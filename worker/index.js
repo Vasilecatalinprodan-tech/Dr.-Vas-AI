@@ -9,7 +9,9 @@ export default {
         }
       });
     }
-
+if (request.method === "GET") {
+  return env.ASSETS.fetch(request);
+}
     if (request.method !== "POST") {
       return new Response("Dr.Vas AI server is running");
     }
