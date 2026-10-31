@@ -1,0 +1,61 @@
+
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dr.Vas AI</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b1422;color:white;font-family:Arial,sans-serif}
+header{padding:24px;background:#102b40;border-bottom:1px solid #29445a}
+.logo{font-size:29px;font-weight:bold;color:#64d9d0}
+.sub{color:#a9bdce;font-size:13px;margin-top:5px}
+main{padding:20px;max-width:700px;margin:auto}
+.welcome{margin-top:45px;text-align:center}
+.symbol{font-size:55px}
+h1{font-size:29px}
+p{color:#b7c7d5;line-height:1.5}
+#chat{margin-top:30px;padding-bottom:100px}
+.msg{padding:14px;border-radius:15px;margin:12px 0;line-height:1.5}
+.bot{background:#172c40}
+.user{background:#176c75;margin-left:35px}
+footer{position:fixed;bottom:0;left:0;right:0;padding:15px;background:#102033;display:flex;gap:8px}
+input{flex:1;min-width:0;padding:15px;border-radius:12px;border:1px solid #426078;background:#172c40;color:white}
+button{padding:14px;border:0;border-radius:12px;background:#35c5bb;color:#09212b;font-weight:bold}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">✚ Dr.Vas AI</div>
+<div class="sub">YOUR PERSONAL AI ASSISTANT</div>
+</header>
+<main>
+<div class="welcome" id="welcome">
+<div class="symbol">🩺</div>
+<h1>Bine ai venit la Dr.Vas</h1>
+<p>Asistentul tău inteligent. Pune o întrebare și începem conversația.</p>
+</div>
+<div id="chat"></div>
+</main>
+<footer>
+<input id="question" placeholder="Scrie mesajul aici...">
+<button onclick="send()">Trimite</button>
+</footer>
+<script>
+function send(){
+const input=document.getElementById('question');
+const value=input.value.trim();
+if(!value)return;
+document.getElementById('welcome').style.display='none';
+const chat=document.getElementById('chat');
+chat.innerHTML+='<div class="msg user">'+escapeHTML(value)+'</div>';
+chat.innerHTML+='<div class="msg bot">Salut! Sunt Dr.Vas. Interfața mea este pregătită. Urmează să conectăm inteligența artificială pentru a-ți putea răspunde la întrebări.</div>';
+input.value='';
+}
+function escapeHTML(s){
+return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+</script>
+</body>
+</html>
