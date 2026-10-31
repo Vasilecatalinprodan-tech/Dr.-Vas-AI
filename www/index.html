@@ -4,58 +4,186 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dr.Vas AI</title>
+<meta name="theme-color" content="#07111f">
+<title>Dr.Vas AI — Intelligence Without Limits</title>
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#0b1422;color:white;font-family:Arial,sans-serif}
-header{padding:24px;background:#102b40;border-bottom:1px solid #29445a}
-.logo{font-size:29px;font-weight:bold;color:#64d9d0}
-.sub{color:#a9bdce;font-size:13px;margin-top:5px}
-main{padding:20px;max-width:700px;margin:auto}
-.welcome{margin-top:45px;text-align:center}
-.symbol{font-size:55px}
-h1{font-size:29px}
-p{color:#b7c7d5;line-height:1.5}
-#chat{margin-top:30px;padding-bottom:100px}
-.msg{padding:14px;border-radius:15px;margin:12px 0;line-height:1.5}
-.bot{background:#172c40}
-.user{background:#176c75;margin-left:35px}
-footer{position:fixed;bottom:0;left:0;right:0;padding:15px;background:#102033;display:flex;gap:8px}
-input{flex:1;min-width:0;padding:15px;border-radius:12px;border:1px solid #426078;background:#172c40;color:white}
-button{padding:14px;border:0;border-radius:12px;background:#35c5bb;color:#09212b;font-weight:bold}
+body{
+ margin:0;background:#07111f;color:#fff;
+ font-family:Inter,Arial,sans-serif;
+ min-height:100vh;
+}
+header{
+ height:75px;padding:0 7%;display:flex;
+ align-items:center;justify-content:space-between;
+ border-bottom:1px solid #18344b;
+ background:#091827;
+}
+.logo{font-size:25px;font-weight:800;color:#54ded5}
+.status{font-size:12px;color:#63d8bd}
+main{max-width:1150px;margin:auto;padding:35px 22px 130px}
+.hero{
+ min-height:350px;border-radius:25px;overflow:hidden;
+ position:relative;display:flex;align-items:center;
+ background:
+ linear-gradient(90deg,rgba(3,12,25,.97),rgba(3,12,25,.35)),
+ url('hero.png') center 38%/cover;
+ border:1px solid #24445b;
+}
+.hero-content{padding:45px;max-width:600px}
+.tag{color:#55d8d0;letter-spacing:3px;font-size:11px}
+h1{font-size:43px;margin:15px 0}
+.hero p{color:#b5c9d9;line-height:1.7}
+.hero strong{color:#57ddd4}
+.panel{
+ margin-top:28px;background:#0d2032;
+ border:1px solid #203d54;border-radius:22px;
+ padding:25px;
+}
+.panel-head{display:flex;align-items:center;gap:12px}
+.avatar{
+ width:43px;height:43px;border-radius:50%;
+ display:grid;place-items:center;
+ background:#123b50;color:#60e2d7;font-size:22px;
+}
+.panel-head h2{font-size:17px;margin:0}
+.panel-head small{color:#70cfc5}
+#chat{min-height:100px;margin-top:22px}
+.msg{
+ padding:15px 17px;border-radius:15px;
+ margin:12px 0;line-height:1.65;
+ white-space:pre-wrap;overflow-wrap:anywhere;
+}
+.bot{background:#172e43;border:1px solid #24465d}
+.user{background:#126a70;margin-left:12%;text-align:left}
+.input-area{display:flex;gap:10px;margin-top:20px}
+input{
+ flex:1;min-width:0;padding:17px;
+ background:#071827;border:1px solid #34536a;
+ border-radius:13px;color:white;font-size:15px;
+ outline:none;
+}
+input:focus{border-color:#55d8d0}
+button{
+ border:0;border-radius:13px;padding:0 24px;
+ background:#54d8cf;color:#061b25;
+ font-weight:800;cursor:pointer;
+}
+button:disabled{opacity:.5}
+.note{text-align:center;color:#71899b;font-size:11px;margin-top:15px}
+footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
+@media(max-width:600px){
+ header{padding:0 18px}
+ main{padding:20px 13px 120px}
+ .hero{min-height:300px;background-position:58% center}
+ .hero-content{padding:25px}
+ h1{font-size:32px}
+ .panel{padding:16px}
+ .input-area{gap:7px}
+ button{padding:0 16px}
+}
 </style>
 </head>
+
 <body>
 <header>
-<div class="logo">✚ Dr.Vas AI</div>
-<div class="sub">YOUR PERSONAL AI ASSISTANT</div>
+ <div class="logo">✚ Dr.Vas AI</div>
+ <div class="status">● AI ASSISTANT ONLINE</div>
 </header>
+
 <main>
-<div class="welcome" id="welcome">
-<div class="symbol">🩺</div>
-<h1>Bine ai venit la Dr.Vas</h1>
-<p>Asistentul tău inteligent. Pune o întrebare și începem conversația.</p>
-</div>
-<div id="chat"></div>
+<section class="hero">
+ <div class="hero-content">
+  <div class="tag">INTELLIGENCE WITHOUT LIMITS</div>
+  <h1>Gândește diferit.<br><strong>Întreabă Dr.Vas.</strong></h1>
+  <p>Un asistent inteligent, pregătit să exploreze idei,
+  să explice lucruri complexe și să te ajute în fiecare zi.</p>
+ </div>
+</section>
+
+<section class="panel">
+ <div class="panel-head">
+  <div class="avatar">✚</div>
+  <div>
+   <h2>Dr.Vas AI</h2>
+   <small>Asistentul tău personal</small>
+  </div>
+ </div>
+
+ <div id="chat">
+  <div class="msg bot">
+   Bun venit la Dr.Vas AI! Cu ce te pot ajuta astăzi?
+  </div>
+ </div>
+
+ <div class="input-area">
+  <input id="question" placeholder="Scrie întrebarea ta..."
+   autocomplete="off">
+  <button id="sendButton" onclick="send()">Trimite ➤</button>
+ </div>
+ <div class="note">Răspunsurile AI pot conține erori. Verifică informațiile importante.</div>
+</section>
 </main>
-<footer>
-<input id="question" placeholder="Scrie mesajul aici...">
-<button onclick="send()">Trimite</button>
-</footer>
+
+<footer>© 2026 Dr.Vas AI · Think • Ask • Discover</footer>
+
 <script>
-function send(){
-const input=document.getElementById('question');
-const value=input.value.trim();
-if(!value)return;
-document.getElementById('welcome').style.display='none';
-const chat=document.getElementById('chat');
-chat.innerHTML+='<div class="msg user">'+escapeHTML(value)+'</div>';
-chat.innerHTML+='<div class="msg bot">Salut! Sunt Dr.Vas. Interfața mea este pregătită. Urmează să conectăm inteligența artificială pentru a-ți putea răspunde la întrebări.</div>';
-input.value='';
+const API_URL =
+ "https://dr--vas-ai.vasilecatalinprodan.workers.dev";
+
+async function send(){
+ const input=document.getElementById('question');
+ const button=document.getElementById('sendButton');
+ const chat=document.getElementById('chat');
+ const message=input.value.trim();
+
+ if(!message || button.disabled)return;
+
+ const user=document.createElement('div');
+ user.className='msg user';
+ user.textContent=message;
+ chat.appendChild(user);
+
+ input.value='';
+ button.disabled=true;
+
+ const answer=document.createElement('div');
+ answer.className='msg bot';
+ answer.textContent='Dr.Vas gândește...';
+ chat.appendChild(answer);
+
+ try{
+  const response=await fetch(API_URL,{
+   method:'POST',
+   headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({message})
+  });
+
+  if(!response.ok)throw new Error('HTTP '+response.status);
+
+  const data=await response.json();
+  const text=data.candidates?.[0]?.content?.parts
+   ?.map(p=>p.text||'').join('')
+   ||data.response||data.message;
+
+  if(!text)throw new Error('Răspuns invalid');
+
+  answer.textContent=text;
+ }catch(error){
+  answer.textContent='Nu mă pot conecta momentan. Încearcă din nou.';
+  console.error(error);
+ }finally{
+  button.disabled=false;
+  input.focus();
+  answer.scrollIntoView({behavior:'smooth',block:'nearest'});
+ }
 }
-function escapeHTML(s){
-return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
+
+document.getElementById('question')
+ .addEventListener('keydown',e=>{
+  if(e.key==='Enter')send();
+ });
 </script>
 </body>
 </html>
