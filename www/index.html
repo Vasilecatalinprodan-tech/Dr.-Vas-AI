@@ -392,18 +392,24 @@ async function send(){
   answer.textContent = "Dr.Vas gândește...";
   chat.appendChild(answer);
 
+  const startedAt = performance.now();
+
   try{
     const response = await fetch(API_URL,{
       method:"POST",
-      headers:{"Content-Type":"application/json"},
+      headers:{"Content-Type":"text/plain;charset=UTF-8"},
       body:JSON.stringify({message})
     });
+
     const data = await response.json();
+    const elapsed = ((performance.now()-startedAt)/1000).toFixed(2);
 
     if(!response.ok) throw new Error(data.error || "HTTP " + response.status);
     if(!data.reply) throw new Error("Răspuns invalid de la server");
 
     answer.textContent = data.reply;
+    console.info("Dr.Vas response time:",elapsed,"seconds");
+
   }catch(error){
     answer.textContent = "Eroare: " + error.message;
     console.error("Dr.Vas AI:",error);
