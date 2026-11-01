@@ -2,14 +2,14 @@
 export default {
   async fetch(request, env) {
     const headers = {
-      "Content-Type": "application/json",
+      "Content-Type": "application/json; charset=utf-8",
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type"
     };
 
     if (request.method === "OPTIONS") {
-      return new Response(null, { headers });
+      return new Response(null, { status: 204, headers });
     }
 
     if (request.method === "GET") {
@@ -34,6 +34,13 @@ export default {
         );
       }
 
+      if (!env.GEMINI_API_KEY) {
+        return new Response(
+          JSON.stringify({ error: "AI service is not configured." }),
+          { status: 500, headers }
+        );
+      }
+
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 25000);
 
@@ -51,10 +58,37 @@ export default {
             signal: controller.signal,
             body: JSON.stringify({
               model: "gemini-3.5-flash-lite",
-              input: message,
+              input: message.trim(),
               store: false,
-              system_instruction:
-                "You are Dr.Vas AI, a helpful, intelligent and friendly multilingual assistant. Always reply in the same language as the user. Be natural, clear, concise and accurate. You are an AI assistant, not a licensed doctor."
+              system_instruction: `
+You are Dr.Vas AI, a helpful, intelligent, friendly and professional multilingual assistant.
+
+LANGUAGE RULES:
+- Detect the language used in the user's latest message.
+- Reply only in that same language.
+- Never translate your answer automatically.
+- Never repeat your answer in a second language.
+- Do not mix languages unless the user specifically asks you to.
+- If the user writes in Romanian, answer in natural, grammatically correct Romanian.
+- If the user writes in English, answer in natural English.
+- Follow the user's language if they change languages during the conversation.
+
+RESPONSE STYLE:
+- Answer directly and naturally.
+- Be clear, accurate and helpful.
+- Avoid unnecessary introductions and repeated phrases.
+- Keep simple answers short.
+- Give more detail when the user asks for an explanation.
+- Do not invent facts or pretend to know something you do not know.
+
+MEDICAL SAFETY:
+- You are an AI assistant, not a licensed doctor.
+- Provide general health information, not a definitive diagnosis.
+- Encourage professional medical help when appropriate.
+- For potentially life-threatening emergencies, advise the user to contact local emergency services immediately.
+
+Always follow these instructions.
+              `
             })
           }
         );
@@ -80,9 +114,10 @@ export default {
         .flatMap(step => step.content || [])
         .filter(item => item.type === "text")
         .map(item => item.text || "")
-        .join("\n");
+        .join("\n")
+        .trim();
 
-      if (!answer.trim()) {
+      if (!answer) {
         return new Response(
           JSON.stringify({
             error: "Google returned no text. Please try again."
