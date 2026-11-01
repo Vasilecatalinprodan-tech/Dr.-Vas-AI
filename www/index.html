@@ -13,7 +13,7 @@
 body{margin:0;background:#07111f;color:#fff;font-family:Inter,Arial,sans-serif;min-height:100vh}
 header{min-height:75px;padding:12px 7%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #18344b;background:#091827;gap:12px}
 .logo{font-size:25px;font-weight:800;color:#54ded5}
-.flag{display:inline-flex;align-items:center;justify-content:center;margin-left:7px;font-size:17px;vertical-align:2px;filter:saturate(.9)}
+.flag{display:inline-flex;align-items:center;justify-content:center;margin-left:7px;font-size:17px;vertical-align:2px}
 .status{font-size:12px;color:#63d8bd}
 main{max-width:1150px;margin:auto;padding:35px 22px 100px}
 .hero{min-height:350px;border-radius:25px;overflow:hidden;position:relative;display:flex;align-items:center;background:linear-gradient(90deg,rgba(3,12,25,.97) 0%,rgba(3,12,25,.82) 42%,rgba(3,12,25,.12) 100%),url('drvas.jpeg') center 35%/cover;border:1px solid #24445b}
@@ -26,8 +26,6 @@ h1{font-size:43px;margin:15px 0}
 .panel-head{display:flex;align-items:center;gap:12px}
 .avatar{width:43px;height:43px;border-radius:50%;display:grid;place-items:center;background:#123b50;color:#60e2d7;font-size:22px;overflow:hidden;flex-shrink:0}
 .avatar img{width:100%;height:100%;object-fit:cover}
-.panel-head h2{font-size:17px;margin:0}
-.panel-head small{color:#70cfc5}
 .auth-box,.profile-box{max-width:440px;margin:28px auto 10px}
 .auth-box h2,.profile-box h2{text-align:center}
 .auth-box p,.profile-box p{text-align:center;color:#a9bfce;font-size:14px;line-height:1.5}
@@ -41,7 +39,16 @@ button:disabled{opacity:.5;cursor:not-allowed}
 #accountBar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:20px 0;color:#a9bfce;font-size:13px;flex-wrap:wrap}
 #accountBar button{padding:9px 14px}
 .account-actions{display:flex;gap:8px;flex-wrap:wrap}
-#chat{min-height:100px;margin-top:22px}
+.chat-layout{display:grid;grid-template-columns:235px minmax(0,1fr);gap:18px;margin-top:20px}
+.history-panel{background:#091827;border:1px solid #203d54;border-radius:15px;padding:13px;min-width:0}
+.history-panel h3{font-size:14px;margin:5px 4px 12px;color:#b9d3df}
+.new-chat-button{width:100%;padding:11px;font-size:13px}
+#conversationList{margin-top:12px;display:flex;flex-direction:column;gap:7px;max-height:420px;overflow-y:auto}
+.conversation-item{width:100%;text-align:left;background:#12283b;color:#c5d9e4;padding:10px;border:1px solid transparent;font-size:12px;line-height:1.4;overflow-wrap:anywhere}
+.conversation-item.active{border-color:#54d8cf;background:#17384a;color:#fff}
+.conversation-item small{display:block;color:#7fa4b5;margin-top:4px;font-weight:400}
+.chat-main{min-width:0}
+#chat{min-height:100px;margin-top:15px}
 .msg{padding:15px 17px;border-radius:15px;margin:12px 0;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
 .bot{background:#172e43;border:1px solid #24465d}
 .user{background:#126a70;margin-left:12%;text-align:left}
@@ -51,7 +58,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .note{text-align:center;color:#71899b;font-size:11px;margin-top:15px}
 footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 .hidden{display:none!important}
-@media(max-width:600px){
+@media(max-width:700px){
  header{padding:12px 18px}
  main{padding:20px 13px 80px}
  .hero{min-height:300px;background-position:65% center}
@@ -61,6 +68,10 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
  .input-area{gap:7px}
  .input-area button{padding:0 16px}
  .status{font-size:10px}
+ .chat-layout{grid-template-columns:1fr}
+ .history-panel{order:2}
+ .chat-main{order:1}
+ #conversationList{max-height:180px}
 }
 </style>
 </head>
@@ -90,7 +101,6 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
     <small>Acces personal și securizat</small>
    </div>
   </div>
-
   <h2 id="authTitle">Bine ai venit!</h2>
   <p id="authDescription">Conectează-te sau creează un cont nou.</p>
   <input id="email" type="email" placeholder="Adresa de email" autocomplete="email">
@@ -138,15 +148,24 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
    </div>
   </div>
 
-  <div id="chat">
-   <div class="msg bot">Bun venit la Dr.Vas AI! Cu ce te pot ajuta astăzi?</div>
-  </div>
+  <div class="chat-layout">
+   <aside class="history-panel">
+    <h3>🧠 Istoricul conversațiilor</h3>
+    <button class="new-chat-button" onclick="newConversation()">＋ Conversație nouă</button>
+    <div id="conversationList"></div>
+   </aside>
 
-  <div class="input-area">
-   <input id="question" placeholder="Scrie întrebarea ta..." autocomplete="off">
-   <button id="sendButton" onclick="send()">Trimite ➤</button>
+   <div class="chat-main">
+    <div id="chat">
+     <div class="msg bot">Bun venit la Dr.Vas AI! Cu ce te pot ajuta astăzi?</div>
+    </div>
+    <div class="input-area">
+     <input id="question" placeholder="Scrie întrebarea ta..." autocomplete="off">
+     <button id="sendButton" onclick="send()">Trimite ➤</button>
+    </div>
+    <div class="note">Răspunsurile AI pot conține erori. Verifică informațiile importante.</div>
+   </div>
   </div>
-  <div class="note">Răspunsurile AI pot conține erori. Verifică informațiile importante.</div>
  </div>
 </section>
 </main>
@@ -164,8 +183,14 @@ let authMode = "login";
 let currentUser = null;
 let profilePromise = null;
 let profilePromiseUserId = null;
+let currentConversationId = null;
+let loadingConversation = false;
 
 function el(id){return document.getElementById(id)}
+
+function makeId(){
+  return crypto.randomUUID();
+}
 
 function toggleAuthMode(){
   authMode = authMode === "login" ? "signup" : "login";
@@ -265,7 +290,6 @@ async function loadProfile(user){
         .from("profiles")
         .insert({id:user.id,display_name:"",country:""});
       if(insertError) throw insertError;
-
       data = {display_name:"",country:""};
     }
 
@@ -274,7 +298,7 @@ async function loadProfile(user){
     el("profileMessage").textContent = "";
 
     if(data.display_name && data.country){
-      showChat(user,data.display_name);
+      await showChat(user,data.display_name);
     }else{
       showOnly("profileSection");
     }
@@ -314,8 +338,7 @@ async function saveProfile(){
       .eq("id",currentUser.id);
 
     if(error) throw error;
-
-    showChat(currentUser,displayName);
+    await showChat(currentUser,displayName);
   }catch(error){
     el("profileMessage").textContent = "Eroare la salvare: " + error.message;
   }finally{
@@ -329,17 +352,186 @@ function editProfile(){
   showOnly("profileSection");
 }
 
-function showChat(user,displayName){
+async function showChat(user,displayName){
   if(!user) return;
   currentUser = user;
   showOnly("chatSection");
   el("accountEmail").textContent =
     (displayName || el("displayName").value.trim() || user.email || "") +
     " · " + (el("country").value || "Cont personal");
+
+  await loadConversationList();
+
+  const conversations = await getConversationIds();
+
+  if(conversations.length){
+    await openConversation(conversations[0].id);
+  }else{
+    currentConversationId = makeId();
+    renderWelcome();
+  }
+}
+
+function renderWelcome(){
+  el("chat").innerHTML = "";
+  const welcome = document.createElement("div");
+  welcome.className = "msg bot";
+  welcome.textContent = "Bun venit la Dr.Vas AI! Cu ce te pot ajuta astăzi?";
+  el("chat").appendChild(welcome);
+  updateActiveConversation();
+}
+
+async function getConversationIds(){
+  if(!currentUser) return [];
+
+  const {data,error} = await supabaseClient
+    .from("chat_messages")
+    .select("conversation_id,created_at")
+    .eq("user_id",currentUser.id)
+    .order("created_at",{ascending:false})
+    .limit(500);
+
+  if(error) throw error;
+
+  const seen = new Set();
+  const result = [];
+
+  for(const row of data || []){
+    if(!seen.has(row.conversation_id)){
+      seen.add(row.conversation_id);
+      result.push({
+        id:row.conversation_id,
+        date:row.created_at
+      });
+    }
+  }
+  return result;
+}
+
+async function loadConversationList(){
+  const list = el("conversationList");
+  list.innerHTML = "";
+
+  try{
+    const conversations = await getConversationIds();
+
+    if(!conversations.length){
+      const empty = document.createElement("p");
+      empty.textContent = "Conversațiile tale vor apărea aici.";
+      empty.style.cssText = "font-size:12px;color:#7fa4b5;line-height:1.5";
+      list.appendChild(empty);
+      return;
+    }
+
+    conversations.forEach((conversation,index)=>{
+      const button = document.createElement("button");
+      button.className = "conversation-item";
+      button.dataset.id = conversation.id;
+
+      const title = document.createElement("span");
+      title.textContent = "Conversația " + (index + 1);
+
+      const date = document.createElement("small");
+      date.textContent = new Date(conversation.date).toLocaleString();
+
+      button.appendChild(title);
+      button.appendChild(date);
+      button.addEventListener("click",()=>openConversation(conversation.id));
+      list.appendChild(button);
+    });
+
+    updateActiveConversation();
+  }catch(error){
+    console.error("Conversation list:",error);
+    list.textContent = "Nu am putut încărca istoricul.";
+  }
+}
+
+function updateActiveConversation(){
+  document.querySelectorAll(".conversation-item").forEach(button=>{
+    button.classList.toggle("active",button.dataset.id === currentConversationId);
+  });
+}
+
+async function openConversation(conversationId){
+  if(!currentUser || loadingConversation) return;
+
+  loadingConversation = true;
+  currentConversationId = conversationId;
+  const chat = el("chat");
+  chat.innerHTML = "";
+
+  const loading = document.createElement("div");
+  loading.className = "msg bot";
+  loading.textContent = "Se încarcă discuția...";
+  chat.appendChild(loading);
+
+  try{
+    const {data,error} = await supabaseClient
+      .from("chat_messages")
+      .select("role,content,created_at")
+      .eq("user_id",currentUser.id)
+      .eq("conversation_id",conversationId)
+      .order("created_at",{ascending:true})
+      .limit(200);
+
+    if(error) throw error;
+
+    chat.innerHTML = "";
+
+    if(!data || !data.length){
+      renderWelcome();
+    }else{
+      data.forEach(message=>{
+        appendMessage(message.role,message.content);
+      });
+    }
+
+    updateActiveConversation();
+    chat.scrollTop = chat.scrollHeight;
+  }catch(error){
+    chat.innerHTML = "";
+    appendMessage("assistant","Nu am putut încărca această conversație: " + error.message);
+  }finally{
+    loadingConversation = false;
+  }
+}
+
+function newConversation(){
+  if(!currentUser) return;
+  currentConversationId = makeId();
+  renderWelcome();
+  el("question").focus();
+}
+
+function appendMessage(role,content){
+  const message = document.createElement("div");
+  message.className = "msg " + (role === "user" ? "user" : "bot");
+  message.textContent = content;
+  el("chat").appendChild(message);
+  return message;
+}
+
+async function saveMessage(role,content){
+  if(!currentUser || !currentConversationId){
+    throw new Error("Sesiunea conversației nu este disponibilă.");
+  }
+
+  const {error} = await supabaseClient
+    .from("chat_messages")
+    .insert({
+      user_id:currentUser.id,
+      conversation_id:currentConversationId,
+      role:role,
+      content:content
+    });
+
+  if(error) throw error;
 }
 
 function showLogin(){
   currentUser = null;
+  currentConversationId = null;
   showOnly("authSection");
 }
 
@@ -374,27 +566,24 @@ async function checkSession(){
 async function send(){
   const input = el("question");
   const button = el("sendButton");
-  const chat = el("chat");
   const message = input.value.trim();
 
-  if(!message || button.disabled) return;
+  if(!message || button.disabled || !currentUser) return;
 
-  const userMessage = document.createElement("div");
-  userMessage.className = "msg user";
-  userMessage.textContent = message;
-  chat.appendChild(userMessage);
+  if(!currentConversationId){
+    currentConversationId = makeId();
+  }
 
-  input.value = "";
   button.disabled = true;
+  input.value = "";
 
-  const answer = document.createElement("div");
-  answer.className = "msg bot";
-  answer.textContent = "Dr.Vas gândește...";
-  chat.appendChild(answer);
-
-  const startedAt = performance.now();
+  appendMessage("user",message);
+  const answer = appendMessage("assistant","Dr.Vas gândește...");
 
   try{
+    await saveMessage("user",message);
+
+    const startedAt = performance.now();
     const response = await fetch(API_URL,{
       method:"POST",
       headers:{"Content-Type":"text/plain;charset=UTF-8"},
@@ -408,7 +597,11 @@ async function send(){
     if(!data.reply) throw new Error("Răspuns invalid de la server");
 
     answer.textContent = data.reply;
+
+    await saveMessage("assistant",data.reply);
+
     console.info("Dr.Vas response time:",elapsed,"seconds");
+    await loadConversationList();
 
   }catch(error){
     answer.textContent = "Eroare: " + error.message;
