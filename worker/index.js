@@ -1,7 +1,7 @@
 
 export default {
   async fetch(request, env) {
-    const cors = {
+    const headers = {
       "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "POST, OPTIONS",
@@ -9,7 +9,7 @@ export default {
     };
 
     if (request.method === "OPTIONS") {
-      return new Response(null, { headers: cors });
+      return new Response(null, { headers });
     }
 
     if (request.method === "GET") {
@@ -17,94 +17,84 @@ export default {
     }
 
     if (request.method !== "POST") {
-      return new Response("Dr.Vas AI server is running");
+      return new Response(
+        JSON.stringify({ error: "Method not allowed" }),
+        { status: 405, headers }
+      );
     }
 
     try {
-      const { message } = await request.json();
+      const body = await request.json();
+      const message = body.message;
 
-      if (!message || typeof message !== "string") {
+      if (typeof message !== "string" || !message.trim()) {
         return new Response(
           JSON.stringify({ error: "Please enter a message." }),
-          { status: 400, headers: cors }
+          { status: 400, headers }
         );
       }
 
-      let response;
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 25000);
 
-      for (let attempt = 0; attempt < 3; attempt++) {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 20000);
+      let aiResponse;
 
-        try {
-          response = await fetch(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.7-flash:generateContent",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                "x-goog-api-key": env.GEMINI_API_KEY
-              },
-              signal: controller.signal,
-              body: JSON.stringify({
-                systemInstruction: {
-                  parts: [{
-                    text: "You are Dr.Vas AI, a helpful, intelligent and friendly multilingual assistant. Automatically detect the language of the user's message and always reply in that same language. If the user writes in Romanian, reply in Romanian. Never switch languages unless asked. Be natural, clear, concise and fast. Be accurate and honest. You are an AI assistant, not a licensed doctor."
-                  }]
-                },
-                contents: [{
-                  parts: [{ text: message }]
-                }],
-                generationConfig: {
-                  temperature: 0.5,
-                  maxOutputTokens: 512
-                }
-              })
-            }
-          );
-        } catch (error) {
-          if (attempt === 2) {
-            return new Response(
-              JSON.stringify({ error: "AI service timed out. Please try again." }),
-              { status: 504, headers: cors }
-            );
+      try {
+        aiResponse = await fetch(
+          "https://generativelanguage.googleapis.com/v1beta/interactions",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "x-goog-api-key": env.GEMINI_API_KEY
+            },
+            signal: controller.signal,
+            body: JSON.stringify({
+              model: "gemini-3.5-flash-lite",
+              input: message,
+              store: false,
+              system_instruction:
+                "You are Dr.Vas AI, a helpful, intelligent and friendly multilingual assistant. Always reply in the same language as the user. Be natural, clear, concise and accurate. You are an AI assistant, not a licensed doctor."
+            })
           }
-        } finally {
-          clearTimeout(timeout);
-        }
-
-        if (response && response.ok) {
-          const data = await response.json();
-          return new Response(JSON.stringify(data), {
-            status: 200,
-            headers: cors
-          });
-        }
-
-        if (response && ![429, 500, 502, 503, 504].includes(response.status)) {
-          const errorData = await response.text();
-          return new Response(errorData, {
-            status: response.status,
-            headers: cors
-          });
-        }
-
-        if (attempt < 2) {
-          await new Promise(resolve =>
-            setTimeout(resolve, 1000 * (attempt + 1))
-          );
-        }
+        );
+      } finally {
+        clearTimeout(timeout);
       }
 
+      const data = await aiResponse.json();
+
+      if (!aiResponse.ok) {
+        return new Response(
+          JSON.stringify({
+            error: data.error?.message || "AI service error"
+          }),
+          { status: aiResponse.status, headers }
+        );
+      }
+
+      const parts = data.outputs || [];
+      const answer = parts
+        .flatMap(item => item.content || [])
+        .filter(item => item.type === "text")
+        .map(item => item.text)
+        .join("\n");
+
       return new Response(
-        JSON.stringify({ error: "AI service is busy. Please try again shortly." }),
-        { status: response?.status || 503, headers: cors }
+        JSON.stringify({ reply: answer || "Nu am primit un răspuns." }),
+        { status: 200, headers }
       );
 
     } catch (error) {
+      const timedOut = error.name === "AbortError";
+
       return new Response(
-        JSON.stringify({ error: "Server error. Please try again." }),
-        { status: 500, headers: cors }
+        JSON.stringify({
+          error: timedOut
+            ? "Dr.Vas a răspuns prea târziu. Încearcă din nou."
+            : "Eroare de server. Încearcă din nou."
+        }),
+        { status: timedOut ? 504 : 500, headers }
       );
     }
   }

@@ -160,19 +160,24 @@ async function send(){
    body:JSON.stringify({message})
   });
 
-  if(!response.ok)throw new Error('HTTP '+response.status);
-
   const data=await response.json();
-  const text=data.candidates?.[0]?.content?.parts
-   ?.map(p=>p.text||'').join('')
-   ||data.response||data.message;
 
-  if(!text)throw new Error('Răspuns invalid');
+  if(!response.ok){
+   throw new Error(data.error || 'HTTP '+response.status);
+  }
+
+  const text=data.reply;
+
+  if(!text){
+   throw new Error('Răspuns invalid de la server');
+  }
 
   answer.textContent=text;
+
  }catch(error){
-  answer.textContent='Nu mă pot conecta momentan. Încearcă din nou.';
-  console.error(error);
+  answer.textContent='Eroare: '+error.message;
+  console.error('Dr.Vas AI:',error);
+
  }finally{
   button.disabled=false;
   input.focus();
