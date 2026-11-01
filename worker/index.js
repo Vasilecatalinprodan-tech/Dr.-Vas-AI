@@ -73,15 +73,26 @@ export default {
         );
       }
 
-      const parts = data.outputs || [];
-      const answer = parts
-        .flatMap(item => item.content || [])
+      const steps = data.steps || [];
+
+      const answer = steps
+        .filter(step => step.type === "model_output")
+        .flatMap(step => step.content || [])
         .filter(item => item.type === "text")
-        .map(item => item.text)
+        .map(item => item.text || "")
         .join("\n");
 
+      if (!answer.trim()) {
+        return new Response(
+          JSON.stringify({
+            error: "Google returned no text. Please try again."
+          }),
+          { status: 502, headers }
+        );
+      }
+
       return new Response(
-        JSON.stringify({ reply: answer || "Nu am primit un răspuns." }),
+        JSON.stringify({ reply: answer }),
         { status: 200, headers }
       );
 
