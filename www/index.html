@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html lang="ro">
 <head>
@@ -7,81 +7,57 @@
 <meta name="theme-color" content="#07111f">
 <title>Dr.Vas AI — Intelligence Without Limits</title>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 *{box-sizing:border-box}
-body{
- margin:0;background:#07111f;color:#fff;
- font-family:Inter,Arial,sans-serif;
- min-height:100vh;
-}
-header{
- height:75px;padding:0 7%;display:flex;
- align-items:center;justify-content:space-between;
- border-bottom:1px solid #18344b;
- background:#091827;
-}
+body{margin:0;background:#07111f;color:#fff;font-family:Inter,Arial,sans-serif;min-height:100vh}
+header{min-height:75px;padding:12px 7%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #18344b;background:#091827;gap:12px}
 .logo{font-size:25px;font-weight:800;color:#54ded5}
 .status{font-size:12px;color:#63d8bd}
-main{max-width:1150px;margin:auto;padding:35px 22px 130px}
-.hero{
- min-height:350px;border-radius:25px;overflow:hidden;
- position:relative;display:flex;align-items:center;
- background:
- linear-gradient(90deg,rgba(3,12,25,.97),rgba(3,12,25,.35)),
- url('hero.png') center 38%/cover;
- border:1px solid #24445b;
-}
+main{max-width:1150px;margin:auto;padding:35px 22px 100px}
+.hero{min-height:350px;border-radius:25px;overflow:hidden;position:relative;display:flex;align-items:center;background:linear-gradient(90deg,rgba(3,12,25,.97),rgba(3,12,25,.35)),url('hero.png') center 38%/cover;border:1px solid #24445b}
 .hero-content{padding:45px;max-width:600px}
 .tag{color:#55d8d0;letter-spacing:3px;font-size:11px}
 h1{font-size:43px;margin:15px 0}
 .hero p{color:#b5c9d9;line-height:1.7}
 .hero strong{color:#57ddd4}
-.panel{
- margin-top:28px;background:#0d2032;
- border:1px solid #203d54;border-radius:22px;
- padding:25px;
-}
+.panel{margin-top:28px;background:#0d2032;border:1px solid #203d54;border-radius:22px;padding:25px}
 .panel-head{display:flex;align-items:center;gap:12px}
-.avatar{
- width:43px;height:43px;border-radius:50%;
- display:grid;place-items:center;
- background:#123b50;color:#60e2d7;font-size:22px;
-}
+.avatar{width:43px;height:43px;border-radius:50%;display:grid;place-items:center;background:#123b50;color:#60e2d7;font-size:22px}
 .panel-head h2{font-size:17px;margin:0}
 .panel-head small{color:#70cfc5}
+.auth-box{max-width:440px;margin:28px auto 10px}
+.auth-box h2{text-align:center}
+.auth-box p{text-align:center;color:#a9bfce;font-size:14px;line-height:1.5}
+.auth-box input{display:block;width:100%;margin:12px 0;padding:15px;background:#071827;border:1px solid #34536a;border-radius:13px;color:white;font-size:15px;outline:none}
+.auth-box input:focus{border-color:#55d8d0}
+button{border:0;border-radius:13px;padding:14px 20px;background:#54d8cf;color:#061b25;font-weight:800;cursor:pointer}
+button:disabled{opacity:.5;cursor:not-allowed}
+.auth-button{width:100%;margin-top:10px}
+.switch-button{background:transparent;color:#60e2d7;width:100%;margin-top:8px}
+#authMessage{color:#f0c879;min-height:22px;font-size:13px;text-align:center;overflow-wrap:anywhere}
+#accountBar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:20px 0;color:#a9bfce;font-size:13px;flex-wrap:wrap}
+#accountBar button{padding:9px 14px}
 #chat{min-height:100px;margin-top:22px}
-.msg{
- padding:15px 17px;border-radius:15px;
- margin:12px 0;line-height:1.65;
- white-space:pre-wrap;overflow-wrap:anywhere;
-}
+.msg{padding:15px 17px;border-radius:15px;margin:12px 0;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
 .bot{background:#172e43;border:1px solid #24465d}
 .user{background:#126a70;margin-left:12%;text-align:left}
 .input-area{display:flex;gap:10px;margin-top:20px}
-input{
- flex:1;min-width:0;padding:17px;
- background:#071827;border:1px solid #34536a;
- border-radius:13px;color:white;font-size:15px;
- outline:none;
-}
-input:focus{border-color:#55d8d0}
-button{
- border:0;border-radius:13px;padding:0 24px;
- background:#54d8cf;color:#061b25;
- font-weight:800;cursor:pointer;
-}
-button:disabled{opacity:.5}
+.input-area input{flex:1;min-width:0;padding:17px;background:#071827;border:1px solid #34536a;border-radius:13px;color:white;font-size:15px;outline:none}
+.input-area input:focus{border-color:#55d8d0}
 .note{text-align:center;color:#71899b;font-size:11px;margin-top:15px}
 footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
+.hidden{display:none!important}
 @media(max-width:600px){
- header{padding:0 18px}
- main{padding:20px 13px 120px}
+ header{padding:12px 18px}
+ main{padding:20px 13px 80px}
  .hero{min-height:300px;background-position:58% center}
  .hero-content{padding:25px}
  h1{font-size:32px}
  .panel{padding:16px}
  .input-area{gap:7px}
- button{padding:0 16px}
+ .input-area button{padding:0 16px}
 }
 </style>
 </head>
@@ -103,92 +79,261 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 </section>
 
 <section class="panel">
- <div class="panel-head">
-  <div class="avatar">✚</div>
-  <div>
-   <h2>Dr.Vas AI</h2>
-   <small>Asistentul tău personal</small>
+ <div id="authSection" class="auth-box">
+  <div class="panel-head">
+   <div class="avatar">✚</div>
+   <div>
+    <h2>Contul tău Dr.Vas AI</h2>
+    <small>Acces personal și securizat</small>
+   </div>
   </div>
+
+  <h2 id="authTitle">Bine ai venit!</h2>
+  <p id="authDescription">Conectează-te sau creează un cont nou.</p>
+
+  <input id="email" type="email" placeholder="Adresa de email" autocomplete="email">
+  <input id="password" type="password" placeholder="Parola" autocomplete="current-password">
+
+  <button id="authButton" class="auth-button" onclick="handleAuth()">Conectare</button>
+  <button id="switchButton" class="switch-button" onclick="toggleAuthMode()">Nu ai cont? Creează unul</button>
+  <div id="authMessage"></div>
  </div>
 
- <div id="chat">
-  <div class="msg bot">
-   Bun venit la Dr.Vas AI! Cu ce te pot ajuta astăzi?
+ <div id="chatSection" class="hidden">
+  <div class="panel-head">
+   <div class="avatar">✚</div>
+   <div>
+    <h2>Dr.Vas AI</h2>
+    <small>Asistentul tău personal</small>
+   </div>
   </div>
- </div>
 
- <div class="input-area">
-  <input id="question" placeholder="Scrie întrebarea ta..."
-   autocomplete="off">
-  <button id="sendButton" onclick="send()">Trimite ➤</button>
+  <div id="accountBar">
+   <span id="accountEmail"></span>
+   <button onclick="logout()">Deconectare</button>
+  </div>
+
+  <div id="chat">
+   <div class="msg bot">Bun venit la Dr.Vas AI! Cu ce te pot ajuta astăzi?</div>
+  </div>
+
+  <div class="input-area">
+   <input id="question" placeholder="Scrie întrebarea ta..." autocomplete="off">
+   <button id="sendButton" onclick="send()">Trimite ➤</button>
+  </div>
+  <div class="note">Răspunsurile AI pot conține erori. Verifică informațiile importante.</div>
  </div>
- <div class="note">Răspunsurile AI pot conține erori. Verifică informațiile importante.</div>
 </section>
 </main>
 
 <footer>© 2026 Dr.Vas AI · Think • Ask • Discover</footer>
 
 <script>
-const API_URL =
- "https://dr--vas-ai.vasilecatalinprodan.workers.dev";
+const API_URL = "https://dr--vas-ai.vasilecatalinprodan.workers.dev";
 
-async function send(){
- const input=document.getElementById('question');
- const button=document.getElementById('sendButton');
- const chat=document.getElementById('chat');
- const message=input.value.trim();
+// Introdu aici cheia publică Supabase (Publishable key).
+const SUPABASE_URL = "https://bqgshoqspcfbflgsnntn.supabase.co";
+const SUPABASE_KEY = "sb_publishable_sP9luSRTjqAZrQmjIzy4VA_EBzLmSPZ";
 
- if(!message || button.disabled)return;
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
- const user=document.createElement('div');
- user.className='msg user';
- user.textContent=message;
- chat.appendChild(user);
+let authMode = "login";
 
- input.value='';
- button.disabled=true;
+function toggleAuthMode(){
+  authMode = authMode === "login" ? "signup" : "login";
 
- const answer=document.createElement('div');
- answer.className='msg bot';
- answer.textContent='Dr.Vas gândește...';
- chat.appendChild(answer);
+  document.getElementById("authTitle").textContent =
+    authMode === "login" ? "Bine ai venit!" : "Creează-ți contul";
 
- try{
-  const response=await fetch(API_URL,{
-   method:'POST',
-   headers:{'Content-Type':'application/json'},
-   body:JSON.stringify({message})
-  });
+  document.getElementById("authDescription").textContent =
+    authMode === "login"
+    ? "Conectează-te cu adresa ta de email și parola."
+    : "Înregistrează-te pentru a folosi Dr.Vas AI.";
 
-  const data=await response.json();
+  document.getElementById("authButton").textContent =
+    authMode === "login" ? "Conectare" : "Creează cont";
 
-  if(!response.ok){
-   throw new Error(data.error || 'HTTP '+response.status);
-  }
+  document.getElementById("switchButton").textContent =
+    authMode === "login"
+    ? "Nu ai cont? Creează unul"
+    : "Ai deja cont? Conectează-te";
 
-  const text=data.reply;
+  document.getElementById("password").autocomplete =
+    authMode === "login" ? "current-password" : "new-password";
 
-  if(!text){
-   throw new Error('Răspuns invalid de la server');
-  }
-
-  answer.textContent=text;
-
- }catch(error){
-  answer.textContent='Eroare: '+error.message;
-  console.error('Dr.Vas AI:',error);
-
- }finally{
-  button.disabled=false;
-  input.focus();
-  answer.scrollIntoView({behavior:'smooth',block:'nearest'});
- }
+  document.getElementById("authMessage").textContent = "";
 }
 
-document.getElementById('question')
- .addEventListener('keydown',e=>{
-  if(e.key==='Enter')send();
- });
+async function handleAuth(){
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const button = document.getElementById("authButton");
+  const message = document.getElementById("authMessage");
+
+  message.textContent = "";
+
+  if(!email || !password){
+    message.textContent = "Introdu adresa de email și parola.";
+    return;
+  }
+
+  if(password.length < 8){
+    message.textContent = "Parola trebuie să aibă minimum 8 caractere.";
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Se procesează...";
+
+  try{
+    if(authMode === "signup"){
+      const {data,error} = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options:{
+          emailRedirectTo: window.location.origin
+        }
+      });
+
+      if(error) throw error;
+
+      if(data.session){
+        showChat(data.session.user);
+      }else{
+        message.textContent =
+          "Cont creat! Verifică emailul și apasă linkul de confirmare.";
+      }
+
+    }else{
+      const {data,error} = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if(error) throw error;
+
+      showChat(data.user);
+    }
+
+  }catch(error){
+    message.textContent = error.message || "A apărut o eroare.";
+  }finally{
+    button.disabled = false;
+    button.textContent =
+      authMode === "login" ? "Conectare" : "Creează cont";
+  }
+}
+
+function showChat(user){
+  document.getElementById("authSection").classList.add("hidden");
+  document.getElementById("chatSection").classList.remove("hidden");
+  document.getElementById("accountEmail").textContent = user.email || "";
+}
+
+function showLogin(){
+  document.getElementById("chatSection").classList.add("hidden");
+  document.getElementById("authSection").classList.remove("hidden");
+}
+
+async function logout(){
+  const {error} = await supabaseClient.auth.signOut();
+
+  if(error){
+    alert("Nu am putut încheia sesiunea: " + error.message);
+    return;
+  }
+
+  showLogin();
+  document.getElementById("authMessage").textContent =
+    "Te-ai deconectat cu succes.";
+}
+
+supabaseClient.auth.onAuthStateChange((event,session)=>{
+  if(session && session.user){
+    showChat(session.user);
+  }else{
+    showLogin();
+  }
+});
+
+async function checkSession(){
+  const {data,error} = await supabaseClient.auth.getSession();
+
+  if(error){
+    console.error("Supabase session:",error);
+    return;
+  }
+
+  if(data.session){
+    showChat(data.session.user);
+  }else{
+    showLogin();
+  }
+}
+
+async function send(){
+  const input = document.getElementById("question");
+  const button = document.getElementById("sendButton");
+  const chat = document.getElementById("chat");
+  const message = input.value.trim();
+
+  if(!message || button.disabled) return;
+
+  const user = document.createElement("div");
+  user.className = "msg user";
+  user.textContent = message;
+  chat.appendChild(user);
+
+  input.value = "";
+  button.disabled = true;
+
+  const answer = document.createElement("div");
+  answer.className = "msg bot";
+  answer.textContent = "Dr.Vas gândește...";
+  chat.appendChild(answer);
+
+  try{
+    const response = await fetch(API_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({message})
+    });
+
+    const data = await response.json();
+
+    if(!response.ok){
+      throw new Error(data.error || "HTTP " + response.status);
+    }
+
+    if(!data.reply){
+      throw new Error("Răspuns invalid de la server");
+    }
+
+    answer.textContent = data.reply;
+
+  }catch(error){
+    answer.textContent = "Eroare: " + error.message;
+    console.error("Dr.Vas AI:",error);
+  }finally{
+    button.disabled = false;
+    input.focus();
+    answer.scrollIntoView({behavior:"smooth",block:"nearest"});
+  }
+}
+
+document.getElementById("question").addEventListener("keydown",e=>{
+  if(e.key === "Enter") send();
+});
+
+document.getElementById("password").addEventListener("keydown",e=>{
+  if(e.key === "Enter") handleAuth();
+});
+
+checkSession();
 </script>
 </body>
 </html>
+```
