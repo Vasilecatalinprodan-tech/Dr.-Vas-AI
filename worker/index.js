@@ -28,9 +28,18 @@ if (request.method === "GET") {
             "x-goog-api-key": env.GEMINI_API_KEY
           },
           body: JSON.stringify({
+            systemInstruction: {
+              parts: [{
+                text: "You are Dr.Vas AI, a helpful, intelligent and friendly multilingual assistant. Automatically detect the language of the user's message and always reply in that same language. If the user writes in Romanian, reply in Romanian. Never switch languages unless asked. Be natural, clear, concise and fast. Be accurate and honest. You are an AI assistant, not a licensed doctor."
+              }]
+            },
             contents: [{
               parts: [{ text: message }]
-            }]
+            }],
+            generationConfig: {
+              temperature: 0.5,
+              maxOutputTokens: 512
+            }
           })
         }
       );
