@@ -23,6 +23,8 @@ export default {
       return json({ error: "Method not allowed" }, 405);
     }
 
+    const requestStartedAt = performance.now();
+
     try {
       const body = await request.json();
       const message = body.message;
@@ -47,11 +49,18 @@ export default {
       const supabaseUrl = env.SUPABASE_URL.replace(/\/$/, "");
 
       // Verify the user's access token with Supabase Auth.
+      const authStartedAt = performance.now();
       const authResponse = await fetch(`${supabaseUrl}/auth/v1/user`, {
         headers: {
           "apikey": env.SUPABASE_KEY,
           "Authorization": `Bearer ${token}`
         }
+      });
+
+      console.info("Dr.Vas timing", {
+        phase: "supabase_auth",
+        milliseconds: Math.round(performance.now() - authStartedAt),
+        status: authResponse.status
       });
 
       if (!authResponse.ok) {
@@ -61,7 +70,6 @@ export default {
       }
 
       const user = await authResponse.json();
-
       if (!user || !user.id) {
         return json({ error: "Utilizator neautentificat." }, 401);
       }
@@ -69,6 +77,7 @@ export default {
       // All database requests use the authenticated user's JWT.
       // Supabase RLS restricts access to this user's own memories.
       async function memoryRequest(path, options = {}) {
+        const memoryStartedAt = performance.now();
         const response = await fetch(
           `${supabaseUrl}/rest/v1/user_memories${path}`,
           {
@@ -96,6 +105,12 @@ export default {
             data?.message || data?.error || "Eroare la accesarea memoriei."
           );
         }
+
+        console.info("Dr.Vas timing", {
+          phase: "supabase_memory",
+          method: options.method || "GET",
+          milliseconds: Math.round(performance.now() - memoryStartedAt)
+        });
 
         return data;
       }
@@ -249,6 +264,7 @@ Always follow these instructions.
       async function askModel(model) {
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 20000);
+        const geminiStartedAt = performance.now();
 
         try {
           const response = await fetch(
@@ -296,6 +312,11 @@ Always follow these instructions.
           return answer;
         } finally {
           clearTimeout(timeout);
+          console.info("Dr.Vas timing", {
+            phase: "gemini",
+            model,
+            milliseconds: Math.round(performance.now() - geminiStartedAt)
+          });
         }
       }
 
@@ -320,6 +341,12 @@ Always follow these instructions.
         answer = await askModel(usedModel);
       }
 
+      console.info("Dr.Vas timing", {
+        phase: "request_total",
+        milliseconds: Math.round(performance.now() - requestStartedAt),
+        status: 200
+      });
+
       return json({
         reply: answer,
         model: usedModel
@@ -327,6 +354,12 @@ Always follow these instructions.
 
     } catch (error) {
       const timedOut = error.name === "AbortError";
+
+      console.info("Dr.Vas timing", {
+        phase: "request_total",
+        milliseconds: Math.round(performance.now() - requestStartedAt),
+        status: timedOut ? 504 : (error.status || 500)
+      });
 
       return json({
         error: timedOut
