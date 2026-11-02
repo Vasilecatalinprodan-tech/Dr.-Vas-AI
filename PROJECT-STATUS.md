@@ -72,11 +72,32 @@ Latest code commits:
 - Worker admin verification: `04fa871ca112e942baf81f1c2b1d022fa8b2bfba`
 - Frontend admin panel: `f5a6baa9516410ca52108b69ba2301fa3c18f539`
 
+## Internationalization — 2026-11-02
+
+Implemented and deployed the first multilingual experience.
+
+- A language selection screen appears before the public hero and module selection.
+- Available languages: Romanian, English, Italian, Turkish, German, French, Spanish and Russian.
+- The selected language is stored in browser localStorage under `drvas_language`; a Language button allows changing it later.
+- Core public content, founder story, module cards, health disclaimer, authentication/profile screens, administrator panel, history controls, common status/error messages, page title, footer and accessibility labels have translation entries.
+- The selected language code is sent with chat requests. The Worker maps it to a full language name and instructs the AI to answer in that language.
+- Common memory and conversation-management commands have multilingual intent patterns; canned memory/action replies are localized in the frontend.
+- Language preference is currently device/browser-specific, not stored in the user's Supabase profile. Cross-device language sync is not implemented.
+- GitHub Actions now validates Worker and inline browser JavaScript, then deploys automatically on pushes to `drvas-integrated-platform`.
+- Latest deployment succeeded: commit `427234353a67688a827997378dc2229f3c25c100`, workflow run `41533789006`.
+- Production URL: https://drvas-ai.vasilecatalinprodan.workers.dev
+
+Remaining language work:
+- Manually test all eight languages on desktop and mobile, including changing language while signed in and signed out.
+- Review every page string, form validation, authentication/provider error and health-module response for missing or awkward translations.
+- Check localized delete-confirmation and memory commands in each language.
+- Refine wording with native-level review before treating the translations as final.
+
 ## Required next steps
 
 1. Ask the founder for the exact email address used to log into Dr.Vas. Do not guess it or hard-code it.
 2. Add that email as the Cloudflare Worker secret `ADMIN_EMAILS` (use Cloudflare dashboard or Wrangler secret management; never commit it to Git).
-3. Deploy the latest branch and test:
+3. Test after configuring the secret:
    - Authorized founder account sees the admin panel.
    - A normal account does not see it.
    - The Worker never trusts a frontend-only admin flag.
