@@ -198,7 +198,7 @@ export default {
           `The selected Dr.Vas module is: ${liveModule}.`,
           moduleInstruction,
           "Be concise for simple questions and detailed when asked. Admit uncertainty. Do not invent facts.",
-          "Use only information provided in this Live session; do not claim access to the user's saved chat history or memory.",
+          "Use the conversation history supplied at the start of this Live session; do not claim access to other saved memories or private systems.",
           "Protect privacy. Do not ask for passwords, access tokens or unnecessary sensitive information.",
           "If you cannot perform an action, say so plainly."
         ].join("\n");
