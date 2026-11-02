@@ -181,8 +181,7 @@ export default {
         /^(?:delete|clear)\s+(?:all\s+)?(?:my\s+)?(?:conversations|chat history|history)[.!?]*$/i.test(normalized);
 
       const confirmDeleteHistoryIntent =
-        /^(?:confirm(?:ă|a)?|da,? confirm(?:ă|a)?|confirm(?:ă|a)\s+ștergerea|confirma\s+stergerea)\s+(?:ștergerea\s+)?(?:tuturor\s+)?(?:conversațiilor|conversatiilor|discuțiilor|discutiilor|istoricului)(?:\s+(?:mele|salvat|salvate))?[.!?]*$/i.test(normalized) ||
-        /^(?:confirm|yes,? confirm)\s+(?:deleting\s+)?(?:all\s+)?(?:my\s+)?(?:conversations|chat history|history)[.!?]*$/i.test(normalized);
+        /^(?:confirm(?:a)?|da,? confirm(?:a)?)\s+(?:(?:stergerea|deleting)\s+)?(?:tuturor\s+|all\s+)?(?:conversatiilor|discutiilor|istoricului|conversations|chat history|history)(?:\s+(?:mele|salvat|salvate|my))?[.!?]*$/i.test(normalized);
 
       if (deleteHistoryIntent) {
         return json({
