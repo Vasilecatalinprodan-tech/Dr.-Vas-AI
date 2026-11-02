@@ -16,6 +16,23 @@ export default {
     }
 
     if (request.method === "GET") {
+      const url = new URL(request.url);
+
+      // Endpoint public, fără autentificare, pentru monitorizarea disponibilității Worker-ului.
+      if (url.pathname === "/health" || url.pathname === "/healthz") {
+        return json({
+          service: "Dr.Vas AI",
+          status: "online",
+          timestamp: new Date().toISOString(),
+          checks: {
+            worker: "ok",
+            assets: env.ASSETS ? "configured" : "not_configured",
+            ai: env.GEMINI_API_KEY ? "configured" : "not_configured",
+            database: env.SUPABASE_URL && env.SUPABASE_KEY ? "configured" : "not_configured"
+          }
+        });
+      }
+
       if (env.ASSETS) return env.ASSETS.fetch(request);
       return json({ service: "Dr.Vas AI", status: "online" });
     }
