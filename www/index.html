@@ -126,6 +126,9 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 .admin-module-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .admin-module-grid .admin-tile span{color:#7ce0c2}
 .admin-table-wrap{overflow-x:auto;border:1px solid #294c5d;border-radius:12px}
+.admin-pagination{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin:10px 0 16px;color:#a9c2d0;font-size:11px}
+.admin-pagination button{border:1px solid #326477;background:#12384a;color:#c8f8f1;border-radius:8px;padding:8px 11px;cursor:pointer}
+.admin-pagination button:disabled{opacity:.4;cursor:not-allowed}
 .admin-log-table{width:100%;border-collapse:collapse;min-width:620px;font-size:11px}
 .admin-log-table th,.admin-log-table td{padding:10px;text-align:left;border-bottom:1px solid #203b4d;color:#bfd0da}
 .admin-log-table th{color:#70ddd3;background:#0a1b29}
@@ -324,6 +327,11 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
      <thead><tr><th>Data</th><th>Modul</th><th>Eveniment</th><th>Status</th><th>Durată</th><th>Model</th></tr></thead>
      <tbody id="adminLogsBody"><tr><td colspan="6">Jurnalul va apărea după configurarea bazei de date.</td></tr></tbody>
     </table>
+   </div>
+   <div class="admin-pagination">
+    <button type="button" id="adminLogsPrev" onclick="changeAdminLogPage(-1)" disabled>← Anterioare</button>
+    <span id="adminLogsPageLabel">Pagina 1 / 1</span>
+    <button type="button" id="adminLogsNext" onclick="changeAdminLogPage(1)" disabled>Următoarele →</button>
    </div>
    <p class="admin-footnote">Jurnalul păstrează metadate operaționale (modul, rezultat, durată și model), nu textul conversațiilor, parole sau tokenuri. Publicarea socială și randarea video nu sunt încă active.</p>
   </section>
@@ -556,6 +564,8 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
 let authMode = "login";
 let currentUser = null;
 let isDrvasAdmin = false;
+let adminLogPage = 0;
+let adminLogPages = 1;
 let profilePromise = null;
 let profilePromiseUserId = null;
 let currentConversationId = null;
@@ -1229,8 +1239,9 @@ async function refreshAdminPanel(){
   }catch(error){console.warn("Admin access check:",error);}
 }
 
-async function loadAdminDashboard(){
+async function loadAdminDashboard(page=adminLogPage){
   if(!isDrvasAdmin) return;
+  adminLogPage=Math.max(0,Math.min(9,Number.isFinite(Number(page))?Number(page):0));
   const button = el("adminRefreshButton");
   const notice = el("adminDashboardNotice");
   if(button) button.disabled = true;
@@ -1240,7 +1251,7 @@ async function loadAdminDashboard(){
     if(error || !data.session) throw new Error("Sesiunea a expirat. Conectează-te din nou.");
     const response = await fetch(API_URL,{
       method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({action:"admin_dashboard",access_token:data.session.access_token})
+      body:JSON.stringify({action:"admin_dashboard",access_token:data.session.access_token,page:adminLogPage})
     });
     const result = await response.json();
     if(!response.ok){
@@ -1253,12 +1264,21 @@ async function loadAdminDashboard(){
     el("adminMetricEvents").textContent = String(result.total_events ?? 0);
     el("adminMetricErrors").textContent = String(result.errors ?? 0);
     el("adminMetricUsers").textContent = String(result.active_users ?? 0);
+    adminLogPage=Number(result.page??adminLogPage);
+    adminLogPages=Number(result.total_pages??1);
+    const previousLogs=el("adminLogsPrev"),nextLogs=el("adminLogsNext"),pageLabel=el("adminLogsPageLabel");
+    if(previousLogs)previousLogs.disabled=adminLogPage<=0;
+    if(nextLogs)nextLogs.disabled=adminLogPage+1>=adminLogPages;
+    if(pageLabel)pageLabel.textContent="Pagina "+(adminLogPage+1)+" / "+adminLogPages+" · "+(result.logs?.length||0)+" afișate";
     const moduleCountIds={free:"adminCountFree",health:"adminCountHealth",studio:"adminCountStudio",academy:"adminCountAcademy",commerce:"adminCountCommerce",business:"adminCountBusiness"};
     Object.entries(moduleCountIds).forEach(([moduleName,id])=>{
       const target=el(id);
       if(target)target.textContent=String(result.module_counts?.[moduleName]??0);
     });
-    if(notice) notice.textContent = "Date actualizate: " + new Date(result.generated_at).toLocaleString(currentLanguage || "ro") + " · interval 24 de ore.";
+    if(notice){
+      notice.textContent = "Date actualizate: " + new Date(result.generated_at).toLocaleString(currentLanguage || "ro") + " · interval 24 de ore.";
+      if(result.logs_capped)notice.textContent+=" · Afișăm maximum 1.000 de evenimente recente; extindem arhiva în etapa următoare.";
+    }
     const tbody = el("adminLogsBody");
     tbody.replaceChildren();
     const logs = Array.isArray(result.logs) ? result.logs : [];
@@ -1291,6 +1311,12 @@ async function loadAdminDashboard(){
   }finally{
     if(button) button.disabled=false;
   }
+}
+
+function changeAdminLogPage(delta){
+ const next=adminLogPage+delta;
+ if(next<0||next>=adminLogPages)return;
+ loadAdminDashboard(next);
 }
 
 async function showChat(user,displayName){
