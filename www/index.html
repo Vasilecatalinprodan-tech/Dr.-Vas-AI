@@ -697,6 +697,7 @@ async function send(){
       body:JSON.stringify({
         message:CREATOR_CONTEXT + "\n\nMESAJUL UTILIZATORULUI:\n" + message,
         module:activeModule,
+        conversation_id:currentConversationId,
         access_token:accessToken
       })
     });
