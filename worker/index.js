@@ -106,7 +106,7 @@ export default {
           "auth_sign_in", "auth_sign_out", "module_selected",
           "conversation_created", "conversation_opened",
           "voice_input_started", "voice_input_completed",
-          "voice_output_enabled", "voice_output_disabled"
+          "voice_output_enabled", "voice_output_disabled", "voice_live_session_started"
         ]);
         const allowedEventModules = new Set([
           "free", "health", "studio", "academy", "commerce", "business"
@@ -139,6 +139,121 @@ export default {
           status: 200
         });
         return json({ ok: logged }, logged ? 200 : 503);
+      }
+
+      // Token Gemini Live de scurtă durată. Cheia Gemini nu ajunge niciodată în browser.
+      if (body.action === "live_voice_token") {
+        const liveAccessToken = body.access_token;
+        const liveModule = typeof body.module === "string" ? body.module : "free";
+        const liveLanguage = typeof body.language === "string" ? body.language : "ro";
+        const liveModules = new Set(["free", "health", "studio", "academy", "commerce", "business"]);
+        const liveLanguages = {
+          ro: "Romanian", en: "English", it: "Italian", tr: "Turkish",
+          de: "German", fr: "French", es: "Spanish", ru: "Russian"
+        };
+
+        if (!liveModules.has(liveModule)) return json({ error: "Modul Dr.Vas invalid." }, 400);
+        if (!liveLanguages[liveLanguage]) return json({ error: "Limba Dr.Vas invalidă." }, 400);
+        if (typeof liveAccessToken !== "string" || !liveAccessToken.trim()) {
+          return json({ error: "Sesiune lipsă." }, 401);
+        }
+        if (!env.SUPABASE_URL || !env.SUPABASE_KEY || !env.GEMINI_API_KEY) {
+          return json({ error: "Serviciul vocal nu este configurat." }, 500);
+        }
+
+        const liveAuth = await fetch(
+          `${env.SUPABASE_URL.replace(/\\/+$/, "")}/auth/v1/user`,
+          { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${liveAccessToken}` } }
+        );
+        if (!liveAuth.ok) return json({ error: "Sesiune invalidă." }, 401);
+        const liveUser = await liveAuth.json();
+        if (!liveUser?.id) return json({ error: "Utilizator neautentificat." }, 401);
+
+        const allowedAdminEmails = (env.ADMIN_EMAILS || "")
+          .split(",").map(email => email.trim().toLowerCase()).filter(Boolean);
+        const isLiveAdmin = Boolean(liveUser.email &&
+          allowedAdminEmails.includes(liveUser.email.trim().toLowerCase()));
+        const premiumLiveModules = new Set(["studio", "academy", "commerce", "business"]);
+        if (premiumLiveModules.has(liveModule) && !isLiveAdmin) {
+          return json({ error: "Acest modul Premium necesită un abonament activ." }, 403);
+        }
+
+        const moduleInstruction = liveModule === "health"
+          ? "You provide general health education only. You are not a doctor and do not diagnose or prescribe. For life-threatening symptoms in the UK, tell the user to call 999 or 112 immediately. For urgent non-life-threatening concerns in England, advise NHS 111 or urgent GP assessment. Never tell users to delay emergency care."
+          : liveModule === "studio"
+          ? "You are a creative director and screenwriter. Help with original concepts, scripts, scenes, dialogue and production planning. Do not claim to render finished video."
+          : liveModule === "academy"
+          ? "You are an entrepreneurship educator. Explain concepts clearly and guide practical learning."
+          : liveModule === "commerce"
+          ? "You support ethical e-commerce and dropshipping planning. Be realistic about costs, risks, suppliers, consumer law and fulfilment."
+          : liveModule === "business"
+          ? "You support business planning, operations, management and analysis. Do not claim to be a regulated accountant, lawyer or financial adviser."
+          : "You are a general-purpose personal AI assistant. Answer questions clearly, help with reasoning and practical tasks.";
+
+        const liveSystemInstruction = [
+          "You are Dr.Vas AI, a warm, intelligent, respectful and multilingual assistant.",
+          "Speak naturally in a warm, calm, clear, masculine-sounding voice. Never claim to be human.",
+          `Always speak in ${liveLanguages[liveLanguage]} unless the user explicitly requests another language.`,
+          `The selected Dr.Vas module is: ${liveModule}.`,
+          moduleInstruction,
+          "Be concise for simple questions and detailed when asked. Admit uncertainty. Do not invent facts.",
+          "Use only information provided in this Live session; do not claim access to the user's saved chat history or memory.",
+          "Protect privacy. Do not ask for passwords, access tokens or unnecessary sensitive information.",
+          "If you cannot perform an action, say so plainly."
+        ].join("\\n");
+
+        const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+        const newSessionExpiresAt = new Date(Date.now() + 60 * 1000).toISOString();
+        const tokenResponse = await fetch("https://generativelanguage.googleapis.com/v1beta/auth_tokens", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": env.GEMINI_API_KEY
+          },
+          body: JSON.stringify({
+            uses: 1,
+            expireTime: expiresAt,
+            newSessionExpireTime: newSessionExpiresAt,
+            bidiGenerateContentSetup: {
+              model: "models/gemini-3.8-live",
+              generationConfig: {
+                responseModalities: ["AUDIO"],
+                speechConfig: {
+                  voiceConfig: {
+                    prebuiltVoiceConfig: { voiceName: "Gacrux" }
+                  }
+                }
+              },
+              systemInstruction: { parts: [{ text: liveSystemInstruction }] },
+              inputAudioTranscription: {},
+              outputAudioTranscription: {},
+              sessionResumption: { }
+            }
+          })
+        });
+
+        const tokenData = await tokenResponse.json();
+        if (!tokenResponse.ok || !tokenData.name) {
+          console.error("Gemini Live token error:", tokenData.error?.message || tokenResponse.status);
+          return json({
+            error: "Nu am putut porni sesiunea vocală. Verifică disponibilitatea Gemini Live și configurarea API."
+          }, tokenResponse.status || 502);
+        }
+
+        await writeAdminAuditLog(env, {
+          user_id: liveUser.id,
+          event_type: "voice_live_session_started",
+          module: liveModule,
+          status: 200,
+          model: "gemini-3.8-live"
+        });
+
+        return new Response(JSON.stringify({
+          token: tokenData.name,
+          model: "models/gemini-3.8-live",
+          expires_at: expiresAt,
+          session_expires_at: newSessionExpiresAt
+        }), { status: 200, headers: { ...headers, "Cache-Control": "no-store, private" } });
       }
 
       // Dashboard centralizat: accesul este verificat din nou pe server la fiecare cerere.
