@@ -219,7 +219,7 @@ export default {
         /^(?:je confirme|confirme)\s+(?:la suppression de )?(?:toutes les )?(?:conversations|discussions)[.!?]*$/i.test(normalized) ||
         /^(?:confirmo)(?: que quiero eliminar)?\s+(?:todas las )?(?:conversaciones|chats)[.!?]*$/i.test(normalized) ||
         /^(?:confirmo que quiero eliminar)\s+(?:todas las )?(?:conversaciones|chats)[.!?]*$/i.test(normalized) ||
-        /^(?:tum|tüm) sohbetlerin silinmesini onayliyorum|onaylıyorum)[.!?]*$/i.test(normalized) ||
+        /^(?:tum|tüm) sohbetlerin silinmesini (?:onayliyorum|onaylıyorum)[.!?]*$/i.test(normalized) ||
         /^(?:подтверждаю)\s+(?:удаление всех )?(?:бесед|разговоров)[.!?]*$/i.test(normalized);
 
       if (deleteHistoryIntent) {
