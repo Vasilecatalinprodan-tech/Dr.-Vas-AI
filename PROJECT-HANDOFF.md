@@ -163,3 +163,21 @@ Expected HTTP result for the static page: `200`.
 - No source-code change was needed for this SQL step. The current branch head at the time of this note is `cb1310fbf741db034e2ec25ce60061bc0a877392`.
 - Still unverified: whether Cloudflare `SUPABASE_KEY` is set to the Supabase `service_role` key, whether the latest Worker version has deployed successfully, and whether live event inserts/dashboard reads succeed. Never request or expose the secret value.
 - Next technical action: inspect Cloudflare Worker deployment status and verify the secret is configured by name/role without revealing it; then test an authenticated event and confirm a row appears in Supabase. Do not claim audit logging is live until this test passes.
+
+
+## 14. Voice clarity improvement — 2026-11-02
+
+User reported that Romanian speech sounded awkward and English was difficult to understand, possibly because the voice was too fast or the wrong voice/language was selected. The goal is a calm, clearly articulated, easy-to-understand multilingual assistant, especially before Dr.Vas Health is ever enabled for clinical workflows.
+
+Changes committed on `drvas-integrated-platform`:
+- `www/index.html`: browser speech output rate reduced from `0.96` to `0.84`, pitch set to `0.96`; voice selection now only selects a voice matching the active language and no longer silently falls back to English for a missing Romanian voice. A localized warning is shown if the selected language voice is not installed.
+- Live audio playback is slowed slightly to `0.92x`; scheduling accounts for the changed playback duration.
+- Gemini Live output voice changed from `Gacrux` to `Charon` (informative voice), with explicit BCP-47 language codes: Romanian `ro-RO`, English `en-US`, Italian `it-IT`, Turkish `tr-TR`, German `de-DE`, French `fr-FR`, Spanish `es-US`, Russian `ru-RU`.
+- Live system instruction now explicitly requires measured pacing, clear articulation, short plain sentences, careful pronunciation of names/numbers, pauses, one question at a time, and asking for clarification rather than guessing. For important health-related information, it asks the listener to confirm understanding.
+
+Important limitations and next QA:
+- These are first-pass configuration improvements, not proof of perfect pronunciation or transcription. Test Romanian and English on desktop Chrome/Edge and a real Android device, with native language voices installed.
+- Browser speech recognition still uses the browser's `SpeechRecognition/webkitSpeechRecognition` implementation and can vary by browser/device. Live input recognition also needs real-world tests with Romanian and English speakers, accents, background noise and medical vocabulary.
+- Gemini Live prompt instructions alone do not guarantee an exact speaking rate; playback is currently slowed slightly client-side. A custom reference voice for precise pacing is not assumed available.
+- Do not market Dr.Vas Health voice as clinically reliable or use it as a substitute for qualified clinicians. Before any clinical deployment, perform formal medical safety, accessibility, privacy, consent, transcription accuracy and human oversight validation.
+- User has not yet tested the updated voice. Do not claim the issue is fixed until the user listens to Romanian and English samples and confirms.
