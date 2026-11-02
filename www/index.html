@@ -561,6 +561,7 @@ let loadingConversation = false;
 let activeModule = "free";
 let voiceRecognition = null;
 let voiceListening = false;
+let voiceErrorKey = "";
 let voiceAutoRead = false;
 let lastSpokenAnswer = "";
 let voiceTranscript = "";
@@ -697,6 +698,7 @@ function toggleVoiceInput(){
  voiceRecognition.maxAlternatives=1;
  voiceRecognition.onstart=()=>{
   voiceListening=true;
+  voiceErrorKey="";
   logClientEvent("voice_input_started");
   refreshVoiceUi("listening");
  };
@@ -711,13 +713,15 @@ function toggleVoiceInput(){
  };
  voiceRecognition.onerror=event=>{
   voiceListening=false;
-  const status=event.error==="not-allowed"||event.error==="service-not-allowed"?"denied":"unsupported";
-  refreshVoiceUi(status);
+  voiceErrorKey=event.error==="not-allowed"||event.error==="service-not-allowed"?"denied":"unsupported";
+  refreshVoiceUi(voiceErrorKey);
  };
  voiceRecognition.onend=()=>{
   voiceListening=false;
   const transcript=voiceTranscript.trim();
-  refreshVoiceUi(transcript?"processing":"ready");
+  const status=voiceErrorKey||(transcript?"processing":"ready");
+  voiceErrorKey="";
+  refreshVoiceUi(status);
   if(transcript&&currentUser&&!el("sendButton").disabled){
    logClientEvent("voice_input_completed");
    el("question").value=transcript;
@@ -1325,7 +1329,7 @@ async function send(){
     const displayedReply = localizeReply(data.reply);
     answer.textContent = displayedReply;
     lastSpokenAnswer=displayedReply;
-    refreshVoiceUi();
+    refreshVoiceUi(voiceAutoRead?"ready":"off");
     if(voiceAutoRead)speakDrVas(displayedReply);
     if(data.action !== "conversations_deleted") await saveMessage("assistant",displayedReply);
     conversationSaved = true;
@@ -1347,6 +1351,7 @@ async function send(){
 
   }catch(error){
     answer.textContent = tr("Eroare: ") + tr(error.message);
+    refreshVoiceUi(voiceAutoRead?"ready":"off");
     console.error("Dr.Vas AI:",error);
   }finally{
     button.disabled = false;
