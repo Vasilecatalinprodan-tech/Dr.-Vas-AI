@@ -46,6 +46,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .history-panel{background:#091827;border:1px solid #203d54;border-radius:15px;padding:13px;min-width:0}
 .history-panel h3{font-size:14px;margin:5px 4px 12px;color:#b9d3df}
 .new-chat-button{width:100%;padding:11px;font-size:13px}
+.delete-history-button{width:100%;padding:10px;margin-top:7px;font-size:12px;background:#44252d;color:#ffd5d5;border:1px solid #74404a}
 #conversationList{margin-top:12px;display:flex;flex-direction:column;gap:7px;max-height:420px;overflow-y:auto}
 .conversation-item{width:100%;text-align:left;background:#12283b;color:#c5d9e4;padding:10px;border:1px solid transparent;font-size:12px;line-height:1.4;overflow-wrap:anywhere}
 .conversation-item.active{border-color:#54d8cf;background:#17384a;color:#fff}
@@ -241,6 +242,7 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
    <aside class="history-panel">
     <h3>🧠 Istoricul conversațiilor salvate</h3>
     <button class="new-chat-button" onclick="newConversation()">＋ Conversație nouă</button>
+    <button class="delete-history-button" onclick="deleteAllConversations()">Șterge tot istoricul</button>
     <div id="conversationList"></div>
    </aside>
 
@@ -584,6 +586,35 @@ function updateActiveConversation(){
   });
 }
 
+async function deleteAllConversations(){
+  if(!currentUser) return;
+  const confirmed = window.confirm("Ștergi definitiv toate conversațiile salvate din cont? Acțiunea nu poate fi anulată.");
+  if(!confirmed) return;
+
+  const button = document.querySelector(".delete-history-button");
+  button.disabled = true;
+  button.textContent = "Se șterge...";
+  try{
+    const {error} = await supabaseClient.from("chat_messages")
+      .delete()
+      .eq("user_id",currentUser.id);
+    if(error) throw error;
+
+    pendingMessages = [];
+    currentConversationId = makeId();
+    conversationSaved = false;
+    el("saveMessage").textContent = "Istoricul conversațiilor salvate a fost șters.";
+    updateSaveButton();
+    renderWelcome();
+    await loadConversationList();
+  }catch(error){
+    el("saveMessage").textContent = "Nu am putut șterge istoricul: " + error.message;
+  }finally{
+    button.disabled = false;
+    button.textContent = "Șterge tot istoricul";
+  }
+}
+
 async function openConversation(conversationId){
   if(!currentUser || loadingConversation) return;
   loadingConversation = true;
@@ -782,6 +813,15 @@ async function send(){
 
     answer.textContent = data.reply;
     recordMessage("assistant",data.reply);
+
+    if(data.action === "conversations_deleted"){
+      pendingMessages = [];
+      currentConversationId = makeId();
+      conversationSaved = false;
+      el("saveMessage").textContent = data.reply;
+      updateSaveButton();
+      await loadConversationList();
+    }
 
     console.info("Dr.Vas response time:",elapsed,"seconds","Module:",activeModule);
     if(conversationSaved) await loadConversationList();
