@@ -163,7 +163,7 @@ Status update — 2026-11-02:
 - Live sessions are limited by a 15-minute token expiry and the current audio-only session duration limit. Session resumption, reconnect logic, playback queue tuning and usage/rate controls still need further work.
 - Live mode transmits microphone audio to Gemini for real-time processing. Dr.Vas does not store raw audio; text transcripts are saved to the user's existing chat history. The interface discloses Gemini processing and possible API usage costs.
 - No browser or Android device QA has yet been completed for either voice path. The code has passed JavaScript syntax compilation in the GitHub-connected editing session, but production deployment and actual Gemini token/WebSocket operation still need verification.
-- The Supabase audit-log SQL migration still must be run manually before the administrator journal can persist and display these new events.
+- Supabase audit-log migration `supabase/migrations/202611020001_admin_audit_logs.sql`: user confirmed on 2026-11-02 that it was executed successfully in the linked Supabase project and that `public.drvas_audit_logs` plus all nine columns are visible in Table Editor. The SQL supplied by the user matches the repository migration exactly. The table is currently empty, which is expected until events are written. Runtime inserts/dashboard retrieval are NOT yet verified. Next checks: confirm Cloudflare Worker secret `SUPABASE_KEY` is the Supabase `service_role` key (never share or expose it), confirm latest Worker deployment, then sign in and generate a harmless test event and verify a row appears.
 
 Official current Gemini Live API documentation:
 - https://ai.google.dev/gemini-api/docs/live-api
