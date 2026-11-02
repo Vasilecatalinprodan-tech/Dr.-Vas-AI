@@ -37,7 +37,7 @@ Free and Health are active. Studio, Academy, Commerce and Business remain gated 
 - Health module safety instructions and UK emergency guidance.
 - Premium module server-side gate remains enabled.
 - Studio has a dedicated creative-director/screenwriter/social-media-planner instruction set. It can create concepts, series bibles, episode outlines and scripts, character arcs, dialogue, production notes, captions, hooks, hashtags, schedules and prompts for separate video/image tools. It does not yet render finished videos.
-- Founder story is factual: Vasile-Cătălin Prodan (Cătălin/Vas), approximately 25 years in Romanian public/political life, including adviser and personal courier work for a Botoșani MP; more than 8 years as a Senior Healthcare Assistant in the UK NHS (not a doctor). “Dr.” is a nickname from colleagues. Jan is a virtual AI collaborator, not a human co-founder. Do not disclose private health/family details in public founder copy.
+- Founder story is factual: Vasile-Cătălin Prodan (Cătălin/Vas), approximately 25 years in Romanian public/political life, including adviser and personal courier work for a Romanian Member of Parliament; more than 8 years as a Senior Healthcare Assistant in the UK NHS (not a doctor). “Dr.” is a nickname from colleagues. Jan is a virtual AI collaborator, not a human co-founder. Do not disclose private health/family details in public founder copy.
 
 ## Studio publishing objective
 
