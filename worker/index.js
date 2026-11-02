@@ -477,7 +477,7 @@ Always follow these instructions.
       // Povestea oficială este servită direct pentru întrebările despre identitatea
       // Dr.Vas, astfel încât să nu depindă de variațiile de generare ale modelului.
       const asksForOriginStory =
-        /\b(cine e[sș]ti|cine te[- ]a creat|cine a creat|povestea ta|povestea mea|povestea dr\.?\s*vas|care\s+(?:este|e|[iî])\s+povestea(?:\s+ta)?|spune[- ]mi\s+povestea|povestește[- ]mi|povesteste[- ]mi|ce [îi]mi po[tț]i spune despre tine|spune[- ]mi despre tine|despre dr\.?\s*vas|what is your story|tell me about yourself|who are you|who created you|who made you|povestea fondatorului|povestea lui c[aă]t[aă]lin|cine este c[aă]t[aă]lin|despre fondator|creatorul dr\\.?\\s*vas)\b/i
+        /\b(cine e[sș]ti|cine te[- ]a creat|cine a creat|povestea ta|povestea mea|povestea dr\.?\s*vas|care\s+(?:este|e|[iî])\s+povestea(?:\s+ta)?|spune[- ]mi\s+povestea|povestește[- ]mi|povesteste[- ]mi|ce [îi]mi po[tț]i spune despre tine|spune[- ]mi despre tine|despre dr\.?\s*vas|what is your story|tell me about yourself|who are you|who created you|who made you|povestea fondatorului|povestea lui c[aă]t[aă]lin|cine este c[aă]t[aă]lin|despre fondator|creatorul dr\.?\s*vas)\b/i
           .test(originalMessage);
 
       if (asksForOriginStory) {
