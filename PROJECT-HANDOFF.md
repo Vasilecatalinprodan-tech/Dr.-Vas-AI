@@ -201,3 +201,8 @@ Important limitations and next QA:
 ### Live voice consistency correction — 2026-11-02
 - Aligned the server-issued Gemini Live token voice with the browser Live WebSocket setup: both now explicitly use `Charon` for every supported language. This removes the previous server/client mismatch (`Iapetus` vs `Charon`).
 - The ordinary browser read-aloud feature still uses installed operating-system voices by language; it cannot guarantee the same acoustic voice across English and Romanian. Use the Live conversation mode for the shared configured Dr.Vas voice.
+
+
+### Gemini Live error diagnostics — 2026-11-02
+- Fixed the Live UI lifecycle so WebSocket/server failures are no longer overwritten by the generic “voice playback stopped” status.
+- The client now surfaces structured Gemini server errors and WebSocket close code/reason when setup fails, allowing the next test to identify the actual connection problem.
