@@ -109,7 +109,25 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 .admin-tile strong{display:block;color:#fff;font-size:12px;margin-bottom:6px}
 .admin-tile span{color:#f0c879;font-size:11px;line-height:1.5}
 .admin-footnote{margin-top:13px!important;color:#819eae!important}
-@media(max-width:800px){.admin-grid{grid-template-columns:1fr}}
+.admin-topline{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.admin-topline h3{margin:0 0 5px}
+.admin-topline button{padding:9px 13px;font-size:12px}
+.admin-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0}
+.admin-stat{padding:14px;border:1px solid #294c5d;border-radius:12px;background:#091a28}
+.admin-stat span{display:block;color:#91acbd;font-size:11px}
+.admin-stat strong{display:block;color:#fff;font-size:24px;margin-top:5px}
+.admin-panel h4{color:#d7e9ef;font-size:13px;margin:18px 0 9px}
+.admin-module-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.admin-module-grid .admin-tile span{color:#7ce0c2}
+.admin-table-wrap{overflow-x:auto;border:1px solid #294c5d;border-radius:12px}
+.admin-log-table{width:100%;border-collapse:collapse;min-width:620px;font-size:11px}
+.admin-log-table th,.admin-log-table td{padding:10px;text-align:left;border-bottom:1px solid #203b4d;color:#bfd0da}
+.admin-log-table th{color:#70ddd3;background:#0a1b29}
+.admin-log-table tr:last-child td{border-bottom:0}
+.admin-log-table .log-error{color:#ff9b9b}
+.admin-log-table .log-ok{color:#7ce0c2}
+
+@media(max-width:800px){.admin-grid,.admin-module-grid{grid-template-columns:1fr}.admin-stats{grid-template-columns:1fr}}
 @media(max-width:800px){.modules-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){
  header{padding:12px 18px}
@@ -274,15 +292,34 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 
 
 
-  <section id="adminPanel" class="admin-panel hidden" aria-label="Panou administrator Dr.Vas">
-   <h3>⚙ Dr.Vas Studio — Panou administrator</h3>
-   <p>Acces privat confirmat de server. Aici vei controla producția serialului și publicarea conținutului.</p>
-   <div class="admin-grid">
-    <div class="admin-tile"><strong>Cont TikTok</strong><span>Personal · conectarea oficială nu este încă configurată</span></div>
-    <div class="admin-tile"><strong>Instagram</strong><span>Neconectat · necesită cont profesional pentru publicare prin API</span></div>
-    <div class="admin-tile"><strong>Program editorial</strong><span>2 episoade originale pe zi · dimineața și seara</span></div>
+  <section id="adminPanel" class="admin-panel hidden" aria-label="Centrul de Administrare Dr.Vas">
+   <div class="admin-topline">
+    <div><h3>⚙ Centrul de Administrare Dr.Vas</h3><p>Acces de administrator confirmat de server · toate cele șase module</p></div>
+    <button type="button" id="adminRefreshButton" onclick="loadAdminDashboard()">↻ Actualizează</button>
    </div>
-   <p class="admin-footnote">Publicarea automată este dezactivată până la aprobarea integrărilor oficiale. Fiecare episod va necesita verificarea și aprobarea ta. Nu sunt conectate încă rețele sociale și nu se publică nimic automat.</p>
+   <div class="admin-stats">
+    <div class="admin-stat"><span>Evenimente · 24h</span><strong id="adminMetricEvents">—</strong></div>
+    <div class="admin-stat"><span>Erori · 24h</span><strong id="adminMetricErrors">—</strong></div>
+    <div class="admin-stat"><span>Utilizatori activi · 24h</span><strong id="adminMetricUsers">—</strong></div>
+   </div>
+   <h4>Module și acces administrator</h4>
+   <div class="admin-grid admin-module-grid" id="adminModuleGrid">
+    <div class="admin-tile"><strong>Dr.Vas Free</strong><span>Gratuit · activ</span></div>
+    <div class="admin-tile"><strong>Dr.Vas Health</strong><span>Gratuit · activ</span></div>
+    <div class="admin-tile"><strong>Dr.Vas Studio</strong><span>Premium · testare administrator</span></div>
+    <div class="admin-tile"><strong>Dr.Vas Academy</strong><span>Premium · testare administrator</span></div>
+    <div class="admin-tile"><strong>Dr.Vas Commerce</strong><span>Premium · testare administrator</span></div>
+    <div class="admin-tile"><strong>Dr.Vas Business</strong><span>Premium · testare administrator</span></div>
+   </div>
+   <p id="adminDashboardNotice" class="admin-footnote" role="status">Se încarcă datele operaționale…</p>
+   <h4>Jurnal operațional · ultimele activități</h4>
+   <div class="admin-table-wrap">
+    <table class="admin-log-table">
+     <thead><tr><th>Data</th><th>Modul</th><th>Eveniment</th><th>Status</th><th>Durată</th><th>Model</th></tr></thead>
+     <tbody id="adminLogsBody"><tr><td colspan="6">Jurnalul va apărea după configurarea bazei de date.</td></tr></tbody>
+    </table>
+   </div>
+   <p class="admin-footnote">Jurnalul păstrează metadate operaționale (modul, rezultat, durată și model), nu textul conversațiilor, parole sau tokenuri. Publicarea socială și randarea video nu sunt încă active.</p>
   </section>
 
   <div class="chat-layout">
@@ -502,6 +539,7 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
 
 let authMode = "login";
 let currentUser = null;
+let isDrvasAdmin = false;
 let profilePromise = null;
 let profilePromiseUserId = null;
 let currentConversationId = null;
@@ -559,7 +597,7 @@ function selectModule(moduleId){
     if(state){
       const premium = ["studio","academy","commerce","business"].includes(card.dataset.module);
       setLocalizedText(state,premium
-        ? (selected ? "● Premium · în pregătire" : "Premium · în pregătire")
+        ? (isDrvasAdmin ? (selected ? "● Premium · acces administrator" : "Premium · testare administrator") : (selected ? "● Premium · în pregătire" : "Premium · în pregătire"))
         : (selected ? "● Gratuit · selectat" : (card.dataset.module === "health" ? "Gratuit · informații generale" : "Gratuit")));
     }
   });
@@ -572,9 +610,12 @@ function selectModule(moduleId){
 
   // Un singur click pe un modul gratuit duce direct la autentificare.
   const premium = ["studio","academy","commerce","business"].includes(moduleId);
-  if(premium){
+  if(premium && !isDrvasAdmin){
     setLocalizedText(accessMessage,"Acest modul Premium este în pregătire. Accesul va fi activat după implementarea abonamentelor și verificarea plății.");
     return;
+  }
+  if(premium && isDrvasAdmin){
+    setLocalizedText(accessMessage,"Mod de administrator: poți testa modulul. Funcțiile comerciale și fluxurile complete sunt încă în dezvoltare.");
   }
 
   // Tranziție în cascadă: după alegerea modulului rămâne doar ecranul de autentificare.
@@ -710,6 +751,7 @@ async function refreshAdminPanel(){
   const panel = el("adminPanel");
   if(!panel) return;
   panel.classList.add("hidden");
+  isDrvasAdmin = false;
   try{
     const {data,error} = await supabaseClient.auth.getSession();
     if(error || !data.session) return;
@@ -719,8 +761,71 @@ async function refreshAdminPanel(){
     });
     if(!response.ok) return;
     const result = await response.json();
-    if(result.is_admin) panel.classList.remove("hidden");
+    isDrvasAdmin = result.is_admin === true;
+    if(isDrvasAdmin){
+      panel.classList.remove("hidden");
+      await loadAdminDashboard();
+    }
   }catch(error){console.warn("Admin access check:",error);}
+}
+
+async function loadAdminDashboard(){
+  if(!isDrvasAdmin) return;
+  const button = el("adminRefreshButton");
+  const notice = el("adminDashboardNotice");
+  if(button) button.disabled = true;
+  if(notice) notice.textContent = "Se actualizează jurnalul operațional…";
+  try{
+    const {data,error} = await supabaseClient.auth.getSession();
+    if(error || !data.session) throw new Error("Sesiunea a expirat. Conectează-te din nou.");
+    const response = await fetch(API_URL,{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({action:"admin_dashboard",access_token:data.session.access_token})
+    });
+    const result = await response.json();
+    if(!response.ok){
+      if(result.setup_required){
+        if(notice) notice.textContent = result.error + " După aplicare, apasă Actualizează.";
+        return;
+      }
+      throw new Error(result.error || "Nu am putut încărca tabloul de bord.");
+    }
+    el("adminMetricEvents").textContent = String(result.total_events ?? 0);
+    el("adminMetricErrors").textContent = String(result.errors ?? 0);
+    el("adminMetricUsers").textContent = String(result.active_users ?? 0);
+    if(notice) notice.textContent = "Date actualizate: " + new Date(result.generated_at).toLocaleString(currentLanguage || "ro") + " · interval 24 de ore.";
+    const tbody = el("adminLogsBody");
+    tbody.replaceChildren();
+    const logs = Array.isArray(result.logs) ? result.logs : [];
+    if(!logs.length){
+      const row=document.createElement("tr"),cell=document.createElement("td");
+      cell.colSpan=6;cell.textContent="Nu există încă evenimente în jurnal pentru ultimele 24 de ore.";
+      row.appendChild(cell);tbody.appendChild(row);
+    }else{
+      for(const log of logs){
+        const row=document.createElement("tr");
+        const values=[
+          new Date(log.created_at).toLocaleString(currentLanguage || "ro"),
+          log.module || "—",
+          log.event_type || "—",
+          String(log.status ?? "—"),
+          Number.isFinite(Number(log.duration_ms)) ? Number(log.duration_ms)+" ms" : "—",
+          log.model || "—"
+        ];
+        values.forEach((value,index)=>{
+          const cell=document.createElement("td");
+          cell.textContent=value;
+          if(index===3) cell.className=Number(log.status)>=400 ? "log-error" : "log-ok";
+          row.appendChild(cell);
+        });
+        tbody.appendChild(row);
+      }
+    }
+  }catch(error){
+    if(notice) notice.textContent=error.message;
+  }finally{
+    if(button) button.disabled=false;
+  }
 }
 
 async function showChat(user,displayName){
