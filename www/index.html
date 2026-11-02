@@ -15,7 +15,20 @@ header{min-height:75px;padding:12px 7%;display:flex;align-items:center;justify-c
 .flag{display:inline-flex;width:30px;height:20px;margin-left:9px;vertical-align:-4px;border:1px solid rgba(255,255,255,.35);border-radius:2px;overflow:hidden;box-shadow:0 1px 5px rgba(0,0,0,.4)}
 .flag i{display:block;flex:1;height:100%}.flag i:nth-child(1){background:#002B7F}.flag i:nth-child(2){background:#FCD116}.flag i:nth-child(3){background:#CE1126}
 .status{font-size:12px;color:#63d8bd}
+.header-actions{display:flex;align-items:center;gap:12px}
+.language-switch{padding:9px 12px;font-size:12px;background:#102b3d;color:#8fe8df;border:1px solid #31566a}
 main{max-width:1250px;margin:auto;padding:35px 22px 100px}
+main.language-pending{min-height:calc(100vh - 100px);display:grid;place-items:center}
+main.language-pending>:not(#languageGate){display:none!important}
+.language-gate{width:100%;max-width:760px;margin:auto}
+.language-card{padding:38px;background:linear-gradient(145deg,#102b40,#091827);border:1px solid #31566a;border-radius:24px;text-align:center;box-shadow:0 18px 55px rgba(0,0,0,.25)}
+.language-card .logo{margin-bottom:24px}
+.language-card h1{font-size:32px;margin:12px 0}
+.language-card p{color:#a9bfce;line-height:1.6}
+.language-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-top:25px}
+.language-grid button{background:#132e43;color:#fff;border:1px solid #34556a;text-align:left;padding:17px;border-radius:13px}
+.language-grid button:hover{border-color:#54d8cf;background:#174052}
+@media(max-width:520px){.language-card{padding:24px 16px}.language-grid{grid-template-columns:1fr}.header-actions{gap:6px}.language-switch{padding:8px;font-size:10px}}
 .hero{min-height:350px;border-radius:25px;overflow:hidden;position:relative;display:flex;align-items:center;background:linear-gradient(90deg,rgba(3,12,25,.97) 0%,rgba(3,12,25,.82) 42%,rgba(3,12,25,.12) 100%),url('drvas.jpeg') center 35%/cover;border:1px solid #24445b}
 .hero-content{padding:45px;max-width:600px}
 .tag{color:#55d8d0;letter-spacing:3px;font-size:11px}
@@ -125,10 +138,24 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 <body>
 <header>
  <div class="logo">✚ Dr.Vas AI <span class="flag" role="img" aria-label="Steagul României" title="Creat în România"><i></i><i></i><i></i></span></div>
- <div class="status">● AI ASSISTANT ONLINE</div>
+ <div class="header-actions"><div class="status" id="onlineStatus">● AI ASSISTANT ONLINE</div><button type="button" class="language-switch" id="languageSwitch" onclick="showLanguageGate()">🌐 Language</button></div>
 </header>
 
-<main>
+<main id="appMain" class="language-pending">
+<section id="languageGate" class="language-gate">
+ <div class="language-card">
+  <div class="logo">✚ Dr.Vas AI</div>
+  <p class="tag">YOUR LANGUAGE · YOUR DR.VAS</p>
+  <h1 id="languageTitle">Select your language</h1>
+  <p id="languageSubtitle">Choose the language you want to use throughout Dr.Vas.</p>
+  <div class="language-grid">
+   <button type="button" onclick="chooseLanguage('ro')">🇷🇴 Română</button><button type="button" onclick="chooseLanguage('en')">🇬🇧 English</button>
+   <button type="button" onclick="chooseLanguage('it')">🇮🇹 Italiano</button><button type="button" onclick="chooseLanguage('tr')">🇹🇷 Türkçe</button>
+   <button type="button" onclick="chooseLanguage('de')">🇩🇪 Deutsch</button><button type="button" onclick="chooseLanguage('fr')">🇫🇷 Français</button>
+   <button type="button" onclick="chooseLanguage('es')">🇪🇸 Español</button><button type="button" onclick="chooseLanguage('ru')">🇷🇺 Русский</button>
+  </div>
+ </div>
+</section>
 <section id="heroSection" class="hero">
  <div class="hero-content">
   <div class="tag">INTELLIGENCE WITHOUT LIMITS</div>
@@ -293,6 +320,58 @@ const API_URL = "https://drvas-ai.vasilecatalinprodan.workers.dev";
 const SUPABASE_URL = "https://bqgshoqspcfbflgsnntn.supabase.co";
 const SUPABASE_KEY = "sb_publishable_sP9luSRTjqAZrQmjIzy4VA_EBzLmSPZ";
 
+const LANGUAGE_KEY="drvas_language";
+const SUPPORTED_LANGUAGES=["ro","en","it","tr","de","fr","es","ru"];
+let currentLanguage=localStorage.getItem(LANGUAGE_KEY)||"";
+let languageReady=false;
+const LANG_NAME={ro:"Romanian",en:"English",it:"Italian",tr:"Turkish",de:"German",fr:"French",es:"Spanish",ru:"Russian"};
+const UI={
+ en:{"Gândește diferit.":"Think differently.","Întreabă Dr.Vas.":"Ask Dr.Vas.","Povestea din spatele Dr.Vas":"The story behind Dr.Vas","Platforma Dr.Vas":"The Dr.Vas platform","Alege spațiul de lucru de care ai nevoie.":"Choose the workspace you need.","2 MODULE ACTIVE · 4 ÎN PREGĂTIRE":"2 MODULE ACTIVE · 4 IN DEVELOPMENT","Asistent AI general pentru întrebări, idei și informații.":"General AI assistant for questions, ideas and information.","Informații despre sănătate, explicații și pregătirea consultațiilor.":"Health information, explanations and appointment preparation.","Spațiu creativ pentru imagini, video și conținut digital.":"Creative space for images, video and digital content.","Învățare, explicații, cursuri și dezvoltarea competențelor.":"Learning, explanations, courses and skills development.","Comerț online, produse, magazin și oportunități de vânzare.":"Online commerce, products, stores and sales opportunities.","Management, planificare, analiză și dezvoltarea afacerilor.":"Management, planning, analysis and business development.","Bine ai venit!":"Welcome!","Conectare":"Sign in","Deconectare":"Sign out","Profilul meu":"My profile","Salvează profilul":"Save profile","Salvează conversația":"Save conversation","Șterge tot istoricul":"Delete all history","＋ Conversație nouă":"＋ New conversation","Istoricul conversațiilor salvate":"Saved conversation history","Scrie întrebarea ta...":"Type your question...","Trimite ➤":"Send ➤","Contul tău Dr.Vas AI":"Your Dr.Vas AI account","Acces personal și securizat":"Private and secure access","Adresa de email":"Email address","Parola":"Password","Păstrează-mă conectat":"Keep me signed in","Spune-ne cum te cheamă":"Tell us your name","Numele tău":"Your name","Alege țara":"Choose your country","Răspunsurile AI pot conține erori. Verifică informațiile importante.":"AI responses may contain errors. Check important information."},
+ it:{"Gândește diferit.":"Pensa in modo diverso.","Întreabă Dr.Vas.":"Chiedi a Dr.Vas.","Povestea din spatele Dr.Vas":"La storia dietro Dr.Vas","Platforma Dr.Vas":"La piattaforma Dr.Vas","Alege spațiul de lucru de care ai nevoie.":"Scegli lo spazio di lavoro di cui hai bisogno.","2 MODULE ACTIVE · 4 ÎN PREGĂTIRE":"2 MODULI ATTIVI · 4 IN SVILUPPO","Asistent AI general pentru întrebări, idei și informații.":"Assistente AI generale per domande, idee e informazioni.","Informații despre sănătate, explicații și pregătirea consultațiilor.":"Informazioni sulla salute e preparazione alle visite.","Spațiu creativ pentru imagini, video și conținut digital.":"Spazio creativo per immagini, video e contenuti digitali.","Învățare, explicații, cursuri și dezvoltarea competențelor.":"Apprendimento, spiegazioni, corsi e competenze.","Comerț online, produse, magazin și oportunități de vânzare.":"Commercio online, prodotti, negozi e vendite.","Management, planificare, analiză și dezvoltarea afacerilor.":"Gestione, pianificazione, analisi e sviluppo aziendale.","Bine ai venit!":"Benvenuto!","Conectare":"Accedi","Deconectare":"Esci","Profilul meu":"Il mio profilo","Salvează profilul":"Salva profilo","Salvează conversația":"Salva conversazione","Șterge tot istoricul":"Elimina tutta la cronologia","＋ Conversație nouă":"＋ Nuova conversazione","Istoricul conversațiilor salvate":"Cronologia delle conversazioni salvate","Scrie întrebarea ta...":"Scrivi la tua domanda...","Trimite ➤":"Invia ➤","Contul tău Dr.Vas AI":"Il tuo account Dr.Vas AI","Adresa de email":"Indirizzo email","Parola":"Password","Păstrează-mă conectat":"Resta connesso","Spune-ne cum te cheamă":"Come ti chiami?","Numele tău":"Il tuo nome","Alege țara":"Scegli il paese"},
+ tr:{"Gândește diferit.":"Farklı düşün.","Întreabă Dr.Vas.":"Dr.Vas'a sor.","Povestea din spatele Dr.Vas":"Dr.Vas'ın hikâyesi","Platforma Dr.Vas":"Dr.Vas platformu","Alege spațiul de lucru de care ai nevoie.":"İhtiyacın olan çalışma alanını seç.","2 MODULE ACTIVE · 4 ÎN PREGĂTIRE":"2 MODÜL AKTİF · 4 GELİŞTİRİLİYOR","Asistent AI general pentru întrebări, idei și informații.":"Sorular ve bilgiler için genel yapay zekâ asistanı.","Informații despre sănătate, explicații și pregătirea consultațiilor.":"Sağlık bilgileri ve randevu hazırlığı.","Spațiu creativ pentru imagini, video și conținut digital.":"Görseller, videolar ve dijital içerik için yaratıcı alan.","Învățare, explicații, cursuri și dezvoltarea competențelor.":"Öğrenme, kurslar ve beceri geliştirme.","Comerț online, produse, magazin și oportunități de vânzare.":"E-ticaret, ürünler ve satış fırsatları.","Management, planificare, analiză și dezvoltarea afacerilor.":"Yönetim, planlama, analiz ve iş geliştirme.","Bine ai venit!":"Hoş geldin!","Conectare":"Giriş yap","Deconectare":"Çıkış yap","Profilul meu":"Profilim","Salvează profilul":"Profili kaydet","Salvează conversația":"Sohbeti kaydet","Șterge tot istoricul":"Tüm geçmişi sil","＋ Conversație nouă":"＋ Yeni sohbet","Istoricul conversațiilor salvate":"Kayıtlı sohbet geçmişi","Scrie întrebarea ta...":"Sorunu yaz...","Trimite ➤":"Gönder ➤","Contul tău Dr.Vas AI":"Dr.Vas AI hesabın","Adresa de email":"E-posta adresi","Parola":"Şifre","Păstrează-mă conectat":"Oturumumu açık tut","Spune-ne cum te cheamă":"Adın nedir?","Numele tău":"Adın","Alege țara":"Ülke seç"},
+ de:{"Gândește diferit.":"Denke anders.","Întreabă Dr.Vas.":"Frage Dr.Vas.","Povestea din spatele Dr.Vas":"Die Geschichte hinter Dr.Vas","Platforma Dr.Vas":"Die Dr.Vas-Plattform","Alege spațiul de lucru de care ai nevoie.":"Wähle den benötigten Arbeitsbereich.","Bine ai venit!":"Willkommen!","Conectare":"Anmelden","Deconectare":"Abmelden","Profilul meu":"Mein Profil","Salvează conversația":"Gespräch speichern","Șterge tot istoricul":"Gesamten Verlauf löschen","Scrie întrebarea ta...":"Schreibe deine Frage...","Trimite ➤":"Senden ➤","Adresa de email":"E-Mail-Adresse","Parola":"Passwort"},
+ fr:{"Gândește diferit.":"Pensez différemment.","Întreabă Dr.Vas.":"Demandez à Dr.Vas.","Povestea din spatele Dr.Vas":"L'histoire derrière Dr.Vas","Platforma Dr.Vas":"La plateforme Dr.Vas","Alege spațiul de lucru de care ai nevoie.":"Choisissez l'espace de travail souhaité.","Bine ai venit!":"Bienvenue !","Conectare":"Se connecter","Deconectare":"Se déconnecter","Profilul meu":"Mon profil","Salvează conversația":"Enregistrer la conversation","Șterge tot istoricul":"Supprimer tout l'historique","Scrie întrebarea ta...":"Écrivez votre question...","Trimite ➤":"Envoyer ➤","Adresa de email":"Adresse e-mail","Parola":"Mot de passe"},
+ es:{"Gândește diferit.":"Piensa diferente.","Întreabă Dr.Vas.":"Pregunta a Dr.Vas.","Povestea din spatele Dr.Vas":"La historia detrás de Dr.Vas","Platforma Dr.Vas":"La plataforma Dr.Vas","Alege spațiul de lucru de care ai nevoie.":"Elige el espacio de trabajo que necesitas.","Bine ai venit!":"¡Bienvenido!","Conectare":"Iniciar sesión","Deconectare":"Cerrar sesión","Profilul meu":"Mi perfil","Salvează conversația":"Guardar conversación","Șterge tot istoricul":"Borrar todo el historial","Scrie întrebarea ta...":"Escribe tu pregunta...","Trimite ➤":"Enviar ➤","Adresa de email":"Correo electrónico","Parola":"Contraseña"},
+ ru:{"Gândește diferit.":"Думай иначе.","Întreabă Dr.Vas.":"Спроси Dr.Vas.","Povestea din spatele Dr.Vas":"История Dr.Vas","Platforma Dr.Vas":"Платформа Dr.Vas","Alege spațiul de lucru de care ai nevoie.":"Выберите нужное рабочее пространство.","Bine ai venit!":"Добро пожаловать!","Conectare":"Войти","Deconectare":"Выйти","Profilul meu":"Мой профиль","Salvează conversația":"Сохранить беседу","Șterge tot istoricul":"Удалить всю историю","Scrie întrebarea ta...":"Введите свой вопрос...","Trimite ➤":"Отправить ➤","Adresa de email":"Электронная почта","Parola":"Пароль"}
+};
+const textOrigins=new WeakMap();
+function tr(s){return (UI[currentLanguage]||{})[s]||s}
+function translatePage(root=document.body){
+ const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;
+ while(n=walker.nextNode()){
+  const p=n.parentElement;if(!p||p.closest("script,style,#chat,#conversationList,.msg,.conversation-item"))continue;
+  if(!textOrigins.has(n))textOrigins.set(n,n.nodeValue);
+  const base=textOrigins.get(n),trim=base.trim();if(!trim)continue;
+  const next=base.replace(trim,tr(trim));if(n.nodeValue!==next)n.nodeValue=next;
+ }
+ document.documentElement.lang=currentLanguage||"ro";
+ const labels={ro:"Limba",en:"Language",it:"Lingua",tr:"Dil",de:"Sprache",fr:"Langue",es:"Idioma",ru:"Язык"};
+ if(el("languageSwitch"))el("languageSwitch").textContent="🌐 "+labels[currentLanguage];
+ const placeholders=[["email","Adresa de email"],["password","Parola"],["displayName","Numele tău"],["question","Scrie întrebarea ta..."]];
+ placeholders.forEach(([id,s])=>{if(el(id))el(id).placeholder=tr(s)});
+}
+function chooseLanguage(code){
+ if(!SUPPORTED_LANGUAGES.includes(code))return;
+ currentLanguage=code;languageReady=true;localStorage.setItem(LANGUAGE_KEY,code);
+ el("appMain").classList.remove("language-pending");el("languageGate").classList.add("hidden");
+ translatePage();checkSession();
+}
+function showLanguageGate(){el("languageGate").classList.remove("hidden");el("appMain").classList.add("language-pending")}
+function initLanguage(){
+ if(SUPPORTED_LANGUAGES.includes(currentLanguage)){languageReady=true;el("appMain").classList.remove("language-pending");el("languageGate").classList.add("hidden");translatePage();checkSession()}
+ else{languageReady=false;showLanguageGate()}
+}
+const uiObserver=new MutationObserver(records=>{
+ if(!languageReady)return;
+ for(const r of records)for(const n of r.addedNodes){
+  if(n.nodeType===Node.TEXT_NODE){
+   const p=n.parentElement;if(!p||p.closest("script,style,#chat,#conversationList,.msg,.conversation-item"))continue;
+   const trim=n.nodeValue.trim();if(trim)n.nodeValue=n.nodeValue.replace(trim,tr(trim));
+  }else if(n.nodeType===Node.ELEMENT_NODE&&!n.closest("#chat,#conversationList"))translatePage(n);
+ }
+});
+uiObserver.observe(document.body,{childList:true,subtree:true});
+
 const REMEMBER_SESSION_KEY = "drvas_remember_me";
 const authStorage = {
   getItem(key){
@@ -364,7 +443,8 @@ function selectModule(moduleId){
   activeModule = moduleId;
   const accessMessage = el("moduleAccessMessage");
   if(accessMessage) accessMessage.textContent = "";
-  const details = moduleDetails[moduleId];
+  const raw = moduleDetails[moduleId];
+  const details = {...raw,title:tr(raw.title),description:tr(raw.description),label:tr(raw.label),placeholder:tr(raw.placeholder),name:tr(raw.name)};
 
   document.querySelectorAll(".module-card").forEach(card=>{
     const selected = card.dataset.module === moduleId;
@@ -445,6 +525,7 @@ async function handleAuth(){
 }
 
 function showOnly(section){
+  if(!languageReady)return;
   const privateFlow = section === "authSection" || section === "profileSection" || section === "chatSection";
   // Fiecare etapă este un ecran separat: alegere -> autentificare -> spațiul privat.
   el("heroSection").classList.toggle("hidden",privateFlow);
@@ -455,7 +536,7 @@ function showOnly(section){
 }
 
 async function showUser(user){
-  if(!user) return;
+  if(!user || !languageReady) return;
   currentUser = user;
   showOnly("profileSection");
   el("profileMessage").textContent = "Se încarcă profilul...";
@@ -495,7 +576,7 @@ async function saveProfile(){
   const country = el("country").value;
   const button = el("profileButton");
 
-  if(!displayName || !country){el("profileMessage").textContent = "Completează numele și țara.";return}
+  if(!displayName || !country){el("profileMessage").textContent = tr("Completează numele și țara.");return}
 
   button.disabled = true;
   button.textContent = "Se salvează...";
@@ -561,7 +642,7 @@ function renderWelcome(){
   el("chat").innerHTML = "";
   const welcome = document.createElement("div");
   welcome.className = "msg bot";
-  welcome.textContent = "Bun venit la Dr.Vas AI! Cu ce te pot ajuta astăzi? Poți întreba și „Cine este Vasile-Cătălin Prodan și care este povestea Dr.Vas?”. Mesajele și răspunsurile noi se salvează automat în contul tău.";
+  welcome.textContent = tr("Bun venit la Dr.Vas AI! Cu ce te pot ajuta astăzi? Poți întreba și „Cine este Vasile-Cătălin Prodan și care este povestea Dr.Vas?”. Mesajele și răspunsurile noi se salvează automat în contul tău.");
   el("chat").appendChild(welcome);
   updateActiveConversation();
 }
@@ -768,6 +849,7 @@ function recordMessage(role,content){
 }
 
 function showLogin(){
+  if(!languageReady)return;
   currentUser = null;
   currentConversationId = null;
   conversationSaved = false;
@@ -794,6 +876,7 @@ async function logout(){
 }
 
 supabaseClient.auth.onAuthStateChange((event,session)=>{
+  if(!languageReady)return;
   if(session && session.user){
     setTimeout(()=>showUser(session.user),0);
   }else{
@@ -842,6 +925,7 @@ async function send(){
       body:JSON.stringify({
         message:message,
         module:activeModule,
+        language:currentLanguage,
         conversation_id:currentConversationId,
         access_token:accessToken
       })
@@ -889,7 +973,7 @@ el("password").addEventListener("keydown",e=>{
   if(e.key === "Enter") handleAuth();
 });
 
-checkSession();
+initLanguage();
 </script>
 </body>
 </html>
