@@ -207,27 +207,27 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
    </div>
 
    <div class="modules-grid">
-    <button class="module-card selected" data-module="free" onclick="selectModule('free')" aria-pressed="true">
+    <button class="module-card selected" data-module="free" onclick="selectModule('free',true)" aria-pressed="true">
      <span class="module-icon">✦</span><span class="module-name">Dr.Vas Free</span>
      <span class="module-description">Asistent AI general pentru întrebări, idei și informații.</span><span class="module-state">● Gratuit</span>
     </button>
-    <button class="module-card" data-module="health" onclick="selectModule('health')" aria-pressed="false">
+    <button class="module-card" data-module="health" onclick="selectModule('health',true)" aria-pressed="false">
      <span class="module-icon">✚</span><span class="module-name">Dr.Vas Health</span>
      <span class="module-description">Informații despre sănătate, explicații și pregătirea consultațiilor.</span><span class="module-state">Gratuit · informații generale</span>
     </button>
-    <button class="module-card" data-module="studio" onclick="selectModule('studio')" aria-pressed="false">
+    <button class="module-card" data-module="studio" onclick="selectModule('studio',true)" aria-pressed="false">
      <span class="module-icon">🎬</span><span class="module-name">Dr.Vas Studio</span>
      <span class="module-description">Spațiu creativ pentru imagini, video și conținut digital.</span><span class="module-state">Premium · în pregătire</span>
     </button>
-    <button class="module-card" data-module="academy" onclick="selectModule('academy')" aria-pressed="false">
+    <button class="module-card" data-module="academy" onclick="selectModule('academy',true)" aria-pressed="false">
      <span class="module-icon">🎓</span><span class="module-name">Dr.Vas Academy</span>
      <span class="module-description">Învățare, explicații, cursuri și dezvoltarea competențelor.</span><span class="module-state">Premium · în pregătire</span>
     </button>
-    <button class="module-card" data-module="commerce" onclick="selectModule('commerce')" aria-pressed="false">
+    <button class="module-card" data-module="commerce" onclick="selectModule('commerce',true)" aria-pressed="false">
      <span class="module-icon">🛒</span><span class="module-name">Dr.Vas Commerce</span>
      <span class="module-description">Comerț online, produse, magazin și oportunități de vânzare.</span><span class="module-state">Premium · în pregătire</span>
     </button>
-    <button class="module-card" data-module="business" onclick="selectModule('business')" aria-pressed="false">
+    <button class="module-card" data-module="business" onclick="selectModule('business',true)" aria-pressed="false">
      <span class="module-icon">📊</span><span class="module-name">Dr.Vas Business</span>
      <span class="module-description">Management, planificare, analiză și dezvoltarea afacerilor.</span><span class="module-state">Premium · în pregătire</span>
     </button>
@@ -603,6 +603,16 @@ const moduleDetails = {
 function el(id){return document.getElementById(id)}
 function makeId(){return crypto.randomUUID()}
 
+async function logClientEvent(eventType,moduleName=activeModule){
+ try{
+  const {data,error}=await supabaseClient.auth.getSession();
+  if(error||!data.session?.access_token)return;
+  await fetch(API_URL,{
+   method:"POST",headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({action:"client_event",event_type:eventType,module:moduleName,access_token:data.session.access_token})
+  });
+ }catch(error){console.warn("Dr.Vas activity log:",error);}
+}
 function voiceLabel(key){
  const lang=VOICE_UI[currentLanguage]||VOICE_UI.ro;
  return lang[key]||VOICE_UI.ro[key];
@@ -617,7 +627,7 @@ function refreshVoiceUi(statusKey){
  replay.textContent=voiceLabel("replay");
  replay.disabled=!lastSpokenAnswer;
  stop.textContent=voiceLabel("stop");
- stop.disabled=!(window.speechSynthesis&&window.speechSynthesis.speaking);
+ stop.disabled=!(window.speechSynthesis&&(window.speechSynthesis.speaking||window.speechSynthesis.pending));
  if(status&&statusKey)status.textContent=voiceLabel(statusKey);
 }
 function speechLanguage(){
@@ -665,6 +675,7 @@ function toggleVoiceOutput(){
   return;
  }
  voiceAutoRead=!voiceAutoRead;
+ logClientEvent(voiceAutoRead?"voice_output_enabled":"voice_output_disabled");
  if(voiceAutoRead&&lastSpokenAnswer)speakDrVas(lastSpokenAnswer);
  refreshVoiceUi(voiceAutoRead?"ready":"off");
 }
@@ -686,6 +697,7 @@ function toggleVoiceInput(){
  voiceRecognition.maxAlternatives=1;
  voiceRecognition.onstart=()=>{
   voiceListening=true;
+  logClientEvent("voice_input_started");
   refreshVoiceUi("listening");
  };
  voiceRecognition.onresult=event=>{
@@ -707,6 +719,7 @@ function toggleVoiceInput(){
   const transcript=voiceTranscript.trim();
   refreshVoiceUi(transcript?"processing":"ready");
   if(transcript&&currentUser&&!el("sendButton").disabled){
+   logClientEvent("voice_input_completed");
    el("question").value=transcript;
    send();
   }else if(transcript&&!currentUser){
@@ -730,8 +743,9 @@ function updateSaveButton(){
   setLocalizedText(button,conversationSaved ? "✓ Conversație salvată" : "Salvează conversația");
 }
 
-function selectModule(moduleId){
+function selectModule(moduleId,fromUser=false){
   if(!moduleDetails[moduleId]) return;
+  if(fromUser&&currentUser)logClientEvent("module_selected",moduleId);
   activeModule = moduleId;
   const accessMessage = el("moduleAccessMessage");
   if(accessMessage) accessMessage.textContent = "";
@@ -990,6 +1004,7 @@ async function showChat(user,displayName){
   await loadConversationList();
 
   currentConversationId = makeId();
+  logClientEvent("conversation_created");
   conversationSaved = false;
   pendingMessages = [];
   el("saveMessage").textContent = "";
@@ -1097,6 +1112,7 @@ async function openConversation(conversationId){
   if(!currentUser || loadingConversation) return;
   loadingConversation = true;
   currentConversationId = conversationId;
+  logClientEvent("conversation_opened");
   conversationSaved = true;
   pendingMessages = [];
   setLocalizedText(el("saveMessage"),"Această conversație și mesajele noi se salvează automat în contul tău.");
@@ -1134,6 +1150,7 @@ async function openConversation(conversationId){
 function newConversation(){
   if(!currentUser) return;
   currentConversationId = makeId();
+  logClientEvent("conversation_created");
   conversationSaved = false;
   pendingMessages = [];
   setLocalizedText(el("saveMessage"),"Conversația nouă se salvează automat în contul tău.");
@@ -1225,6 +1242,7 @@ function showLogin(){
 }
 
 async function logout(){
+  await logClientEvent("auth_sign_out");
   if(voiceRecognition&&voiceListening)voiceRecognition.stop();
   stopVoiceOutput();
   const {error} = await supabaseClient.auth.signOut();
@@ -1239,6 +1257,7 @@ async function logout(){
 supabaseClient.auth.onAuthStateChange((event,session)=>{
   if(!languageReady)return;
   if(session && session.user){
+    if(event==="SIGNED_IN")logClientEvent("auth_sign_in");
     setTimeout(()=>showUser(session.user),0);
   }else{
     showLogin();
