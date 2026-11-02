@@ -134,27 +134,27 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
    <div class="modules-grid">
     <button class="module-card selected" data-module="free" onclick="selectModule('free')" aria-pressed="true">
      <span class="module-icon">✦</span><span class="module-name">Dr.Vas Free</span>
-     <span class="module-description">Asistent AI general pentru întrebări, idei și informații.</span><span class="module-state">● Modul selectat</span>
+     <span class="module-description">Asistent AI general pentru întrebări, idei și informații.</span><span class="module-state">● Gratuit</span>
     </button>
     <button class="module-card" data-module="health" onclick="selectModule('health')" aria-pressed="false">
      <span class="module-icon">✚</span><span class="module-name">Dr.Vas Health</span>
-     <span class="module-description">Informații despre sănătate, explicații și pregătirea consultațiilor.</span><span class="module-state">Modul disponibil</span>
+     <span class="module-description">Informații despre sănătate, explicații și pregătirea consultațiilor.</span><span class="module-state">Gratuit · informații generale</span>
     </button>
     <button class="module-card" data-module="studio" onclick="selectModule('studio')" aria-pressed="false">
      <span class="module-icon">🎬</span><span class="module-name">Dr.Vas Studio</span>
-     <span class="module-description">Spațiu creativ pentru imagini, video și conținut digital.</span><span class="module-state">Modul disponibil</span>
+     <span class="module-description">Spațiu creativ pentru imagini, video și conținut digital.</span><span class="module-state">Premium · în pregătire</span>
     </button>
     <button class="module-card" data-module="academy" onclick="selectModule('academy')" aria-pressed="false">
      <span class="module-icon">🎓</span><span class="module-name">Dr.Vas Academy</span>
-     <span class="module-description">Învățare, explicații, cursuri și dezvoltarea competențelor.</span><span class="module-state">Modul disponibil</span>
+     <span class="module-description">Învățare, explicații, cursuri și dezvoltarea competențelor.</span><span class="module-state">Premium · în pregătire</span>
     </button>
     <button class="module-card" data-module="commerce" onclick="selectModule('commerce')" aria-pressed="false">
      <span class="module-icon">🛒</span><span class="module-name">Dr.Vas Commerce</span>
-     <span class="module-description">Comerț online, produse, magazin și oportunități de vânzare.</span><span class="module-state">Modul disponibil</span>
+     <span class="module-description">Comerț online, produse, magazin și oportunități de vânzare.</span><span class="module-state">Premium · în pregătire</span>
     </button>
     <button class="module-card" data-module="business" onclick="selectModule('business')" aria-pressed="false">
      <span class="module-icon">📊</span><span class="module-name">Dr.Vas Business</span>
-     <span class="module-description">Management, planificare, analiză și dezvoltarea afacerilor.</span><span class="module-state">Modul disponibil</span>
+     <span class="module-description">Management, planificare, analiză și dezvoltarea afacerilor.</span><span class="module-state">Premium · în pregătire</span>
     </button>
    </div>
 
@@ -166,6 +166,7 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
     </div>
    </div>
    <button id="continueModuleButton" class="auth-button" style="width:100%;margin-top:14px" onclick="continueWithModule()">Continuă cu modulul ales</button>
+   <p id="moduleAccessMessage" class="module-disclaimer" aria-live="polite"></p>
    <p class="module-disclaimer">Modulele sunt în curs de dezvoltare. Selectarea lor pregătește spațiul de lucru; funcțiile și agenții AI specializați vor fi conectați treptat. Dr.Vas Health oferă informații generale și nu înlocuiește consultația medicală.</p>
   </section>
 
@@ -309,7 +310,12 @@ function selectModule(moduleId){
     card.classList.toggle("selected",selected);
     card.setAttribute("aria-pressed",String(selected));
     const state = card.querySelector(".module-state");
-    if(state) state.textContent = selected ? "● Modul selectat" : "Modul disponibil";
+    if(state){
+      const premium = ["studio","academy","commerce","business"].includes(card.dataset.module);
+      state.textContent = premium
+        ? (selected ? "● Premium · în pregătire" : "Premium · în pregătire")
+        : (selected ? "● Gratuit · selectat" : (card.dataset.module === "health" ? "Gratuit · informații generale" : "Gratuit"));
+    }
   });
 
   el("activeModuleIcon").textContent = details.icon;
@@ -322,6 +328,12 @@ function selectModule(moduleId){
 function continueWithModule(){
   const details = moduleDetails[activeModule];
   if(!details) return;
+  const premium = ["studio","academy","commerce","business"].includes(activeModule);
+  if(premium){
+    el("moduleAccessMessage").textContent = "Acest modul Premium este în pregătire. Accesul va fi activat după implementarea abonamentelor și verificarea plății. Nu există încă acces Premium activ.";
+    return;
+  }
+  el("moduleAccessMessage").textContent = "";
   el("authSection").classList.remove("hidden");
   el("authTitle").textContent = authMode === "login" ? "Bine ai venit!" : "Creează-ți contul";
   el("authDescription").textContent = "Conectează-te pentru a continua în " + details.name + ".";
