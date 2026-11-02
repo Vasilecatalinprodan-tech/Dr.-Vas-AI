@@ -234,7 +234,7 @@ export default {
                 speechConfig: {
                   languageCode: liveLanguageCodes[liveLanguage],
                   voiceConfig: {
-                    prebuiltVoiceConfig: { voiceName: "Iapetus" }
+                    prebuiltVoiceConfig: { voiceName: "Charon" }
                   }
                 },
                 systemInstruction: { parts: [{ text: liveSystemInstruction }] },
