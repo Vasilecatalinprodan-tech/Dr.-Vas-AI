@@ -125,7 +125,7 @@ export default {
         }
 
         const eventAuth = await fetch(
-          `${env.SUPABASE_URL.replace(/\\/+$/, "")}/auth/v1/user`,
+          `${env.SUPABASE_URL.replace(/\/+$/, "")}/auth/v1/user`,
           { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${eventToken}` } }
         );
         if (!eventAuth.ok) return json({ error: "Sesiune invalidă." }, 401);
