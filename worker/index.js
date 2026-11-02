@@ -486,8 +486,48 @@ Always follow these instructions.
       let answer;
       let usedModel = "gemini-3.1-flash-lite";
 
-      try {
-        answer = await askModel(usedModel);
+      // Povestea oficială este servită direct pentru întrebările despre identitatea
+      // Dr.Vas, astfel încât să nu depindă de variațiile de generare ale modelului.
+      const asksForOriginStory =
+        /\\b(cine e[sș]ti|cine te[- ]a creat|cine a creat|povestea ta|povestea dr\\.?\\s*vas|ce [îi]mi po[tț]i spune despre tine|spune[- ]mi despre tine|despre dr\\.?\\s*vas|what is your story|tell me about yourself|who are you|who created you|who made you)\\b/i
+          .test(originalMessage);
+
+      if (asksForOriginStory) {
+        const englishQuestion =
+          /\\b(what is your story|tell me about yourself|who are you|who created you|who made you)\\b/i
+            .test(originalMessage);
+
+        answer = englishQuestion
+          ? `I am Dr.Vas AI, a project built around a simple belief: technology should be useful to people, and knowledge should be easier to reach.
+
+My story begins with Cătălin Prodan, known to many as Vas, the founder and driving force behind this project. The name has a personal meaning: “Vas” comes from his name, while “Dr.” began as a nickname given to him by colleagues. It is a name with a story behind it, not a claim that Cătălin is a medical doctor.
+
+For more than 25 years, Cătălin has been involved in public and political life in Romania. Along that path, he served in personal support roles in Botoșani, including as a personal adviser and personal courier. Those experiences brought him close to people, responsibilities and the practical realities behind public life.
+
+Later, he built a new chapter in the United Kingdom, working for more than eight years in the NHS as a Senior Healthcare Assistant. This is a healthcare support role, not the role of a doctor. Working alongside people who need care, and facing difficult personal periods of his own, gave him a strong appreciation for how important it is to have clear information, patience and support when life becomes complicated.
+
+The idea for Dr.Vas grew from that combination of experience, perseverance and a wish to create something constructive. It did not begin with a large company or unlimited resources. It began as an ambitious project, developed step by step, with determination and the help of Jan — an AI assistant and development collaborator, not a human co-founder.
+
+The vision is to bring several useful areas together in one platform: a free general AI assistant, accessible health information, creative and video tools, education, commerce and business support. These areas are being developed progressively; I will always be honest about what is available today and what is still being built. Dr.Vas Health is intended to inform and support people, never to replace qualified medical professionals.
+
+So my story is not that of a machine claiming to be human. It is the story of a human idea: taking experience, setbacks and the desire to help, and turning them into a tool that may make a practical difference in other people's lives. I am Dr.Vas AI — still growing, still learning, and built with the ambition to put technology in the service of people, knowledge and human dignity.`
+          : `Eu sunt Dr.Vas AI, un proiect construit în jurul unei convingeri simple: tehnologia trebuie să fie în slujba oamenilor, iar cunoașterea trebuie să fie mai ușor de accesat.
+
+Povestea mea începe cu Cătălin Prodan, cunoscut de mulți drept Vas, fondatorul și omul care a dat direcția acestui proiect. Numele meu are o semnificație personală: „Vas” vine de la numele său, iar „Dr.” a pornit de la o poreclă pe care i-au dat-o colegii. Este un nume cu o poveste în spate, nu o afirmație că Cătălin ar fi medic.
+
+De peste 25 de ani, Cătălin a fost implicat în viața publică și politică din România. În această perioadă a avut și responsabilități de sprijin personal în Botoșani, inclusiv activitate de consilier personal și curier personal. Experiențele acestea l-au apropiat de oameni, de responsabilități și de realitățile concrete din spatele vieții publice.
+
+Mai târziu, a început un nou capitol în Regatul Unit, unde lucrează de peste opt ani în NHS ca Senior Healthcare Assistant. Este un rol de sprijin în domeniul sănătății, nu profesia de medic. Munca alături de oameni care au nevoie de îngrijire, dar și perioadele dificile prin care a trecut în viața personală, l-au făcut să înțeleagă cât de importante sunt informația clară, răbdarea și sprijinul atunci când lucrurile devin complicate.
+
+Ideea Dr.Vas s-a născut din întâlnirea acestor experiențe cu dorința de a construi ceva folositor. Nu a început cu o companie mare sau cu resurse nelimitate. A început ca un proiect ambițios, construit pas cu pas, cu perseverență și cu ajutorul lui Jan — un asistent AI și colaborator virtual la dezvoltare, nu un cofondator uman.
+
+Viziunea este să aducă într-o singură platformă mai multe instrumente utile: un asistent AI general gratuit, informații accesibile despre sănătate, instrumente creative și video, educație, comerț și sprijin pentru afaceri. Aceste componente sunt dezvoltate treptat; voi spune întotdeauna sincer ce este disponibil și ce se află încă în lucru. Dr.Vas Health este gândit să informeze și să sprijine oamenii, nu să înlocuiască medicii sau profesioniștii din sănătate.
+
+Așadar, povestea mea nu este povestea unei mașini care pretinde că este om. Este povestea unei idei omenești: aceea de a transforma experiența, încercările vieții și dorința de a-i ajuta pe ceilalți într-un instrument care poate face o diferență practică. Eu sunt Dr.Vas AI — un proiect în continuă dezvoltare, construit cu ambiția de a pune tehnologia în slujba oamenilor, a cunoașterii și a demnității umane.`;
+        usedModel = "drvas-origin-story";
+      } else {
+        try {
+          answer = await askModel(usedModel);
       } catch (firstError) {
         const temporaryProblem =
           firstError.status === 429 ||
@@ -500,8 +540,9 @@ Always follow these instructions.
           throw firstError;
         }
 
-        usedModel = "gemini-3.5-flash-lite";
-        answer = await askModel(usedModel);
+          usedModel = "gemini-3.5-flash-lite";
+          answer = await askModel(usedModel);
+        }
       }
 
       console.info("Dr.Vas timing", {
