@@ -240,14 +240,6 @@ export default {
           }, tokenResponse.status || 502);
         }
 
-        await writeAdminAuditLog(env, {
-          user_id: liveUser.id,
-          event_type: "voice_live_session_started",
-          module: liveModule,
-          status: 200,
-          model: "gemini-3.8-live"
-        });
-
         return new Response(JSON.stringify({
           token: tokenData.name,
           model: "models/gemini-3.8-live",
