@@ -595,7 +595,7 @@ Așa că, dacă mă întrebi care este povestea mea, ți-aș spune că este pove
         const modelFallbacks = [
           "gemini-3.5-flash-lite",
           "gemini-3.1-flash-lite",
-          "gemini-2.5-flash-lite"
+          "gemini-3.5-flash"
         ];
 
         let lastTemporaryError = null;
