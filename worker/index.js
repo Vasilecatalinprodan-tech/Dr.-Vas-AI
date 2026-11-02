@@ -45,6 +45,31 @@ export default {
 
     try {
       const body = await request.json();
+
+      // Verificare server-side a administratorului; lista este un secret Cloudflare.
+      if (body.action === "admin_status") {
+        const adminToken = body.access_token;
+        if (typeof adminToken !== "string" || !adminToken.trim()) {
+          return json({ error: "Sesiune lipsă.", is_admin: false }, 401);
+        }
+        if (!env.SUPABASE_URL || !env.SUPABASE_KEY) {
+          return json({ error: "Autentificarea nu este configurată.", is_admin: false }, 500);
+        }
+        const adminAuth = await fetch(
+          `${env.SUPABASE_URL.replace(/\/+$/, "")}/auth/v1/user`,
+          { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${adminToken}` } }
+        );
+        if (!adminAuth.ok) return json({ error: "Sesiune invalidă.", is_admin: false }, 401);
+        const adminUser = await adminAuth.json();
+        const allowedAdmins = (env.ADMIN_EMAILS || "")
+          .split(",").map(email => email.trim().toLowerCase()).filter(Boolean);
+        const isAdmin = Boolean(adminUser?.email &&
+          allowedAdmins.includes(adminUser.email.trim().toLowerCase()));
+        return new Response(JSON.stringify({
+          is_admin: isAdmin, configured: allowedAdmins.length > 0
+        }), { status: 200, headers: { ...headers, "Cache-Control": "no-store, private" } });
+      }
+
       const message = body.message;
       const token = body.access_token;
       const conversationId = body.conversation_id || null;
