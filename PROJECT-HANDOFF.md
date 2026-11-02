@@ -151,3 +151,15 @@ Expected HTTP result for the static page: `200`.
 - Expanded the deterministic story trigger to recognise more Romanian phrasings, including variants of “care este povestea ta?”, “povestea mea”, “spune-mi povestea” and “povestește-mi”.
 - Trigger-fix commit: `2d19732c284fdcba076e8a6b88095e06a1694488`.
 - Next required action in Codespaces terminal: pull the latest branch, then deploy the Worker with Wrangler. Deployment is not yet confirmed.
+
+
+## 13. Supabase audit-log migration applied — 2026-11-02
+
+- User confirmed the SQL for `public.drvas_audit_logs` was executed in the linked Supabase project.
+- User opened Supabase Table Editor, selected `drvas_audit_logs`, and confirmed the table exists with all nine columns visible. The table showed no rows yet; this is expected before the Worker writes events.
+- The SQL pasted by the user matches exactly the repository migration `supabase/migrations/202611020001_admin_audit_logs.sql`.
+- The active branch already contains the audit implementation in `worker/index.js`: `writeAdminAuditLog` inserts metadata-only events; `client_event` validates the Supabase user and records approved UI events; successful AI requests and caught AI errors are logged; `admin_dashboard` checks the administrator allowlist server-side and reads the latest audit rows.
+- The frontend already contains the administrator activity dashboard and refresh/pagination UI in `www/index.html`.
+- No source-code change was needed for this SQL step. The current branch head at the time of this note is `cb1310fbf741db034e2ec25ce60061bc0a877392`.
+- Still unverified: whether Cloudflare `SUPABASE_KEY` is set to the Supabase `service_role` key, whether the latest Worker version has deployed successfully, and whether live event inserts/dashboard reads succeed. Never request or expose the secret value.
+- Next technical action: inspect Cloudflare Worker deployment status and verify the secret is configured by name/role without revealing it; then test an authenticated event and confirm a row appears in Supabase. Do not claim audit logging is live until this test passes.
