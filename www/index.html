@@ -441,7 +441,7 @@ function editProfile(){
   showOnly("profileSection");
 }
 
-/* La fiecare autentificare pornim o conversație temporară complet nouă. */
+/* La fiecare autentificare pornim o conversație nouă, salvată automat de la primul mesaj. */
 async function showChat(user,displayName){
   if(!user) return;
   currentUser = user;
@@ -465,7 +465,7 @@ function renderWelcome(){
   el("chat").innerHTML = "";
   const welcome = document.createElement("div");
   welcome.className = "msg bot";
-  welcome.textContent = "Bun venit la Dr.Vas AI! Cu ce te pot ajuta astăzi? Această conversație este temporară până când alegi să o salvezi.";
+  welcome.textContent = "Bun venit la Dr.Vas AI! Cu ce te pot ajuta astăzi? Mesajele acestei conversații sunt salvate automat în contul tău.";
   el("chat").appendChild(welcome);
   updateActiveConversation();
 }
@@ -571,7 +571,7 @@ function newConversation(){
   currentConversationId = makeId();
   conversationSaved = false;
   pendingMessages = [];
-  el("saveMessage").textContent = "Ai început o conversație temporară nouă.";
+  el("saveMessage").textContent = "Conversația nouă va fi salvată automat după primul mesaj.";
   updateSaveButton();
   renderWelcome();
   el("question").focus();
@@ -635,10 +635,12 @@ async function saveCurrentConversation(){
   }
 }
 
-function recordMessage(role,content){
-  if(conversationSaved) return saveMessage(role,content);
-  pendingMessages.push({role,content});
-  return Promise.resolve();
+async function recordMessage(role,content){
+  await saveMessage(role,content);
+  conversationSaved = true;
+  pendingMessages = [];
+  el("saveMessage").textContent = "Conversația este salvată automat în contul tău.";
+  updateSaveButton();
 }
 
 function showLogin(){
@@ -651,7 +653,7 @@ function showLogin(){
   if(el("conversationList")) el("conversationList").innerHTML = "";
   if(el("saveMessage")) el("saveMessage").textContent = "";
   updateSaveButton();
-  showOnly("authSection");
+  ["authSection","profileSection","chatSection"].forEach(id=>el(id).classList.add("hidden"));
 }
 
 async function logout(){
