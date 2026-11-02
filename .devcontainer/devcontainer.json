@@ -1,0 +1,12 @@
+{
+  "name": "Dr.Vas AI development",
+  "forwardPorts": [8000],
+  "portsAttributes": {
+    "8000": {
+      "label": "Dr.Vas web preview",
+      "onAutoForward": "openBrowser",
+      "visibility": "private"
+    }
+  },
+  "postStartCommand": "bash -lc 'nohup python3 -m http.server 8000 --directory www --bind 0.0.0.0 >/tmp/drvas-preview.log 2>&1 </dev/null &'"
+}
