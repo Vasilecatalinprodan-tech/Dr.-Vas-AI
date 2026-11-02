@@ -88,6 +88,15 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 .active-module-info strong{display:block;color:#62ded5;font-size:14px;margin-bottom:4px}
 .active-module-info span{display:block;color:#9bb4c3;font-size:12px;line-height:1.5}
 .module-disclaimer{font-size:11px;color:#71899b;line-height:1.5;margin:12px 2px 0}
+.admin-panel{margin:16px 0;padding:20px;border:1px solid #3a766f;border-radius:17px;background:linear-gradient(145deg,#102d38,#0b1d2d)}
+.admin-panel h3{margin:0 0 7px;color:#69e0d4;font-size:18px}
+.admin-panel p{color:#a9bfce;font-size:12px;line-height:1.6;margin:7px 0}
+.admin-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+.admin-tile{padding:13px;border:1px solid #294c5d;border-radius:12px;background:#0a1b29}
+.admin-tile strong{display:block;color:#fff;font-size:12px;margin-bottom:6px}
+.admin-tile span{color:#f0c879;font-size:11px;line-height:1.5}
+.admin-footnote{margin-top:13px!important;color:#819eae!important}
+@media(max-width:800px){.admin-grid{grid-template-columns:1fr}}
 @media(max-width:800px){.modules-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){
  header{padding:12px 18px}
@@ -237,6 +246,17 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
   </div>
 
 
+
+  <section id="adminPanel" class="admin-panel hidden" aria-label="Panou administrator Dr.Vas">
+   <h3>⚙ Dr.Vas Studio — Panou administrator</h3>
+   <p>Acces privat confirmat de server. Aici vei controla producția serialului și publicarea conținutului.</p>
+   <div class="admin-grid">
+    <div class="admin-tile"><strong>Cont TikTok</strong><span>Personal · conectarea oficială nu este încă configurată</span></div>
+    <div class="admin-tile"><strong>Instagram</strong><span>Neconectat · necesită cont profesional pentru publicare prin API</span></div>
+    <div class="admin-tile"><strong>Program editorial</strong><span>2 episoade originale pe zi · dimineața și seara</span></div>
+   </div>
+   <p class="admin-footnote">Publicarea automată este dezactivată până la aprobarea integrărilor oficiale. Fiecare episod va necesita verificarea și aprobarea ta. Nu sunt conectate încă rețele sociale și nu se publică nimic automat.</p>
+  </section>
 
   <div class="chat-layout">
    <aside class="history-panel">
@@ -500,6 +520,23 @@ function editProfile(){
 }
 
 /* La fiecare autentificare pornim o conversație nouă; mesajele rămân temporare până la salvarea manuală. */
+async function refreshAdminPanel(){
+  const panel = el("adminPanel");
+  if(!panel) return;
+  panel.classList.add("hidden");
+  try{
+    const {data,error} = await supabaseClient.auth.getSession();
+    if(error || !data.session) return;
+    const response = await fetch(API_URL,{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({action:"admin_status",access_token:data.session.access_token})
+    });
+    if(!response.ok) return;
+    const result = await response.json();
+    if(result.is_admin) panel.classList.remove("hidden");
+  }catch(error){console.warn("Admin access check:",error);}
+}
+
 async function showChat(user,displayName){
   if(!user) return;
   currentUser = user;
@@ -508,6 +545,7 @@ async function showChat(user,displayName){
     (displayName || el("displayName").value.trim() || user.email || "") +
     " · " + (el("country").value || "Cont personal");
 
+  await refreshAdminPanel();
   selectModule(activeModule);
   await loadConversationList();
 
