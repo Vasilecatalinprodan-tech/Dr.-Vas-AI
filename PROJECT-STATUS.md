@@ -187,3 +187,10 @@ Official current Gemini Live API documentation:
 - Updated Gemini Live voice from Charon (informative) to Iapetus (clear male voice). The Live persona now requests a mature, calm, reassuring, professional and warm masculine delivery, with natural conversational rhythm and complete-word articulation.
 - Improved browser speech synthesis: strips Markdown/code/URLs/list markers before reading, restores natural pauses at paragraph boundaries, uses a moderate 0.91 rate rather than 0.84, and slightly lowers pitch for a steadier delivery. Voice selection prefers installed enhanced/natural voices matching the selected language and never falls back to another language.
 - Important limitation: browser speech voices are supplied by the operating system/browser, so the selected installed voice still varies by device. Gemini Live voice quality and translation accuracy require user testing in Romanian and English before considering this refinement accepted. No clinical translation or voice validation is implied.
+
+
+## Consistent Dr.Vas identity and voice — 2026-11-02
+
+- Founder story wording now identifies the role as personal adviser/courier to a member of the Romanian Parliament (Romanian: „un membru al Parlamentului României”), rather than the less precise „un deputat român”; the equivalent wording is updated in the supported language variants.
+- Standard assistant and Live system instructions explicitly preserve the same Dr.Vas identity, personality and conversational style across all supported languages. Language changes must not create a different character.
+- Gemini Live uses one configured voice name, Iapetus, for all supported language codes. Browser read-aloud uses operating-system voices selected by language, so the exact same acoustic voice cannot be guaranteed in browser TTS across Romanian and English. For a consistent voice identity, use Live mode; browser TTS remains device-dependent.
