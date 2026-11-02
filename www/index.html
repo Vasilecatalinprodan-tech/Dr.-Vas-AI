@@ -139,38 +139,6 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
   <div id="authMessage"></div>
  </div>
 
- <div id="profileSection" class="profile-box hidden">
-  <div class="panel-head">
-   <div class="avatar">✚</div>
-   <div><h2>Profilul tău Dr.Vas</h2><small>Personalizează-ți contul</small></div>
-  </div>
-  <h2>Spune-ne cum te cheamă</h2>
-  <p>Completează câteva detalii pentru profilul tău personal.</p>
-  <input id="displayName" type="text" maxlength="80" placeholder="Numele tău">
-  <select id="country">
-   <option value="">Alege țara</option>
-   <option value="Romania">România</option>
-   <option value="United Kingdom">United Kingdom</option>
-   <option value="Other">Altă țară</option>
-  </select>
-  <button id="profileButton" class="profile-button" onclick="saveProfile()">Salvează profilul</button>
-  <div id="profileMessage"></div>
- </div>
-
- <div id="chatSection" class="hidden">
-  <div class="panel-head">
-   <div class="avatar"><img src="drvas.jpeg" alt="Dr.Vas"></div>
-   <div><h2>Dr.Vas AI</h2><small>Platformă inteligentă integrată</small></div>
-  </div>
-
-  <div id="accountBar">
-   <span id="accountEmail"></span>
-   <div class="account-actions">
-    <button onclick="editProfile()">Profilul meu</button>
-    <button onclick="logout()">Deconectare</button>
-   </div>
-  </div>
-
   <section class="modules-section">
    <div class="modules-heading">
     <div><h2>Platforma Dr.Vas</h2><p>Alege spațiul de lucru de care ai nevoie.</p></div>
@@ -211,8 +179,43 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
      <span id="activeModuleDescription">Modulul general este selectat. Poți începe conversația.</span>
     </div>
    </div>
+   <button id="continueModuleButton" class="auth-button" style="width:100%;margin-top:14px" onclick="continueWithModule()">Continuă cu modulul ales</button>
    <p class="module-disclaimer">Modulele sunt în curs de dezvoltare. Selectarea lor pregătește spațiul de lucru; funcțiile și agenții AI specializați vor fi conectați treptat. Dr.Vas Health oferă informații generale și nu înlocuiește consultația medicală.</p>
   </section>
+
+ <div id="profileSection" class="profile-box hidden">
+  <div class="panel-head">
+   <div class="avatar">✚</div>
+   <div><h2>Profilul tău Dr.Vas</h2><small>Personalizează-ți contul</small></div>
+  </div>
+  <h2>Spune-ne cum te cheamă</h2>
+  <p>Completează câteva detalii pentru profilul tău personal.</p>
+  <input id="displayName" type="text" maxlength="80" placeholder="Numele tău">
+  <select id="country">
+   <option value="">Alege țara</option>
+   <option value="Romania">România</option>
+   <option value="United Kingdom">United Kingdom</option>
+   <option value="Other">Altă țară</option>
+  </select>
+  <button id="profileButton" class="profile-button" onclick="saveProfile()">Salvează profilul</button>
+  <div id="profileMessage"></div>
+ </div>
+
+ <div id="chatSection" class="hidden">
+  <div class="panel-head">
+   <div class="avatar"><img src="drvas.jpeg" alt="Dr.Vas"></div>
+   <div><h2>Dr.Vas AI</h2><small>Platformă inteligentă integrată</small></div>
+  </div>
+
+  <div id="accountBar">
+   <span id="accountEmail"></span>
+   <div class="account-actions">
+    <button onclick="editProfile()">Profilul meu</button>
+    <button onclick="logout()">Deconectare</button>
+   </div>
+  </div>
+
+
 
   <div class="chat-layout">
    <aside class="history-panel">
@@ -312,6 +315,15 @@ function selectModule(moduleId){
   el("activeModuleDescription").textContent = details.description;
   el("chatModuleLabel").textContent = details.icon + " " + details.label;
   el("question").placeholder = details.placeholder;
+}
+
+function continueWithModule(){
+  const details = moduleDetails[activeModule];
+  if(!details) return;
+  el("authSection").classList.remove("hidden");
+  el("authTitle").textContent = authMode === "login" ? "Bine ai venit!" : "Creează-ți contul";
+  el("authDescription").textContent = "Conectează-te pentru a continua în " + details.name + ".";
+  el("authSection").scrollIntoView({behavior:"smooth",block:"center"});
 }
 
 function toggleAuthMode(){
@@ -695,7 +707,7 @@ async function send(){
       method:"POST",
       headers:{"Content-Type":"text/plain;charset=UTF-8"},
       body:JSON.stringify({
-        message:CREATOR_CONTEXT + "\n\nMESAJUL UTILIZATORULUI:\n" + message,
+        message:message,
         module:activeModule,
         conversation_id:currentConversationId,
         access_token:accessToken
