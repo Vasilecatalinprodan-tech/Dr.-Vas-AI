@@ -86,7 +86,7 @@ Known AI endpoint/model configuration previously inspected:
 
 - Founder: Cătălin Prodan (“Vas”).
 - “Dr.” is a nickname, not a medical qualification. The product and founder must never imply that the founder is a physician.
-- The origin story includes the founder's public/political work in Botoșani and more than eight years of UK care work, and the idea of building a useful AI platform from limited resources.
+- The origin story includes the founder's public/political work in Romania and more than eight years of UK care work, and the idea of building a useful AI platform from limited resources.
 - The AI assistant “Jane” is an AI collaborator, not a human co-founder.
 - Keep the story respectful and factual; do not expose private health or family information in public-facing copy.
 
@@ -137,7 +137,7 @@ Expected HTTP result for the static page: `200`.
 - User confirmed the Codespaces preview page opens successfully.
 - Added a **Păstrează-mă conectat** checkbox to the login form in `www/index.html`.
 - Supabase auth now uses a storage adapter that stores the session in `localStorage` when the box is checked (default checked), or in `sessionStorage` when unchecked. Signing out remains available and clears the session from both browser stores.
-- The user-facing founder story in `worker/index.js` has been rewritten in Romanian and English. It now has a warmer, more human and professional tone; includes approximately 25 years in Romanian public/political life, personal adviser and personal courier roles in Botoșani, both positive and difficult experiences, mistakes and everyday mischief, and more than eight years as a Senior Healthcare Assistant in the NHS.
+- The user-facing founder story in `worker/index.js` has been rewritten in Romanian and English. It now has a warmer, more human and professional tone; includes approximately 25 years in Romanian public/political life, personal adviser and personal courier roles in Romanian public life, both positive and difficult experiences, mistakes and everyday mischief, and more than eight years as a Senior Healthcare Assistant in the NHS.
 - The story explicitly clarifies that “Dr.” is a nickname, Cătălin is not a doctor, and Jan is an AI collaborator rather than a human co-founder. It avoids inventing specific mischief or disclosing private health details.
 - Latest frontend commit: `ee906082df484851fe608ad9f46ee886fe70fe2d`.
 - Latest Worker/story commit: `d670b500f895c30c8d619209ae1ed741d9d6154b`.
