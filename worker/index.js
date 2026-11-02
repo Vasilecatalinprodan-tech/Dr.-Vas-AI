@@ -3,7 +3,7 @@ async function writeAdminAuditLog(env, event) {
   if (!env.SUPABASE_URL || !env.SUPABASE_KEY) return;
   try {
     const response = await fetch(
-      `${env.SUPABASE_URL.replace(/\\/+$/, "")}/rest/v1/drvas_audit_logs`,
+      `${env.SUPABASE_URL.replace(/\/+$/, "")}/rest/v1/drvas_audit_logs`,
       {
         method: "POST",
         headers: {
@@ -105,7 +105,7 @@ export default {
           return json({ error: "Autentificarea nu este configurată." }, 500);
         }
         const authResponse = await fetch(
-          `${env.SUPABASE_URL.replace(/\\/+$/, "")}/auth/v1/user`,
+          `${env.SUPABASE_URL.replace(/\/+$/, "")}/auth/v1/user`,
           { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${adminToken}` } }
         );
         if (!authResponse.ok) return json({ error: "Sesiune invalidă." }, 401);
@@ -124,7 +124,7 @@ export default {
           limit: "1000"
         });
         const logsResponse = await fetch(
-          `${env.SUPABASE_URL.replace(/\\/+$/, "")}/rest/v1/drvas_audit_logs?${params.toString()}`,
+          `${env.SUPABASE_URL.replace(/\/+$/, "")}/rest/v1/drvas_audit_logs?${params.toString()}`,
           { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${env.SUPABASE_KEY}` } }
         );
         if (!logsResponse.ok) {
