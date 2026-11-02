@@ -199,3 +199,7 @@ Official current Gemini Live API documentation:
 ### Live voice consistency correction — 2026-11-02
 - Server-issued Gemini Live tokens and the browser Live WebSocket setup now both specify `Charon` across all supported languages; removed the previous `Iapetus`/`Charon` mismatch.
 - Standard browser read-aloud remains dependent on installed OS voices per language. Live mode is the consistent configured voice path.
+
+
+### Gemini Live error diagnostics — 2026-11-02
+- Live connection errors are now surfaced to the user instead of being replaced by the generic stopped message. Structured server errors and WebSocket close code/reason are displayed for diagnosis.
