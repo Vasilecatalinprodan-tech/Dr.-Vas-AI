@@ -292,35 +292,38 @@ export default {
         });
       }
 
-      // Încărcăm memoria utilizatorului.
-      const memories = await getMemories();
+      // Încărcăm memoria și istoricul în paralel pentru a reduce timpul de așteptare.
+      const historyPromise = (async () => {
+        let history = [];
+
+        if (typeof conversationId === "string") {
+          const params = new URLSearchParams({
+            select: "role,content,created_at",
+            user_id: `eq.${user.id}`,
+            conversation_id: `eq.${conversationId}`,
+            order: "created_at.asc",
+            limit: "30"
+          });
+
+          history = await supabaseRequest(
+            "chat_messages",
+            `?${params.toString()}`
+          );
+        }
+
+        return history;
+      })();
+
+      const [memories, conversationHistory] = await Promise.all([
+        getMemories(),
+        historyPromise
+      ]);
 
       const memoryContext = memories.length
         ? memories.map((item, index) =>
             `${index + 1}. ${item.content}`
           ).join("\n")
         : "Nu există încă informații salvate.";
-
-      // ISTORICUL CONVERSAȚIEI
-      let conversationHistory = [];
-
-      if (
-        typeof conversationId === "string" &&
-        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(conversationId)
-      ) {
-        const params = new URLSearchParams({
-          select: "role,content,created_at",
-          user_id: `eq.${user.id}`,
-          conversation_id: `eq.${conversationId}`,
-          order: "created_at.asc",
-          limit: "30"
-        });
-
-        conversationHistory = await supabaseRequest(
-          "chat_messages",
-          `?${params.toString()}`
-        );
-      }
 
       // Evităm repetarea mesajului curent dacă frontend-ul l-a salvat deja.
       const lastMessage = conversationHistory[conversationHistory.length - 1];
