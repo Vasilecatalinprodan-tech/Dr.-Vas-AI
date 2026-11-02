@@ -37,6 +37,26 @@ export default {
         return json({ error: "Te rog să scrii un mesaj." }, 400);
       }
 
+      if (message.length > 12000) {
+        return json({ error: "Mesajul depășește limita de 12.000 de caractere." }, 413);
+      }
+
+      const allowedModules = new Set([
+        "free", "health", "studio", "academy", "commerce", "business"
+      ]);
+
+      if (typeof moduleName !== "string" || !allowedModules.has(moduleName)) {
+        return json({ error: "Modul Dr.Vas invalid." }, 400);
+      }
+
+      if (
+        conversationId !== null &&
+        (typeof conversationId !== "string" ||
+         !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(conversationId))
+      ) {
+        return json({ error: "Identificator de conversație invalid." }, 400);
+      }
+
       if (!env.GEMINI_API_KEY) {
         return json({ error: "Serviciul AI nu este configurat." }, 500);
       }
