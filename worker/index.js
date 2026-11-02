@@ -215,19 +215,19 @@ export default {
             uses: 1,
             expireTime: expiresAt,
             newSessionExpireTime: newSessionExpiresAt,
-            bidiGenerateContentSetup: {
+            liveConnectConstraints: {
               model: "models/gemini-3.8-live",
-              generationConfig: {
+              config: {
                 responseModalities: ["AUDIO"],
                 speechConfig: {
                   voiceConfig: {
                     prebuiltVoiceConfig: { voiceName: "Gacrux" }
                   }
-                }
-              },
-              systemInstruction: { parts: [{ text: liveSystemInstruction }] },
-              inputAudioTranscription: {},
-              outputAudioTranscription: {}
+                },
+                systemInstruction: { parts: [{ text: liveSystemInstruction }] },
+                inputAudioTranscription: {},
+                outputAudioTranscription: {}
+              }
             }
           })
         });
