@@ -333,7 +333,8 @@ function selectModule(moduleId){
     return;
   }
 
-  el("authSection").classList.remove("hidden");
+  // Tranziție în cascadă: după alegerea modulului rămâne doar ecranul de autentificare.
+  if(!currentUser) showOnly("authSection");
   el("authTitle").textContent = authMode === "login" ? "Bine ai venit!" : "Creează-ți contul";
   el("authDescription").textContent = "Conectează-te pentru a continua în " + details.name + ".";
   el("authSection").scrollIntoView({behavior:"smooth",block:"center"});
@@ -384,10 +385,10 @@ async function handleAuth(){
 }
 
 function showOnly(section){
-  const authenticatedView = section === "profileSection" || section === "chatSection";
-  // După autentificare, interfața publică (hero + cele șase module) dispare.
-  el("heroSection").classList.toggle("hidden",authenticatedView);
-  el("moduleSelectionSection").classList.toggle("hidden",authenticatedView);
+  const privateFlow = section === "authSection" || section === "profileSection" || section === "chatSection";
+  // Fiecare etapă este un ecran separat: alegere -> autentificare -> spațiul privat.
+  el("heroSection").classList.toggle("hidden",privateFlow);
+  el("moduleSelectionSection").classList.toggle("hidden",privateFlow);
   ["authSection","profileSection","chatSection"].forEach(id=>{
     el(id).classList.toggle("hidden",id !== section);
   });
