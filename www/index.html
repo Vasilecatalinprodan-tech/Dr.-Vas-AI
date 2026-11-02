@@ -1257,7 +1257,7 @@ async function logout(){
 supabaseClient.auth.onAuthStateChange((event,session)=>{
   if(!languageReady)return;
   if(session && session.user){
-    if(event==="SIGNED_IN")logClientEvent("auth_sign_in");
+    if(event==="SIGNED_IN")setTimeout(()=>logClientEvent("auth_sign_in"),0);
     setTimeout(()=>showUser(session.user),0);
   }else{
     showLogin();
