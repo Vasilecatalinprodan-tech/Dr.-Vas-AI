@@ -287,6 +287,9 @@ export default {
           }, 503);
         }
         const logs = await logsResponse.json();
+        const pageSize = 100;
+        const requestedPage = Number.isInteger(body.page) ? body.page : 0;
+        const page = Math.max(0, Math.min(9, requestedPage));
         const modules = ["free","health","studio","academy","commerce","business"];
         const moduleCounts = Object.fromEntries(modules.map(name => [name, 0]));
         const activeUsers = new Set();
@@ -303,7 +306,11 @@ export default {
           errors,
           active_users: activeUsers.size,
           module_counts: moduleCounts,
-          logs: logs.slice(0, 100)
+          page,
+          page_size: pageSize,
+          total_pages: Math.max(1, Math.ceil(logs.length / pageSize)),
+          logs_capped: logs.length >= 1000,
+          logs: logs.slice(page * pageSize, (page + 1) * pageSize)
         }), { status: 200, headers: { ...headers, "Cache-Control": "no-store, private" } });
       }
 
