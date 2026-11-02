@@ -350,13 +350,14 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
      <button id="sendButton" onclick="send()">Trimite ➤</button>
     </div>
     <div class="voice-toolbar" aria-label="Controale vocale Dr.Vas">
+     <button type="button" id="liveVoiceButton" onclick="toggleLiveVoice()">🎧 Live</button>
      <button type="button" id="voiceMicButton" onclick="toggleVoiceInput()">🎙 Vorbește</button>
      <button type="button" id="voiceAutoButton" onclick="toggleVoiceOutput()">🔊 Activează vocea</button>
      <button type="button" id="voiceReplayButton" onclick="replayLastAnswer()" disabled>↻ Reascultă</button>
      <button type="button" id="voiceStopButton" onclick="stopVoiceOutput()" disabled>■ Oprește</button>
      <span id="voiceStatus" role="status" aria-live="polite">Vocea este oprită.</span>
     </div>
-    <p class="voice-privacy">Microfonul este folosit numai după ce apeși butonul. Recunoașterea poate fi procesată de serviciul vocal al browserului; Dr.Vas nu păstrează înregistrări audio.</p>
+    <p class="voice-privacy">Microfonul se activează numai după apăsare. În modul Live, sunetul este transmis către Gemini pentru răspuns în timp real; în modul dictare, recunoașterea poate fi procesată de browser. Dr.Vas nu păstrează înregistrări audio.</p>
     <div class="note">Răspunsurile AI pot conține erori. Verifică informațiile importante.</div>
    </div>
   </div>
@@ -565,6 +566,28 @@ let voiceErrorKey = "";
 let voiceAutoRead = false;
 let lastSpokenAnswer = "";
 let voiceTranscript = "";
+let liveSocket = null;
+let liveStream = null;
+let liveAudioContext = null;
+let liveMicSource = null;
+let liveMicProcessor = null;
+let liveSetupReady = false;
+let liveStopRequested = false;
+let livePlaybackNextTime = 0;
+let liveActiveSources = new Set();
+let liveUserTranscript = "";
+let liveAssistantTranscript = "";
+
+const LIVE_UI = {
+ ro:{button:"🎧 Live",stop:"■ Oprește Live",connecting:"Conectez conversația vocală în timp real…",ready:"Conectat. Vorbește natural cu Dr.Vas.",error:"Nu am putut porni vocea Live.",stopped:"Conversația vocală Live a fost închisă."},
+ en:{button:"🎧 Live",stop:"■ Stop Live",connecting:"Connecting real-time voice…",ready:"Connected. Speak naturally with Dr.Vas.",error:"Could not start Live voice.",stopped:"Live voice session closed."},
+ it:{button:"🎧 Live",stop:"■ Ferma Live",connecting:"Connessione vocale in tempo reale…",ready:"Connesso. Parla con Dr.Vas in modo naturale.",error:"Impossibile avviare la voce Live.",stopped:"Sessione vocale Live chiusa."},
+ tr:{button:"🎧 Canlı",stop:"■ Canlıyı durdur",connecting:"Gerçek zamanlı ses bağlanıyor…",ready:"Bağlandı. Dr.Vas ile doğal şekilde konuş.",error:"Canlı ses başlatılamadı.",stopped:"Canlı ses oturumu kapatıldı."},
+ de:{button:"🎧 Live",stop:"■ Live beenden",connecting:"Echtzeit-Sprachverbindung wird hergestellt…",ready:"Verbunden. Sprich ganz natürlich mit Dr.Vas.",error:"Live-Stimme konnte nicht gestartet werden.",stopped:"Live-Sprachsitzung beendet."},
+ fr:{button:"🎧 Live",stop:"■ Arrêter Live",connecting:"Connexion vocale en temps réel…",ready:"Connecté. Parlez naturellement avec Dr.Vas.",error:"Impossible de démarrer la voix Live.",stopped:"Session vocale Live fermée."},
+ es:{button:"🎧 Live",stop:"■ Detener Live",connecting:"Conectando voz en tiempo real…",ready:"Conectado. Habla con Dr.Vas con naturalidad.",error:"No se pudo iniciar la voz Live.",stopped:"Sesión de voz Live cerrada."},
+ ru:{button:"🎧 Live",stop:"■ Остановить Live",connecting:"Подключение голоса в реальном времени…",ready:"Подключено. Говорите с Dr.Vas естественно.",error:"Не удалось запустить Live.",stopped:"Сеанс Live завершён."}
+};
 
 const VOICE_UI = {
  ro:{mic:"🎙 Vorbește",stopMic:"■ Oprește microfonul",enable:"🔊 Activează vocea",disable:"🔇 Dezactivează vocea",replay:"↻ Reascultă",stop:"■ Oprește",off:"Vocea este oprită.",ready:"Vocea este activă. Poți vorbi sau asculta răspunsurile.",listening:"Te ascult… vorbește acum.",processing:"Am înțeles. Trimit întrebarea către Dr.Vas…",unsupported:"Acest browser nu oferă recunoaștere vocală. Poți scrie în continuare.",denied:"Accesul la microfon a fost refuzat sau nu este disponibil.",speaking:"Dr.Vas vorbește…",stopped:"Redarea vocală a fost oprită."},
@@ -614,13 +637,24 @@ async function logClientEvent(eventType,moduleName=activeModule){
   });
  }catch(error){console.warn("Dr.Vas activity log:",error);}
 }
+function liveLabel(key){
+ const lang=LIVE_UI[currentLanguage]||LIVE_UI.ro;
+ return lang[key]||LIVE_UI.ro[key];
+}
 function voiceLabel(key){
  const lang=VOICE_UI[currentLanguage]||VOICE_UI.ro;
  return lang[key]||VOICE_UI.ro[key];
 }
 function refreshVoiceUi(statusKey){
- const mic=el("voiceMicButton"),auto=el("voiceAutoButton"),replay=el("voiceReplayButton"),stop=el("voiceStopButton"),status=el("voiceStatus");
+ const mic=el("voiceMicButton"),auto=el("voiceAutoButton"),replay=el("voiceReplayButton"),stop=el("voiceStopButton"),status=el("voiceStatus"),live=el("liveVoiceButton");
  if(!mic)return;
+ const liveActive=Boolean(liveSocket||liveStream);
+ if(live){
+  live.textContent=liveLabel(liveActive?"stop":"button");
+  live.classList.toggle("active",liveActive);
+ }
+ mic.disabled=liveActive;
+ auto.disabled=liveActive;
  mic.textContent=voiceLabel(voiceListening?"stopMic":"mic");
  mic.classList.toggle("active",voiceListening);
  auto.textContent=voiceLabel(voiceAutoRead?"disable":"enable");
@@ -735,6 +769,225 @@ function toggleVoiceInput(){
 }
 if(window.speechSynthesis){
  window.speechSynthesis.onvoiceschanged=()=>refreshVoiceUi();
+}
+
+function encodePcmBase64(int16Samples){
+ const bytes=new Uint8Array(int16Samples.buffer);
+ let binary="";
+ for(let i=0;i<bytes.length;i++)binary+=String.fromCharCode(bytes[i]);
+ return btoa(binary);
+}
+function downsampleTo16k(input,sampleRate){
+ const ratio=sampleRate/16000;
+ const length=Math.floor(input.length/ratio);
+ const output=new Int16Array(length);
+ for(let i=0;i<length;i++){
+  const sample=Math.max(-1,Math.min(1,input[Math.floor(i*ratio)]||0));
+  output[i]=sample<0?sample*32768:sample*32767;
+ }
+ return output;
+}
+function stopLivePlayback(){
+ for(const source of liveActiveSources){
+  try{source.stop()}catch{}
+  try{source.disconnect()}catch{}
+ }
+ liveActiveSources.clear();
+ livePlaybackNextTime=0;
+}
+function queueLiveAudio(base64Data){
+ if(!liveAudioContext||!base64Data)return;
+ try{
+  const binary=atob(base64Data);
+  const samples=new Int16Array(Math.floor(binary.length/2));
+  for(let i=0;i<samples.length;i++){
+   let value=binary.charCodeAt(i*2)|(binary.charCodeAt(i*2+1)<<8);
+   if(value>32767)value-=65536;
+   samples[i]=value;
+  }
+  if(!samples.length)return;
+  const buffer=liveAudioContext.createBuffer(1,samples.length,24000);
+  const channel=buffer.getChannelData(0);
+  for(let i=0;i<samples.length;i++)channel[i]=samples[i]/32768;
+  const source=liveAudioContext.createBufferSource();
+  source.buffer=buffer;
+  source.connect(liveAudioContext.destination);
+  livePlaybackNextTime=Math.max(livePlaybackNextTime,liveAudioContext.currentTime+0.02);
+  source.start(livePlaybackNextTime);
+  livePlaybackNextTime+=buffer.duration;
+  liveActiveSources.add(source);
+  source.onended=()=>{
+   liveActiveSources.delete(source);
+   try{source.disconnect()}catch{}
+  };
+ }catch(error){console.warn("Live audio playback:",error);}
+}
+async function saveLiveTurn(){
+ const userText=liveUserTranscript.trim();
+ const assistantText=liveAssistantTranscript.trim();
+ liveUserTranscript="";
+ liveAssistantTranscript="";
+ if(!userText&&!assistantText)return;
+ try{
+  if(userText){
+   appendMessage("user",userText);
+   await saveMessage("user",userText);
+  }
+  if(assistantText){
+   appendMessage("assistant",assistantText);
+   lastSpokenAnswer=assistantText;
+   await saveMessage("assistant",assistantText);
+  }
+  conversationSaved=true;
+  pendingMessages=[];
+  updateSaveButton();
+  await loadConversationList();
+ }catch(error){console.warn("Live transcript save:",error);}
+}
+async function startLiveMicrophone(){
+ if(!liveStream||!liveAudioContext)return;
+ const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+ if(!AudioContextClass)throw new Error("AudioContext is not supported by this browser.");
+ await liveAudioContext.resume();
+ liveMicSource=liveAudioContext.createMediaStreamSource(liveStream);
+ liveMicProcessor=liveAudioContext.createScriptProcessor(4096,1,1);
+ liveMicProcessor.onaudioprocess=event=>{
+  const output=event.outputBuffer.getChannelData(0);
+  output.fill(0);
+  if(!liveSetupReady||!liveSocket||liveSocket.readyState!==WebSocket.OPEN)return;
+  const pcm=downsampleTo16k(event.inputBuffer.getChannelData(0),liveAudioContext.sampleRate);
+  if(!pcm.length)return;
+  const audio=encodePcmBase64(pcm);
+  liveSocket.send(JSON.stringify({realtimeInput:{audio:{data:audio,mimeType:"audio/pcm;rate=16000"}}}));
+ };
+ liveMicSource.connect(liveMicProcessor);
+ liveMicProcessor.connect(liveAudioContext.destination);
+}
+async function stopLiveMedia(){
+ liveSetupReady=false;
+ if(liveMicProcessor){try{liveMicProcessor.disconnect()}catch{};liveMicProcessor.onaudioprocess=null;liveMicProcessor=null;}
+ if(liveMicSource){try{liveMicSource.disconnect()}catch{};liveMicSource=null;}
+ if(liveStream){liveStream.getTracks().forEach(track=>track.stop());liveStream=null;}
+ stopLivePlayback();
+ if(liveAudioContext){const context=liveAudioContext;liveAudioContext=null;try{await context.close()}catch{}}
+}
+async function stopLiveVoice(){
+ liveStopRequested=true;
+ if(liveSocket){
+  const socket=liveSocket;
+  liveSocket=null;
+  try{if(socket.readyState===WebSocket.OPEN||socket.readyState===WebSocket.CONNECTING)socket.close(1000,"User ended Live session")}catch{}
+ }
+ await stopLiveMedia();
+ liveStopRequested=false;
+ refreshVoiceUi();
+ const status=el("voiceStatus");
+ if(status)status.textContent=liveLabel("stopped");
+}
+async function toggleLiveVoice(){
+ if(liveSocket||liveStream){
+  await stopLiveVoice();
+  return;
+ }
+ await startLiveVoice();
+}
+async function startLiveVoice(){
+ if(!currentUser){
+  const status=el("voiceStatus");if(status)status.textContent=liveLabel("error");
+  return;
+ }
+ if(!navigator.mediaDevices?.getUserMedia||!window.WebSocket){
+  const status=el("voiceStatus");if(status)status.textContent=liveLabel("error");
+  return;
+ }
+ try{
+  if(voiceRecognition&&voiceListening)voiceRecognition.stop();
+  stopVoiceOutput();
+  const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+  if(!AudioContextClass)throw new Error("AudioContext is not supported.");
+  liveStream=await navigator.mediaDevices.getUserMedia({
+   audio:{channelCount:1,echoCancellation:true,noiseSuppression:true,autoGainControl:true}
+  });
+  liveAudioContext=new AudioContextClass();
+  await liveAudioContext.resume();
+
+  const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
+  if(sessionError)throw sessionError;
+  const accessToken=sessionData.session?.access_token;
+  if(!accessToken)throw new Error("Sesiunea a expirat. Conectează-te din nou.");
+  const status=el("voiceStatus");
+  if(status)status.textContent=liveLabel("connecting");
+
+  const tokenResponse=await fetch(API_URL,{
+   method:"POST",headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({
+    action:"live_voice_token",access_token:accessToken,
+    module:activeModule,language:currentLanguage
+   })
+  });
+  const tokenData=await tokenResponse.json();
+  if(!tokenResponse.ok||!tokenData.token)throw new Error(tokenData.error||"Live token unavailable.");
+
+  const socketUrl="wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContentConstrained?access_token="+encodeURIComponent(tokenData.token);
+  liveSocket=new WebSocket(socketUrl);
+  liveSocket.onopen=()=>{
+   const setup={
+    model:tokenData.model||"models/gemini-3.8-live",
+    generationConfig:{
+     responseModalities:["AUDIO"],
+     speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:"Gacrux"}}}
+    },
+    inputAudioTranscription:{},
+    outputAudioTranscription:{}
+   };
+   liveSocket.send(JSON.stringify({setup}));
+  };
+  liveSocket.onmessage=async event=>{
+   let message;
+   try{message=JSON.parse(event.data)}catch{return}
+   if(message.setupComplete){
+    liveSetupReady=true;
+    try{
+     await startLiveMicrophone();
+     if(status)status.textContent=liveLabel("ready");
+     refreshVoiceUi();
+    }catch(error){
+     if(status)status.textContent=liveLabel("error");
+     console.error("Live microphone:",error);
+     await stopLiveVoice();
+    }
+    return;
+   }
+   const server=message.serverContent;
+   if(!server)return;
+   if(server.interrupted)stopLivePlayback();
+   if(server.inputTranscription?.text)liveUserTranscript+=server.inputTranscription.text;
+   if(server.outputTranscription?.text)liveAssistantTranscript+=server.outputTranscription.text;
+   const parts=server.modelTurn?.parts||[];
+   for(const part of parts){
+    const audio=part.inlineData?.data||part.inline_data?.data;
+    if(audio)queueLiveAudio(audio);
+   }
+   if(server.turnComplete)await saveLiveTurn();
+  };
+  liveSocket.onerror=()=>{
+   if(status)status.textContent=liveLabel("error");
+   console.warn("Gemini Live WebSocket error");
+  };
+  liveSocket.onclose=async()=>{
+   if(!liveStopRequested){
+    liveSocket=null;
+    await stopLiveMedia();
+    refreshVoiceUi();
+    if(status)status.textContent=liveLabel("stopped");
+   }
+  };
+ }catch(error){
+  console.error("Dr.Vas Live:",error);
+  await stopLiveVoice();
+  const status=el("voiceStatus");
+  if(status)status.textContent=liveLabel("error")+" "+(error.message||"");
+ }
 }
 
 /* Mesajele rămân temporare
