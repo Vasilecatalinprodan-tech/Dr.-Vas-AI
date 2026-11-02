@@ -113,3 +113,37 @@ Remaining language work:
 - Do not unlock Premium modules before subscription verification is implemented.
 - Do not claim an integration, video render, publication, or deployment succeeded until it has been tested.
 - Continue on `drvas-integrated-platform` and inspect the current files before making further edits.
+
+
+## Voice assistant roadmap — 2026-11-02
+
+Founder requested a Dr.Vas experience that can listen to people and speak back, not only accept typed messages.
+
+Recommended implementation: use the Gemini Live API for real-time bidirectional voice rather than relying only on browser speech recognition plus speech synthesis.
+
+Why:
+- Gemini Live supports continuous audio input and native audio output over a stateful WebSocket, with low-latency conversational turn-taking.
+- It can detect spoken language and adapt; Dr.Vas must still receive the selected UI language and explicit instructions for the response language.
+- The user should be able to interrupt the assistant while it speaks; the client must immediately stop/discard buffered playback when Live reports interruption.
+- Browser/mobile client must not receive the long-lived Gemini API key. Authenticate the user through Supabase, then have the Worker mint a short-lived, single-use, constrained Gemini ephemeral token for the Live session.
+- Configure the token to constrain the model and response modality; keep the server-side safety/persona instructions and module boundaries protected.
+- Native audio sessions are limited in duration and need session-resumption/context management for longer conversations.
+- Live API audio usage is token-billed; apply session duration, idle timeout, rate limits, and clear user-visible microphone controls to manage cost and privacy.
+
+Phased build:
+1. Add a clear microphone/voice-mode control to the existing chat UI, with permission request, listening/speaking indicators, mute/stop/end controls, and text fallback.
+2. Add an authenticated Worker endpoint that validates the Supabase access token and issues a short-lived constrained Live API token. Never expose GEMINI_API_KEY.
+3. Connect the browser/mobile client to Gemini Live using the ephemeral token. Send audio in small chunks; play returned audio, render available transcription/text, support interruption and reconnect/resumption.
+4. Preserve the selected language, current module, conversation identity and relevant Dr.Vas safety instructions in the Live session. Ensure Health remains educational/supportive and does not replace clinicians.
+5. Save conversation text/transcripts to Supabase only with clear notice and user control. Do not retain raw microphone audio by default.
+6. Test all eight languages, desktop Chrome, Android/Samsung browser and APK, microphone permissions, headphones/echo, backgrounding, poor networks, interrupted speech, and cost limits.
+
+A basic push-to-talk/transcribe + existing chat + TTS fallback may be used as an early compatibility path, but the intended experience is natural two-way Live voice. The default Dr.Vas voice should be a warm, clear male voice, with a future voice selector; no cloning of a real person's voice without explicit consent.
+
+References:
+- Gemini Live API overview: https://ai.google.dev/gemini-api/docs/live-api
+- Ephemeral tokens: https://ai.google.dev/gemini-api/docs/live-api/ephemeral-tokens
+- Live API best practices: https://ai.google.dev/gemini-api/docs/live-api/best-practices
+- Gemini TTS: https://ai.google.dev/gemini-api/docs/speech-generation
+
+Status: roadmap documented only. No microphone UI, Live session, token endpoint, or voice feature has been implemented or deployed yet.
