@@ -125,20 +125,6 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 </section>
 
 <section class="panel">
- <div id="authSection" class="auth-box">
-  <div class="panel-head">
-   <div class="avatar">✚</div>
-   <div><h2>Contul tău Dr.Vas AI</h2><small>Acces personal și securizat</small></div>
-  </div>
-  <h2 id="authTitle">Bine ai venit!</h2>
-  <p id="authDescription">Conectează-te sau creează un cont nou.</p>
-  <input id="email" type="email" placeholder="Adresa de email" autocomplete="email">
-  <input id="password" type="password" placeholder="Parola" autocomplete="current-password">
-  <button id="authButton" class="auth-button" onclick="handleAuth()">Conectare</button>
-  <button id="switchButton" class="switch-button" onclick="toggleAuthMode()">Nu ai cont? Creează unul</button>
-  <div id="authMessage"></div>
- </div>
-
   <section class="modules-section">
    <div class="modules-heading">
     <div><h2>Platforma Dr.Vas</h2><p>Alege spațiul de lucru de care ai nevoie.</p></div>
@@ -182,6 +168,22 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
    <button id="continueModuleButton" class="auth-button" style="width:100%;margin-top:14px" onclick="continueWithModule()">Continuă cu modulul ales</button>
    <p class="module-disclaimer">Modulele sunt în curs de dezvoltare. Selectarea lor pregătește spațiul de lucru; funcțiile și agenții AI specializați vor fi conectați treptat. Dr.Vas Health oferă informații generale și nu înlocuiește consultația medicală.</p>
   </section>
+
+ <div id="authSection" class="auth-box hidden">
+  <div class="panel-head">
+   <div class="avatar">✚</div>
+   <div><h2>Contul tău Dr.Vas AI</h2><small>Acces personal și securizat</small></div>
+  </div>
+  <h2 id="authTitle">Bine ai venit!</h2>
+  <p id="authDescription">Conectează-te sau creează un cont nou.</p>
+  <input id="email" type="email" placeholder="Adresa de email" autocomplete="email">
+  <input id="password" type="password" placeholder="Parola" autocomplete="current-password">
+  <button id="authButton" class="auth-button" onclick="handleAuth()">Conectare</button>
+  <button id="switchButton" class="switch-button" onclick="toggleAuthMode()">Nu ai cont? Creează unul</button>
+  <div id="authMessage"></div>
+ </div>
+
+
 
  <div id="profileSection" class="profile-box hidden">
   <div class="panel-head">
