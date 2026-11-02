@@ -200,7 +200,7 @@ export default {
           "Use only information provided in this Live session; do not claim access to the user's saved chat history or memory.",
           "Protect privacy. Do not ask for passwords, access tokens or unnecessary sensitive information.",
           "If you cannot perform an action, say so plainly."
-        ].join("\\n");
+        ].join("\n");
 
         const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
         const newSessionExpiresAt = new Date(Date.now() + 60 * 1000).toISOString();
@@ -226,8 +226,7 @@ export default {
               },
               systemInstruction: { parts: [{ text: liveSystemInstruction }] },
               inputAudioTranscription: {},
-              outputAudioTranscription: {},
-              sessionResumption: { }
+              outputAudioTranscription: {}
             }
           })
         });
