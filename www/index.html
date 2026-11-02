@@ -77,6 +77,12 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .input-area{display:flex;gap:10px;margin-top:20px}
 .input-area input{flex:1;min-width:0;padding:17px;background:#071827;border:1px solid #34536a;border-radius:13px;color:white;font-size:15px;outline:none}
 .input-area input:focus{border-color:#55d8d0}
+.voice-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px}
+.voice-toolbar button{padding:10px 13px;font-size:12px;background:#12384a;color:#c8f8f1;border:1px solid #326477}
+.voice-toolbar button.active{background:#176b68;border-color:#59d8ce;color:#fff}
+.voice-toolbar button:disabled{opacity:.45}
+#voiceStatus{font-size:11px;color:#89a9b9;line-height:1.5}
+.voice-privacy{font-size:10px;color:#71899b;line-height:1.5;margin-top:7px}
 .note{text-align:center;color:#71899b;font-size:11px;margin-top:15px}
 footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 .hidden{display:none!important}
@@ -343,6 +349,14 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
      <input id="question" placeholder="Scrie întrebarea ta..." autocomplete="off">
      <button id="sendButton" onclick="send()">Trimite ➤</button>
     </div>
+    <div class="voice-toolbar" aria-label="Controale vocale Dr.Vas">
+     <button type="button" id="voiceMicButton" onclick="toggleVoiceInput()">🎙 Vorbește</button>
+     <button type="button" id="voiceAutoButton" onclick="toggleVoiceOutput()">🔊 Activează vocea</button>
+     <button type="button" id="voiceReplayButton" onclick="replayLastAnswer()" disabled>↻ Reascultă</button>
+     <button type="button" id="voiceStopButton" onclick="stopVoiceOutput()" disabled>■ Oprește</button>
+     <span id="voiceStatus" role="status" aria-live="polite">Vocea este oprită.</span>
+    </div>
+    <p class="voice-privacy">Microfonul este folosit numai după ce apeși butonul. Recunoașterea poate fi procesată de serviciul vocal al browserului; Dr.Vas nu păstrează înregistrări audio.</p>
     <div class="note">Răspunsurile AI pot conține erori. Verifică informațiile importante.</div>
    </div>
   </div>
@@ -494,11 +508,11 @@ function chooseLanguage(code){
  if(!SUPPORTED_LANGUAGES.includes(code))return;
  currentLanguage=code;languageReady=true;localStorage.setItem(LANGUAGE_KEY,code);
  el("appMain").classList.remove("language-pending");el("languageGate").classList.add("hidden");
- translatePage();checkSession();
+ translatePage();refreshVoiceUi(voiceAutoRead?"ready":"off");checkSession();
 }
 function showLanguageGate(){el("languageGate").classList.remove("hidden");el("appMain").classList.add("language-pending");if(languageReady)translatePage(el("languageGate"))}
 function initLanguage(){
- if(SUPPORTED_LANGUAGES.includes(currentLanguage)){languageReady=true;el("appMain").classList.remove("language-pending");el("languageGate").classList.add("hidden");translatePage();checkSession()}
+ if(SUPPORTED_LANGUAGES.includes(currentLanguage)){languageReady=true;el("appMain").classList.remove("language-pending");el("languageGate").classList.add("hidden");translatePage();refreshVoiceUi(voiceAutoRead?"ready":"off");checkSession()}
  else{languageReady=false;document.documentElement.lang="en";showLanguageGate()}
 }
 const uiObserver=new MutationObserver(records=>{
@@ -545,6 +559,22 @@ let profilePromiseUserId = null;
 let currentConversationId = null;
 let loadingConversation = false;
 let activeModule = "free";
+let voiceRecognition = null;
+let voiceListening = false;
+let voiceAutoRead = false;
+let lastSpokenAnswer = "";
+let voiceTranscript = "";
+
+const VOICE_UI = {
+ ro:{mic:"🎙 Vorbește",stopMic:"■ Oprește microfonul",enable:"🔊 Activează vocea",disable:"🔇 Dezactivează vocea",replay:"↻ Reascultă",stop:"■ Oprește",off:"Vocea este oprită.",ready:"Vocea este activă. Poți vorbi sau asculta răspunsurile.",listening:"Te ascult… vorbește acum.",processing:"Am înțeles. Trimit întrebarea către Dr.Vas…",unsupported:"Acest browser nu oferă recunoaștere vocală. Poți scrie în continuare.",denied:"Accesul la microfon a fost refuzat sau nu este disponibil.",speaking:"Dr.Vas vorbește…",stopped:"Redarea vocală a fost oprită."},
+ en:{mic:"🎙 Speak",stopMic:"■ Stop microphone",enable:"🔊 Enable voice",disable:"🔇 Disable voice",replay:"↻ Replay",stop:"■ Stop",off:"Voice is off.",ready:"Voice is on. You can speak or listen to replies.",listening:"Listening… speak now.",processing:"Got it. Sending your question to Dr.Vas…",unsupported:"This browser does not support speech recognition. You can still type.",denied:"Microphone access was denied or is unavailable.",speaking:"Dr.Vas is speaking…",stopped:"Voice playback stopped."},
+ it:{mic:"🎙 Parla",stopMic:"■ Ferma microfono",enable:"🔊 Attiva voce",disable:"🔇 Disattiva voce",replay:"↻ Riascolta",stop:"■ Ferma",off:"Voce disattivata.",ready:"Voce attiva. Puoi parlare o ascoltare le risposte.",listening:"Ti ascolto… parla ora.",processing:"Ricevuto. Invio la domanda a Dr.Vas…",unsupported:"Questo browser non supporta il riconoscimento vocale. Puoi scrivere.",denied:"Accesso al microfono negato o non disponibile.",speaking:"Dr.Vas sta parlando…",stopped:"Riproduzione vocale interrotta."},
+ tr:{mic:"🎙 Konuş",stopMic:"■ Mikrofonu durdur",enable:"🔊 Sesi aç",disable:"🔇 Sesi kapat",replay:"↻ Yeniden dinle",stop:"■ Durdur",off:"Ses kapalı.",ready:"Ses açık. Konuşabilir veya yanıtları dinleyebilirsin.",listening:"Dinliyorum… şimdi konuş.",processing:"Anladım. Sorunu Dr.Vas'a gönderiyorum…",unsupported:"Bu tarayıcı konuşma tanımayı desteklemiyor. Yazmaya devam edebilirsin.",denied:"Mikrofon erişimi reddedildi veya kullanılamıyor.",speaking:"Dr.Vas konuşuyor…",stopped:"Sesli oynatma durduruldu."},
+ de:{mic:"🎙 Sprechen",stopMic:"■ Mikrofon stoppen",enable:"🔊 Stimme aktivieren",disable:"🔇 Stimme deaktivieren",replay:"↻ Erneut anhören",stop:"■ Stoppen",off:"Stimme ist ausgeschaltet.",ready:"Stimme ist aktiv. Du kannst sprechen oder Antworten anhören.",listening:"Ich höre zu… sprich jetzt.",processing:"Verstanden. Ich sende deine Frage an Dr.Vas…",unsupported:"Dieser Browser unterstützt keine Spracherkennung. Du kannst weiterhin schreiben.",denied:"Der Mikrofonzugriff wurde verweigert oder ist nicht verfügbar.",speaking:"Dr.Vas spricht…",stopped:"Sprachausgabe gestoppt."},
+ fr:{mic:"🎙 Parler",stopMic:"■ Arrêter le micro",enable:"🔊 Activer la voix",disable:"🔇 Désactiver la voix",replay:"↻ Réécouter",stop:"■ Arrêter",off:"La voix est désactivée.",ready:"La voix est active. Vous pouvez parler ou écouter les réponses.",listening:"Je vous écoute… parlez maintenant.",processing:"Compris. J'envoie votre question à Dr.Vas…",unsupported:"Ce navigateur ne prend pas en charge la reconnaissance vocale. Vous pouvez écrire.",denied:"L'accès au microphone a été refusé ou est indisponible.",speaking:"Dr.Vas parle…",stopped:"Lecture vocale arrêtée."},
+ es:{mic:"🎙 Hablar",stopMic:"■ Detener micrófono",enable:"🔊 Activar voz",disable:"🔇 Desactivar voz",replay:"↻ Volver a escuchar",stop:"■ Detener",off:"La voz está desactivada.",ready:"La voz está activa. Puedes hablar o escuchar las respuestas.",listening:"Te escucho… habla ahora.",processing:"Entendido. Envío tu pregunta a Dr.Vas…",unsupported:"Este navegador no admite reconocimiento de voz. Puedes escribir.",denied:"Se denegó el acceso al micrófono o no está disponible.",speaking:"Dr.Vas está hablando…",stopped:"Reproducción de voz detenida."},
+ ru:{mic:"🎙 Говорить",stopMic:"■ Остановить микрофон",enable:"🔊 Включить голос",disable:"🔇 Выключить голос",replay:"↻ Повторить",stop:"■ Стоп",off:"Голос выключен.",ready:"Голос включён. Можно говорить или слушать ответы.",listening:"Слушаю… говорите сейчас.",processing:"Понял. Отправляю вопрос Dr.Vas…",unsupported:"Этот браузер не поддерживает распознавание речи. Можно вводить текст.",denied:"Доступ к микрофону запрещён или недоступен.",speaking:"Dr.Vas говорит…",stopped:"Воспроизведение остановлено."}
+};
 
 /* Mesajele rămân temporare până când utilizatorul apasă explicit „Salvează conversația”. */
 let conversationSaved = false;
@@ -572,6 +602,125 @@ const moduleDetails = {
 
 function el(id){return document.getElementById(id)}
 function makeId(){return crypto.randomUUID()}
+
+function voiceLabel(key){
+ const lang=VOICE_UI[currentLanguage]||VOICE_UI.ro;
+ return lang[key]||VOICE_UI.ro[key];
+}
+function refreshVoiceUi(statusKey){
+ const mic=el("voiceMicButton"),auto=el("voiceAutoButton"),replay=el("voiceReplayButton"),stop=el("voiceStopButton"),status=el("voiceStatus");
+ if(!mic)return;
+ mic.textContent=voiceLabel(voiceListening?"stopMic":"mic");
+ mic.classList.toggle("active",voiceListening);
+ auto.textContent=voiceLabel(voiceAutoRead?"disable":"enable");
+ auto.classList.toggle("active",voiceAutoRead);
+ replay.textContent=voiceLabel("replay");
+ replay.disabled=!lastSpokenAnswer;
+ stop.textContent=voiceLabel("stop");
+ stop.disabled=!(window.speechSynthesis&&window.speechSynthesis.speaking);
+ if(status&&statusKey)status.textContent=voiceLabel(statusKey);
+}
+function speechLanguage(){
+ return ({ro:"ro-RO",en:"en-GB",it:"it-IT",tr:"tr-TR",de:"de-DE",fr:"fr-FR",es:"es-ES",ru:"ru-RU"})[currentLanguage]||"ro-RO";
+}
+function chooseSpeechVoice(lang){
+ if(!window.speechSynthesis)return null;
+ const voices=window.speechSynthesis.getVoices()||[];
+ const matching=voices.filter(v=>v.lang&&v.lang.toLowerCase().startsWith(lang.slice(0,2).toLowerCase()));
+ const maleNames=/male|david|mark|daniel|george|james|guy|ryan|alex|thomas|jorge|diego|pavel|nicolas|henri|stefan|andrei|radu/i;
+ return matching.find(v=>maleNames.test(v.name))||matching[0]||voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith("en"))||null;
+}
+function speakDrVas(text){
+ if(!voiceAutoRead||!text||!window.speechSynthesis)return;
+ lastSpokenAnswer=text;
+ window.speechSynthesis.cancel();
+ const utterance=new SpeechSynthesisUtterance(text);
+ const lang=speechLanguage();
+ utterance.lang=lang;
+ const voice=chooseSpeechVoice(lang);
+ if(voice)utterance.voice=voice;
+ utterance.rate=0.96;
+ utterance.pitch=0.92;
+ utterance.onstart=()=>refreshVoiceUi("speaking");
+ utterance.onend=()=>refreshVoiceUi("ready");
+ utterance.onerror=()=>refreshVoiceUi("ready");
+ window.speechSynthesis.speak(utterance);
+ refreshVoiceUi("ready");
+}
+function replayLastAnswer(){
+ if(!lastSpokenAnswer||!window.speechSynthesis)return;
+ const wasEnabled=voiceAutoRead;
+ voiceAutoRead=true;
+ speakDrVas(lastSpokenAnswer);
+ voiceAutoRead=wasEnabled;
+ refreshVoiceUi("speaking");
+}
+function stopVoiceOutput(){
+ if(window.speechSynthesis)window.speechSynthesis.cancel();
+ refreshVoiceUi("stopped");
+}
+function toggleVoiceOutput(){
+ if(!window.speechSynthesis){
+  refreshVoiceUi("unsupported");
+  return;
+ }
+ voiceAutoRead=!voiceAutoRead;
+ if(voiceAutoRead&&lastSpokenAnswer)speakDrVas(lastSpokenAnswer);
+ refreshVoiceUi(voiceAutoRead?"ready":"off");
+}
+function toggleVoiceInput(){
+ const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(voiceListening&&voiceRecognition){
+  voiceRecognition.stop();
+  return;
+ }
+ if(!SpeechRecognition){
+  refreshVoiceUi("unsupported");
+  return;
+ }
+ voiceTranscript="";
+ voiceRecognition=new SpeechRecognition();
+ voiceRecognition.lang=speechLanguage();
+ voiceRecognition.continuous=false;
+ voiceRecognition.interimResults=true;
+ voiceRecognition.maxAlternatives=1;
+ voiceRecognition.onstart=()=>{
+  voiceListening=true;
+  refreshVoiceUi("listening");
+ };
+ voiceRecognition.onresult=event=>{
+  let finalText="";
+  for(let i=event.resultIndex;i<event.results.length;i++){
+   const transcript=event.results[i][0]?.transcript||"";
+   if(event.results[i].isFinal)finalText+=transcript;
+  }
+  if(finalText)voiceTranscript=(voiceTranscript+" "+finalText).trim();
+  if(el("question"))el("question").value=(voiceTranscript||"").trim();
+ };
+ voiceRecognition.onerror=event=>{
+  voiceListening=false;
+  const status=event.error==="not-allowed"||event.error==="service-not-allowed"?"denied":"unsupported";
+  refreshVoiceUi(status);
+ };
+ voiceRecognition.onend=()=>{
+  voiceListening=false;
+  const transcript=voiceTranscript.trim();
+  refreshVoiceUi(transcript?"processing":"ready");
+  if(transcript&&currentUser&&!el("sendButton").disabled){
+   el("question").value=transcript;
+   send();
+  }else if(transcript&&!currentUser){
+   refreshVoiceUi("denied");
+  }
+ };
+ try{voiceRecognition.start();}
+ catch(error){voiceListening=false;refreshVoiceUi("unsupported");}
+}
+if(window.speechSynthesis){
+ window.speechSynthesis.onvoiceschanged=()=>refreshVoiceUi();
+}
+
+/* Mesajele rămân temporare
 
 function updateSaveButton(){
   const button = el("saveConversationButton");
@@ -1076,6 +1225,8 @@ function showLogin(){
 }
 
 async function logout(){
+  if(voiceRecognition&&voiceListening)voiceRecognition.stop();
+  stopVoiceOutput();
   const {error} = await supabaseClient.auth.signOut();
   if(error){
     alert(tr("Nu am putut încheia sesiunea: ") + error.message);
@@ -1149,6 +1300,9 @@ async function send(){
 
     const displayedReply = localizeReply(data.reply);
     answer.textContent = displayedReply;
+    lastSpokenAnswer=displayedReply;
+    refreshVoiceUi();
+    if(voiceAutoRead)speakDrVas(displayedReply);
     if(data.action !== "conversations_deleted") await saveMessage("assistant",displayedReply);
     conversationSaved = true;
     pendingMessages = [];
