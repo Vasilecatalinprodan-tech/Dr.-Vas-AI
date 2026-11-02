@@ -106,7 +106,8 @@ export default {
           "auth_sign_in", "auth_sign_out", "module_selected",
           "conversation_created", "conversation_opened",
           "voice_input_started", "voice_input_completed",
-          "voice_output_enabled", "voice_output_disabled", "voice_live_session_started"
+          "voice_output_enabled", "voice_output_disabled",
+          "voice_live_session_started", "voice_live_session_ended"
         ]);
         const allowedEventModules = new Set([
           "free", "health", "studio", "academy", "commerce", "business"
