@@ -900,6 +900,8 @@ async function startLiveVoice(){
   const status=el("voiceStatus");if(status)status.textContent=liveLabel("error");
   return;
  }
+ const status=el("voiceStatus");
+ if(status)status.textContent=liveLabel("connecting");
  try{
   if(voiceRecognition&&voiceListening)voiceRecognition.stop();
   stopVoiceOutput();
@@ -915,8 +917,7 @@ async function startLiveVoice(){
   if(sessionError)throw sessionError;
   const accessToken=sessionData.session?.access_token;
   if(!accessToken)throw new Error("Sesiunea a expirat. Conectează-te din nou.");
-  const status=el("voiceStatus");
-  if(status)status.textContent=liveLabel("connecting");
+  if(!liveStream)return;
 
   const tokenResponse=await fetch(API_URL,{
    method:"POST",headers:{"Content-Type":"application/json"},
