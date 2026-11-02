@@ -74,6 +74,7 @@ export default {
       const token = body.access_token;
       const conversationId = body.conversation_id || null;
       const moduleName = body.module || "free";
+      const requestedLanguage = typeof body.language === "string" ? body.language : "";
 
       if (typeof message !== "string" || !message.trim()) {
         return json({ error: "Te rog să scrii un mesaj." }, 400);
@@ -502,8 +503,9 @@ If a module is selected, adapt your answer to its purpose while remaining honest
 ${moduleSpecificInstruction}
 
 LANGUAGE:
-- Detect the language of the user's latest message.
-- Reply in that language only.
+- The customer's selected interface language is: ${requestedLanguage || "not specified"}.
+- If a selected language is supplied, answer in that language even when the user writes in another language, unless they explicitly ask you to switch.
+- Keep the entire response, including headings, explanations and examples, in the selected language.
 - Use natural, fluent and grammatically correct language.
 - Do not translate or repeat answers in another language unless requested.
 
