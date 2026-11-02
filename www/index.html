@@ -828,10 +828,11 @@ function queueLiveAudio(base64Data){
   for(let i=0;i<samples.length;i++)channel[i]=samples[i]/32768;
   const source=liveAudioContext.createBufferSource();
   source.buffer=buffer;
+  source.playbackRate.value=0.92;
   source.connect(liveAudioContext.destination);
   livePlaybackNextTime=Math.max(livePlaybackNextTime,liveAudioContext.currentTime+0.02);
   source.start(livePlaybackNextTime);
-  livePlaybackNextTime+=buffer.duration;
+  livePlaybackNextTime+=buffer.duration/source.playbackRate.value;
   liveActiveSources.add(source);
   source.onended=()=>{
    liveActiveSources.delete(source);
