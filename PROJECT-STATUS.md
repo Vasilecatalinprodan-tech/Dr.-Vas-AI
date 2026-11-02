@@ -101,14 +101,14 @@ Remaining language work:
    - Sign in with a normal account and confirm the panel stays hidden and premium modules remain gated.
    - Refresh the dashboard and confirm metadata events appear after the SQL migration.
 3. Verify that the Cloudflare Worker secret `SUPABASE_KEY` is the service-role key required for server-only audit inserts/reads. Do not reveal or paste the key into chat or Git. The frontend must continue to use only its public anon/publishable key.
-4. Test the browser voice MVP in desktop Chrome and Android Chrome: microphone permission, Romanian/English/other selected languages, transcript submission, auto-read, replay, stop and sign-out cleanup. Confirm fallback typing remains available.
-5. Implement the full Gemini Live API experience with authenticated ephemeral tokens, streaming microphone PCM, native audio output, interruption/barge-in, transcripts, session resumption and usage limits. Do not expose `GEMINI_API_KEY` to the browser.
-6. Expand the administrator journal with pagination, filters and further operational events while keeping conversation contents and health data out of operational logs.
-7. Build persistent Studio workflows: episode queue, draft status, approval/rejection, schedule in Europe/London, publication log and retry/error handling.
-8. Implement official OAuth connections for TikTok and Meta; store tokens securely server-side and support revocation/refresh.
-9. Integrate actual video rendering, voice and subtitles. Current Studio engine produces scripts/prompts, not finished video files.
-10. Only enable scheduled public publishing after each platform's app review/permissions and explicit user approval are in place.
-
+4. Test the browser voice MVP and Gemini Live in desktop Chrome and Android Chrome: microphone permission, all supported languages, current-chat context, transcript saving, native audio, interruption, stop, sign-out and background cleanup.
+5. Finish Live reliability: session resumption/reconnect, robust transcript ordering, audio quality on mobile, and per-user usage/rate limits. The Live token is currently single-use and expires after 15 minutes.
+6. Keep Health Live voice disabled by default. The Worker requires `GEMINI_LIVE_HEALTH_ENABLED=true` before allowing it. Set that secret only after reviewing the applicable Gemini API data terms, paid-tier privacy protections, healthcare data handling and legal/compliance requirements. The text-based Health module remains available with its existing safeguards.
+7. Expand the administrator journal beyond its current 1,000-event fetch cap, add filters and server-side aggregation, and continue keeping conversation contents and health data out of operational logs.
+8. Build persistent Studio workflows: episode queue, draft status, approval/rejection, schedule in Europe/London, publication log and retry/error handling.
+9. Implement official OAuth connections for TikTok and Meta; store tokens securely server-side and support revocation/refresh.
+10. Integrate actual video rendering, voice and subtitles. Current Studio engine produces scripts/prompts, not finished video files.
+11. Only enable scheduled public publishing after each platform's app review/permissions and explicit user approval are in place.
 ## Important guardrails
 
 - Do not expose admin access based only on a client-side flag or a hard-coded password in the page.
