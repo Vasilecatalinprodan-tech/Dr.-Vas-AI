@@ -578,6 +578,7 @@ let livePlaybackNextTime = 0;
 let liveActiveSources = new Set();
 let liveUserTranscript = "";
 let liveAssistantTranscript = "";
+let liveTurnSaveTimer = null;
 
 const LIVE_UI = {
  ro:{button:"🎧 Live",stop:"■ Oprește Live",connecting:"Conectez conversația vocală în timp real…",ready:"Conectat. Vorbește natural cu Dr.Vas.",error:"Nu am putut porni vocea Live.",stopped:"Conversația vocală Live a fost închisă."},
@@ -839,7 +840,15 @@ async function sendLiveHistory(){
   }
  }catch(error){console.warn("Live history context:",error);}
 }
+function scheduleLiveTurnSave(){
+ if(liveTurnSaveTimer)clearTimeout(liveTurnSaveTimer);
+ liveTurnSaveTimer=setTimeout(()=>{
+  liveTurnSaveTimer=null;
+  saveLiveTurn();
+ },750);
+}
 async function saveLiveTurn(){
+ if(liveTurnSaveTimer){clearTimeout(liveTurnSaveTimer);liveTurnSaveTimer=null;}
  const userText=liveUserTranscript.trim();
  const assistantText=liveAssistantTranscript.trim();
  liveUserTranscript="";
@@ -890,6 +899,7 @@ async function stopLiveMedia(){
 }
 async function stopLiveVoice(){
  const hadLiveSession=Boolean(liveSocket||liveStream);
+ if(liveTurnSaveTimer){clearTimeout(liveTurnSaveTimer);liveTurnSaveTimer=null;await saveLiveTurn();}
  if(hadLiveSession&&currentUser)await logClientEvent("voice_live_session_ended");
  liveStopRequested=true;
  if(liveSocket){
@@ -970,6 +980,7 @@ async function startLiveVoice(){
     try{
      await sendLiveHistory();
      await startLiveMicrophone();
+     logClientEvent("voice_live_session_started");
      if(status)status.textContent=liveLabel("ready");
      refreshVoiceUi();
     }catch(error){
@@ -982,14 +993,20 @@ async function startLiveVoice(){
    const server=message.serverContent;
    if(!server)return;
    if(server.interrupted)stopLivePlayback();
-   if(server.inputTranscription?.text)liveUserTranscript+=server.inputTranscription.text;
-   if(server.outputTranscription?.text)liveAssistantTranscript+=server.outputTranscription.text;
+   if(server.inputTranscription?.text){
+    liveUserTranscript+=server.inputTranscription.text;
+    if(liveTurnSaveTimer)scheduleLiveTurnSave();
+   }
+   if(server.outputTranscription?.text){
+    liveAssistantTranscript+=server.outputTranscription.text;
+    if(liveTurnSaveTimer)scheduleLiveTurnSave();
+   }
    const parts=server.modelTurn?.parts||[];
    for(const part of parts){
     const audio=part.inlineData?.data||part.inline_data?.data;
     if(audio)queueLiveAudio(audio);
    }
-   if(server.turnComplete)await saveLiveTurn();
+   if(server.turnComplete)scheduleLiveTurnSave();
   };
   liveSocket.onerror=()=>{
    if(status)status.textContent=liveLabel("error");
