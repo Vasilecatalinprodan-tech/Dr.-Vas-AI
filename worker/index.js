@@ -503,7 +503,7 @@ If a module is selected, adapt your answer to its purpose while remaining honest
 ${moduleSpecificInstruction}
 
 LANGUAGE:
-- The customer's selected interface language is: ${requestedLanguage || "not specified"}.
+- The selected interface language is: ${{ro:"Romanian",en:"English",it:"Italian",tr:"Turkish",de:"German",fr:"French",es:"Spanish",ru:"Russian"}[requestedLanguage] || "not specified"}.
 - If a selected language is supplied, answer in that language even when the user writes in another language, unless they explicitly ask you to switch.
 - Keep the entire response, including headings, explanations and examples, in the selected language.
 - Use natural, fluent and grammatically correct language.
