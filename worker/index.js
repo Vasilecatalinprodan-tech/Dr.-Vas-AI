@@ -498,7 +498,7 @@ Always follow these instructions.
 
       async function askModel(model) {
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 30000);
+        const timeout = setTimeout(() => controller.abort(), 20000);
 
         try {
           const response = await fetch(
@@ -592,24 +592,36 @@ Visul este o singură platformă care să adune un asistent general gratuit, inf
 Așa că, dacă mă întrebi care este povestea mea, ți-aș spune că este povestea unui om cu un drum lung în spate — cu muncă, politică, responsabilități, greșeli, năzbâtii, încercări și speranță — care a hotărât să transforme o parte din experiența lui într-un proiect pentru alții. Eu sunt Dr.Vas AI: nu un om și nu un medic, ci o idee construită de oameni, aflată încă în creștere, cu ambiția de a pune tehnologia în slujba oamenilor.`;
         usedModel = "drvas-origin-story";
       } else {
-        try {
-          answer = await askModel(usedModel);
-      } catch (firstError) {
-        const temporaryProblem =
-          firstError.name === "AbortError" ||
-          firstError.status === 429 ||
-          firstError.status === 503 ||
-          firstError.status === 502 ||
-          firstError.status === 500 ||
-          /high demand|overload|temporarily unavailable/i.test(firstError.message);
+        const modelFallbacks = [
+          "gemini-3.5-flash-lite",
+          "gemini-3.1-flash-lite",
+          "gemini-2.5-flash-lite"
+        ];
 
-        if (!temporaryProblem) {
-          throw firstError;
+        let lastTemporaryError = null;
+
+        for (const model of modelFallbacks) {
+          usedModel = model;
+
+          try {
+            answer = await askModel(model);
+            lastTemporaryError = null;
+            break;
+          } catch (modelError) {
+            const temporaryProblem =
+              modelError.name === "AbortError" ||
+              modelError.status === 429 ||
+              modelError.status === 503 ||
+              modelError.status === 502 ||
+              modelError.status === 500 ||
+              /high demand|overload|temporarily unavailable/i.test(modelError.message);
+
+            if (!temporaryProblem) throw modelError;
+            lastTemporaryError = modelError;
+          }
         }
 
-          usedModel = "gemini-3.1-flash-lite";
-          answer = await askModel(usedModel);
-        }
+        if (!answer && lastTemporaryError) throw lastTemporaryError;
       }
 
       console.info("Dr.Vas timing", {
