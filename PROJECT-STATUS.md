@@ -146,4 +146,19 @@ References:
 - Live API best practices: https://ai.google.dev/gemini-api/docs/live-api/best-practices
 - Gemini TTS: https://ai.google.dev/gemini-api/docs/speech-generation
 
-Status: roadmap documented only. No microphone UI, Live session, token endpoint, or voice feature has been implemented or deployed yet.
+Status update — 2026-11-02:
+- A first browser-based voice MVP has now been added to `www/index.html`: push-to-talk using the browser SpeechRecognition API, automatic submission of the recognized transcript to the existing Dr.Vas chat, optional spoken replies using SpeechSynthesis, replay and stop controls.
+- Voice controls and status messages are localized across all eight supported interface languages.
+- The browser voice selector prefers an available male-sounding voice for the selected language, but the actual voice depends on the device/browser and cannot be guaranteed.
+- Microphone access is requested only after the user presses the microphone button. The page explains that browser speech recognition may be processed by the browser's speech service; Dr.Vas does not retain raw audio recordings.
+- Privacy-safe client activity events are now supported by the Worker for sign-in/out, module selection, conversation create/open and voice input/output actions. Events contain metadata only, never conversation text, transcripts, audio, passwords or tokens.
+- The administrator dashboard now displays 24-hour activity counts for each of the six modules.
+- This browser MVP is not the final real-time voice experience. Gemini Live API, server-minted ephemeral tokens, streaming PCM audio, native spoken responses, barge-in/interruption and session resumption remain to be implemented and tested.
+- No browser or Android device QA has yet been completed for the new voice controls. GitHub Actions validation/deployment status must be checked after these commits.
+- The Supabase audit-log SQL migration still must be run manually before the administrator journal can persist and display these new events.
+
+Official current Gemini Live API documentation:
+- https://ai.google.dev/gemini-api/docs/live-api
+- https://ai.google.dev/api/live
+- https://ai.google.dev/api/generate-content (ephemeral token creation endpoint and schema)
+- Current recommended low-latency model: `gemini-3.8-live`; use an ephemeral token for client-to-server browser/mobile connections. Audio-only sessions are currently limited to 15 minutes unless session management/resumption is implemented.
