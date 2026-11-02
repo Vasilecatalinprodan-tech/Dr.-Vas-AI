@@ -292,7 +292,7 @@ let currentConversationId = null;
 let loadingConversation = false;
 let activeModule = "free";
 
-/* Mesajele conversației sunt salvate automat în cont după fiecare trimitere. */
+/* Mesajele rămân temporare până când utilizatorul apasă explicit „Salvează conversația”. */
 let conversationSaved = false;
 let pendingMessages = [];
 
@@ -511,7 +511,7 @@ function renderWelcome(){
   el("chat").innerHTML = "";
   const welcome = document.createElement("div");
   welcome.className = "msg bot";
-  welcome.textContent = "Bun venit la Dr.Vas AI! Cu ce te pot ajuta astăzi? Mesajele acestei conversații sunt salvate automat în contul tău.";
+  welcome.textContent = "Bun venit la Dr.Vas AI! Cu ce te pot ajuta astăzi? Mesajele noi nu se salvează automat. Apasă „Salvează conversația” doar dacă dorești să păstrezi discuția.";
   el("chat").appendChild(welcome);
   updateActiveConversation();
 }
@@ -580,7 +580,7 @@ async function openConversation(conversationId){
   currentConversationId = conversationId;
   conversationSaved = true;
   pendingMessages = [];
-  el("saveMessage").textContent = "Această conversație este salvată. Mesajele noi vor fi păstrate automat.";
+  el("saveMessage").textContent = "Această conversație are un istoric salvat. Mesajele noi rămân temporare până când apeși „Salvează conversația”.";
   updateSaveButton();
 
   const chat = el("chat");
@@ -617,7 +617,7 @@ function newConversation(){
   currentConversationId = makeId();
   conversationSaved = false;
   pendingMessages = [];
-  el("saveMessage").textContent = "Conversația nouă va fi salvată automat după primul mesaj.";
+  el("saveMessage").textContent = "Conversația nouă este privată implicit în istoricul contului. O poți salva manual când dorești.";
   updateSaveButton();
   renderWelcome();
   el("question").focus();
@@ -681,11 +681,10 @@ async function saveCurrentConversation(){
   }
 }
 
-async function recordMessage(role,content){
-  await saveMessage(role,content);
-  conversationSaved = true;
-  pendingMessages = [];
-  el("saveMessage").textContent = "Conversația este salvată automat în contul tău.";
+function recordMessage(role,content){
+  pendingMessages.push({role,content});
+  conversationSaved = false;
+  el("saveMessage").textContent = "Mesajele sunt temporare și nu au fost salvate. Apasă „Salvează conversația” dacă vrei să le păstrezi.";
   updateSaveButton();
 }
 
@@ -745,7 +744,7 @@ async function send(){
   const answer = appendMessage("assistant","Dr.Vas gândește...");
 
   try{
-    await recordMessage("user",message);
+    recordMessage("user",message);
 
     const {data:sessionData,error:sessionError} = await supabaseClient.auth.getSession();
     if(sessionError) throw sessionError;
@@ -772,7 +771,7 @@ async function send(){
     if(!data.reply) throw new Error("Răspuns invalid de la server");
 
     answer.textContent = data.reply;
-    await recordMessage("assistant",data.reply);
+    recordMessage("assistant",data.reply);
 
     console.info("Dr.Vas response time:",elapsed,"seconds","Module:",activeModule);
     if(conversationSaved) await loadConversationList();
