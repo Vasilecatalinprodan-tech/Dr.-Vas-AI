@@ -175,6 +175,43 @@ export default {
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "");
 
+      // ȘTERGEREA ISTORICULUI — confirmare obligatorie înainte de acțiunea ireversibilă.
+      const deleteHistoryIntent =
+        /^(?:șterge|sterge|șterge-mi|sterge-mi)\s+(?:toate\s+)?(?:conversațiile|conversatiile|discuțiile|discutiile|istoricul)(?:\s+(?:mele|salvat|salvate))?[.!?]*$/i.test(normalized) ||
+        /^(?:delete|clear)\s+(?:all\s+)?(?:my\s+)?(?:conversations|chat history|history)[.!?]*$/i.test(normalized);
+
+      const confirmDeleteHistoryIntent =
+        /^(?:confirm(?:ă|a)?|da,? confirm(?:ă|a)?|confirm(?:ă|a)\s+ștergerea|confirma\s+stergerea)\s+(?:ștergerea\s+)?(?:tuturor\s+)?(?:conversațiilor|conversatiilor|discuțiilor|discutiilor|istoricului)(?:\s+(?:mele|salvat|salvate))?[.!?]*$/i.test(normalized) ||
+        /^(?:confirm|yes,? confirm)\s+(?:deleting\s+)?(?:all\s+)?(?:my\s+)?(?:conversations|chat history|history)[.!?]*$/i.test(normalized);
+
+      if (deleteHistoryIntent) {
+        return json({
+          reply: "Pot șterge definitiv toate conversațiile salvate în contul tău. Acțiunea nu poate fi anulată. Pentru confirmare, scrie: „Confirm ștergerea tuturor conversațiilor”.",
+          action: "confirm_delete_conversations"
+        });
+      }
+
+      if (confirmDeleteHistoryIntent) {
+        const deleteParams = new URLSearchParams({
+          user_id: `eq.${user.id}`,
+          select: "conversation_id"
+        });
+        const deletedRows = await supabaseRequest(
+          "chat_messages",
+          `?${deleteParams.toString()}`,
+          { method: "DELETE", headers: { Prefer: "return=representation" } }
+        );
+        const deletedConversationCount = new Set(
+          (deletedRows || []).map(row => row.conversation_id)
+        ).size;
+
+        return json({
+          reply: `Am șters conversațiile salvate din contul tău (${deletedConversationCount} conversații). Nu am șters contul sau profilul.`,
+          action: "conversations_deleted",
+          deleted_conversations: deletedConversationCount
+        });
+      }
+
       // Utilizatorul cere să vadă memoria.
       const listIntent =
         /^(ce )?(ai )?(mai )?memorat despre mine\??$/.test(normalized) ||
