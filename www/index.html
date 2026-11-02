@@ -379,7 +379,16 @@ Object.assign(UI.de,{"Conectează-te pentru a continua în ":"Melde dich an, um 
 Object.assign(UI.fr,{"Conectează-te pentru a continua în ":"Connectez-vous pour continuer dans ","Dr.Vas Free și Dr.Vas Health sunt active. Dr.Vas Studio, Academy, Commerce și Business sunt în pregătire; funcțiile și accesul Premium vor fi activate după dezvoltare și implementarea abonamentelor. Dr.Vas Health oferă informații generale și nu înlocuiește consultația medicală.":"Dr.Vas Free et Dr.Vas Health sont actifs. Dr.Vas Studio, Academy, Commerce et Business sont en développement ; les fonctions Premium seront activées après leur développement et la mise en place des abonnements. Dr.Vas Health fournit des informations générales et ne remplace pas une consultation médicale."});
 Object.assign(UI.es,{"Conectează-te pentru a continua în ":"Inicia sesión para continuar en ","Dr.Vas Free și Dr.Vas Health sunt active. Dr.Vas Studio, Academy, Commerce și Business sunt în pregătire; funcțiile și accesul Premium vor fi activate după dezvoltare și implementarea abonamentelor. Dr.Vas Health oferă informații generale și nu înlocuiește consultația medicală.":"Dr.Vas Free y Dr.Vas Health están activos. Dr.Vas Studio, Academy, Commerce y Business están en desarrollo; las funciones Premium se activarán después de su desarrollo y de implementar las suscripciones. Dr.Vas Health ofrece información general y no sustituye una consulta médica."});
 Object.assign(UI.ru,{"Conectează-te pentru a continua în ":"Войдите, чтобы продолжить в ","Dr.Vas Free și Dr.Vas Health sunt active. Dr.Vas Studio, Academy, Commerce și Business sunt în pregătire; funcțiile și accesul Premium vor fi activate după dezvoltare și implementarea abonamentelor. Dr.Vas Health oferă informații generale și nu înlocuiește consultația medicală.":"Dr.Vas Free и Dr.Vas Health активны. Dr.Vas Studio, Academy, Commerce и Business находятся в разработке; функции Premium будут доступны после завершения разработки и внедрения подписок. Dr.Vas Health предоставляет общую информацию и не заменяет консультацию врача."});
+Object.assign(UI.ro|| (UI.ro={}),{"YOUR LANGUAGE · YOUR DR.VAS":"LIMBA TA · DR.VAS AL TĂU","Select your language":"Selectează limba","Choose the language you want to use throughout Dr.Vas.":"Alege limba pe care dorești să o folosești în întreaga platformă Dr.Vas.","INTELLIGENCE WITHOUT LIMITS":"INTELIGENȚĂ FĂRĂ LIMITE","AI ASSISTANT ONLINE":"ASISTENT AI ONLINE","Think • Ask • Discover":"Gândește • Întreabă • Descoperă","Spune-ne cum te cheamă":"Spune-ne cum te cheamă","United Kingdom":"Regatul Unit","Steagul României":"Steagul României","Creat în România":"Creat în România"});
+Object.assign(UI.en|| (UI.en={}),{"Spune-ne cum te cheamă":"Tell us your name","United Kingdom":"United Kingdom","Steagul României":"Romanian flag","Creat în România":"Created in Romania","Think • Ask • Discover":"Think • Ask • Discover","Selectează limba":"Select your language","Limba":"Language"});
+Object.assign(UI.it|| (UI.it={}),{"Spune-ne cum te cheamă":"Dicci come ti chiami","United Kingdom":"Regno Unito","Steagul României":"Bandiera della Romania","Creat în România":"Creato in Romania","Think • Ask • Discover":"Pensa • Chiedi • Scopri","Limba":"Lingua"});
+Object.assign(UI.tr|| (UI.tr={}),{"Spune-ne cum te cheamă":"Adını bize söyle","United Kingdom":"Birleşik Krallık","Steagul României":"Romanya bayrağı","Creat în România":"Romanya'da üretildi","Think • Ask • Discover":"Düşün • Sor • Keşfet","Limba":"Dil"});
+Object.assign(UI.de|| (UI.de={}),{"Spune-ne cum te cheamă":"Wie heißt du?","United Kingdom":"Vereinigtes Königreich","Steagul României":"Flagge Rumäniens","Creat în România":"In Rumänien entwickelt","Think • Ask • Discover":"Denken • Fragen • Entdecken","Limba":"Sprache"});
+Object.assign(UI.fr|| (UI.fr={}),{"Spune-ne cum te cheamă":"Comment vous appelez-vous ?","United Kingdom":"Royaume-Uni","Steagul României":"Drapeau de la Roumanie","Creat în România":"Créé en Roumanie","Think • Ask • Discover":"Penser • Demander • Découvrir","Limba":"Langue"});
+Object.assign(UI.es|| (UI.es={}),{"Spune-ne cum te cheamă":"Dinos cómo te llamas","United Kingdom":"Reino Unido","Steagul României":"Bandera de Rumanía","Creat în România":"Creado en Rumanía","Think • Ask • Discover":"Piensa • Pregunta • Descubre","Limba":"Idioma"});
+Object.assign(UI.ru|| (UI.ru={}),{"Spune-ne cum te cheamă":"Как вас зовут?","United Kingdom":"Великобритания","Steagul României":"Флаг Румынии","Creat în România":"Создано в Румынии","Think • Ask • Discover":"Думай • Спрашивай • Открывай","Limba":"Язык"});
 const textOrigins=new WeakMap();
+const attributeOrigins=new WeakMap();
 function tr(s){return (UI[currentLanguage]||{})[s]||s}
 function setLocalizedText(target,source){
  if(!target)return;
@@ -401,7 +410,17 @@ function translatePage(root=document.body){
  if(el("languageTitle"))setLocalizedText(el("languageTitle"),"Select your language");
  if(el("languageSubtitle"))setLocalizedText(el("languageSubtitle"),"Choose the language you want to use throughout Dr.Vas.");
  const placeholders=[["email","Adresa de email"],["password","Parola"],["displayName","Numele tău"],["question","Scrie întrebarea ta..."]];
- placeholders.forEach(([id,s])=>{if(el(id))el(id).placeholder=tr(s)});
+ placeholders.forEach(([id,key])=>{if(el(id))el(id).placeholder=tr(key)});
+ document.querySelectorAll("input,textarea,select,option,img,button,[aria-label],[title]").forEach(node=>{
+  for(const attr of ["placeholder","title","aria-label","alt"]){
+   if(!node.hasAttribute(attr))continue;
+   let saved=attributeOrigins.get(node);
+   if(!saved){saved={};attributeOrigins.set(node,saved)}
+   if(saved[attr]===undefined)saved[attr]=node.getAttribute(attr);
+   node.setAttribute(attr,tr(saved[attr]));
+  }
+ });
+ document.title=tr("Dr.Vas AI — Intelligence Without Limits");
 }
 function chooseLanguage(code){
  if(!SUPPORTED_LANGUAGES.includes(code))return;
