@@ -816,7 +816,7 @@ async function send(){
     if(!data.reply) throw new Error("Răspuns invalid de la server");
 
     answer.textContent = data.reply;
-    await saveMessage("assistant",data.reply);
+    if(data.action !== "conversations_deleted") await saveMessage("assistant",data.reply);
     conversationSaved = true;
     pendingMessages = [];
     el("saveMessage").textContent = "Conversația este salvată automat.";
