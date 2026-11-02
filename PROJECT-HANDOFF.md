@@ -181,3 +181,11 @@ Important limitations and next QA:
 - Gemini Live prompt instructions alone do not guarantee an exact speaking rate; playback is currently slowed slightly client-side. A custom reference voice for precise pacing is not assumed available.
 - Do not market Dr.Vas Health voice as clinically reliable or use it as a substitute for qualified clinicians. Before any clinical deployment, perform formal medical safety, accessibility, privacy, consent, transcription accuracy and human oversight validation.
 - User has not yet tested the updated voice. Do not claim the issue is fixed until the user listens to Romanian and English samples and confirms.
+
+
+## Translation and voice refinement — 2026-11-02
+
+- Strengthened the main assistant language instructions: translations must preserve meaning, nuance, register, names, numbers, negations and medical details; use idiomatic target-language grammar; avoid literal word-for-word rendering; and flag genuine ambiguity rather than guessing.
+- Updated Gemini Live voice from Charon (informative) to Iapetus (clear male voice). The Live persona now requests a mature, calm, reassuring, professional and warm masculine delivery, with natural conversational rhythm and complete-word articulation.
+- Improved browser speech synthesis: strips Markdown/code/URLs/list markers before reading, restores natural pauses at paragraph boundaries, uses a moderate 0.91 rate rather than 0.84, and slightly lowers pitch for a steadier delivery. Voice selection prefers installed enhanced/natural voices matching the selected language and never falls back to another language.
+- Important limitation: browser speech voices are supplied by the operating system/browser, so the selected installed voice still varies by device. Gemini Live voice quality and translation accuracy require user testing in Romanian and English before considering this refinement accepted. No clinical translation or voice validation is implied.
