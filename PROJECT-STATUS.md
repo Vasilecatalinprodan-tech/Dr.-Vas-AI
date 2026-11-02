@@ -170,3 +170,12 @@ Official current Gemini Live API documentation:
 - https://ai.google.dev/api/live
 - https://ai.google.dev/api/generate-content (ephemeral token creation endpoint and schema)
 - Current recommended low-latency model: `gemini-3.8-live`; use an ephemeral token for client-to-server browser/mobile connections. Audio-only sessions are currently limited to 15 minutes unless session management/resumption is implemented.
+
+
+## Voice clarity update — 2026-11-02
+
+- Implemented first-pass voice improvements in `www/index.html` and `worker/index.js`: browser TTS now runs at 0.84x with language-matched voice selection and no English fallback for missing Romanian voices; Gemini Live uses Charon, explicit language codes, clearer pacing/articulation instructions, and 0.92x client playback scheduling.
+- Localized warning added when the device has no installed voice for the selected language.
+- Changes are committed, but the latest deployment/build and actual browser/Android voice quality are still unverified. User must test Romanian and English Live and non-Live modes.
+- Speech recognition remains browser-dependent for non-Live dictation; accuracy must be evaluated separately from TTS output.
+- Do not describe voice as medically validated. Dr.Vas Health remains general information only and any future clinical use requires clinician oversight and formal safety/privacy/accessibility validation.
