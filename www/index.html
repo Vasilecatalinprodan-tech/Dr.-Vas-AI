@@ -116,7 +116,7 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 </header>
 
 <main>
-<section class="hero">
+<section id="heroSection" class="hero">
  <div class="hero-content">
   <div class="tag">INTELLIGENCE WITHOUT LIMITS</div>
   <h1>Gândește diferit.<br><strong>Întreabă Dr.Vas.</strong></h1>
@@ -126,7 +126,7 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 </section>
 
 <section class="panel">
-  <section class="modules-section">
+  <section id="moduleSelectionSection" class="modules-section">
    <div class="modules-heading">
     <div><h2>Platforma Dr.Vas</h2><p>Alege spațiul de lucru de care ai nevoie.</p></div>
     <span class="status">6 MODULE DISPONIBILE</span>
@@ -384,6 +384,10 @@ async function handleAuth(){
 }
 
 function showOnly(section){
+  const authenticatedView = section === "profileSection" || section === "chatSection";
+  // După autentificare, interfața publică (hero + cele șase module) dispare.
+  el("heroSection").classList.toggle("hidden",authenticatedView);
+  el("moduleSelectionSection").classList.toggle("hidden",authenticatedView);
   ["authSection","profileSection","chatSection"].forEach(id=>{
     el(id).classList.toggle("hidden",id !== section);
   });
@@ -667,6 +671,9 @@ function showLogin(){
   if(el("saveMessage")) el("saveMessage").textContent = "";
   updateSaveButton();
   ["authSection","profileSection","chatSection"].forEach(id=>el(id).classList.add("hidden"));
+  // La deconectare revenim la pagina publică de selecție a modulelor.
+  el("heroSection").classList.remove("hidden");
+  el("moduleSelectionSection").classList.remove("hidden");
 }
 
 async function logout(){
