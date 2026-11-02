@@ -166,7 +166,6 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
      <span id="activeModuleDescription">Modulul general este selectat. Poți începe conversația.</span>
     </div>
    </div>
-   <button id="continueModuleButton" class="auth-button" style="width:100%;margin-top:14px" onclick="continueWithModule()">Continuă cu modulul ales</button>
    <p id="moduleAccessMessage" class="module-disclaimer" aria-live="polite"></p>
    <p class="module-disclaimer">Modulele sunt în curs de dezvoltare. Selectarea lor pregătește spațiul de lucru; funcțiile și agenții AI specializați vor fi conectați treptat. Dr.Vas Health oferă informații generale și nu înlocuiește consultația medicală.</p>
   </section>
@@ -326,17 +325,14 @@ function selectModule(moduleId){
   el("activeModuleDescription").textContent = details.description;
   el("chatModuleLabel").textContent = details.icon + " " + details.label;
   el("question").placeholder = details.placeholder;
-}
 
-function continueWithModule(){
-  const details = moduleDetails[activeModule];
-  if(!details) return;
-  const premium = ["studio","academy","commerce","business"].includes(activeModule);
+  // Un singur click pe un modul gratuit duce direct la autentificare.
+  const premium = ["studio","academy","commerce","business"].includes(moduleId);
   if(premium){
-    el("moduleAccessMessage").textContent = "Acest modul Premium este în pregătire. Accesul va fi activat după implementarea abonamentelor și verificarea plății. Nu există încă acces Premium activ.";
+    accessMessage.textContent = "Acest modul Premium este în pregătire. Accesul va fi activat după implementarea abonamentelor și verificarea plății.";
     return;
   }
-  el("moduleAccessMessage").textContent = "";
+
   el("authSection").classList.remove("hidden");
   el("authTitle").textContent = authMode === "login" ? "Bine ai venit!" : "Creează-ți contul";
   el("authDescription").textContent = "Conectează-te pentru a continua în " + details.name + ".";
