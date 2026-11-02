@@ -131,3 +131,15 @@ Expected HTTP result for the static page: `200`.
 - Prefer making direct repository edits when possible, then report the exact file and commit.
 - Keep the user informed in Romanian with clear, short terminal commands.
 - Preserve this handoff document as the ongoing source of truth and update it after important work.
+
+## 11. Latest changes — 2026-11-02
+
+- User confirmed the Codespaces preview page opens successfully.
+- Added a **Păstrează-mă conectat** checkbox to the login form in `www/index.html`.
+- Supabase auth now uses a storage adapter that stores the session in `localStorage` when the box is checked (default checked), or in `sessionStorage` when unchecked. Signing out remains available and clears the session from both browser stores.
+- The user-facing founder story in `worker/index.js` has been rewritten in Romanian and English. It now has a warmer, more human and professional tone; includes approximately 25 years in Romanian public/political life, personal adviser and personal courier roles in Botoșani, both positive and difficult experiences, mistakes and everyday mischief, and more than eight years as a Senior Healthcare Assistant in the NHS.
+- The story explicitly clarifies that “Dr.” is a nickname, Cătălin is not a doctor, and Jan is an AI collaborator rather than a human co-founder. It avoids inventing specific mischief or disclosing private health details.
+- Latest frontend commit: `ee906082df484851fe608ad9f46ee886fe70fe2d`.
+- Latest Worker/story commit: `d670b500f895c30c8d619209ae1ed741d9d6154b`.
+- These changes are committed to `drvas-integrated-platform` only. They have NOT been deployed to the production Cloudflare Worker. The Codespaces preview must pull the branch before it can display the updated login UI; the story response also requires the Worker deployment before it changes in production.
+- Required tests: unchecked remember option should survive refresh in the same tab but not a fresh browser session; checked option should survive closing/reopening the browser; logout must end the session. Test both the Romanian founder-story prompt and the English equivalent after Worker deployment.
