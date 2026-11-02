@@ -178,6 +178,11 @@ export default {
         if (premiumLiveModules.has(liveModule) && !isLiveAdmin) {
           return json({ error: "Acest modul Premium necesită un abonament activ." }, 403);
         }
+        if (liveModule === "health" && env.GEMINI_LIVE_HEALTH_ENABLED !== "true") {
+          return json({
+            error: "Vocea Dr.Vas Health este dezactivată temporar până la verificarea condițiilor de confidențialitate și protecție a datelor medicale."
+          }, 403);
+        }
 
         const moduleInstruction = liveModule === "health"
           ? "You provide general health education only. You are not a doctor and do not diagnose or prescribe. For life-threatening symptoms in the UK, tell the user to call 999 or 112 immediately. For urgent non-life-threatening concerns in England, advise NHS 111 or urgent GP assessment. Never tell users to delay emergency care."
