@@ -196,3 +196,8 @@ Important limitations and next QA:
 - Founder story wording now identifies the role as personal adviser and personal courier to a deputy in the Romanian Parliament (Romanian: „un deputat din Parlamentul României”); this wording intentionally avoids naming a county or constituency, rather than the less precise „un deputat român”; the equivalent wording is updated in the supported language variants.
 - Standard assistant and Live system instructions explicitly preserve the same Dr.Vas identity, personality and conversational style across all supported languages. Language changes must not create a different character.
 - Gemini Live uses one configured voice name, Iapetus, for all supported language codes. Browser read-aloud uses operating-system voices selected by language, so the exact same acoustic voice cannot be guaranteed in browser TTS across Romanian and English. For a consistent voice identity, use Live mode; browser TTS remains device-dependent.
+
+
+### Live voice consistency correction — 2026-11-02
+- Aligned the server-issued Gemini Live token voice with the browser Live WebSocket setup: both now explicitly use `Charon` for every supported language. This removes the previous server/client mismatch (`Iapetus` vs `Charon`).
+- The ordinary browser read-aloud feature still uses installed operating-system voices by language; it cannot guarantee the same acoustic voice across English and Romanian. Use the Live conversation mode for the shared configured Dr.Vas voice.
