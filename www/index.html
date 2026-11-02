@@ -357,7 +357,7 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
      <button type="button" id="voiceStopButton" onclick="stopVoiceOutput()" disabled>■ Oprește</button>
      <span id="voiceStatus" role="status" aria-live="polite">Vocea este oprită.</span>
     </div>
-    <p class="voice-privacy">Microfonul se activează numai după apăsare. În modul Live, sunetul este transmis către Gemini pentru răspuns în timp real și poate consuma utilizare API; în modul dictare, recunoașterea poate fi procesată de browser. Dr.Vas nu păstrează înregistrări audio.</p>
+    <p class="voice-privacy">Microfonul se activează numai după apăsare. În modul Live, sunetul este transmis către Gemini pentru răspuns în timp real și poate consuma utilizare API; în modul dictare, recunoașterea poate fi procesată de browser. Dr.Vas nu păstrează înregistrări audio; transcrierile text se salvează în istoricul conversației.</p>
     <div class="note">Răspunsurile AI pot conține erori. Verifică informațiile importante.</div>
    </div>
   </div>
@@ -507,6 +507,7 @@ function localizeReply(reply){
 }
 function chooseLanguage(code){
  if(!SUPPORTED_LANGUAGES.includes(code))return;
+ if(liveSocket||liveStream)stopLiveVoice();
  currentLanguage=code;languageReady=true;localStorage.setItem(LANGUAGE_KEY,code);
  el("appMain").classList.remove("language-pending");el("languageGate").classList.add("hidden");
  translatePage();refreshVoiceUi(voiceAutoRead?"ready":"off");checkSession();
@@ -822,6 +823,22 @@ function queueLiveAudio(base64Data){
   };
  }catch(error){console.warn("Live audio playback:",error);}
 }
+async function sendLiveHistory(){
+ if(!currentUser||!currentConversationId||!liveSocket||liveSocket.readyState!==WebSocket.OPEN)return;
+ try{
+  const {data,error}=await supabaseClient.from("chat_messages")
+   .select("role,content")
+   .eq("user_id",currentUser.id)
+   .eq("conversation_id",currentConversationId)
+   .order("created_at",{ascending:false}).limit(16);
+  if(error)throw error;
+  const turns=(data||[]).reverse().filter(item=>["user","assistant"].includes(item.role))
+   .map(item=>({role:item.role==="assistant"?"model":"user",parts:[{text:String(item.content||"").slice(0,4000)}]}));
+  if(turns.length&&liveSocket&&liveSocket.readyState===WebSocket.OPEN){
+   liveSocket.send(JSON.stringify({clientContent:{turns,turnComplete:false}}));
+  }
+ }catch(error){console.warn("Live history context:",error);}
+}
 async function saveLiveTurn(){
  const userText=liveUserTranscript.trim();
  const assistantText=liveAssistantTranscript.trim();
@@ -872,6 +889,8 @@ async function stopLiveMedia(){
  if(liveAudioContext){const context=liveAudioContext;liveAudioContext=null;try{await context.close()}catch{}}
 }
 async function stopLiveVoice(){
+ const hadLiveSession=Boolean(liveSocket||liveStream);
+ if(hadLiveSession&&currentUser)await logClientEvent("voice_live_session_ended");
  liveStopRequested=true;
  if(liveSocket){
   const socket=liveSocket;
@@ -949,6 +968,7 @@ async function startLiveVoice(){
    if(message.setupComplete){
     liveSetupReady=true;
     try{
+     await sendLiveHistory();
      await startLiveMicrophone();
      if(status)status.textContent=liveLabel("ready");
      refreshVoiceUi();
@@ -1003,6 +1023,7 @@ function updateSaveButton(){
 
 function selectModule(moduleId,fromUser=false){
   if(!moduleDetails[moduleId]) return;
+  if(fromUser&&(liveSocket||liveStream))stopLiveVoice();
   if(fromUser&&currentUser)logClientEvent("module_selected",moduleId);
   activeModule = moduleId;
   const accessMessage = el("moduleAccessMessage");
@@ -1489,6 +1510,7 @@ function recordMessage(role,content){
 
 function showLogin(){
   if(!languageReady)return;
+  if(liveSocket||liveStream)stopLiveVoice();
   currentUser = null;
   currentConversationId = null;
   conversationSaved = false;
@@ -1506,6 +1528,7 @@ function showLogin(){
 
 async function logout(){
   await logClientEvent("auth_sign_out");
+  if(liveSocket||liveStream)await stopLiveVoice();
   if(voiceRecognition&&voiceListening)voiceRecognition.stop();
   stopVoiceOutput();
   const {error} = await supabaseClient.auth.signOut();
@@ -1516,6 +1539,14 @@ async function logout(){
   showLogin();
   setLocalizedText(el("authMessage"),"Te-ai deconectat cu succes.");
 }
+
+document.addEventListener("visibilitychange",()=>{
+ if(document.hidden&&(liveSocket||liveStream))stopLiveVoice();
+});
+window.addEventListener("pagehide",()=>{
+ if(liveSocket){try{liveSocket.close()}catch{}}
+ if(liveStream)liveStream.getTracks().forEach(track=>track.stop());
+});
 
 supabaseClient.auth.onAuthStateChange((event,session)=>{
   if(!languageReady)return;
