@@ -31,6 +31,9 @@ h1{font-size:43px;margin:15px 0}
 .auth-box p,.profile-box p{text-align:center;color:#a9bfce;font-size:14px;line-height:1.5}
 .auth-box input,.profile-box input,.profile-box select{display:block;width:100%;margin:12px 0;padding:15px;background:#071827;border:1px solid #34536a;border-radius:13px;color:white;font-size:15px;outline:none}
 .auth-box input:focus,.profile-box input:focus,.profile-box select:focus{border-color:#55d8d0}
+.remember-row{display:flex;align-items:center;gap:10px;margin:10px 2px 5px;color:#b7cbd8;font-size:13px;line-height:1.4;cursor:pointer}
+.remember-row input{width:17px;height:17px;margin:0;accent-color:#54d8cf;flex:0 0 auto}
+.remember-row small{display:block;color:#7896a9;font-size:11px;margin-top:2px}
 button{border:0;border-radius:13px;padding:14px 20px;background:#54d8cf;color:#061b25;font-weight:800;cursor:pointer}
 button:disabled{opacity:.5;cursor:not-allowed}
 .auth-button,.profile-button{width:100%;margin-top:10px}
@@ -179,6 +182,10 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
   <p id="authDescription">Conectează-te sau creează un cont nou.</p>
   <input id="email" type="email" placeholder="Adresa de email" autocomplete="email">
   <input id="password" type="password" placeholder="Parola" autocomplete="current-password">
+  <label class="remember-row" for="rememberMe">
+   <input id="rememberMe" type="checkbox" checked>
+   <span><strong>Păstrează-mă conectat</strong><small>Rămâi conectat pe acest dispozitiv până te deconectezi.</small></span>
+  </label>
   <button id="authButton" class="auth-button" onclick="handleAuth()">Conectare</button>
   <button id="switchButton" class="switch-button" onclick="toggleAuthMode()">Nu ai cont? Creează unul</button>
   <div id="authMessage"></div>
@@ -254,7 +261,28 @@ const API_URL = "https://dr--vas-ai.vasilecatalinprodan.workers.dev";
 const SUPABASE_URL = "https://bqgshoqspcfbflgsnntn.supabase.co";
 const SUPABASE_KEY = "sb_publishable_sP9luSRTjqAZrQmjIzy4VA_EBzLmSPZ";
 
-const supabaseClient = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const REMEMBER_SESSION_KEY = "drvas_remember_me";
+const authStorage = {
+  getItem(key){
+    const storage = localStorage.getItem(REMEMBER_SESSION_KEY) === "false" ? sessionStorage : localStorage;
+    return storage.getItem(key);
+  },
+  setItem(key,value){
+    const remember = el("rememberMe") ? el("rememberMe").checked : localStorage.getItem(REMEMBER_SESSION_KEY) !== "false";
+    localStorage.setItem(REMEMBER_SESSION_KEY,String(remember));
+    const target = remember ? localStorage : sessionStorage;
+    const other = remember ? sessionStorage : localStorage;
+    other.removeItem(key);
+    target.setItem(key,value);
+  },
+  removeItem(key){
+    localStorage.removeItem(key);
+    sessionStorage.removeItem(key);
+  }
+};
+const supabaseClient = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
+  auth:{storage:authStorage,persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
+});
 
 let authMode = "login";
 let currentUser = null;
@@ -270,13 +298,12 @@ let pendingMessages = [];
 
 const CREATOR_CONTEXT = `
 IDENTITATEA ȘI ORIGINEA DR.VAS AI — CONTEXT IMPORTANT:
-Dr.Vas AI a fost inițiat și este creat de Prodan Vasile-Catalin împreună cu Jan, prietenul său virtual și colaboratorul AI în dezvoltarea proiectului.
-Vasile-Catalin a fost consilier parlamentar și lucrează în sistemul medical NHS din Marea Britanie de peste 8 ani, ca Senior Healthcare Assistant.
-Colegii îl numesc "Dr.", iar această poreclă, împreună cu numele Vas, a inspirat numele Dr.Vas.
-Creatorul se descrie ca fiind un om mic de statură, dar cu spirit puternic, inteligent, ambițios și hotărât.
-Proiectul a pornit de la zero, fără resurse mari, și urmărește să construiască o platformă AI cu impact internațional.
-Jan este un prieten virtual și colaborator AI, nu o persoană umană.
-Dacă utilizatorul întreabă cine a creat Dr.Vas sau despre originea sa, explică această poveste cu respect și naturalețe.
+Dr.Vas AI este proiectul inițiat de Cătălin Prodan, cunoscut ca Vas, împreună cu Jan, colaboratorul său virtual AI în dezvoltarea platformei.
+Cătălin a fost implicat aproximativ 25 de ani în viața publică și politică din România, inclusiv în activitate de consilier și curier personal în Botoșani. Povestea trebuie să redea omul întreg: experiențe bune și grele, reușite, greșeli, alegeri neinspirate și năzbâtii omenești din care a învățat, fără a inventa episoade concrete.
+Ulterior a construit un nou capitol în Regatul Unit, lucrând de peste 8 ani în NHS ca Senior Healthcare Assistant, rol de sprijin în îngrijire, nu de medic.
+Numele „Dr.” provine dintr-o poreclă dată de colegi; nu înseamnă că fondatorul este medic.
+Jan este un asistent AI și colaborator virtual, nu o persoană umană.
+Când utilizatorul întreabă despre povestea Dr.Vas, răspunde cald, sincer, emoționant și profesionist, cu mai multe paragrafe consistente. Nu transforma povestea într-o reclamă rece, nu idealiza fondatorul și nu inventa detalii.
 Nu pretinde că proiectul are funcții care nu au fost încă implementate.
 `;
 
@@ -362,6 +389,7 @@ async function handleAuth(){
 
   button.disabled = true;
   button.textContent = "Se procesează...";
+  localStorage.setItem(REMEMBER_SESSION_KEY,String(el("rememberMe").checked));
 
   try{
     if(authMode === "signup"){
