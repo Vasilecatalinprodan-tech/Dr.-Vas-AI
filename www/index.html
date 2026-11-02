@@ -310,12 +310,12 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
    </div>
    <h4>Module și acces administrator</h4>
    <div class="admin-grid admin-module-grid" id="adminModuleGrid">
-    <div class="admin-tile"><strong>Dr.Vas Free</strong><span>Gratuit · activ</span></div>
-    <div class="admin-tile"><strong>Dr.Vas Health</strong><span>Gratuit · activ</span></div>
-    <div class="admin-tile"><strong>Dr.Vas Studio</strong><span>Premium · testare administrator</span></div>
-    <div class="admin-tile"><strong>Dr.Vas Academy</strong><span>Premium · testare administrator</span></div>
-    <div class="admin-tile"><strong>Dr.Vas Commerce</strong><span>Premium · testare administrator</span></div>
-    <div class="admin-tile"><strong>Dr.Vas Business</strong><span>Premium · testare administrator</span></div>
+    <div class="admin-tile"><strong>Dr.Vas Free</strong><span>Gratuit · activ · 24h: <b id="adminCountFree">—</b></span></div>
+    <div class="admin-tile"><strong>Dr.Vas Health</strong><span>Gratuit · activ · 24h: <b id="adminCountHealth">—</b></span></div>
+    <div class="admin-tile"><strong>Dr.Vas Studio</strong><span>Premium · testare admin · 24h: <b id="adminCountStudio">—</b></span></div>
+    <div class="admin-tile"><strong>Dr.Vas Academy</strong><span>Premium · testare admin · 24h: <b id="adminCountAcademy">—</b></span></div>
+    <div class="admin-tile"><strong>Dr.Vas Commerce</strong><span>Premium · testare admin · 24h: <b id="adminCountCommerce">—</b></span></div>
+    <div class="admin-tile"><strong>Dr.Vas Business</strong><span>Premium · testare admin · 24h: <b id="adminCountBusiness">—</b></span></div>
    </div>
    <p id="adminDashboardNotice" class="admin-footnote" role="status">Se încarcă datele operaționale…</p>
    <h4>Jurnal operațional · ultimele activități</h4>
@@ -956,6 +956,11 @@ async function loadAdminDashboard(){
     el("adminMetricEvents").textContent = String(result.total_events ?? 0);
     el("adminMetricErrors").textContent = String(result.errors ?? 0);
     el("adminMetricUsers").textContent = String(result.active_users ?? 0);
+    const moduleCountIds={free:"adminCountFree",health:"adminCountHealth",studio:"adminCountStudio",academy:"adminCountAcademy",commerce:"adminCountCommerce",business:"adminCountBusiness"};
+    Object.entries(moduleCountIds).forEach(([moduleName,id])=>{
+      const target=el(id);
+      if(target)target.textContent=String(result.module_counts?.[moduleName]??0);
+    });
     if(notice) notice.textContent = "Date actualizate: " + new Date(result.generated_at).toLocaleString(currentLanguage || "ro") + " · interval 24 de ore.";
     const tbody = el("adminLogsBody");
     tbody.replaceChildren();
