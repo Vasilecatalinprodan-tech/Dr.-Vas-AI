@@ -395,6 +395,13 @@ Object.assign(UI.de,{"Dr.Vas AI — Intelligence Without Limits":"Dr.Vas AI — 
 Object.assign(UI.fr,{"Dr.Vas AI — Intelligence Without Limits":"Dr.Vas AI — Intelligence sans limites","© 2026 Dr.Vas AI · Think • Ask • Discover":"© 2026 Dr.Vas AI · Penser • Demander • Découvrir"});
 Object.assign(UI.es,{"Dr.Vas AI — Intelligence Without Limits":"Dr.Vas AI — Inteligencia sin límites","© 2026 Dr.Vas AI · Think • Ask • Discover":"© 2026 Dr.Vas AI · Piensa • Pregunta • Descubre"});
 Object.assign(UI.ru,{"Dr.Vas AI — Intelligence Without Limits":"Dr.Vas AI — Интеллект без границ","© 2026 Dr.Vas AI · Think • Ask • Discover":"© 2026 Dr.Vas AI · Думай • Спрашивай • Открывай"});
+Object.assign(UI.en,{"Nu am putut salva conversația: ":"Could not save conversation: ","Sesiunea conversației nu este disponibilă.":"Conversation session is unavailable.","Eroare: ":"Error: ","Nu am putut încărca istoricul.":"Could not load conversation history.","Nu am putut încheia sesiunea: ":"Could not end the session: "});
+Object.assign(UI.it,{"Nu am putut salva conversația: ":"Impossibile salvare la conversazione: ","Sesiunea conversației nu este disponibilă.":"La sessione della conversazione non è disponibile.","Eroare: ":"Errore: ","Nu am putut încărca istoricul.":"Impossibile caricare la cronologia delle conversazioni.","Nu am putut încheia sesiunea: ":"Impossibile terminare la sessione: "});
+Object.assign(UI.tr,{"Nu am putut salva conversația: ":"Sohbet kaydedilemedi: ","Sesiunea conversației nu este disponibilă.":"Sohbet oturumu kullanılamıyor.","Eroare: ":"Hata: ","Nu am putut încărca istoricul.":"Sohbet geçmişi yüklenemedi.","Nu am putut încheia sesiunea: ":"Oturum sonlandırılamadı: "});
+Object.assign(UI.de,{"Nu am putut salva conversația: ":"Unterhaltung konnte nicht gespeichert werden: ","Sesiunea conversației nu este disponibilă.":"Die Unterhaltungssitzung ist nicht verfügbar.","Eroare: ":"Fehler: ","Nu am putut încărca istoricul.":"Gesprächsverlauf konnte nicht geladen werden.","Nu am putut încheia sesiunea: ":"Sitzung konnte nicht beendet werden: "});
+Object.assign(UI.fr,{"Nu am putut salva conversația: ":"Impossible d'enregistrer la conversation : ","Sesiunea conversației nu este disponibilă.":"La session de conversation est indisponible.","Eroare: ":"Erreur : ","Nu am putut încărca istoricul.":"Impossible de charger l'historique des conversations.","Nu am putut încheia sesiunea: ":"Impossible de terminer la session : "});
+Object.assign(UI.es,{"Nu am putut salva conversația: ":"No se pudo guardar la conversación: ","Sesiunea conversației nu este disponibilă.":"La sesión de conversación no está disponible.","Eroare: ":"Error: ","Nu am putut încărca istoricul.":"No se pudo cargar el historial de conversaciones.","Nu am putut încheia sesiunea: ":"No se pudo cerrar la sesión: "});
+Object.assign(UI.ru,{"Nu am putut salva conversația: ":"Не удалось сохранить беседу: ","Sesiunea conversației nu este disponibilă.":"Сеанс беседы недоступен.","Eroare: ":"Ошибка: ","Nu am putut încărca istoricul.":"Не удалось загрузить историю бесед.","Nu am putut încheia sesiunea: ":"Не удалось завершить сеанс: "});
 const textOrigins=new WeakMap();
 const attributeOrigins=new WeakMap();
 function tr(s){return (UI[currentLanguage]||{})[s]||s}
@@ -755,7 +762,7 @@ async function loadConversationList(){
     const conversations = await getConversationIds();
     if(!conversations.length){
       const empty = document.createElement("p");
-      empty.textContent = "Nu ai încă discuții salvate.";
+      setLocalizedText(empty,"Nu ai încă discuții salvate.");
       empty.style.cssText = "font-size:12px;color:#7fa4b5;line-height:1.5";
       list.appendChild(empty);
       return;
@@ -766,7 +773,7 @@ async function loadConversationList(){
       button.className = "conversation-item";
       button.dataset.id = conversation.id;
       const title = document.createElement("span");
-      title.textContent = "Conversația " + (index + 1);
+      setLocalizedText(title,"Conversația " + (index + 1));
       const date = document.createElement("small");
       date.textContent = new Date(conversation.date).toLocaleString(currentLanguage || "ro");
       button.appendChild(title);
@@ -777,7 +784,7 @@ async function loadConversationList(){
     updateActiveConversation();
   }catch(error){
     console.error("Conversation list:",error);
-    list.textContent = "Nu am putut încărca istoricul.";
+    setLocalizedText(list,"Nu am putut încărca istoricul.");
   }
 }
 
@@ -789,12 +796,12 @@ function updateActiveConversation(){
 
 async function deleteAllConversations(){
   if(!currentUser) return;
-  const confirmed = window.confirm("Ștergi definitiv toate conversațiile salvate din cont? Acțiunea nu poate fi anulată.");
+  const confirmed = window.confirm(tr("Ștergi definitiv toate conversațiile salvate din cont? Acțiunea nu poate fi anulată."));
   if(!confirmed) return;
 
   const button = document.querySelector(".delete-history-button");
   button.disabled = true;
-  button.textContent = "Se șterge...";
+  setLocalizedText(button,"Se șterge...");
   try{
     const {error} = await supabaseClient.from("chat_messages")
       .delete()
@@ -804,15 +811,15 @@ async function deleteAllConversations(){
     pendingMessages = [];
     currentConversationId = makeId();
     conversationSaved = false;
-    el("saveMessage").textContent = "Istoricul conversațiilor salvate a fost șters.";
+    setLocalizedText(el("saveMessage"),"Istoricul conversațiilor salvate a fost șters.");
     updateSaveButton();
     renderWelcome();
     await loadConversationList();
   }catch(error){
-    el("saveMessage").textContent = "Nu am putut șterge istoricul: " + error.message;
+    el("saveMessage").textContent = tr("Nu am putut șterge istoricul: ") + error.message;
   }finally{
     button.disabled = false;
-    button.textContent = "Șterge tot istoricul";
+    setLocalizedText(button,"Șterge tot istoricul");
   }
 }
 
@@ -822,14 +829,14 @@ async function openConversation(conversationId){
   currentConversationId = conversationId;
   conversationSaved = true;
   pendingMessages = [];
-  el("saveMessage").textContent = "Această conversație și mesajele noi se salvează automat în contul tău.";
+  setLocalizedText(el("saveMessage"),"Această conversație și mesajele noi se salvează automat în contul tău.");
   updateSaveButton();
 
   const chat = el("chat");
   chat.innerHTML = "";
   const loading = document.createElement("div");
   loading.className = "msg bot";
-  loading.textContent = "Se încarcă discuția...";
+  setLocalizedText(loading,"Se încarcă discuția...");
   chat.appendChild(loading);
 
   try{
@@ -848,7 +855,7 @@ async function openConversation(conversationId){
     chat.scrollTop = chat.scrollHeight;
   }catch(error){
     chat.innerHTML = "";
-    appendMessage("assistant","Nu am putut încărca această conversație: " + error.message);
+    appendMessage("assistant",tr("Nu am putut încărca această conversație: ") + error.message);
   }finally{
     loadingConversation = false;
   }
@@ -859,7 +866,7 @@ function newConversation(){
   currentConversationId = makeId();
   conversationSaved = false;
   pendingMessages = [];
-  el("saveMessage").textContent = "Conversația nouă se salvează automat în contul tău.";
+  setLocalizedText(el("saveMessage"),"Conversația nouă se salvează automat în contul tău.");
   updateSaveButton();
   renderWelcome();
   el("question").focus();
@@ -874,7 +881,7 @@ function appendMessage(role,content){
 }
 
 async function saveMessage(role,content){
-  if(!currentUser || !currentConversationId) throw new Error("Sesiunea conversației nu este disponibilă.");
+  if(!currentUser || !currentConversationId) throw new Error(tr("Sesiunea conversației nu este disponibilă."));
   const {error} = await supabaseClient.from("chat_messages").insert({
     user_id:currentUser.id,
     conversation_id:currentConversationId,
@@ -917,7 +924,7 @@ async function saveCurrentConversation(){
     updateSaveButton();
     await loadConversationList();
   }catch(error){
-    el("saveMessage").textContent = "Nu am putut salva conversația: " + error.message;
+    el("saveMessage").textContent = tr("Nu am putut salva conversația: ") + error.message;
     button.disabled = false;
     setLocalizedText(button,"Încearcă din nou să salvezi");
   }
@@ -950,7 +957,7 @@ function showLogin(){
 async function logout(){
   const {error} = await supabaseClient.auth.signOut();
   if(error){
-    alert("Nu am putut încheia sesiunea: " + error.message);
+    alert(tr("Nu am putut încheia sesiunea: ") + error.message);
     return;
   }
   showLogin();
@@ -1039,7 +1046,7 @@ async function send(){
     if(conversationSaved) await loadConversationList();
 
   }catch(error){
-    answer.textContent = "Eroare: " + error.message;
+    answer.textContent = tr("Eroare: ") + tr(error.message);
     console.error("Dr.Vas AI:",error);
   }finally{
     button.disabled = false;
