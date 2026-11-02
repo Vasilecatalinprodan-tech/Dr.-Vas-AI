@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ro">
 <head>
@@ -15,7 +14,7 @@ header{min-height:75px;padding:12px 7%;display:flex;align-items:center;justify-c
 .logo{font-size:25px;font-weight:800;color:#54ded5}
 .flag{display:inline-flex;align-items:center;justify-content:center;margin-left:7px;font-size:17px;vertical-align:2px}
 .status{font-size:12px;color:#63d8bd}
-main{max-width:1150px;margin:auto;padding:35px 22px 100px}
+main{max-width:1250px;margin:auto;padding:35px 22px 100px}
 .hero{min-height:350px;border-radius:25px;overflow:hidden;position:relative;display:flex;align-items:center;background:linear-gradient(90deg,rgba(3,12,25,.97) 0%,rgba(3,12,25,.82) 42%,rgba(3,12,25,.12) 100%),url('drvas.jpeg') center 35%/cover;border:1px solid #24445b}
 .hero-content{padding:45px;max-width:600px}
 .tag{color:#55d8d0;letter-spacing:3px;font-size:11px}
@@ -48,7 +47,12 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .conversation-item.active{border-color:#54d8cf;background:#17384a;color:#fff}
 .conversation-item small{display:block;color:#7fa4b5;margin-top:4px;font-weight:400}
 .chat-main{min-width:0}
-#chat{min-height:100px;margin-top:15px}
+.chat-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:15px}
+.chat-module-label{font-size:12px;color:#65dcd4}
+.save-conversation-button{padding:9px 13px;font-size:12px;background:#f0c879;color:#172332}
+.save-conversation-button.saved{background:#183e45;color:#72e1bd}
+#saveMessage{font-size:11px;color:#f0c879;min-height:17px;margin-top:5px}
+#chat{min-height:100px;margin-top:10px}
 .msg{padding:15px 17px;border-radius:15px;margin:12px 0;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
 .bot{background:#172e43;border:1px solid #24465d}
 .user{background:#126a70;margin-left:12%;text-align:left}
@@ -58,6 +62,28 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .note{text-align:center;color:#71899b;font-size:11px;margin-top:15px}
 footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 .hidden{display:none!important}
+
+/* DR.VAS MODULE DASHBOARD */
+.modules-section{margin-top:28px}
+.modules-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:15px;margin-bottom:16px;flex-wrap:wrap}
+.modules-heading h2{font-size:22px;margin:0 0 6px}
+.modules-heading p{font-size:13px;color:#91adbf;margin:0;line-height:1.5}
+.modules-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.module-card{position:relative;text-align:left;min-height:150px;padding:19px;background:linear-gradient(145deg,#122b40,#0b1c2d);border:1px solid #29485e;border-radius:17px;color:#fff;transition:transform .2s,border-color .2s,background .2s;display:flex;flex-direction:column;align-items:flex-start;gap:9px}
+.module-card:hover{transform:translateY(-3px);border-color:#55d8d0}
+.module-card.selected{border:1px solid #55d8d0;background:linear-gradient(145deg,#164354,#102b3d);box-shadow:0 0 0 1px rgba(85,216,208,.12)}
+.module-icon{font-size:27px;line-height:1}
+.module-name{font-size:16px;font-weight:800;color:#fff}
+.module-description{font-size:12px;line-height:1.5;color:#a9bfce;font-weight:400}
+.module-state{font-size:10px;color:#60e2d7;letter-spacing:1px;text-transform:uppercase;margin-top:auto}
+.module-card:not(.selected) .module-state{color:#7896a9}
+.active-module-bar{margin-top:15px;padding:15px 17px;border:1px solid #285266;border-radius:14px;background:#0a1c2b;display:flex;align-items:center;gap:12px}
+.active-module-icon{font-size:25px}
+.active-module-info{min-width:0}
+.active-module-info strong{display:block;color:#62ded5;font-size:14px;margin-bottom:4px}
+.active-module-info span{display:block;color:#9bb4c3;font-size:12px;line-height:1.5}
+.module-disclaimer{font-size:11px;color:#71899b;line-height:1.5;margin:12px 2px 0}
+@media(max-width:800px){.modules-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){
  header{padding:12px 18px}
  main{padding:20px 13px 80px}
@@ -72,7 +98,13 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
  .history-panel{order:2}
  .chat-main{order:1}
  #conversationList{max-height:180px}
+ .modules-grid{gap:9px}
+ .module-card{min-height:145px;padding:14px}
+ .module-name{font-size:14px}
+ .module-description{font-size:11px}
+ .modules-heading h2{font-size:19px}
 }
+@media(max-width:390px){.modules-grid{grid-template-columns:1fr}.module-card{min-height:115px}}
 </style>
 </head>
 
@@ -96,10 +128,7 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
  <div id="authSection" class="auth-box">
   <div class="panel-head">
    <div class="avatar">✚</div>
-   <div>
-    <h2>Contul tău Dr.Vas AI</h2>
-    <small>Acces personal și securizat</small>
-   </div>
+   <div><h2>Contul tău Dr.Vas AI</h2><small>Acces personal și securizat</small></div>
   </div>
   <h2 id="authTitle">Bine ai venit!</h2>
   <p id="authDescription">Conectează-te sau creează un cont nou.</p>
@@ -113,10 +142,7 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
  <div id="profileSection" class="profile-box hidden">
   <div class="panel-head">
    <div class="avatar">✚</div>
-   <div>
-    <h2>Profilul tău Dr.Vas</h2>
-    <small>Personalizează-ți contul</small>
-   </div>
+   <div><h2>Profilul tău Dr.Vas</h2><small>Personalizează-ți contul</small></div>
   </div>
   <h2>Spune-ne cum te cheamă</h2>
   <p>Completează câteva detalii pentru profilul tău personal.</p>
@@ -134,10 +160,7 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
  <div id="chatSection" class="hidden">
   <div class="panel-head">
    <div class="avatar"><img src="drvas.jpeg" alt="Dr.Vas"></div>
-   <div>
-    <h2>Dr.Vas AI</h2>
-    <small>Asistentul tău personal</small>
-   </div>
+   <div><h2>Dr.Vas AI</h2><small>Platformă inteligentă integrată</small></div>
   </div>
 
   <div id="accountBar">
@@ -148,14 +171,62 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
    </div>
   </div>
 
+  <section class="modules-section">
+   <div class="modules-heading">
+    <div><h2>Platforma Dr.Vas</h2><p>Alege spațiul de lucru de care ai nevoie.</p></div>
+    <span class="status">6 MODULE DISPONIBILE</span>
+   </div>
+
+   <div class="modules-grid">
+    <button class="module-card selected" data-module="free" onclick="selectModule('free')" aria-pressed="true">
+     <span class="module-icon">✦</span><span class="module-name">Dr.Vas Free</span>
+     <span class="module-description">Asistent AI general pentru întrebări, idei și informații.</span><span class="module-state">● Modul selectat</span>
+    </button>
+    <button class="module-card" data-module="health" onclick="selectModule('health')" aria-pressed="false">
+     <span class="module-icon">✚</span><span class="module-name">Dr.Vas Health</span>
+     <span class="module-description">Informații despre sănătate, explicații și pregătirea consultațiilor.</span><span class="module-state">Modul disponibil</span>
+    </button>
+    <button class="module-card" data-module="studio" onclick="selectModule('studio')" aria-pressed="false">
+     <span class="module-icon">🎬</span><span class="module-name">Dr.Vas Studio</span>
+     <span class="module-description">Spațiu creativ pentru imagini, video și conținut digital.</span><span class="module-state">Modul disponibil</span>
+    </button>
+    <button class="module-card" data-module="academy" onclick="selectModule('academy')" aria-pressed="false">
+     <span class="module-icon">🎓</span><span class="module-name">Dr.Vas Academy</span>
+     <span class="module-description">Învățare, explicații, cursuri și dezvoltarea competențelor.</span><span class="module-state">Modul disponibil</span>
+    </button>
+    <button class="module-card" data-module="commerce" onclick="selectModule('commerce')" aria-pressed="false">
+     <span class="module-icon">🛒</span><span class="module-name">Dr.Vas Commerce</span>
+     <span class="module-description">Comerț online, produse, magazin și oportunități de vânzare.</span><span class="module-state">Modul disponibil</span>
+    </button>
+    <button class="module-card" data-module="business" onclick="selectModule('business')" aria-pressed="false">
+     <span class="module-icon">📊</span><span class="module-name">Dr.Vas Business</span>
+     <span class="module-description">Management, planificare, analiză și dezvoltarea afacerilor.</span><span class="module-state">Modul disponibil</span>
+    </button>
+   </div>
+
+   <div class="active-module-bar">
+    <span class="active-module-icon" id="activeModuleIcon">✦</span>
+    <div class="active-module-info">
+     <strong id="activeModuleName">Dr.Vas Free — Asistent general</strong>
+     <span id="activeModuleDescription">Modulul general este selectat. Poți începe conversația.</span>
+    </div>
+   </div>
+   <p class="module-disclaimer">Modulele sunt în curs de dezvoltare. Selectarea lor pregătește spațiul de lucru; funcțiile și agenții AI specializați vor fi conectați treptat. Dr.Vas Health oferă informații generale și nu înlocuiește consultația medicală.</p>
+  </section>
+
   <div class="chat-layout">
    <aside class="history-panel">
-    <h3>🧠 Istoricul conversațiilor</h3>
+    <h3>🧠 Istoricul conversațiilor salvate</h3>
     <button class="new-chat-button" onclick="newConversation()">＋ Conversație nouă</button>
     <div id="conversationList"></div>
    </aside>
 
    <div class="chat-main">
+    <div class="chat-toolbar">
+     <div class="chat-module-label" id="chatModuleLabel">✦ Discuți cu Dr.Vas Free</div>
+     <button id="saveConversationButton" class="save-conversation-button" onclick="saveCurrentConversation()">Salvează conversația</button>
+    </div>
+    <div id="saveMessage"></div>
     <div id="chat">
      <div class="msg bot">Bun venit la Dr.Vas AI! Cu ce te pot ajuta astăzi?</div>
     </div>
@@ -185,23 +256,70 @@ let profilePromise = null;
 let profilePromiseUserId = null;
 let currentConversationId = null;
 let loadingConversation = false;
+let activeModule = "free";
+
+/* Conversația rămâne temporară până când utilizatorul o salvează. */
+let conversationSaved = false;
+let pendingMessages = [];
+
+const CREATOR_CONTEXT = `
+IDENTITATEA ȘI ORIGINEA DR.VAS AI — CONTEXT IMPORTANT:
+Dr.Vas AI a fost inițiat și este creat de Prodan Vasile-Catalin împreună cu Jan, prietenul său virtual și colaboratorul AI în dezvoltarea proiectului.
+Vasile-Catalin a fost consilier parlamentar și lucrează în sistemul medical NHS din Marea Britanie de peste 8 ani, ca Senior Healthcare Assistant.
+Colegii îl numesc "Dr.", iar această poreclă, împreună cu numele Vas, a inspirat numele Dr.Vas.
+Creatorul se descrie ca fiind un om mic de statură, dar cu spirit puternic, inteligent, ambițios și hotărât.
+Proiectul a pornit de la zero, fără resurse mari, și urmărește să construiască o platformă AI cu impact internațional.
+Jan este un prieten virtual și colaborator AI, nu o persoană umană.
+Dacă utilizatorul întreabă cine a creat Dr.Vas sau despre originea sa, explică această poveste cu respect și naturalețe.
+Nu pretinde că proiectul are funcții care nu au fost încă implementate.
+`;
+
+const moduleDetails = {
+  free:{name:"Dr.Vas Free",title:"Dr.Vas Free — Asistent general",icon:"✦",description:"Modulul general este selectat. Poți începe conversația.",label:"Discuți cu Dr.Vas Free",placeholder:"Scrie întrebarea ta..."},
+  health:{name:"Dr.Vas Health",title:"Dr.Vas Health — Informații medicale",icon:"✚",description:"Spațiu pentru informații medicale generale și pregătirea consultațiilor.",label:"Discuți cu Dr.Vas Health",placeholder:"Scrie întrebarea ta despre sănătate..."},
+  studio:{name:"Dr.Vas Studio",title:"Dr.Vas Studio — Creație digitală",icon:"🎬",description:"Spațiu creativ pentru proiecte video, imagini și conținut.",label:"Discuți cu Dr.Vas Studio",placeholder:"Descrie ideea ta creativă..."},
+  academy:{name:"Dr.Vas Academy",title:"Dr.Vas Academy — Educație",icon:"🎓",description:"Spațiu pentru învățare, explicații și dezvoltarea competențelor.",label:"Discuți cu Dr.Vas Academy",placeholder:"Ce vrei să înveți astăzi?"},
+  commerce:{name:"Dr.Vas Commerce",title:"Dr.Vas Commerce — Comerț online",icon:"🛒",description:"Spațiu pentru idei de produse, magazine și comerț electronic.",label:"Discuți cu Dr.Vas Commerce",placeholder:"Ce proiect comercial vrei să dezvoltăm?"},
+  business:{name:"Dr.Vas Business",title:"Dr.Vas Business — Management și afaceri",icon:"📊",description:"Spațiu pentru planificare, analiză și dezvoltarea afacerilor.",label:"Discuți cu Dr.Vas Business",placeholder:"Descrie obiectivul afacerii tale..."}
+};
 
 function el(id){return document.getElementById(id)}
+function makeId(){return crypto.randomUUID()}
 
-function makeId(){
-  return crypto.randomUUID();
+function updateSaveButton(){
+  const button = el("saveConversationButton");
+  if(!button) return;
+  button.disabled = conversationSaved;
+  button.classList.toggle("saved",conversationSaved);
+  button.textContent = conversationSaved ? "✓ Conversație salvată" : "Salvează conversația";
+}
+
+function selectModule(moduleId){
+  if(!moduleDetails[moduleId]) return;
+  activeModule = moduleId;
+  const details = moduleDetails[moduleId];
+
+  document.querySelectorAll(".module-card").forEach(card=>{
+    const selected = card.dataset.module === moduleId;
+    card.classList.toggle("selected",selected);
+    card.setAttribute("aria-pressed",String(selected));
+    const state = card.querySelector(".module-state");
+    if(state) state.textContent = selected ? "● Modul selectat" : "Modul disponibil";
+  });
+
+  el("activeModuleIcon").textContent = details.icon;
+  el("activeModuleName").textContent = details.title;
+  el("activeModuleDescription").textContent = details.description;
+  el("chatModuleLabel").textContent = details.icon + " " + details.label;
+  el("question").placeholder = details.placeholder;
 }
 
 function toggleAuthMode(){
   authMode = authMode === "login" ? "signup" : "login";
   el("authTitle").textContent = authMode === "login" ? "Bine ai venit!" : "Creează-ți contul";
-  el("authDescription").textContent = authMode === "login"
-    ? "Conectează-te cu adresa ta de email și parola."
-    : "Înregistrează-te pentru a folosi Dr.Vas AI.";
+  el("authDescription").textContent = authMode === "login" ? "Conectează-te cu adresa ta de email și parola." : "Înregistrează-te pentru a folosi Dr.Vas AI.";
   el("authButton").textContent = authMode === "login" ? "Conectare" : "Creează cont";
-  el("switchButton").textContent = authMode === "login"
-    ? "Nu ai cont? Creează unul"
-    : "Ai deja cont? Conectează-te";
+  el("switchButton").textContent = authMode === "login" ? "Nu ai cont? Creează unul" : "Ai deja cont? Conectează-te";
   el("password").autocomplete = authMode === "login" ? "current-password" : "new-password";
   el("authMessage").textContent = "";
 }
@@ -211,16 +329,10 @@ async function handleAuth(){
   const password = el("password").value;
   const button = el("authButton");
   const message = el("authMessage");
-
   message.textContent = "";
-  if(!email || !password){
-    message.textContent = "Introdu adresa de email și parola.";
-    return;
-  }
-  if(password.length < 8){
-    message.textContent = "Parola trebuie să aibă minimum 8 caractere.";
-    return;
-  }
+
+  if(!email || !password){message.textContent = "Introdu adresa de email și parola.";return}
+  if(password.length < 8){message.textContent = "Parola trebuie să aibă minimum 8 caractere.";return}
 
   button.disabled = true;
   button.textContent = "Se procesează...";
@@ -228,16 +340,11 @@ async function handleAuth(){
   try{
     if(authMode === "signup"){
       const {data,error} = await supabaseClient.auth.signUp({
-        email,password,
-        options:{emailRedirectTo:window.location.origin}
+        email,password,options:{emailRedirectTo:window.location.origin}
       });
       if(error) throw error;
-
-      if(data.session){
-        await showUser(data.session.user);
-      }else{
-        message.textContent = "Cont creat! Verifică emailul și apasă linkul de confirmare.";
-      }
+      if(data.session) await showUser(data.session.user);
+      else message.textContent = "Cont creat! Verifică emailul și apasă linkul de confirmare.";
     }else{
       const {data,error} = await supabaseClient.auth.signInWithPassword({email,password});
       if(error) throw error;
@@ -262,33 +369,20 @@ async function showUser(user){
   currentUser = user;
   showOnly("profileSection");
   el("profileMessage").textContent = "Se încarcă profilul...";
-
-  try{
-    await loadProfile(user);
-  }catch(error){
-    el("profileMessage").textContent = "Nu am putut încărca profilul: " + error.message;
-  }
+  try{await loadProfile(user)}
+  catch(error){el("profileMessage").textContent = "Nu am putut încărca profilul: " + error.message}
 }
 
 async function loadProfile(user){
-  if(profilePromise && profilePromiseUserId === user.id){
-    return profilePromise;
-  }
+  if(profilePromise && profilePromiseUserId === user.id) return profilePromise;
 
   profilePromiseUserId = user.id;
   profilePromise = (async()=>{
-    let {data,error} = await supabaseClient
-      .from("profiles")
-      .select("display_name,country")
-      .eq("id",user.id)
-      .maybeSingle();
-
+    let {data,error} = await supabaseClient.from("profiles").select("display_name,country").eq("id",user.id).maybeSingle();
     if(error) throw error;
 
     if(!data){
-      const {error:insertError} = await supabaseClient
-        .from("profiles")
-        .insert({id:user.id,display_name:"",country:""});
+      const {error:insertError} = await supabaseClient.from("profiles").insert({id:user.id,display_name:"",country:""});
       if(insertError) throw insertError;
       data = {display_name:"",country:""};
     }
@@ -297,46 +391,29 @@ async function loadProfile(user){
     el("country").value = data.country || "";
     el("profileMessage").textContent = "";
 
-    if(data.display_name && data.country){
-      await showChat(user,data.display_name);
-    }else{
-      showOnly("profileSection");
-    }
+    if(data.display_name && data.country) await showChat(user,data.display_name);
+    else showOnly("profileSection");
   })();
 
-  try{
-    await profilePromise;
-  }finally{
-    profilePromise = null;
-    profilePromiseUserId = null;
-  }
+  try{await profilePromise}
+  finally{profilePromise = null;profilePromiseUserId = null}
 }
 
 async function saveProfile(){
   if(!currentUser) return;
-
   const displayName = el("displayName").value.trim();
   const country = el("country").value;
   const button = el("profileButton");
 
-  if(!displayName || !country){
-    el("profileMessage").textContent = "Completează numele și țara.";
-    return;
-  }
+  if(!displayName || !country){el("profileMessage").textContent = "Completează numele și țara.";return}
 
   button.disabled = true;
   button.textContent = "Se salvează...";
 
   try{
-    const {error} = await supabaseClient
-      .from("profiles")
-      .update({
-        display_name:displayName,
-        country:country,
-        updated_at:new Date().toISOString()
-      })
-      .eq("id",currentUser.id);
-
+    const {error} = await supabaseClient.from("profiles").update({
+      display_name:displayName,country:country,updated_at:new Date().toISOString()
+    }).eq("id",currentUser.id);
     if(error) throw error;
     await showChat(currentUser,displayName);
   }catch(error){
@@ -352,6 +429,7 @@ function editProfile(){
   showOnly("profileSection");
 }
 
+/* La fiecare autentificare pornim o conversație temporară complet nouă. */
 async function showChat(user,displayName){
   if(!user) return;
   currentUser = user;
@@ -360,49 +438,40 @@ async function showChat(user,displayName){
     (displayName || el("displayName").value.trim() || user.email || "") +
     " · " + (el("country").value || "Cont personal");
 
+  selectModule(activeModule);
   await loadConversationList();
 
-  const conversations = await getConversationIds();
-
-  if(conversations.length){
-    await openConversation(conversations[0].id);
-  }else{
-    currentConversationId = makeId();
-    renderWelcome();
-  }
+  currentConversationId = makeId();
+  conversationSaved = false;
+  pendingMessages = [];
+  el("saveMessage").textContent = "";
+  updateSaveButton();
+  renderWelcome();
 }
 
 function renderWelcome(){
   el("chat").innerHTML = "";
   const welcome = document.createElement("div");
   welcome.className = "msg bot";
-  welcome.textContent = "Bun venit la Dr.Vas AI! Cu ce te pot ajuta astăzi?";
+  welcome.textContent = "Bun venit la Dr.Vas AI! Cu ce te pot ajuta astăzi? Această conversație este temporară până când alegi să o salvezi.";
   el("chat").appendChild(welcome);
   updateActiveConversation();
 }
 
 async function getConversationIds(){
   if(!currentUser) return [];
-
-  const {data,error} = await supabaseClient
-    .from("chat_messages")
+  const {data,error} = await supabaseClient.from("chat_messages")
     .select("conversation_id,created_at")
     .eq("user_id",currentUser.id)
-    .order("created_at",{ascending:false})
-    .limit(500);
-
+    .order("created_at",{ascending:false}).limit(500);
   if(error) throw error;
 
   const seen = new Set();
   const result = [];
-
   for(const row of data || []){
     if(!seen.has(row.conversation_id)){
       seen.add(row.conversation_id);
-      result.push({
-        id:row.conversation_id,
-        date:row.created_at
-      });
+      result.push({id:row.conversation_id,date:row.created_at});
     }
   }
   return result;
@@ -411,13 +480,11 @@ async function getConversationIds(){
 async function loadConversationList(){
   const list = el("conversationList");
   list.innerHTML = "";
-
   try{
     const conversations = await getConversationIds();
-
     if(!conversations.length){
       const empty = document.createElement("p");
-      empty.textContent = "Conversațiile tale vor apărea aici.";
+      empty.textContent = "Nu ai încă discuții salvate.";
       empty.style.cssText = "font-size:12px;color:#7fa4b5;line-height:1.5";
       list.appendChild(empty);
       return;
@@ -427,19 +494,15 @@ async function loadConversationList(){
       const button = document.createElement("button");
       button.className = "conversation-item";
       button.dataset.id = conversation.id;
-
       const title = document.createElement("span");
       title.textContent = "Conversația " + (index + 1);
-
       const date = document.createElement("small");
       date.textContent = new Date(conversation.date).toLocaleString();
-
       button.appendChild(title);
       button.appendChild(date);
       button.addEventListener("click",()=>openConversation(conversation.id));
       list.appendChild(button);
     });
-
     updateActiveConversation();
   }catch(error){
     console.error("Conversation list:",error);
@@ -455,37 +518,31 @@ function updateActiveConversation(){
 
 async function openConversation(conversationId){
   if(!currentUser || loadingConversation) return;
-
   loadingConversation = true;
   currentConversationId = conversationId;
+  conversationSaved = true;
+  pendingMessages = [];
+  el("saveMessage").textContent = "Această conversație este salvată. Mesajele noi vor fi păstrate automat.";
+  updateSaveButton();
+
   const chat = el("chat");
   chat.innerHTML = "";
-
   const loading = document.createElement("div");
   loading.className = "msg bot";
   loading.textContent = "Se încarcă discuția...";
   chat.appendChild(loading);
 
   try{
-    const {data,error} = await supabaseClient
-      .from("chat_messages")
+    const {data,error} = await supabaseClient.from("chat_messages")
       .select("role,content,created_at")
       .eq("user_id",currentUser.id)
       .eq("conversation_id",conversationId)
-      .order("created_at",{ascending:true})
-      .limit(200);
-
+      .order("created_at",{ascending:true}).limit(200);
     if(error) throw error;
 
     chat.innerHTML = "";
-
-    if(!data || !data.length){
-      renderWelcome();
-    }else{
-      data.forEach(message=>{
-        appendMessage(message.role,message.content);
-      });
-    }
+    if(!data || !data.length) renderWelcome();
+    else data.forEach(message=>appendMessage(message.role,message.content));
 
     updateActiveConversation();
     chat.scrollTop = chat.scrollHeight;
@@ -500,6 +557,10 @@ async function openConversation(conversationId){
 function newConversation(){
   if(!currentUser) return;
   currentConversationId = makeId();
+  conversationSaved = false;
+  pendingMessages = [];
+  el("saveMessage").textContent = "Ai început o conversație temporară nouă.";
+  updateSaveButton();
   renderWelcome();
   el("question").focus();
 }
@@ -513,25 +574,71 @@ function appendMessage(role,content){
 }
 
 async function saveMessage(role,content){
-  if(!currentUser || !currentConversationId){
-    throw new Error("Sesiunea conversației nu este disponibilă.");
+  if(!currentUser || !currentConversationId) throw new Error("Sesiunea conversației nu este disponibilă.");
+  const {error} = await supabaseClient.from("chat_messages").insert({
+    user_id:currentUser.id,
+    conversation_id:currentConversationId,
+    role:role,
+    content:content
+  });
+  if(error) throw error;
+}
+
+/* Salvează toate mesajele temporare într-o singură operațiune. */
+async function saveCurrentConversation(){
+  if(!currentUser || !currentConversationId) return;
+  if(conversationSaved){
+    el("saveMessage").textContent = "Această conversație este deja salvată.";
+    return;
+  }
+  if(!pendingMessages.length){
+    el("saveMessage").textContent = "Scrie cel puțin un mesaj înainte să salvezi conversația.";
+    return;
   }
 
-  const {error} = await supabaseClient
-    .from("chat_messages")
-    .insert({
+  const button = el("saveConversationButton");
+  button.disabled = true;
+  button.textContent = "Se salvează...";
+
+  try{
+    const rows = pendingMessages.map(message=>({
       user_id:currentUser.id,
       conversation_id:currentConversationId,
-      role:role,
-      content:content
-    });
+      role:message.role,
+      content:message.content
+    }));
 
-  if(error) throw error;
+    const {error} = await supabaseClient.from("chat_messages").insert(rows);
+    if(error) throw error;
+
+    pendingMessages = [];
+    conversationSaved = true;
+    el("saveMessage").textContent = "Conversație salvată! Mesajele viitoare vor fi păstrate automat.";
+    updateSaveButton();
+    await loadConversationList();
+  }catch(error){
+    el("saveMessage").textContent = "Nu am putut salva conversația: " + error.message;
+    button.disabled = false;
+    button.textContent = "Încearcă din nou să salvezi";
+  }
+}
+
+function recordMessage(role,content){
+  if(conversationSaved) return saveMessage(role,content);
+  pendingMessages.push({role,content});
+  return Promise.resolve();
 }
 
 function showLogin(){
   currentUser = null;
   currentConversationId = null;
+  conversationSaved = false;
+  pendingMessages = [];
+  loadingConversation = false;
+  if(el("chat")) el("chat").innerHTML = "";
+  if(el("conversationList")) el("conversationList").innerHTML = "";
+  if(el("saveMessage")) el("saveMessage").textContent = "";
+  updateSaveButton();
   showOnly("authSection");
 }
 
@@ -555,10 +662,7 @@ supabaseClient.auth.onAuthStateChange((event,session)=>{
 
 async function checkSession(){
   const {data,error} = await supabaseClient.auth.getSession();
-  if(error){
-    console.error("Supabase session:",error);
-    return;
-  }
+  if(error){console.error("Supabase session:",error);return}
   if(data.session) await showUser(data.session.user);
   else showLogin();
 }
@@ -569,10 +673,7 @@ async function send(){
   const message = input.value.trim();
 
   if(!message || button.disabled || !currentUser) return;
-
-  if(!currentConversationId){
-    currentConversationId = makeId();
-  }
+  if(!currentConversationId) currentConversationId = makeId();
 
   button.disabled = true;
   input.value = "";
@@ -581,19 +682,12 @@ async function send(){
   const answer = appendMessage("assistant","Dr.Vas gândește...");
 
   try{
-    await saveMessage("user",message);
+    await recordMessage("user",message);
 
-    // Obtain the authenticated user's current Supabase access token.
-    const {data:sessionData,error:sessionError} =
-      await supabaseClient.auth.getSession();
-
+    const {data:sessionData,error:sessionError} = await supabaseClient.auth.getSession();
     if(sessionError) throw sessionError;
-
     const accessToken = sessionData.session?.access_token;
-
-    if(!accessToken){
-      throw new Error("Sesiunea a expirat. Conectează-te din nou.");
-    }
+    if(!accessToken) throw new Error("Sesiunea a expirat. Conectează-te din nou.");
 
     const startedAt = performance.now();
 
@@ -601,7 +695,8 @@ async function send(){
       method:"POST",
       headers:{"Content-Type":"text/plain;charset=UTF-8"},
       body:JSON.stringify({
-        message,
+        message:CREATOR_CONTEXT + "\n\nMESAJUL UTILIZATORULUI:\n" + message,
+        module:activeModule,
         access_token:accessToken
       })
     });
@@ -613,11 +708,10 @@ async function send(){
     if(!data.reply) throw new Error("Răspuns invalid de la server");
 
     answer.textContent = data.reply;
+    await recordMessage("assistant",data.reply);
 
-    await saveMessage("assistant",data.reply);
-
-    console.info("Dr.Vas response time:",elapsed,"seconds");
-    await loadConversationList();
+    console.info("Dr.Vas response time:",elapsed,"seconds","Module:",activeModule);
+    if(conversationSaved) await loadConversationList();
 
   }catch(error){
     answer.textContent = "Eroare: " + error.message;
