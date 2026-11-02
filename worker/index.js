@@ -176,14 +176,6 @@ export default {
         return json({ error: "Modul Dr.Vas invalid." }, 400);
       }
 
-      // Accesul Premium rămâne blocat până la implementarea verificării abonamentului.
-      const premiumModules = new Set(["studio", "academy", "commerce", "business"]);
-      if (premiumModules.has(moduleName)) {
-        return json({
-          error: "Acest modul Premium nu este încă activ. Accesul va fi disponibil după implementarea abonamentelor și verificarea plății."
-        }, 403);
-      }
-
       if (
         conversationId !== null &&
         (typeof conversationId !== "string" ||
@@ -226,6 +218,16 @@ export default {
 
       if (!user?.id) {
         return json({ error: "Utilizator neautentificat." }, 401);
+      }
+      const allowedAdminEmails = (env.ADMIN_EMAILS || "")
+        .split(",").map(email => email.trim().toLowerCase()).filter(Boolean);
+      const isAdminUser = Boolean(user.email &&
+        allowedAdminEmails.includes(user.email.trim().toLowerCase()));
+      const premiumModules = new Set(["studio", "academy", "commerce", "business"]);
+      if (premiumModules.has(moduleName) && !isAdminUser) {
+        return json({
+          error: "Acest modul Premium necesită un abonament activ. Administratorul poate testa modulele în modul de administrare."
+        }, 403);
       }
       auditContext = { userId: user.id, module: moduleName };
 
