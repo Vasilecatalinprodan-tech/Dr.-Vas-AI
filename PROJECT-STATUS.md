@@ -156,8 +156,11 @@ Status update — 2026-11-02:
 - Microphone access is requested only after the user presses the microphone button. The page explains that browser speech recognition may be processed by the browser's speech service; Dr.Vas does not retain raw audio recordings.
 - Privacy-safe client activity events are now supported by the Worker for sign-in/out, module selection, conversation create/open and voice input/output actions. Events contain metadata only, never conversation text, transcripts, audio, passwords or tokens.
 - The administrator dashboard now displays 24-hour activity counts for each of the six modules.
-- This browser MVP is not the final real-time voice experience. Gemini Live API, server-minted ephemeral tokens, streaming PCM audio, native spoken responses, barge-in/interruption and session resumption remain to be implemented and tested.
-- No browser or Android device QA has yet been completed for the new voice controls. GitHub Actions validation/deployment status must be checked after these commits.
+- A real-time Gemini Live path has now also been added in code: an authenticated Worker endpoint validates the Supabase session and mints a one-use, short-lived Gemini 3.8 Live ephemeral token; the browser opens the constrained Live WebSocket, streams microphone PCM at 16 kHz, plays returned 24 kHz audio, handles model interruption, receives input/output transcripts and saves transcript text to the current Dr.Vas conversation.
+- Live voice is configured with Google's prebuilt `Gacrux` voice and a warm, calm, masculine-sounding speaking instruction. The selected language and module are passed to the Worker; Health mode includes emergency and non-diagnosis guardrails.
+- Live sessions are limited by a 15-minute token expiry and the current audio-only session duration limit. Session resumption, reconnect logic, playback queue tuning and usage/rate controls still need further work.
+- Live mode transmits microphone audio to Gemini for real-time processing. Dr.Vas does not store raw audio; text transcripts are saved to the user's existing chat history. The interface discloses Gemini processing and possible API usage costs.
+- No browser or Android device QA has yet been completed for either voice path. The code has passed JavaScript syntax compilation in the GitHub-connected editing session, but production deployment and actual Gemini token/WebSocket operation still need verification.
 - The Supabase audit-log SQL migration still must be run manually before the administrator journal can persist and display these new events.
 
 Official current Gemini Live API documentation:
