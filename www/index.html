@@ -785,7 +785,11 @@ async function send(){
   const answer = appendMessage("assistant","Dr.Vas gândește...");
 
   try{
-    recordMessage("user",message);
+    await saveMessage("user",message);
+    conversationSaved = true;
+    pendingMessages = [];
+    el("saveMessage").textContent = "Mesajul tău este salvat automat în cont.";
+    updateSaveButton();
 
     const {data:sessionData,error:sessionError} = await supabaseClient.auth.getSession();
     if(sessionError) throw sessionError;
@@ -812,7 +816,11 @@ async function send(){
     if(!data.reply) throw new Error("Răspuns invalid de la server");
 
     answer.textContent = data.reply;
-    recordMessage("assistant",data.reply);
+    await saveMessage("assistant",data.reply);
+    conversationSaved = true;
+    pendingMessages = [];
+    el("saveMessage").textContent = "Conversația este salvată automat.";
+    updateSaveButton();
 
     if(data.action === "conversations_deleted"){
       pendingMessages = [];
