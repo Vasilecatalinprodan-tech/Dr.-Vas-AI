@@ -17,9 +17,12 @@ async function writeAdminAuditLog(env, event) {
     );
     if (!response.ok) {
       console.warn("Dr.Vas audit log unavailable:", response.status);
+      return false;
     }
+    return true;
   } catch (error) {
     console.warn("Dr.Vas audit log error:", error.message);
+    return false;
   }
 }
 
@@ -95,6 +98,49 @@ export default {
         }), { status: 200, headers: { ...headers, "Cache-Control": "no-store, private" } });
       }
       
+      // Evenimente de interfață fără conținut conversațional; utilizatorul este verificat server-side.
+      if (body.action === "client_event") {
+        const eventToken = body.access_token;
+        const eventType = body.event_type;
+        const allowedEvents = new Set([
+          "auth_sign_in", "auth_sign_out", "module_selected",
+          "conversation_created", "conversation_opened",
+          "voice_input_started", "voice_input_completed",
+          "voice_output_enabled", "voice_output_disabled"
+        ]);
+        const allowedEventModules = new Set([
+          "free", "health", "studio", "academy", "commerce", "business"
+        ]);
+        const eventModule = typeof body.module === "string" && allowedEventModules.has(body.module)
+          ? body.module : "unknown";
+
+        if (!allowedEvents.has(eventType)) {
+          return json({ error: "Eveniment de audit invalid." }, 400);
+        }
+        if (typeof eventToken !== "string" || !eventToken.trim()) {
+          return json({ error: "Sesiune lipsă." }, 401);
+        }
+        if (!env.SUPABASE_URL || !env.SUPABASE_KEY) {
+          return json({ error: "Autentificarea nu este configurată." }, 500);
+        }
+
+        const eventAuth = await fetch(
+          `${env.SUPABASE_URL.replace(/\\/+$/, "")}/auth/v1/user`,
+          { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${eventToken}` } }
+        );
+        if (!eventAuth.ok) return json({ error: "Sesiune invalidă." }, 401);
+        const eventUser = await eventAuth.json();
+        if (!eventUser?.id) return json({ error: "Utilizator neautentificat." }, 401);
+
+        const logged = await writeAdminAuditLog(env, {
+          user_id: eventUser.id,
+          event_type: eventType,
+          module: eventModule,
+          status: 200
+        });
+        return json({ ok: logged }, logged ? 200 : 503);
+      }
+
       // Dashboard centralizat: accesul este verificat din nou pe server la fiecare cerere.
       if (body.action === "admin_dashboard") {
         const adminToken = body.access_token;
