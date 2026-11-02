@@ -152,6 +152,10 @@ export default {
           ro: "Romanian", en: "English", it: "Italian", tr: "Turkish",
           de: "German", fr: "French", es: "Spanish", ru: "Russian"
         };
+        const liveLanguageCodes = {
+          ro: "ro-RO", en: "en-US", it: "it-IT", tr: "tr-TR",
+          de: "de-DE", fr: "fr-FR", es: "es-US", ru: "ru-RU"
+        };
 
         if (!liveModules.has(liveModule)) return json({ error: "Modul Dr.Vas invalid." }, 400);
         if (!liveLanguages[liveLanguage]) return json({ error: "Limba Dr.Vas invalidă." }, 400);
@@ -198,8 +202,10 @@ export default {
 
         const liveSystemInstruction = [
           "You are Dr.Vas AI, a warm, intelligent, respectful and multilingual assistant.",
-          "Speak naturally in a warm, calm, clear, masculine-sounding voice. Never claim to be human.",
-          `Always speak in ${liveLanguages[liveLanguage]} unless the user explicitly requests another language.`,
+          "Speak in a warm, calm, clear, masculine-sounding voice. Never claim to be human.",
+          `RESPOND IN ${liveLanguages[liveLanguage].toUpperCase()}. YOU MUST SPEAK UNMISTAKABLY IN ${liveLanguages[liveLanguage].toUpperCase()}.`,
+          "Use a measured, unhurried speaking style. Articulate every word clearly, pronounce names and numbers carefully, and leave natural pauses between sentences. Never rush, mumble, slur words, or run sentences together.",
+          "Use short, plain sentences. Explain medical and technical terms in everyday language. Ask one question at a time. When information is important, repeat it clearly and ask the listener to confirm that they understood.",
           `The selected Dr.Vas module is: ${liveModule}.`,
           moduleInstruction,
           "Be concise for simple questions and detailed when asked. Admit uncertainty. Do not invent facts.",
@@ -225,8 +231,9 @@ export default {
               config: {
                 responseModalities: ["AUDIO"],
                 speechConfig: {
+                  languageCode: liveLanguageCodes[liveLanguage],
                   voiceConfig: {
-                    prebuiltVoiceConfig: { voiceName: "Gacrux" }
+                    prebuiltVoiceConfig: { voiceName: "Charon" }
                   }
                 },
                 systemInstruction: { parts: [{ text: liveSystemInstruction }] },
