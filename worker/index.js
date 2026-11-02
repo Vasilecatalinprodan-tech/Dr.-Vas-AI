@@ -197,17 +197,29 @@ export default {
       const originalMessage = message.trim();
 
       const normalized = originalMessage
-        .toLocaleLowerCase("ro")
+        .toLocaleLowerCase()
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "");
 
       // ȘTERGEREA ISTORICULUI — confirmare obligatorie înainte de acțiunea ireversibilă.
       const deleteHistoryIntent =
         /^(?:șterge|sterge|șterge-mi|sterge-mi)\s+(?:toate\s+)?(?:conversațiile|conversatiile|discuțiile|discutiile|istoricul)(?:\s+(?:mele|salvat|salvate))?[.!?]*$/i.test(normalized) ||
-        /^(?:delete|clear)\s+(?:all\s+)?(?:my\s+)?(?:conversations|chat history|history)[.!?]*$/i.test(normalized);
+        /^(?:delete|clear)\s+(?:all\s+)?(?:my\s+)?(?:conversations|chat history|history)[.!?]*$/i.test(normalized) ||
+        /^(?:elimina|cancella)\s+(?:tutte le\s+)?(?:conversazioni|chat|cronologia)[.!?]*$/i.test(normalized) ||
+        /^(?:losche|loesche)\s+(?:alle\s+)?(?:unterhaltungen|gesprache|chats|verlauf)[.!?]*$/i.test(normalized) ||
+        /^(?:supprime|efface)\s+(?:toutes les\s+)?(?:conversations|discussions|historique)[.!?]*$/i.test(normalized) ||
+        /^(?:elimina|borra)\s+(?:todas las\s+)?(?:conversaciones|chats|historial)[.!?]*$/i.test(normalized) ||
+        /^(?:(?:tum|tüm)\s+)?(?:konusmalari|konuşmaları|sohbetleri)\s+sil[.!?]*$/i.test(normalized) ||
+        /^(?:удали|очисти)\s+(?:все\s+)?(?:беседы|разговоры|историю)[.!?]*$/i.test(normalized);
 
       const confirmDeleteHistoryIntent =
-        /^(?:confirm(?:a)?|da,? confirm(?:a)?)\s+(?:(?:stergerea|deleting)\s+)?(?:tuturor\s+|all\s+)?(?:conversatiilor|discutiilor|istoricului|conversations|chat history|history)(?:\s+(?:mele|salvat|salvate|my))?[.!?]*$/i.test(normalized);
+        /^(?:confirm(?:a)?|da,? confirm(?:a)?)\s+(?:(?:stergerea|deleting)\s+)?(?:tuturor\s+|all\s+)?(?:conversatiilor|discutiilor|istoricului|conversations|chat history|history)(?:\s+(?:mele|salvat|salvate|my))?[.!?]*$/i.test(normalized) ||
+        /^(?:confermo|conferma)\s+(?:l'eliminazione di )?(?:tutte le )?(?:conversazioni|chat)[.!?]*$/i.test(normalized) ||
+        /^(?:bestatige|bestatigen)\s+(?:das loschen aller )?(?:unterhaltungen|gesprache)[.!?]*$/i.test(normalized) ||
+        /^(?:je confirme|confirme)\s+(?:la suppression de )?(?:toutes les )?(?:conversations|discussions)[.!?]*$/i.test(normalized) ||
+        /^(?:confirmo)\s+(?:la eliminacion de )?(?:todas las )?(?:conversaciones|chats)[.!?]*$/i.test(normalized) ||
+        /^(?:onayliyorum)\s+(?:tum sohbetlerin silinmesini|tüm sohbetlerin silinmesini)[.!?]*$/i.test(normalized) ||
+        /^(?:подтверждаю)\s+(?:удаление всех )?(?:бесед|разговоров)[.!?]*$/i.test(normalized);
 
       if (deleteHistoryIntent) {
         return json({
@@ -241,7 +253,12 @@ export default {
       const listIntent =
         /^(ce )?(ai )?(mai )?memorat despre mine\??$/.test(normalized) ||
         /^(arata|aratati|listeaza) (memoria|memoriile)( mea| mele)?\??$/.test(normalized) ||
-        /^what do you remember about me\??$/.test(normalized);
+        /^what do you remember about me\??$/.test(normalized) ||
+        /^(cosa ricordi|cosa ti ricordi) di me\??$/.test(normalized) ||
+        /^was weisst du ueber mich\??$/.test(normalized) ||
+        /^(que te acuerdas|que recuerdas) de mi\??$/.test(normalized) ||
+        /^(benim hakkimda ne hatirliyorsun|belleğimde ne var)\??$/.test(normalized) ||
+        /^что ты помнишь обо мне\??$/.test(normalized);
 
       if (listIntent) {
         const memories = await getMemories();
@@ -259,7 +276,7 @@ export default {
 
       // Utilizatorul cere ștergerea unei informații exacte.
       const deleteMatch = originalMessage.match(
-        /^(?:șterge|sterge|uită|uita)\s+(?:din\s+)?memorie\s*:\s*(.+)$/i
+        /^(?:șterge|sterge|uită|uita|delete|forget|elimina|cancella|sil|losche|loesche|supprime|borra|удали)\s+(?:(?:din|from|de|aus|из)\s+)?(?:memorie|memory|memoria|gedachtnis|bellek|памяти)\s*:\s*(.+)$/i
       );
 
       if (deleteMatch) {
@@ -290,7 +307,7 @@ export default {
 
       // Salvăm numai când utilizatorul cere explicit.
       const saveMatch = originalMessage.match(
-        /^(?:ține minte că|tine minte ca|memorează că|memoreaza ca|reține că|retine ca|remember that)\s+(.+)$/i
+        /^(?:ține minte că|tine minte ca|memorează că|memoreaza ca|reține că|retine ca|remember that|ricorda che|ricordati che|merk dir dass|souviens-toi que|recuerda que|hatirla ki|şunu hatırla|запомни что)\s+(.+)$/i
       );
 
       if (saveMatch) {
