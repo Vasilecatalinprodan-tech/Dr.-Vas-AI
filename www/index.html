@@ -685,8 +685,28 @@ function chooseSpeechVoice(lang){
  const voices=window.speechSynthesis.getVoices()||[];
  const language=lang.slice(0,2).toLowerCase();
  const matching=voices.filter(v=>v.lang&&v.lang.toLowerCase().startsWith(language));
- const maleNames=/male|david|mark|daniel|george|james|guy|ryan|alex|thomas|jorge|diego|pavel|nicolas|henri|stefan|andrei|radu|charon/i;
- return matching.find(v=>maleNames.test(v.name))||matching[0]||null;
+ if(!matching.length)return null;
+ const preferredNames=/natural|neural|enhanced|premium|online|andrei|radu|david|daniel|george|james|guy|ryan|alex|thomas|mark/i;
+ return matching.find(v=>preferredNames.test(v.name))||matching[0];
+}
+function prepareSpeechText(value){
+ return String(value||"")
+  .replace(/```[\s\S]*?```/g," ")
+  .replace(/https?:\/\/\S+/g," ")
+  .replace(/!?\[[^\]]*\]\([^)]*\)/g," ")
+  .replace(/^\s{0,3}#{1,6}\s+/gm,"")
+  .replace(/\*\*(.*?)\*\*/g,"$1")
+  .replace(/\*(.*?)\*/g,"$1")
+  .replace(/__(.*?)__/g,"$1")
+  .replace(/_(.*?)_/g,"$1")
+  .replace(/[`~]/g,"")
+  .replace(/^\s*[-*+]\s+/gm,"")
+  .replace(/^\s*\d+[.)]\s+/gm,"")
+  .replace(/[|<>]/g," ")
+  .replace(/\s*\n\s*/g,". ")
+  .replace(/([.!?])\s*\1+/g,"$1")
+  .replace(/\s{2,}/g," ")
+  .trim();
 }
 function speakDrVas(text){
  if(!voiceAutoRead||!text||!window.speechSynthesis)return;
@@ -696,13 +716,15 @@ function speakDrVas(text){
   refreshVoiceUi("voiceUnavailable");
   return;
  }
+ const spokenText=prepareSpeechText(text);
+ if(!spokenText)return;
  lastSpokenAnswer=text;
  window.speechSynthesis.cancel();
- const utterance=new SpeechSynthesisUtterance(text);
+ const utterance=new SpeechSynthesisUtterance(spokenText);
  utterance.lang=lang;
  utterance.voice=voice;
- utterance.rate=0.84;
- utterance.pitch=0.96;
+ utterance.rate=0.91;
+ utterance.pitch=0.93;
  utterance.onstart=()=>refreshVoiceUi("speaking");
  utterance.onend=()=>refreshVoiceUi("ready");
  utterance.onerror=()=>refreshVoiceUi("ready");
