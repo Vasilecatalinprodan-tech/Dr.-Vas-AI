@@ -1,4 +1,28 @@
 
+async function writeAdminAuditLog(env, event) {
+  if (!env.SUPABASE_URL || !env.SUPABASE_KEY) return;
+  try {
+    const response = await fetch(
+      `${env.SUPABASE_URL.replace(/\\/+$/, "")}/rest/v1/drvas_audit_logs`,
+      {
+        method: "POST",
+        headers: {
+          apikey: env.SUPABASE_KEY,
+          Authorization: `Bearer ${env.SUPABASE_KEY}`,
+          "Content-Type": "application/json",
+          Prefer: "return=minimal"
+        },
+        body: JSON.stringify(event)
+      }
+    );
+    if (!response.ok) {
+      console.warn("Dr.Vas audit log unavailable:", response.status);
+    }
+  } catch (error) {
+    console.warn("Dr.Vas audit log error:", error.message);
+  }
+}
+
 export default {
   async fetch(request, env) {
     const headers = {
@@ -42,6 +66,7 @@ export default {
     }
 
     const requestStartedAt = performance.now();
+    let auditContext = null;
 
     try {
       const body = await request.json();
@@ -67,6 +92,65 @@ export default {
           allowedAdmins.includes(adminUser.email.trim().toLowerCase()));
         return new Response(JSON.stringify({
           is_admin: isAdmin, configured: allowedAdmins.length > 0
+        }), { status: 200, headers: { ...headers, "Cache-Control": "no-store, private" } });
+      }
+      
+      // Dashboard centralizat: accesul este verificat din nou pe server la fiecare cerere.
+      if (body.action === "admin_dashboard") {
+        const adminToken = body.access_token;
+        if (typeof adminToken !== "string" || !adminToken.trim()) {
+          return json({ error: "Sesiune lipsă." }, 401);
+        }
+        if (!env.SUPABASE_URL || !env.SUPABASE_KEY) {
+          return json({ error: "Autentificarea nu este configurată." }, 500);
+        }
+        const authResponse = await fetch(
+          `${env.SUPABASE_URL.replace(/\\/+$/, "")}/auth/v1/user`,
+          { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${adminToken}` } }
+        );
+        if (!authResponse.ok) return json({ error: "Sesiune invalidă." }, 401);
+        const adminUser = await authResponse.json();
+        const allowedAdmins = (env.ADMIN_EMAILS || "")
+          .split(",").map(email => email.trim().toLowerCase()).filter(Boolean);
+        if (!adminUser?.email || !allowedAdmins.includes(adminUser.email.trim().toLowerCase())) {
+          return json({ error: "Acces interzis." }, 403);
+        }
+
+        const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+        const params = new URLSearchParams({
+          select: "id,created_at,event_type,module,status,model,duration_ms,user_id,error_code",
+          created_at: `gte.${since}`,
+          order: "created_at.desc",
+          limit: "1000"
+        });
+        const logsResponse = await fetch(
+          `${env.SUPABASE_URL.replace(/\\/+$/, "")}/rest/v1/drvas_audit_logs?${params.toString()}`,
+          { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${env.SUPABASE_KEY}` } }
+        );
+        if (!logsResponse.ok) {
+          return json({
+            error: "Tabelul de audit nu este încă disponibil. Aplică migrarea SQL din supabase/migrations.",
+            setup_required: true
+          }, 503);
+        }
+        const logs = await logsResponse.json();
+        const modules = ["free","health","studio","academy","commerce","business"];
+        const moduleCounts = Object.fromEntries(modules.map(name => [name, 0]));
+        const activeUsers = new Set();
+        let errors = 0;
+        for (const log of logs) {
+          if (moduleCounts[log.module] !== undefined) moduleCounts[log.module]++;
+          if (log.user_id) activeUsers.add(log.user_id);
+          if (Number(log.status) >= 400) errors++;
+        }
+        return new Response(JSON.stringify({
+          generated_at: new Date().toISOString(),
+          period: "24h",
+          total_events: logs.length,
+          errors,
+          active_users: activeUsers.size,
+          module_counts: moduleCounts,
+          logs: logs.slice(0, 100)
         }), { status: 200, headers: { ...headers, "Cache-Control": "no-store, private" } });
       }
 
@@ -143,6 +227,7 @@ export default {
       if (!user?.id) {
         return json({ error: "Utilizator neautentificat." }, 401);
       }
+      auditContext = { userId: user.id, module: moduleName };
 
       // Funcție generală pentru cereri Supabase.
       async function supabaseRequest(table, path, options = {}) {
@@ -711,9 +796,18 @@ Așa că, dacă mă întrebi care este povestea mea, ți-aș spune că este pove
         if (!answer && lastTemporaryError) throw lastTemporaryError;
       }
 
+      const requestDuration = Math.round(performance.now() - requestStartedAt);
+      await writeAdminAuditLog(env, {
+        user_id: user.id,
+        event_type: "ai_request",
+        module: moduleName,
+        status: 200,
+        model: usedModel,
+        duration_ms: requestDuration
+      });
       console.info("Dr.Vas timing", {
         phase: "request_total",
-        milliseconds: Math.round(performance.now() - requestStartedAt),
+        milliseconds: requestDuration,
         status: 200
       });
 
@@ -726,6 +820,16 @@ Așa că, dacă mă întrebi care este povestea mea, ți-aș spune că este pove
 
     } catch (error) {
       const timedOut = error.name === "AbortError";
+      if (auditContext?.userId) {
+        await writeAdminAuditLog(env, {
+          user_id: auditContext.userId,
+          event_type: "ai_request_error",
+          module: auditContext.module || "unknown",
+          status: timedOut ? 504 : (error.status || 500),
+          duration_ms: Math.round(performance.now() - requestStartedAt),
+          error_code: timedOut ? "timeout" : (error.status ? `upstream_${error.status}` : "internal_error")
+        });
+      }
 
       console.error("Dr.Vas request error:", error.message);
 
