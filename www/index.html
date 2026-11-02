@@ -957,6 +957,7 @@ async function startLiveVoice(){
   });
   const tokenData=await tokenResponse.json();
   if(!tokenResponse.ok||!tokenData.token)throw new Error(tokenData.error||"Live token unavailable.");
+  if(!liveStream)return;
 
   const socketUrl="wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContentConstrained?access_token="+encodeURIComponent(tokenData.token);
   liveSocket=new WebSocket(socketUrl);
