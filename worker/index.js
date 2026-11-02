@@ -472,7 +472,7 @@ Always follow these instructions.
       }
 
       let answer;
-      let usedModel = "gemini-3.1-flash-lite";
+      let usedModel = "gemini-3.5-flash-lite";
 
       // Povestea oficială este servită direct pentru întrebările despre identitatea
       // Dr.Vas, astfel încât să nu depindă de variațiile de generare ale modelului.
@@ -518,6 +518,7 @@ Așa că, dacă mă întrebi care este povestea mea, ți-aș spune că este pove
           answer = await askModel(usedModel);
       } catch (firstError) {
         const temporaryProblem =
+          firstError.name === "AbortError" ||
           firstError.status === 429 ||
           firstError.status === 503 ||
           firstError.status === 502 ||
@@ -528,7 +529,7 @@ Așa că, dacă mă întrebi care este povestea mea, ți-aș spune că este pove
           throw firstError;
         }
 
-          usedModel = "gemini-3.5-flash-lite";
+          usedModel = "gemini-3.1-flash-lite";
           answer = await askModel(usedModel);
         }
       }
