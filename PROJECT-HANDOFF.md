@@ -143,3 +143,11 @@ Expected HTTP result for the static page: `200`.
 - Latest Worker/story commit: `d670b500f895c30c8d619209ae1ed741d9d6154b`.
 - These changes are committed to `drvas-integrated-platform` only. They have NOT been deployed to the production Cloudflare Worker. The Codespaces preview must pull the branch before it can display the updated login UI; the story response also requires the Worker deployment before it changes in production.
 - Required tests: unchecked remember option should survive refresh in the same tab but not a fresh browser session; checked option should survive closing/reopening the browser; logout must end the session. Test both the Romanian founder-story prompt and the English equivalent after Worker deployment.
+
+## 12. Founder story trigger fix — 2026-11-02
+
+- User confirmed the updated frontend and persistent-login behaviour appear correctly in the Codespaces preview.
+- User still saw the older short generic story from the assistant. The new long-form Romanian/English story is implemented in `worker/index.js`, so the likely missing step is deploying the updated Worker; the earlier Worker/story commits were branch-only.
+- Expanded the deterministic story trigger to recognise more Romanian phrasings, including variants of “care este povestea ta?”, “povestea mea”, “spune-mi povestea” and “povestește-mi”.
+- Trigger-fix commit: `2d19732c284fdcba076e8a6b88095e06a1694488`.
+- Next required action in Codespaces terminal: pull the latest branch, then deploy the Worker with Wrangler. Deployment is not yet confirmed.
