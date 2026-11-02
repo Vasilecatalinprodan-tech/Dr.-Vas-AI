@@ -487,7 +487,7 @@ function editProfile(){
   showOnly("profileSection");
 }
 
-/* La fiecare autentificare pornim o conversație nouă, salvată automat de la primul mesaj. */
+/* La fiecare autentificare pornim o conversație nouă; mesajele rămân temporare până la salvarea manuală. */
 async function showChat(user,displayName){
   if(!user) return;
   currentUser = user;
@@ -671,7 +671,7 @@ async function saveCurrentConversation(){
 
     pendingMessages = [];
     conversationSaved = true;
-    el("saveMessage").textContent = "Conversație salvată! Mesajele viitoare vor fi păstrate automat.";
+    el("saveMessage").textContent = "Conversația a fost salvată. Mesajele următoare rămân temporare până când alegi din nou „Salvează conversația”.";
     updateSaveButton();
     await loadConversationList();
   }catch(error){
