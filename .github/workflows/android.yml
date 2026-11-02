@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - main
+      - drvas-integrated-platform
 
 jobs:
   build:
@@ -25,8 +25,7 @@ jobs:
 
       - name: Prepare app
         run: |
-          mkdir -p www
-          cp index.html www/index.html
+          test -f www/index.html
           npx cap sync android
 
       - name: Build APK
