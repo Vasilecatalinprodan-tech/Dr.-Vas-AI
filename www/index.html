@@ -523,7 +523,7 @@ function renderWelcome(){
   el("chat").innerHTML = "";
   const welcome = document.createElement("div");
   welcome.className = "msg bot";
-  welcome.textContent = "Bun venit la Dr.Vas AI! Cu ce te pot ajuta astăzi? Poți întreba și „Cine este Vasile-Cătălin Prodan și care este povestea Dr.Vas?”. Mesajele noi nu se salvează automat. Apasă „Salvează conversația” doar dacă dorești să păstrezi discuția.";
+  welcome.textContent = "Bun venit la Dr.Vas AI! Cu ce te pot ajuta astăzi? Poți întreba și „Cine este Vasile-Cătălin Prodan și care este povestea Dr.Vas?”. Mesajele și răspunsurile noi se salvează automat în contul tău.";
   el("chat").appendChild(welcome);
   updateActiveConversation();
 }
@@ -621,7 +621,7 @@ async function openConversation(conversationId){
   currentConversationId = conversationId;
   conversationSaved = true;
   pendingMessages = [];
-  el("saveMessage").textContent = "Această conversație are un istoric salvat. Mesajele noi rămân temporare până când apeși „Salvează conversația”.";
+  el("saveMessage").textContent = "Această conversație și mesajele noi se salvează automat în contul tău.";
   updateSaveButton();
 
   const chat = el("chat");
@@ -658,7 +658,7 @@ function newConversation(){
   currentConversationId = makeId();
   conversationSaved = false;
   pendingMessages = [];
-  el("saveMessage").textContent = "Conversația nouă este privată implicit în istoricul contului. O poți salva manual când dorești.";
+  el("saveMessage").textContent = "Conversația nouă se salvează automat în contul tău.";
   updateSaveButton();
   renderWelcome();
   el("question").focus();
@@ -712,7 +712,7 @@ async function saveCurrentConversation(){
 
     pendingMessages = [];
     conversationSaved = true;
-    el("saveMessage").textContent = "Conversația a fost salvată. Mesajele următoare rămân temporare până când alegi din nou „Salvează conversația”.";
+    el("saveMessage").textContent = "Conversația este salvată automat.";
     updateSaveButton();
     await loadConversationList();
   }catch(error){
