@@ -900,7 +900,6 @@ async function stopLiveMedia(){
 async function stopLiveVoice(){
  const hadLiveSession=Boolean(liveSocket||liveStream);
  if(liveTurnSaveTimer){clearTimeout(liveTurnSaveTimer);liveTurnSaveTimer=null;await saveLiveTurn();}
- if(hadLiveSession&&currentUser)await logClientEvent("voice_live_session_ended");
  liveStopRequested=true;
  if(liveSocket){
   const socket=liveSocket;
@@ -909,6 +908,7 @@ async function stopLiveVoice(){
  }
  await stopLiveMedia();
  liveStopRequested=false;
+ if(hadLiveSession&&currentUser)await logClientEvent("voice_live_session_ended");
  refreshVoiceUi();
  const status=el("voiceStatus");
  if(status)status.textContent=liveLabel("stopped");
