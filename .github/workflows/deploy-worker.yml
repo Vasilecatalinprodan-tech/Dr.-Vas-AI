@@ -2,6 +2,9 @@ name: Deploy Dr.Vas Worker
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - drvas-integrated-platform
 
 permissions:
   contents: read
@@ -23,6 +26,21 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Validate Worker and browser JavaScript
+        run: |
+          node --check worker/index.js
+          node <<'NODE'
+          const fs = require('fs');
+          const vm = require('vm');
+          const html = fs.readFileSync('www/index.html', 'utf8');
+          const scripts = [...html.matchAll(/<script(?:\\s[^>]*)?>([\\s\\S]*?)<\\/script>/gi)]
+            .map(match => match[1])
+            .filter(script => script.trim());
+          if (!scripts.length) throw new Error('No inline browser script found');
+          scripts.forEach((script, index) => new vm.Script(script, { filename: `drvas-inline-${index}.js` }));
+          console.log(`Validated ${scripts.length} inline browser script(s).`);
+          NODE
 
       - name: Deploy Worker
         run: npx wrangler deploy
