@@ -95,16 +95,19 @@ Remaining language work:
 
 ## Required next steps
 
-1. Ask the founder for the exact email address used to log into Dr.Vas. Do not guess it or hard-code it.
-2. Add that email as the Cloudflare Worker secret `ADMIN_EMAILS` (use Cloudflare dashboard or Wrangler secret management; never commit it to Git).
-3. Test after configuring the secret:
-   - Authorized founder account sees the admin panel.
-   - A normal account does not see it.
-   - The Worker never trusts a frontend-only admin flag.
-4. Build persistent Studio data and workflows: episode queue, draft status, approval/rejection, schedule in Europe/London, publication log and retry/error handling.
-5. Implement official OAuth connections for TikTok and Meta; store tokens securely server-side and support revocation/refresh.
-6. Integrate a video rendering/voice/subtitle pipeline. Current Studio engine produces text/scripts/prompts, not final video files.
-7. Only enable scheduled public publishing after each platform's app review/permissions and user approval are in place.
+1. Apply the SQL migration `supabase/migrations/202611020001_admin_audit_logs.sql` in the linked Supabase project's SQL Editor. Until this is done, persistent audit logging and the dashboard journal will report that setup is required.
+2. Test administrator access in the browser:
+   - Sign in with the authorized founder account and confirm the panel appears.
+   - Sign in with a normal account and confirm the panel stays hidden and premium modules remain gated.
+   - Refresh the dashboard and confirm metadata events appear after the SQL migration.
+3. Verify that the Cloudflare Worker secret `SUPABASE_KEY` is the service-role key required for server-only audit inserts/reads. Do not reveal or paste the key into chat or Git. The frontend must continue to use only its public anon/publishable key.
+4. Test the browser voice MVP in desktop Chrome and Android Chrome: microphone permission, Romanian/English/other selected languages, transcript submission, auto-read, replay, stop and sign-out cleanup. Confirm fallback typing remains available.
+5. Implement the full Gemini Live API experience with authenticated ephemeral tokens, streaming microphone PCM, native audio output, interruption/barge-in, transcripts, session resumption and usage limits. Do not expose `GEMINI_API_KEY` to the browser.
+6. Expand the administrator journal with pagination, filters and further operational events while keeping conversation contents and health data out of operational logs.
+7. Build persistent Studio workflows: episode queue, draft status, approval/rejection, schedule in Europe/London, publication log and retry/error handling.
+8. Implement official OAuth connections for TikTok and Meta; store tokens securely server-side and support revocation/refresh.
+9. Integrate actual video rendering, voice and subtitles. Current Studio engine produces scripts/prompts, not finished video files.
+10. Only enable scheduled public publishing after each platform's app review/permissions and explicit user approval are in place.
 
 ## Important guardrails
 
