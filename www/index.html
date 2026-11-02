@@ -584,6 +584,7 @@ let liveMicSource = null;
 let liveMicProcessor = null;
 let liveSetupReady = false;
 let liveStopRequested = false;
+let liveFailureMessage = "";
 let livePlaybackNextTime = 0;
 let liveActiveSources = new Set();
 let liveUserTranscript = "";
@@ -949,7 +950,7 @@ async function stopLiveVoice(){
  if(hadLiveSession&&currentUser)await logClientEvent("voice_live_session_ended");
  refreshVoiceUi();
  const status=el("voiceStatus");
- if(status)status.textContent=liveLabel("stopped");
+ if(status)status.textContent=liveFailureMessage ? (liveLabel("error")+" "+liveFailureMessage) : liveLabel("stopped");
 }
 async function toggleLiveVoice(){
  if(liveSocket||liveStream){
@@ -959,6 +960,7 @@ async function toggleLiveVoice(){
  await startLiveVoice();
 }
 async function startLiveVoice(){
+ liveFailureMessage="";
  if(!currentUser){
   const status=el("voiceStatus");if(status)status.textContent=liveLabel("error");
   return;
@@ -1017,6 +1019,12 @@ async function startLiveVoice(){
   liveSocket.onmessage=async event=>{
    let message;
    try{message=JSON.parse(event.data)}catch{return}
+   if(message.error){
+    liveFailureMessage=message.error.message||message.error.status||"Gemini Live a respins configurarea sesiunii.";
+    console.error("Gemini Live server error:",message.error);
+    await stopLiveVoice();
+    return;
+   }
    if(message.setupComplete){
     liveSetupReady=true;
     try{
@@ -1051,16 +1059,19 @@ async function startLiveVoice(){
    if(server.turnComplete)scheduleLiveTurnSave();
   };
   liveSocket.onerror=()=>{
-   if(status)status.textContent=liveLabel("error");
+   liveFailureMessage="Conexiunea cu serverul vocal a eșuat. Verifică mesajul de închidere sau încearcă din nou.";
    console.warn("Gemini Live WebSocket error");
    stopLiveVoice();
   };
-  liveSocket.onclose=async()=>{
+  liveSocket.onclose=async(event)=>{
    if(!liveStopRequested){
     liveSocket=null;
+    if(!liveSetupReady && !liveFailureMessage){
+     liveFailureMessage=`Serverul a închis conexiunea înainte de activare (cod ${event.code}${event.reason ? ", "+event.reason : ""}).`;
+    }
     await stopLiveMedia();
     refreshVoiceUi();
-    if(status)status.textContent=liveLabel("stopped");
+    if(status)status.textContent=liveFailureMessage ? (liveLabel("error")+" "+liveFailureMessage) : liveLabel("stopped");
    }
   };
  }catch(error){
