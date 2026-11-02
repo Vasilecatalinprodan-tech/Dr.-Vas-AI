@@ -215,10 +215,11 @@ export default {
       const confirmDeleteHistoryIntent =
         /^(?:confirm(?:a)?|da,? confirm(?:a)?)\s+(?:(?:stergerea|deleting)\s+)?(?:tuturor\s+|all\s+)?(?:conversatiilor|discutiilor|istoricului|conversations|chat history|history)(?:\s+(?:mele|salvat|salvate|my))?[.!?]*$/i.test(normalized) ||
         /^(?:confermo|conferma)\s+(?:l'eliminazione di )?(?:tutte le )?(?:conversazioni|chat)[.!?]*$/i.test(normalized) ||
-        /^(?:bestatige|bestatigen)\s+(?:das loschen aller )?(?:unterhaltungen|gesprache)[.!?]*$/i.test(normalized) ||
+        /^(?:bestatige|bestatigen)\s+(?:(?:das loschen aller )?(?:unterhaltungen|gesprache)|alle (?:unterhaltungen|gesprache) loschen bestatigen)[.!?]*$/i.test(normalized) ||
         /^(?:je confirme|confirme)\s+(?:la suppression de )?(?:toutes les )?(?:conversations|discussions)[.!?]*$/i.test(normalized) ||
-        /^(?:confirmo)\s+(?:la eliminacion de )?(?:todas las )?(?:conversaciones|chats)[.!?]*$/i.test(normalized) ||
-        /^(?:onayliyorum)\s+(?:tum sohbetlerin silinmesini|tüm sohbetlerin silinmesini)[.!?]*$/i.test(normalized) ||
+        /^(?:confirmo)(?: que quiero eliminar)?\s+(?:todas las )?(?:conversaciones|chats)[.!?]*$/i.test(normalized) ||
+        /^(?:confirmo que quiero eliminar)\s+(?:todas las )?(?:conversaciones|chats)[.!?]*$/i.test(normalized) ||
+        /^(?:tum|tüm) sohbetlerin silinmesini onayliyorum[.!?]*$/i.test(normalized) ||
         /^(?:подтверждаю)\s+(?:удаление всех )?(?:бесед|разговоров)[.!?]*$/i.test(normalized);
 
       if (deleteHistoryIntent) {
@@ -307,7 +308,7 @@ export default {
 
       // Salvăm numai când utilizatorul cere explicit.
       const saveMatch = originalMessage.match(
-        /^(?:ține minte că|tine minte ca|memorează că|memoreaza ca|reține că|retine ca|remember that|ricorda che|ricordati che|merk dir dass|souviens-toi que|recuerda que|hatirla ki|şunu hatırla|запомни что)\s+(.+)$/i
+        /^(?:ține minte că|tine minte ca|memorează că|memoreaza ca|reține că|retine ca|remember that|ricorda che|ricordati che|merk dir dass|merk dir, dass|souviens-toi que|recuerda que|hatirla ki|sunu hatirla|şunu hatırla|запомни что)\s+(.+)$/i
       );
 
       if (saveMatch) {
