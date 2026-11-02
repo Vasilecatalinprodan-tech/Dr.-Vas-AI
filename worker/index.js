@@ -162,7 +162,7 @@ export default {
         }
 
         const liveAuth = await fetch(
-          `${env.SUPABASE_URL.replace(/\\/+$/, "")}/auth/v1/user`,
+          `${env.SUPABASE_URL.replace(/\/+$/, "")}/auth/v1/user`,
           { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${liveAccessToken}` } }
         );
         if (!liveAuth.ok) return json({ error: "Sesiune invalidă." }, 401);
