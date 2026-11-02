@@ -264,7 +264,7 @@ let currentConversationId = null;
 let loadingConversation = false;
 let activeModule = "free";
 
-/* Conversația rămâne temporară până când utilizatorul o salvează. */
+/* Mesajele conversației sunt salvate automat în cont după fiecare trimitere. */
 let conversationSaved = false;
 let pendingMessages = [];
 
@@ -303,6 +303,8 @@ function updateSaveButton(){
 function selectModule(moduleId){
   if(!moduleDetails[moduleId]) return;
   activeModule = moduleId;
+  const accessMessage = el("moduleAccessMessage");
+  if(accessMessage) accessMessage.textContent = "";
   const details = moduleDetails[moduleId];
 
   document.querySelectorAll(".module-card").forEach(card=>{
