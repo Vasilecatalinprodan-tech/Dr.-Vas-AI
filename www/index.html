@@ -592,12 +592,13 @@ function chooseLanguage(code){
  if(!SUPPORTED_LANGUAGES.includes(code))return;
  if(liveSocket||liveStream)stopLiveVoice();
  currentLanguage=code;languageReady=true;localStorage.setItem(LANGUAGE_KEY,code);
+ refreshSpeechVoiceOptions();
  el("appMain").classList.remove("language-pending");el("languageGate").classList.add("hidden");
  translatePage();refreshVoiceUi(voiceAutoRead?"ready":"off");checkSession();
 }
 function showLanguageGate(){el("languageGate").classList.remove("hidden");el("appMain").classList.add("language-pending");if(languageReady)translatePage(el("languageGate"))}
 function initLanguage(){
- if(SUPPORTED_LANGUAGES.includes(currentLanguage)){languageReady=true;el("appMain").classList.remove("language-pending");el("languageGate").classList.add("hidden");translatePage();refreshVoiceUi(voiceAutoRead?"ready":"off");checkSession()}
+ if(SUPPORTED_LANGUAGES.includes(currentLanguage)){languageReady=true;el("appMain").classList.remove("language-pending");el("languageGate").classList.add("hidden");translatePage();refreshSpeechVoiceOptions();refreshVoiceUi(voiceAutoRead?"ready":"off");checkSession()}
  else{languageReady=false;document.documentElement.lang="en";showLanguageGate()}
 }
 const uiObserver=new MutationObserver(records=>{
