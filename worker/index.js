@@ -352,10 +352,16 @@ export default {
         const adminUser = await adminAuth.json();
         const allowedAdmins = (env.ADMIN_EMAILS || "")
           .split(",").map(email => email.trim().toLowerCase()).filter(Boolean);
-        const isAdmin = Boolean(adminUser?.email &&
-          allowedAdmins.includes(adminUser.email.trim().toLowerCase()));
+        const normalizedEmail = typeof adminUser?.email === "string"
+          ? adminUser.email.trim().toLowerCase() : "";
+        const isAdmin = Boolean(normalizedEmail && allowedAdmins.includes(normalizedEmail));
+        const adminReason = isAdmin ? "authorized"
+          : allowedAdmins.length === 0 ? "allowlist_missing"
+          : !normalizedEmail ? "account_email_missing" : "email_not_allowlisted";
         return new Response(JSON.stringify({
-          is_admin: isAdmin, configured: allowedAdmins.length > 0
+          is_admin: isAdmin,
+          configured: allowedAdmins.length > 0,
+          reason: adminReason
         }), { status: 200, headers: { ...headers, "Cache-Control": "no-store, private" } });
       }
       
