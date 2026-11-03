@@ -41,6 +41,7 @@ revoke all on public.drvas_income_opportunities from anon;
 create table if not exists public.drvas_founder_provenance (
   id uuid primary key default gen_random_uuid(),
   record_version integer not null default 1 check (record_version > 0),
+  public_claim jsonb not null default '{}'::jsonb,
   encrypted_payload text not null,
   payload_sha256 char(64) not null,
   signature_base64 text not null,
