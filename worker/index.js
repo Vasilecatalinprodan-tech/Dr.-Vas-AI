@@ -202,6 +202,59 @@ async function writeAdminAuditLog(env, event) {
   }
 }
 
+
+async function consumeRateLimit(env, userId, bucket, limit, windowSeconds) {
+  if (!env.SUPABASE_URL || !env.SUPABASE_KEY) return { configured: false };
+  try {
+    const response = await fetch(
+      env.SUPABASE_URL.replace(/\\/+$/, "") + "/rest/v1/rpc/drvas_consume_rate_limit",
+      {
+        method: "POST",
+        headers: {
+          apikey: env.SUPABASE_KEY,
+          Authorization: "Bearer " + env.SUPABASE_KEY,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          p_user_id: userId,
+          p_bucket: bucket,
+          p_limit: limit,
+          p_window_seconds: windowSeconds
+        })
+      }
+    );
+    if (!response.ok) {
+      console.error("Dr.Vas rate-limit service unavailable:", response.status);
+      return { configured: false };
+    }
+    const result = await response.json();
+    const row = Array.isArray(result) ? result[0] : result;
+    if (!row || typeof row.allowed !== "boolean") return { configured: false };
+    return {
+      configured: true,
+      allowed: row.allowed,
+      remaining: Number(row.remaining) || 0,
+      resetAt: row.reset_at || null
+    };
+  } catch (error) {
+    console.error("Dr.Vas rate-limit error:", error.message);
+    return { configured: false };
+  }
+}
+
+function rateLimitResponse(headers, rateLimit) {
+  const resetAt = rateLimit.resetAt ? Date.parse(rateLimit.resetAt) : NaN;
+  const retryAfter = Number.isFinite(resetAt)
+    ? Math.max(1, Math.ceil((resetAt - Date.now()) / 1000)) : 60;
+  return new Response(JSON.stringify({
+    error: "Ai atins limita temporară de utilizare. Te rugăm să încerci din nou puțin mai târziu.",
+    retry_after_seconds: retryAfter
+  }), {
+    status: 429,
+    headers: { ...headers, "Cache-Control": "no-store", "Retry-After": String(retryAfter) }
+  });
+}
+
 export default {
   async fetch(request, env, ctx) {
     // Allow only the production app, the Codespaces preview, and local/Capacitor development origins.
@@ -211,7 +264,10 @@ export default {
     try {
       const parsedOrigin = new URL(requestOrigin);
       const host = parsedOrigin.hostname.toLowerCase();
-      const isProduction = host === "dr--vas-ai.vasilecatalinprodan.workers.dev";
+      const isProduction = [
+        "dr--vas-ai.vasilecatalinprodan.workers.dev",
+        "drvas-ai.vasilecatalinprodan.workers.dev"
+      ].includes(host);
       const isCodespacesPreview = parsedOrigin.protocol === "https:" && host.endsWith(".app.github.dev");
       const isLocalDevelopment = ["localhost", "127.0.0.1"].includes(host) &&
         ["http:", "https:"].includes(parsedOrigin.protocol);
@@ -268,13 +324,29 @@ export default {
     let auditContext = null;
 
     try {
-      const body = await request.json();
+      const contentType = request.headers.get("Content-Type") || "";
+      if (!contentType.toLowerCase().includes("application/json")) {
+        return json({ error: "Content-Type trebuie să fie application/json." }, 415);
+      }
+      const rawBody = await request.text();
+      if (new TextEncoder().encode(rawBody).byteLength > 64 * 1024) {
+        return json({ error: "Cererea depășește limita de 64 KB." }, 413);
+      }
+      let body;
+      try {
+        body = JSON.parse(rawBody);
+      } catch {
+        return json({ error: "Corpul cererii JSON este invalid." }, 400);
+      }
+      if (!body || typeof body !== "object" || Array.isArray(body)) {
+        return json({ error: "Corpul cererii este invalid." }, 400);
+      }
 
       // Profil privat: datele sunt validate și criptate exclusiv în Worker.
       if (body.action === "private_profile_get" || body.action === "private_profile_save" || body.action === "private_profile_clear") {
         const profileUser = await verifySupabaseUser(env, body.access_token);
         if (!profileUser) return json({ error: "Sesiune invalidă. Conectează-te din nou." }, 401);
-        if (!env.DRVAS_PROFILE_ENCRYPTION_KEY) {
+        if (body.action !== "private_profile_clear" && !env.DRVAS_PROFILE_ENCRYPTION_KEY) {
           return json({ error: "Criptarea profilului nu este încă configurată pe server." }, 503);
         }
         try {
@@ -297,6 +369,24 @@ export default {
             });
           }
           if (body.action === "private_profile_save") {
+            const consentQuery = new URLSearchParams({
+              select: "granted",
+              user_id: "eq." + profileUser.id,
+              consent_type: "eq.optional_profile_data",
+              order: "recorded_at.desc",
+              limit: "1"
+            });
+            const consentCheck = await fetch(
+              env.SUPABASE_URL.replace(/\\/+$/, "") + "/rest/v1/drvas_privacy_consents?" + consentQuery.toString(),
+              { headers: { apikey: env.SUPABASE_KEY, Authorization: "Bearer " + env.SUPABASE_KEY } }
+            );
+            if (!consentCheck.ok) {
+              return json({ error: "Nu am putut verifica acordul de confidențialitate. Datele nu au fost salvate." }, 503);
+            }
+            const consentRows = await consentCheck.json();
+            if (!Array.isArray(consentRows) || consentRows[0]?.granted !== true) {
+              return json({ error: "Acordul explicit este necesar înainte de salvarea datelor private opționale." }, 403);
+            }
             const profile = normalizePrivateProfile(body.profile);
             if (new TextEncoder().encode(JSON.stringify(profile)).length > 12000) {
               return json({ error: "Profilul depășește limita permisă." }, 413);
@@ -522,6 +612,12 @@ export default {
             error: "Vocea Dr.Vas Health este dezactivată temporar până la verificarea condițiilor de confidențialitate și protecție a datelor medicale."
           }, 403);
         }
+
+        const liveRateLimit = await consumeRateLimit(env, liveUser.id, "live_voice_token", 4, 600);
+        if (!liveRateLimit.configured) {
+          return json({ error: "Protecția de utilizare nu este disponibilă momentan. Încearcă din nou mai târziu.", setup_required: true }, 503);
+        }
+        if (!liveRateLimit.allowed) return rateLimitResponse(headers, liveRateLimit);
 
         const moduleInstruction = liveModule === "health"
           ? "You provide general health education only. You are not a doctor and do not diagnose or prescribe. For life-threatening symptoms in the UK, tell the user to call 999 or 112 immediately. For urgent non-life-threatening concerns in England, advise NHS 111 or urgent GP assessment. Never tell users to delay emergency care."
@@ -965,6 +1061,13 @@ export default {
           error: "Acest modul Premium necesită un abonament activ. Administratorul poate testa modulele în modul de administrare."
         }, 403);
       }
+
+      const aiRateLimit = await consumeRateLimit(env, user.id, "ai_chat", 20, 60);
+      if (!aiRateLimit.configured) {
+        return json({ error: "Protecția de utilizare nu este disponibilă momentan. Încearcă din nou mai târziu.", setup_required: true }, 503);
+      }
+      if (!aiRateLimit.allowed) return rateLimitResponse(headers, aiRateLimit);
+
       auditContext = { userId: user.id, module: moduleName };
 
       // Funcție generală pentru cereri Supabase.
