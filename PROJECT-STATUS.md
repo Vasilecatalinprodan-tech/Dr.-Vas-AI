@@ -449,3 +449,12 @@ Founder requested autonomous work while away and added a third assistant named A
 - This is lightweight 2D SVG/CSS animation, not yet a photorealistic 3D avatar, full facial rig, or AI-generated lip-sync. The mouth animation is a visual speaking cue, not phoneme-accurate lip synchronization.
 - Implementation commit: `2e0c5c15fcd6f2eeefd43c94589f909aedb35d69`.
 - GitHub Actions run `41664801404` was queued for this commit at checkpoint time: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/41664801404. Deployment is not yet confirmed.
+## Authentication diagnostics and premium interface refresh — 2026-11-03
+
+- Founder reported that sign-in/connection was failing again and requested the promised more polished interface.
+- Refreshed the public landing experience, hero, module cards, authentication/profile panels, chat layout, history panel, assistant selector, composer, Studio/admin surfaces and responsive mobile styling with a more cohesive premium visual system.
+- Improved sign-in error handling: network failures, invalid credentials, unconfirmed email and rate-limit responses now receive clearer messages; errors are logged for browser diagnostics.
+- Wrapped session restoration in error handling so a failed session check returns to the login view with a visible explanation rather than silently leaving the user without feedback.
+- Frontend changes committed as `a7584f609c16b6da0df03eb94e32ff200febd82b`.
+- GitHub Actions Worker deployment run `41665183054` completed successfully for this commit. APK workflow `41665183136` was still running at checkpoint time.
+- Important limitation: a successful Worker deployment/health smoke test does not prove Supabase password sign-in or profile RLS works for a real account. Live endpoint checks from this environment were blocked by DNS/network restrictions. The next required diagnostic is the exact browser error shown in the sign-in message, then a signed-in end-to-end test of Supabase Auth and `profiles` access. Do not claim the user's login is fixed until that test succeeds.
