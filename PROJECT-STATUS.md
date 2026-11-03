@@ -329,3 +329,11 @@ Founder clarified the next product direction and supplied a portrait to use as t
   7. Test signed-in administrator and normal-client accounts separately on desktop and mobile.
 - Do not install or distribute the APK yet; the founder explicitly deferred phone installation while web work continues.
 - The founder asked to save this checkpoint and continue from this state without restarting the project.
+## Voice identity checkpoint — 2026-11-03
+
+- Founder supplied an initial personal voice sample (`drvasvoice.ogg`) in the conversation, approximately 4.55 seconds, mono, 16 kHz.
+- Treat the sample as an initial reference only; it is too short to establish a high-quality voice-cloning model. Request a longer clean recording (approximately 2–3 minutes, natural Romanian speech with varied sentences and intonation) before evaluating voice synthesis quality.
+- Intended product identity: Dr.Vas may use the founder's voice as its distinctive voice, subject to the founder's explicit consent and provider/tool capabilities; Dr.Jan should have a separate voice identity.
+- The raw voice sample must NOT be committed to the public GitHub repository or exposed to clients. If used for voice modelling, store/process it only through an appropriately secured provider/service, disclose processing and retention, and obtain explicit consent.
+- Do not claim a cloned voice is implemented until a suitable voice model/provider is configured, integrated server-side, and tested. Keep text and standard voice alternatives available.
+- Continue recording each meaningful project decision, implementation, test result and next step in this PROJECT-STATUS.md checkpoint. Do not claim a change is complete until it has actually been committed/deployed/tested.
