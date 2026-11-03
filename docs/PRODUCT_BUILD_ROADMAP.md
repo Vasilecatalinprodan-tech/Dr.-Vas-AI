@@ -19,6 +19,24 @@ The founder wants a professional product with no arbitrary 1,000-word/message re
 5. **Dr.Vas Commerce** — ethical e-commerce and dropshipping, product/niche research, supplier due diligence, store content, unit economics, fulfilment, customer support and compliance by jurisdiction. No fake reviews or misleading sales practices.
 6. **Dr.Vas Business** — business plans, operations, management, budgets, cash flow, break-even, KPI and bookkeeping organisation. Clearly distinguish estimates from verified figures and regulated professional advice.
 
+## AI Evaluation & Training Workbench — revenue capability
+
+Add this as a capability inside **Dr.Vas Studio** and **Dr.Vas Business**, not as a seventh public workspace. It should help customers evaluate AI systems and prepare quality-controlled feedback/training assets.
+
+Planned capabilities:
+- Rubric-based evaluation of AI answers: factual correctness, relevance, completeness, clarity, instruction adherence and evidence quality.
+- Human-in-the-loop review, reviewer calibration, double-review sampling, disagreement resolution and quality audits.
+- Versioned prompt/model test sets, repeatable benchmark runs and regression comparisons.
+- Dataset annotation and preparation (classification, ranking, tagging and structured feedback) with provenance and licence tracking.
+- Training-data preparation only where customer permissions, provider terms and applicable law allow it; evaluation submissions are not automatically training permissions.
+- Exportable scorecards, audit trails and business reports.
+
+Potential monetisation to validate through pilots: per-task/per-item review, paid evaluation projects, monthly business plans, custom benchmark packages and managed QA contracts. Do not publish prices or promise earnings until real operating costs, reviewer rates, provider costs and customer demand are measured.
+
+Quality and privacy requirements: synthetic or public-domain/licensed test data for the first prototype; minimise/redact personal data; document provenance and permissions; role-based access; retention/deletion controls; versioned rubrics; bias checks; appeals/corrections; qualified human review for high-impact domains. No claim of certification or guaranteed model improvement without independent evidence.
+
+Current status: product direction only; no service, dataset pipeline, billing or public offer has been launched.
+
 ## Dr.Vas Crypto — private administrator subsystem
 
 Crypto is a separate, hidden administrator-only subsystem, not a public seventh workspace. Ordinary users must not see its navigation, status, controls or API capabilities. The Worker must re-check administrator identity for every Crypto action.
