@@ -275,3 +275,12 @@ Important limitations and next QA:
 - The assistant cannot independently continue executing new repository edits while the conversation is idle. GitHub Actions workflows continue running automatically. This handoff and session log preserve the work and next actions for resumption from phone or laptop.
 - Important blocker unchanged: founder must apply `supabase/migrations/202611030001_rate_limits.sql` in Supabase before authenticated AI chat and Gemini Live endpoints can pass fail-closed rate limiting. Do not request secrets or have them pasted into chat.
 - Next actions: verify latest workflow runs and deployment; rerun static element-reference audit after cleanup; check the entire UI/backend interaction surface; test authenticated chat after migration; verify Studio create/save/reopen/export/delete and income tracker flows; then continue the Studio rendering/approval pipeline. Physical Android install remains unverified.
+
+
+### 15. Verified chat fix deployment — 2026-11-03
+
+- Commit `6664fb27cb11a83f402dc6fb751da26134218e16` passed Playwright browser regression run `41698929672`.
+- Cloudflare Worker deployment run `41698929634` completed successfully. Every step passed, including JavaScript validation, Chromium/Playwright checks, Worker deployment and production smoke test.
+- The production deployment therefore contains the safer chat entry flow and obsolete manual-save cleanup. This is not a substitute for a human visual check in the founder's signed-in browser.
+- Expanded guest CTA and module-gating tests were added in commit `17f5764f1a0575681f10d1c83b5f0ff60ebc6130`; workflow was still in progress at the time of this update.
+- APK build for the deployed frontend commit was still in progress; do not claim a completed APK until its workflow and artifact are confirmed. Physical Android installation is still required.
