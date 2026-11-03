@@ -202,3 +202,16 @@ After each substantial work session, update this checkpoint with: completed chan
 ## Session archive — 2026-11-03
 
 A detailed session log was added at `docs/SESSION_LOG_2026-11-03.md`. It records the user's requests, active-conversation persistence, automatic scrolling, save-status UI, descriptive conversation-history labels, typing indicator, commit IDs, workflow results, remaining manual tests, and next development priorities. The user intends to export this work to a Word document later.
+
+
+## Product expansion direction — 2026-11-03
+
+- Founder requested an administrator-only hidden Crypto workspace, further Studio development, completion of Academy/Commerce dropshipping/Business, a paid Psychology/wellbeing service, and child-safety reporting.
+- Added `docs/PRODUCT_EXPANSION_AND_SAFETY_ARCHITECTURE.md` with implementation phases, release gates, data safeguards and product requirements.
+- Upgraded the Studio brief UI with creative tone, target audience, duration and aspect ratio controls. Studio prompts now request scene-by-scene scripts, camera/lighting/sound/editing notes, subtitles, on-screen copy and platform-specific publishing copy; they explicitly prohibit invented commercial claims and false claims of rendered/published output.
+- Studio frontend commit: `557d32b274b2b777664dba1bb6c0084b6bd3a536`.
+- Product/safety architecture document commit: `39578136d09fd5c6efc087913def1e8751d1b3ee`.
+- Important safety boundary: Crypto begins as a server-authorised admin-only read-only dashboard/calculator. No covert mining or use of visitor devices. Any later mining must be on company-owned/authorised infrastructure with explicit activation, resource/budget limits and legal/economic review.
+- Psychology is scoped as AI wellbeing/psychoeducation with human professional referral and a crisis-support flow. The AI must not autonomously call 112/999 or transmit location based only on a model risk score. A real emergency escalation service requires clinical governance, legal basis, human operations, reliable location handling and formal emergency-service arrangements.
+- Child-safety work is scoped to user reporting and human-governed safeguarding. No automated criminal/pedophile classification, covert surveillance or unverified accusations.
+- Not yet implemented: crypto dashboard/mining, Psychology service, emergency escalation integration, child-safety reporting portal, product catalog/supplier integrations, payment entitlements, Studio video rendering/publishing. These remain roadmap items, not live features.
