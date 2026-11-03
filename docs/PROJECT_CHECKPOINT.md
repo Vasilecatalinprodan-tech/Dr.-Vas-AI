@@ -84,3 +84,27 @@ Repository contents were re-fetched after the edits. Deployment of the Worker is
 ## Working rule
 
 After each substantial work session, update this checkpoint with: completed changes, commit links/SHAs, tests actually run, outstanding blockers and the next exact action. Never mark an item complete unless it was verified.
+
+
+## Dr.Vas Studio pilot workspace — 2026-11-03
+
+- Added a dedicated Studio workspace to the frontend, visible when the administrator selects Dr.Vas Studio.
+- The workspace offers structured inputs for the creative deliverable (dramatic series/episode, vertical short-form video package, YouTube video package, product/service advert, storyboard), target platform and original idea.
+- The Studio builder composes a production-specific prompt and places it in the existing chat composer for review before submission. The existing Worker Studio system instructions then generate scripts, scenes, dialogue, production notes, social copy and prompts.
+- Added clear disclosure: this pilot generates creative text and production instructions; it does not yet render finished video files or publish automatically.
+- Added explicit commercial-access status: public paid access is not enabled yet. Premium Worker requests remain admin-only until server-verified paid entitlements and payment webhooks are implemented. Do not remove this server-side gate merely to make the UI appear public.
+- Frontend change commit: `d0c5cce11ca7b899e877f9e78a9f4497d2eacb57`.
+- Worker production deployment and smoke test before this frontend commit: run `41612475652` completed successfully on Worker history fix commit `25c9c95727a0e6d5c00d8a69a4ef5136ffc5468c`. The frontend commit triggers a new deployment/build workflow; verify its result before claiming this latest UI is live.
+- Android debug APK build on commit `25c9c95727a0e6d5c00d8a69a4ef5136ffc5468c`: run `41612476208` completed successfully; artifact `DrVas-APK`, artifact id `13218709603`, approximately 5.7 MB. This is a debug APK artifact, not yet installed or tested on a physical phone and not a Google Play release.
+- APK workflow URL: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/41612476208
+- Latest verified APK checksum: `sha256:46146b604cabc7f4e7232c043ea39e4d20ae4c8c3a243cafb0ae3b379828f450`.
+
+## Commercial Studio implementation still required
+
+1. Connect the founder's Stripe account and configure product/price IDs for Studio plans.
+2. Create a Supabase entitlement/subscription table with RLS and a Stripe webhook path; grant/revoke access only from verified Stripe webhook events. Keep the founder admin allowlist as a development override.
+3. Add Worker checkout-session creation, Stripe signature verification and idempotent webhook processing. Never put Stripe secret keys or webhook signing secrets in the browser or repository.
+4. Change Worker premium authorization to accept either the configured administrator or a current, server-verified Studio entitlement. Do not trust frontend flags.
+5. Decide final public prices and usage quotas only after estimating Gemini/media-generation costs. The current Studio pilot produces text; video/image rendering is a separate integration and must have its own usage/cost controls.
+6. Implement real media rendering, asset storage/gallery, project persistence and export before marketing Studio as a full video editor.
+7. Connect official Meta/TikTok APIs only after the required app permissions/reviews; no auto-publishing is currently active.
