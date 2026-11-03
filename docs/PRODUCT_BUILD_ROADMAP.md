@@ -118,3 +118,8 @@ Security and release gates:
 - Keep feature branches and pull requests; merge only after review and tests.
 - Do not claim a feature is live until the production deployment and a real end-to-end test succeed.
 - Never promise infinite AI usage. A future plan can offer generous usage, transparent fair-use rules and capacity-based availability, subject to provider costs and limits.
+
+
+## Advertising and sponsorships (design approved; disabled by default)
+
+See `docs/ADVERTISING_SPEC.md`. Prepare privacy-first direct sponsorship placements and contextual workspace placements, visibly labelled and kept separate from assistant answers. Require global and per-workspace admin switches, creative review, frequency caps, immediate suspension and aggregate-only measurement. Never sell or disclose chats, Health data, uploads or private profiles; do not use sensitive data for targeting. Tracking remains off until valid PECR/UK GDPR consent. No provider or SDK is selected, and no advertising is live.
