@@ -305,6 +305,70 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
 #authMessage:not(:empty),#profileMessage:not(:empty){padding:10px 12px;border-radius:11px;background:#382c1d66;border:1px solid #80683d55}
 @media(max-width:900px){.chat-layout{grid-template-columns:1fr}.history-panel{order:2}.assistant-choice{min-width:0}.hero{min-height:350px}}
 @media(max-width:560px){main{padding-left:12px;padding-right:12px}.hero{min-height:330px;border-radius:20px}.hero-content{padding:23px}.modules-grid{gap:10px}.module-card{min-height:160px;padding:15px}.module-name{font-size:14px}.module-description{font-size:11px}.assistant-choice{flex-basis:100%;min-height:76px}.auth-box,.profile-box{padding:20px}.chat-layout{gap:12px}}
+
+/* INDEPENDENT PAGE AND CHAT SCROLL AREAS */
+.chat-main{
+  display:flex!important;
+  flex-direction:column!important;
+  height:min(78vh,820px)!important;
+  min-height:600px!important;
+  max-height:820px!important;
+  min-width:0;
+  overflow:hidden!important;
+  padding:14px!important;
+  border:1px solid rgba(91,170,185,.32);
+  border-radius:22px;
+  background:linear-gradient(155deg,rgba(12,30,46,.98),rgba(7,19,32,.98));
+  box-shadow:0 20px 55px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.025);
+}
+.chat-main>.chat-toolbar,.chat-main>.assistant-switcher,.chat-main>#saveMessage,
+.chat-main>.input-area,.chat-main>.voice-toolbar,.chat-main>.voice-privacy,.chat-main>.note{
+  flex:0 0 auto;
+}
+.chat-main>.chat-toolbar{margin-top:0}
+.chat-main>#chat{
+  flex:1 1 auto!important;
+  min-height:0!important;
+  height:auto!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain;
+  scrollbar-gutter:stable;
+  padding:5px 12px 12px 5px;
+  margin-top:10px;
+  border:1px solid rgba(80,128,153,.22);
+  border-radius:16px;
+  background:rgba(3,13,24,.48);
+  scroll-behavior:smooth;
+  overflow-anchor:auto;
+}
+.chat-main>#chat::-webkit-scrollbar{width:9px}
+.chat-main>#chat::-webkit-scrollbar-thumb{background:#315a6d;border:2px solid #0b1c2b;border-radius:99px}
+.chat-main>#chat::-webkit-scrollbar-track{background:transparent}
+.chat-main>.input-area{margin-top:12px}
+.chat-main>.voice-toolbar{max-height:110px;overflow-y:auto;overscroll-behavior:contain}
+.history-panel{
+  height:min(78vh,820px);
+  min-height:600px;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  scrollbar-gutter:stable;
+}
+#conversationList{max-height:none;overflow:visible}
+@media(max-width:900px){
+ .chat-main{height:76vh!important;min-height:560px!important;max-height:820px!important}
+ .history-panel{height:auto;min-height:0;max-height:360px}
+ #conversationList{max-height:220px;overflow-y:auto}
+}
+@media(max-width:560px){
+ .chat-main{height:78vh!important;min-height:540px!important;max-height:760px!important;padding:10px!important;border-radius:17px}
+ .chat-main>#chat{padding:4px 8px 10px}
+ .chat-main>.assistant-switcher{max-height:170px;overflow-y:auto;overscroll-behavior:contain}
+ .chat-main>.voice-toolbar{max-height:84px}
+ .chat-main>.voice-privacy{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){.chat-main>#chat{scroll-behavior:auto}}
+
 </style>
 </head>
 
@@ -965,23 +1029,14 @@ function getRememberedConversation(){
 
 let chatScrollFrame = 0;
 function scrollToLatestMessage(target){
-  const chat = el("chat");
-  if(!chat) return;
-  // The founder's required resting position is the composer: the text box and
-  // voice controls must be visible, not merely the last assistant paragraph.
-  const composerTarget = document.querySelector(".voice-toolbar")
-    || document.querySelector(".input-area")
-    || chat;
+  const chat=el("chat");
+  if(!chat)return;
   cancelAnimationFrame(chatScrollFrame);
-  chatScrollFrame = requestAnimationFrame(()=>{
-    chatScrollFrame = requestAnimationFrame(()=>{
-      if(!composerTarget.isConnected) return;
-      composerTarget.scrollIntoView({behavior:"smooth",block:"end",inline:"nearest"});
-      // Explicit viewport scroll is more reliable on desktop browsers and mobile WebViews.
-      const rect = composerTarget.getBoundingClientRect();
-      const page = document.scrollingElement || document.documentElement;
-      const destination = Math.max(0,page.scrollTop + rect.bottom - window.innerHeight - 12);
-      window.scrollTo({top:destination,behavior:"smooth"});
+  chatScrollFrame=requestAnimationFrame(()=>{
+    chatScrollFrame=requestAnimationFrame(()=>{
+      if(!chat.isConnected)return;
+      // Scroll only the message viewport; keep the page, module navigation and composer still.
+      chat.scrollTo({top:chat.scrollHeight,behavior:"smooth"});
     });
   });
 }
