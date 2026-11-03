@@ -51,6 +51,12 @@ Build and test the platform as one product. Do not represent unfinished features
 
 Repository contents were re-fetched after the edits. Deployment of the Worker is confirmed on the latest health-smoke-test run noted above; end-to-end authenticated AI chat and Supabase audit inserts still need a real signed-in test.
 
+10. Added a production security smoke check: an unauthenticated `admin_status` POST must return HTTP 401. The deploy run for commit `64c98e45f57d5c5c481f8ccf936ad38c36780426` completed successfully, including this expanded smoke-test step.
+11. Refreshed `PROJECT-STATUS.md` to correct the production Worker URL/name, deployment workflow description, audit migration status and current verification boundaries.
+   Commit: `b96cc4bcba4ca583d60974c7959b6e99f7b8e83b`
+12. Latest verified Android APK build at this checkpoint: run `41612089004`, artifact `DrVas-APK`, about 6 MB. It compiled and uploaded successfully; installation/runtime on a physical device remains unverified.
+13. End-to-end AI chat and Supabase runtime audit inserts/dashboard reads remain unverified because they require a real authenticated session. Do not ask the founder to share access tokens, passwords or service-role secrets.
+
 ## Immediate next steps
 
 1. Confirm Cloudflare Worker secrets exist by name (never reveal or request their values):
