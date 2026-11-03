@@ -58,6 +58,8 @@ jobs:
             [!worker.includes('"Access-Control-Allow-Origin": "*"'), 'Wildcard CORS must not be enabled'],
             [worker.includes('64 * 1024'), 'Worker request body limit is missing'],
             [worker.includes('drvas_consume_rate_limit'), 'Atomic rate-limit RPC is not wired into the Worker'],
+            [!html.includes('"Content-Type":"text/plain;charset=UTF-8"'), 'AI chat must send JSON accepted by the Worker'],
+            [html.includes('headers:{"Content-Type":"application/json"}'), 'JSON content type must be used by the frontend'],
             [worker.includes('Acordul explicit este necesar'), 'Private-profile consent is not enforced server-side'],
             [worker.includes('body.action !== "private_profile_clear"'), 'Private-profile deletion must not depend on an encryption key'],
             [migration.includes('SECURITY DEFINER'), 'Rate-limit RPC must be SECURITY DEFINER'],
