@@ -2610,51 +2610,7 @@ async function saveMessage(role,content,conversationId=currentConversationId){
   if(error) throw error;
 }
 
-/* Salvează toate mesajele temporare într-o singură operațiune. */
-async function saveCurrentConversation(){
-  if(!currentUser || !currentConversationId) return;
-  if(conversationSaved){
-    setLocalizedText(el("saveMessage"),"Această conversație este deja salvată.");
-    return;
-  }
-  if(!pendingMessages.length){
-    setLocalizedText(el("saveMessage"),"Scrie cel puțin un mesaj înainte să salvezi conversația.");
-    return;
-  }
-
-  const button = el("saveConversationButton");
-  button.disabled = true;
-  setLocalizedText(button,"Se salvează...");
-
-  try{
-    const rows = pendingMessages.map(message=>({
-      user_id:currentUser.id,
-      conversation_id:currentConversationId,
-      role:message.role,
-      content:message.content
-    }));
-
-    const {error} = await supabaseClient.from("chat_messages").insert(rows);
-    if(error) throw error;
-
-    pendingMessages = [];
-    conversationSaved = true;
-    setLocalizedText(el("saveMessage"),"Conversația este salvată automat.");
-    updateSaveButton();
-    await loadConversationList();
-  }catch(error){
-    el("saveMessage").textContent = tr("Nu am putut salva conversația: ") + error.message;
-    button.disabled = false;
-    setLocalizedText(button,"Încearcă din nou să salvezi");
-  }
-}
-
-function recordMessage(role,content){
-  pendingMessages.push({role,content});
-  conversationSaved = false;
-  setLocalizedText(el("saveMessage"),"Mesajele sunt temporare și nu au fost salvate. Apasă „Salvează conversația” dacă vrei să le păstrezi.");
-  updateSaveButton();
-}
+/* Messages are saved immediately by send(); no manual-save path remains. */
 
 function showLogin(){
   if(!languageReady)return;
