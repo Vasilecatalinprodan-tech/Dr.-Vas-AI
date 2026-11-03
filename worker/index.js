@@ -265,6 +265,40 @@ export default {
       }
 
 
+      // Consimțământ explicit și versionat pentru câmpurile opționale din profilul privat.
+      if (body.action === "privacy_consent_save") {
+        const consentUser = await verifySupabaseUser(env, body.access_token);
+        if (!consentUser) return json({ error: "Sesiune invalidă. Conectează-te din nou." }, 401);
+        if (body.consent_type !== "optional_profile_data" || typeof body.granted !== "boolean") {
+          return json({ error: "Consimțământ invalid." }, 400);
+        }
+        if (!env.SUPABASE_URL || !env.SUPABASE_KEY) {
+          return json({ error: "Autentificarea nu este configurată." }, 500);
+        }
+        const consentResponse = await fetch(
+          `${env.SUPABASE_URL.replace(/\\/+$/, "")}/rest/v1/drvas_privacy_consents`,
+          {
+            method: "POST",
+            headers: {
+              apikey: env.SUPABASE_KEY,
+              Authorization: `Bearer ${env.SUPABASE_KEY}`,
+              "Content-Type": "application/json",
+              Prefer: "return=minimal"
+            },
+            body: JSON.stringify({
+              user_id: consentUser.id,
+              consent_type: "optional_profile_data",
+              policy_version: "v1",
+              granted: body.granted
+            })
+          }
+        );
+        if (!consentResponse.ok) return json({ error: "Nu am putut înregistra opțiunea de confidențialitate." }, 503);
+        return new Response(JSON.stringify({ ok: true, recorded: true }), {
+          status: 200, headers: { ...headers, "Cache-Control": "no-store, private" }
+        });
+      }
+
       // Verificare server-side a administratorului; lista este un secret Cloudflare.
       if (body.action === "admin_status") {
         const adminToken = body.access_token;
