@@ -643,6 +643,13 @@ Object.assign(UI.de,{"📁 Proiectele mele":"📁 Meine Projekte","Proiectele me
 Object.assign(UI.fr,{"📁 Proiectele mele":"📁 Mes projets","Proiectele mele Dr.Vas Studio":"Mes projets Dr.Vas Studio"});
 Object.assign(UI.es,{"📁 Proiectele mele":"📁 Mis proyectos","Proiectele mele Dr.Vas Studio":"Mis proyectos de Dr.Vas Studio"});
 Object.assign(UI.ru,{"📁 Proiectele mele":"📁 Мои проекты","Proiectele mele Dr.Vas Studio":"Мои проекты Dr.Vas Studio"});
+Object.assign(UI.en,{"Baza de date Studio nu este activată încă. Aplică migrarea SQL 202611030004_studio_projects.sql din Supabase.":"The Studio database is not active yet. Apply the 202611030004_studio_projects.sql migration in Supabase."});
+Object.assign(UI.it,{"Baza de date Studio nu este activată încă. Aplică migrarea SQL 202611030004_studio_projects.sql din Supabase.":"Il database Studio non è ancora attivo. Applica la migrazione 202611030004_studio_projects.sql in Supabase."});
+Object.assign(UI.tr,{"Baza de date Studio nu este activată încă. Aplică migrarea SQL 202611030004_studio_projects.sql din Supabase.":"Studio veritabanı henüz etkin değil. Supabase'de 202611030004_studio_projects.sql geçişini uygulayın."});
+Object.assign(UI.de,{"Baza de date Studio nu este activată încă. Aplică migrarea SQL 202611030004_studio_projects.sql din Supabase.":"Die Studio-Datenbank ist noch nicht aktiviert. Wende die Migration 202611030004_studio_projects.sql in Supabase an."});
+Object.assign(UI.fr,{"Baza de date Studio nu este activată încă. Aplică migrarea SQL 202611030004_studio_projects.sql din Supabase.":"La base de données Studio n'est pas encore activée. Appliquez la migration 202611030004_studio_projects.sql dans Supabase."});
+Object.assign(UI.es,{"Baza de date Studio nu este activată încă. Aplică migrarea SQL 202611030004_studio_projects.sql din Supabase.":"La base de datos de Studio aún no está activa. Aplica la migración 202611030004_studio_projects.sql en Supabase."});
+Object.assign(UI.ru,{"Baza de date Studio nu este activată încă. Aplică migrarea SQL 202611030004_studio_projects.sql din Supabase.":"База данных Studio ещё не активирована. Примените миграцию 202611030004_studio_projects.sql в Supabase."});
 const textOrigins=new WeakMap();
 const attributeOrigins=new WeakMap();
 Object.assign(UI.en,{
@@ -1408,7 +1415,7 @@ function studioProjectData(){
 }
 function setStudioProjectStatus(message,isError=false){
  const status=el("studioProjectStatus");if(!status)return;
- status.textContent=message;status.style.color=isError?"#ff9d9d":"#9fe5ce";
+ status.textContent=tr(message);status.style.color=isError?"#ff9d9d":"#9fe5ce";
 }
 async function loadStudioProjects(selectedId=""){
  if(!currentUser)return;
