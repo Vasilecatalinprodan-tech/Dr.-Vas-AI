@@ -36,3 +36,34 @@
 - Changes are committed to the feature branch and included in draft PR #3.
 - PR #3 is open and unmerged. Nothing from this work has been deployed to production.
 - Runtime, security and end-to-end tests remain outstanding.
+
+
+## 3 November 2026 — AI Evaluation and AI Training business line
+
+### Founder direction
+- The founder wants Dr.Vas to compete at a higher quality level than existing AI evaluation and AI training services, and to create a real revenue stream from this work.
+- This conversation and the product decision are recorded here for continuity across devices and future development sessions.
+
+### Product decision
+- Add an **AI Evaluation & Training Workbench** as a capability inside the existing Dr.Vas Studio and Dr.Vas Business workspaces, not as a seventh public workspace.
+- Intended service areas:
+  1. AI response evaluation: correctness, relevance, completeness, clarity, instruction-following and citation/source quality.
+  2. Human review and quality assurance: expert or trained reviewers, double review for high-impact tasks, adjudication and measurable inter-rater agreement.
+  3. Prompt and workflow evaluation: compare prompts/models against versioned test sets and regression benchmarks.
+  4. Dataset preparation and annotation: classification, tagging, ranking, transcription review and structured feedback, only where the source data is lawfully usable.
+  5. AI training support: create licensed, documented examples and feedback datasets; improve task instructions and rubrics; support supervised fine-tuning or preference-data preparation only where the chosen provider and contract permit it.
+  6. Business services: evaluation reports, quality dashboards, audit trails and managed evaluation projects for companies.
+- Potential revenue models to validate: paid evaluation projects, per-task/per-item review, monthly business subscriptions, custom benchmark packages and managed quality-assurance contracts. Prices and margins must be tested with real pilot customers and actual reviewer/provider costs before publication.
+- Differentiation target: transparent scoring rubrics, traceable evidence, calibrated human reviewers, repeatable benchmarks, privacy-by-design, domain-specific quality controls and clear confidence/limitations—not unsupported claims that Dr.Vas can certify or guarantee an AI system.
+
+### Safety, rights and quality gates
+- Never use private customer data, personal data, copyrighted material or confidential business data for model training without a documented lawful basis, appropriate permissions/licences, contractual authority and retention/deletion controls.
+- Separate evaluation from training: evaluating a model must not automatically grant permission to use submitted content for training.
+- Minimise and redact personal/sensitive data; restrict access by role; record dataset provenance, licence/consent, reviewer actions and deletion status.
+- Health, legal, finance and other high-impact evaluations require domain-qualified reviewers and appropriate professional/regulatory review; general-purpose automated scoring alone is insufficient.
+- Build human-in-the-loop review, reviewer calibration, disagreement handling, sampling audits, bias checks, appeal/correction paths and versioned rubrics.
+- Do not promise jobs, guaranteed income, certification, model improvement or customer outcomes until supported by actual contracts and measured results.
+
+### Status and next build
+- This is a recorded product decision and roadmap addition only. No evaluator/training service, customer data pipeline, marketplace, billing or public offer has been implemented or launched.
+- Next: define the evaluation schema and workflow; build a private prototype with synthetic/publicly licensed sample data; add repeatable rubric scoring, human review, benchmark runs, version history and exportable reports; then pilot with a small number of real customers under written terms.
