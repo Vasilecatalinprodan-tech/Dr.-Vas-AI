@@ -440,3 +440,12 @@ Founder requested autonomous work while away and added a third assistant named A
 - Implementation commit: `bb1ab804d73a44b4f331b55650988a27f0bb6411`.
 - CI/deployment run for this new avatar commit has not yet been verified at checkpoint time. Do not claim the new portraits are live until a successful run for this exact commit is confirmed.
 - No external AI image-generation service or voice provider was used. The SVG artwork is stored directly in application source.
+## Animated assistant portraits and voice expression sync — 2026-11-03
+
+- Expanded Dr.Jan and Aurora inline SVG portrait cards from 54×64 to 68×82 CSS pixels for clearer faces in the assistant selector.
+- Added subtle idle portrait movement and a speaking animation when the selected assistant speaks using browser speech synthesis.
+- Added mouth-shape movement for the Jan and Aurora illustrated SVG faces while speech is active. The selected portrait animates during Live audio playback and returns to idle after the final audio chunk; stop/cancel paths clear the speaking state.
+- Added `prefers-reduced-motion` handling so users who request reduced motion do not receive the avatar animations.
+- This is lightweight 2D SVG/CSS animation, not yet a photorealistic 3D avatar, full facial rig, or AI-generated lip-sync. The mouth animation is a visual speaking cue, not phoneme-accurate lip synchronization.
+- Implementation commit: `2e0c5c15fcd6f2eeefd43c94589f909aedb35d69`.
+- GitHub Actions run `41664801404` was queued for this commit at checkpoint time: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/41664801404. Deployment is not yet confirmed.
