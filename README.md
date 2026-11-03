@@ -72,8 +72,15 @@ Planned provenance protection: a private encrypted record (AES-256-GCM with a Cl
   - `DRVAS_FOUNDER_SIGNING_PUBLIC_KEY_SPKI_B64` (matching Ed25519 public key, SPKI)
   - `DRVAS_FOUNDER_PUBLIC_KEY_ID`
 - Never paste private key material into chat or commit it to GitHub. Until secrets are configured and the SQL migration is applied, the provenance record cannot be created.
-- Validation: GitHub Actions syntax-validation step passed for the Worker and browser JavaScript on the corrected Worker commit. The first Worker deployment attempt failed; a corrected run was subsequently superseded by newer runs. Latest Worker deployment and APK workflow were still in progress at checkpoint time; do not claim production completion until confirmed.
+- Validation: GitHub Actions syntax validation passed for Worker and browser JavaScript. The first Worker deployment attempt failed, then the corrected run for branch commit `a0010b62fad9da5a1f9a7f52372b06c7bce11a08` completed successfully, including the production smoke test. The Android APK build workflow for the same commit was still in progress at the last check. The SQL migration and Cloudflare founder secrets still require administrator action.
 - Remote branch has been updated through GitHub commits. Codespaces local/unpushed changes remain unverified; reconcile `git status --short && git log -5 --oneline` before local pull/reset.
+
+### Follow-up verification — 2026-11-03
+
+- Confirmed GitHub Actions run `41650000228` succeeded on the founder-admin UI commit; Worker/browser syntax validation, Cloudflare deployment and production smoke tests all passed.
+- Confirmed the income-tracker-only run `41649735951` also passed.
+- Android APK build run `41650000139` was still running at the last status check.
+- The latest README checkpoint commit records this status. Do not infer Supabase migration execution or founder-key configuration from a successful Worker deployment.
 
 ## Session log — 2026-11-03
 
