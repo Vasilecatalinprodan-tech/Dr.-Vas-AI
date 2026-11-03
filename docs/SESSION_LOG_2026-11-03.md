@@ -144,3 +144,11 @@ The preceding project checkpoint and project status documents contain the full p
 - Founder asked to preserve this conversation and explain required Supabase SQL. The crypto device registry migration `supabase/migrations/202611030003_crypto_device_registry.sql` is the outstanding migration for the read-only Crypto device registry. It must be applied once in Supabase SQL Editor; it does not enable mining, wallets, or trading. The earlier audit-log and private-profile migrations were previously recorded as applied and should not be rerun.
 - Do not claim that the admin panel, Crypto registry, or auto-scroll is fully verified until tested against the live site and Supabase.
 
+## Founder clarification — scroll to the composer, not just the answer (2026-11-03)
+
+- Founder clarified the required final viewport: after Dr.Vas replies, automatically scroll far enough down that the message input and voice controls are visible and ready for the next interaction. Scrolling only the final answer bubble is insufficient.
+- Updated `scrollToLatestMessage()` to target `.voice-toolbar` (fallback `.input-area`, then chat), align its bottom into view, and explicitly scroll the document viewport. This applies to message append and the final send cleanup because both use this helper.
+- Frontend commit: `ea9fdbe18687a346b66f71b9601e07d74b5968a7`.
+- Founder confirmed the Crypto device registry SQL migration was run in Supabase. This is user-reported, not independently verified; next technical step is verify the table exists and the admin Crypto panel reports ready. Do not rerun the migration blindly.
+- This UI change still requires a live browser test on desktop and mobile after the latest GitHub Actions deployment succeeds.
+
