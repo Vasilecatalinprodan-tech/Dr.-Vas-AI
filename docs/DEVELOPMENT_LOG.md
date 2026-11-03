@@ -75,3 +75,33 @@
 - Strategic conclusion: Dr.Vas should not begin by trying to build a giant open gig marketplace. Start with a focused managed evaluation service and a software workbench: benchmark design, repeatable scoring, human QA, evidence-backed reports and carefully permissioned data preparation. Add a vetted reviewer network only after workflows and customer demand are proven.
 - Market research references reviewed: https://aitrainers.jobs/platforms ; https://www.aitrainer.work/platforms/database ; https://services.deepen.ai/guides/llm-evaluation-companies ; https://www.aitrainingjobsuk.co.uk/platforms
 - These are third-party directories/guides, not guarantees of a provider's current openings, pay or contractual terms. Re-verify against each provider's own site before making claims or recommending applications.
+
+
+## 3 November 2026 — confidential adult-media business proposal and Dr.Vas advertising
+
+### Founder proposals and assessment
+The founder proposed (a) an administrator-only AI-assisted adult film production business, with distribution through specialist adult platforms under commercial agreements, and (b) paid advertising/sponsorships inside Dr.Vas.
+
+### Adult-media concept — research before any implementation
+- Treat as a separate confidential administrator-only business experiment, NOT a public Dr.Vas workspace and NOT part of the six public modules.
+- No production, publishing, platform onboarding or payment integration is authorised by this discussion. First perform legal, platform-policy, payment-provider, insurance, tax and unit-economics due diligence.
+- Any future scope must be limited to lawful adult-only material featuring clearly fictional, synthetic adult characters. Do not use a real person's face, body, voice, likeness or identifiable characteristics without explicit documented rights and consent. Never create or distribute non-consensual intimate imagery, nudification/deepfake content, underage/young-looking characters, or sexual content involving minors.
+- No model, dataset, actor, voice, image, music or other third-party asset may be used without appropriate commercial rights/licences. Preserve provenance, consent/rights records, age/identity checks where relevant, release records, AI-generation disclosures, content moderation and takedown process.
+- UK regulatory review is mandatory. Ofcom guidance requires highly effective age assurance for services publishing pornography; the 2026 legal changes further strengthen rules around non-consensual intimate imagery and certain AI-generated pornographic depictions. The Crime and Policing Act 2026 also introduced relevant new provisions and a review of age/consent verification for people appearing in pornographic content. Re-check commencement, detailed rules and jurisdictional scope with a UK solicitor before launch.
+- Platform and payment-provider acceptance must be obtained in writing before production investment. Do not assume a platform accepts synthetic/AI adult content, or that mainstream payment processors/ad networks will process it.
+- Commercial viability is unproven. Validate distribution access, revenue share, minimum payout, chargebacks, content acquisition costs, moderation, legal costs, marketing restrictions and realistic demand with a small non-production feasibility study first.
+- Current decision: research only; no implementation until explicit founder approval after legal and commercial review.
+
+### Dr.Vas advertising and sponsorships
+- Add a monetisation option to evaluate across public Dr.Vas workspaces, without disrupting assistant conversations or compromising user trust.
+- Preferred formats: clearly labelled direct sponsorships, contextual ads relevant to the current workspace, and disclosed partner/referral listings. Keep ads visually separate from assistant answers and never imply that paid placement is an objective recommendation.
+- Never sell conversation content or expose private chats, Health information, uploaded files or personal profiles to advertisers. Do not target ads using sensitive health or other special-category data.
+- Prefer contextual advertising and direct sponsorships at launch. Any advertising cookies, device storage, tracking or profiling must follow PECR/UK GDPR consent requirements; document vendors, purposes, data flows, withdrawal and measurement controls.
+- Consider a paid/ad-free tier and frequency caps. No ad network or ad SDK selected or integrated yet.
+- Validate revenue only after user traffic, retention, fill rate, CPM/RPM, consent rate and user experience can be measured. Advertising is supplementary income, not a guaranteed material revenue source.
+- Current decision: approved for product research and future design only; no ads are live and no ad provider has been connected.
+
+### Current references checked
+- Ofcom online pornography / age assurance guidance: https://www.ofcom.org.uk/online-safety/pornography and https://www.ofcom.org.uk/online-safety/protecting-children/age-assurance
+- Crime and Policing Act 2026 factsheets: https://www.gov.uk/government/publications/crime-and-policing-act-2026-factsheets
+- ICO online advertising and PECR guidance: https://ico.org.uk/for-organisations/direct-marketing-and-privacy-and-electronic-communications/guidance-on-the-use-of-storage-and-access-technologies/how-do-the-rules-apply-to-online-advertising/
