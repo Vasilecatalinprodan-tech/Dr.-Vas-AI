@@ -5,6 +5,17 @@ on:
   push:
     branches:
       - drvas-integrated-platform
+    paths:
+      - 'worker/**'
+      - 'www/**'
+      - 'wrangler.toml'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/deploy-worker.yml'
+
+concurrency:
+  group: drvas-worker-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
