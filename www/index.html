@@ -1775,12 +1775,12 @@ async function openConversation(conversationId){
       .select("role,content,created_at")
       .eq("user_id",currentUser.id)
       .eq("conversation_id",conversationId)
-      .order("created_at",{ascending:true}).limit(200);
+      .order("created_at",{ascending:false}).limit(200);
     if(error) throw error;
 
     chat.innerHTML = "";
     if(!data || !data.length) renderWelcome();
-    else data.forEach(message=>appendMessage(message.role,message.content));
+    else [...data].reverse().forEach(message=>appendMessage(message.role,message.content));
 
     updateActiveConversation();
     scrollToLatestMessage(chat.lastElementChild);
