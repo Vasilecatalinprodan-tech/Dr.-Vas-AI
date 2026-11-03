@@ -87,3 +87,30 @@ test("header chat button opens the conversation without entering destructive foc
   await page.locator("#chatSection").scrollIntoViewIfNeeded();
   await expect(page.locator("#question")).toBeVisible();
 });
+
+test("header chat button routes signed-out visitors to sign-in without hiding the dashboard", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.locator("#headerChatCta").click();
+
+  await expect(page.locator("#authSection")).toBeVisible();
+  await expect(page.locator("#heroSection")).toBeVisible();
+  await expect(page.locator('[data-module]')).toHaveCount(6);
+  await expect(page.locator("#chatSection")).toBeHidden();
+  expect(await page.evaluate(() => document.body.classList.contains("chat-focus-mode"))).toBe(false);
+});
+
+test("health stays available while premium modules remain gated for non-admin users", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-standard-user", email: "standard@example.invalid" };
+    isDrvasAdmin = false;
+    selectModule("health", true);
+  });
+
+  await expect(page.locator("#activeModuleName")).toContainText("Dr.Vas Health");
+  await expect(page.locator("#moduleAccessMessage")).toContainText("nu înlocuiește");
+  await page.evaluate(() => selectModule("studio", true));
+  await expect(page.locator("#moduleAccessMessage")).toContainText("Premium");
+  await expect(page.locator("#studioWorkspace")).toBeHidden();
+  await expect(page.locator("#activeModuleName")).toContainText("Dr.Vas Health");
+});
