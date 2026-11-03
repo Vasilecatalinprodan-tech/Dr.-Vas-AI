@@ -202,7 +202,25 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
  .modules-heading h2{font-size:19px}
 }
 @media(max-width:390px){.modules-grid{grid-template-columns:1fr}.module-card{min-height:115px}}
-.studio-project-manager{margin-top:22px;padding:18px;border:1px solid #245064;border-radius:14px;background:#0a1c2b}.studio-project-manager h3{margin:0 0 12px;color:#8fe8df}.studio-project-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0}.studio-project-controls label{color:#a8c7d5;font-size:13px}.studio-project-controls input,.studio-project-controls select{min-width:190px;flex:1;padding:11px;border:1px solid #31566a;border-radius:8px;background:#102b3d;color:#fff}.studio-project-controls button{padding:10px 14px;border:1px solid #3c8e91;border-radius:8px;background:#123c4a;color:#d9fffb;cursor:pointer}.studio-project-manager p{font-size:12px;color:#9bb8c8;margin:10px 0 0}</style>
+.studio-project-manager{margin-top:22px;padding:18px;border:1px solid #245064;border-radius:14px;background:#0a1c2b}.studio-project-manager h3{margin:0 0 12px;color:#8fe8df}.studio-project-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0}.studio-project-controls label{color:#a8c7d5;font-size:13px}.studio-project-controls input,.studio-project-controls select{min-width:190px;flex:1;padding:11px;border:1px solid #31566a;border-radius:8px;background:#102b3d;color:#fff}.studio-project-controls button{padding:10px 14px;border:1px solid #3c8e91;border-radius:8px;background:#123c4a;color:#d9fffb;cursor:pointer}.studio-project-manager p{font-size:12px;color:#9bb8c8;margin:10px 0 0}
+.income-tracker{margin-top:22px;padding:18px;border:1px solid #39736f;border-radius:14px;background:#0b2230}
+.income-tracker h3{margin:0 0 8px;color:#8fe8df}
+.income-tracker-intro,.income-tracker small{color:#a9bfce;font-size:12px;line-height:1.5}
+.income-form{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+.income-form label{display:flex;flex-direction:column;gap:6px;color:#c8dce5;font-size:12px;font-weight:700}
+.income-form input,.income-form select,.income-form textarea{width:100%;min-width:0;padding:10px;border:1px solid #34536a;border-radius:8px;background:#071827;color:#fff;font:inherit}
+.income-form textarea{min-height:64px;resize:vertical}
+.income-form .income-wide{grid-column:1/-1}
+.income-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.income-actions button{padding:9px 13px;border:1px solid #3c8e91;border-radius:8px;background:#123c4a;color:#d9fffb;cursor:pointer}
+.income-summary{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0;color:#d6e8ee;font-size:13px}
+.income-list{display:grid;gap:9px;margin-top:12px}
+.income-item{padding:12px;border:1px solid #29485e;border-radius:10px;background:#0c1b2b}
+.income-item strong{color:#fff}.income-item p{margin:5px 0;color:#a9bfce;font-size:12px;line-height:1.5}
+.income-item-actions{display:flex;gap:8px;margin-top:8px}
+.income-item-actions button{padding:6px 10px;border:1px solid #3c8e91;border-radius:7px;background:#123c4a;color:#d9fffb;cursor:pointer}
+@media(max-width:650px){.income-form{grid-template-columns:1fr}.income-form .income-wide{grid-column:auto}}
+</style>
 </head>
 
 <body>
@@ -355,6 +373,29 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
       <button type="button" onclick="deleteStudioProject()">Șterge</button>
      </div>
      <p id="studioProjectStatus" role="status" aria-live="polite">Proiectele tale vor fi salvate privat în contul Dr.Vas.</p>
+    </section>
+    <section class="income-tracker" aria-labelledby="incomeTrackerTitle">
+     <h3 id="incomeTrackerTitle">💷 Dr.Vas Independent Income</h3>
+     <p class="income-tracker-intro">Urmărește oportunitățile de venit din scriere, traduceri, muzică, video și produse digitale. Dr.Vas pregătește și organizează; tu aprobi publicarea, contractele și orice cheltuială.</p>
+     <div class="income-form">
+      <label>Titlul oportunității<input id="incomeTitle" maxlength="160" placeholder="Ex.: Traducere pentru client"></label>
+      <label>Platformă / client<input id="incomePlatform" maxlength="120" placeholder="Ex.: Fiverr, Upwork, editură"></label>
+      <label>Tip<select id="incomeType"><option value="writing">Scriere / carte</option><option value="translation">Traducere</option><option value="music">Muzică / versuri</option><option value="video">Video / conținut</option><option value="digital_product">Produs digital</option><option value="freelance">Servicii freelance</option><option value="other">Altele</option></select></label>
+      <label>Stadiu<select id="incomeStatus"><option value="idea">Idee</option><option value="research">Cercetare</option><option value="ready">Pregătit</option><option value="submitted">Trimis</option><option value="accepted">Acceptat</option><option value="paid">Plătit</option><option value="rejected">Respins</option></select></label>
+      <label>Valoare estimată<input id="incomeEstimated" type="number" min="0" step="0.01" value="0"></label>
+      <label>Încasat efectiv<input id="incomeActual" type="number" min="0" step="0.01" value="0"></label>
+      <label>Monedă<select id="incomeCurrency"><option>GBP</option><option>EUR</option><option>USD</option><option>CHF</option><option>RON</option></select></label>
+      <label>Link oportunitate<input id="incomeUrl" type="url" maxlength="2000" placeholder="https://..."></label>
+      <label>Următoarea acțiune<input id="incomeNextAction" maxlength="500" placeholder="Ex.: Pregătește mostra de traducere"></label>
+      <label class="income-wide">Note<textarea id="incomeNotes" maxlength="10000" placeholder="Cerințe, termene, reguli AI, comision, drepturi și observații..."></textarea></label>
+     </div>
+     <div class="income-actions">
+      <button type="button" onclick="saveIncomeOpportunity()">Salvează oportunitatea</button>
+      <button type="button" onclick="resetIncomeForm()">Înregistrare nouă</button>
+      <span id="incomeStatusMessage" role="status" aria-live="polite" class="income-tracker-intro">Datele sunt private în contul tău.</span>
+     </div>
+     <div class="income-summary"><span id="incomeEstimatedTotal">Estimat: —</span><span id="incomeActualTotal">Încasat: —</span><span id="incomeOpportunityCount">Oportunități: 0</span></div>
+     <div id="incomeOpportunityList" class="income-list" aria-live="polite"><p class="income-tracker-intro">Autentifică-te pentru a încărca oportunitățile tale.</p></div>
     </section>
     <div class="studio-capabilities">
      <div><strong>✍️ Scenarii</strong><span>Dialog, personaje, scene și cliffhanger.</span></div>
@@ -1481,6 +1522,65 @@ function exportStudioProject(){
  const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=(project.title.replace(/[^a-z0-9ăâîșț_-]+/gi,"-").slice(0,70)||"drvas-proiect")+".md";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
  setStudioProjectStatus("Fișierul proiectului a fost pregătit pentru export.");
 }
+let currentIncomeOpportunityId=null;
+let incomeOpportunityCache=[];
+function incomeMessage(message,isError=false){const node=el("incomeStatusMessage");if(!node)return;node.textContent=message;node.style.color=isError?"#ff9d9d":"#9fe5ce";}
+function resetIncomeForm(){
+ currentIncomeOpportunityId=null;
+ ["incomeTitle","incomePlatform","incomeUrl","incomeNextAction","incomeNotes"].forEach(id=>{if(el(id))el(id).value="";});
+ ["incomeEstimated","incomeActual"].forEach(id=>{if(el(id))el(id).value="0";});
+ el("incomeType").value="writing";el("incomeStatus").value="idea";el("incomeCurrency").value="GBP";incomeMessage("Formular nou. Completează oportunitatea.");
+}
+function moneyLabel(amount,currency){return Number(amount||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+" "+currency;}
+function renderIncomeOpportunities(){
+ const list=el("incomeOpportunityList");if(!list)return;list.replaceChildren();
+ incomeOpportunityCache.forEach(item=>{
+  const card=document.createElement("article");card.className="income-item";
+  const title=document.createElement("strong");title.textContent=item.title;card.appendChild(title);
+  const details=document.createElement("p");details.textContent=(item.platform||"Platformă neprecizată")+" · "+item.opportunity_type+" · "+item.status+" · Estimat: "+moneyLabel(item.estimated_amount,item.currency)+" · Încasat: "+moneyLabel(item.actual_amount,item.currency);card.appendChild(details);
+  if(item.next_action){const next=document.createElement("p");next.textContent="Următorul pas: "+item.next_action;card.appendChild(next);}
+  const actions=document.createElement("div");actions.className="income-item-actions";
+  const edit=document.createElement("button");edit.type="button";edit.textContent="Editează";edit.addEventListener("click",()=>editIncomeOpportunity(item.id));actions.appendChild(edit);
+  const remove=document.createElement("button");remove.type="button";remove.textContent="Șterge";remove.addEventListener("click",()=>deleteIncomeOpportunity(item.id));actions.appendChild(remove);
+  card.appendChild(actions);list.appendChild(card);
+ });
+ if(!incomeOpportunityCache.length){const empty=document.createElement("p");empty.className="income-tracker-intro";empty.textContent="Nu ai înregistrat încă oportunități. Adaugă prima oportunitate mai sus.";list.appendChild(empty);}
+ const currencies=[...new Set(incomeOpportunityCache.map(x=>x.currency||"GBP"))];
+ const total=field=>currency=>incomeOpportunityCache.filter(x=>(x.currency||"GBP")===currency).reduce((sum,x)=>sum+Number(x[field]||0),0);
+ el("incomeEstimatedTotal").textContent="Estimat: "+(currencies.length?currencies.map(c=>moneyLabel(total("estimated_amount")(c),c)).join(" · "):"0.00 GBP");
+ el("incomeActualTotal").textContent="Încasat: "+(currencies.length?currencies.map(c=>moneyLabel(total("actual_amount")(c),c)).join(" · "):"0.00 GBP");
+ el("incomeOpportunityCount").textContent="Oportunități: "+incomeOpportunityCache.length;
+}
+async function loadIncomeOpportunities(){
+ if(!currentUser)return;
+ const {data,error}=await supabaseClient.from("drvas_income_opportunities").select("*").eq("user_id",currentUser.id).order("updated_at",{ascending:false}).limit(200);
+ if(error)throw error;incomeOpportunityCache=data||[];renderIncomeOpportunities();
+}
+function editIncomeOpportunity(id){
+ const item=incomeOpportunityCache.find(x=>x.id===id);if(!item)return;currentIncomeOpportunityId=id;
+ el("incomeTitle").value=item.title||"";el("incomePlatform").value=item.platform||"";el("incomeType").value=item.opportunity_type||"other";el("incomeStatus").value=item.status||"idea";
+ el("incomeEstimated").value=item.estimated_amount||0;el("incomeActual").value=item.actual_amount||0;el("incomeCurrency").value=item.currency||"GBP";
+ el("incomeUrl").value=item.target_url||"";el("incomeNextAction").value=item.next_action||"";el("incomeNotes").value=item.notes||"";
+ incomeMessage("Oportunitate încărcată pentru editare.");el("incomeTitle").scrollIntoView({behavior:"smooth",block:"center"});
+}
+async function saveIncomeOpportunity(){
+ if(!currentUser){incomeMessage("Autentifică-te pentru a salva oportunități.",true);return;}
+ const title=el("incomeTitle").value.trim();if(!title){incomeMessage("Adaugă titlul oportunității.",true);el("incomeTitle").focus();return;}
+ const estimated=Number(el("incomeEstimated").value||0),actual=Number(el("incomeActual").value||0);
+ if(!Number.isFinite(estimated)||!Number.isFinite(actual)||estimated<0||actual<0){incomeMessage("Valorile financiare trebuie să fie numere pozitive.",true);return;}
+ const status=el("incomeStatus").value;
+ const payload={user_id:currentUser.id,title,platform:el("incomePlatform").value.trim(),opportunity_type:el("incomeType").value,status,estimated_amount:estimated,actual_amount:actual,currency:el("incomeCurrency").value,next_action:el("incomeNextAction").value.trim(),notes:el("incomeNotes").value.trim(),target_url:el("incomeUrl").value.trim(),updated_at:new Date().toISOString(),paid_at:status==="paid"?new Date().toISOString():null};
+ try{
+  const result=currentIncomeOpportunityId?await supabaseClient.from("drvas_income_opportunities").update(payload).eq("id",currentIncomeOpportunityId).eq("user_id",currentUser.id).select("id").single():await supabaseClient.from("drvas_income_opportunities").insert(payload).select("id").single();
+  if(result.error)throw result.error;currentIncomeOpportunityId=result.data.id;await loadIncomeOpportunities();incomeMessage("Oportunitatea a fost salvată în contul tău.");
+ }catch(error){console.error("Dr.Vas income tracker:",error);incomeMessage("Nu am putut salva: "+error.message,true);}
+}
+async function deleteIncomeOpportunity(id){
+ if(!currentUser||!window.confirm("Ștergi această oportunitate?"))return;
+ try{const {error}=await supabaseClient.from("drvas_income_opportunities").delete().eq("id",id).eq("user_id",currentUser.id);if(error)throw error;if(currentIncomeOpportunityId===id)resetIncomeForm();await loadIncomeOpportunities();incomeMessage("Oportunitatea a fost ștearsă.");}
+ catch(error){incomeMessage("Nu am putut șterge: "+error.message,true);}
+}
+
 function buildStudioPrompt(){
   const idea=el("studioIdea").value.trim();
   if(!idea){el("studioIdea").focus();el("moduleAccessMessage").textContent="Scrie mai întâi ideea proiectului.";return;}
@@ -1898,6 +1998,7 @@ async function showChat(user,displayName){
   await refreshAdminPanel();
   selectModule(activeModule);
   loadStudioProjects().catch(error=>{console.warn("Studio project list unavailable:",error);setStudioProjectStatus(error.message.includes("drvas_studio_projects")?"Baza de date Studio nu este activată încă. Aplică migrarea SQL 202611030004_studio_projects.sql din Supabase.":"Nu am putut încărca proiectele: "+error.message,true);});
+  loadIncomeOpportunities().catch(error=>{console.warn("Income tracker unavailable:",error);incomeMessage(error.message.includes("drvas_income_opportunities")?"Aplică migrarea SQL 202611030005_income_and_founder_provenance.sql în Supabase.":"Nu am putut încărca oportunitățile: "+error.message,true);});
   const conversations = await loadConversationList();
   const rememberedId = getRememberedConversation();
   const resumeId = conversations.some(item=>item.id===rememberedId)
