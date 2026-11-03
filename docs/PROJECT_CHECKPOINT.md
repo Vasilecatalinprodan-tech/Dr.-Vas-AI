@@ -245,3 +245,13 @@ A detailed session log was added at `docs/SESSION_LOG_2026-11-03.md`. It records
 - Commits: Worker endpoint `38a122284c1dee01763798c00618af1c75a720bf`; UI `f357a5c8bdb779d1577c06f6b27cd05cb881a16d`; SQL migration `c4577489a8209ecdc288e5d0d3c64fe5e1d8f564`; Worker URL-normalization fix `5c3d57dd2ceaedf4e22e5dfaadf5fe3e58c7efaa`.
 - Migration has NOT yet been applied to Supabase. Until it is applied, the panel will report setup required. No device enrollment, mining, wallet custody, exchange integration, or live/paper trading has been enabled.
 - Next: implement cryptographic device enrollment (private key generated and kept on the device; only public key registered), explicit admin approval/revocation, and audit events. Then build read-only market data and profitability estimates before any simulation or execution.
+
+## Latest founder request — auto-scroll and pending SQL (2026-11-03)
+
+- Founder reports the document/page scrollbar still sometimes fails to follow the newest Dr.Vas answer.
+- Frontend auto-scroll helper was hardened to wait for layout frames, use `scrollIntoView()`, and explicitly scroll the document viewport. Commit: `27d84c60016d73effe01faa70d70749ae9aeddd8`.
+- Session continuity record updated in `docs/SESSION_LOG_2026-11-03.md`, commit: `d42f7ef87135386b25f92c12af3e85356ab86f48`.
+- Deployment and real-browser behaviour still require verification. Test a long answer after the deployment is green, on desktop and mobile.
+- Pending founder action: apply `supabase/migrations/202611030003_crypto_device_registry.sql` once in Supabase SQL Editor. This creates the private administrator device registry only; it does not enable mining, wallet custody, exchange integration, or trading.
+- Do not rerun the earlier audit-log or private-profile migrations; they were previously recorded as applied.
+
