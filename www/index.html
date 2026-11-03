@@ -1542,6 +1542,12 @@ function showOnly(section){
 
 async function showUser(user){
   if(!user || !languageReady) return;
+  if(currentUser && currentUser.id!==user.id){
+    currentStudioProjectId=null;currentStudioProjectOutput="";
+    if(el("studioSavedProjects"))el("studioSavedProjects").innerHTML='<option value="">Alege un proiect salvat</option>';
+    if(el("studioProjectTitle"))el("studioProjectTitle").value="";
+    if(el("studioIdea"))el("studioIdea").value="";
+  }
   currentUser = user;
   showOnly("profileSection");
   setLocalizedText(el("profileMessage"),"Se încarcă profilul...");
