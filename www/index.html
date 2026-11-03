@@ -78,6 +78,12 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .chat-main{min-width:0}
 .chat-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:15px}
 .chat-module-label{font-size:12px;color:#65dcd4}
+.assistant-switcher{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0 8px;padding:12px;border:1px solid #25495d;border-radius:14px;background:linear-gradient(120deg,#0d2234,#102d3b)}
+.assistant-switcher-label{width:100%;font-size:10px;color:#88a9ba;text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.assistant-choice{display:flex;align-items:center;gap:8px;padding:9px 13px;border:1px solid #34566b;border-radius:999px;background:#10283b;color:#d7e9f0;font-size:12px;font-weight:700}
+.assistant-choice[aria-pressed="true"]{border-color:#58d8cf;background:#174b51;color:#fff;box-shadow:0 0 0 1px rgba(88,216,207,.15)}
+.assistant-choice small{font-size:10px;color:#9ab6c4;font-weight:500}
+.assistant-intro{font-size:11px;color:#9bb5c3;line-height:1.5;margin:0 0 8px}
 .auto-save-indicator{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border:1px solid #245b50;border-radius:999px;background:#102e2b;color:#83e0bd;font-size:11px;font-weight:600;white-space:nowrap}
 #saveMessage{font-size:11px;color:#f0c879;min-height:17px;margin-top:5px}
 #chat{min-height:100px;margin-top:10px}
@@ -575,6 +581,13 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
      <div class="chat-module-label" id="chatModuleLabel">✦ Discuți cu Dr.Vas Free</div>
      <span id="autoSaveStatus" class="auto-save-indicator" role="status">● Salvare automată activă</span>
     </div>
+    <div class="assistant-switcher" role="group" aria-label="Alege asistentul">
+     <span class="assistant-switcher-label">Alege asistentul tău</span>
+     <button type="button" class="assistant-choice" data-assistant="drvas" aria-pressed="true" onclick="selectAssistant('drvas')">✦ Dr.Vas <small>Principal</small></button>
+     <button type="button" class="assistant-choice" data-assistant="jan" aria-pressed="false" onclick="selectAssistant('jan')">◈ Dr.Jan <small>Ghid inteligent</small></button>
+     <button type="button" class="assistant-choice" data-assistant="aurora" aria-pressed="false" onclick="selectAssistant('aurora')">✧ Aurora <small>Învățare & idei</small></button>
+     <p class="assistant-intro" id="assistantIntro">Asistentul principal Dr.Vas este pregătit să te ajute.</p>
+    </div>
     <div id="saveMessage"></div>
     <div id="chat" role="log" aria-live="polite" aria-relevant="additions text" aria-label="Conversația cu Dr.Vas">
      <div class="msg bot">Bun venit la Dr.Vas AI! Cu ce te pot ajuta astăzi?</div>
@@ -905,7 +918,28 @@ function scrollToLatestMessage(target){
   });
 }
 let activeModule = "free";
-
+let activeAssistant = "drvas";
+const ASSISTANTS = {
+ drvas:{name:"Dr.Vas",icon:"✦",intro:"Asistentul principal: analiză, răspunsuri clare și ajutor practic.",welcome:"Bun venit! Sunt Dr.Vas. Spune-mi cu ce te pot ajuta."},
+ jan:{name:"Dr.Jan",icon:"◈",intro:"Ghid strategic: explică pașii, organizează sarcinile și te ajută să rezolvi probleme.",welcome:"Salut! Sunt Dr.Jan. Îți voi explica lucrurile clar, pas cu pas, și verificăm împreună fiecare etapă."},
+ aurora:{name:"Aurora",icon:"✧",intro:"Asistentă pentru învățare, creativitate și organizarea ideilor, cu explicații clare și încurajatoare.",welcome:"Bun venit! Sunt Aurora. Hai să explorăm ideile tale și să le transformăm în pași simpli și realizabili."}
+};
+function selectAssistant(assistantId){
+ if(!Object.prototype.hasOwnProperty.call(ASSISTANTS,assistantId))return;
+ activeAssistant=assistantId;
+ document.querySelectorAll(".assistant-choice").forEach(button=>{
+  const selected=button.dataset.assistant===assistantId;
+  button.setAttribute("aria-pressed",String(selected));
+ });
+ const assistant=ASSISTANTS[assistantId];
+ const intro=el("assistantIntro");
+ if(intro)intro.textContent=assistant.intro;
+ const label=el("chatModuleLabel");
+ if(label)label.textContent=assistant.icon+" "+assistant.name+" · "+(activeModule==="free"?"Asistent general":activeModule==="health"?"Health":activeModule.charAt(0).toUpperCase()+activeModule.slice(1));
+ if(window.speechSynthesis)window.speechSynthesis.cancel();
+ if(voiceAutoRead)refreshVoiceUi("ready");
+ try{if(currentUser)localStorage.setItem("drvas_assistant_"+currentUser.id,assistantId)}catch{}
+}
 function selectModule(moduleName,userInitiated=false){
   const modules={
     free:{icon:"✦",name:"Dr.Vas Free — Asistent general",description:"Modulul general este selectat. Poți începe conversația."},
@@ -1086,7 +1120,9 @@ function chooseSpeechVoice(lang){
  if(!matching.length)return null;
  const selected=el("speechVoiceSelect")?.value;
  if(selected){const chosen=matching.find(v=>v.voiceURI===selected);if(chosen)return chosen;}
- const preferredNames=/natural|neural|enhanced|premium|online|andrei|radu|david|daniel|george|james|guy|ryan|alex|thomas|mark/i;
+ const preferredNames=activeAssistant==="aurora"
+  ? /natural|neural|enhanced|premium|online|female|woman|zira|susan|samantha|aria|jenny|ava|karen|victoria|sara|google.*female/i
+  : /natural|neural|enhanced|premium|online|male|man|andrei|radu|david|daniel|george|james|guy|ryan|alex|thomas|mark/i;
  return matching.find(v=>preferredNames.test(v.name))||matching[0];
 }
 function prepareSpeechText(value){
@@ -1124,7 +1160,7 @@ function speakDrVas(text){
  utterance.lang=lang;
  utterance.voice=voice;
  utterance.rate=selectedSpeechRate();
- utterance.pitch=0.96;
+ utterance.pitch=activeAssistant==="aurora"?1.04:activeAssistant==="jan"?0.92:0.96;
  utterance.onstart=()=>refreshVoiceUi("speaking");
  utterance.onend=()=>refreshVoiceUi("ready");
  utterance.onerror=()=>refreshVoiceUi("ready");
@@ -2093,6 +2129,7 @@ function changeAdminLogPage(delta){
 async function showChat(user,displayName){
   if(!user) return;
   currentUser = user;
+  try{const savedAssistant=localStorage.getItem("drvas_assistant_"+user.id);if(savedAssistant&&ASSISTANTS[savedAssistant])activeAssistant=savedAssistant;}catch{}
   showOnly("chatSection");
   el("accountEmail").textContent =
     (displayName || el("displayName").value.trim() || user.email || "") +
@@ -2126,7 +2163,8 @@ function renderWelcome(){
   el("chat").innerHTML = "";
   const welcome = document.createElement("div");
   welcome.className = "msg bot";
-  setLocalizedText(welcome,"Bun venit la Dr.Vas AI! Cu ce te pot ajuta astăzi? Poți întreba și „Cine este Vasile-Cătălin Prodan și care este povestea Dr.Vas?”. Mesajele și răspunsurile noi se salvează automat în contul tău.");
+  const assistant=ASSISTANTS[activeAssistant]||ASSISTANTS.drvas;
+  welcome.textContent=assistant.welcome+" Mesajele și răspunsurile noi se salvează automat în contul tău.";
   el("chat").appendChild(welcome);
   updateActiveConversation();
 }
@@ -2447,6 +2485,7 @@ async function send(){
       body:JSON.stringify({
         message:message,
         module:moduleId,
+        assistant:activeAssistant,
         language:language,
         conversation_id:conversationId,
         access_token:accessToken
