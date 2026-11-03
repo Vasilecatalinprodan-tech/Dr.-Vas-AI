@@ -475,3 +475,15 @@ Founder requested autonomous work while away and added a third assistant named A
 - The previous login-navigation fix (`6896b5d4211c1dfac2ac5fadb80de47eeaf0a495`) deployed successfully, but the broader all-module routing commit is newer and its own deployment must be verified before claiming it is live.
 - Assistant architecture already exists in the signed-in chat: three selectable personas, Dr.Vas (primary), Dr.Jan (step-by-step guide) and Aurora (creative/learning). Persona selection changes the system prompt, assistant label and voice selection; speech playback supports browser voices, and Gemini Live has configured built-in voices. Dr.Jan/Aurora have original illustrated SVG portraits with lightweight idle/speaking motion; Dr.Vas retains the founder portrait. Current mouth motion is a speaking animation, not phoneme-accurate lip sync or a photorealistic 3D avatar.
 - Next product step: make assistant selection prominent in the signed-in workspace and implement proper subscription entitlements/payment for the four premium modules; then progress to expressive animated avatars and real audio-driven lip-sync.
+## Distinct assistant voice mapping — 2026-11-03
+
+- Founder confirmed that Dr.Jan and Aurora's avatars remain unchanged for now; photographic avatar replacement is deferred until image generation is available.
+- Found and fixed a real Live voice mismatch: the browser's Gemini Live setup hard-coded `Charon`, overriding the Worker-side per-assistant voice selection. Live setup now maps Dr.Vas → `Charon`, Dr.Jan → `Fenrir`, Aurora → `Aoede`, matching the Worker token configuration.
+- Browser speech synthesis keeps separate voice preferences per assistant and language, with assistant-specific voice-name preference heuristics and pitch differences. Actual voice availability/naturalness depends on the voices installed by the user's browser/device; user can select a voice in the voice dropdown.
+- Pitch tuning adjusted slightly: Dr.Vas 0.98, Dr.Jan 0.90, Aurora 1.08. These are presentation distinctions, not cloned or unique biometric voices.
+- Code commit: `5d8c20a68ada85f34e605cf596c73b7404761d5c`. Deployment and real-device listening tests are still required.
+
+## Conversation management parity roadmap
+
+- Founder clarified that Dr.Vas itself should perform in-app actions like creating a new chat and archiving conversations, rather than merely telling users to click UI controls.
+- Current app has a `newConversation()` client function, but archive action/function was not found in the inspected frontend. Next implementation should add first-class conversation management (create, rename if appropriate, archive/unarchive, delete with confirmation) with database persistence and safe user ownership checks. Do not claim it can manipulate ChatGPT's own chat list; this capability applies inside Dr.Vas.
