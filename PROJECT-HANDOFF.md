@@ -220,3 +220,22 @@ Important limitations and next QA:
 - Next: review and implement abuse/rate controls for AI and Live token issuance; complete a privacy/data-retention review; confirm the private-profile encryption key and founder cryptographic key configuration by presence/format only, never by exposing values; then continue authenticated end-to-end testing.
 - Preserve the existing rule: do not enable Health Live voice or public social publishing before the relevant privacy, consent, platform approval and compliance gates are satisfied.
 
+## 16. Server-side security and cost controls — 2026-11-03
+
+- Added a 64 KB JSON request-body ceiling, content-type validation, malformed JSON handling and object-only request bodies to the Worker.
+- Added Supabase-backed atomic rate limiting (shared across Worker isolates): 20 standard AI chat requests/user/minute and 4 Live ephemeral-token requests/user/10 minutes. Exceeded limits return 429 with Retry-After.
+- Added migration `supabase/migrations/202611030001_rate_limits.sql`. It creates `public.drvas_rate_limits`, enables RLS, revokes client access and grants execution of `drvas_consume_rate_limit` only to `service_role`. No prompt or audio content is stored in the counters.
+- **Required founder action:** execute the new migration in the linked Supabase SQL Editor before normal AI chat and Live-token issuance can work on the updated Worker. The Worker deliberately fails closed (503) if the RPC is missing or unavailable; it does not silently bypass the protection.
+- Optional private-profile writes now check the latest explicit `optional_profile_data` consent on the server before encrypting/saving. A client-side checkbox alone is not trusted.
+- Private-profile deletion now works even if the encryption key is missing; deletion does not need decryption.
+- CORS now permits both the current production Worker hostname and the previous Dr.Vas production hostname, alongside Codespaces, local development and Capacitor origins. CORS is not authentication.
+- CI now statically guards these security properties and checks the SQL migration's RLS/service-role permissions.
+- Commits:
+  - `9e66a45579c26cf016bebf592fd43c34a788fcb1` — rate-limit SQL migration.
+  - `0f6f7e980582abdcd310a0a5278cac6e8a12b74c` — Worker enforcement, request limits and consent enforcement.
+  - `846957928412be4021728bb41513b028ecf12786` — URL normalisation correction in Worker.
+  - `bb582a952c7f734089c4717f223fa586ee60f0cb` — CI regression checks.
+- Latest known GitHub Actions run: 244, triggered by commit `bb582a952c7f734089c4717f223fa586ee60f0cb`; it was pending when last checked. Check the run before claiming deployment or runtime success.
+- The current rate limit is per authenticated user, not a global IP/WAF control. Cloudflare edge-level protection remains required before a high-traffic public launch.
+- Next work: inspect and implement full account deletion/data export/retention workflows; then test authenticated conversation, privacy and admin flows. Keep Health Live disabled and premium/social integrations gated until their legal and platform prerequisites are met.
+
