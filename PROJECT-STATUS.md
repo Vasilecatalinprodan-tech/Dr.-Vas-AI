@@ -581,3 +581,12 @@ Founder requested autonomous work while away and added a third assistant named A
 - Commits: frontend navigation fix `a50eb384396ca6a09498f06443ff466fa667cbad`; E2E regression test `17de2f5219f74ca68e9df8a8f6238fcbd421fc6c`; obsolete manual-save code removal `6664fb27cb11a83f402dc6fb751da26134218e16`.
 - Outstanding end-to-end limits: authenticated chat/Live still require the founder to apply Supabase migration `202611030001_rate_limits.sql`; real microphone/Gemini Live needs a permitted browser/device session; APK compilation does not prove installation/runtime on a physical Android device.
 - Next: confirm Actions for commit `6664fb27cb11a83f402dc6fb751da26134218e16`; inspect any failed steps; verify production UI behavior; audit all action flows (auth/profile/privacy/chat/history/admin/Studio/income); then continue Studio's real production pipeline (generation, saved project lifecycle, media rendering, approvals and social API gates).
+
+
+### Verified deployment and browser regression — 2026-11-03
+
+- Final chat-layout cleanup commit `6664fb27cb11a83f402dc6fb751da26134218e16` passed the browser E2E workflow `41698929672` and Worker deployment workflow `41698929634`.
+- Deployment run 41698929634 completed successfully through all steps: Worker/browser JavaScript validation, Chromium installation, Playwright homepage/session tests, Cloudflare Worker deployment and production smoke test.
+- Production Worker/assets now include the chat navigation fix and removal of the obsolete manual-save path. This verifies deployment and smoke checks; a live human visual test in the founder's own browser is still recommended when available.
+- Added a further browser test batch in commit `17f5764f1a0575681f10d1c83b5f0ff60ebc6130` for signed-out header CTA and non-admin Health/Premium module gating; its workflow was still running at checkpoint.
+- Android APK build for commit `6664fb27cb11a83f402dc6fb751da26134218e16` was still compiling; physical installation/runtime test remains outstanding.
