@@ -771,10 +771,25 @@ function getRememberedConversation(){
   try{return localStorage.getItem(ACTIVE_CONVERSATION_PREFIX+currentUser.id)}catch{return null}
 }
 
+let chatScrollFrame = 0;
 function scrollToLatestMessage(target){
-  requestAnimationFrame(()=>{
-    const node=target&&target.isConnected?target:el("chat").lastElementChild;
-    if(node) node.scrollIntoView({behavior:"smooth",block:"end"});
+  const chat = el("chat");
+  if(!chat) return;
+  const node = target && target.isConnected ? target : chat.lastElementChild;
+  if(!node) return;
+  cancelAnimationFrame(chatScrollFrame);
+  // Two layout frames ensure newly inserted or expanded assistant content has its final geometry.
+  chatScrollFrame = requestAnimationFrame(()=>{
+    chatScrollFrame = requestAnimationFrame(()=>{
+      if(!node.isConnected) return;
+      const scrollingElement = document.scrollingElement || document.documentElement;
+      const rect = node.getBoundingClientRect();
+      const targetTop = Math.max(0, scrollingElement.scrollTop + rect.bottom - window.innerHeight + 28);
+      // scrollIntoView handles any nested scroll container; explicit page scrolling
+      // also covers browsers where the chat's parent is not detected reliably.
+      node.scrollIntoView({behavior:"smooth",block:"end",inline:"nearest"});
+      window.scrollTo({top:targetTop,behavior:"smooth"});
+    });
   });
 }
 let activeModule = "free";
