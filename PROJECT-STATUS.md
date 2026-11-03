@@ -511,3 +511,17 @@ Founder requested autonomous work while away and added a third assistant named A
 - Existing conversations remain visible if the metadata table is not yet present; archive/rename actions require applying migration 006 in Supabase first.
 - Delete-all also clears the user's metadata rows. Do not claim the database feature is live until the migration is applied in Supabase and tested with a signed-in account.
 - Current frontend commits: `ed9404afab0d3ca8d10d340844a960145457abd5` (controls), `f7ab902ff23e8a2b68522898516accc7a3a2f767` (migration-safe fallback and delete-all cleanup).
+
+## Security hardening — 2026-11-03
+
+- Updated `worker/index.js` to replace wildcard CORS (`Access-Control-Allow-Origin: *`) with an explicit origin allowlist:
+  - Production Dr.Vas Worker origin.
+  - HTTPS GitHub Codespaces preview origins ending in `.app.github.dev`.
+  - Local development origins on `localhost` and `127.0.0.1`.
+  - Capacitor WebView origin `capacitor://localhost`.
+- The Worker now returns `Vary: Origin` and only emits `Access-Control-Allow-Origin` for an allowed origin. Opaque, malformed, and untrusted origins receive no CORS permission.
+- This is defense-in-depth only; CORS is not authentication. Sensitive Worker actions must continue to validate Supabase access tokens and administrator allowlists server-side.
+- Change committed to `drvas-integrated-platform`: `4a19665e3c3985843ab8d17b3de08f8f44bb3458`.
+- CI/deployment status must be read from the workflow run for this commit before claiming production deployment or successful runtime behaviour.
+- Next security work: add server-side abuse/rate controls for expensive AI and Live-token routes; audit retention/deletion controls; review privacy notice and consent wording; verify encrypted profile and founder-key configuration without exposing secret values.
+
