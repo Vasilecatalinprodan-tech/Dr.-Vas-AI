@@ -1,0 +1,52 @@
+name: Dr.Vas browser regression tests
+
+on:
+  pull_request:
+    branches: [drvas-integrated-platform]
+  push:
+    branches: [drvas-integrated-platform]
+    paths:
+      - 'www/**'
+      - 'tests/e2e/**'
+      - '.github/workflows/browser-e2e.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: drvas-browser-e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  browser-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install browser test runner
+        run: npm install --no-save --package-lock=false @playwright/test
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Start local static site
+        run: |
+          python3 -m http.server 4173 --directory www > /tmp/drvas-http.log 2>&1 &
+          for attempt in $(seq 1 20); do
+            if curl --silent --fail http://127.0.0.1:4173/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/drvas-http.log
+          exit 1
+
+      - name: Run homepage and session-restoration tests
+        run: npx playwright test tests/e2e/homepage.spec.cjs --reporter=line
