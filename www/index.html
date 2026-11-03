@@ -151,6 +151,13 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 .admin-tile strong{display:block;color:#fff;font-size:12px;margin-bottom:6px}
 .admin-tile span{color:#f0c879;font-size:11px;line-height:1.5}
 .admin-footnote{margin-top:13px!important;color:#819eae!important}
+.crypto-admin-card{margin:18px 0;padding:16px;border:1px solid #326477;border-radius:14px;background:linear-gradient(145deg,#0b2230,#0a1926)}
+.crypto-admin-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.crypto-admin-heading h4{margin:0 0 6px;color:#d7e9ef}
+.crypto-admin-heading p{margin:0;color:#91acbd;font-size:12px;line-height:1.5}
+.crypto-status{white-space:nowrap;border:1px solid #b78a3e;border-radius:20px;padding:5px 9px;color:#f0c879;font-size:10px;font-weight:700;letter-spacing:.04em}
+.crypto-device-table{min-width:720px}
+
 .admin-topline{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
 .admin-topline h3{margin:0 0 5px}
 .admin-topline button{padding:9px 13px;font-size:12px}
@@ -434,6 +441,21 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
     <div class="admin-tile"><strong>Dr.Vas Commerce</strong><span>Premium · testare admin · 24h: <b id="adminCountCommerce">—</b></span></div>
     <div class="admin-tile"><strong>Dr.Vas Business</strong><span>Premium · testare admin · 24h: <b id="adminCountBusiness">—</b></span></div>
    </div>
+   <section class="crypto-admin-card" aria-labelledby="cryptoAdminHeading">
+    <div class="crypto-admin-heading">
+     <div><h4 id="cryptoAdminHeading">₿ Dr.Vas Crypto · Registrul dispozitivelor</h4>
+      <p>Doar echipamente înscrise și autorizate explicit de administratori. Mining și tranzacționare sunt dezactivate.</p></div>
+     <span class="crypto-status">FAZA 1 · READ-ONLY</span>
+    </div>
+    <p id="cryptoDevicesNotice" class="admin-footnote" role="status">Se verifică registrul securizat…</p>
+    <div class="admin-table-wrap">
+     <table class="admin-log-table crypto-device-table">
+      <thead><tr><th>Echipament</th><th>Platformă</th><th>Stare</th><th>Înregistrat</th><th>Aprobat</th><th>Ultima activitate</th></tr></thead>
+      <tbody id="cryptoDevicesBody"><tr><td colspan="6">Se încarcă…</td></tr></tbody>
+     </table>
+    </div>
+    <p class="admin-footnote">Nu se colectează chei private, seed phrases sau parole. Următorul pas va fi înscrierea cu cheie criptografică a dispozitivului și aprobare explicită.</p>
+   </section>
    <p id="adminDashboardNotice" class="admin-footnote" role="status">Se încarcă datele operaționale…</p>
    <h4>Jurnal operațional · ultimele activități</h4>
    <div class="admin-table-wrap">
@@ -1622,6 +1644,58 @@ async function refreshAdminPanel(){
   }
 }
 
+async function loadCryptoDevices(){
+  const notice=el("cryptoDevicesNotice"),tbody=el("cryptoDevicesBody");
+  if(!isDrvasAdmin||!notice||!tbody)return;
+  notice.textContent="Se verifică registrul securizat…";
+  try{
+    const {data,error}=await supabaseClient.auth.getSession();
+    if(error||!data.session)throw new Error("Sesiunea a expirat. Conectează-te din nou.");
+    const response=await fetch(API_URL,{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({action:"crypto_devices_list",access_token:data.session.access_token})
+    });
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok){
+      if(result.setup_required){
+        notice.textContent=result.error||"Registrul Crypto nu este configurat.";
+      }else{
+        throw new Error(result.error||"Nu am putut încărca registrul Crypto.");
+      }
+      return;
+    }
+    tbody.replaceChildren();
+    const devices=Array.isArray(result.devices)?result.devices:[];
+    if(!devices.length){
+      const row=document.createElement("tr"),cell=document.createElement("td");
+      cell.colSpan=6;cell.textContent="Nu există încă dispozitive înscrise. Niciun echipament nu are acces la resursele Crypto.";
+      row.appendChild(cell);tbody.appendChild(row);
+    }else{
+      for(const device of devices){
+        const row=document.createElement("tr");
+        const statusLabel=device.status==="authorized"?"Autorizat":device.status==="revoked"?"Revocat":"În așteptare";
+        const values=[
+          device.device_name||"Dispozitiv fără nume",
+          device.platform||"—",
+          statusLabel,
+          device.created_at?new Date(device.created_at).toLocaleString(currentLanguage||"ro"):"—",
+          device.approved_at?new Date(device.approved_at).toLocaleString(currentLanguage||"ro"):"—",
+          device.last_seen_at?new Date(device.last_seen_at).toLocaleString(currentLanguage||"ro"):"—"
+        ];
+        values.forEach((value,index)=>{
+          const cell=document.createElement("td");cell.textContent=value;
+          if(index===2)cell.className=device.status==="authorized"?"log-ok":device.status==="revoked"?"log-error":"";
+          row.appendChild(cell);
+        });
+        tbody.appendChild(row);
+      }
+    }
+    notice.textContent="Registru actualizat: "+devices.length+" dispozitive · "+new Date(result.generated_at).toLocaleString(currentLanguage||"ro")+".";
+  }catch(error){
+    notice.textContent=error.message;
+  }
+}
+
 async function loadAdminDashboard(page=adminLogPage){
   if(!isDrvasAdmin) return;
   adminLogPage=Math.max(0,Math.min(9,Number.isFinite(Number(page))?Number(page):0));
@@ -1689,6 +1763,7 @@ async function loadAdminDashboard(page=adminLogPage){
         tbody.appendChild(row);
       }
     }
+    await loadCryptoDevices();
   }catch(error){
     if(notice) notice.textContent=error.message;
   }finally{
