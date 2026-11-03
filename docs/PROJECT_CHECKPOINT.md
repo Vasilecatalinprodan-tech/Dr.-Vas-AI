@@ -317,3 +317,5 @@ A detailed session log was added at `docs/SESSION_LOG_2026-11-03.md`. It records
 - Added user-requested project deletion with explicit confirmation. Deletion is constrained by both the selected project ID and authenticated user ID, and is protected by the table's RLS DELETE policy. Commit: `8b415af5036326fb87a360d9aae21cd0a0f7c444`.
 
 - Added account-switch isolation: when a different Supabase user signs in, the active Studio project ID, output, title, idea and saved-project selector are cleared so one account's project state cannot leak into another account's workspace. Commit: `cefd66e827b4da90385de5ae03213a187e997589`.
+
+- Added `docs/REVENUE_ENGINE_ROADMAP.md` defining revenue streams across Studio, Business, Academy, Commerce and compliant Health partnerships; server-side payment/order/entitlement architecture; launch sequence; IP/AI disclosure safeguards; and future cryptocurrency legal/security gates. Commit: `38f20bd4b225e5d4e8c006cbaaf0821a5a14552e`.
