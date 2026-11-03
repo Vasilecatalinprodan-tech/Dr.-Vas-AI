@@ -152,3 +152,11 @@ The preceding project checkpoint and project status documents contain the full p
 - Founder confirmed the Crypto device registry SQL migration was run in Supabase. This is user-reported, not independently verified; next technical step is verify the table exists and the admin Crypto panel reports ready. Do not rerun the migration blindly.
 - This UI change still requires a live browser test on desktop and mobile after the latest GitHub Actions deployment succeeds.
 
+## Build-pipeline optimization (2026-11-03)
+
+- Both GitHub Actions workflows now use concurrency groups with `cancel-in-progress: true`, preventing overlapping deployments/builds for the same branch.
+- Worker deployment runs only when Worker/frontend/runtime config or its workflow changes; Android APK builds only when web assets, Android/Capacitor config, dependencies, or its workflow changes. Documentation-only commits no longer trigger costly builds.
+- Workflow files were checked after editing for correct YAML structure.
+- Workflow commits: `67cf060ba68b513c4d068aa6ac697323e6e55052` (Worker), `67ae15bcab208e87d86785a73789c0d8056d5c8a` (Android).
+- The revised composer auto-scroll targets the voice toolbar so the message field and voice controls remain visible after a reply. Commit: `ea9fdbe18687a346b66f71b9601e07d74b5968a7`.
+- Founder reports the crypto device registry SQL migration has been applied. Live DB confirmation and real browser tests remain outstanding.
