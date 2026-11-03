@@ -143,3 +143,13 @@ After each substantial work session, update this checkpoint with: completed chan
 - This improves user control and makes use of the best voices installed on each device. It does not install new voices or guarantee that every browser/device has a high-quality Romanian voice; device testing is required.
 - Commits: `6cfcc408cebf1c13848cacf44744c43c44beba0c` (voice picker + pace controls), `eaff90464255433c23a062b9e062d0f3d8b51e4d` (refresh on language switch).
 
+
+
+## Turkish audience and Instagram account confirmation — 2026-11-03
+
+- Founder confirmed that the Instagram account has been switched to a **Creator** account. This satisfies the account-type prerequisite for the Meta professional-account route, subject to linking the Instagram account to a Facebook Page and meeting Meta's current API/app-review requirements.
+- Turkish is already included as a first-class supported language: language selector, tr-TR speech recognition and browser speech output, and Gemini Live Turkish language/instructions.
+- Expanded the Turkish interface dictionary to cover the Studio workflow, social-network integration disclosures, voice controls and voice privacy text. This improves the Turkish user journey but is not yet a complete professional human-reviewed translation of every screen.
+- Browser speech quality still depends on the Turkish voices installed/provided by the device/browser. Gemini Live is configured to request Turkish; test it on Windows and the Samsung phone before public launch.
+- Instagram Creator status does not itself connect the account to Dr.Vas. Meta OAuth, the linked Facebook Page, developer app credentials, approved permissions and secure server-side token storage remain to be configured. TikTok still requires its own developer app and OAuth credentials.
+- The latest APK build completed successfully: workflow run 41615804712, artifact DrVas-APK, artifact id 13220403831, approximately 6.0 MB. This is a build artifact only; it has not yet been installed and tested on a physical device.
