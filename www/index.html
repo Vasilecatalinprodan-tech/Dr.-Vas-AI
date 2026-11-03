@@ -1260,7 +1260,7 @@ function speakDrVas(text){
  utterance.lang=lang;
  utterance.voice=voice;
  utterance.rate=selectedSpeechRate();
- utterance.pitch=activeAssistant==="aurora"?1.04:activeAssistant==="jan"?0.92:0.96;
+ utterance.pitch=activeAssistant==="aurora"?1.08:activeAssistant==="jan"?0.90:0.98;
  utterance.onstart=()=>{document.body.classList.add("assistant-speaking");refreshVoiceUi("speaking")};
  utterance.onend=()=>{document.body.classList.remove("assistant-speaking");refreshVoiceUi("ready")};
  utterance.onerror=()=>{document.body.classList.remove("assistant-speaking");refreshVoiceUi("ready")};
@@ -1561,7 +1561,7 @@ async function startLiveVoice(){
      responseModalities:["AUDIO"],
      speechConfig:{
       languageCode:({ro:"ro-RO",en:"en-US",it:"it-IT",tr:"tr-TR",de:"de-DE",fr:"fr-FR",es:"es-US",ru:"ru-RU"})[currentLanguage]||"ro-RO",
-      voiceConfig:{prebuiltVoiceConfig:{voiceName:"Charon"}}
+      voiceConfig:{prebuiltVoiceConfig:{voiceName:activeAssistant==="jan"?"Fenrir":activeAssistant==="aurora"?"Aoede":"Charon"}}
      }
     },
     inputAudioTranscription:{},
