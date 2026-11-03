@@ -113,3 +113,15 @@ The founder proposed (a) an administrator-only AI-assisted adult film production
 - Added `docs/ADVERTISING_SPEC.md` defining privacy-first direct sponsorships and contextual placements, a global OFF switch, per-workspace controls, explicit labels, consent requirements, aggregate-only measurement and no health/chat/file targeting.
 - No advertising SDK, network, campaign or tracking is active. No mining or trading is enabled.
 - Validation status: source change committed; runtime, Supabase integration, race-condition and browser tests remain outstanding. Do not deploy until these pass.
+
+
+## 3 November 2026 — Production availability investigation
+
+- Founder reported that the public Dr.Vas site stopped working.
+- Checked GitHub Actions for the production Worker deployment. Latest observed deployment run: `41679408782`, branch `drvas-integrated-platform`, commit `ef43f9ca1a04e01a6937b3dd33e6096ae519bdac`, completed successfully at `2026-11-03T16:57:21Z` (run conclusion success).
+- Deployment job steps confirmed successful: dependency installation, Worker/browser JavaScript validation, Cloudflare Worker deployment, and production smoke test. The smoke test checks `/health`, homepage delivery, all six public module markers, and unauthenticated admin rejection.
+- The latest successful production change was the privacy notice link in the account profile. The experimental `drvas-modules-long-input` branch and its recent Crypto/advertising documentation changes were not deployed by this run.
+- Cloudflare Status history showed an active Workers and Pages build-errors incident on 3 Nov 2026 (investigating/identified, with increased builder queue times) and a separate increased Durable Object errors incident in Dallas. The build incident may delay future deployments; it does not by itself prove the already-deployed Dr.Vas Worker is down. See https://www.cloudflarestatus.com/history?service=API.
+- Direct live HTTP probe from the assistant's container could not resolve DNS in that environment, so it did not independently establish the live response. Web page open was also unavailable. Do not claim independent live-site recovery from those failed probes.
+- Working conclusion: production deploy and its immediate smoke test were healthy; exact current user-facing failure remains unconfirmed. Need user's exact URL and browser error/screenshot, then check current `/health`, root response, and Cloudflare Worker logs. Do not redeploy or change production blindly.
+- Reliability action: add external uptime monitoring and scheduled health checks, plus alerting for Worker 5xx/latency and deployment failures. Keep production deploy gated by the existing syntax and smoke tests.
