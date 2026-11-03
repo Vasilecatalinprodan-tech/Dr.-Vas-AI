@@ -16,7 +16,6 @@ window.supabase = {
       }),
       insert: async () => ({ error: null })
     })
-    }
   })
 };
 `;
