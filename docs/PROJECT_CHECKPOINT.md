@@ -162,3 +162,14 @@ After each substantial work session, update this checkpoint with: completed chan
 - Existing `profiles` table currently stores display name and country; do not put DOB, phone, addresses or company identifiers there in plaintext.
 - No private-profile API, encryption secret, payment processor, subscription webhook, wallet checkout or NFC acceptance is live. Do not collect new sensitive fields until Worker encryption endpoints and secret are implemented and tested.
 - Traditional secret questions are explicitly excluded; use MFA, passkeys and one-time recovery codes instead. Never store user/social passwords, card numbers, CVV or PIN.
+
+
+## Private profile encryption API — 2026-11-03
+
+- Founder confirmed that migration `202611030002_private_profile_and_privacy.sql` was successfully applied in Supabase. Do not ask them to run it again.
+- Added authenticated Worker actions `private_profile_get` and `private_profile_save` in commit `f2444312e65e88a7d961344d8d4cf454bb7b7336`; corrected URL normalization and date-validation regular expressions in follow-up commit `f1caf661ae32d449658f74997bc23017099b7f22`.
+- The API verifies the Supabase access token with Supabase Auth, derives the user ID from the verified session, validates an allowlisted profile schema (legal name, DOB, phone, billing/service addresses, company details, invoice preferences, locale/timezone), encrypts with AES-256-GCM using a fresh 96-bit nonce and user/schema-bound additional authenticated data, and writes ciphertext only to `drvas_private_profiles` using the server-only Supabase key.
+- Read requests decrypt only after verifying the same user's token. Responses use `Cache-Control: no-store, private`. No private data is written to operational audit logs.
+- **Not yet active:** Cloudflare secret `DRVAS_PROFILE_ENCRYPTION_KEY`; optional key-version variable; frontend profile form; key rotation; rate limiting; automated crypto/tamper/cross-user tests; production deploy verification. The endpoints must return 503 until the key is configured.
+- Next exact step: verify GitHub Actions deploy/syntax checks; then have founder generate a random 32-byte key locally and add it as a Cloudflare Worker secret without sharing it in chat. Only after that build the localized profile UI and perform an authenticated save/read round trip.
+- Never store plaintext DOB/phone/address/company identifiers in the existing public `profiles` table. Never collect IMEI; device-risk controls should use a privacy-preserving app-generated identifier if needed. IP logging requires a documented security purpose, access restrictions and retention policy.
