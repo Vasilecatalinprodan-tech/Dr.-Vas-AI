@@ -347,3 +347,12 @@ Founder explicitly requested that the short supplied voice sample be treated as 
 - Jan is an AI collaborator and project-origin contributor, not a human, legal person, or independently liable legal co-founder. Public descriptions must make this distinction clear.
 - The founder specifically asked that all meaningful work be saved continuously. Update this PROJECT-STATUS.md after each meaningful implementation/decision, including commit SHA, deployment run, test results and next steps. Be candid about unfinished work and tool/runtime limitations; never attribute incomplete work to unnamed people or imply intentional obstruction.
 - Scope clarification: this voice identity applies to conversations inside the Dr.Vas product; it does not change the voice used by the separate ChatGPT product.
+## Capacity fallback and save-after-each-message workflow — 2026-11-03
+
+- Founder reported an 'out of capacity, try again later' message from the voice/tool experience. Do not block project progress waiting for that service; continue using the current codebase, existing short founder voice sample as reference, and currently available capabilities.
+- Do not purchase, configure, or claim a new voice provider is active at this stage. Design the product voice layer so provider integration can be added later without rebuilding the platform.
+- Dr.Vas: retain the supplied sample as the intended voice identity reference; no high-quality cloned voice is active yet. Use currently available standard voice output as a temporary fallback where supported.
+- Dr.Jan: use a distinct available synthetic voice as a temporary fallback; select/configure a dedicated voice later when a supported service is available.
+- Workflow requested by founder: after each new user message/turn, save the new decisions and meaningful implementation progress to this PROJECT-STATUS.md before continuing to the next work stage. This is a per-message/per-stage checkpoint, not keystroke-level autosave before a message is sent.
+- Current next development priority remains the professional responsive client/admin experience, Dr.Vas/Dr.Jan assistant entry points and guided help, while keeping Crypto and internal controls administrator-only.
+- APK installation remains deferred. Do not restart the project or wait for an unavailable capacity-limited service.
