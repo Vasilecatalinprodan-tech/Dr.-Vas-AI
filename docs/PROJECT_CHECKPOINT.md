@@ -243,7 +243,7 @@ A detailed session log was added at `docs/SESSION_LOG_2026-11-03.md`. It records
 - Added Worker action `crypto_devices_list`, which revalidates the Supabase session and the Cloudflare `ADMIN_EMAILS` allowlist on every request. It returns only non-secret device metadata.
 - Added a read-only Crypto device registry panel to the administrator console. It clearly states that mining and trading are disabled.
 - Commits: Worker endpoint `38a122284c1dee01763798c00618af1c75a720bf`; UI `f357a5c8bdb779d1577c06f6b27cd05cb881a16d`; SQL migration `c4577489a8209ecdc288e5d0d3c64fe5e1d8f564`; Worker URL-normalization fix `5c3d57dd2ceaedf4e22e5dfaadf5fe3e58c7efaa`.
-- Migration has NOT yet been applied to Supabase. Until it is applied, the panel will report setup required. No device enrollment, mining, wallet custody, exchange integration, or live/paper trading has been enabled.
+- Founder confirmed on 2026-11-03 that the migration was applied in Supabase. This is user-reported and still needs a live authenticated panel check; do not ask the founder to rerun it. No device enrollment, mining, wallet custody, exchange integration, or live/paper trading has been enabled.
 - Next: implement cryptographic device enrollment (private key generated and kept on the device; only public key registered), explicit admin approval/revocation, and audit events. Then build read-only market data and profitability estimates before any simulation or execution.
 
 ## Latest founder request — auto-scroll and pending SQL (2026-11-03)
@@ -271,3 +271,17 @@ A detailed session log was added at `docs/SESSION_LOG_2026-11-03.md`. It records
 - Workflow commits: `67cf060ba68b513c4d068aa6ac697323e6e55052` (Worker), `67ae15bcab208e87d86785a73789c0d8056d5c8a` (Android).
 - The revised composer auto-scroll targets the voice toolbar so the message field and voice controls remain visible after a reply. Commit: `ea9fdbe18687a346b66f71b9601e07d74b5968a7`.
 - Founder reports the crypto device registry SQL migration has been applied. Live DB confirmation and real browser tests remain outstanding.
+
+
+## Dr.Vas Studio expansion — books, translation and music (2026-11-03)
+
+- Expanded the existing Studio deliverable selector with: book/novel/e-book, translation/localisation, original music composition, lyrics/poetry and article/blog/commercial copy.
+- Updated the Studio prompt builder so each deliverable receives a specialised brief and appropriate output requirements. Long books are planned chapter-by-chapter with continuity notes; translations preserve meaning, tone, terminology and formatting; music requests include original lyrics, structure, tempo, chords and arrangement guidance.
+- Expanded the Cloudflare Worker Studio system instructions to support original manuscripts, translations, music composition briefs, screenwriting, video and editorial content.
+- Added guardrails: no copying protected works or imitating a living creator's distinctive style; no false claims of certified translation, published books, rendered audio, copyright registration, royalties, platform acceptance or guaranteed income. Qualified human review remains necessary for regulated/certified work.
+- Frontend commit: `f177af13eedc70b7e869251fba7df86aafdda1b5`.
+- Worker commit: `4498a1b70286e7cb52694ffd25cecb77661185b8`.
+- These changes are committed to `drvas-integrated-platform`; production deployment and browser verification must be checked before calling the expanded Studio live.
+- Current scope: Dr.Vas can draft and prepare these creative deliverables through its existing AI chat. Direct audio-track generation, paid marketplace fulfilment, public checkout/subscriptions, publishing/distribution and royalty collection are not yet integrated.
+- Monetisation path: introduce paid per-project packages and subscriptions only after server-side Stripe entitlements, usage limits, cost controls, order/project storage, refund handling and AI-disclosure/marketplace policy checks are implemented.
+- Crypto roadmap remains separate and later: first complete product rights, company/IP ownership review, trademark/domain checks, token legal classification and regulatory advice. Do not issue or market a Dr.Vas cryptocurrency before these reviews.
