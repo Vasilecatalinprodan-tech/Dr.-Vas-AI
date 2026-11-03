@@ -411,6 +411,7 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
     <button onclick="logout()">Deconectare</button>
    </div>
   </div>
+  <p id="adminAccessNotice" class="admin-footnote hidden" role="status" aria-live="polite"></p>
 
 
 
@@ -1578,9 +1579,11 @@ async function savePrivateProfile(){
 /* La fiecare autentificare pornim o conversație nouă; mesajele rămân temporare până la salvarea manuală. */
 async function refreshAdminPanel(){
   const panel = el("adminPanel");
+  const notice = el("adminAccessNotice");
   if(!panel) return;
   panel.classList.add("hidden");
   isDrvasAdmin = false;
+  if(notice){notice.classList.add("hidden");notice.textContent="";}
   try{
     const {data,error} = await supabaseClient.auth.getSession();
     if(error || !data.session) return;
@@ -1588,14 +1591,35 @@ async function refreshAdminPanel(){
       method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({action:"admin_status",access_token:data.session.access_token})
     });
-    if(!response.ok) return;
-    const result = await response.json();
+    const result = await response.json().catch(()=>({}));
+    if(!response.ok){
+      if(notice){
+        notice.textContent = response.status===401
+          ? "Verificarea administratorului nu a putut valida sesiunea. Deconectează-te și conectează-te din nou."
+          : "Verificarea administratorului este temporar indisponibilă. Verifică autentificarea serverului.";
+        notice.classList.remove("hidden");
+      }
+      return;
+    }
     isDrvasAdmin = result.is_admin === true;
     if(isDrvasAdmin){
       panel.classList.remove("hidden");
       await loadAdminDashboard();
+    }else if(notice){
+      notice.textContent = result.reason === "allowlist_missing"
+        ? "Accesul de administrator nu este configurat pe server: lipsește secretul Cloudflare ADMIN_EMAILS."
+        : result.reason === "account_email_missing"
+          ? "Contul autentificat nu returnează o adresă de e-mail verificabilă. Verifică setările contului Supabase."
+          : "Contul conectat ("+(currentUser?.email || "fără e-mail")+") nu este autorizat ca administrator. Verifică valoarea secretului Cloudflare ADMIN_EMAILS și folosește exact adresa contului cu care te-ai conectat.";
+      notice.classList.remove("hidden");
     }
-  }catch(error){console.warn("Admin access check:",error);}
+  }catch(error){
+    console.warn("Admin access check:",error);
+    if(notice){
+      notice.textContent = "Nu am putut verifica accesul de administrator. Verifică conexiunea și încearcă din nou.";
+      notice.classList.remove("hidden");
+    }
+  }
 }
 
 async function loadAdminDashboard(page=adminLogPage){
