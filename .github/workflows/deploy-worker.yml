@@ -57,6 +57,8 @@ jobs:
           const checks = [
             [!worker.includes('"Access-Control-Allow-Origin": "*"'), 'Wildcard CORS must not be enabled'],
             [worker.includes('64 * 1024'), 'Worker request body limit is missing'],
+            [worker.includes('"X-Content-Type-Options": "nosniff"'), 'API security headers are missing'],
+            [worker.includes('assetHeaders.set("X-Frame-Options", "DENY")'), 'Static asset frame protection is missing'],
             [worker.includes('drvas_consume_rate_limit'), 'Atomic rate-limit RPC is not wired into the Worker'],
             [!html.includes('"Content-Type":"text/plain;charset=UTF-8"'), 'AI chat must send JSON accepted by the Worker'],
             [html.includes('headers:{"Content-Type":"application/json"}'), 'JSON content type must be used by the frontend'],
@@ -64,7 +66,9 @@ jobs:
             [worker.includes('body.action !== "private_profile_clear"'), 'Private-profile deletion must not depend on an encryption key'],
             [migration.includes('SECURITY DEFINER'), 'Rate-limit RPC must be SECURITY DEFINER'],
             [migration.includes('TO service_role'), 'Rate-limit RPC must be restricted to service_role'],
-            [migration.includes('ENABLE ROW LEVEL SECURITY'), 'Rate-limit storage must have RLS enabled']
+            [migration.includes('ENABLE ROW LEVEL SECURITY'), 'Rate-limit storage must have RLS enabled'],
+            [migration.includes('REFERENCES auth.users(id) ON DELETE CASCADE'), 'Rate-limit counters must cascade on account deletion'],
+            [migration.includes('SET search_path = pg_catalog, public'), 'Rate-limit SECURITY DEFINER search path must be hardened']
           ];
           for (const [ok, message] of checks) {
             if (!ok) throw new Error(message);
