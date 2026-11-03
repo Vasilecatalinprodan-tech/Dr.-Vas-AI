@@ -123,3 +123,14 @@ The preceding project checkpoint and project status documents contain the full p
 - Psychology requires a qualified human professional pathway, crisis-safe responses and legal/clinical governance. No automatic 112/999 call or location disclosure based only on AI inference.
 - Child-safety reporting must be human-led and lawful; no AI suspect labelling, covert monitoring or automatic criminal accusations.
 - Next development sequence: improve Studio project persistence/export; build Academy/Business/Commerce planning and dropshipping calculators; add Crypto read-only admin workspace; implement billing/entitlements; only then consider clinical Psychology and safeguarding integrations after professional/legal review.
+
+
+## Crypto Admin phase 1 — device registry foundation (2026-11-03)
+
+- Added migration `supabase/migrations/202611030003_crypto_device_registry.sql` defining a server-only registry for administrator-authorized devices.
+- Table stores device name/platform, SHA-256 public-key fingerprint, public JWK only, pending/authorized/revoked state, requesting/approving admin IDs, and timestamps. RLS is enabled; anon/authenticated have no table privileges; service_role only.
+- Added Worker action `crypto_devices_list`, which revalidates the Supabase session and the Cloudflare `ADMIN_EMAILS` allowlist on every request. It returns only non-secret device metadata.
+- Added a read-only Crypto device registry panel to the administrator console. It clearly states that mining and trading are disabled.
+- Commits: Worker endpoint `38a122284c1dee01763798c00618af1c75a720bf`; UI `f357a5c8bdb779d1577c06f6b27cd05cb881a16d`; SQL migration `c4577489a8209ecdc288e5d0d3c64fe5e1d8f564`; Worker URL-normalization fix `5c3d57dd2ceaedf4e22e5dfaadf5fe3e58c7efaa`.
+- Migration has NOT yet been applied to Supabase. Until it is applied, the panel will report setup required. No device enrollment, mining, wallet custody, exchange integration, or live/paper trading has been enabled.
+- Next: implement cryptographic device enrollment (private key generated and kept on the device; only public key registered), explicit admin approval/revocation, and audit events. Then build read-only market data and profitability estimates before any simulation or execution.
