@@ -67,3 +67,11 @@
 ### Status and next build
 - This is a recorded product decision and roadmap addition only. No evaluator/training service, customer data pipeline, marketplace, billing or public offer has been implemented or launched.
 - Next: define the evaluation schema and workflow; build a private prototype with synthetic/publicly licensed sample data; add repeatable rubric scoring, human review, benchmark runs, version history and exportable reports; then pilot with a small number of real customers under written terms.
+
+
+### Market scan — 3 November 2026
+- Current market examples include expert networks and contributor platforms such as Alignerr, Mercor, micro1, Prolific, Outlier, Welo Data, TELUS Digital, Appen/CrowdGen and RWS TrainAI. Their work spans response rating, domain-expert evaluation, RLHF/preference feedback, data annotation, language/voice collection and quality review.
+- Enterprise providers such as Scale AI, Surge AI, Labelbox, Appen, Toloka and Prolific offer combinations of model evaluation, expert review, benchmark/red-team work and data services; client pricing is often quote-based rather than publicly listed.
+- Strategic conclusion: Dr.Vas should not begin by trying to build a giant open gig marketplace. Start with a focused managed evaluation service and a software workbench: benchmark design, repeatable scoring, human QA, evidence-backed reports and carefully permissioned data preparation. Add a vetted reviewer network only after workflows and customer demand are proven.
+- Market research references reviewed: https://aitrainers.jobs/platforms ; https://www.aitrainer.work/platforms/database ; https://services.deepen.ai/guides/llm-evaluation-companies ; https://www.aitrainingjobsuk.co.uk/platforms
+- These are third-party directories/guides, not guarantees of a provider's current openings, pay or contractual terms. Re-verify against each provider's own site before making claims or recommending applications.
