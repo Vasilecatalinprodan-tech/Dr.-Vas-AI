@@ -192,3 +192,17 @@ Founder proposed adding revenue-generating writing, translation and music servic
 - Frontend commit `f177af13eedc70b7e869251fba7df86aafdda1b5` Worker deployment run `41640335030` and Android build run `41640334913` both succeeded.
 - New Studio APK artifact ID `13233370497`, 6,012,180 bytes, SHA-256 `b19905f2e0f80fb4736196ddfed40f4b535af893bd651f1873e9d0f27d431317`.
 - Browser testing of the deployed Studio options and physical Android installation remain outstanding.
+
+
+## Studio project save/reopen/export workspace — 2026-11-03
+
+- Added Studio project manager controls: project title, save, list saved projects, reopen, and export as Markdown.
+- Project save stores the brief and latest visible assistant response per signed-in Supabase user.
+- Created SQL migration `supabase/migrations/202611030004_studio_projects.sql`: user-owned table, RLS, SELECT/INSERT/UPDATE/DELETE policies and authenticated-only grants.
+- Migration is committed but NOT applied in the live Supabase database yet. User must apply it before cloud save/reopen can work; do not claim live DB verified.
+- Markdown export is browser-side and includes project brief plus latest assistant output.
+- Frontend commits: `778ec04998c28bc3e03e60d8a877fc7530725ba9`, `b920a32e59e9ceff8ab0c1bb5e792b092d3b8327`, `233a13166643c9bba5a842eb25a601713b8c5721`, `c8645a52aef47ca90a7d306dbd153dbb39bdabdc`.
+- Worker run `41641955809` succeeded on commit `233a131`. Latest Worker run `41642039335` and APK run `41642039341` were queued/pending when this note was written.
+- Android workflow cancellations are due to concurrency guard; wait for latest commit's APK workflow, then test its artifact on a physical Samsung device.
+- Remaining verification: latest production deployment, latest APK build/artifact, browser UI, apply SQL migration, test save/reopen/export, physical Android runtime.
+
