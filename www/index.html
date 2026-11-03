@@ -68,8 +68,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .chat-main{min-width:0}
 .chat-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:15px}
 .chat-module-label{font-size:12px;color:#65dcd4}
-.save-conversation-button{padding:9px 13px;font-size:12px;background:#f0c879;color:#172332}
-.save-conversation-button.saved{background:#183e45;color:#72e1bd}
+.auto-save-indicator{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border:1px solid #245b50;border-radius:999px;background:#102e2b;color:#83e0bd;font-size:11px;font-weight:600;white-space:nowrap}
 #saveMessage{font-size:11px;color:#f0c879;min-height:17px;margin-top:5px}
 #chat{min-height:100px;margin-top:10px}
 .msg{padding:15px 17px;border-radius:15px;margin:12px 0;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
@@ -437,7 +436,7 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
    <div class="chat-main">
     <div class="chat-toolbar">
      <div class="chat-module-label" id="chatModuleLabel">✦ Discuți cu Dr.Vas Free</div>
-     <button id="saveConversationButton" class="save-conversation-button" onclick="saveCurrentConversation()">Salvează conversația</button>
+     <span id="autoSaveStatus" class="auto-save-indicator" role="status">● Salvare automată activă</span>
     </div>
     <div id="saveMessage"></div>
     <div id="chat">
@@ -664,6 +663,24 @@ let profilePromise = null;
 let profilePromiseUserId = null;
 let currentConversationId = null;
 let loadingConversation = false;
+const ACTIVE_CONVERSATION_PREFIX = "drvas_active_conversation:";
+
+function rememberActiveConversation(conversationId){
+  if(!currentUser || !conversationId) return;
+  try{localStorage.setItem(ACTIVE_CONVERSATION_PREFIX+currentUser.id,conversationId)}catch(error){console.warn("Active conversation storage unavailable:",error)}
+}
+
+function getRememberedConversation(){
+  if(!currentUser) return null;
+  try{return localStorage.getItem(ACTIVE_CONVERSATION_PREFIX+currentUser.id)}catch{return null}
+}
+
+function scrollToLatestMessage(target){
+  requestAnimationFrame(()=>{
+    const node=target&&target.isConnected?target:el("chat").lastElementChild;
+    if(node) node.scrollIntoView({behavior:"smooth",block:"end"});
+  });
+}
 let activeModule = "free";
 let voiceRecognition = null;
 let voiceListening = false;
@@ -1220,11 +1237,9 @@ async function startLiveVoice(){
 /* End of Dr.Vas Live voice helpers. */
 
 function updateSaveButton(){
-  const button = el("saveConversationButton");
-  if(!button) return;
-  button.disabled = conversationSaved;
-  button.classList.toggle("saved",conversationSaved);
-  setLocalizedText(button,conversationSaved ? "✓ Conversație salvată" : "Salvează conversația");
+  const status = el("autoSaveStatus");
+  if(!status) return;
+  setLocalizedText(status,conversationSaved ? "✓ Conversație salvată automat" : "● Salvare automată activă");
 }
 
 function buildStudioPrompt(){
@@ -1600,15 +1615,24 @@ async function showChat(user,displayName){
 
   await refreshAdminPanel();
   selectModule(activeModule);
-  await loadConversationList();
+  const conversations = await loadConversationList();
+  const rememberedId = getRememberedConversation();
+  const resumeId = conversations.some(item=>item.id===rememberedId)
+    ? rememberedId
+    : (conversations[0]?.id || null);
 
-  currentConversationId = makeId();
-  logClientEvent("conversation_created");
-  conversationSaved = false;
-  pendingMessages = [];
-  el("saveMessage").textContent = "";
-  updateSaveButton();
-  renderWelcome();
+  if(resumeId){
+    await openConversation(resumeId);
+  }else{
+    currentConversationId = makeId();
+    rememberActiveConversation(currentConversationId);
+    logClientEvent("conversation_created");
+    conversationSaved = false;
+    pendingMessages = [];
+    el("saveMessage").textContent = "";
+    updateSaveButton();
+    renderWelcome();
+  }
 }
 
 function renderWelcome(){
@@ -1649,7 +1673,7 @@ async function loadConversationList(){
       setLocalizedText(empty,"Nu ai încă discuții salvate.");
       empty.style.cssText = "font-size:12px;color:#7fa4b5;line-height:1.5";
       list.appendChild(empty);
-      return;
+      return conversations;
     }
 
     conversations.forEach((conversation,index)=>{
@@ -1666,9 +1690,11 @@ async function loadConversationList(){
       list.appendChild(button);
     });
     updateActiveConversation();
+    return conversations;
   }catch(error){
     console.error("Conversation list:",error);
     setLocalizedText(list,"Nu am putut încărca istoricul.");
+    return [];
   }
 }
 
@@ -1694,6 +1720,7 @@ async function deleteAllConversations(){
 
     pendingMessages = [];
     currentConversationId = makeId();
+    rememberActiveConversation(currentConversationId);
     conversationSaved = false;
     setLocalizedText(el("saveMessage"),"Istoricul conversațiilor salvate a fost șters.");
     updateSaveButton();
@@ -1711,6 +1738,7 @@ async function openConversation(conversationId){
   if(!currentUser || loadingConversation) return;
   loadingConversation = true;
   currentConversationId = conversationId;
+  rememberActiveConversation(conversationId);
   logClientEvent("conversation_opened");
   conversationSaved = true;
   pendingMessages = [];
@@ -1737,7 +1765,7 @@ async function openConversation(conversationId){
     else data.forEach(message=>appendMessage(message.role,message.content));
 
     updateActiveConversation();
-    chat.scrollTop = chat.scrollHeight;
+    scrollToLatestMessage(chat.lastElementChild);
   }catch(error){
     chat.innerHTML = "";
     appendMessage("assistant",tr("Nu am putut încărca această conversație: ") + error.message);
@@ -1749,6 +1777,7 @@ async function openConversation(conversationId){
 function newConversation(){
   if(!currentUser) return;
   currentConversationId = makeId();
+  rememberActiveConversation(currentConversationId);
   logClientEvent("conversation_created");
   conversationSaved = false;
   pendingMessages = [];
@@ -1763,6 +1792,7 @@ function appendMessage(role,content){
   message.className = "msg " + (role === "user" ? "user" : "bot");
   message.textContent = content;
   el("chat").appendChild(message);
+  scrollToLatestMessage(message);
   return message;
 }
 
@@ -1887,6 +1917,7 @@ async function send(){
 
   if(!message || button.disabled || !currentUser) return;
   if(!currentConversationId) currentConversationId = makeId();
+  rememberActiveConversation(currentConversationId);
 
   button.disabled = true;
   input.value = "";
@@ -1956,7 +1987,7 @@ async function send(){
   }finally{
     button.disabled = false;
     input.focus();
-    answer.scrollIntoView({behavior:"smooth",block:"nearest"});
+    scrollToLatestMessage(answer);
   }
 }
 
