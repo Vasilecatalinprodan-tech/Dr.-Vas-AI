@@ -538,7 +538,7 @@ export default {
           return json({ error: "Autentificarea nu este configurată." }, 500);
         }
         const authResponse = await fetch(
-          `${env.SUPABASE_URL.replace(/\\/+$/, "")}/auth/v1/user`,
+          `${env.SUPABASE_URL.replace(/\/+$/, "")}/auth/v1/user`,
           { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${adminToken}` } }
         );
         if (!authResponse.ok) return json({ error: "Sesiune invalidă." }, 401);
@@ -554,7 +554,7 @@ export default {
           limit: "100"
         });
         const devicesResponse = await fetch(
-          `${env.SUPABASE_URL.replace(/\\/+$/, "")}/rest/v1/drvas_crypto_devices?${params.toString()}`,
+          `${env.SUPABASE_URL.replace(/\/+$/, "")}/rest/v1/drvas_crypto_devices?${params.toString()}`,
           { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${env.SUPABASE_KEY}` } }
         );
         if (!devicesResponse.ok) {
