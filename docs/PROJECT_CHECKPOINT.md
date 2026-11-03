@@ -153,3 +153,12 @@ After each substantial work session, update this checkpoint with: completed chan
 - Browser speech quality still depends on the Turkish voices installed/provided by the device/browser. Gemini Live is configured to request Turkish; test it on Windows and the Samsung phone before public launch.
 - Instagram Creator status does not itself connect the account to Dr.Vas. Meta OAuth, the linked Facebook Page, developer app credentials, approved permissions and secure server-side token storage remain to be configured. TikTok still requires its own developer app and OAuth credentials.
 - The latest APK build completed successfully: workflow run 41615804712, artifact DrVas-APK, artifact id 13220403831, approximately 6.0 MB. This is a build artifact only; it has not yet been installed and tested on a physical device.
+
+
+## Privacy, premium profiles and payment foundation — 2026-11-03
+
+- Added `supabase/migrations/202611030002_private_profile_and_privacy.sql`: Worker-only encrypted private-profile ciphertext table and minimal versioned privacy-consent evidence table. Direct anon/authenticated access is revoked; service_role only. This migration is committed but has NOT yet been applied in Supabase.
+- Added `docs/PRIVACY_SECURITY_PAYMENTS.md` covering data minimisation, staged premium/business profile fields, AES-256-GCM Worker-only encryption, key rotation, MFA/passkeys/recovery codes, OAuth token handling, privacy centre/localization, Stripe subscriptions and Apple Pay/Google Pay versus in-person NFC.
+- Existing `profiles` table currently stores display name and country; do not put DOB, phone, addresses or company identifiers there in plaintext.
+- No private-profile API, encryption secret, payment processor, subscription webhook, wallet checkout or NFC acceptance is live. Do not collect new sensitive fields until Worker encryption endpoints and secret are implemented and tested.
+- Traditional secret questions are explicitly excluded; use MFA, passkeys and one-time recovery codes instead. Never store user/social passwords, card numbers, CVV or PIN.
