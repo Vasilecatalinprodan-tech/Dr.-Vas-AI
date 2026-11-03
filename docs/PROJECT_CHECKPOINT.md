@@ -304,3 +304,11 @@ A detailed session log was added at `docs/SESSION_LOG_2026-11-03.md`. It records
 - The save/open/export controls require an authenticated user. Save and reopen rely on the new Supabase migration. Markdown export is client-side and includes the brief plus the latest visible assistant response.
 - Worker deployment for frontend commit `233a131` succeeded (run `41641955809`). Latest frontend commit `c8645a5` has deployment run `41642039335` queued and APK run `41642039341` pending at checkpoint time. Earlier Android runs were cancelled by the configured concurrency guard when newer commits arrived; only the latest APK run should be treated as current.
 - Browser test, Supabase migration application, save/reopen test, and physical Android installation remain outstanding.
+
+
+### Studio project workspace refinement
+
+- Added a clear "Proiect nou" action so users can start a separate project without accidentally overwriting the currently loaded project.
+- Reopening a saved project restores its stored latest assistant output for later export.
+- Latest Studio output is now tracked only when a new assistant response is received while Dr.Vas Studio is the active module. This prevents an unrelated old chat answer from being attached to a new project.
+- Refinement commit: `49f65f41ec6e45de4e9e9189133bd3e8830ade5f`.
