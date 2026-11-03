@@ -229,3 +229,16 @@ Founder proposed adding revenue-generating writing, translation and music servic
 - Latest Android run `41643859812` succeeded; artifact `DrVas-APK`, ID `13234710860`, size 6,015,535 bytes, SHA-256 `a0c41ecb697fcf654340645e3567be9cbff9b740ffb12e2df125f77f4b63c8ac`.
 - APK compile and upload are verified; Samsung installation/runtime test is still pending.
 - Browser visual tests and Supabase save/reopen test are pending. Migration `202611030004_studio_projects.sql` must first be applied by the founder in Supabase.
+
+
+## 2026-11-03 — Header chat blue-screen defect and interaction audit
+
+- User reported that clicking “Vorbește cu Dr.Vas” caused a blue/blank page until F5.
+- Root cause identified in chat focus mode: sibling sections were hidden and the main view was constrained to a fixed viewport height with overflow hidden. This fragile layout was removed from the entry flow.
+- `enterChatFocus()` now keeps the dashboard visible, reveals the chat section and scrolls to it; signed-out users are taken to the authentication panel. Exit clears any stale focus class and returns to the page top.
+- Added a Playwright regression test for this exact path, including assertions that the hero and six module cards remain visible.
+- Static audit at this point: 50 buttons / 50 explicit click handlers; 36 distinct inline click/change handler names all resolve; no duplicate IDs. One dead manual-save function referenced a missing `saveConversationButton`; removed the obsolete manual-save code since chat messages are auto-saved during `send()`.
+- Commits: `a50eb384396ca6a09498f06443ff466fa667cbad`, `17de2f5219f74ca68e9df8a8f6238fcbd421fc6c`, `6664fb27cb11a83f402dc6fb751da26134218e16`.
+- At checkpoint, CI for the final commit was queued; do not mark this defect fixed in production until E2E and deployment succeed.
+- Supabase migration `202611030001_rate_limits.sql` still needs owner execution before authenticated chat/Live can be tested. Physical Android installation is also outstanding.
+- Next: verify CI and deployed behavior, continue full interaction audit, then advance Studio generation/rendering/approval/social integrations with platform permissions and user approval gates.
