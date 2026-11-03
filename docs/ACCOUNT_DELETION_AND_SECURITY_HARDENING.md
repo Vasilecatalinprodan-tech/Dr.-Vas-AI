@@ -79,3 +79,26 @@ Do not deploy or merge an account-deletion implementation until:
 - the public deletion URL and privacy notice are ready.
 
 This document is an engineering plan, not legal advice and not proof that deletion is already implemented.
+
+
+## Additional release-readiness findings
+
+### Privacy notice review
+
+The current `www/privacy-policy.html` is explicitly labelled a working draft and correctly warns that it is not yet legally approved. Before public release it still needs:
+- the controller's full legal identity and a working privacy contact address;
+- a documented purpose, lawful basis, and retention period for each category of processing;
+- a clear account-deletion process and the specific narrow exceptions/retention periods;
+- confirmed processor/subprocessor details and UK/EEA international-transfer safeguards;
+- a documented Article 9 condition and appropriate safeguards before processing identifiable health data at scale;
+- confirmation that the described voice, memory, encryption, analytics, and AI-provider behaviour exactly matches production.
+
+Do not replace these gaps with invented company details or generic promises. The privacy notice must describe the deployed product, not planned features.
+
+### iOS build readiness
+
+The inspected `package.json` contains `@capacitor/core`, `@capacitor/android`, and `@capacitor/cli`, but does not currently list `@capacitor/ios`. The inspected `capacitor.config.json` defines app ID `com.drvas.ai`, app name `Dr.Vas AI`, and web directory `www`. iOS packaging therefore remains a separate engineering task: add and sync the iOS platform in a controlled change, then build/sign/test with Xcode on macOS. Do not claim iPhone readiness from the Android APK or the web build.
+
+### Current scope of this pull request
+
+This pull request intentionally changes documentation only. It does not modify the live Worker, frontend, Supabase schema, permissions, Cloudflare deployment, Android package, or iOS package.
