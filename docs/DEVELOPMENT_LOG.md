@@ -24,3 +24,12 @@
 - Confirmed from deployment logs: Cloudflare uploaded /index.html, Worker deployment succeeded, production homepage HTML contained all six module markers, Worker health returned online, and unauthenticated admin status returned HTTP 401. This is server/static-delivery smoke testing only, not browser execution.
 - External browser fetch through available web viewer is unavailable, and founder cannot provide screenshots or console logs. Do not request them again.
 - Next diagnostic: inspect all startup-time DOM visibility/class mutations and add a deterministic visible startup diagnostic/failsafe that covers synchronous errors and unhandled promise rejections, while ensuring the language gate itself is always visible when required. Test the actual DOM-state transitions with a browser-capable automated test before another production deployment. Avoid another speculative patch.
+
+
+## 2026-11-03 — Session restoration must not hide the public dashboard
+
+- Founder confirmed that after refresh only the header remains: Dr.Vas logo, online status and language switch; no language buttons, hero, or module cards are visible.
+- Code trace: initLanguage() calls checkSession(); an existing Supabase session leads through showUser() -> loadProfile() -> showChat(). The showChat() function previously called enterChatFocus() automatically. Focus mode applies CSS that hides every direct child of main except #chatSection and hides the header chat CTA. If chat initialization is interrupted or its content fails to render, the public dashboard can appear blank. This is the leading code-path explanation for the reported symptom; it is not yet proven by a browser trace.
+- Created branch fix/session-restore-preserves-homepage. Changed showChat() to keep the public dashboard visible on session restoration and not enter focus mode or auto-scroll. Focus mode remains available through the explicit header chat button. This also keeps the six-workspace homepage visible while account/chat data loads.
+- Validation: extracted inline browser script parses successfully with JavaScript Function constructor. This is syntax validation only; a real browser end-to-end test remains outstanding.
+- Not deployed. Next: review PR, run production validation, deploy only after checks pass, then founder retests without needing to provide screenshots or console output.
