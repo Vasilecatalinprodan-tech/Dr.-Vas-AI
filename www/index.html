@@ -952,7 +952,10 @@ function selectAssistant(assistantId){
  if(intro)intro.textContent=assistant.intro;
  const label=el("chatModuleLabel");
  if(label)label.textContent=assistant.icon+" "+assistant.name+" · "+(activeModule==="free"?"Asistent general":activeModule==="health"?"Health":activeModule.charAt(0).toUpperCase()+activeModule.slice(1));
- if(window.speechSynthesis)window.speechSynthesis.cancel();
+ if(window.speechSynthesis){
+  window.speechSynthesis.cancel();
+  refreshSpeechVoiceOptions();
+ }
  if(voiceAutoRead)refreshVoiceUi("ready");
  try{if(currentUser)localStorage.setItem("drvas_assistant_"+currentUser.id,assistantId)}catch{}
 }
