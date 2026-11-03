@@ -75,3 +75,12 @@
 - After merge, GitHub Actions production deployment run `41694602512` started. At the time of this log entry it was still installing Chromium; no claim of production deployment success or live browser verification is made yet.
 - The separate Cloudflare GitHub App Workers Build check for PR commit `f30525bce92abea69a62650ca97955dce9bf61d8` reported failure. Its dashboard build log is not accessible through the available GitHub connector/web session. The independent repository deploy workflow is being used; its actual outcome must be checked.
 - This log records technical decisions and project status, not a verbatim copy of the ChatGPT transcript. The conversation itself remains in ChatGPT history.
+
+
+### Deployment result — 2026-11-03
+
+- Production deployment workflow run `41694602512` completed with conclusion `success`: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/41694602512
+- The deployment workflow passed JavaScript validation, installed Chromium, ran the homepage/persisted-session Playwright suite successfully, deployed the Worker, and passed the production smoke test. The smoke test checked `/health`, the served homepage title and all six module markers, plus unauthenticated admin endpoint rejection (HTTP 401).
+- The Worker deployment step and post-deploy smoke-test step both completed successfully. This confirms the production Worker/site deployment and server-level checks. It does not equal a live browser session against the real Supabase account; browser regression used a mocked Supabase client.
+- Cloudflare's separate GitHub App build check for the PR had reported failure and its private build log remained inaccessible. Despite that separate check, the repository's own Wrangler production deploy workflow succeeded and its production smoke tests passed.
+- Current production Worker URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev
