@@ -250,3 +250,11 @@ Founder proposed adding revenue-generating writing, translation and music servic
 - Cloudflare deployment run `41698929634` succeeded through JavaScript validation, browser tests, deployment and production smoke test. The fix is deployed.
 - The additional signed-out CTA and Health/Premium gating tests are in commit `17f5764f1a0575681f10d1c83b5f0ff60ebc6130`; check run `41699194261` before marking them passed.
 - APK workflow `41698929811` was still running; physical Android installation remains untested.
+
+
+## 2026-11-03 — Expanded regression and API audit results
+
+- Playwright run `41699194261` passed for commit `17f5764f1a0575681f10d1c83b5f0ff60ebc6130`, including guest CTA and non-admin module access tests.
+- Static frontend-to-Worker audit: all seven frontend action names resolve to Worker handlers; all nine Worker fetch call sites use JSON; all UI handler names resolve; 204 `el(...)` references resolve to existing HTML IDs after removing obsolete manual-save code.
+- Core frontend Supabase tables identified: `profiles`, `chat_messages`, `drvas_conversation_metadata`, `drvas_studio_projects`, `drvas_income_opportunities`. The two core profile/chat tables are legacy schema; the new feature migrations cover the newer functionality.
+- APK Gradle compile succeeded for commit `6664fb27cb11a83f402dc6fb751da26134218e16`; artifact upload was still running at this checkpoint. Device installation remains outstanding.
