@@ -206,3 +206,11 @@ Founder proposed adding revenue-generating writing, translation and music servic
 - Android workflow cancellations are due to concurrency guard; wait for latest commit's APK workflow, then test its artifact on a physical Samsung device.
 - Remaining verification: latest production deployment, latest APK build/artifact, browser UI, apply SQL migration, test save/reopen/export, physical Android runtime.
 
+
+
+### Studio project workflow refinement
+
+- Added a "Proiect nou" control to clear the form and reset the current project ID, preventing accidental overwrites.
+- Reopening restores saved latest output.
+- The latest output is tracked only when a response is generated with Studio active, preventing stale unrelated assistant responses from entering project exports.
+- Commit: `49f65f41ec6e45de4e9e9189133bd3e8830ade5f`.
