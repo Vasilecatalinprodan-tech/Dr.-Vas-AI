@@ -667,7 +667,13 @@ let profilePromise = null;
 let profilePromiseUserId = null;
 let currentConversationId = null;
 let loadingConversation = false;
+let isSendingMessage = false;
 const ACTIVE_CONVERSATION_PREFIX = "drvas_active_conversation:";
+
+function setChatNavigationDisabled(disabled){
+  document.querySelectorAll(".new-chat-button,.delete-history-button,.conversation-item")
+    .forEach(button=>{button.disabled=disabled;});
+}
 
 function rememberActiveConversation(conversationId){
   if(!currentUser || !conversationId) return;
@@ -1717,7 +1723,7 @@ function updateActiveConversation(){
 }
 
 async function deleteAllConversations(){
-  if(!currentUser) return;
+  if(!currentUser || isSendingMessage) return;
   const confirmed = window.confirm(tr("Ștergi definitiv toate conversațiile salvate din cont? Acțiunea nu poate fi anulată."));
   if(!confirmed) return;
 
@@ -1747,7 +1753,7 @@ async function deleteAllConversations(){
 }
 
 async function openConversation(conversationId){
-  if(!currentUser || loadingConversation) return;
+  if(!currentUser || loadingConversation || isSendingMessage) return;
   loadingConversation = true;
   currentConversationId = conversationId;
   rememberActiveConversation(conversationId);
@@ -1787,7 +1793,7 @@ async function openConversation(conversationId){
 }
 
 function newConversation(){
-  if(!currentUser) return;
+  if(!currentUser || isSendingMessage) return;
   currentConversationId = makeId();
   rememberActiveConversation(currentConversationId);
   logClientEvent("conversation_created");
@@ -1808,11 +1814,11 @@ function appendMessage(role,content){
   return message;
 }
 
-async function saveMessage(role,content){
-  if(!currentUser || !currentConversationId) throw new Error(tr("Sesiunea conversației nu este disponibilă."));
+async function saveMessage(role,content,conversationId=currentConversationId){
+  if(!currentUser || !conversationId) throw new Error(tr("Sesiunea conversației nu este disponibilă."));
   const {error} = await supabaseClient.from("chat_messages").insert({
     user_id:currentUser.id,
-    conversation_id:currentConversationId,
+    conversation_id:conversationId,
     role:role,
     content:content
   });
@@ -1927,10 +1933,15 @@ async function send(){
   const button = el("sendButton");
   const message = input.value.trim();
 
-  if(!message || button.disabled || !currentUser) return;
+  if(!message || button.disabled || !currentUser || isSendingMessage) return;
   if(!currentConversationId) currentConversationId = makeId();
-  rememberActiveConversation(currentConversationId);
+  const conversationId = currentConversationId;
+  const moduleId = activeModule;
+  const language = currentLanguage;
+  rememberActiveConversation(conversationId);
 
+  isSendingMessage = true;
+  setChatNavigationDisabled(true);
   button.disabled = true;
   input.value = "";
 
@@ -1939,7 +1950,7 @@ async function send(){
   answer.classList.add("typing");
 
   try{
-    await saveMessage("user",message);
+    await saveMessage("user",message,conversationId);
     conversationSaved = true;
     pendingMessages = [];
     setLocalizedText(el("saveMessage"),"Mesajul tău este salvat automat în cont.");
@@ -1957,9 +1968,9 @@ async function send(){
       headers:{"Content-Type":"text/plain;charset=UTF-8"},
       body:JSON.stringify({
         message:message,
-        module:activeModule,
-        language:currentLanguage,
-        conversation_id:currentConversationId,
+        module:moduleId,
+        language:language,
+        conversation_id:conversationId,
         access_token:accessToken
       })
     });
@@ -1976,7 +1987,7 @@ async function send(){
     lastSpokenAnswer=displayedReply;
     refreshVoiceUi(voiceAutoRead?"ready":"off");
     if(voiceAutoRead)speakDrVas(displayedReply);
-    if(data.action !== "conversations_deleted") await saveMessage("assistant",displayedReply);
+    if(data.action !== "conversations_deleted") await saveMessage("assistant",displayedReply,conversationId);
     conversationSaved = true;
     pendingMessages = [];
     setLocalizedText(el("saveMessage"),"Conversația este salvată automat.");
@@ -2000,6 +2011,8 @@ async function send(){
     refreshVoiceUi(voiceAutoRead?"ready":"off");
     console.error("Dr.Vas AI:",error);
   }finally{
+    isSendingMessage = false;
+    setChatNavigationDisabled(false);
     button.disabled = false;
     input.focus();
     scrollToLatestMessage(answer);
