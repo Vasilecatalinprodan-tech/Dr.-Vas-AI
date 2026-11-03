@@ -1057,6 +1057,18 @@ function selectModule(moduleName,userInitiated=false){
     message.textContent="";
   }
   if(userInitiated&&currentUser)logClientEvent("module_selected",moduleName);
+  // A public visitor who chooses an available module must be taken straight
+  // to sign-in; selecting a card alone must never leave the visitor stranded.
+  if(userInitiated&&!currentUser){
+    showOnly("authSection");
+    const authPanel=el("authSection");
+    if(authPanel){
+      setLocalizedText(el("authTitle"),"Bine ai venit!");
+      setLocalizedText(el("authDescription"),"Conectează-te sau creează un cont pentru a continua în Dr.Vas.");
+      requestAnimationFrame(()=>authPanel.scrollIntoView({behavior:"smooth",block:"center"}));
+      setTimeout(()=>el("email")?.focus({preventScroll:true}),350);
+    }
+  }
 }
 
 let voiceRecognition = null;
