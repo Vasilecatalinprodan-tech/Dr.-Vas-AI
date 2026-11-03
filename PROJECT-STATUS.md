@@ -494,3 +494,11 @@ Founder requested autonomous work while away and added a third assistant named A
 - Keep the internal assistant ID `aurora` unchanged for backward compatibility with saved preferences, existing sessions and Worker validation. The user-facing name and persona prompt are Sarah.
 - The feminine Gemini Live voice mapping remains the existing built-in `Aoede` voice for now; this is not the founder's cloned voice.
 - Founder reiterates that he previously supplied a voice sample and asks us to locate it in saved conversation history. Current Library/conversation file search returned no audio attachment or audio file. Do not assert the sample was never supplied; it is simply not currently retrievable from indexed files. Voice cloning remains unimplemented until the original audio is accessible and a supported cloning provider is configured.
+
+
+## Founder voice asset identification and conversation persistence requirement — 2026-11-03
+
+- Founder explicitly identifies the intended voice recording filename as `drvasvoice.ogg` and reiterates that it was supplied earlier in the conversation history. Treat this exact filename as the source asset name; do not ask the founder to rename it or describe it as never supplied.
+- A fresh search of indexed conversation and Library files by exact filename and related voice terms did not return the audio binary or an attachment identifier. This is a retrieval limitation, not proof that the founder never supplied it. The actual audio must be located in the original conversation attachment storage before it can be passed to a voice-cloning provider.
+- Founder explicitly requires conversation history to be saved. Current Dr.Vas frontend writes new chat messages to Supabase `chat_messages` and loads history per authenticated user. Preserve this automatic persistence; never tell the founder that new conversations are only temporary. Existing UI supports creating a new conversation, opening saved conversations and deleting all history. Per-conversation archive/restore and rename actions remain unimplemented and are next work items.
+- Apology/correction: earlier status wording that implied the founder's voice sample had not been supplied was too categorical. Correct statement: the filename is known as `drvasvoice.ogg`, but the binary is not presently retrievable from indexed Library/conversation files.
