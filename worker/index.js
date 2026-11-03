@@ -216,7 +216,7 @@ export default {
           if (body.action === "private_profile_clear") {
             const clearQuery = new URLSearchParams({ user_id: `eq.${profileUser.id}` });
             const clearResponse = await fetch(
-              `${env.SUPABASE_URL.replace(/\\/+$/, "")}/rest/v1/drvas_private_profiles?${clearQuery.toString()}`,
+              `${env.SUPABASE_URL.replace(/\/+$/, "")}/rest/v1/drvas_private_profiles?${clearQuery.toString()}`,
               {
                 method: "DELETE",
                 headers: {
@@ -294,7 +294,7 @@ export default {
           return json({ error: "Autentificarea nu este configurată." }, 500);
         }
         const consentResponse = await fetch(
-          `${env.SUPABASE_URL.replace(/\\/+$/, "")}/rest/v1/drvas_privacy_consents`,
+          `${env.SUPABASE_URL.replace(/\/+$/, "")}/rest/v1/drvas_privacy_consents`,
           {
             method: "POST",
             headers: {
