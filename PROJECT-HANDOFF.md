@@ -284,3 +284,12 @@ Important limitations and next QA:
 - The production deployment therefore contains the safer chat entry flow and obsolete manual-save cleanup. This is not a substitute for a human visual check in the founder's signed-in browser.
 - Expanded guest CTA and module-gating tests were added in commit `17f5764f1a0575681f10d1c83b5f0ff60ebc6130`; workflow was still in progress at the time of this update.
 - APK build for the deployed frontend commit was still in progress; do not claim a completed APK until its workflow and artifact are confirmed. Physical Android installation is still required.
+
+
+### 16. Expanded browser and API interaction audit — 2026-11-03
+
+- Additional Playwright run `41699194261` passed for commit `17f5764f1a0575681f10d1c83b5f0ff60ebc6130`: signed-out header CTA shows sign-in without blanking the dashboard; Health remains available and Premium Studio stays gated for a non-admin account.
+- Cross-layer static mapping: all seven frontend Worker action names have corresponding Worker handlers. The Worker also implements the five privacy/private-profile actions called through the shared frontend helper.
+- All nine frontend Worker fetch call sites use JSON content type.
+- Current frontend Supabase tables: `profiles`, `chat_messages`, `drvas_conversation_metadata`, `drvas_studio_projects`, `drvas_income_opportunities`. The older core profile/chat tables predate the newer migrations; the recent feature migrations cover conversation metadata, Studio projects, income/provenance, privacy, rate limits and device registry.
+- APK Gradle build completed for commit `6664fb27cb11a83f402dc6fb751da26134218e16`; artifact upload was still running. Do not confuse compilation with physical Android testing.
