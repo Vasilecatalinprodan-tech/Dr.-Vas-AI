@@ -662,6 +662,7 @@ let liveActiveSources = new Set();
 let liveUserTranscript = "";
 let liveAssistantTranscript = "";
 let liveTurnSaveTimer = null;
+let liveConnectTimer = null;
 
 const LIVE_UI = {
  ro:{button:"🎧 Live",stop:"■ Oprește Live",connecting:"Conectez conversația vocală în timp real…",ready:"Conectat. Vorbește natural cu Dr.Vas.",error:"Nu am putut porni vocea Live.",stopped:"Conversația vocală Live a fost închisă."},
@@ -918,6 +919,8 @@ function queueLiveAudio(base64Data){
    samples[i]=value;
   }
   if(!samples.length)return;
+  // Previne acumularea unei cozi audio foarte mari pe conexiuni lente.
+  if(livePlaybackNextTime-liveAudioContext.currentTime>8)stopLivePlayback();
   const buffer=liveAudioContext.createBuffer(1,samples.length,24000);
   const channel=buffer.getChannelData(0);
   for(let i=0;i<samples.length;i++)channel[i]=samples[i]/32768;
@@ -1010,6 +1013,7 @@ async function stopLiveMedia(){
 }
 async function stopLiveVoice(){
  const hadLiveSession=Boolean(liveSocket||liveStream);
+ if(liveConnectTimer){clearTimeout(liveConnectTimer);liveConnectTimer=null;}
  liveStopRequested=true;
  if(liveSocket){
   const socket=liveSocket;
@@ -1033,6 +1037,8 @@ async function toggleLiveVoice(){
 }
 async function startLiveVoice(){
  liveFailureMessage="";
+ liveSetupReady=false;
+ if(liveConnectTimer){clearTimeout(liveConnectTimer);liveConnectTimer=null;}
  if(!currentUser){
   const status=el("voiceStatus");if(status)status.textContent=liveLabel("error");
   return;
@@ -1073,6 +1079,13 @@ async function startLiveVoice(){
 
   const socketUrl="wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContentConstrained?access_token="+encodeURIComponent(tokenData.token);
   liveSocket=new WebSocket(socketUrl);
+  // Închide controlat sesiunile care rămân blocate înainte de setupComplete.
+  liveConnectTimer=setTimeout(()=>{
+   if(liveSocket&&!liveSetupReady){
+    liveFailureMessage="Conexiunea vocală nu s-a inițializat în 15 secunde. Verifică rețeaua și încearcă din nou.";
+    stopLiveVoice();
+   }
+  },15000);
   liveSocket.onopen=()=>{
    const setup={
     model:tokenData.model||"models/gemini-3.8-live",
@@ -1099,6 +1112,7 @@ async function startLiveVoice(){
    }
    if(message.setupComplete){
     liveSetupReady=true;
+    if(liveConnectTimer){clearTimeout(liveConnectTimer);liveConnectTimer=null;}
     try{
      await sendLiveHistory();
      await startLiveMicrophone();
@@ -1136,6 +1150,7 @@ async function startLiveVoice(){
    stopLiveVoice();
   };
   liveSocket.onclose=async(event)=>{
+   if(liveConnectTimer){clearTimeout(liveConnectTimer);liveConnectTimer=null;}
    if(!liveStopRequested){
     liveSocket=null;
     if(!liveSetupReady && !liveFailureMessage){
@@ -1147,6 +1162,7 @@ async function startLiveVoice(){
    }
   };
  }catch(error){
+  if(liveConnectTimer){clearTimeout(liveConnectTimer);liveConnectTimer=null;}
   console.error("Dr.Vas Live:",error);
   await stopLiveVoice();
   const status=el("voiceStatus");
