@@ -173,3 +173,15 @@ After each substantial work session, update this checkpoint with: completed chan
 - Worker deployment, JavaScript validation and production smoke test passed on commit `84d5048eed796e6fc56938f76b4a9e3d149b9267` (run `41619091780`).\n- **Not yet active:** Cloudflare secret `DRVAS_PROFILE_ENCRYPTION_KEY`; optional key-version variable; frontend profile form; key rotation; rate limiting; automated crypto/tamper/cross-user tests; authenticated encryption round-trip test. The endpoints must return 503 until the key is configured.
 - Next exact step: verify GitHub Actions deploy/syntax checks; then have founder generate a random 32-byte key locally and add it as a Cloudflare Worker secret without sharing it in chat. Only after that build the localized profile UI and perform an authenticated save/read round trip.
 - Never store plaintext DOB/phone/address/company identifiers in the existing public `profiles` table. Never collect IMEI; device-risk controls should use a privacy-preserving app-generated identifier if needed. IP logging requires a documented security purpose, access restrictions and retention policy.
+
+
+## Encrypted private profile UI and consent — 2026-11-03
+
+- Added an optional private-profile section to the account profile UI for legal name, phone, company name, business type, company country and invoice preferences. These fields are not written to the plaintext `profiles` table.
+- Frontend calls the authenticated Worker actions `private_profile_get` and `private_profile_save`; the Worker verifies the Supabase session and encrypts the payload using the configured AES-256-GCM key before service-role storage.
+- Added `privacy_consent_get` and `privacy_consent_save` Worker actions. Consent is recorded in `drvas_privacy_consents` with policy version `v1`; the UI restores the latest consent state on sign-in.
+- Added explicit withdrawal: when the user unchecks consent and saves, the Worker records the withdrawal and deletes that user's encrypted private-profile row. The UI clears the fields only after the delete request succeeds.
+- Worker deployment and production smoke test succeeded on run `41623518402`, commit `be510465f84faab1cba67d8d0c8e6f834bc599ad`. JavaScript validation and deploy steps passed.
+- Android APK build for the same latest commit is still in progress at run `41623518375`; do not claim a new APK artifact until it completes.
+- Not yet verified: signed-in end-to-end save/load/withdrawal using a test account, database row/ciphertext verification, cross-user isolation, and real device behaviour. Use synthetic test data only; do not enter health data, passwords, card details or other unnecessary sensitive information.
+- Known boundary: consent policy version `v1` is an implementation identifier, not a substitute for a reviewed published privacy notice. Add retention, export, access and deletion controls plus legal/privacy review before public commercial onboarding.
