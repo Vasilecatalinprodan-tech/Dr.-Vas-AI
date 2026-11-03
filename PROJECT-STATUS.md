@@ -561,3 +561,10 @@ Founder requested autonomous work while away and added a third assistant named A
 - Hardened the rate-limit migration with account-deletion cascade and a safer SECURITY DEFINER search path in commit `a934ee1fef29c175f760edb12407e7e73c229fb6`.
 - Latest CI regression guard for security headers and migration isolation is commit `55e75923e7aff7ba383336e4655caf555c23ecfb`; run 249 is in progress. Confirm it before claiming the latest security-header code is live.
 
+## Latest security deployment confirmed — 2026-11-03
+
+- GitHub Actions run 249 completed successfully: `https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/41697762758`.
+- All checks passed, including JavaScript and security assertions, Playwright homepage/session regression tests, Cloudflare deployment and production smoke tests.
+- The latest deployed Worker includes the security headers, hardened rate-limit migration contract and the corrected JSON chat request from the preceding successful deployment.
+- The Supabase rate-limit migration still needs to be executed once by the project owner. Until then, AI chat and Live-token endpoints intentionally fail closed rather than bypassing rate protection.
+
