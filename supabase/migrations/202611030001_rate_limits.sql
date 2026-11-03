@@ -1,7 +1,8 @@
 -- Shared, atomic per-user rate limiting for expensive Dr.Vas AI endpoints.
 -- The Worker calls this function with its server-only Supabase service-role key.
+begin;
 CREATE TABLE IF NOT EXISTS public.drvas_rate_limits (
-  user_id uuid NOT NULL,
+  user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   bucket text NOT NULL,
   window_start timestamptz NOT NULL,
   request_count integer NOT NULL DEFAULT 0 CHECK (request_count >= 0),
@@ -26,7 +27,7 @@ RETURNS TABLE (
 )
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public, pg_temp
+SET search_path = pg_catalog, public
 AS $$
 DECLARE
   v_window_start timestamptz;
@@ -34,6 +35,8 @@ DECLARE
 BEGIN
   IF p_user_id IS NULL
      OR p_bucket IS NULL
+     OR p_limit IS NULL
+     OR p_window_seconds IS NULL
      OR p_bucket !~ '^[a-z0-9_:-]{1,80}$'
      OR p_limit < 1 OR p_limit > 1000
      OR p_window_seconds < 1 OR p_window_seconds > 86400 THEN
@@ -72,3 +75,5 @@ GRANT EXECUTE ON FUNCTION public.drvas_consume_rate_limit(uuid, text, integer, i
 
 COMMENT ON TABLE public.drvas_rate_limits IS
   'Atomic fixed-window counters for server-side Dr.Vas abuse and cost controls. No message content is stored.';
+
+commit;
