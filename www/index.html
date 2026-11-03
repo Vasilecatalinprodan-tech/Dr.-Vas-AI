@@ -567,6 +567,49 @@ Object.assign(UI.es,{"Pot șterge definitiv toate conversațiile salvate în con
 Object.assign(UI.ru,{"Pot șterge definitiv toate conversațiile salvate în contul tău. Acțiunea nu poate fi anulată. Pentru confirmare, scrie: „Confirm ștergerea tuturor conversațiilor”.":"Я могу навсегда удалить все сохранённые беседы из вашего аккаунта. Это действие нельзя отменить. Для подтверждения напишите: «Подтверждаю удаление всех бесед».","Am șters conversațiile salvate din contul tău":"Я удалил сохранённые беседы из вашего аккаунта","conversații":"бесед","Nu am șters contul sau profilul.":"Ваш аккаунт и профиль не удалены.","Acestea sunt informațiile salvate în memoria ta:":"Вот информация, сохранённая в вашей памяти:","Nu ai încă informații salvate în memoria personală.":"В личной памяти пока нет сохранённой информации.","Scrie informația exactă pe care dorești să o șterg, după două puncte.":"После двоеточия напишите точную информацию, которую нужно удалить.","Am procesat cererea de ștergere a informației din memoria ta.":"Запрос на удаление этой информации из памяти обработан.","Informația trebuie să aibă între 3 și 1000 de caractere.":"Информация должна содержать от 3 до 1 000 символов.","Am salvat această informație în memoria ta personală.":"Я сохранил эту информацию в вашей личной памяти.","Nu există încă informații salvate.":"Сохранённой информации пока нет."});
 const textOrigins=new WeakMap();
 const attributeOrigins=new WeakMap();
+Object.assign(UI.en,{
+ "✓ Conversație salvată automat":"✓ Conversation saved automatically",
+ "● Salvare automată activă":"● Automatic saving active",
+ "Mesaj pentru Dr.Vas":"Message for Dr.Vas",
+ "Conversația cu Dr.Vas":"Conversation with Dr.Vas"
+});
+Object.assign(UI.it,{
+ "✓ Conversație salvată automat":"✓ Conversazione salvata automaticamente",
+ "● Salvare automată activă":"● Salvataggio automatico attivo",
+ "Mesaj pentru Dr.Vas":"Messaggio per Dr.Vas",
+ "Conversația cu Dr.Vas":"Conversazione con Dr.Vas"
+});
+Object.assign(UI.tr,{
+ "✓ Conversație salvată automat":"✓ Konuşma otomatik kaydedildi",
+ "● Salvare automată activă":"● Otomatik kaydetme etkin",
+ "Mesaj pentru Dr.Vas":"Dr.Vas için mesaj",
+ "Conversația cu Dr.Vas":"Dr.Vas ile konuşma"
+});
+Object.assign(UI.de,{
+ "✓ Conversație salvată automat":"✓ Unterhaltung automatisch gespeichert",
+ "● Salvare automată activă":"● Automatisches Speichern aktiv",
+ "Mesaj pentru Dr.Vas":"Nachricht an Dr.Vas",
+ "Conversația cu Dr.Vas":"Unterhaltung mit Dr.Vas"
+});
+Object.assign(UI.fr,{
+ "✓ Conversație salvată automat":"✓ Conversation enregistrée automatiquement",
+ "● Salvare automată activă":"● Enregistrement automatique activé",
+ "Mesaj pentru Dr.Vas":"Message pour Dr.Vas",
+ "Conversația cu Dr.Vas":"Conversation avec Dr.Vas"
+});
+Object.assign(UI.es,{
+ "✓ Conversație salvată automat":"✓ Conversación guardada automáticamente",
+ "● Salvare automată activă":"● Guardado automático activo",
+ "Mesaj pentru Dr.Vas":"Mensaje para Dr.Vas",
+ "Conversația cu Dr.Vas":"Conversación con Dr.Vas"
+});
+Object.assign(UI.ru,{
+ "✓ Conversație salvată automat":"✓ Беседа сохранена автоматически",
+ "● Salvare automată activă":"● Автосохранение включено",
+ "Mesaj pentru Dr.Vas":"Сообщение для Dr.Vas",
+ "Conversația cu Dr.Vas":"Беседа с Dr.Vas"
+});
+
 function tr(s){return (UI[currentLanguage]||{})[s]||s}
 function setLocalizedText(target,source){
  if(!target)return;
