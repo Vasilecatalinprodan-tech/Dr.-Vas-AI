@@ -207,7 +207,7 @@ async function consumeRateLimit(env, userId, bucket, limit, windowSeconds) {
   if (!env.SUPABASE_URL || !env.SUPABASE_KEY) return { configured: false };
   try {
     const response = await fetch(
-      env.SUPABASE_URL.replace(/\\/+$/, "") + "/rest/v1/rpc/drvas_consume_rate_limit",
+      env.SUPABASE_URL.replace(/\/+$/, "") + "/rest/v1/rpc/drvas_consume_rate_limit",
       {
         method: "POST",
         headers: {
@@ -377,7 +377,7 @@ export default {
               limit: "1"
             });
             const consentCheck = await fetch(
-              env.SUPABASE_URL.replace(/\\/+$/, "") + "/rest/v1/drvas_privacy_consents?" + consentQuery.toString(),
+              env.SUPABASE_URL.replace(/\/+$/, "") + "/rest/v1/drvas_privacy_consents?" + consentQuery.toString(),
               { headers: { apikey: env.SUPABASE_KEY, Authorization: "Bearer " + env.SUPABASE_KEY } }
             );
             if (!consentCheck.ok) {
