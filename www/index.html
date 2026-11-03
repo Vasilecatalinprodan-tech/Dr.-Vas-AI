@@ -251,6 +251,59 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 .income-item-actions{display:flex;gap:8px;margin-top:8px}
 .income-item-actions button{padding:6px 10px;border:1px solid #3c8e91;border-radius:7px;background:#123c4a;color:#d9fffb;cursor:pointer}
 @media(max-width:650px){.income-form{grid-template-columns:1fr}.income-form .income-wide{grid-column:auto}}
+
+/* PREMIUM INTERFACE REFRESH — November 2026 */
+:root{color-scheme:dark;--dv-bg:#06101d;--dv-panel:#0c1d2d;--dv-line:#244459;--dv-accent:#5ce2d7;--dv-muted:#9db5c4}
+body{background:radial-gradient(ellipse at 12% 0%,#12384a 0,transparent 34%),radial-gradient(ellipse at 90% 16%,#202d4b 0,transparent 28%),#06101d;color:#f4fbff}
+header{position:sticky;top:0;z-index:50;backdrop-filter:blur(18px);background:rgba(6,18,31,.88);border-bottom:1px solid rgba(105,192,203,.2);box-shadow:0 8px 30px #02081155}
+.logo{letter-spacing:-1.2px;text-shadow:0 0 24px #54ded544}
+main{max-width:1380px;padding-top:30px}
+.hero{min-height:410px;border-radius:28px;border-color:#3b7180;box-shadow:0 25px 70px #0006;background-image:linear-gradient(90deg,rgba(3,12,25,.98) 0%,rgba(3,12,25,.83) 43%,rgba(3,12,25,.18) 100%),url('drvas.jpeg')}
+.hero-content{max-width:650px;padding:clamp(25px,5vw,58px)}
+.hero h1{font-size:clamp(36px,5vw,58px);line-height:1.04;letter-spacing:-1.8px}
+.hero p{font-size:15px;max-width:530px}
+.tag{font-weight:800;letter-spacing:3.5px}
+.panel,.history-panel,.language-card{background:linear-gradient(145deg,rgba(15,39,58,.96),rgba(7,22,36,.96));border-color:rgba(92,170,184,.28);box-shadow:0 18px 55px #0003}
+.panel{border-radius:24px}
+.modules-section{margin-top:42px}
+.modules-heading h2{font-size:clamp(23px,3vw,31px);letter-spacing:-.7px}
+.modules-grid{gap:16px}
+.module-card{min-height:174px;padding:22px;border-radius:20px;background:linear-gradient(145deg,#132f46,#0a1b2c);border-color:#2b5067;box-shadow:0 10px 28px #0002}
+.module-card:hover{transform:translateY(-5px);box-shadow:0 18px 38px #0005}
+.module-card.selected{background:linear-gradient(145deg,#17545a,#102d40);border-color:#66e6dc;box-shadow:0 0 0 1px #66e6dc44,0 16px 36px #0004}
+.module-icon{width:46px;height:46px;display:grid;place-items:center;border-radius:14px;background:#ffffff0c;font-size:28px}
+.module-name{font-size:17px;letter-spacing:-.25px}
+.module-description{font-size:13px;line-height:1.6}
+.module-state{font-size:10px;font-weight:800;letter-spacing:1.3px}
+.auth-box,.profile-box{max-width:490px;margin:30px auto 16px;padding:28px;border:1px solid #31596c;border-radius:23px;background:linear-gradient(145deg,#102b40,#091827);box-shadow:0 22px 65px #0006}
+.auth-box h2,.profile-box h2{text-align:left}
+.auth-box p,.profile-box p{text-align:left}
+.auth-box input,.profile-box input,.profile-box select{padding:16px;border-radius:12px;background:#061522;border-color:#35586d;transition:border-color .2s,box-shadow .2s}
+.auth-box input:focus,.profile-box input:focus,.profile-box select:focus{border-color:#62e5dc;box-shadow:0 0 0 3px #62e5dc20}
+.auth-button,.profile-button{min-height:50px;background:linear-gradient(100deg,#62e5dc,#8cebd0);box-shadow:0 8px 22px #42d8cc22}
+.switch-button{min-height:44px}
+.assistant-switcher{padding:15px;border-radius:18px;background:linear-gradient(110deg,#102c40,#172b43);border-color:#34596d}
+.assistant-choice{flex:1;min-width:190px;min-height:90px;border-radius:16px;background:#0a1d2e;border-color:#35566b}
+.assistant-choice[aria-pressed="true"]{box-shadow:0 0 0 1px #58d8cf66,0 10px 28px #0004}
+.chat-layout{grid-template-columns:260px minmax(0,1fr);gap:20px}
+.history-panel{border-radius:19px;padding:16px}
+.conversation-item{border-radius:11px}
+.chat-main{padding:4px}
+.msg{border-radius:18px;padding:17px 19px;box-shadow:0 6px 20px #0002}
+.bot{background:linear-gradient(135deg,#172f45,#12283b);border-color:#31546a}
+.user{background:linear-gradient(120deg,#116c70,#175b79)}
+.input-area textarea{border-radius:16px;background:#071827;border-color:#3a6075}
+.input-area button{border-radius:15px;min-width:96px}
+.voice-toolbar button{border-radius:11px}
+.studio-workspace,.admin-panel{border-radius:22px;box-shadow:0 18px 45px #0003}
+footer{border-top:1px solid #1c394d;margin-top:40px}
+button{transition:transform .18s,filter .18s,box-shadow .18s}
+button:not(:disabled):hover{filter:brightness(1.08)}
+button:not(:disabled):active{transform:translateY(1px) scale(.99)}
+#authMessage:empty,#profileMessage:empty{min-height:8px}
+#authMessage:not(:empty),#profileMessage:not(:empty){padding:10px 12px;border-radius:11px;background:#382c1d66;border:1px solid #80683d55}
+@media(max-width:900px){.chat-layout{grid-template-columns:1fr}.history-panel{order:2}.assistant-choice{min-width:0}.hero{min-height:350px}}
+@media(max-width:560px){main{padding-left:12px;padding-right:12px}.hero{min-height:330px;border-radius:20px}.hero-content{padding:23px}.modules-grid{gap:10px}.module-card{min-height:160px;padding:15px}.module-name{font-size:14px}.module-description{font-size:11px}.assistant-choice{flex-basis:100%;min-height:76px}.auth-box,.profile-box{padding:20px}.chat-layout{gap:12px}}
 </style>
 </head>
 
@@ -1788,7 +1841,16 @@ async function handleAuth(){
       await showUser(data.user);
     }
   }catch(error){
-    message.textContent = tr(error.message || "A apărut o eroare.");
+    console.error("Dr.Vas authentication error:",error);
+    const raw=String(error?.message||"");
+    const lower=raw.toLowerCase();
+    const friendly=lower.includes("failed to fetch")||lower.includes("network")||lower.includes("load failed")
+      ? "Nu mă pot conecta acum la serviciul de autentificare. Verifică internetul și încearcă din nou. Dacă problema continuă, verificăm serviciul Supabase."
+      : lower.includes("invalid login credentials") ? "Emailul sau parola nu sunt corecte."
+      : lower.includes("email not confirmed") ? "Confirmă adresa de email din mesajul primit, apoi încearcă din nou."
+      : lower.includes("too many requests") ? "Au fost prea multe încercări. Așteaptă puțin și încearcă din nou."
+      : raw||"A apărut o eroare la conectare.";
+    message.textContent = tr(friendly);
   }finally{
     button.disabled = false;
     setLocalizedText(button,authMode === "login" ? "Conectare" : "Creează cont");
@@ -2469,10 +2531,17 @@ supabaseClient.auth.onAuthStateChange((event,session)=>{
 });
 
 async function checkSession(){
-  const {data,error} = await supabaseClient.auth.getSession();
-  if(error){console.error("Supabase session:",error);return}
-  if(data.session) await showUser(data.session.user);
-  else showLogin();
+  try{
+    const {data,error} = await supabaseClient.auth.getSession();
+    if(error)throw error;
+    if(data.session) await showUser(data.session.user);
+    else showLogin();
+  }catch(error){
+    console.error("Supabase session check:",error);
+    showLogin();
+    const message=el("authMessage");
+    if(message)message.textContent=tr("Nu am putut verifica sesiunea. Reîncearcă autentificarea. Detalii: ")+(error?.message||"eroare de rețea");
+  }
 }
 
 async function send(){
