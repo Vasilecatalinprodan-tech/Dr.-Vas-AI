@@ -1,4 +1,133 @@
 
+
+const PROFILE_SCHEMA_VERSION = 1;
+const PROFILE_FIELDS = new Set([
+  "legal_name", "date_of_birth", "phone", "billing_address",
+  "company_name", "business_type", "company_country",
+  "company_registration_number", "tax_id", "service_address",
+  "invoice_preferences", "locale", "timezone"
+]);
+
+function cleanProfileText(value, max = 200) {
+  if (value === null || value === undefined || value === "") return "";
+  if (typeof value !== "string") throw new Error("Câmp de profil invalid.");
+  const clean = value.trim();
+  if (clean.length > max) throw new Error("Un câmp din profil depășește limita permisă.");
+  return clean;
+}
+
+function cleanProfileAddress(value) {
+  if (value === null || value === undefined) return null;
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    throw new Error("Adresa trebuie completată în câmpurile formularului.");
+  }
+  const allowed = ["line1", "line2", "city", "region", "postcode", "country"];
+  const result = {};
+  for (const key of allowed) result[key] = cleanProfileText(value[key], key === "line1" || key === "line2" ? 160 : 100);
+  return result;
+}
+
+function normalizePrivateProfile(input) {
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    throw new Error("Datele profilului sunt invalide.");
+  }
+  for (const key of Object.keys(input)) {
+    if (!PROFILE_FIELDS.has(key)) throw new Error("Profilul conține un câmp neacceptat.");
+  }
+  const profile = {};
+  for (const key of PROFILE_FIELDS) {
+    if (!(key in input)) continue;
+    if (key === "billing_address" || key === "service_address") {
+      profile[key] = cleanProfileAddress(input[key]);
+    } else if (key === "date_of_birth") {
+      const value = cleanProfileText(input[key], 10);
+      if (value && (!/^\\d{4}-\\d{2}-\\d{2}$/.test(value) || Number.isNaN(Date.parse(value)) || new Date(value) > new Date())) {
+        throw new Error("Data nașterii trebuie să fie o dată validă, în format AAAA-LL-ZZ.");
+      }
+      profile[key] = value;
+    } else {
+      const limits = {
+        legal_name: 160, phone: 40, company_name: 180, business_type: 100,
+        company_country: 100, company_registration_number: 100, tax_id: 100,
+        invoice_preferences: 500, locale: 20, timezone: 80
+      };
+      profile[key] = cleanProfileText(input[key], limits[key] || 200);
+    }
+  }
+  return profile;
+}
+
+function toBase64(bytes) {
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary);
+}
+
+function fromBase64(value) {
+  const binary = atob(value);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+
+async function getProfileCryptoKey(env) {
+  if (!env.DRVAS_PROFILE_ENCRYPTION_KEY) throw new Error("PROFILE_ENCRYPTION_NOT_CONFIGURED");
+  const raw = fromBase64(env.DRVAS_PROFILE_ENCRYPTION_KEY.trim());
+  if (raw.length !== 32) throw new Error("PROFILE_ENCRYPTION_KEY_INVALID");
+  return crypto.subtle.importKey("raw", raw, { name: "AES-GCM" }, false, ["encrypt", "decrypt"]);
+}
+
+async function encryptPrivateProfile(env, userId, profile) {
+  const key = await getProfileCryptoKey(env);
+  const nonce = crypto.getRandomValues(new Uint8Array(12));
+  const aad = new TextEncoder().encode(`drvas-private-profile:v${PROFILE_SCHEMA_VERSION}:${userId}`);
+  const plaintext = new TextEncoder().encode(JSON.stringify(profile));
+  const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv: nonce, additionalData: aad, tagLength: 128 }, key, plaintext);
+  const combined = new Uint8Array(nonce.length + ciphertext.byteLength);
+  combined.set(nonce, 0);
+  combined.set(new Uint8Array(ciphertext), nonce.length);
+  return toBase64(combined);
+}
+
+async function decryptPrivateProfile(env, userId, encoded) {
+  const key = await getProfileCryptoKey(env);
+  const combined = fromBase64(encoded);
+  if (combined.length < 29) throw new Error("PROFILE_CIPHERTEXT_INVALID");
+  const nonce = combined.slice(0, 12);
+  const ciphertext = combined.slice(12);
+  const aad = new TextEncoder().encode(`drvas-private-profile:v${PROFILE_SCHEMA_VERSION}:${userId}`);
+  const plaintext = await crypto.subtle.decrypt({ name: "AES-GCM", iv: nonce, additionalData: aad, tagLength: 128 }, key, ciphertext);
+  return JSON.parse(new TextDecoder().decode(plaintext));
+}
+
+async function verifySupabaseUser(env, accessToken) {
+  if (!env.SUPABASE_URL || !env.SUPABASE_KEY) throw new Error("AUTH_NOT_CONFIGURED");
+  if (typeof accessToken !== "string" || !accessToken.trim()) return null;
+  const response = await fetch(`${env.SUPABASE_URL.replace(/\\/+$/, "")}/auth/v1/user`, {
+    headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${accessToken}` }
+  });
+  if (!response.ok) return null;
+  const user = await response.json();
+  return user?.id ? user : null;
+}
+
+async function privateProfileRequest(env, userId, method, payload) {
+  const base = env.SUPABASE_URL.replace(/\\/+$/, "");
+  const url = `${base}/rest/v1/drvas_private_profiles?on_conflict=user_id`;
+  const response = await fetch(url, {
+    method,
+    headers: {
+      apikey: env.SUPABASE_KEY,
+      Authorization: `Bearer ${env.SUPABASE_KEY}`,
+      "Content-Type": "application/json",
+      Prefer: "resolution=merge-duplicates,return=minimal"
+    },
+    body: JSON.stringify({ user_id: userId, ...payload })
+  });
+  if (!response.ok) throw new Error("PRIVATE_PROFILE_STORAGE_FAILED");
+  return true;
+}
+
 async function writeAdminAuditLog(env, event) {
   if (!env.SUPABASE_URL || !env.SUPABASE_KEY) return;
   try {
@@ -73,6 +202,63 @@ export default {
 
     try {
       const body = await request.json();
+
+      // Profil privat: datele sunt validate și criptate exclusiv în Worker.
+      if (body.action === "private_profile_get" || body.action === "private_profile_save") {
+        const profileUser = await verifySupabaseUser(env, body.access_token);
+        if (!profileUser) return json({ error: "Sesiune invalidă. Conectează-te din nou." }, 401);
+        if (!env.DRVAS_PROFILE_ENCRYPTION_KEY) {
+          return json({ error: "Criptarea profilului nu este încă configurată pe server." }, 503);
+        }
+        try {
+          if (body.action === "private_profile_save") {
+            const profile = normalizePrivateProfile(body.profile);
+            const encrypted_payload = await encryptPrivateProfile(env, profileUser.id, profile);
+            await privateProfileRequest(env, profileUser.id, "POST", {
+              encrypted_payload,
+              encryption_version: PROFILE_SCHEMA_VERSION,
+              key_version: env.DRVAS_PROFILE_KEY_VERSION || "v1",
+              updated_at: new Date().toISOString()
+            });
+            return new Response(JSON.stringify({ ok: true, saved: true }), {
+              status: 200, headers: { ...headers, "Cache-Control": "no-store, private" }
+            });
+          }
+
+          const query = new URLSearchParams({
+            select: "encrypted_payload,encryption_version,key_version",
+            user_id: `eq.${profileUser.id}`,
+            limit: "1"
+          });
+          const storedResponse = await fetch(
+            `${env.SUPABASE_URL.replace(/\\/+$/, "")}/rest/v1/drvas_private_profiles?${query.toString()}`,
+            { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${env.SUPABASE_KEY}` } }
+          );
+          if (!storedResponse.ok) throw new Error("PRIVATE_PROFILE_READ_FAILED");
+          const rows = await storedResponse.json();
+          if (!rows.length) {
+            return new Response(JSON.stringify({ ok: true, profile: null }), {
+              status: 200, headers: { ...headers, "Cache-Control": "no-store, private" }
+            });
+          }
+          if (rows[0].encryption_version !== PROFILE_SCHEMA_VERSION) {
+            throw new Error("PROFILE_ENCRYPTION_VERSION_UNSUPPORTED");
+          }
+          const profile = await decryptPrivateProfile(env, profileUser.id, rows[0].encrypted_payload);
+          return new Response(JSON.stringify({ ok: true, profile }), {
+            status: 200, headers: { ...headers, "Cache-Control": "no-store, private" }
+          });
+        } catch (profileError) {
+          const status = profileError.message === "PROFILE_ENCRYPTION_NOT_CONFIGURED" ||
+            profileError.message === "PROFILE_ENCRYPTION_KEY_INVALID" ? 503 : 400;
+          return json({
+            error: status === 503
+              ? "Cheia de criptare lipsește sau are format invalid."
+              : "Nu am putut procesa profilul privat. Verifică datele și încearcă din nou."
+          }, status);
+        }
+      }
+
 
       // Verificare server-side a administratorului; lista este un secret Cloudflare.
       if (body.action === "admin_status") {
