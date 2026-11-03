@@ -242,3 +242,11 @@ Founder proposed adding revenue-generating writing, translation and music servic
 - At checkpoint, CI for the final commit was queued; do not mark this defect fixed in production until E2E and deployment succeed.
 - Supabase migration `202611030001_rate_limits.sql` still needs owner execution before authenticated chat/Live can be tested. Physical Android installation is also outstanding.
 - Next: verify CI and deployed behavior, continue full interaction audit, then advance Studio generation/rendering/approval/social integrations with platform permissions and user approval gates.
+
+
+## 2026-11-03 — Production deployment confirmation
+
+- Chat navigation fix and obsolete manual-save cleanup commit `6664fb27cb11a83f402dc6fb751da26134218e16` passed Playwright run `41698929672`.
+- Cloudflare deployment run `41698929634` succeeded through JavaScript validation, browser tests, deployment and production smoke test. The fix is deployed.
+- The additional signed-out CTA and Health/Premium gating tests are in commit `17f5764f1a0575681f10d1c83b5f0ff60ebc6130`; check run `41699194261` before marking them passed.
+- APK workflow `41698929811` was still running; physical Android installation remains untested.
