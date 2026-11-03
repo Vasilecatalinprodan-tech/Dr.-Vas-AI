@@ -102,6 +102,51 @@ async function decryptPrivateProfile(env, userId, encoded) {
   return JSON.parse(new TextDecoder().decode(plaintext));
 }
 
+function canonicalJson(value) {
+  if (Array.isArray(value)) return "[" + value.map(canonicalJson).join(",") + "]";
+  if (value && typeof value === "object") {
+    return "{" + Object.keys(value).sort().map(key => JSON.stringify(key) + ":" + canonicalJson(value[key])).join(",") + "}";
+  }
+  return JSON.stringify(value);
+}
+
+function bytesToHex(bytes) {
+  return Array.from(new Uint8Array(bytes), byte => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function founderSignatureMessage(digest, signedAt, publicKeyId, sourceCommitSha) {
+  return new TextEncoder().encode([digest, signedAt, publicKeyId, sourceCommitSha || ""].join("\\n"));
+}
+
+async function getFounderEncryptionKey(env) {
+  if (!env.DRVAS_FOUNDER_ENCRYPTION_KEY) throw new Error("FOUNDER_ENCRYPTION_NOT_CONFIGURED");
+  const raw = fromBase64(env.DRVAS_FOUNDER_ENCRYPTION_KEY.trim());
+  if (raw.length !== 32) throw new Error("FOUNDER_ENCRYPTION_KEY_INVALID");
+  return crypto.subtle.importKey("raw", raw, { name: "AES-GCM" }, false, ["encrypt"]);
+}
+
+async function getFounderSigningPrivateKey(env) {
+  if (!env.DRVAS_FOUNDER_SIGNING_PRIVATE_KEY_PKCS8_B64) throw new Error("FOUNDER_SIGNING_KEY_NOT_CONFIGURED");
+  return crypto.subtle.importKey("pkcs8", fromBase64(env.DRVAS_FOUNDER_SIGNING_PRIVATE_KEY_PKCS8_B64.trim()), { name: "Ed25519" }, false, ["sign"]);
+}
+
+async function getFounderSigningPublicKey(env) {
+  if (!env.DRVAS_FOUNDER_SIGNING_PUBLIC_KEY_SPKI_B64) throw new Error("FOUNDER_PUBLIC_KEY_NOT_CONFIGURED");
+  return crypto.subtle.importKey("spki", fromBase64(env.DRVAS_FOUNDER_SIGNING_PUBLIC_KEY_SPKI_B64.trim()), { name: "Ed25519" }, false, ["verify"]);
+}
+
+async function encryptFounderRecord(env, record) {
+  const key = await getFounderEncryptionKey(env);
+  const nonce = crypto.getRandomValues(new Uint8Array(12));
+  const aad = new TextEncoder().encode("drvas-founder-provenance:v1");
+  const plaintext = new TextEncoder().encode(canonicalJson(record));
+  const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv: nonce, additionalData: aad, tagLength: 128 }, key, plaintext);
+  const combined = new Uint8Array(nonce.length + ciphertext.byteLength);
+  combined.set(nonce, 0);
+  combined.set(new Uint8Array(ciphertext), nonce.length);
+  return toBase64(combined);
+}
+
 async function verifySupabaseUser(env, accessToken) {
   if (!env.SUPABASE_URL || !env.SUPABASE_KEY) throw new Error("AUTH_NOT_CONFIGURED");
   if (typeof accessToken !== "string" || !accessToken.trim()) return null;
@@ -526,6 +571,179 @@ export default {
           expires_at: expiresAt,
           session_expires_at: newSessionExpiresAt
         }), { status: 200, headers: { ...headers, "Cache-Control": "no-store, private" } });
+      }
+
+      // Founder provenance: public verification returns only signed claims and encrypted ciphertext.
+      if (body.action === "founder_provenance_verify") {
+        if (!env.SUPABASE_URL || !env.SUPABASE_KEY) {
+          return json({ error: "Verificarea nu este configurată.", setup_required: true }, 503);
+        }
+        let publicKey;
+        try { publicKey = await getFounderSigningPublicKey(env); }
+        catch (error) {
+          return json({ error: "Cheia publică de verificare nu este configurată.", setup_required: true }, 503);
+        }
+        const params = new URLSearchParams({
+          select: "id,record_version,public_claim,encrypted_payload,payload_sha256,signature_base64,signature_algorithm,public_key_id,encryption_algorithm,source_commit_sha,signed_at",
+          order: "signed_at.desc",
+          limit: "1"
+        });
+        const response = await fetch(
+          `${env.SUPABASE_URL.replace(/\\/+$/, "")}/rest/v1/drvas_founder_provenance?${params.toString()}`,
+          { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${env.SUPABASE_KEY}` } }
+        );
+        if (!response.ok) return json({ error: "Registrul de proveniență nu este disponibil.", setup_required: true }, 503);
+        const rows = await response.json();
+        if (!Array.isArray(rows) || !rows[0]) return json({ ok: true, record_found: false, verified: false }, 200);
+        const record = rows[0];
+        const canonical = canonicalJson({
+          public_claim: record.public_claim,
+          encrypted_payload: record.encrypted_payload,
+          signed_at: record.signed_at,
+          source_commit_sha: record.source_commit_sha || ""
+        });
+        const computedDigest = bytesToHex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(canonical)));
+        let signatureValid = false;
+        try {
+          signatureValid = computedDigest === record.payload_sha256 &&
+            await crypto.subtle.verify(
+              { name: "Ed25519" },
+              publicKey,
+              fromBase64(record.signature_base64),
+              founderSignatureMessage(record.payload_sha256, record.signed_at, record.public_key_id, record.source_commit_sha || "")
+            );
+        } catch (error) {
+          console.warn("Founder provenance verification error:", error.message);
+        }
+        return new Response(JSON.stringify({
+          ok: true,
+          record_found: true,
+          verified: Boolean(signatureValid),
+          integrity_match: computedDigest === record.payload_sha256,
+          public_claim: record.public_claim,
+          payload_sha256: record.payload_sha256,
+          signature_base64: record.signature_base64,
+          signature_algorithm: record.signature_algorithm,
+          public_key_id: record.public_key_id,
+          encryption_algorithm: record.encryption_algorithm,
+          encrypted_payload: record.encrypted_payload,
+          source_commit_sha: record.source_commit_sha,
+          signed_at: record.signed_at
+        }), { status: 200, headers: { ...headers, "Cache-Control": "no-store" } });
+      }
+
+      // Founder provenance creation is administrator-only. Private keys never leave Cloudflare secrets.
+      if (body.action === "founder_provenance_create") {
+        const adminToken = body.access_token;
+        const adminUser = await verifySupabaseUser(env, adminToken);
+        if (!adminUser) return json({ error: "Sesiune invalidă." }, 401);
+        const allowedAdmins = (env.ADMIN_EMAILS || "")
+          .split(",").map(email => email.trim().toLowerCase()).filter(Boolean);
+        const adminEmail = typeof adminUser.email === "string" ? adminUser.email.trim().toLowerCase() : "";
+        if (!adminEmail || !allowedAdmins.includes(adminEmail)) return json({ error: "Acces interzis." }, 403);
+        if (!env.SUPABASE_URL || !env.SUPABASE_KEY) return json({ error: "Baza de date nu este configurată." }, 503);
+
+        try {
+          const publicKeyId = (env.DRVAS_FOUNDER_PUBLIC_KEY_ID || "").trim();
+          if (!publicKeyId) throw new Error("FOUNDER_PUBLIC_KEY_ID_NOT_CONFIGURED");
+          const sourceCommitSha = typeof body.source_commit_sha === "string" &&
+            /^[a-f0-9]{7,64}$/i.test(body.source_commit_sha.trim())
+            ? body.source_commit_sha.trim().toLowerCase() : "";
+          const signedAt = new Date().toISOString().replace("Z", "+00:00");
+          const publicClaim = {
+            project: "Dr.Vas AI",
+            founder: { name: "Vasile Catalin Prodan", role: "Founder and project originator" },
+            collaborator: {
+              name: "Jan (My AI Friend)",
+              role: "Virtual AI collaborator; project co-founder designation",
+              clarification: "Jan is an AI system, not a human or legal person. This designation records the project's collaborative history and does not claim legal personality."
+            },
+            declaration: "This record documents the declared origin and collaborative development of the Dr.Vas AI project.",
+            record_version: 1
+          };
+          const privateRecord = {
+            public_claim: publicClaim,
+            signed_at: signedAt,
+            source_commit_sha: sourceCommitSha,
+            created_by_user_id: adminUser.id
+          };
+          const encryptedPayload = await encryptFounderRecord(env, privateRecord);
+          const digestInput = canonicalJson({
+            public_claim: publicClaim,
+            encrypted_payload: encryptedPayload,
+            signed_at: signedAt,
+            source_commit_sha: sourceCommitSha
+          });
+          const digest = bytesToHex(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(digestInput)));
+          const privateKey = await getFounderSigningPrivateKey(env);
+          const publicKey = await getFounderSigningPublicKey(env);
+          const signatureMessage = founderSignatureMessage(digest, signedAt, publicKeyId, sourceCommitSha);
+          const signature = new Uint8Array(await crypto.subtle.sign({ name: "Ed25519" }, privateKey, signatureMessage));
+          const signatureBase64 = toBase64(signature);
+          const signatureValid = await crypto.subtle.verify(
+            { name: "Ed25519" }, publicKey, signature, signatureMessage
+          );
+          if (!signatureValid) throw new Error("FOUNDER_SIGNING_KEY_PAIR_MISMATCH");
+
+          const insertResponse = await fetch(
+            `${env.SUPABASE_URL.replace(/\\/+$/, "")}/rest/v1/drvas_founder_provenance`,
+            {
+              method: "POST",
+              headers: {
+                apikey: env.SUPABASE_KEY,
+                Authorization: `Bearer ${env.SUPABASE_KEY}`,
+                "Content-Type": "application/json",
+                Prefer: "return=representation"
+              },
+              body: JSON.stringify({
+                record_version: 1,
+                public_claim: publicClaim,
+                encrypted_payload: encryptedPayload,
+                payload_sha256: digest,
+                signature_base64: signatureBase64,
+                signature_algorithm: "Ed25519",
+                public_key_id: publicKeyId,
+                encryption_algorithm: "AES-256-GCM",
+                source_commit_sha: sourceCommitSha,
+                signed_at: signedAt,
+                created_by: adminUser.id
+              })
+            }
+          );
+          if (!insertResponse.ok) {
+            const detail = await insertResponse.text();
+            console.error("Founder provenance insert failed:", insertResponse.status, detail.slice(0, 300));
+            return json({ error: "Nu am putut salva înregistrarea criptografică. Verifică migrarea SQL 0005." }, 503);
+          }
+          const saved = (await insertResponse.json())?.[0];
+          await writeAdminAuditLog(env, {
+            user_id: adminUser.id,
+            event_type: "founder_provenance_signed",
+            module: "admin",
+            status: 200
+          });
+          return new Response(JSON.stringify({
+            ok: true,
+            record_id: saved?.id || null,
+            public_claim: publicClaim,
+            payload_sha256: digest,
+            signature_algorithm: "Ed25519",
+            public_key_id: publicKeyId,
+            encryption_algorithm: "AES-256-GCM",
+            source_commit_sha: sourceCommitSha,
+            signed_at: signedAt,
+            verified_at_creation: true
+          }), { status: 200, headers: { ...headers, "Cache-Control": "no-store, private" } });
+        } catch (error) {
+          const missing = error.message.includes("NOT_CONFIGURED") || error.message.includes("_INVALID");
+          return json({
+            error: missing
+              ? "Cheile criptografice Dr.Vas Founder nu sunt configurate în Cloudflare."
+              : "Nu am putut crea dovada criptografică.",
+            setup_required: missing,
+            code: error.message
+          }, missing ? 503 : 500);
+        }
       }
 
       // Crypto Admin: listă read-only a dispozitivelor aprobate. Nu pornește mining sau tranzacții.
