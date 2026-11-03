@@ -327,3 +327,14 @@ A detailed session log was added at `docs/SESSION_LOG_2026-11-03.md`. It records
 - Added a clear, localised message when the Studio projects table is not present in Supabase, including the exact migration filename `202611030004_studio_projects.sql`.
 - Added output size cap (50,000 characters) to keep stored project output bounded.
 - Translation syntax validation caught an incomplete Spanish dictionary entry before deployment; corrected it in commit `f31e04f2d893098857dd4b30d0c115e29c565e64`. The corrected Worker deployment passed. The latest setup-guidance localisation commit is `e40cd68ca0a27c37b17bf6667eb6626816043635`; its deployment validation is in progress.
+
+
+### Final deployment and APK verification for Studio workspace — 2026-11-03
+
+- Latest frontend/Worker commit: `e40cd68ca0a27c37b17bf6667eb6626816043635`.
+- Worker run `41643859848`: successful JavaScript validation, Cloudflare deployment and production smoke test.
+- Android run `41643859812`: successful Gradle build and artifact upload.
+- Latest APK artifact: `DrVas-APK`, artifact ID `13234710860`, 6,015,535 bytes, SHA-256 `a0c41ecb697fcf654340645e3567be9cbff9b740ffb12e2df125f77f4b63c8ac`. GitHub run: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/41643859812
+- APK is compiled, not yet installed or runtime-tested on the founder's Samsung device.
+- Production Worker deployment is confirmed. Browser visual testing and live Supabase project save/reopen testing remain outstanding.
+- The new Studio projects migration `202611030004_studio_projects.sql` remains to be applied manually in Supabase before cloud project save/reopen can work.
