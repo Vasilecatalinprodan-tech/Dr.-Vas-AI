@@ -79,7 +79,7 @@ Planned provenance protection: a private encrypted record (AES-256-GCM with a Cl
 
 - Confirmed GitHub Actions run `41650000228` succeeded on the founder-admin UI commit; Worker/browser syntax validation, Cloudflare deployment and production smoke tests all passed.
 - Confirmed the income-tracker-only run `41649735951` also passed.
-- Android APK build run `41650000139` was still running at the last status check.
+- Android APK build run `41650000139` completed successfully and uploaded artifact `DrVas-APK` (artifact ID `13237336482`, approximately 6.0 MB).
 - The latest README checkpoint commit records this status. Do not infer Supabase migration execution or founder-key configuration from a successful Worker deployment.
 
 ## Session log — 2026-11-03
