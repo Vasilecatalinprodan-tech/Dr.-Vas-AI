@@ -283,3 +283,12 @@ Official current Gemini Live API documentation:
 - CI passed both Worker/browser JavaScript syntax validation and production Worker smoke tests.
 - Static inline-handler audit found 30 unique UI handler names; all have matching function declarations after adding `selectModule`.
 - Manual signed-in administrator and non-administrator browser checks remain outstanding. APK installation is deferred; keep builds as CI artifacts only.
+
+
+## Dedicated module instructions — 2026-11-03
+
+- Added text-chat instruction sets for Academy, Commerce and Business, not only Health and Studio.
+- Academy provides structured learning plans, lessons, practice and assessment, without inventing accreditation.
+- Commerce provides ethical e-commerce and dropshipping analysis, supplier due diligence and realistic unit economics; unauthorised spending and deceptive tactics are prohibited.
+- Business provides structured planning, management and financial modelling, with professional boundaries and explicit approval required for external actions.
+- Production Worker deployment run `41655022585` succeeded on commit `c38cec2b0b21d481653c559b7b0c1a011a995b85`; syntax validation and smoke tests passed.
