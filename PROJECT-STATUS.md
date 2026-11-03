@@ -215,3 +215,13 @@ Official current Gemini Live API documentation:
 
 ### Gemini Live error diagnostics — 2026-11-02
 - Live connection errors are now surfaced to the user instead of being replaced by the generic stopped message. Structured server errors and WebSocket close code/reason are displayed for diagnosis.
+
+## Latest engineering update — 2026-11-03
+
+- Worker audit writes for successful and failed AI requests are scheduled in the background through Cloudflare `ctx.waitUntil` where supported. Production deployment and its JavaScript validation + smoke test succeeded on commit `eaff90464255433c23a062b9e062d0f3d8b51e4d`.
+- Live voice startup has a 15-second setup timeout, clears its watchdog on close/stop/error, and limits queued playback audio to avoid unbounded lag.
+- Browser speech output now has per-language device voice selection and user-adjustable pace (calm/natural/fast/very fast). Preferences are local to the device/browser. The browser does not expose reliable voice-gender metadata; the preferred voice ranking is a best-effort name heuristic, not a guarantee of a masculine voice.
+- Safe research and governed self-improvement architecture is documented in `docs/SAFE_RESEARCH_AND_AUTONOMY.md`. No public web search provider or Tor/onion provider is connected; Tor remains disabled.
+- Latest APK build for the voice-picker change is still running: workflow run `41615775933`. Do not treat this code as tested on Android until the build succeeds and the APK is installed and tested on a device.
+- Founder reports Instagram is currently Personal and is checking whether to switch it to Creator. Do not change the account type or claim Meta OAuth is ready until the founder confirms and supplies the required Meta Developer app credentials.
+
