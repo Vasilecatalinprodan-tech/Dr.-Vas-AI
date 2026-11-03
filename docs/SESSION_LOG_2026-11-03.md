@@ -160,3 +160,25 @@ The preceding project checkpoint and project status documents contain the full p
 - Workflow commits: `67cf060ba68b513c4d068aa6ac697323e6e55052` (Worker), `67ae15bcab208e87d86785a73789c0d8056d5c8a` (Android).
 - The revised composer auto-scroll targets the voice toolbar so the message field and voice controls remain visible after a reply. Commit: `ea9fdbe18687a346b66f71b9601e07d74b5968a7`.
 - Founder reports the crypto device registry SQL migration has been applied. Live DB confirmation and real browser tests remain outstanding.
+
+
+## Studio creative services expansion — 2026-11-03
+
+Founder proposed adding revenue-generating writing, translation and music services. The decision is to expand the existing Dr.Vas Studio module rather than create a separate seventh module.
+
+- Added deliverable types for books/novels/e-books, translation/localisation, original music composition, lyrics/poetry and articles/blog/commercial copy.
+- Updated the frontend brief builder and Worker Studio system instructions to generate specialised creative requests.
+- Added intellectual-property and commercial guardrails: original works only; no copying protected works or imitating a living creator's distinctive style; no claims of certified translation, generated audio, publication, royalties, platform acceptance or guaranteed income without actual completion/verification.
+- Frontend commit: `f177af13eedc70b7e869251fba7df86aafdda1b5`.
+- Worker commit: `4498a1b70286e7cb52694ffd25cecb77661185b8`.
+- Production deployment and browser verification are pending.
+- Direct audio generation, marketplace checkout, payments, order management, public subscriptions and royalty/distribution integrations are not implemented yet.
+- Future revenue model: paid project orders and subscriptions, with verified server-side entitlements, transparent AI disclosure, usage/cost limits, refunds and human-review options.
+- Founder also confirmed that the Crypto device-registry SQL migration was applied in Supabase. Treat this as user-reported until the authenticated admin panel confirms it; do not request a rerun.
+
+## Android build verification — 2026-11-03
+
+- Android workflow run `41639141697` completed successfully, including Gradle APK build and artifact upload.
+- Artifact: `DrVas-APK`, ID `13231669013`, size 6,012,166 bytes, SHA-256 `ebdeb737903736cf20f55fd76678a65bf1b2aec4db797eda3d3248b5a4eb5630`.
+- Build commit: `67ae15bcab208e87d86785a73789c0d8056d5c8a`.
+- APK compilation is verified; installation and runtime testing on a physical Android device are still pending.
