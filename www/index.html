@@ -289,7 +289,7 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
    <p id="moduleAccessMessage" class="module-disclaimer" aria-live="polite"></p>
    <section id="studioWorkspace" class="studio-workspace hidden" aria-labelledby="studioWorkspaceTitle">
     <div class="studio-workspace-head">
-     <div><span class="tag">DR.VAS CREATIVE LAB</span><h2 id="studioWorkspaceTitle">🎬 Dr.Vas Studio</h2><p>Transformă o idee în scenariu, storyboard și conținut pregătit pentru publicare.</p></div>
+     <div><span class="tag">DR.VAS CREATIVE LAB</span><h2 id="studioWorkspaceTitle">🎬 Dr.Vas Studio</h2><p>Scrie cărți, traduce texte, compune versuri și muzică, creează scenarii și materiale digitale originale.</p></div>
      <span class="studio-beta-label">PILOT · ACCES ADMINISTRATOR</span>
     </div>
     <div class="studio-form-grid">
@@ -300,6 +300,11 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
        <option value="youtube">Videoclip YouTube</option>
        <option value="ad">Reclamă pentru produs sau serviciu</option>
        <option value="storyboard">Storyboard și plan de filmare</option>
+       <option value="book">Carte / roman / e-book</option>
+       <option value="translation">Traducere și localizare</option>
+       <option value="music">Melodie / compoziție muzicală</option>
+       <option value="lyrics">Versuri / poezie</option>
+       <option value="article">Articol / blog / text comercial</option>
       </select>
      </label>
      <label>Platforma principală
@@ -1362,59 +1367,20 @@ function buildStudioPrompt(){
    short:"Creează un pachet complet pentru un clip vertical scurt: hook în primele 2 secunde, scenariu cu replici și acțiuni, indicații de cadre, text pe ecran, ritm de montaj, descriere, CTA și hashtaguri.",
    youtube:"Creează un pachet YouTube: titlu, idee de thumbnail, introducere puternică, scenariu structurat, indicații vizuale și sonore, capitole, descriere, CTA și taguri.",
    ad:"Creează o campanie video originală pentru produsul/serviciul descris: public-țintă, promisiune verificabilă, concept, scenariu, cadre, voice-over, text pe ecran, CTA și variante scurte.",
-   storyboard:"Transformă ideea într-un storyboard tabelar, cadru cu cadru: durată, imagine/acțiune, mișcarea camerei, dialog/voice-over, sunet, lumină și instrucțiuni de montaj."
+   storyboard:"Transformă ideea într-un storyboard tabelar, cadru cu cadru: durată, imagine/acțiune, mișcarea camerei, dialog/voice-over, sunet, lumină și instrucțiuni de montaj.",
+   book:"Construiește o carte originală: propune titlu, public, gen, promisiune editorială, cuprins detaliat, structură pe capitole, fișe de personaje dacă este ficțiune și un prim capitol complet. Pentru lucrări lungi, continuă capitol cu capitol și păstrează o fișă de continuitate.",
+   translation:"Realizează traducerea sau localizarea textului furnizat. Identifică limba-sursă și limba-țintă; dacă nu sunt clare, cere doar această precizare. Păstrează sensul, tonul, terminologia, numele, cifrele și formatarea. Semnalează pasajele ambigue și oferă un glosar pentru termenii importanți.",
+   music:"Creează o compoziție muzicală originală: concept, gen, atmosferă, tempo, structură (intro, strofe, refren, bridge, outro), tonalitate orientativă, acorduri, instrumentație și indicații de interpretare. Dacă se cer versuri, scrie-le integral și potrivite ritmic. Nu imita o melodie sau un artist existent.",
+   lyrics:"Scrie versuri sau poezie originale, cu temă, structură, rimă și ritm potrivite cererii. Pentru cântec, separă strofele, pre-refrenul, refrenul și bridge-ul și adaugă indicații muzicale orientative.",
+   article:"Scrie un articol, material de blog sau text comercial original, documentat și adaptat publicului. Include titlu, structură, introducere, secțiuni, concluzie și, unde este cazul, îndemn la acțiune. Marchează afirmațiile care necesită verificarea surselor."
   };
-  const prompt="PROIECT DR.VAS STUDIO — BRIEF DE PRODUCȚIE\nFORMAT: "+deliverables[el("studioDeliverable").value]+"\nPLATFORMĂ: "+el("studioPlatform").value+"\nSTIL: "+el("studioTone").value+"\nPUBLIC-ȚINTĂ: "+el("studioAudience").value+"\nDURATĂ: "+el("studioDuration").value+"\nFORMAT CADRU: "+el("studioAspect").value+"\nIDEA CLIENTULUI (păstrează intenția și toate detaliile):\n"+idea+"\n\nCERINȚE DE LIVRARE:\n1. Începe cu un rezumat creativ și obiectivul materialului.\n2. Livrează scenariul complet, cu scene numerotate, acțiune, dialog și voice-over unde este cazul.\n3. Pentru fiecare scenă precizează durata, tipul cadrului, mișcarea camerei, lumină, sunet și tranziția.\n4. Include textul exact afișat pe ecran și subtitrările propuse.\n5. Adaugă instrucțiuni de montaj, ritm, muzică/licențiere și active necesare.\n6. Încheie cu titlu, descriere, apel la acțiune și hashtaguri adaptate platformei.\n7. Semnalează afirmațiile comerciale care trebuie verificate și nu inventa rezultate, testimoniale sau certificări.\nPăstrează ideea originală a clientului, separă scenariul de notele tehnice și nu pretinde că ai randat ori publicat un fișier video.";
+  const kind=el("studioDeliverable").value;
+  const isVideo=["series","short","youtube","ad","storyboard"].includes(kind);
+  const prompt="PROIECT DR.VAS STUDIO — BRIEF CREATIV\nTIPUL LUCRĂRII: "+(deliverables[kind]||"Creează materialul original solicitat.")+"\nSTIL: "+el("studioTone").value+"\nPUBLIC-ȚINTĂ: "+el("studioAudience").value+"\nDURATĂ / DIMENSIUNE: "+el("studioDuration").value+"\nFORMAT: "+el("studioAspect").value+"\nCERINȚA ȘI MATERIALELE CLIENTULUI (păstrează intenția și detaliile):\n"+idea+"\n\nCERINȚE DE LIVRARE:\n1. Livrează un rezultat concret, bine structurat, nu doar recomandări generale.\n2. Respectă limba, tonul, publicul și formatul cerute; nu inventa informații sau surse.\n3. Separă materialul final de observațiile editoriale și recomandările de îmbunătățire.\n4. Pentru lucrări lungi, propune etape și păstrează consecvența între capitole/versiuni.\n5. Folosește numai conținut original; nu copia opere protejate și nu reproduce stilul distinctiv al unui creator în viață.\n6. Semnalează când este necesară verificarea umană, autorizarea unui traducător sau consultarea unui specialist.\n7. Precizează clar ce este text/concept și ce fișier media a fost efectiv generat. Nu pretinde că ai produs un fișier audio, o carte publicată ori o traducere autorizată dacă nu s-a întâmplat.";
   el("question").value=prompt;
   el("question").focus();
-  el("moduleAccessMessage").textContent="Cererea Studio este pregătită. Verific-o în caseta de mesaj și apasă Trimite.";
+  el("moduleAccessMessage").textContent="Brieful creativ este pregătit. Verifică-l în caseta de mesaj și apasă Trimite.";
   el("question").scrollIntoView({behavior:"smooth",block:"center"});
- }
-
-function selectModule(moduleId,fromUser=false){
-  if(!moduleDetails[moduleId]) return;
-  if(fromUser&&(liveSocket||liveStream))stopLiveVoice();
-  if(fromUser&&currentUser)logClientEvent("module_selected",moduleId);
-  activeModule = moduleId;
-  const accessMessage = el("moduleAccessMessage");
-  if(accessMessage) accessMessage.textContent = "";
-  const raw = moduleDetails[moduleId];
-  const details = {...raw,title:tr(raw.title),description:tr(raw.description),label:tr(raw.label),placeholder:tr(raw.placeholder),name:tr(raw.name)};
-
-  document.querySelectorAll(".module-card").forEach(card=>{
-    const selected = card.dataset.module === moduleId;
-    card.classList.toggle("selected",selected);
-    card.setAttribute("aria-pressed",String(selected));
-    const state = card.querySelector(".module-state");
-    if(state){
-      const premium = ["studio","academy","commerce","business"].includes(card.dataset.module);
-      setLocalizedText(state,premium
-        ? (isDrvasAdmin ? (selected ? "● Premium · acces administrator" : "Premium · testare administrator") : (selected ? "● Premium · în pregătire" : "Premium · în pregătire"))
-        : (selected ? "● Gratuit · selectat" : (card.dataset.module === "health" ? "Gratuit · informații generale" : "Gratuit")));
-    }
-  });
-
-  el("activeModuleIcon").textContent = details.icon;
-  setLocalizedText(el("activeModuleName"),raw.title);
-  setLocalizedText(el("activeModuleDescription"),raw.description);
-  setLocalizedText(el("chatModuleLabel"),raw.icon + " " + raw.label);
-  el("question").placeholder = tr(raw.placeholder);
-
-  // Un singur click pe un modul gratuit duce direct la autentificare.
-  const premium = ["studio","academy","commerce","business"].includes(moduleId);
-  if(premium && !isDrvasAdmin){
-    setLocalizedText(accessMessage,"Acest modul Premium este în pregătire. Accesul va fi activat după implementarea abonamentelor și verificarea plății.");
-    return;
-  }
-  if(premium && isDrvasAdmin){
-    setLocalizedText(accessMessage,"Mod de administrator: poți testa modulul. Funcțiile comerciale și fluxurile complete sunt încă în dezvoltare.");
-  }
-
-  // Tranziție în cascadă: după alegerea modulului rămâne doar ecranul de autentificare.
-  if(!currentUser) showOnly("authSection");
-  setLocalizedText(el("authTitle"),authMode === "login" ? "Bine ai venit!" : "Creează-ți contul");
-  setLocalizedText(el("authDescription"),tr("Conectează-te pentru a continua în ") + details.name + ".");
-  el("authSection").scrollIntoView({behavior:"smooth",block:"center"});
 }
 
 function toggleAuthMode(){
