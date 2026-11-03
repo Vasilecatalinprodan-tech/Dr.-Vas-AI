@@ -1847,6 +1847,7 @@ async function showChat(user,displayName){
 
   await refreshAdminPanel();
   selectModule(activeModule);
+  loadStudioProjects().catch(error=>console.warn("Studio project list unavailable until migration is applied:",error));
   const conversations = await loadConversationList();
   const rememberedId = getRememberedConversation();
   const resumeId = conversations.some(item=>item.id===rememberedId)
