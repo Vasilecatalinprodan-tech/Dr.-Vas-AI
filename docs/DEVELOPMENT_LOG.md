@@ -14,3 +14,13 @@
 - Android build workflow run `41690169974` completed with conclusion `success`. APK artifact `DrVas-APK` was created (6,033,975 bytes; SHA-256 `61ceface6e08a76b133a3d41c21a76459ba3a87fb3b140a4c2600c8d590c2741`) and is available until 2027-02-01.
 - These CI results confirm deployment and APK compilation, but do not prove that the founder's browser UI, language selector, or every app feature works correctly. The precise browser-side root cause and successful recovery on the founder's device remain unconfirmed.
 - Next: founder should hard-refresh the production page (`Ctrl+Shift+R`) and confirm whether the full interface and language selector now appear. Then test login, chat, and each workspace separately. Do not treat the Worker smoke test as end-to-end UI validation.
+
+
+## 2026-11-03 — Founder retest: blank/vanishing homepage persists
+
+- After successful deployment of the fail-open hotfix, founder retested with F5 and reports the Dr.Vas image briefly appears during refresh, then disappears; only the header/brand/flag/language control remain. Therefore the user-visible issue is NOT resolved and must not be marked fixed.
+- Reviewed deployed www/index.html at production branch. #appMain does not initially carry language-pending; the only remaining code path that adds that class is showLanguageGate(), called by initLanguage() when no supported language is present in localStorage. In that branch, #languageGate should be visible. If a supported language is stored, initLanguage() hides the language gate and leaves the main page visible.
+- The current runtime error listener only handles error events with a non-null event.error; it does not handle unhandledrejection. This may miss asynchronous startup failures, but by itself does not explain why the whole page content vanishes.
+- Confirmed from deployment logs: Cloudflare uploaded /index.html, Worker deployment succeeded, production homepage HTML contained all six module markers, Worker health returned online, and unauthenticated admin status returned HTTP 401. This is server/static-delivery smoke testing only, not browser execution.
+- External browser fetch through available web viewer is unavailable, and founder cannot provide screenshots or console logs. Do not request them again.
+- Next diagnostic: inspect all startup-time DOM visibility/class mutations and add a deterministic visible startup diagnostic/failsafe that covers synchronous errors and unhandled promise rejections, while ensuring the language gate itself is always visible when required. Test the actual DOM-state transitions with a browser-capable automated test before another production deployment. Avoid another speculative patch.
