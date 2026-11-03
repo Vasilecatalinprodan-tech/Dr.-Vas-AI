@@ -1,7 +1,7 @@
 # Dr.Vas — Privacy, account security and payments blueprint
 
 Last updated: 2026-11-03
-Status: design and database foundation; not a claim of completed compliance or live payments.
+Status: database foundation and authenticated Worker encryption endpoints committed; encryption key, UI, tests and production verification still pending.
 
 ## 1. Product principles
 - Privacy by design and default; collect only data needed for a stated purpose.
@@ -34,7 +34,7 @@ Before collecting private fields:
 5. No plaintext sensitive values in audit logs, analytics, errors, URLs, localStorage, GitHub or model prompts.
 6. Key rotation supports current/previous versions; re-encrypt and verify records before retiring old keys. Maintain encrypted backups and test restore.
 7. Add rate limits, origin/CSRF controls appropriate to auth model, security tests and deletion cascade handling.
-8. Do not build the private profile form until this Worker endpoint and encryption key are deployed and tested.
+8. Do not build/enable the private profile form until the Worker endpoint and encryption key are deployed and tested.
 
 Supabase encryption at rest is defence-in-depth, not a substitute for application-level encryption.
 
@@ -78,6 +78,6 @@ Preferred initial online architecture: Stripe-hosted Checkout or Stripe Payment 
 ## 8. Implementation status
 - Existing basic profiles table currently stores display name and country directly. Do not add DOB, phone, address or company identifiers to that plaintext table.
 - Encrypted private-profile and consent table migration added, but it must be applied in Supabase before use.
-- No private-profile Worker endpoints or encryption key are active yet.
+- Authenticated Worker actions `private_profile_get` and `private_profile_save` are implemented in code. They validate the Supabase access token, derive the user ID server-side, validate an allowlisted profile schema, and use AES-256-GCM with a fresh 96-bit nonce and user/schema-bound AAD. They store only ciphertext through service-role access.\n- The Worker secret `DRVAS_PROFILE_ENCRYPTION_KEY` and optional `DRVAS_PROFILE_KEY_VERSION` are not yet configured; until then the endpoints intentionally return HTTP 503. No private-profile form is active.\n- The Worker deployment and CI syntax check for this commit must be verified before treating the code as live. End-to-end encryption/storage round-trip tests are still required.
 - No payment processor, card vault, Apple Pay/Google Pay checkout, NFC Terminal, subscriptions or entitlement webhook is active.
 - No Meta/TikTok OAuth tokens are stored yet.
