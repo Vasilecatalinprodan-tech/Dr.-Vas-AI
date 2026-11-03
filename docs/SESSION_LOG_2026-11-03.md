@@ -218,3 +218,5 @@ Founder proposed adding revenue-generating writing, translation and music servic
 - Added confirmed deletion of the selected Studio project, restricted to the signed-in owner and protected by RLS DELETE policy. Commit: `8b415af5036326fb87a360d9aae21cd0a0f7c444`.
 
 - Added account-switch isolation for Studio project state; switching Supabase users clears the selected project and form state. Commit: `cefd66e827b4da90385de5ae03213a187e997589`.
+
+- Added `docs/REVENUE_ENGINE_ROADMAP.md`: multi-module revenue streams, payment/order/entitlement architecture, build phases, IP/AI transparency, and crypto launch gates. Commit: `38f20bd4b225e5d4e8c006cbaaf0821a5a14552e`.
