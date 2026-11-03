@@ -1659,11 +1659,11 @@ async function getConversationIds(){
   const seen = new Map();
   for(const row of data || []){
     if(!seen.has(row.conversation_id)){
-      seen.set(row.conversation_id,{
-        id:row.conversation_id,
-        date:row.created_at,
-        title:row.role==="user" ? String(row.content || "") : ""
-      });
+      seen.set(row.conversation_id,{id:row.conversation_id,date:row.created_at,title:""});
+    }
+    const conversation = seen.get(row.conversation_id);
+    if(!conversation.title && row.role==="user"){
+      conversation.title = String(row.content || "");
     }
   }
   return Array.from(seen.values());
