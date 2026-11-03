@@ -1,6 +1,6 @@
 # Dr.Vas AI — Project Status
 
-Last updated: 2026-11-02
+Last updated: 2026-11-03
 Working branch: `drvas-integrated-platform`
 
 ## Product direction
@@ -21,13 +21,25 @@ Free and Health are active. Studio, Academy, Commerce and Business remain gated 
 
 - GitHub repository: `Vasilecatalinprodan-tech/Dr.-Vas-AI`
 - Active branch: `drvas-integrated-platform`
-- Cloudflare Worker service: `drvas-ai`
-- Production Worker: `https://drvas-ai.vasilecatalinprodan.workers.dev`
-- Health endpoint: `https://drvas-ai.vasilecatalinprodan.workers.dev/health`
+- Cloudflare Worker service: `dr--vas-ai`
+- Production Worker: `https://dr--vas-ai.vasilecatalinprodan.workers.dev`
+- Health endpoint: `https://dr--vas-ai.vasilecatalinprodan.workers.dev/health`
 - Frontend: `www/index.html`
 - Worker source: `worker/index.js`
 - Supabase project URL is configured in Worker settings and frontend; never place service-role keys or provider secrets in frontend code.
-- GitHub Actions deployment workflow: `.github/workflows/deploy-worker.yml` (manual workflow dispatch).
+- GitHub Actions deployment workflow: `.github/workflows/deploy-worker.yml` (runs on pushes to `drvas-integrated-platform` and can also be manually dispatched).
+
+## Verified repository and deployment state — 2026-11-03
+
+- Active branch: `drvas-integrated-platform`.
+- Production Worker name and frontend API URL now agree on `dr--vas-ai`.
+- GitHub Actions successfully deployed the Worker and passed the production health/configuration check and homepage checks for all six module cards on commit `1e547c931a70632f74c5134c6247661fa3207ff1`.
+- The deployment workflow has since been extended with a production check that an unauthenticated `admin_status` request is rejected with HTTP 401. That new check is awaiting its first run.
+- Worker and inline browser JavaScript syntax checks passed in CI.
+- An Android debug APK build completed successfully on commit `48bad10801ea88fa4d214699c01a48ef0bb332c8`; the `DrVas-APK` artifact was uploaded. This confirms compilation and artifact creation, not installation or runtime behaviour on a device.
+- A newer APK build and Worker deployment are triggered automatically by pushes. Check GitHub Actions before claiming their latest status.
+- End-to-end authenticated AI chat, saved conversation continuity, runtime audit-log inserts, and dashboard reads still require a signed-in test.
+- Four moderate npm dependency advisories were reported during CI. Review them without applying breaking or forced upgrades blindly.
 
 ## Existing capabilities and decisions
 
@@ -95,7 +107,7 @@ Remaining language work:
 
 ## Required next steps
 
-1. Apply the SQL migration `supabase/migrations/202611020001_admin_audit_logs.sql` in the linked Supabase project's SQL Editor. Until this is done, persistent audit logging and the dashboard journal will report that setup is required.
+1. The founder confirmed on 2026-11-02 that the SQL migration `supabase/migrations/202611020001_admin_audit_logs.sql` was applied and that the `drvas_audit_logs` table and all nine columns are visible in Supabase Table Editor. Do not ask them to reapply it; runtime inserts and dashboard reads still need verification.
 2. Test administrator access in the browser:
    - Sign in with the authorized founder account and confirm the panel appears.
    - Sign in with a normal account and confirm the panel stays hidden and premium modules remain gated.
