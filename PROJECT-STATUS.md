@@ -412,3 +412,15 @@ Founder requested autonomous work while away and added a third assistant named A
 4. Test privileged actions and client visibility again; Crypto must remain entirely absent from client-facing screens and independently protected in the Worker.
 5. Design/prepare Dr.Vas portrait avatar and original Dr.Jan/Aurora avatars as separate visual assets; do not claim they are live until integrated and tested.
 6. Continue saving each meaningful change and test/deployment result in this file.
+## Assistant presentation polish and final validation — 2026-11-03
+
+- Replaced the three plain assistant pills with more professional selectable cards. Dr.Vas uses the existing founder portrait asset `www/drvas.jpeg`; Dr.Jan and Aurora have distinct original CSS-based visual identities. No new external avatar image service is required for this first pass.
+- Added a dedicated guided-help shortcut alongside the assistant cards.
+- Browser speech voice preferences are now stored separately for each assistant and language (`drvas_speech_voice_<assistant>_<language>`), so a user's choice for Aurora does not overwrite the voice choice for Dr.Jan or Dr.Vas.
+- Switching assistants cancels any current speech playback and refreshes the available voice selection for the chosen persona.
+- Frontend audit found the Crypto UI and related Founder Provenance controls only inside the administrator panel; the six customer-facing module cards still contain no Crypto module. Worker endpoints continue to verify the authenticated administrator allowlist independently.
+- Final relevant frontend commits: assistant selector/personas `4a1834873bd8fb86fd8d9d611608fcdd53956918`; guided-help shortcut `73efd8e17359cb7dd52eb74e79cdbaf416a74d95`; visual cards `83e1dd4fe1b6874081638f70a9c893d10edbf30b`; per-assistant voice preference key `f350950750c2b654106c85ba8e08e2bcde938afc`; refresh voice selection on assistant switch `d52c69ae0918e00dd03a5bbdf2f4b5fb276c56da`.
+- Worker persona validation and prompt commit `d3d6cf03f22c4f65887daf9192a6c979e41346d7`; identity consistency/origin-story routing fix `4c45452bb1e36658c8b0a21f47b8e8436186b3e5`.
+- Latest verified Worker deployment run `41659348940` on commit `4c45452bb1e36658c8b0a21f47b8e8436186b3e5` passed all checks including Worker/browser JavaScript validation, deployment and production smoke test. A later frontend-only commit `d52c69ae0918e00dd03a5bbdf2f4b5fb276c56da` is also queued/in deployment; confirm its final run before telling the founder the latest UI changes are deployed.
+- Keep the current distinction clear: assistant cards/persona prompts are implemented; photorealistic animated avatars and the founder's cloned voice are not. Dr.Vas uses the existing portrait image in the selector; Jan and Aurora currently use original CSS avatar symbols.
+- No APK installation was performed. CI may produce private APK artifacts automatically; the founder's request to defer installation remains in force.
