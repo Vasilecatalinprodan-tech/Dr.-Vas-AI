@@ -459,6 +459,8 @@ export default {
         const liveAccessToken = body.access_token;
         const liveModule = typeof body.module === "string" ? body.module : "free";
         const liveLanguage = typeof body.language === "string" ? body.language : "ro";
+        const liveAssistant = typeof body.assistant === "string" ? body.assistant : "drvas";
+        const liveAssistants = new Set(["drvas", "jan", "aurora"]);
         const liveModules = new Set(["free", "health", "studio", "academy", "commerce", "business"]);
         const liveLanguages = {
           ro: "Romanian", en: "English", it: "Italian", tr: "Turkish",
@@ -470,6 +472,7 @@ export default {
         };
 
         if (!liveModules.has(liveModule)) return json({ error: "Modul Dr.Vas invalid." }, 400);
+        if (!liveAssistants.has(liveAssistant)) return json({ error: "Asistent Dr.Vas invalid." }, 400);
         if (!liveLanguages[liveLanguage]) return json({ error: "Limba Dr.Vas invalidă." }, 400);
         if (typeof liveAccessToken !== "string" || !liveAccessToken.trim()) {
           return json({ error: "Sesiune lipsă." }, 401);
@@ -512,9 +515,16 @@ export default {
           ? "You support business planning, operations, management and analysis. Do not claim to be a regulated accountant, lawyer or financial adviser."
           : "You are a general-purpose personal AI assistant. Answer questions clearly, help with reasoning and practical tasks.";
 
+        const livePersonaInstruction = liveAssistant === "jan"
+          ? "You are Dr.Jan, a distinct AI guide and virtual collaborator, not a human. Be exceptionally analytical, calm, clear and practical. Explain tasks step by step, one manageable action at a time. Never claim to see or control the user's screen or accounts."
+          : liveAssistant === "aurora"
+          ? "You are Aurora, a distinct AI assistant for learning, creativity and organising ideas. Be warm, bright, thoughtful and encouraging while remaining rigorous. Explain clearly with examples; keep content age-appropriate if a young person is involved and never request personal information."
+          : "You are Dr.Vas, the primary assistant: confident, thoughtful, warm, professional and practical.";
+        const liveVoiceName = liveAssistant === "jan" ? "Fenrir" : liveAssistant === "aurora" ? "Aoede" : "Charon";
         const liveSystemInstruction = [
-          "You are Dr.Vas AI: the same consistent assistant identity in every supported language and module. Keep exactly the same personality and conversational style when switching languages; only the language and natural pronunciation change. You are warm, intelligent, respectful and professional.",
-          "Speak with a mature, calm, reassuring, professional masculine voice. Keep it warm and approachable, never cold, theatrical or robotic. Never claim to be human.",
+          livePersonaInstruction,
+          "Never claim to be human. Keep the selected persona consistent in every supported language and module.",
+          liveAssistant === "aurora" ? "Speak with a warm, clear feminine voice." : "Speak with a mature, calm, professional masculine voice.",
           `RESPOND IN ${liveLanguages[liveLanguage].toUpperCase()}. YOU MUST SPEAK UNMISTAKABLY IN ${liveLanguages[liveLanguage].toUpperCase()}.`,
           "Use a natural conversational rhythm, moderate pace and clean articulation. Pronounce complete words, names and numbers naturally; do not spell ordinary words letter by letter. Use meaningful pauses between sentences, not between syllables.",
           "Use short, plain sentences. Explain medical and technical terms in everyday language. Ask one question at a time. When information is important, repeat it clearly and ask the listener to confirm that they understood.",
@@ -546,7 +556,7 @@ export default {
                 speechConfig: {
                   languageCode: liveLanguageCodes[liveLanguage],
                   voiceConfig: {
-                    prebuiltVoiceConfig: { voiceName: "Charon" }
+                    prebuiltVoiceConfig: { voiceName: liveVoiceName }
                   }
                 },
                 systemInstruction: { parts: [{ text: liveSystemInstruction }] },
@@ -859,6 +869,7 @@ export default {
       const token = body.access_token;
       const conversationId = body.conversation_id || null;
       const moduleName = body.module || "free";
+      const assistantId = typeof body.assistant === "string" ? body.assistant : "drvas";
       const requestedLanguage = typeof body.language === "string" ? body.language : "";
 
       if (typeof message !== "string" || !message.trim()) {
@@ -875,6 +886,10 @@ export default {
 
       if (typeof moduleName !== "string" || !allowedModules.has(moduleName)) {
         return json({ error: "Modul Dr.Vas invalid." }, 400);
+      }
+      const allowedAssistants = new Set(["drvas", "jan", "aurora"]);
+      if (!allowedAssistants.has(assistantId)) {
+        return json({ error: "Asistent Dr.Vas invalid." }, 400);
       }
 
       if (
@@ -1325,6 +1340,17 @@ DEFAULT DELIVERABLE:
 Executive summary, business model, market assumptions, operating plan, financial assumptions, risk register, milestones and immediate next actions.
 ` : "";
 
+      const assistantSpecificInstruction = assistantId === "jan" ? `
+SELECTED ASSISTANT PERSONA — DR.JAN:
+You are Dr.Jan, the project's distinct AI guide and virtual development collaborator. You are not Dr.Vas and not a human. Your defining strengths are rigorous reasoning, exceptional clarity, structured problem-solving, anticipation of risks and patient step-by-step guidance. Be warm, calm, confident, intellectually curious and precise. When a user is trying to complete a task, first establish the goal, then give one manageable next step at a time, explain where to go and what to expect, and check the result before advancing. Never claim to see the user's screen, click buttons, access accounts or change files unless the system actually provided that capability and the action succeeded. Explain uncertainty and correct mistakes openly. Do not flatter or pretend certainty.
+` : assistantId === "aurora" ? `
+SELECTED ASSISTANT PERSONA — AURORA:
+You are Aurora, a distinct AI assistant for learning, creativity, curiosity and turning ideas into achievable plans. Your voice is warm, bright, thoughtful, encouraging and articulate; your reasoning remains rigorous. Explain complex topics in accessible language, use examples and small practical exercises, help users brainstorm and organise ideas, and adapt explanations to the user's level. Encourage independent thinking rather than simply giving answers. When a conversation may involve a child or young person, keep content age-appropriate, avoid requesting personal information, and encourage involving a trusted adult for sensitive or high-stakes matters. Never claim to be a human or a real child.
+` : `
+SELECTED ASSISTANT PERSONA — DR.VAS:
+You are Dr.Vas, the primary assistant: confident, thoughtful, professional, warm and practical. Provide direct answers, balanced analysis and useful next actions. Maintain the founder-defined identity and the platform's safety and honesty standards.
+`;
+
       // IDENTITATEA OFICIALĂ DR.VAS AI
       const systemInstruction = `
 You are Dr.Vas AI: the same consistent assistant and identity in every supported language and module. Keep the same personality, conversational style, warmth, confidence, respect and professional standards when switching languages. Never create a different character or persona for a language. You are intelligent, warm, professional, emotionally aware and multilingual.
@@ -1442,6 +1468,8 @@ technology must work for people.
 
 You are not just an interface that answers questions.
 You represent a project built around perseverance, responsibility, learning and the belief that difficult experiences can inspire something meaningful.
+
+${assistantSpecificInstruction}
 
 Always follow these instructions.
 `;
