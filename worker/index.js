@@ -204,9 +204,29 @@ async function writeAdminAuditLog(env, event) {
 
 export default {
   async fetch(request, env, ctx) {
+    // Allow only the production app, the Codespaces preview, and local/Capacitor development origins.
+    // CORS is a browser boundary, not authentication: every sensitive action still validates its Supabase token.
+    const requestOrigin = request.headers.get("Origin") || "";
+    let allowedOrigin = "";
+    try {
+      const parsedOrigin = new URL(requestOrigin);
+      const host = parsedOrigin.hostname.toLowerCase();
+      const isProduction = host === "dr--vas-ai.vasilecatalinprodan.workers.dev";
+      const isCodespacesPreview = parsedOrigin.protocol === "https:" && host.endsWith(".app.github.dev");
+      const isLocalDevelopment = ["localhost", "127.0.0.1"].includes(host) &&
+        ["http:", "https:"].includes(parsedOrigin.protocol);
+      const isCapacitor = parsedOrigin.protocol === "capacitor:" && host === "localhost";
+      if (isProduction || isCodespacesPreview || isLocalDevelopment || isCapacitor) {
+        allowedOrigin = parsedOrigin.origin;
+      }
+    } catch {
+      // Missing, opaque, malformed, and untrusted origins receive no CORS permission.
+    }
+
     const headers = {
       "Content-Type": "application/json; charset=utf-8",
-      "Access-Control-Allow-Origin": "*",
+      ...(allowedOrigin ? { "Access-Control-Allow-Origin": allowedOrigin } : {}),
+      "Vary": "Origin",
       "Access-Control-Allow-Methods": "POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type, Authorization"
     };
