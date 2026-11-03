@@ -215,3 +215,11 @@ A detailed session log was added at `docs/SESSION_LOG_2026-11-03.md`. It records
 - Psychology is scoped as AI wellbeing/psychoeducation with human professional referral and a crisis-support flow. The AI must not autonomously call 112/999 or transmit location based only on a model risk score. A real emergency escalation service requires clinical governance, legal basis, human operations, reliable location handling and formal emergency-service arrangements.
 - Child-safety work is scoped to user reporting and human-governed safeguarding. No automated criminal/pedophile classification, covert surveillance or unverified accusations.
 - Not yet implemented: crypto dashboard/mining, Psychology service, emergency escalation integration, child-safety reporting portal, product catalog/supplier integrations, payment entitlements, Studio video rendering/publishing. These remain roadmap items, not live features.
+
+
+## Dr.Vas Crypto administrator model — 2026-11-03
+
+- Founder confirmed that mining is limited to administrator-owned or explicitly administrator-authorised devices, and that administrators may connect their own crypto accounts. A portion of realised proceeds may later be allocated to a bounded trading strategy.
+- Added `docs/CRYPTO_ADMIN_CONTROL_MODEL.md` (commit `4bfd801c149f3787b4d0dfca8856bcb116508288`). It specifies server-enforced admin access, enrolled/revocable devices, no visitor-device mining, separate administrator accounts, read-only first connections, no seed phrases/private keys, withdrawal-disabled trading credentials if later enabled, per-account ledgers, paper trading, human-approved live orders and hard risk limits for any later automation.
+- This is a design document only: no mining agent, wallet custody or live trading has been enabled.
+- Assistant role: technical/product copilot only; it cannot be a legal administrator, account holder, custodian or signatory and cannot independently control real funds.
