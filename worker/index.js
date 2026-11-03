@@ -284,14 +284,32 @@ export default {
 
 
       // Consimțământ explicit și versionat pentru câmpurile opționale din profilul privat.
-      if (body.action === "privacy_consent_save") {
+      if (body.action === "privacy_consent_get" || body.action === "privacy_consent_save") {
         const consentUser = await verifySupabaseUser(env, body.access_token);
         if (!consentUser) return json({ error: "Sesiune invalidă. Conectează-te din nou." }, 401);
-        if (body.consent_type !== "optional_profile_data" || typeof body.granted !== "boolean") {
-          return json({ error: "Consimțământ invalid." }, 400);
-        }
         if (!env.SUPABASE_URL || !env.SUPABASE_KEY) {
           return json({ error: "Autentificarea nu este configurată." }, 500);
+        }
+        if (body.action === "privacy_consent_get") {
+          const consentQuery = new URLSearchParams({
+            select: "granted,policy_version,recorded_at",
+            user_id: `eq.${consentUser.id}`,
+            consent_type: "eq.optional_profile_data",
+            order: "recorded_at.desc",
+            limit: "1"
+          });
+          const consentRead = await fetch(
+            `${env.SUPABASE_URL.replace(/\/+$/, "")}/rest/v1/drvas_privacy_consents?${consentQuery.toString()}`,
+            { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${env.SUPABASE_KEY}` } }
+          );
+          if (!consentRead.ok) return json({ error: "Nu am putut citi opțiunea de confidențialitate." }, 503);
+          const rows = await consentRead.json();
+          return new Response(JSON.stringify({ ok: true, granted: rows.length ? rows[0].granted === true : false }), {
+            status: 200, headers: { ...headers, "Cache-Control": "no-store, private" }
+          });
+        }
+        if (body.consent_type !== "optional_profile_data" || typeof body.granted !== "boolean") {
+          return json({ error: "Consimțământ invalid." }, 400);
         }
         const consentResponse = await fetch(
           `${env.SUPABASE_URL.replace(/\/+$/, "")}/rest/v1/drvas_privacy_consents`,
