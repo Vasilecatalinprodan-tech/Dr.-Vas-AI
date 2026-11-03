@@ -13,9 +13,6 @@ on:
       - 'package-lock.json'
       - '.github/workflows/android.yml'
 
-permissions:
-  contents: write
-
 concurrency:
   group: drvas-android-${{ github.ref }}
   cancel-in-progress: true
@@ -47,20 +44,6 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug
-
-      - name: Publish public Android APK download
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: android-latest
-          name: Dr.Vas Android — latest test build
-          body: |
-            Latest automatically built Dr.Vas Android APK.
-            This is a debug/test build, not a Google Play production release.
-          files: android/app/build/outputs/apk/debug/app-debug.apk
-          overwrite_files: true
-          make_latest: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/upload-artifact@v4
         with:
