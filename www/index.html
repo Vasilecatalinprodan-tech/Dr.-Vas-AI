@@ -75,6 +75,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .conversation-item{width:100%;text-align:left;background:#12283b;color:#c5d9e4;padding:10px;border:1px solid transparent;font-size:12px;line-height:1.4;overflow-wrap:anywhere}
 .conversation-item.active{border-color:#54d8cf;background:#17384a;color:#fff}
 .conversation-item small{display:block;color:#7fa4b5;margin-top:4px;font-weight:400}
+.conversation-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px;align-items:stretch;margin:7px 0}.conversation-row .conversation-item{min-width:0}.conversation-actions{display:flex;flex-direction:column;gap:4px}.conversation-actions button,.history-filter-button{padding:6px 8px;border:1px solid #31566a;background:#102b3d;color:#a9d8df;border-radius:8px;font-size:10px}.conversation-actions button:hover,.history-filter-button:hover{border-color:#54d8cf}.history-filter-button{width:100%;margin-top:7px}
 .chat-main{min-width:0}
 .chat-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:15px}
 .chat-module-label{font-size:12px;color:#65dcd4}
@@ -638,6 +639,7 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
     <h3>🧠 Istoricul conversațiilor salvate</h3>
     <button class="new-chat-button" onclick="newConversation()">＋ Conversație nouă</button>
     <button class="delete-history-button" onclick="deleteAllConversations()">Șterge tot istoricul</button>
+    <button type="button" id="historyFilterButton" class="history-filter-button" onclick="toggleArchivedConversations()">Vezi conversațiile arhivate</button>
     <div id="conversationList"></div>
    </aside>
 
@@ -2288,66 +2290,74 @@ function renderWelcome(){
   updateActiveConversation();
 }
 
+let showArchivedConversations = false;
 async function getConversationIds(){
-  if(!currentUser) return [];
-  const {data,error} = await supabaseClient.from("chat_messages")
-    .select("conversation_id,created_at,role,content")
-    .eq("user_id",currentUser.id)
-    .order("created_at",{ascending:false}).limit(500);
-  if(error) throw error;
-
-  const seen = new Map();
-  for(const row of data || []){
-    if(!seen.has(row.conversation_id)){
-      seen.set(row.conversation_id,{id:row.conversation_id,date:row.created_at,title:""});
-    }
-    const conversation = seen.get(row.conversation_id);
-    if(!conversation.title && row.role==="user"){
-      conversation.title = String(row.content || "");
-    }
-  }
-  return Array.from(seen.values());
+ if(!currentUser)return [];
+ const {data,error}=await supabaseClient.from("chat_messages").select("conversation_id,created_at,role,content").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(500);
+ if(error)throw error;
+ const seen=new Map();
+ for(const row of data||[]){
+  if(!seen.has(row.conversation_id))seen.set(row.conversation_id,{id:row.conversation_id,date:row.created_at,title:"",archived_at:null});
+  const item=seen.get(row.conversation_id);if(!item.title&&row.role==="user")item.title=String(row.content||"");
+ }
+ const conversations=Array.from(seen.values());
+ if(conversations.length){
+  const {data:meta,error:metaError}=await supabaseClient.from("drvas_conversation_metadata").select("conversation_id,title,archived_at").eq("user_id",currentUser.id).in("conversation_id",conversations.map(x=>x.id));
+  if(metaError)throw metaError;
+  const byId=new Map((meta||[]).map(x=>[x.conversation_id,x]));
+  conversations.forEach(item=>{const saved=byId.get(item.id);if(saved){item.archived_at=saved.archived_at;if(saved.title)item.title=saved.title;}});
+ }
+ return conversations;
 }
-
 async function loadConversationList(){
-  const list = el("conversationList");
-  list.innerHTML = "";
-  try{
-    const conversations = await getConversationIds();
-    if(!conversations.length){
-      const empty = document.createElement("p");
-      setLocalizedText(empty,"Nu ai încă discuții salvate.");
-      empty.style.cssText = "font-size:12px;color:#7fa4b5;line-height:1.5";
-      list.appendChild(empty);
-      return conversations;
-    }
-
-    conversations.forEach((conversation,index)=>{
-      const button = document.createElement("button");
-      button.className = "conversation-item";
-      button.dataset.id = conversation.id;
-      const title = document.createElement("span");
-      const readableTitle = String(conversation.title || "").replace(/\\s+/g," ").trim();
-      title.textContent = readableTitle
-        ? (readableTitle.length > 52 ? readableTitle.slice(0,49) + "…" : readableTitle)
-        : tr("Conversația ") + (index + 1);
-      title.title = readableTitle || title.textContent;
-      const date = document.createElement("small");
-      date.textContent = new Date(conversation.date).toLocaleString(currentLanguage || "ro",{
-        day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"
-      });
-      button.appendChild(title);
-      button.appendChild(date);
-      button.addEventListener("click",()=>openConversation(conversation.id));
-      list.appendChild(button);
-    });
-    updateActiveConversation();
-    return conversations;
-  }catch(error){
-    console.error("Conversation list:",error);
-    setLocalizedText(list,"Nu am putut încărca istoricul.");
-    return [];
-  }
+ const list=el("conversationList");list.innerHTML="";
+ const filter=el("historyFilterButton");if(filter)setLocalizedText(filter,showArchivedConversations?"Vezi conversațiile active":"Vezi conversațiile arhivate");
+ try{
+  const all=await getConversationIds(),items=all.filter(x=>showArchivedConversations?Boolean(x.archived_at):!x.archived_at);
+  if(!items.length){const empty=document.createElement("p");setLocalizedText(empty,showArchivedConversations?"Nu ai conversații arhivate.":"Nu ai încă discuții salvate.");empty.style.cssText="font-size:12px;color:#7fa4b5;line-height:1.5";list.appendChild(empty);return all;}
+  items.forEach((conversation,index)=>{
+   const row=document.createElement("div");row.className="conversation-row";
+   const button=document.createElement("button");button.type="button";button.className="conversation-item";button.dataset.id=conversation.id;
+   const title=document.createElement("span"),readable=String(conversation.title||"").replace(/\s+/g," ").trim();
+   title.textContent=readable?(readable.length>52?readable.slice(0,49)+"…":readable):tr("Conversația ")+(index+1);title.title=readable||title.textContent;
+   const date=document.createElement("small");date.textContent=new Date(conversation.date).toLocaleString(currentLanguage||"ro",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
+   button.append(title,date);button.addEventListener("click",()=>openConversation(conversation.id));
+   const actions=document.createElement("div");actions.className="conversation-actions";
+   const addAction=(label,handler)=>{const b=document.createElement("button");b.type="button";b.textContent=label;b.addEventListener("click",event=>{event.stopPropagation();handler();});actions.appendChild(b);};
+   addAction("Redenumește",()=>renameConversation(conversation));
+   addAction(conversation.archived_at?"Restaurează":"Arhivează",()=>setConversationArchived(conversation,!conversation.archived_at));
+   addAction("Șterge",()=>deleteConversation(conversation));
+   row.append(button,actions);list.appendChild(row);
+  });
+  updateActiveConversation();return all;
+ }catch(error){console.error("Conversation list:",error);setLocalizedText(list,"Nu am putut încărca istoricul. Verifică migrarea pentru administrarea conversațiilor.");return [];}
+}
+function toggleArchivedConversations(){showArchivedConversations=!showArchivedConversations;loadConversationList();}
+async function renameConversation(conversation){
+ if(!currentUser||isSendingMessage)return;
+ const proposed=window.prompt("Noul nume al conversației:",conversation.title||"");if(proposed===null)return;
+ const title=proposed.trim().slice(0,120);if(!title){window.alert("Numele nu poate fi gol.");return;}
+ try{const {error}=await supabaseClient.from("drvas_conversation_metadata").upsert({user_id:currentUser.id,conversation_id:conversation.id,title,archived_at:conversation.archived_at||null},{onConflict:"user_id,conversation_id"});if(error)throw error;await loadConversationList();}
+ catch(error){window.alert("Nu am putut redenumi conversația: "+error.message);}
+}
+async function setConversationArchived(conversation,archived){
+ if(!currentUser||isSendingMessage)return;
+ try{
+  const {error}=await supabaseClient.from("drvas_conversation_metadata").upsert({user_id:currentUser.id,conversation_id:conversation.id,title:conversation.title||"",archived_at:archived?new Date().toISOString():null},{onConflict:"user_id,conversation_id"});
+  if(error)throw error;
+  if(archived&&currentConversationId===conversation.id){currentConversationId=makeId();rememberActiveConversation(currentConversationId);conversationSaved=false;pendingMessages=[];renderWelcome();updateSaveButton();}
+  await loadConversationList();
+ }catch(error){window.alert("Nu am putut actualiza arhivarea: "+error.message);}
+}
+async function deleteConversation(conversation){
+ if(!currentUser||isSendingMessage)return;
+ if(!window.confirm("Ștergi definitiv această conversație și toate mesajele ei? Acțiunea nu poate fi anulată."))return;
+ try{
+  const {error}=await supabaseClient.from("chat_messages").delete().eq("user_id",currentUser.id).eq("conversation_id",conversation.id);if(error)throw error;
+  const meta=await supabaseClient.from("drvas_conversation_metadata").delete().eq("user_id",currentUser.id).eq("conversation_id",conversation.id);if(meta.error)throw meta.error;
+  if(currentConversationId===conversation.id){currentConversationId=makeId();rememberActiveConversation(currentConversationId);conversationSaved=false;pendingMessages=[];renderWelcome();updateSaveButton();}
+  await loadConversationList();
+ }catch(error){window.alert("Nu am putut șterge conversația: "+error.message);}
 }
 
 function updateActiveConversation(){
