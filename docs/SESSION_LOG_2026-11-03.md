@@ -222,3 +222,10 @@ Founder proposed adding revenue-generating writing, translation and music servic
 - Added `docs/REVENUE_ENGINE_ROADMAP.md`: multi-module revenue streams, payment/order/entitlement architecture, build phases, IP/AI transparency, and crypto launch gates. Commit: `38f20bd4b225e5d4e8c006cbaaf0821a5a14552e`.
 
 - Localised Studio project controls and missing-database setup message across all seven non-Romanian supported languages. Added a 50,000-character cap for stored latest output. Translation validation caught and prevented a malformed Spanish dictionary entry; fixed in `f31e04f2d893098857dd4b30d0c115e29c565e64`, then Worker deployment passed. Latest localisation commit `e40cd68ca0a27c37b17bf6667eb6626816043635` was being validated/deployed at checkpoint time.
+
+## Final verification of Studio project workspace
+
+- Latest frontend commit `e40cd68ca0a27c37b17bf6667eb6626816043635` passed Worker JavaScript validation, Cloudflare deployment and production smoke test in run `41643859848`.
+- Latest Android run `41643859812` succeeded; artifact `DrVas-APK`, ID `13234710860`, size 6,015,535 bytes, SHA-256 `a0c41ecb697fcf654340645e3567be9cbff9b740ffb12e2df125f77f4b63c8ac`.
+- APK compile and upload are verified; Samsung installation/runtime test is still pending.
+- Browser visual tests and Supabase save/reopen test are pending. Migration `202611030004_studio_projects.sql` must first be applied by the founder in Supabase.
