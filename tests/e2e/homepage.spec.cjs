@@ -72,3 +72,18 @@ test("persisted Supabase session keeps the public dashboard visible when profile
   await expect(page.locator("#chatSection")).toBeHidden();
   expect(await page.evaluate(() => document.body.classList.contains("chat-focus-mode"))).toBe(false);
 });
+
+test("header chat button opens the conversation without entering destructive focus layout", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-session-user", email: "e2e@example.invalid" };
+    window.enterChatFocus();
+  });
+
+  await expect(page.locator("#chatSection")).toBeVisible();
+  await expect(page.locator("#heroSection")).toBeVisible();
+  await expect(page.locator('[data-module]')).toHaveCount(6);
+  expect(await page.evaluate(() => document.body.classList.contains("chat-focus-mode"))).toBe(false);
+  await page.locator("#chatSection").scrollIntoViewIfNeeded();
+  await expect(page.locator("#question")).toBeVisible();
+});
