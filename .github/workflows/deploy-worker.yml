@@ -65,7 +65,7 @@ jobs:
           fi
           homepage="$(curl --fail --silent --show-error "$WORKER_HEALTH_URL/")"
           for marker in "Dr.Vas AI" 'data-module="free"' 'data-module="health"' 'data-module="studio"' 'data-module="academy"' 'data-module="commerce"' 'data-module="business"'; do
-            if ! printf '%s' "$homepage" | grep -Fq "$marker"; then
+            if ! grep -Fq "$marker" <<<"$homepage"; then
               echo "Homepage is missing expected content: $marker"
               exit 1
             fi
