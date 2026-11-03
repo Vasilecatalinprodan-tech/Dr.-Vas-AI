@@ -443,11 +443,11 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
      <span id="autoSaveStatus" class="auto-save-indicator" role="status">● Salvare automată activă</span>
     </div>
     <div id="saveMessage"></div>
-    <div id="chat">
+    <div id="chat" role="log" aria-live="polite" aria-relevant="additions text" aria-label="Conversația cu Dr.Vas">
      <div class="msg bot">Bun venit la Dr.Vas AI! Cu ce te pot ajuta astăzi?</div>
     </div>
     <div class="input-area">
-     <input id="question" placeholder="Scrie întrebarea ta..." autocomplete="off">
+     <input id="question" aria-label="Mesaj pentru Dr.Vas" placeholder="Scrie întrebarea ta..." autocomplete="off">
      <button id="sendButton" onclick="send()">Trimite ➤</button>
     </div>
     <div class="voice-toolbar" aria-label="Controale vocale Dr.Vas">
