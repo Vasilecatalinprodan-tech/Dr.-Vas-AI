@@ -293,3 +293,14 @@ A detailed session log was added at `docs/SESSION_LOG_2026-11-03.md`. It records
 - Worker instruction expansion initially had a template-closure error; Wrangler caught it before deployment. Corrected in commit `4fb5b9a10541efeea322922831d298a7b61f4c0e`.
 - Corrected Worker deployment run `41640877696` succeeded, including Worker/browser JavaScript validation, deployment and production smoke test.
 - The expanded Studio is deployed. The user must still perform browser testing of the new book/translation/music options and test the new APK on a physical Android device.
+
+
+## Dr.Vas Studio project workspace — 2026-11-03
+
+- Added a private project manager inside the existing Studio workspace: project title, save, saved-project selector, reopen and Markdown export.
+- Project data is stored per authenticated Supabase user in `public.drvas_studio_projects`; project metadata/brief includes deliverable type, idea, platform, style, audience, duration, aspect and latest assistant response.
+- Added migration `supabase/migrations/202611030004_studio_projects.sql`. It creates the table, user/time index, enables RLS, grants authenticated access and defines per-user SELECT/INSERT/UPDATE/DELETE policies. Anonymous access is revoked. The founder has NOT yet been asked to apply this migration; do not claim the live table exists until he applies it and the UI save test succeeds.
+- Frontend commits: `778ec04998c28bc3e03e60d8a877fc7530725ba9`, `b920a32e59e9ceff8ab0c1bb5e792b092d3b8327`, `233a13166643c9bba5a842eb25a601713b8c5721`, `c8645a52aef47ca90a7d306dbd153dbb39bdabdc`.
+- The save/open/export controls require an authenticated user. Save and reopen rely on the new Supabase migration. Markdown export is client-side and includes the brief plus the latest visible assistant response.
+- Worker deployment for frontend commit `233a131` succeeded (run `41641955809`). Latest frontend commit `c8645a5` has deployment run `41642039335` queued and APK run `41642039341` pending at checkpoint time. Earlier Android runs were cancelled by the configured concurrency guard when newer commits arrived; only the latest APK run should be treated as current.
+- Browser test, Supabase migration application, save/reopen test, and physical Android installation remain outstanding.
