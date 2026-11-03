@@ -41,7 +41,7 @@ function normalizePrivateProfile(input) {
       profile[key] = cleanProfileAddress(input[key]);
     } else if (key === "date_of_birth") {
       const value = cleanProfileText(input[key], 10);
-      if (value && (!/^\\d{4}-\\d{2}-\\d{2}$/.test(value) || Number.isNaN(Date.parse(value)) || new Date(value) > new Date())) {
+      if (value && (!/^\d{4}-\d{2}-\d{2}$/.test(value) || Number.isNaN(Date.parse(value)) || new Date(value) > new Date())) {
         throw new Error("Data nașterii trebuie să fie o dată validă, în format AAAA-LL-ZZ.");
       }
       profile[key] = value;
@@ -103,7 +103,7 @@ async function decryptPrivateProfile(env, userId, encoded) {
 async function verifySupabaseUser(env, accessToken) {
   if (!env.SUPABASE_URL || !env.SUPABASE_KEY) throw new Error("AUTH_NOT_CONFIGURED");
   if (typeof accessToken !== "string" || !accessToken.trim()) return null;
-  const response = await fetch(`${env.SUPABASE_URL.replace(/\\/+$/, "")}/auth/v1/user`, {
+  const response = await fetch(`${env.SUPABASE_URL.replace(/\/+$/, "")}/auth/v1/user`, {
     headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${accessToken}` }
   });
   if (!response.ok) return null;
@@ -112,7 +112,7 @@ async function verifySupabaseUser(env, accessToken) {
 }
 
 async function privateProfileRequest(env, userId, method, payload) {
-  const base = env.SUPABASE_URL.replace(/\\/+$/, "");
+  const base = env.SUPABASE_URL.replace(/\/+$/, "");
   const url = `${base}/rest/v1/drvas_private_profiles?on_conflict=user_id`;
   const response = await fetch(url, {
     method,
@@ -231,7 +231,7 @@ export default {
             limit: "1"
           });
           const storedResponse = await fetch(
-            `${env.SUPABASE_URL.replace(/\\/+$/, "")}/rest/v1/drvas_private_profiles?${query.toString()}`,
+            `${env.SUPABASE_URL.replace(/\/+$/, "")}/rest/v1/drvas_private_profiles?${query.toString()}`,
             { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${env.SUPABASE_KEY}` } }
           );
           if (!storedResponse.ok) throw new Error("PRIVATE_PROFILE_READ_FAILED");
