@@ -110,3 +110,5 @@ The preceding project checkpoint and project status documents contain the full p
 - Most recent completed APK build before this safety refinement: commit `154646d223c04ecf367ab942819a06321286b2dc`, workflow run `41626703955`, artifact `DrVas-APK` ID `13225762545` (about 6.0 MB). It includes the chat persistence, auto-scroll, conversation titles, typing indicator, and screen-reader improvements.
 
 - Long-thread history loading was also hardened: opening a conversation now fetches the newest 200 messages in descending database order and reverses them for chronological display. Previously, a very long thread could load its oldest 200 messages and leave the visitor away from the latest discussion. Commit: `ef098fb7f63944f7eead7efccff13ab0acd9cd2c`.
+
+- Added translations for the automatic-save status and chat accessibility labels in English, Italian, Turkish, German, French, Spanish, and Russian, so the new controls do not unexpectedly remain Romanian when a visitor changes language. Commit: `352ae05c93c197904552a337062602cf67a9798c`.
