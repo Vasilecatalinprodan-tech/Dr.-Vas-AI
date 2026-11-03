@@ -264,3 +264,14 @@ Official current Gemini Live API documentation:
 - Android APK build for the same latest commit is still in progress at run `41623518375`; do not claim a new APK artifact until it completes.
 - Not yet verified: signed-in end-to-end save/load/withdrawal using a test account, database row/ciphertext verification, cross-user isolation, and real device behaviour. Use synthetic test data only; do not enter health data, passwords, card details or other unnecessary sensitive information.
 - Known boundary: consent policy version `v1` is an implementation identifier, not a substitute for a reviewed published privacy notice. Add retention, export, access and deletion controls plus legal/privacy review before public commercial onboarding.
+
+
+## Studio pilot update — 2026-11-03
+
+- Studio remains an administrator-only pilot while premium billing and subscription entitlement checks are not implemented.
+- The Studio workspace now appears only after a verified administrator selects the Studio module. The previous frontend referenced `selectModule` from all six module cards without defining it; a handler has now been added to manage module selection, active-module UI, audit event and premium access gate.
+- Studio includes workflows for books/e-books, translation/localisation, original music/lyrics, screenwriting, video/social content and editorial/commercial writing.
+- Creative briefs now omit video-specific platform, duration and aspect-ratio fields for non-video deliverables and add suitable guidance for translation, books and music.
+- The Studio Income tracker and private project manager remain in the admin pilot. Public Premium access must wait for subscription verification and payment integration.
+- APK installation/testing is deferred by founder request. Keep Android builds as workflow artifacts; do not automatically publish a public Release.
+- Outstanding: run CI/deploy checks, verify signed-in administrator can select Studio and load projects/income records, verify a non-admin cannot access Studio, and test the composer on the live page.
