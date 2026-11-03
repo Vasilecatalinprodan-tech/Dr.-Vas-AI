@@ -293,3 +293,10 @@ Important limitations and next QA:
 - All nine frontend Worker fetch call sites use JSON content type.
 - Current frontend Supabase tables: `profiles`, `chat_messages`, `drvas_conversation_metadata`, `drvas_studio_projects`, `drvas_income_opportunities`. The older core profile/chat tables predate the newer migrations; the recent feature migrations cover conversation metadata, Studio projects, income/provenance, privacy, rate limits and device registry.
 - APK Gradle build completed for commit `6664fb27cb11a83f402dc6fb751da26134218e16`; artifact upload was still running. Do not confuse compilation with physical Android testing.
+
+
+### 17. Android artifact confirmation — 2026-11-03
+
+- APK workflow run `41698929811` succeeded for commit `6664fb27cb11a83f402dc6fb751da26134218e16`.
+- Artifact: `DrVas-APK`, ID `13262293447`, 6,033,799 bytes; SHA-256 `a2063e934e0d958f1280d6c416efaaffc47c41db8b2d581fd5146730032fb402`; expires 2027-02-01.
+- This confirms build and artifact upload only. Physical Android installation/runtime testing remains outstanding.
