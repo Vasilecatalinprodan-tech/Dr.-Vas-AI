@@ -182,3 +182,13 @@ Founder proposed adding revenue-generating writing, translation and music servic
 - Artifact: `DrVas-APK`, ID `13231669013`, size 6,012,166 bytes, SHA-256 `ebdeb737903736cf20f55fd76678a65bf1b2aec4db797eda3d3248b5a4eb5630`.
 - Build commit: `67ae15bcab208e87d86785a73789c0d8056d5c8a`.
 - APK compilation is verified; installation and runtime testing on a physical Android device are still pending.
+
+
+### Deployment correction and final verification
+
+- The first Worker deployment attempt for the Studio system-instruction expansion failed at Wrangler build time because the template-literal conditional was missing its closing `: "";`. No broken Worker was deployed; the previous production version remained active.
+- Corrected the template closure in commit `4fb5b9a10541efeea322922831d298a7b61f4c0e`.
+- Corrected Worker run `41640877696` completed successfully: JavaScript validation, deployment and production smoke test all passed.
+- Frontend commit `f177af13eedc70b7e869251fba7df86aafdda1b5` Worker deployment run `41640335030` and Android build run `41640334913` both succeeded.
+- New Studio APK artifact ID `13233370497`, 6,012,180 bytes, SHA-256 `b19905f2e0f80fb4736196ddfed40f4b535af893bd651f1873e9d0f27d431317`.
+- Browser testing of the deployed Studio options and physical Android installation remain outstanding.
