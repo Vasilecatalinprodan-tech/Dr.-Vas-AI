@@ -54,3 +54,13 @@
 - The Cloudflare Preview bot reported a failed preview build for the earlier PR commit. Its dashboard build log is behind the user's Cloudflare account; current GitHub connector cannot retrieve that private log. Treat preview status as unresolved until inspected in Cloudflare.
 - Current state: PR #5 remains open/draft, not merged; production is unchanged. The code fix is prepared and browser regression checks pass, but the full issue is NOT declared fixed in production. Next required work: inspect Cloudflare preview build failure, add a true mocked Supabase session-restoration browser test (including profile-fetch success/failure), then run the production deployment checks and only then merge/deploy.
 - Founder explicitly asked that the conversation be preserved. This development log is the durable project record of the issue, findings, decisions, validation and outstanding work; the ChatGPT conversation remains in chat history.
+
+
+## 2026-11-03 — Expanded browser coverage for actual persisted-session startup
+
+- Latest previously completed browser workflow run `41692782910` passed all steps, including Chromium installation and the homepage regression suite, on the prior PR head. This is not the result for the newly expanded test yet.
+- Inspected the real startup chain in `www/index.html`: `initLanguage()` calls `checkSession()`, which awaits Supabase `getSession()`; a persisted user proceeds through `showUser()` and `loadProfile()`. Profile-loading errors are caught by `showUser()`. The dashboard is kept visible by `showOnly()`, while `showChat()` no longer automatically applies `chat-focus-mode`.
+- Expanded `tests/e2e/homepage.spec.cjs` so the Supabase browser stub can return a persisted session and simulate a profile-read failure. Added a browser test that exercises the actual page startup/session check and asserts that the hero and all six modules remain visible, chat focus mode stays off, and the profile error is shown.
+- Corrected the test stub syntax before validation. GitHub Actions has been triggered by the latest test commits; wait for the run result before treating the new coverage as passing.
+- This new test covers persisted-session restoration up to the profile-fetch failure boundary. It does not yet prove the complete successful profile/private-profile/chat/history loading path against a real Supabase project.
+- Production remains unchanged; PR #5 is still the review vehicle. Cloudflare Preview failure log remains inaccessible through the current GitHub connection and must not be represented as resolved.
