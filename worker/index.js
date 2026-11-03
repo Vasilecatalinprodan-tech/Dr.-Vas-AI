@@ -281,6 +281,12 @@ export default {
 
     const headers = {
       "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store",
+      "X-Content-Type-Options": "nosniff",
+      "Referrer-Policy": "strict-origin-when-cross-origin",
+      "X-Frame-Options": "DENY",
+      "Strict-Transport-Security": "max-age=31536000",
+      "Permissions-Policy": "microphone=(self), camera=(), geolocation=(), payment=(), usb=()",
       ...(allowedOrigin ? { "Access-Control-Allow-Origin": allowedOrigin } : {}),
       "Vary": "Origin",
       "Access-Control-Allow-Methods": "POST, OPTIONS",
@@ -312,7 +318,20 @@ export default {
         });
       }
 
-      if (env.ASSETS) return env.ASSETS.fetch(request);
+      if (env.ASSETS) {
+        const assetResponse = await env.ASSETS.fetch(request);
+        const assetHeaders = new Headers(assetResponse.headers);
+        assetHeaders.set("X-Content-Type-Options", "nosniff");
+        assetHeaders.set("Referrer-Policy", "strict-origin-when-cross-origin");
+        assetHeaders.set("X-Frame-Options", "DENY");
+        assetHeaders.set("Strict-Transport-Security", "max-age=31536000");
+        assetHeaders.set("Permissions-Policy", "microphone=(self), camera=(), geolocation=(), payment=(), usb=()");
+        return new Response(assetResponse.body, {
+          status: assetResponse.status,
+          statusText: assetResponse.statusText,
+          headers: assetHeaders
+        });
+      }
       return json({ service: "Dr.Vas AI", status: "online" });
     }
 
