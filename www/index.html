@@ -347,6 +347,7 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
       <input id="studioProjectTitle" type="text" maxlength="120" placeholder="Ex.: Romanul meu / Traducere contract">
      </div>
      <div class="studio-project-controls">
+      <button type="button" onclick="newStudioProject()">Proiect nou</button>
       <button type="button" onclick="saveStudioProject()">Salvează proiectul</button>
       <select id="studioSavedProjects" aria-label="Proiecte salvate"><option value="">Alege un proiect salvat</option></select>
       <button type="button" onclick="openStudioProject()">Deschide</button>
@@ -1374,13 +1375,21 @@ function updateSaveButton(){
 }
 
 let currentStudioProjectId=null;
+let currentStudioProjectOutput="";
+function newStudioProject(){
+ currentStudioProjectId=null;currentStudioProjectOutput="";
+ ["studioProjectTitle","studioIdea"].forEach(id=>{el(id).value="";});
+ el("studioDeliverable").value="series";
+ el("studioSavedProjects").value="";
+ setStudioProjectStatus("Proiect nou. Completează ideea și salvează când ești gata.");
+}
 function studioProjectData(){
  const value=id=>el(id)?.value||"";
  const idea=value("studioIdea").trim();
  const deliverable=value("studioDeliverable");
  const labels={series:"Serial / episod",short:"Clip scurt",youtube:"Video YouTube",ad:"Reclamă",storyboard:"Storyboard",book:"Carte / e-book",translation:"Traducere",music:"Compoziție muzicală",lyrics:"Versuri / poezie",article:"Articol / blog"};
  const title=value("studioProjectTitle").trim()||((labels[deliverable]||"Proiect")+" — "+(idea.slice(0,48)||"Proiect nou"));
- return {title,project_type:deliverable,brief:{idea,deliverable,platform:value("studioPlatform"),tone:value("studioTone"),audience:value("studioAudience"),duration:value("studioDuration"),aspect:value("studioAspect"),latest_output:[...document.querySelectorAll("#chat .msg.bot")].map(node=>node.textContent||"").filter(text=>text.trim()).pop()||"",updated_from:"drvas-studio"}};
+ return {title,project_type:deliverable,brief:{idea,deliverable,platform:value("studioPlatform"),tone:value("studioTone"),audience:value("studioAudience"),duration:value("studioDuration"),aspect:value("studioAspect"),latest_output:[...document.querySelectorAll("#chat .msg.bot")].map(node=>node.textContent||"").filter(text=>text.trim()).pop()||currentStudioProjectOutput,updated_from:"drvas-studio"}};
 }
 function setStudioProjectStatus(message,isError=false){
  const status=el("studioProjectStatus");if(!status)return;
@@ -1423,7 +1432,7 @@ async function openStudioProject(){
  try{
   const {data,error}=await supabaseClient.from("drvas_studio_projects").select("id,title,project_type,brief").eq("id",id).eq("user_id",currentUser.id).single();
   if(error)throw error;
-  const b=data.brief||{};currentStudioProjectId=data.id;
+  const b=data.brief||{};currentStudioProjectId=data.id;currentStudioProjectOutput=b.latest_output||"";
   el("studioProjectTitle").value=data.title||"";
   el("studioDeliverable").value=data.project_type||b.deliverable||"series";
   ["studioIdea","studioPlatform","studioTone","studioAudience","studioDuration","studioAspect"].forEach((key,index)=>{const fields=["idea","platform","tone","audience","duration","aspect"];if(b[fields[index]]!==undefined)el(key).value=b[fields[index]];});
