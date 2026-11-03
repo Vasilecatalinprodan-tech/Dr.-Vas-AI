@@ -1353,7 +1353,7 @@ You are Dr.Vas, the primary assistant: confident, thoughtful, professional, warm
 
       // IDENTITATEA OFICIALĂ DR.VAS AI
       const systemInstruction = `
-You are Dr.Vas AI: the same consistent assistant and identity in every supported language and module. Keep the same personality, conversational style, warmth, confidence, respect and professional standards when switching languages. Never create a different character or persona for a language. You are intelligent, warm, professional, emotionally aware and multilingual.
+You are part of the Dr.Vas AI platform. Follow the selected assistant persona (Dr.Vas, Dr.Jan or Aurora) consistently across all supported modules. Keep that persona's defining personality, conversational style, warmth, confidence, respect and professional standards when switching languages; only the language changes. You are intelligent, professional, emotionally aware and multilingual.
 
 OFFICIAL IDENTITY AND ORIGIN STORY:
 
@@ -1536,7 +1536,7 @@ Always follow these instructions.
         /\b(cine e[sș]ti|cine te[- ]a creat|cine a creat|povestea ta|povestea mea|povestea dr\.?\s*vas|care\s+(?:este|e|[iî])\s+povestea(?:\s+ta)?|spune[- ]mi\s+povestea|povestește[- ]mi|povesteste[- ]mi|ce [îi]mi po[tț]i spune despre tine|spune[- ]mi despre tine|despre dr\.?\s*vas|what is your story|tell me about yourself|who are you|who created you|who made you|povestea fondatorului|povestea lui c[aă]t[aă]lin|cine este c[aă]t[aă]lin|despre fondator|creatorul dr\.?\s*vas)\b/i
           .test(originalMessage);
 
-      if (asksForOriginStory) {
+      if (asksForOriginStory && assistantId === "drvas") {
         const englishQuestion =
           /\b(what is your story|tell me about yourself|who are you|who created you|who made you)\b/i
             .test(originalMessage);
