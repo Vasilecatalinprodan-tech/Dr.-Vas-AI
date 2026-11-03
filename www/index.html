@@ -963,6 +963,7 @@ function selectModule(moduleName,userInitiated=false){
     card.setAttribute("aria-pressed",String(selected));
   });
   const config=modules[moduleName];
+  selectAssistant(activeAssistant);
   el("activeModuleIcon").textContent=config.icon;
   setLocalizedText(el("activeModuleName"),config.name);
   setLocalizedText(el("activeModuleDescription"),config.description);
@@ -1434,7 +1435,7 @@ async function startLiveVoice(){
    method:"POST",headers:{"Content-Type":"application/json"},
    body:JSON.stringify({
     action:"live_voice_token",access_token:accessToken,
-    module:activeModule,language:currentLanguage
+    module:activeModule,assistant:activeAssistant,language:currentLanguage
    })
   });
   const tokenData=await tokenResponse.json();
