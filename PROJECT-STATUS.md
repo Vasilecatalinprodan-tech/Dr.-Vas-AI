@@ -568,3 +568,16 @@ Founder requested autonomous work while away and added a third assistant named A
 - The latest deployed Worker includes the security headers, hardened rate-limit migration contract and the corrected JSON chat request from the preceding successful deployment.
 - The Supabase rate-limit migration still needs to be executed once by the project owner. Until then, AI chat and Live-token endpoints intentionally fail closed rather than bypassing rate protection.
 
+
+
+## Chat navigation defect and interaction audit — 2026-11-03
+
+- Founder reported that clicking **VORBEȘTE CU DR.VAS** could leave the page as a blue/blank screen until a manual refresh.
+- Root cause isolated to the chat focus-mode layout: it hid every sibling section and forced a fixed viewport-height/overflow-hidden layout. This was fragile across browser viewport/layout states.
+- Reworked `enterChatFocus()` to preserve the normal page/dashboard layout, reveal the chat section and scroll it into view. The unauthenticated path now scrolls to the sign-in panel. Exiting chat clears any stale focus classes and returns to the top.
+- Added a Playwright regression test asserting that the chat opens while the hero and all six module cards remain visible and the destructive focus-mode class is absent.
+- Static interaction audit: 50 HTML buttons, all 50 have explicit click handlers; all 36 distinct inline click/change handler names resolve to declared functions; no duplicate HTML IDs. One stale reference to a removed `saveConversationButton` was found in an obsolete manual-save function; removed that dead manual-save path because messages are saved immediately by `send()`.
+- A follow-up element-reference scan after cleanup is required. Browser E2E and production deployment for the final cleanup commit are pending at this checkpoint. Do not claim the live page is fixed until the newest Actions run and production smoke test finish.
+- Commits: frontend navigation fix `a50eb384396ca6a09498f06443ff466fa667cbad`; E2E regression test `17de2f5219f74ca68e9df8a8f6238fcbd421fc6c`; obsolete manual-save code removal `6664fb27cb11a83f402dc6fb751da26134218e16`.
+- Outstanding end-to-end limits: authenticated chat/Live still require the founder to apply Supabase migration `202611030001_rate_limits.sql`; real microphone/Gemini Live needs a permitted browser/device session; APK compilation does not prove installation/runtime on a physical Android device.
+- Next: confirm Actions for commit `6664fb27cb11a83f402dc6fb751da26134218e16`; inspect any failed steps; verify production UI behavior; audit all action flows (auth/profile/privacy/chat/history/admin/Studio/income); then continue Studio's real production pipeline (generation, saved project lifecycle, media rendering, approvals and social API gates).
