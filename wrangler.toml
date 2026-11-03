@@ -1,4 +1,4 @@
-name = "drvas-ai"
+name = "dr--vas-ai"
 main = "worker/index.js"
 compatibility_date = "2026-10-31"
 
