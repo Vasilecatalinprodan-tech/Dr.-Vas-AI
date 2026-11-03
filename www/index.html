@@ -1029,6 +1029,26 @@ function selectModule(moduleName,userInitiated=false){
     business:{icon:"📊",name:"Dr.Vas Business",description:"Planificare, management și analiză de afaceri — în pregătire."}
   };
   if(!Object.prototype.hasOwnProperty.call(modules,moduleName))return;
+  // Every module card, free or premium, opens sign-in for visitors.
+  // Keep the requested module through the authentication/profile flow.
+  if(userInitiated&&!currentUser){
+    try{sessionStorage.setItem("drvas_pending_module",moduleName)}catch{}
+    activeModule=moduleName;
+    document.querySelectorAll(".module-card").forEach(card=>{
+      const selected=card.dataset.module===moduleName;
+      card.classList.toggle("selected",selected);
+      card.setAttribute("aria-pressed",String(selected));
+    });
+    showOnly("authSection");
+    const authPanel=el("authSection");
+    if(authPanel){
+      setLocalizedText(el("authTitle"),"Bine ai venit!");
+      setLocalizedText(el("authDescription"),"Conectează-te sau creează un cont pentru a continua în "+modules[moduleName].name+".");
+      requestAnimationFrame(()=>authPanel.scrollIntoView({behavior:"smooth",block:"center"}));
+      setTimeout(()=>el("email")?.focus({preventScroll:true}),350);
+    }
+    return;
+  }
   const premium=["studio","academy","commerce","business"].includes(moduleName);
   if(premium&&!isDrvasAdmin){
     const notice=tr("Acest modul Premium necesită un abonament activ. Administratorul poate testa modulele în modul de administrare.");
@@ -1057,18 +1077,6 @@ function selectModule(moduleName,userInitiated=false){
     message.textContent="";
   }
   if(userInitiated&&currentUser)logClientEvent("module_selected",moduleName);
-  // A public visitor who chooses an available module must be taken straight
-  // to sign-in; selecting a card alone must never leave the visitor stranded.
-  if(userInitiated&&!currentUser){
-    showOnly("authSection");
-    const authPanel=el("authSection");
-    if(authPanel){
-      setLocalizedText(el("authTitle"),"Bine ai venit!");
-      setLocalizedText(el("authDescription"),"Conectează-te sau creează un cont pentru a continua în Dr.Vas.");
-      requestAnimationFrame(()=>authPanel.scrollIntoView({behavior:"smooth",block:"center"}));
-      setTimeout(()=>el("email")?.focus({preventScroll:true}),350);
-    }
-  }
 }
 
 let voiceRecognition = null;
@@ -1914,6 +1922,11 @@ async function loadProfile(user){
     el("profileMessage").textContent = "";
     await loadPrivateProfile(user);
 
+    let pendingModule="";
+    try{pendingModule=sessionStorage.getItem("drvas_pending_module")||"";sessionStorage.removeItem("drvas_pending_module")}catch{}
+    if(pendingModule&&["free","health","studio","academy","commerce","business"].includes(pendingModule)){
+      selectModule(pendingModule,false);
+    }
     if(data.display_name && data.country) await showChat(user,data.display_name);
     else showOnly("profileSection");
   })();
