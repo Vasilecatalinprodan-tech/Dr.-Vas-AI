@@ -352,6 +352,7 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
       <select id="studioSavedProjects" aria-label="Proiecte salvate"><option value="">Alege un proiect salvat</option></select>
       <button type="button" onclick="openStudioProject()">Deschide</button>
       <button type="button" onclick="exportStudioProject()">Exportă</button>
+      <button type="button" onclick="deleteStudioProject()">Șterge</button>
      </div>
      <p id="studioProjectStatus" role="status" aria-live="polite">Proiectele tale vor fi salvate privat în contul Dr.Vas.</p>
     </section>
@@ -1438,6 +1439,19 @@ async function openStudioProject(){
   ["studioIdea","studioPlatform","studioTone","studioAudience","studioDuration","studioAspect"].forEach((key,index)=>{const fields=["idea","platform","tone","audience","duration","aspect"];if(b[fields[index]]!==undefined)el(key).value=b[fields[index]];});
   setStudioProjectStatus("Proiect încărcat. Poți continua editarea și îl poți salva din nou.");
  }catch(error){setStudioProjectStatus("Nu am putut deschide proiectul: "+error.message,true);}
+}
+async function deleteStudioProject(){
+ if(!currentUser){setStudioProjectStatus("Autentifică-te pentru a șterge proiecte.",true);return;}
+ const id=el("studioSavedProjects").value||currentStudioProjectId;
+ if(!id){setStudioProjectStatus("Alege sau deschide proiectul pe care vrei să îl ștergi.",true);return;}
+ if(!window.confirm("Ștergi definitiv acest proiect Dr.Vas Studio?"))return;
+ try{
+  const {error}=await supabaseClient.from("drvas_studio_projects").delete().eq("id",id).eq("user_id",currentUser.id);
+  if(error)throw error;
+  if(currentStudioProjectId===id){currentStudioProjectId=null;currentStudioProjectOutput="";el("studioProjectTitle").value="";el("studioIdea").value="";}
+  await loadStudioProjects();
+  setStudioProjectStatus("Proiectul a fost șters din contul tău.");
+ }catch(error){setStudioProjectStatus("Nu am putut șterge proiectul: "+error.message,true);}
 }
 function exportStudioProject(){
  const project=studioProjectData();
