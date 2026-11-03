@@ -15,10 +15,35 @@ html{min-height:100%;height:auto;overflow-x:hidden;overflow-y:auto;scroll-behavi
 body{min-height:100vh;height:auto;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:auto}
 #appMain{min-height:calc(100vh - 75px);height:auto;overflow:visible}
 main{padding-bottom:140px}
-#pageBottomButton{position:fixed;right:22px;bottom:22px;z-index:9999;display:inline-flex;align-items:center;gap:8px;padding:12px 16px;border:1px solid #62e3da;border-radius:999px;background:#123c4a;color:#e5fffc;box-shadow:0 8px 28px rgba(0,0,0,.4);font-size:12px;font-weight:800;cursor:pointer}
-#pageBottomButton:hover{background:#17616a}
-#pageBottomButton[hidden]{display:none!important}
-@media(max-width:700px){#pageBottomButton{right:14px;bottom:14px;padding:11px 14px}}
+#pageBottomButton{display:none!important}
+.header-chat-cta{background:#54d8cf;color:#061b25;border-radius:999px;padding:10px 16px;font-size:12px;font-weight:900;white-space:nowrap}
+.chat-view-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;padding:10px 12px;background:#0a1c2c;border:1px solid #25465d;border-radius:14px}
+.chat-view-nav strong{color:#65ddd5;font-size:13px;letter-spacing:.2px}
+.chat-view-nav-actions{display:flex;gap:8px;flex-wrap:wrap}
+.chat-view-nav button{padding:9px 12px;font-size:11px}
+.chat-back-button{background:#17364a;color:#d7edf3;border:1px solid #34566b}
+.chat-history-toggle{background:#123b43;color:#bff8ee;border:1px solid #39777b}
+body.chat-focus-mode main{max-width:1500px;padding:12px 18px 18px;min-height:0;height:calc(100dvh - 75px);overflow:hidden}
+body.chat-focus-mode main>:not(#chatSection){display:none!important}
+body.chat-focus-mode footer{display:none!important}
+body.chat-focus-mode #chatSection{height:100%;display:flex!important;flex-direction:column;min-height:0}
+body.chat-focus-mode #chatSection>.panel-head,body.chat-focus-mode #accountBar,body.chat-focus-mode #adminAccessNotice,body.chat-focus-mode #adminPanel{display:none!important}
+body.chat-focus-mode .chat-layout{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;margin:0;flex:1;min-height:0}
+body.chat-focus-mode .history-panel{display:none;max-height:100%;overflow:auto}
+body.chat-focus-mode.history-open .chat-layout{grid-template-columns:250px minmax(0,1fr)}
+body.chat-focus-mode.history-open .history-panel{display:block}
+body.chat-focus-mode .chat-main{height:100%!important;min-height:0!important;max-height:none!important;padding:12px!important}
+body.chat-focus-mode .chat-main>#chat{min-height:0!important;flex:1 1 auto!important}
+body.chat-focus-mode .chat-main>.assistant-switcher{max-height:112px}
+@media(max-width:760px){
+ body.chat-focus-mode main{height:calc(100dvh - 65px);padding:8px}
+ body.chat-focus-mode.history-open .chat-layout{grid-template-columns:minmax(0,1fr)}
+ body.chat-focus-mode.history-open .history-panel{max-height:28vh}
+ .chat-view-nav{padding:8px}
+ .chat-view-nav strong{font-size:11px}
+ .chat-view-nav button{padding:8px 9px;font-size:10px}
+ .header-chat-cta{padding:8px 10px;font-size:10px}
+}
 body{margin:0;background:#07111f;color:#fff;font-family:Inter,Arial,sans-serif;min-height:100vh}
 header{min-height:75px;padding:12px 7%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #18344b;background:#091827;gap:12px}
 .logo{font-size:25px;font-weight:800;color:#54ded5}
@@ -379,7 +404,7 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
 <body>
 <header>
  <div class="logo">✚ Dr.Vas AI <span class="flag" role="img" aria-label="Steagul României" title="Creat în România"><i></i><i></i><i></i></span></div>
- <div class="header-actions"><div class="status" id="onlineStatus">● AI ASSISTANT ONLINE</div><button type="button" class="language-switch" id="languageSwitch" onclick="showLanguageGate()">🌐 Language</button></div>
+ <div class="header-actions"><div class="status" id="onlineStatus">● AI ASSISTANT ONLINE</div><button type="button" class="header-chat-cta" id="headerChatCta" onclick="enterChatFocus()">VORBEȘTE CU DR.VAS</button><button type="button" class="language-switch" id="languageSwitch" onclick="showLanguageGate()">🌐 Language</button></div>
 </header>
 
 <main id="appMain" class="language-pending">
@@ -624,6 +649,13 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
  </div>
 
  <div id="chatSection" class="hidden">
+  <div class="chat-view-nav">
+   <strong>✦ DR.VAS · CONVERSAȚIE</strong>
+   <div class="chat-view-nav-actions">
+    <button type="button" class="chat-history-toggle" onclick="toggleChatHistory()">☷ Istoric</button>
+    <button type="button" class="chat-back-button" onclick="exitChatFocus()">← Înapoi la platformă</button>
+   </div>
+  </div>
   <div class="panel-head">
    <div class="avatar"><img src="drvas.jpeg" alt="Dr.Vas"></div>
    <div><h2>Dr.Vas AI</h2><small>Platformă inteligentă integrată</small></div>
@@ -1953,6 +1985,17 @@ async function handleAuth(){
   }
 }
 
+function enterChatFocus(){
+  if(!currentUser){showOnly("authSection");return;}
+  document.body.classList.add("chat-focus-mode");
+  document.body.classList.remove("history-open");
+  requestAnimationFrame(()=>window.scrollTo({top:0,behavior:"auto"}));
+}
+function exitChatFocus(){
+  document.body.classList.remove("chat-focus-mode","history-open");
+  window.scrollTo({top:0,behavior:"auto"});
+}
+function toggleChatHistory(){document.body.classList.toggle("history-open");}
 function showOnly(section){
   if(!languageReady)return;
   // Pagina publică rămâne vizibilă ca punct de revenire; autentificarea și chatul
@@ -2326,6 +2369,7 @@ async function showChat(user,displayName){
   try{const savedAssistant=localStorage.getItem("drvas_assistant_"+user.id);if(savedAssistant&&ASSISTANTS[savedAssistant])activeAssistant=savedAssistant;}catch{}
   selectAssistant(activeAssistant);
   showOnly("chatSection");
+  enterChatFocus();
   el("accountEmail").textContent =
     (displayName || el("displayName").value.trim() || user.email || "") +
     " · " + (el("country").value || tr("Cont personal"));
@@ -2774,25 +2818,6 @@ el("password").addEventListener("keydown",e=>{
 initLanguage();
 </script>
 
-<button id="pageBottomButton" type="button" aria-label="Derulează la partea de jos a paginii" title="Derulează până la ultimele butoane">↓ Jos, la ultimele butoane</button>
-<script>
-(()=>{
- const button=document.getElementById("pageBottomButton");
- if(!button)return;
- const update=()=>{
-  const page=document.scrollingElement||document.documentElement;
-  const remaining=page.scrollHeight-page.scrollTop-window.innerHeight;
-  button.hidden=remaining<180;
- };
- button.addEventListener("click",()=>{
-  const page=document.scrollingElement||document.documentElement;
-  window.scrollTo({top:page.scrollHeight,behavior:"smooth"});
- });
- window.addEventListener("scroll",update,{passive:true});
- window.addEventListener("resize",update);
- window.addEventListener("load",update);
- update();
-})();
-</script>
+
 </body>
 </html>
