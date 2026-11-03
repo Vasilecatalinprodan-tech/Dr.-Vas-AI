@@ -1149,15 +1149,37 @@ export default {
             user_id: `eq.${user.id}`,
             conversation_id: `eq.${conversationId}`,
             order: "created_at.desc",
-            limit: "30"
+            limit: "100"
           });
 
           history = await supabaseRequest(
             "chat_messages",
             `?${params.toString()}`
           );
-          // Fetch the newest 30 messages, then restore chronological order for the model.
+          // Fetch up to 100 recent messages, then restore chronological order.
           history.reverse();
+
+          // Bound prompt size while preserving the newest context. Approx. 12k tokens
+          // at a conservative 4 characters/token; the full record remains in Supabase.
+          const maxHistoryCharacters = 48000;
+          let usedCharacters = 0;
+          const boundedHistory = [];
+          for (let index = history.length - 1; index >= 0; index--) {
+            const item = history[index];
+            if (!["user", "assistant"].includes(item.role)) continue;
+            const content = typeof item.content === "string" ? item.content : "";
+            if (!content) continue;
+            if (usedCharacters + content.length > maxHistoryCharacters) {
+              const remaining = maxHistoryCharacters - usedCharacters;
+              if (remaining > 500) {
+                boundedHistory.unshift({ ...item, content: content.slice(-remaining) });
+              }
+              break;
+            }
+            boundedHistory.unshift(item);
+            usedCharacters += content.length;
+          }
+          history = boundedHistory;
         }
 
         return history;
