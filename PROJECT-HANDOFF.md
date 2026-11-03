@@ -255,3 +255,10 @@ Important limitations and next QA:
 - Migration commit `a934ee1fef29c175f760edb12407e7e73c229fb6` adds account-deletion cascade for rate-limit counters and hardens the SECURITY DEFINER search path.
 - CI commit `55e75923e7aff7ba383336e4655caf555c23ecfb` adds checks for these headers and SQL protections. Run 249 is the current validation/deployment run.
 
+### Latest security deployment completed
+
+- GitHub Actions run 249 succeeded in full: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/41697762758
+- JavaScript/security checks, Playwright homepage/session regression tests, Cloudflare deployment and production smoke tests all passed.
+- Current production Worker includes the API/static-asset security headers, bounded JSON request parsing, server-enforced optional-profile consent, corrected frontend JSON chat content type and Supabase atomic rate-limit calls.
+- The founder still needs to apply migration `202611030001_rate_limits.sql` once in Supabase before authenticated AI and Live routes can pass the fail-closed rate-limit check.
+
