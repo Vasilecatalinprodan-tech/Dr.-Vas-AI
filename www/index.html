@@ -107,6 +107,26 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 .active-module-info strong{display:block;color:#62ded5;font-size:14px;margin-bottom:4px}
 .active-module-info span{display:block;color:#9bb4c3;font-size:12px;line-height:1.5}
 .module-disclaimer{font-size:11px;color:#71899b;line-height:1.5;margin:12px 2px 0}
+.studio-workspace{margin:20px 0;padding:22px;border:1px solid #39736f;border-radius:19px;background:linear-gradient(145deg,#102d3b,#091b2b)}
+.studio-workspace-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.studio-workspace-head h2{margin:8px 0;font-size:25px;color:#fff}
+.studio-workspace-head p{margin:0;color:#a9bfce;font-size:13px;line-height:1.6}
+.studio-beta-label{font-size:10px;letter-spacing:1px;color:#f0c879;border:1px solid #806b3c;border-radius:20px;padding:8px 11px}
+.studio-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:20px}
+.studio-form-grid label{display:flex;flex-direction:column;gap:7px;color:#c8dce5;font-size:12px;font-weight:700}
+.studio-form-grid select,.studio-form-grid textarea{width:100%;padding:12px;background:#071827;border:1px solid #34536a;border-radius:10px;color:#fff;font:inherit}
+.studio-form-grid textarea{resize:vertical;line-height:1.5}
+.studio-idea-label{grid-column:1/-1}
+.studio-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
+.studio-actions button{background:#54d8cf;color:#061b25}
+.studio-actions span,.studio-disclaimer{font-size:11px;color:#91adbf;line-height:1.5}
+.studio-capabilities{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:18px}
+.studio-capabilities div{padding:13px;border:1px solid #29485e;border-radius:12px;background:#0a1d2d}
+.studio-capabilities strong,.studio-capabilities span{display:block}
+.studio-capabilities strong{font-size:12px;color:#6fe0d6;margin-bottom:6px}
+.studio-capabilities span{font-size:11px;color:#a9bfce;line-height:1.5}
+.studio-disclaimer{margin:15px 0 0}
+@media(max-width:650px){.studio-form-grid,.studio-capabilities{grid-template-columns:1fr}.studio-idea-label{grid-column:auto}}
 .admin-panel{margin:16px 0;padding:20px;border:1px solid #3a766f;border-radius:17px;background:linear-gradient(145deg,#102d38,#0b1d2d)}
 .admin-panel h3{margin:0 0 7px;color:#69e0d4;font-size:18px}
 .admin-panel p{color:#a9bfce;font-size:12px;line-height:1.6;margin:7px 0}
@@ -244,7 +264,42 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
     </div>
    </div>
    <p id="moduleAccessMessage" class="module-disclaimer" aria-live="polite"></p>
-   <p class="module-disclaimer">Dr.Vas Free și Dr.Vas Health sunt active. Dr.Vas Studio, Academy, Commerce și Business sunt în pregătire; funcțiile și accesul Premium vor fi activate după dezvoltare și implementarea abonamentelor. Dr.Vas Health oferă informații generale și nu înlocuiește consultația medicală.</p>
+   <section id="studioWorkspace" class="studio-workspace hidden" aria-labelledby="studioWorkspaceTitle">
+    <div class="studio-workspace-head">
+     <div><span class="tag">DR.VAS CREATIVE LAB</span><h2 id="studioWorkspaceTitle">🎬 Dr.Vas Studio</h2><p>Transformă o idee în scenariu, storyboard și conținut pregătit pentru publicare.</p></div>
+     <span class="studio-beta-label">PILOT · ACCES ADMINISTRATOR</span>
+    </div>
+    <div class="studio-form-grid">
+     <label>Ce vrei să creezi?
+      <select id="studioDeliverable">
+       <option value="series">Serial / episod dramatic</option>
+       <option value="short">TikTok / Reels / Shorts</option>
+       <option value="youtube">Videoclip YouTube</option>
+       <option value="ad">Reclamă pentru produs sau serviciu</option>
+       <option value="storyboard">Storyboard și plan de filmare</option>
+      </select>
+     </label>
+     <label>Platforma principală
+      <select id="studioPlatform">
+       <option>TikTok</option><option>Instagram Reels</option><option>YouTube Shorts</option><option>YouTube</option><option>Facebook</option><option>Toate platformele</option>
+      </select>
+     </label>
+     <label class="studio-idea-label">Ideea ta
+      <textarea id="studioIdea" rows="4" maxlength="5000" placeholder="Descrie ideea, personajele, produsul sau mesajul. Păstrează aici detaliile importante."></textarea>
+     </label>
+    </div>
+    <div class="studio-actions">
+     <button type="button" onclick="buildStudioPrompt()">Pregătește proiectul în Studio</button>
+     <span>Vei putea modifica cererea înainte să o trimiți către Dr.Vas.</span>
+    </div>
+    <div class="studio-capabilities">
+     <div><strong>✍️ Scenarii</strong><span>Dialog, personaje, scene și cliffhanger.</span></div>
+     <div><strong>🎞️ Producție</strong><span>Storyboard, cadre, lumină, sunet și montaj.</span></div>
+     <div><strong>📱 Social media</strong><span>Hook, descriere, hashtaguri și calendar.</span></div>
+    </div>
+    <p class="studio-disclaimer">În această versiune, Studio generează materiale creative text și instrucțiuni de producție. Randarea efectivă a fișierelor video, publicarea automată și abonamentele publice sunt în lucru; nu sunt prezentate ca funcții deja active.</p>
+   </section>
+   <p class="module-disclaimer">Dr.Vas Free și Dr.Vas Health sunt active. Dr.Vas Studio este în pilot cu acces administrator; accesul public contra cost va fi activat după integrarea plăților și verificarea abonamentelor. Academy, Commerce și Business sunt în pregătire. Dr.Vas Health oferă informații generale și nu înlocuiește consultația medicală.</p> Dr.Vas Studio, Academy, Commerce și Business sunt în pregătire; funcțiile și accesul Premium vor fi activate după dezvoltare și implementarea abonamentelor. Dr.Vas Health oferă informații generale și nu înlocuiește consultația medicală.</p>
   </section>
 
  <div id="authSection" class="auth-box hidden">
@@ -1091,6 +1146,23 @@ function updateSaveButton(){
   button.classList.toggle("saved",conversationSaved);
   setLocalizedText(button,conversationSaved ? "✓ Conversație salvată" : "Salvează conversația");
 }
+
+function buildStudioPrompt(){
+  const idea=el("studioIdea").value.trim();
+  if(!idea){el("studioIdea").focus();el("moduleAccessMessage").textContent="Scrie mai întâi ideea proiectului.";return;}
+  const deliverables={
+   series:"Dezvoltă un serial dramatic original: concept, titlu, personaje, relații și secrete, arc narativ, structură de episod și scenariu complet cu scene și dialog natural. Încheie episodul cu un cliffhanger credibil.",
+   short:"Creează un pachet complet pentru un clip vertical scurt: hook în primele 2 secunde, scenariu cu replici și acțiuni, indicații de cadre, text pe ecran, ritm de montaj, descriere, CTA și hashtaguri.",
+   youtube:"Creează un pachet YouTube: titlu, idee de thumbnail, introducere puternică, scenariu structurat, indicații vizuale și sonore, capitole, descriere, CTA și taguri.",
+   ad:"Creează o campanie video originală pentru produsul/serviciul descris: public-țintă, promisiune verificabilă, concept, scenariu, cadre, voice-over, text pe ecran, CTA și variante scurte.",
+   storyboard:"Transformă ideea într-un storyboard tabelar, cadru cu cadru: durată, imagine/acțiune, mișcarea camerei, dialog/voice-over, sunet, lumină și instrucțiuni de montaj."
+  };
+  const prompt="PROIECT DR.VAS STUDIO\nFORMAT: "+deliverables[el("studioDeliverable").value]+"\nPLATFORMĂ: "+el("studioPlatform").value+"\nIDEA CLIENTULUI (păstrează intenția și detaliile):\n"+idea+"\n\nLivrează materialul concret, original și gata de folosit. Separă clar scenariul de recomandările de producție. Nu pretinde că ai randat un fișier video.";
+  el("question").value=prompt;
+  el("question").focus();
+  el("moduleAccessMessage").textContent="Cererea Studio este pregătită. Verific-o în caseta de mesaj și apasă Trimite.";
+  el("question").scrollIntoView({behavior:"smooth",block:"center"});
+ }
 
 function selectModule(moduleId,fromUser=false){
   if(!moduleDetails[moduleId]) return;
