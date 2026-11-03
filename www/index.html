@@ -1457,11 +1457,6 @@ async function savePrivateProfile(){
     invoice_preferences:el("privateInvoicePreferences").value.trim(),
     locale:currentLanguage||"ro"
   };
-  const hasData=Object.entries(profile).some(([key,value])=>key!=="locale"&&Boolean(value));
-  if(hasData&&!consent.checked){
-    message.textContent="Bifează acordul explicit înainte de a salva datele opționale.";
-    return;
-  }
   button.disabled=true;
   setLocalizedText(button,"Se salvează în siguranță...");
   message.textContent="";
@@ -1470,10 +1465,17 @@ async function savePrivateProfile(){
       consent_type:"optional_profile_data",granted:consent.checked
     });
     if(consent.checked){
+      const hasData=Object.entries(profile).some(([key,value])=>key!=="locale"&&Boolean(value));
+      if(!hasData){
+        message.textContent="Completează cel puțin un câmp opțional sau debifează acordul pentru a șterge datele private.";
+        return;
+      }
       await privateProfileRequest("private_profile_save",{profile});
       message.textContent="Datele opționale au fost criptate și salvate.";
     }else{
-      message.textContent="Nu ai acordat permisiunea. Datele private nu au fost salvate.";
+      await privateProfileRequest("private_profile_clear");
+      ["privateLegalName","privatePhone","privateCompanyName","privateBusinessType","privateCompanyCountry","privateInvoicePreferences"].forEach(id=>el(id).value="");
+      message.textContent="Acord retras. Datele private salvate au fost șterse.";
     }
   }catch(error){
     message.textContent="Nu am putut salva datele private: "+error.message;
