@@ -285,3 +285,11 @@ A detailed session log was added at `docs/SESSION_LOG_2026-11-03.md`. It records
 - Current scope: Dr.Vas can draft and prepare these creative deliverables through its existing AI chat. Direct audio-track generation, paid marketplace fulfilment, public checkout/subscriptions, publishing/distribution and royalty collection are not yet integrated.
 - Monetisation path: introduce paid per-project packages and subscriptions only after server-side Stripe entitlements, usage limits, cost controls, order/project storage, refund handling and AI-disclosure/marketplace policy checks are implemented.
 - Crypto roadmap remains separate and later: first complete product rights, company/IP ownership review, trademark/domain checks, token legal classification and regulatory advice. Do not issue or market a Dr.Vas cryptocurrency before these reviews.
+
+
+### Deployment verification addendum — 2026-11-03
+
+- Frontend Studio expansion commit `f177af13eedc70b7e869251fba7df86aafdda1b5`: Worker deployment run `41640335030` succeeded; Android run `41640334913` succeeded and uploaded `DrVas-APK` artifact ID `13233370497` (6,012,180 bytes; SHA-256 `b19905f2e0f80fb4736196ddfed40f4b535af893bd651f1873e9d0f27d431317`).
+- Worker instruction expansion initially had a template-closure error; Wrangler caught it before deployment. Corrected in commit `4fb5b9a10541efeea322922831d298a7b61f4c0e`.
+- Corrected Worker deployment run `41640877696` succeeded, including Worker/browser JavaScript validation, deployment and production smoke test.
+- The expanded Studio is deployed. The user must still perform browser testing of the new book/translation/music options and test the new APK on a physical Android device.
