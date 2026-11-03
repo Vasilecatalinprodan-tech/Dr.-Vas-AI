@@ -487,3 +487,10 @@ Founder requested autonomous work while away and added a third assistant named A
 
 - Founder clarified that Dr.Vas itself should perform in-app actions like creating a new chat and archiving conversations, rather than merely telling users to click UI controls.
 - Current app has a `newConversation()` client function, but archive action/function was not found in the inspected frontend. Next implementation should add first-class conversation management (create, rename if appropriate, archive/unarchive, delete with confirmation) with database persistence and safe user ownership checks. Do not claim it can manipulate ChatGPT's own chat list; this capability applies inside Dr.Vas.
+
+## Sarah assistant identity — 2026-11-03
+
+- Founder requested that the third assistant persona be renamed from Aurora to Sarah, at his daughter's request. Sarah is the dedicated learning, creativity and idea-organisation persona for his daughter; retain the existing adult fictional illustrated avatar and age-appropriate safeguards.
+- Keep the internal assistant ID `aurora` unchanged for backward compatibility with saved preferences, existing sessions and Worker validation. The user-facing name and persona prompt are Sarah.
+- The feminine Gemini Live voice mapping remains the existing built-in `Aoede` voice for now; this is not the founder's cloned voice.
+- Founder reiterates that he previously supplied a voice sample and asks us to locate it in saved conversation history. Current Library/conversation file search returned no audio attachment or audio file. Do not assert the sample was never supplied; it is simply not currently retrievable from indexed files. Voice cloning remains unimplemented until the original audio is accessible and a supported cloning provider is configured.
