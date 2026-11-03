@@ -577,7 +577,7 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
      <div class="msg bot">Bun venit la Dr.Vas AI! Cu ce te pot ajuta astăzi?</div>
     </div>
     <div class="input-area">
-     <textarea id="question" aria-label="Mesaj pentru Dr.Vas" placeholder="Scrie mesajul tău aici..." rows="1" maxlength="12000" autocomplete="off"></textarea>
+     <textarea id="question" aria-label="Mesaj pentru Dr.Vas" placeholder="Scrie mesajul tău aici..." rows="1" wrap="soft" maxlength="12000" autocomplete="off"></textarea>
      <button id="sendButton" onclick="send()">Trimite ➤</button>
     </div>
     <div class="voice-toolbar" aria-label="Controale vocale Dr.Vas">
@@ -1139,7 +1139,7 @@ function toggleVoiceInput(){
    if(event.results[i].isFinal)finalText+=transcript;
   }
   if(finalText)voiceTranscript=(voiceTranscript+" "+finalText).trim();
-  if(el("question"))el("question").value=(voiceTranscript||"").trim();
+  if(el("question")){el("question").value=(voiceTranscript||"").trim();resizeQuestionInput();}
  };
  voiceRecognition.onerror=event=>{
   voiceListening=false;
@@ -1155,6 +1155,7 @@ function toggleVoiceInput(){
   if(transcript&&currentUser&&!el("sendButton").disabled){
    logClientEvent("voice_input_completed");
    el("question").value=transcript;
+   resizeQuestionInput();
    send();
   }else if(transcript&&!currentUser){
    refreshVoiceUi("denied");
@@ -2455,7 +2456,7 @@ function resizeQuestionInput(){
 }
 el("question").addEventListener("input",resizeQuestionInput);
 el("question").addEventListener("keydown",e=>{
-  if(e.key==="Enter" && (e.ctrlKey || e.metaKey)){
+  if(e.key==="Enter" && !e.shiftKey){
     e.preventDefault();
     send();
   }
