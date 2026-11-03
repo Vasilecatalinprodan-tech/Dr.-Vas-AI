@@ -185,3 +185,15 @@ After each substantial work session, update this checkpoint with: completed chan
 - Android APK build for the same latest commit is still in progress at run `41623518375`; do not claim a new APK artifact until it completes.
 - Not yet verified: signed-in end-to-end save/load/withdrawal using a test account, database row/ciphertext verification, cross-user isolation, and real device behaviour. Use synthetic test data only; do not enter health data, passwords, card details or other unnecessary sensitive information.
 - Known boundary: consent policy version `v1` is an implementation identifier, not a substitute for a reviewed published privacy notice. Add retention, export, access and deletion controls plus legal/privacy review before public commercial onboarding.
+
+
+## Conversation continuity and auto-scroll — 2026-11-03
+
+- User reported that the active chat appeared to reset after returning to the app and that the browser's right-hand page scrollbar did not automatically move to the latest answer.
+- Existing send flow already inserts each user message and assistant reply into Supabase `chat_messages`; the root continuity defect was that `showChat()` generated a fresh `currentConversationId` on every chat entry instead of reopening the active thread.
+- Frontend now stores only the active conversation UUID in browser `localStorage`, namespaced by authenticated Supabase user ID. On sign-in, it resumes that thread if it still exists in the user's conversation list; otherwise it opens the most recent saved conversation, or creates a new one if none exists. New-chat, history-delete and history-open actions update the remembered ID.
+- Added a shared smooth-scroll helper and invoke it when messages are appended, when a saved conversation is loaded, and after an AI reply finishes, so the latest response is brought into view automatically.
+- Replaced the manual “Save conversation” button with an automatic-save status indicator because individual messages are already saved to Supabase as they are sent/received.
+- Code commit: `8f2b715985c8d1194c49438ca09978722a2b19a4`. Deployment and APK build workflows were started; confirm their final results before calling this release verified.
+- User requested that the conversation/project progress up to this point be retained. This checkpoint records the current work and next verification steps.
+- Next: verify deployment and build; test same-account refresh/resume, create-new-chat, switching between history entries, and long AI response auto-scroll. Do not test by deleting real conversation history.
