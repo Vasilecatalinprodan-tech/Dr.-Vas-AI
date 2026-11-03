@@ -243,3 +243,12 @@ Official current Gemini Live API documentation:
 - Existing `profiles` table currently stores display name and country; do not put DOB, phone, addresses or company identifiers there in plaintext.
 - No private-profile API, encryption secret, payment processor, subscription webhook, wallet checkout or NFC acceptance is live. Do not collect new sensitive fields until Worker encryption endpoints and secret are implemented and tested.
 - Traditional secret questions are explicitly excluded; use MFA, passkeys and one-time recovery codes instead. Never store user/social passwords, card numbers, CVV or PIN.
+
+
+## Private profile encryption foundation — 2026-11-03
+
+- The founder applied `supabase/migrations/202611030002_private_profile_and_privacy.sql` successfully. Private-profile ciphertext and versioned consent tables now exist in Supabase; client roles have no direct access.
+- Worker commits `f2444312e65e88a7d961344d8d4cf454bb7b7336` and `f1caf661ae32d449658f74997bc23017099b7f22` add authenticated `private_profile_get` / `private_profile_save` actions. The server validates the Supabase session, derives the user ID itself, validates an allowlisted profile schema and uses AES-256-GCM before writing ciphertext.
+- The encryption secret is not configured yet. Until `DRVAS_PROFILE_ENCRYPTION_KEY` is added in Cloudflare, the endpoints intentionally return 503. No private profile form or payment integration is live. Verify the latest deploy/CI run and perform an authenticated encryption round-trip before enabling collection.
+- Data fields planned for Premium/Business include legal name, date of birth where justified, phone, billing/service addresses, company/trading name, business type, registration/tax identifiers where required, invoice preferences, locale and time zone. Do not add these to the plaintext public profile table.
+- IP/security-event retention requires a documented purpose, role-limited access and retention schedule. Do not collect IMEI. Do not collect precise location unless a specific feature requires it and the user is informed.
