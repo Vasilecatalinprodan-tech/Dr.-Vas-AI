@@ -356,3 +356,14 @@ Founder explicitly requested that the short supplied voice sample be treated as 
 - Workflow requested by founder: after each new user message/turn, save the new decisions and meaningful implementation progress to this PROJECT-STATUS.md before continuing to the next work stage. This is a per-message/per-stage checkpoint, not keystroke-level autosave before a message is sent.
 - Current next development priority remains the professional responsive client/admin experience, Dr.Vas/Dr.Jan assistant entry points and guided help, while keeping Crypto and internal controls administrator-only.
 - APK installation remains deferred. Do not restart the project or wait for an unavailable capacity-limited service.
+## Access-control and conversation integration audit — 2026-11-03
+
+- Inspected the current `www/index.html` and `worker/index.js` on branch `drvas-integrated-platform`.
+- The six customer-facing module cards are Free, Health, Studio, Academy, Commerce and Business; no Crypto module card is present in the customer module grid.
+- The Crypto device registry and founder provenance creation controls are nested inside `#adminPanel`, which is hidden by default and shown only after the browser calls Worker `admin_status` and receives `is_admin === true`.
+- Worker actions `crypto_devices_list`, `admin_dashboard` and `founder_provenance_create` independently validate the Supabase access token and check the server-side ADMIN_EMAILS allowlist. This is stronger than relying only on hidden frontend UI.
+- `founder_provenance_verify` is intentionally public read-only verification; it does not return or expose private signing keys. Keep this distinction documented.
+- The personal profile actions are scoped to the authenticated user's own Supabase identity; they are not administrator controls.
+- The main text-chat request currently sends message, module, language, conversation_id and access_token. It does not yet send a selected assistant persona (Dr.Vas vs Dr.Jan). The browser speech synthesis voice selector currently chooses available device/browser voices; the founder's cloned voice is not integrated.
+- Next implementation task: add an explicit assistant identity/persona layer (Dr.Vas / Dr.Jan) to the chat experience and Worker prompt construction, with a safe default of Dr.Vas and separate voice preferences. Dr.Jan must give step-by-step contextual guidance without claiming screen access or taking actions.
+- This audit was read-only; no application source code was changed in this audit step. The checkpoint file itself is updated to preserve the findings.
