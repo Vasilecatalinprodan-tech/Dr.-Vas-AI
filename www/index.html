@@ -52,6 +52,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .auth-button,.profile-button{width:100%;margin-top:10px}
 .switch-button{background:transparent;color:#60e2d7;width:100%;margin-top:8px}
 #authMessage,#profileMessage{color:#f0c879;min-height:22px;font-size:13px;text-align:center;overflow-wrap:anywhere}
+.private-profile-panel{margin:18px 0;padding:14px;background:#091827;border:1px solid #29465b;border-radius:13px;text-align:left}.private-profile-panel summary{color:#65dcd4;font-size:13px;font-weight:700;cursor:pointer}.private-profile-panel p{font-size:12px;text-align:left;color:#9fb7c7;line-height:1.55}.private-profile-panel input,.private-profile-panel textarea{display:block;width:100%;margin:10px 0;padding:13px;background:#071827;border:1px solid #34536a;border-radius:10px;color:white;font:inherit}.private-profile-panel textarea{resize:vertical}.private-profile-panel #privateProfileMessage{min-height:20px;color:#f0c879;font-size:12px;text-align:center;overflow-wrap:anywhere}
 #accountBar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:20px 0;color:#a9bfce;font-size:13px;flex-wrap:wrap}
 #accountBar button{padding:9px 14px}
 .account-actions{display:flex;gap:8px;flex-wrap:wrap}
@@ -354,6 +355,22 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
    <option value="United Kingdom">United Kingdom</option>
    <option value="Other">Altă țară</option>
   </select>
+  <details class="private-profile-panel">
+   <summary>Date private opționale · profil profesional și facturare</summary>
+   <p>Completează doar informațiile de care ai nevoie. Sunt opționale și sunt criptate pe server înainte de salvare. Nu introduce date medicale, parole sau date de card.</p>
+   <input id="privateLegalName" type="text" maxlength="160" autocomplete="name" placeholder="Nume legal (opțional)">
+   <input id="privatePhone" type="tel" maxlength="40" autocomplete="tel" placeholder="Telefon (opțional)">
+   <input id="privateCompanyName" type="text" maxlength="180" autocomplete="organization" placeholder="Firmă / denumire comercială (opțional)">
+   <input id="privateBusinessType" type="text" maxlength="100" placeholder="Domeniul de activitate (opțional)">
+   <input id="privateCompanyCountry" type="text" maxlength="100" placeholder="Țara firmei (opțional)">
+   <textarea id="privateInvoicePreferences" maxlength="500" rows="2" placeholder="Preferințe de facturare (opțional)"></textarea>
+   <label class="remember-row" for="privateProfileConsent">
+    <input id="privateProfileConsent" type="checkbox">
+    <span><strong>Îmi dau acordul pentru salvarea acestor date opționale.</strong><small>Poți retrage acordul ulterior din setările de confidențialitate. Politica aplicabilă: v1.</small></span>
+   </label>
+   <button type="button" id="privateProfileSaveButton" class="profile-button" onclick="savePrivateProfile()">Salvează datele private</button>
+   <div id="privateProfileMessage" role="status" aria-live="polite"></div>
+  </details>
   <button id="profileButton" class="profile-button" onclick="saveProfile()">Salvează profilul</button>
   <div id="profileMessage"></div>
  </div>
@@ -1355,6 +1372,7 @@ async function loadProfile(user){
     el("displayName").value = data.display_name || "";
     el("country").value = data.country || "";
     el("profileMessage").textContent = "";
+    await loadPrivateProfile(user);
 
     if(data.display_name && data.country) await showChat(user,data.display_name);
     else showOnly("profileSection");
@@ -1392,6 +1410,77 @@ async function saveProfile(){
 function editProfile(){
   if(!currentUser) return;
   showOnly("profileSection");
+}
+
+async function privateProfileRequest(action, extra={}){
+  const {data,error}=await supabaseClient.auth.getSession();
+  if(error) throw error;
+  const token=data.session?.access_token;
+  if(!token) throw new Error("Sesiunea a expirat. Conectează-te din nou.");
+  const response=await fetch(API_URL,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({action,access_token:token,...extra})
+  });
+  const result=await response.json().catch(()=>({}));
+  if(!response.ok) throw new Error(result.error||"Serviciul de profil privat nu este disponibil.");
+  return result;
+}
+
+async function loadPrivateProfile(user){
+  if(!user)return;
+  try{
+    const result=await privateProfileRequest("private_profile_get");
+    const p=result.profile||{};
+    el("privateLegalName").value=p.legal_name||"";
+    el("privatePhone").value=p.phone||"";
+    el("privateCompanyName").value=p.company_name||"";
+    el("privateBusinessType").value=p.business_type||"";
+    el("privateCompanyCountry").value=p.company_country||"";
+    el("privateInvoicePreferences").value=p.invoice_preferences||"";
+  }catch(error){
+    el("privateProfileMessage").textContent="Datele private nu au putut fi încărcate: "+error.message;
+  }
+}
+
+async function savePrivateProfile(){
+  if(!currentUser)return;
+  const consent=el("privateProfileConsent");
+  const button=el("privateProfileSaveButton");
+  const message=el("privateProfileMessage");
+  const profile={
+    legal_name:el("privateLegalName").value.trim(),
+    phone:el("privatePhone").value.trim(),
+    company_name:el("privateCompanyName").value.trim(),
+    business_type:el("privateBusinessType").value.trim(),
+    company_country:el("privateCompanyCountry").value.trim(),
+    invoice_preferences:el("privateInvoicePreferences").value.trim(),
+    locale:currentLanguage||"ro"
+  };
+  const hasData=Object.entries(profile).some(([key,value])=>key!=="locale"&&Boolean(value));
+  if(hasData&&!consent.checked){
+    message.textContent="Bifează acordul explicit înainte de a salva datele opționale.";
+    return;
+  }
+  button.disabled=true;
+  setLocalizedText(button,"Se salvează în siguranță...");
+  message.textContent="";
+  try{
+    await privateProfileRequest("privacy_consent_save",{
+      consent_type:"optional_profile_data",granted:consent.checked
+    });
+    if(consent.checked){
+      await privateProfileRequest("private_profile_save",{profile});
+      message.textContent="Datele opționale au fost criptate și salvate.";
+    }else{
+      message.textContent="Nu ai acordat permisiunea. Datele private nu au fost salvate.";
+    }
+  }catch(error){
+    message.textContent="Nu am putut salva datele private: "+error.message;
+  }finally{
+    button.disabled=false;
+    setLocalizedText(button,"Salvează datele private");
+  }
 }
 
 /* La fiecare autentificare pornim o conversație nouă; mesajele rămân temporare până la salvarea manuală. */
