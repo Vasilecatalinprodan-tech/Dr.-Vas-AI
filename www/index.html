@@ -120,6 +120,17 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 .studio-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
 .studio-actions button{background:#54d8cf;color:#061b25}
 .studio-actions span,.studio-disclaimer{font-size:11px;color:#91adbf;line-height:1.5}
+.studio-social{margin-top:18px;padding:16px;border:1px solid #31566b;border-radius:14px;background:#0a2030}
+.studio-social-heading{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.studio-social-heading h3{margin:0 0 6px;color:#fff;font-size:17px}
+.studio-social-heading p{margin:0;color:#a9bfce;font-size:12px;line-height:1.5;max-width:540px}
+.studio-social-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.studio-social-card{padding:14px;border:1px solid #29485e;border-radius:12px;background:#0c1b2b}
+.studio-social-brand{display:flex;align-items:center;gap:9px;color:#fff;font-size:13px}
+.studio-social-brand span{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:#1b5360;color:#fff;font-size:18px;font-weight:800}
+.studio-social-card p{font-size:12px;line-height:1.55;color:#b4c8d5}
+.studio-social-card small{font-size:10px;line-height:1.5;color:#e4c17b}
+@media(max-width:650px){.studio-social-grid{grid-template-columns:1fr}}
 .studio-capabilities{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:18px}
 .studio-capabilities div{padding:13px;border:1px solid #29485e;border-radius:12px;background:#0a1d2d}
 .studio-capabilities strong,.studio-capabilities span{display:block}
@@ -297,9 +308,15 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
      <div><strong>🎞️ Producție</strong><span>Storyboard, cadre, lumină, sunet și montaj.</span></div>
      <div><strong>📱 Social media</strong><span>Hook, descriere, hashtaguri și calendar.</span></div>
     </div>
-    <p class="studio-disclaimer">În această versiune, Studio generează materiale creative text și instrucțiuni de producție. Randarea efectivă a fișierelor video, publicarea automată și abonamentele publice sunt în lucru; nu sunt prezentate ca funcții deja active.</p>
-   </section>
-   <p class="module-disclaimer">Dr.Vas Free și Dr.Vas Health sunt active. Dr.Vas Studio este în pilot cu acces administrator; accesul public contra cost va fi activat după integrarea plăților și verificarea abonamentelor. Academy, Commerce și Business sunt în pregătire. Dr.Vas Health oferă informații generale și nu înlocuiește consultația medicală.</p> Dr.Vas Studio, Academy, Commerce și Business sunt în pregătire; funcțiile și accesul Premium vor fi activate după dezvoltare și implementarea abonamentelor. Dr.Vas Health oferă informații generale și nu înlocuiește consultația medicală.</p>
+    <section class="studio-social" aria-labelledby="studioSocialTitle">
+     <div class="studio-social-heading"><div><h3 id="studioSocialTitle">Conectează rețelele sociale</h3><p>Un singur Studio pentru conturile tale. Autorizarea se face pe site-urile oficiale; Dr.Vas nu îți cere parolele sociale.</p></div><span class="studio-beta-label">INTEGRARE ÎN DEZVOLTARE</span></div>
+     <div class="studio-social-grid">
+      <article class="studio-social-card"><div class="studio-social-brand"><span>f</span><strong>Facebook + Instagram</strong></div><p>Conectare prin Meta. Instagram va putea fi gestionat prin Facebook pentru conturile profesionale eligibile, asociate unei Pagini Facebook.</p><small>Stare: integrarea Meta și aprobarea permisiunilor sunt necesare.</small></article>
+      <article class="studio-social-card"><div class="studio-social-brand"><span>♪</span><strong>TikTok</strong></div><p>Conectare separată prin TikTok Login Kit. Publicarea directă va folosi Content Posting API și permisiunile aprobate.</p><small>Stare: aplicația TikTok Developer și aprobarea API sunt necesare.</small></article>
+     </div>
+     <p class="studio-disclaimer">După conectare, fiecare utilizator își va putea autoriza propriile conturi. Programarea și publicarea vor fi activate numai pentru funcțiile permise de Meta și TikTok și după aprobarea aplicațiilor Dr.Vas.</p>
+    </section>
+    <p class="studio-disclaimer">În versiunea pilot, Studio generează materiale creative text și instrucțiuni de producție. Randarea video, publicarea automată și abonamentele publice nu sunt încă active.</p>
   </section>
 
  <div id="authSection" class="auth-box hidden">
