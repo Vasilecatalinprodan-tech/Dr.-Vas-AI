@@ -502,3 +502,12 @@ Founder requested autonomous work while away and added a third assistant named A
 - A fresh search of indexed conversation and Library files by exact filename and related voice terms did not return the audio binary or an attachment identifier. This is a retrieval limitation, not proof that the founder never supplied it. The actual audio must be located in the original conversation attachment storage before it can be passed to a voice-cloning provider.
 - Founder explicitly requires conversation history to be saved. Current Dr.Vas frontend writes new chat messages to Supabase `chat_messages` and loads history per authenticated user. Preserve this automatic persistence; never tell the founder that new conversations are only temporary. Existing UI supports creating a new conversation, opening saved conversations and deleting all history. Per-conversation archive/restore and rename actions remain unimplemented and are next work items.
 - Apology/correction: earlier status wording that implied the founder's voice sample had not been supplied was too categorical. Correct statement: the filename is known as `drvasvoice.ogg`, but the binary is not presently retrievable from indexed Library/conversation files.
+
+
+## Conversation archive and per-chat controls — 2026-11-03
+
+- Added frontend controls for renaming, archiving, restoring and permanently deleting an individual conversation; archived conversations have a separate filter. Destructive deletion requires confirmation and is scoped by the signed-in user's ID and conversation ID.
+- Added migration `supabase/migrations/202611030006_conversation_management.sql` creating private `drvas_conversation_metadata` with composite user/conversation ownership, RLS, and per-user archive/title metadata. Existing message rows remain in `chat_messages`; this feature does not rewrite or migrate message history.
+- Existing conversations remain visible if the metadata table is not yet present; archive/rename actions require applying migration 006 in Supabase first.
+- Delete-all also clears the user's metadata rows. Do not claim the database feature is live until the migration is applied in Supabase and tested with a signed-in account.
+- Current frontend commits: `ed9404afab0d3ca8d10d340844a960145457abd5` (controls), `f7ab902ff23e8a2b68522898516accc7a3a2f767` (migration-safe fallback and delete-all cleanup).
