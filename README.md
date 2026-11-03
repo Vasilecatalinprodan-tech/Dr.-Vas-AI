@@ -133,3 +133,12 @@ Work in bounded 30-minute blocks. At the end of each block:
 - The Independent Income tracker and private Studio project workspace remain the existing storage paths; no automatic publishing, contracts, payments or media rendering are claimed.
 - APK public Release publishing was intentionally not enabled; Android builds remain workflow artifacts until the founder chooses to resume APK installation/testing.
 - Validation/deployment: check GitHub Actions for the latest commit after this checkpoint. Do not claim authenticated end-to-end Studio use or mobile runtime testing until manually verified.
+
+
+### Verification follow-up — 2026-11-03
+
+- Latest relevant Worker deployment: run `41654590802`, commit `b59e6c65946d4a78afa854adb4dc14fae7c44e0f`, completed successfully.
+- CI passed Worker and browser JavaScript syntax validation and the production Worker smoke test.
+- Static audit of `www/index.html` found 30 distinct inline UI handlers; all 30 now have matching function declarations, including the restored `selectModule` handler.
+- Studio remains an administrator-only pilot. Real authenticated administrator/non-administrator browser testing is still required.
+- APK installation remains deferred; Android build workflows may run automatically as CI artifacts, but no public Release is published.
