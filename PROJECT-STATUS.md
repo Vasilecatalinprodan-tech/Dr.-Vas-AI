@@ -275,3 +275,11 @@ Official current Gemini Live API documentation:
 - The Studio Income tracker and private project manager remain in the admin pilot. Public Premium access must wait for subscription verification and payment integration.
 - APK installation/testing is deferred by founder request. Keep Android builds as workflow artifacts; do not automatically publish a public Release.
 - Outstanding: run CI/deploy checks, verify signed-in administrator can select Studio and load projects/income records, verify a non-admin cannot access Studio, and test the composer on the live page.
+
+
+## Verification follow-up — 2026-11-03
+
+- Worker deployment run `41654590802` succeeded on commit `b59e6c65946d4a78afa854adb4dc14fae7c44e0f`.
+- CI passed both Worker/browser JavaScript syntax validation and production Worker smoke tests.
+- Static inline-handler audit found 30 unique UI handler names; all have matching function declarations after adding `selectModule`.
+- Manual signed-in administrator and non-administrator browser checks remain outstanding. APK installation is deferred; keep builds as CI artifacts only.
