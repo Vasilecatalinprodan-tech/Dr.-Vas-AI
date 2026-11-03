@@ -551,3 +551,13 @@ Founder requested autonomous work while away and added a third assistant named A
 - Production smoke test confirmed the Worker health endpoint, all six public module cards, and HTTP 401 rejection for unauthenticated administrator-status requests.
 - **Database prerequisite remains:** migration `202611030001_rate_limits.sql` must be applied in Supabase before AI chat and Gemini Live token issuance can pass the new fail-closed rate-limit check. The CI smoke test intentionally does not send authenticated AI requests.
 
+## Frontend/API compatibility and Android build — 2026-11-03
+
+- Fixed the main chat request in `www/index.html`: it now sends `Content-Type: application/json`, matching the Worker request parser and CORS contract. Other Worker actions already used JSON.
+- CI now checks that the old `text/plain;charset=UTF-8` chat header does not return and that the frontend uses JSON.
+- Workflow run 246 succeeded: JavaScript/security checks, Playwright homepage and persisted-session regression tests, Cloudflare deployment and production smoke tests all passed. Run: `https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/41697239638`.
+- Android APK workflow run 219 succeeded for frontend commit `49a1122d1d9496685f938f380e5337bb93ab0fd4`. This confirms the APK artifact was built, not that it has been installed or tested on a physical device.
+- Added security headers for API and static asset responses in Worker commit `8f5112a728c8159038a6e6a0dc7927d4432db49f`: no-sniff, frame denial, strict referrer policy, HSTS and a permissions policy that preserves same-origin microphone access.
+- Hardened the rate-limit migration with account-deletion cascade and a safer SECURITY DEFINER search path in commit `a934ee1fef29c175f760edb12407e7e73c229fb6`.
+- Latest CI regression guard for security headers and migration isolation is commit `55e75923e7aff7ba383336e4655caf555c23ecfb`; run 249 is in progress. Confirm it before claiming the latest security-header code is live.
+
