@@ -82,6 +82,14 @@ Planned provenance protection: a private encrypted record (AES-256-GCM with a Cl
 - Android APK build run `41650000139` completed successfully and uploaded artifact `DrVas-APK` (artifact ID `13237336482`, approximately 6.0 MB).
 - The latest README checkpoint commit records this status. Do not infer Supabase migration execution or founder-key configuration from a successful Worker deployment.
 
+## Session checkpoint — 2026-11-03 (full-page navigation and multiline composer)
+
+- Updated `www/index.html` with document-level vertical scrolling, bottom page clearance and a floating jump-to-bottom control labelled "Jos, la ultimele butoane". Commit: `e7ebecb073a297679b9cee2e3dde4737eec4b59e`.
+- Replaced the single-line chat composer with a multiline textarea. It wraps long text, grows automatically up to 240px, then scrolls internally; Enter inserts a new line and Ctrl+Enter (or Cmd+Enter) sends. The send button remains the normal send action. Text is not sent automatically.
+- Added a Worker system-instruction rule for the explicit project-continuity phrase "salvează ce am făcut până acum": Dr.Vas must use the supplied chat history, accurately explain that authenticated chat history is auto-saved, and never claim unperformed repository or external changes.
+- User-facing verification still required: reload the production site with Ctrl+F5 and test long multiline typing, line breaks, Ctrl+Enter, and the jump-to-bottom control. Deployment status for this commit must be checked after GitHub Actions runs.
+- Existing Supabase tables and founder provenance secrets state remain as recorded in earlier checkpoint; do not infer Cloudflare secrets are configured.
+
 ## Session log — 2026-11-03
 
 ### Completed in this inspection
