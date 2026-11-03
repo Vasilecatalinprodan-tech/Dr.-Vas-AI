@@ -1107,7 +1107,7 @@ function refreshVoiceUi(statusKey){
 function speechLanguage(){
  return ({ro:"ro-RO",en:"en-GB",it:"it-IT",tr:"tr-TR",de:"de-DE",fr:"fr-FR",es:"es-ES",ru:"ru-RU"})[currentLanguage]||"ro-RO";
 }
-function speechVoiceStorageKey(){return "drvas_speech_voice_"+currentLanguage;}
+function speechVoiceStorageKey(){return "drvas_speech_voice_"+activeAssistant+"_"+currentLanguage;}
 function refreshSpeechVoiceOptions(){
  const select=el("speechVoiceSelect");
  if(!select||!window.speechSynthesis)return;
