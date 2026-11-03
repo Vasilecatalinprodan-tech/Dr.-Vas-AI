@@ -1432,7 +1432,7 @@ async function openStudioProject(){
 }
 function exportStudioProject(){
  const project=studioProjectData();
- const body="# "+project.title+"\n\n"+"Tip: "+project.project_type+"\n"+"Platformă: "+project.brief.platform+"\n"+"Stil: "+project.brief.tone+"\n"+"Public: "+project.brief.audience+"\n\n## Idee și material\n\n"+project.brief.idea+"\n";
+ const body="# "+project.title+"\n\n"+"Tip: "+project.project_type+"\n"+"Platformă: "+project.brief.platform+"\n"+"Stil: "+project.brief.tone+"\n"+"Public: "+project.brief.audience+"\n\n## Idee și material\n\n"+project.brief.idea+"\n\n## Ultimul rezultat Dr.Vas\n\n"+(project.brief.latest_output||"Nu există încă un răspuns salvat.")+"\n";
  const blob=new Blob([body],{type:"text/markdown;charset=utf-8"});
  const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=(project.title.replace(/[^a-z0-9ăâîșț_-]+/gi,"-").slice(0,70)||"drvas-proiect")+".md";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
  setStudioProjectStatus("Fișierul proiectului a fost pregătit pentru export.");
