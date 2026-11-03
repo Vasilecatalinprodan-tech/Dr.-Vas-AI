@@ -80,9 +80,14 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .chat-module-label{font-size:12px;color:#65dcd4}
 .assistant-switcher{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0 8px;padding:12px;border:1px solid #25495d;border-radius:14px;background:linear-gradient(120deg,#0d2234,#102d3b)}
 .assistant-switcher-label{width:100%;font-size:10px;color:#88a9ba;text-transform:uppercase;letter-spacing:1px;font-weight:700}
-.assistant-choice{display:flex;align-items:center;gap:8px;padding:9px 13px;border:1px solid #34566b;border-radius:999px;background:#10283b;color:#d7e9f0;font-size:12px;font-weight:700}
-.assistant-choice[aria-pressed="true"]{border-color:#58d8cf;background:#174b51;color:#fff;box-shadow:0 0 0 1px rgba(88,216,207,.15)}
-.assistant-choice small{font-size:10px;color:#9ab6c4;font-weight:500}
+.assistant-choice{display:flex;align-items:center;gap:10px;min-width:155px;padding:10px 13px;border:1px solid #34566b;border-radius:14px;background:#10283b;color:#d7e9f0;font-size:12px;font-weight:700;text-align:left;transition:border-color .2s,background .2s}
+.assistant-choice[aria-pressed="true"]{border-color:#58d8cf;background:linear-gradient(135deg,#174b51,#17384a);color:#fff;box-shadow:0 0 0 1px rgba(88,216,207,.15)}
+.assistant-choice small{display:block;font-size:10px;color:#9ab6c4;font-weight:500;margin-top:3px}
+.assistant-avatar{width:40px;height:40px;flex:0 0 40px;border-radius:50%;object-fit:cover;border:1px solid #5a9b9d}
+.assistant-avatar-symbol{display:grid;place-items:center;width:40px;height:40px;flex:0 0 40px;border-radius:50%;font-size:21px;background:linear-gradient(145deg,#315b79,#172d49);border:1px solid #5a9b9d}
+.assistant-aurora{background:linear-gradient(145deg,#66558c,#233d60);border-color:#a99ad8}
+.assistant-jan{background:linear-gradient(145deg,#256c6b,#203e61);border-color:#6fd3c8}
+.assistant-help-choice{margin-left:auto;background:#163d48;border-color:#39777b}
 .assistant-intro{font-size:11px;color:#9bb5c3;line-height:1.5;margin:0 0 8px}
 .auto-save-indicator{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border:1px solid #245b50;border-radius:999px;background:#102e2b;color:#83e0bd;font-size:11px;font-weight:600;white-space:nowrap}
 #saveMessage{font-size:11px;color:#f0c879;min-height:17px;margin-top:5px}
@@ -583,10 +588,10 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
     </div>
     <div class="assistant-switcher" role="group" aria-label="Alege asistentul">
      <span class="assistant-switcher-label">Alege asistentul tău</span>
-     <button type="button" class="assistant-choice" data-assistant="drvas" aria-pressed="true" onclick="selectAssistant('drvas')">✦ Dr.Vas <small>Principal</small></button>
-     <button type="button" class="assistant-choice" data-assistant="jan" aria-pressed="false" onclick="selectAssistant('jan')">◈ Dr.Jan <small>Ghid inteligent</small></button>
-     <button type="button" class="assistant-choice" data-assistant="aurora" aria-pressed="false" onclick="selectAssistant('aurora')">✧ Aurora <small>Învățare & idei</small></button>
-     <button type="button" class="assistant-choice" onclick="startGuidedHelp()">Ghidează-mă pas cu pas</button>
+     <button type="button" class="assistant-choice" data-assistant="drvas" aria-pressed="true" onclick="selectAssistant('drvas')"><img class="assistant-avatar" src="drvas.jpeg" alt=""><span>Dr.Vas<small>Asistent principal</small></span></button>
+     <button type="button" class="assistant-choice" data-assistant="jan" aria-pressed="false" onclick="selectAssistant('jan')"><span class="assistant-avatar-symbol assistant-jan" aria-hidden="true">◈</span><span>Dr.Jan<small>Ghid strategic AI</small></span></button>
+     <button type="button" class="assistant-choice" data-assistant="aurora" aria-pressed="false" onclick="selectAssistant('aurora')"><span class="assistant-avatar-symbol assistant-aurora" aria-hidden="true">✧</span><span>Aurora<small>Învățare și creativitate</small></span></button>
+     <button type="button" class="assistant-choice assistant-help-choice" onclick="startGuidedHelp()">Ghidează-mă pas cu pas</button>
      <p class="assistant-intro" id="assistantIntro">Asistentul principal Dr.Vas este pregătit să te ajute.</p>
     </div>
     <div id="saveMessage"></div>
