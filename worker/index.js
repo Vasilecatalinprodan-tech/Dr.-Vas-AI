@@ -756,8 +756,8 @@ export default {
         }
       }
 
-      // Crypto Admin: listă read-only a dispozitivelor aprobate. Nu pornește mining sau tranzacții.
-      if (body.action === "crypto_devices_list") {
+      // Crypto Admin: listare și aprobare/revocare dispozitive. Nu pornește mining sau tranzacții.
+      if (["crypto_devices_list", "crypto_device_update"].includes(body.action)) {
         const adminToken = body.access_token;
         if (typeof adminToken !== "string" || !adminToken.trim()) {
           return json({ error: "Sesiune lipsă." }, 401);
@@ -765,8 +765,9 @@ export default {
         if (!env.SUPABASE_URL || !env.SUPABASE_KEY) {
           return json({ error: "Autentificarea nu este configurată." }, 500);
         }
+        const supabaseBase = env.SUPABASE_URL.replace(/\\/+$/, "");
         const authResponse = await fetch(
-          `${env.SUPABASE_URL.replace(/\/+$/, "")}/auth/v1/user`,
+          `${supabaseBase}/auth/v1/user`,
           { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${adminToken}` } }
         );
         if (!authResponse.ok) return json({ error: "Sesiune invalidă." }, 401);
@@ -776,13 +777,56 @@ export default {
         if (!adminUser?.email || !allowedAdmins.includes(adminUser.email.trim().toLowerCase())) {
           return json({ error: "Acces interzis." }, 403);
         }
+
+        if (body.action === "crypto_device_update") {
+          const deviceId = typeof body.device_id === "string" ? body.device_id : "";
+          const nextStatus = body.status;
+          if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(deviceId)) {
+            return json({ error: "Identificator de dispozitiv invalid." }, 400);
+          }
+          if (!["authorized", "revoked"].includes(nextStatus)) {
+            return json({ error: "Stare Crypto nepermisă." }, 400);
+          }
+          const now = new Date().toISOString();
+          const patch = nextStatus === "authorized"
+            ? { status: "authorized", approved_by: adminUser.id, approved_at: now, revoked_at: null }
+            : { status: "revoked", revoked_at: now };
+          const updateResponse = await fetch(
+            `${supabaseBase}/rest/v1/drvas_crypto_devices?id=eq.${deviceId}`,
+            {
+              method: "PATCH",
+              headers: {
+                apikey: env.SUPABASE_KEY,
+                Authorization: `Bearer ${env.SUPABASE_KEY}`,
+                "Content-Type": "application/json",
+                Prefer: "return=representation"
+              },
+              body: JSON.stringify(patch)
+            }
+          );
+          const updated = await updateResponse.json().catch(() => []);
+          if (!updateResponse.ok) {
+            return json({ error: "Nu am putut actualiza dispozitivul Crypto." }, 500);
+          }
+          if (!Array.isArray(updated) || !updated.length) {
+            return json({ error: "Dispozitivul nu a fost găsit." }, 404);
+          }
+          await writeAdminAuditLog(env, {
+            user_id: adminUser.id,
+            event_type: nextStatus === "authorized" ? "crypto_device_authorized" : "crypto_device_revoked",
+            module: "crypto",
+            status: 200
+          });
+          return json({ updated: true, device: updated[0] });
+        }
+
         const params = new URLSearchParams({
           select: "id,device_name,platform,status,created_at,approved_at,last_seen_at",
           order: "created_at.desc",
           limit: "100"
         });
         const devicesResponse = await fetch(
-          `${env.SUPABASE_URL.replace(/\/+$/, "")}/rest/v1/drvas_crypto_devices?${params.toString()}`,
+          `${supabaseBase}/rest/v1/drvas_crypto_devices?${params.toString()}`,
           { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${env.SUPABASE_KEY}` } }
         );
         if (!devicesResponse.ok) {
