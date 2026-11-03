@@ -319,3 +319,11 @@ A detailed session log was added at `docs/SESSION_LOG_2026-11-03.md`. It records
 - Added account-switch isolation: when a different Supabase user signs in, the active Studio project ID, output, title, idea and saved-project selector are cleared so one account's project state cannot leak into another account's workspace. Commit: `cefd66e827b4da90385de5ae03213a187e997589`.
 
 - Added `docs/REVENUE_ENGINE_ROADMAP.md` defining revenue streams across Studio, Business, Academy, Commerce and compliant Health partnerships; server-side payment/order/entitlement architecture; launch sequence; IP/AI disclosure safeguards; and future cryptocurrency legal/security gates. Commit: `38f20bd4b225e5d4e8c006cbaaf0821a5a14552e`.
+
+
+### Studio internationalisation and setup guidance
+
+- Added translations for the new Studio project manager controls across the app's supported languages (English, Italian, Turkish, German, French, Spanish and Russian).
+- Added a clear, localised message when the Studio projects table is not present in Supabase, including the exact migration filename `202611030004_studio_projects.sql`.
+- Added output size cap (50,000 characters) to keep stored project output bounded.
+- Translation syntax validation caught an incomplete Spanish dictionary entry before deployment; corrected it in commit `f31e04f2d893098857dd4b30d0c115e29c565e64`. The corrected Worker deployment passed. The latest setup-guidance localisation commit is `e40cd68ca0a27c37b17bf6667eb6626816043635`; its deployment validation is in progress.
