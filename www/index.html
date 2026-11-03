@@ -73,6 +73,10 @@ button:disabled{opacity:.5;cursor:not-allowed}
 #chat{min-height:100px;margin-top:10px}
 .msg{padding:15px 17px;border-radius:15px;margin:12px 0;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
 .bot{background:#172e43;border:1px solid #24465d}
+.msg.typing{display:flex;align-items:center;gap:9px;color:#a9c3d0}
+.msg.typing::after{content:"";width:6px;height:6px;border-radius:50%;background:#65dcd4;box-shadow:10px 0 #65dcd4,20px 0 #65dcd4;animation:drvasTyping 1s infinite ease-in-out}
+@keyframes drvasTyping{0%,60%,100%{opacity:.35;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+@media(prefers-reduced-motion:reduce){.msg.typing::after{animation:none;opacity:.8}}
 .user{background:#126a70;margin-left:12%;text-align:left}
 .input-area{display:flex;gap:10px;margin-top:20px}
 .input-area input{flex:1;min-width:0;padding:17px;background:#071827;border:1px solid #34536a;border-radius:13px;color:white;font-size:15px;outline:none}
@@ -1932,6 +1936,7 @@ async function send(){
 
   appendMessage("user",message);
   const answer = appendMessage("assistant",tr("Dr.Vas gândește..."));
+  answer.classList.add("typing");
 
   try{
     await saveMessage("user",message);
@@ -1966,6 +1971,7 @@ async function send(){
     if(!data.reply) throw new Error("Răspuns invalid de la server");
 
     const displayedReply = localizeReply(data.reply);
+    answer.classList.remove("typing");
     answer.textContent = displayedReply;
     lastSpokenAnswer=displayedReply;
     refreshVoiceUi(voiceAutoRead?"ready":"off");
@@ -1989,6 +1995,7 @@ async function send(){
     if(conversationSaved) await loadConversationList();
 
   }catch(error){
+    answer.classList.remove("typing");
     answer.textContent = tr("Eroare: ") + tr(error.message);
     refreshVoiceUi(voiceAutoRead?"ready":"off");
     console.error("Dr.Vas AI:",error);
