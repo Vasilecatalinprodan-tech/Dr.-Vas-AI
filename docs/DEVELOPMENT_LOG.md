@@ -105,3 +105,11 @@ The founder proposed (a) an administrator-only AI-assisted adult film production
 - Ofcom online pornography / age assurance guidance: https://www.ofcom.org.uk/online-safety/pornography and https://www.ofcom.org.uk/online-safety/protecting-children/age-assurance
 - Crime and Policing Act 2026 factsheets: https://www.gov.uk/government/publications/crime-and-policing-act-2026-factsheets
 - ICO online advertising and PECR guidance: https://ico.org.uk/for-organisations/direct-marketing-and-privacy-and-electronic-communications/guidance-on-the-use-of-storage-and-access-technologies/how-do-the-rules-apply-to-online-advertising/
+
+
+## 3 November 2026 — Crypto transition hardening and advertising specification
+
+- Crypto administrator state changes now use conditional database filters: authorization is accepted only from pending/revoked, and revocation only from authorized. This reduces stale/replayed state overwrites. It does not replace device proof-of-possession, rate limiting or end-to-end tests.
+- Added `docs/ADVERTISING_SPEC.md` defining privacy-first direct sponsorships and contextual placements, a global OFF switch, per-workspace controls, explicit labels, consent requirements, aggregate-only measurement and no health/chat/file targeting.
+- No advertising SDK, network, campaign or tracking is active. No mining or trading is enabled.
+- Validation status: source change committed; runtime, Supabase integration, race-condition and browser tests remain outstanding. Do not deploy until these pass.
