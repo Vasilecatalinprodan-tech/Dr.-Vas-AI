@@ -202,7 +202,7 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
  .modules-heading h2{font-size:19px}
 }
 @media(max-width:390px){.modules-grid{grid-template-columns:1fr}.module-card{min-height:115px}}
-</style>
+.studio-project-manager{margin-top:22px;padding:18px;border:1px solid #245064;border-radius:14px;background:#0a1c2b}.studio-project-manager h3{margin:0 0 12px;color:#8fe8df}.studio-project-controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:10px 0}.studio-project-controls label{color:#a8c7d5;font-size:13px}.studio-project-controls input,.studio-project-controls select{min-width:190px;flex:1;padding:11px;border:1px solid #31566a;border-radius:8px;background:#102b3d;color:#fff}.studio-project-controls button{padding:10px 14px;border:1px solid #3c8e91;border-radius:8px;background:#123c4a;color:#d9fffb;cursor:pointer}.studio-project-manager p{font-size:12px;color:#9bb8c8;margin:10px 0 0}</style>
 </head>
 
 <body>
@@ -340,6 +340,20 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
      <button type="button" onclick="buildStudioPrompt()">Pregătește proiectul în Studio</button>
      <span>Vei putea modifica cererea înainte să o trimiți către Dr.Vas.</span>
     </div>
+    <section class="studio-project-manager" aria-label="Proiectele mele Dr.Vas Studio">
+     <h3>📁 Proiectele mele</h3>
+     <div class="studio-project-controls">
+      <label for="studioProjectTitle">Titlul proiectului</label>
+      <input id="studioProjectTitle" type="text" maxlength="120" placeholder="Ex.: Romanul meu / Traducere contract">
+     </div>
+     <div class="studio-project-controls">
+      <button type="button" onclick="saveStudioProject()">Salvează proiectul</button>
+      <select id="studioSavedProjects" aria-label="Proiecte salvate"><option value="">Alege un proiect salvat</option></select>
+      <button type="button" onclick="openStudioProject()">Deschide</button>
+      <button type="button" onclick="exportStudioProject()">Exportă</button>
+     </div>
+     <p id="studioProjectStatus" role="status" aria-live="polite">Proiectele tale vor fi salvate privat în contul Dr.Vas.</p>
+    </section>
     <div class="studio-capabilities">
      <div><strong>✍️ Scenarii</strong><span>Dialog, personaje, scene și cliffhanger.</span></div>
      <div><strong>🎞️ Producție</strong><span>Storyboard, cadre, lumină, sunet și montaj.</span></div>
@@ -1359,6 +1373,70 @@ function updateSaveButton(){
   setLocalizedText(status,conversationSaved ? "✓ Conversație salvată automat" : "● Salvare automată activă");
 }
 
+let currentStudioProjectId=null;
+function studioProjectData(){
+ const value=id=>el(id)?.value||"";
+ const idea=value("studioIdea").trim();
+ const deliverable=value("studioDeliverable");
+ const labels={series:"Serial / episod",short:"Clip scurt",youtube:"Video YouTube",ad:"Reclamă",storyboard:"Storyboard",book:"Carte / e-book",translation:"Traducere",music:"Compoziție muzicală",lyrics:"Versuri / poezie",article:"Articol / blog"};
+ const title=value("studioProjectTitle").trim()||((labels[deliverable]||"Proiect")+" — "+(idea.slice(0,48)||"Proiect nou"));
+ return {title,project_type:deliverable,brief:{idea,deliverable,platform:value("studioPlatform"),tone:value("studioTone"),audience:value("studioAudience"),duration:value("studioDuration"),aspect:value("studioAspect"),updated_from:"drvas-studio"}};
+}
+function setStudioProjectStatus(message,isError=false){
+ const status=el("studioProjectStatus");if(!status)return;
+ status.textContent=message;status.style.color=isError?"#ff9d9d":"#9fe5ce";
+}
+async function loadStudioProjects(selectedId=""){
+ if(!currentUser)return;
+ const select=el("studioSavedProjects");if(!select)return;
+ const {data,error}=await supabaseClient.from("drvas_studio_projects").select("id,title,project_type,updated_at").eq("user_id",currentUser.id).order("updated_at",{ascending:false}).limit(100);
+ if(error)throw error;
+ select.innerHTML='<option value="">Alege un proiect salvat</option>';
+ (data||[]).forEach(project=>{const option=document.createElement("option");option.value=project.id;option.textContent=project.title+" · "+new Date(project.updated_at).toLocaleDateString();select.appendChild(option);});
+ if(selectedId)select.value=selectedId;
+}
+async function saveStudioProject(){
+ if(!currentUser){setStudioProjectStatus("Autentifică-te pentru a salva proiecte în contul tău.",true);return;}
+ const project=studioProjectData();
+ if(!project.brief.idea){el("studioIdea").focus();setStudioProjectStatus("Adaugă mai întâi ideea sau materialul proiectului.",true);return;}
+ const payload={user_id:currentUser.id,title:project.title,project_type:project.project_type,brief:project.brief,updated_at:new Date().toISOString()};
+ try{
+  let result;
+  if(currentStudioProjectId){
+   result=await supabaseClient.from("drvas_studio_projects").update(payload).eq("id",currentStudioProjectId).eq("user_id",currentUser.id).select("id").single();
+  }else{
+   result=await supabaseClient.from("drvas_studio_projects").insert(payload).select("id").single();
+  }
+  if(result.error)throw result.error;
+  currentStudioProjectId=result.data.id;
+  el("studioProjectTitle").value=project.title;
+  await loadStudioProjects(currentStudioProjectId);
+  setStudioProjectStatus("Proiect salvat în contul tău. Îl poți redeschide de pe alt dispozitiv.");
+ }catch(error){
+  console.error("Dr.Vas Studio save:",error);
+  setStudioProjectStatus(error.message.includes("drvas_studio_projects")?"Tabelul de proiecte nu este încă activ în Supabase. Aplică migrarea SQL din proiect.":"Nu am putut salva proiectul: "+error.message,true);
+ }
+}
+async function openStudioProject(){
+ if(!currentUser){setStudioProjectStatus("Autentifică-te pentru a deschide proiectele.",true);return;}
+ const id=el("studioSavedProjects").value;if(!id){setStudioProjectStatus("Alege mai întâi un proiect salvat.",true);return;}
+ try{
+  const {data,error}=await supabaseClient.from("drvas_studio_projects").select("id,title,project_type,brief").eq("id",id).eq("user_id",currentUser.id).single();
+  if(error)throw error;
+  const b=data.brief||{};currentStudioProjectId=data.id;
+  el("studioProjectTitle").value=data.title||"";
+  el("studioDeliverable").value=data.project_type||b.deliverable||"series";
+  ["studioIdea","studioPlatform","studioTone","studioAudience","studioDuration","studioAspect"].forEach((key,index)=>{const fields=["idea","platform","tone","audience","duration","aspect"];if(b[fields[index]]!==undefined)el(key).value=b[fields[index]];});
+  setStudioProjectStatus("Proiect încărcat. Poți continua editarea și îl poți salva din nou.");
+ }catch(error){setStudioProjectStatus("Nu am putut deschide proiectul: "+error.message,true);}
+}
+function exportStudioProject(){
+ const project=studioProjectData();
+ const body="# "+project.title+"\n\n"+"Tip: "+project.project_type+"\n"+"Platformă: "+project.brief.platform+"\n"+"Stil: "+project.brief.tone+"\n"+"Public: "+project.brief.audience+"\n\n## Idee și material\n\n"+project.brief.idea+"\n";
+ const blob=new Blob([body],{type:"text/markdown;charset=utf-8"});
+ const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=(project.title.replace(/[^a-z0-9ăâîșț_-]+/gi,"-").slice(0,70)||"drvas-proiect")+".md";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+ setStudioProjectStatus("Fișierul proiectului a fost pregătit pentru export.");
+}
 function buildStudioPrompt(){
   const idea=el("studioIdea").value.trim();
   if(!idea){el("studioIdea").focus();el("moduleAccessMessage").textContent="Scrie mai întâi ideea proiectului.";return;}
