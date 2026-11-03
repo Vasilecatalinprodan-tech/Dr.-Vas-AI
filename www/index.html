@@ -306,17 +306,17 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
 @media(max-width:900px){.chat-layout{grid-template-columns:1fr}.history-panel{order:2}.assistant-choice{min-width:0}.hero{min-height:350px}}
 @media(max-width:560px){main{padding-left:12px;padding-right:12px}.hero{min-height:330px;border-radius:20px}.hero-content{padding:23px}.modules-grid{gap:10px}.module-card{min-height:160px;padding:15px}.module-name{font-size:14px}.module-description{font-size:11px}.assistant-choice{flex-basis:100%;min-height:76px}.auth-box,.profile-box{padding:20px}.chat-layout{gap:12px}}
 
-/* INDEPENDENT PAGE AND CHAT SCROLL AREAS */
+/* INDEPENDENT PAGE AND CHAT SCROLL AREAS — larger conversation viewport */
 .chat-main{
   display:flex!important;
   flex-direction:column!important;
-  height:min(78vh,820px)!important;
-  min-height:600px!important;
-  max-height:820px!important;
+  height:min(92vh,1100px)!important;
+  min-height:900px!important;
+  max-height:none!important;
   min-width:0;
   overflow:hidden!important;
-  padding:14px!important;
-  border:1px solid rgba(91,170,185,.32);
+  padding:16px!important;
+  border:1px solid rgba(91,170,185,.38);
   border-radius:22px;
   background:linear-gradient(155deg,rgba(12,30,46,.98),rgba(7,19,32,.98));
   box-shadow:0 20px 55px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.025);
@@ -326,29 +326,31 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
   flex:0 0 auto;
 }
 .chat-main>.chat-toolbar{margin-top:0}
+.chat-main>.assistant-switcher{max-height:145px;overflow-y:auto;overscroll-behavior:contain}
 .chat-main>#chat{
   flex:1 1 auto!important;
-  min-height:0!important;
+  min-height:460px!important;
   height:auto!important;
   overflow-y:auto!important;
   overflow-x:hidden!important;
   overscroll-behavior:contain;
   scrollbar-gutter:stable;
-  padding:5px 12px 12px 5px;
-  margin-top:10px;
-  border:1px solid rgba(80,128,153,.22);
-  border-radius:16px;
-  background:rgba(3,13,24,.48);
-  scroll-behavior:smooth;
+  padding:12px 16px 18px 12px;
+  margin-top:12px;
+  border:1px solid rgba(80,128,153,.3);
+  border-radius:17px;
+  background:rgba(3,13,24,.58);
+  scroll-behavior:auto!important;
   overflow-anchor:auto;
 }
-.chat-main>#chat::-webkit-scrollbar{width:9px}
-.chat-main>#chat::-webkit-scrollbar-thumb{background:#315a6d;border:2px solid #0b1c2b;border-radius:99px}
+.chat-main>#chat .msg{font-size:15px;line-height:1.7;padding:16px 18px;margin:14px 0}
+.chat-main>#chat::-webkit-scrollbar{width:10px}
+.chat-main>#chat::-webkit-scrollbar-thumb{background:#426f83;border:2px solid #0b1c2b;border-radius:99px}
 .chat-main>#chat::-webkit-scrollbar-track{background:transparent}
-.chat-main>.input-area{margin-top:12px}
-.chat-main>.voice-toolbar{max-height:110px;overflow-y:auto;overscroll-behavior:contain}
+.chat-main>.input-area{margin-top:14px}
+.chat-main>.voice-toolbar{max-height:100px;overflow-y:auto;overscroll-behavior:contain}
 .history-panel{
-  height:min(78vh,820px);
+  height:min(92vh,1100px);
   min-height:600px;
   overflow-y:auto;
   overscroll-behavior:contain;
@@ -356,18 +358,20 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
 }
 #conversationList{max-height:none;overflow:visible}
 @media(max-width:900px){
- .chat-main{height:76vh!important;min-height:560px!important;max-height:820px!important}
+ .chat-main{height:auto!important;min-height:850px!important;max-height:none!important}
+ .chat-main>#chat{min-height:430px!important}
  .history-panel{height:auto;min-height:0;max-height:360px}
  #conversationList{max-height:220px;overflow-y:auto}
 }
 @media(max-width:560px){
- .chat-main{height:78vh!important;min-height:540px!important;max-height:760px!important;padding:10px!important;border-radius:17px}
- .chat-main>#chat{padding:4px 8px 10px}
- .chat-main>.assistant-switcher{max-height:170px;overflow-y:auto;overscroll-behavior:contain}
- .chat-main>.voice-toolbar{max-height:84px}
+ .chat-main{height:auto!important;min-height:850px!important;max-height:none!important;padding:11px!important;border-radius:17px}
+ .chat-main>#chat{min-height:420px!important;padding:8px 10px 14px}
+ .chat-main>#chat .msg{font-size:14px;line-height:1.65;padding:13px 14px}
+ .chat-main>.assistant-switcher{max-height:155px;overflow-y:auto;overscroll-behavior:contain}
+ .chat-main>.voice-toolbar{max-height:88px}
  .chat-main>.voice-privacy{font-size:9px}
 }
-@media(prefers-reduced-motion:reduce){.chat-main>#chat{scroll-behavior:auto}}
+@media(prefers-reduced-motion:reduce){.chat-main>#chat{scroll-behavior:auto!important}}
 
 </style>
 </head>
@@ -1033,10 +1037,12 @@ function scrollToLatestMessage(target){
   if(!chat)return;
   cancelAnimationFrame(chatScrollFrame);
   chatScrollFrame=requestAnimationFrame(()=>{
+    if(!chat.isConnected)return;
+    chat.scrollTop=chat.scrollHeight;
     chatScrollFrame=requestAnimationFrame(()=>{
       if(!chat.isConnected)return;
-      // Scroll only the message viewport; keep the page, module navigation and composer still.
-      chat.scrollTo({top:chat.scrollHeight,behavior:"smooth"});
+      // Re-check after message text/layout has settled; never move the outer page.
+      chat.scrollTop=chat.scrollHeight;
     });
   });
 }
