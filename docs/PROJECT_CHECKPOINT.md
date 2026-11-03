@@ -223,3 +223,14 @@ A detailed session log was added at `docs/SESSION_LOG_2026-11-03.md`. It records
 - Added `docs/CRYPTO_ADMIN_CONTROL_MODEL.md` (commit `4bfd801c149f3787b4d0dfca8856bcb116508288`). It specifies server-enforced admin access, enrolled/revocable devices, no visitor-device mining, separate administrator accounts, read-only first connections, no seed phrases/private keys, withdrawal-disabled trading credentials if later enabled, per-account ledgers, paper trading, human-approved live orders and hard risk limits for any later automation.
 - This is a design document only: no mining agent, wallet custody or live trading has been enabled.
 - Assistant role: technical/product copilot only; it cannot be a legal administrator, account holder, custodian or signatory and cannot independently control real funds.
+
+
+## Administrator access recovery — 2026-11-03
+
+- Founder reported that the account `vasilecatalinprodan@gmail.com` no longer sees the administrator panel.
+- Root cause boundary confirmed in code: both `admin_status` and `admin_dashboard` validate the authenticated Supabase user against the server-only Cloudflare Worker secret `ADMIN_EMAILS`. The browser cannot grant administrator access.
+- Improved Worker diagnostics to distinguish a missing allowlist, a missing authenticated email, and an email not present in the allowlist. Worker commit: `990d2f43be15d796c80b12b56a453ee709b29145`.
+- Improved frontend diagnostics so the signed-in founder sees a clear recovery message instead of the admin panel silently disappearing. Frontend commit: `bce939143c4a13000fc9aea440525daa76eb6882`.
+- Security remains intact: no client-side admin bypass, no hard-coded founder email, and no exposure of the allowlist secret.
+- Remaining external action: confirm/update the Cloudflare Worker secret named `ADMIN_EMAILS` so its value includes the exact address `vasilecatalinprodan@gmail.com` (lowercase; comma-separated if there are multiple admins). This secret value cannot be read or changed through the connected GitHub tools. After saving, redeploy the Worker and sign out/in or refresh the app.
+- Do not mark administrator access restored until the live `admin_status` check returns `is_admin: true` and the admin dashboard loads successfully.
