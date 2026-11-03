@@ -108,3 +108,16 @@ After each substantial work session, update this checkpoint with: completed chan
 5. Decide final public prices and usage quotas only after estimating Gemini/media-generation costs. The current Studio pilot produces text; video/image rendering is a separate integration and must have its own usage/cost controls.
 6. Implement real media rendering, asset storage/gallery, project persistence and export before marketing Studio as a full video editor.
 7. Connect official Meta/TikTok APIs only after the required app permissions/reviews; no auto-publishing is currently active.
+
+
+## Studio social platform integration plan — 2026-11-03
+
+- Added a Studio social integration panel in the frontend for Facebook + Instagram (Meta authorization) and TikTok (separate TikTok authorization).
+- The panel clearly marks both integrations as in development; it does not display fake connected states or collect social passwords.
+- Frontend commit: `c56b963bf61cc208ed3ff112167654fd48b12f2c`.
+- Meta/Facebook Login route must be implemented server-side with OAuth state validation, authorization-code exchange, token refresh/secure storage, account/page discovery and per-user disconnect/revoke handling. For the Facebook Login route to Instagram publishing, the Instagram account must be a supported Professional account linked to a Facebook Page; supported permissions and App Review must be completed.
+- TikTok requires a registered TikTok Developer app, Login Kit, configured HTTPS redirect URI, server-side OAuth code exchange, CSRF state validation, and secure token storage. Direct publishing additionally requires Content Posting API and approval for `video.publish`; unaudited clients have visibility restrictions.
+- Do not store social access/refresh tokens in browser localStorage, frontend source, or Git. Store encrypted server-side, scoped per Dr.Vas user; implement revocation and deletion.
+- Publishing must be opt-in and user-confirmed. Respect each platform's publishing restrictions, media formats, privacy choices, rate limits and app review.
+- Official references checked 2026-11-03: TikTok Login Kit overview https://developers.tiktok.com/docs/en/login-kit-overview ; TikTok Content Posting API https://developers.tiktok.com/docs/en/content-posting-api-get-started ; TikTok app registration/review https://developers.tiktok.com/docs/en/getting-started-create-an-app ; Meta Instagram API docs https://www.postman.com/meta/instagram/documentation/6yqw8pt/instagram-api .
+- Current state: social UI panel only; OAuth, connected-account storage, scheduled publishing, analytics and actual publishing are not yet implemented.
