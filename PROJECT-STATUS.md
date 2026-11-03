@@ -428,3 +428,15 @@ Founder requested autonomous work while away and added a third assistant named A
 ### Deployment record correction
 - Confirmed after the previous checkpoint: Worker deployment run `41659348940` corresponds to commit `d52c69ae0918e00dd03a5bbdf2f4b5fb276c56da` (not `4c45452...`) and completed successfully. It includes the latest assistant-specific voice preference key and refresh-on-switch frontend changes, plus the previously deployed persona Worker logic. GitHub Actions passed validation, deployment and production smoke test.
 - The following documentation-only checkpoint commit is `9ef6c707a5c6a8684b5ff19daf445388062b6864`.
+
+## Original illustrated assistant avatars — 2026-11-03
+
+- Founder clarified that he wants the assistant faces integrated directly into the Dr.Vas AI application, not a standalone generated image in chat.
+- Replaced the temporary Dr.Jan and Aurora symbol avatars in `www/index.html` with original inline SVG portrait illustrations embedded in the assistant selector. This keeps the artwork self-contained in the application and avoids third-party character likenesses or external image dependencies.
+- Dr.Jan: original masculine adult illustrated face, dark hair, tailored dark professional suit and tie, neutral teal/blue background.
+- Aurora: original adult woman illustrated face, long dark brunette hair, brown eyes, elegant professional jacket, warm plum background. This is an adult fictional AI avatar, not a depiction or age transformation of the founder's daughter.
+- The portraits are vector illustrations (not photorealistic animated 3D/video avatars). They are currently static portraits; subtle animation/lip-sync and a larger assistant profile view remain future enhancements.
+- Dr.Vas continues to use the founder's existing `www/drvas.jpeg` portrait as requested. All three assistant cards now have face imagery and professional presentation.
+- Implementation commit: `bb1ab804d73a44b4f331b55650988a27f0bb6411`.
+- CI/deployment run for this new avatar commit has not yet been verified at checkpoint time. Do not claim the new portraits are live until a successful run for this exact commit is confirmed.
+- No external AI image-generation service or voice provider was used. The SVG artwork is stored directly in application source.
