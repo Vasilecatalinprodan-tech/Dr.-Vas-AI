@@ -64,3 +64,14 @@
 - Corrected the test stub syntax before validation. GitHub Actions has been triggered by the latest test commits; wait for the run result before treating the new coverage as passing.
 - This new test covers persisted-session restoration up to the profile-fetch failure boundary. It does not yet prove the complete successful profile/private-profile/chat/history loading path against a real Supabase project.
 - Production remains unchanged; PR #5 is still the review vehicle. Cloudflare Preview failure log remains inaccessible through the current GitHub connection and must not be represented as resolved.
+
+
+## 2026-11-03 — Homepage session-restore fix merged; production deployment running
+
+- PR #5 was merged by squash into `drvas-integrated-platform`: merge commit `b8318870ca241cf9186c7816b38881090dead185`.
+- Root cause: startup session restoration called `showChat()`, which automatically enabled `chat-focus-mode`; the CSS for that mode hides all main-page sections other than chat. The automatic focus-mode call was removed so the public dashboard remains visible. Focus mode remains an explicit user action.
+- Playwright Chromium run #7 passed with the new persisted Supabase-session startup test and simulated profile-read failure. Run: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/41693429703
+- A production deployment gate was added to `.github/workflows/deploy-worker.yml`: validate JavaScript, run the homepage/session-restoration Playwright tests, then deploy Worker, then run production health/homepage/admin-auth smoke checks. The local test server now has a readiness loop before Playwright starts.
+- After merge, GitHub Actions production deployment run `41694602512` started. At the time of this log entry it was still installing Chromium; no claim of production deployment success or live browser verification is made yet.
+- The separate Cloudflare GitHub App Workers Build check for PR commit `f30525bce92abea69a62650ca97955dce9bf61d8` reported failure. Its dashboard build log is not accessible through the available GitHub connector/web session. The independent repository deploy workflow is being used; its actual outcome must be checked.
+- This log records technical decisions and project status, not a verbatim copy of the ChatGPT transcript. The conversation itself remains in ChatGPT history.
