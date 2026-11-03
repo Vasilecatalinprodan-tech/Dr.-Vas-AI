@@ -525,3 +525,21 @@ Founder requested autonomous work while away and added a third assistant named A
 - CI/deployment status must be read from the workflow run for this commit before claiming production deployment or successful runtime behaviour.
 - Next security work: add server-side abuse/rate controls for expensive AI and Live-token routes; audit retention/deletion controls; review privacy notice and consent wording; verify encrypted profile and founder-key configuration without exposing secret values.
 
+## Security controls and cost protection — 2026-11-03
+
+- Added server-side request validation in `worker/index.js`: JSON content type required, malformed JSON rejected with HTTP 400, non-object bodies rejected, and request bodies capped at 64 KB.
+- Added an atomic, cross-Worker-isolate fixed-window rate limiter backed by Supabase:
+  - Standard AI chat: 20 requests per authenticated user per 60 seconds.
+  - Gemini Live ephemeral-token issuance: 4 tokens per authenticated user per 10 minutes.
+  - Limit responses return HTTP 429 and `Retry-After`.
+  - If the database rate-limit function is unavailable, AI and Live-token requests fail closed with HTTP 503; they do not silently fall back to an isolate-local counter.
+- Added migration `supabase/migrations/202611030001_rate_limits.sql`. It creates a minimal counter table, enables RLS, denies client-role access, and grants the atomic RPC only to `service_role`. It stores no prompts, transcripts, or audio.
+- The founder must apply this new SQL migration in Supabase before normal AI chat and Live-token issuance can work with the new Worker code. This is a required one-time database setup, not a routine verification.
+- Enforced optional-profile consent server-side: a direct API call cannot save private profile fields unless the latest recorded `optional_profile_data` consent is explicitly granted.
+- Fixed a deletion dependency: clearing an encrypted private profile no longer requires the encryption key to be present; the key is required only to read or save encrypted data.
+- Expanded accepted production CORS origins to include both the current Worker hostname and the previously used production hostname; wildcard CORS remains disabled.
+- Added CI security regression checks for wildcard CORS, request size validation, consent enforcement, deletion behaviour, and rate-limit migration permissions.
+- Worker changes: `0f6f7e980582abdcd310a0a5278cac6e8a12b74c`, then URL-normalisation correction `846957928412be4021728bb41513b028ecf12786`.
+- CI checks: `.github/workflows/deploy-worker.yml` updated in commit `bb582a952c7f734089c4717f223fa586ee60f0cb`; workflow run 244 was pending at the time of this note. Do not claim production deployment until the run completes successfully.
+- Important limitation: rate limits are per authenticated Supabase user, not a global per-IP firewall. Add Cloudflare edge/IP protections before a high-traffic public launch.
+
