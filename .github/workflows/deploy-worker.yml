@@ -71,6 +71,15 @@ jobs:
             fi
           done
           echo "Homepage delivery and all six module cards verified."
+          auth_status="$(curl --silent --show-error --output /tmp/drvas-auth-check.json --write-out '%{http_code}' \
+            -H 'Content-Type: application/json' \
+            --data '{"action":"admin_status"}' "$WORKER_HEALTH_URL/")"
+          if [ "$auth_status" != "401" ]; then
+            echo "Unauthenticated admin-status request should return HTTP 401, got $auth_status."
+            cat /tmp/drvas-auth-check.json
+            exit 1
+          fi
+          echo "Unauthenticated admin-status request correctly rejected (HTTP 401)."
           printf '%s' "$response" | node -e '
             let raw = "";
             process.stdin.setEncoding("utf8");
