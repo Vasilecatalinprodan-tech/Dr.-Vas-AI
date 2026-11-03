@@ -84,10 +84,16 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .assistant-choice[aria-pressed="true"]{border-color:#58d8cf;background:linear-gradient(135deg,#174b51,#17384a);color:#fff;box-shadow:0 0 0 1px rgba(88,216,207,.15)}
 .assistant-choice small{display:block;font-size:10px;color:#9ab6c4;font-weight:500;margin-top:3px}
 .assistant-avatar{width:40px;height:40px;flex:0 0 40px;border-radius:50%;object-fit:cover;border:1px solid #5a9b9d}
-.assistant-avatar-symbol{display:block;width:54px;height:64px;flex:0 0 54px;border-radius:13px;overflow:hidden;background:#17354b;border:1px solid #5a9b9d;box-shadow:0 4px 12px #07152266}
-.assistant-avatar-symbol svg{display:block;width:100%;height:100%}
+.assistant-avatar-symbol{display:block;width:68px;height:82px;flex:0 0 68px;border-radius:15px;overflow:hidden;background:#17354b;border:1px solid #5a9b9d;box-shadow:0 5px 16px #07152288;transform:translateZ(0)}
+.assistant-avatar-symbol svg{display:block;width:100%;height:100%;animation:avatarIdle 4.8s ease-in-out infinite;transform-origin:50% 80%}
 .assistant-aurora{background:#40304c;border-color:#c2a1bd}
 .assistant-jan{background:#203e4b;border-color:#78c8c4}
+@keyframes avatarIdle{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+body.assistant-speaking .assistant-choice[aria-pressed="true"] .assistant-avatar-symbol svg{animation:avatarTalk .22s ease-in-out infinite alternate}
+@keyframes avatarTalk{from{transform:translateY(0) scale(1)}to{transform:translateY(-1px) scale(1.012)}}
+body.assistant-speaking .assistant-choice[data-assistant="jan"][aria-pressed="true"] .assistant-avatar-symbol svg path[d^="M52 76"],body.assistant-speaking .assistant-choice[data-assistant="aurora"][aria-pressed="true"] .assistant-avatar-symbol svg path[d^="M51 79"]{animation:avatarMouth .18s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}
+@keyframes avatarMouth{from{transform:scaleY(.65)}to{transform:scaleY(1.55)}}
+@media(prefers-reduced-motion:reduce){.assistant-avatar-symbol svg,body.assistant-speaking .assistant-choice[aria-pressed="true"] .assistant-avatar-symbol svg,body.assistant-speaking .assistant-choice[aria-pressed="true"] .assistant-avatar-symbol svg path{animation:none!important}}
 .assistant-help-choice{margin-left:auto;background:#163d48;border-color:#39777b}
 .assistant-intro{font-size:11px;color:#9bb5c3;line-height:1.5;margin:0 0 8px}
 .auto-save-indicator{display:inline-flex;align-items:center;gap:7px;padding:8px 11px;border:1px solid #245b50;border-radius:999px;background:#102e2b;color:#83e0bd;font-size:11px;font-weight:600;white-space:nowrap}
@@ -1182,9 +1188,9 @@ function speakDrVas(text){
  utterance.voice=voice;
  utterance.rate=selectedSpeechRate();
  utterance.pitch=activeAssistant==="aurora"?1.04:activeAssistant==="jan"?0.92:0.96;
- utterance.onstart=()=>refreshVoiceUi("speaking");
- utterance.onend=()=>refreshVoiceUi("ready");
- utterance.onerror=()=>refreshVoiceUi("ready");
+ utterance.onstart=()=>{document.body.classList.add("assistant-speaking");refreshVoiceUi("speaking")};
+ utterance.onend=()=>{document.body.classList.remove("assistant-speaking");refreshVoiceUi("ready")};
+ utterance.onerror=()=>{document.body.classList.remove("assistant-speaking");refreshVoiceUi("ready")};
  window.speechSynthesis.speak(utterance);
  refreshVoiceUi("ready");
 }
@@ -1198,6 +1204,7 @@ function replayLastAnswer(){
 }
 function stopVoiceOutput(){
  if(window.speechSynthesis)window.speechSynthesis.cancel();
+ document.body.classList.remove("assistant-speaking");
  refreshVoiceUi("stopped");
 }
 function toggleVoiceOutput(){
@@ -1291,6 +1298,7 @@ function stopLivePlayback(){
   try{source.disconnect()}catch{}
  }
  liveActiveSources.clear();
+ document.body.classList.remove("assistant-speaking");
  livePlaybackNextTime=0;
 }
 function queueLiveAudio(base64Data){
@@ -1319,8 +1327,10 @@ function queueLiveAudio(base64Data){
   liveActiveSources.add(source);
   source.onended=()=>{
    liveActiveSources.delete(source);
+   if(liveActiveSources.size===0)document.body.classList.remove("assistant-speaking");
    try{source.disconnect()}catch{}
   };
+  document.body.classList.add("assistant-speaking");
  }catch(error){console.warn("Live audio playback:",error);}
 }
 async function sendLiveHistory(){
