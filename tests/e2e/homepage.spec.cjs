@@ -35,7 +35,7 @@ test("saved language keeps the public dashboard visible", async ({ page }) => {
   await expect(page.locator('[data-module]')).toHaveCount(6);
 });
 
-test("restoring a signed-in session does not hide the public dashboard", async ({ page }) => {
+test("showChat keeps the public dashboard visible instead of entering focus mode", async ({ page }) => {
   await openApp(page, "ro");
   await expect(page.locator("#heroSection")).toBeVisible();
 
