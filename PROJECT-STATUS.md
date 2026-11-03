@@ -590,3 +590,11 @@ Founder requested autonomous work while away and added a third assistant named A
 - Production Worker/assets now include the chat navigation fix and removal of the obsolete manual-save path. This verifies deployment and smoke checks; a live human visual test in the founder's own browser is still recommended when available.
 - Added a further browser test batch in commit `17f5764f1a0575681f10d1c83b5f0ff60ebc6130` for signed-out header CTA and non-admin Health/Premium module gating; its workflow was still running at checkpoint.
 - Android APK build for commit `6664fb27cb11a83f402dc6fb751da26134218e16` was still compiling; physical installation/runtime test remains outstanding.
+
+
+### Expanded interaction tests and API mapping — 2026-11-03
+
+- Additional Playwright run `41699194261` passed for commit `17f5764f1a0575681f10d1c83b5f0ff60ebc6130`. It covers signed-out header CTA routing and the free Health / gated Premium module behavior for a non-admin account.
+- Static cross-layer audit found seven frontend Worker action names; all seven have matching Worker action handlers. Worker also contains the five private-profile/privacy actions used through the shared request helper.
+- All nine frontend requests to the Worker use JSON content type. Frontend Supabase table references are `profiles`, `chat_messages`, `drvas_conversation_metadata`, `drvas_studio_projects`, and `drvas_income_opportunities`; the repository includes the four newer feature migrations for conversation metadata, Studio, income/provenance, plus the privacy/rate-limit/device migrations. Existing base profile/chat tables predate these recent migrations.
+- The APK Gradle build step completed successfully for commit `6664fb27cb11a83f402dc6fb751da26134218e16`; artifact upload was still in progress at checkpoint. This remains a build result, not physical-device validation.
