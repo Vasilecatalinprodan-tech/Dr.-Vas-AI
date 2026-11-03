@@ -63,6 +63,14 @@ jobs:
             echo "Worker health endpoint did not respond successfully."
             exit 1
           fi
+          homepage="$(curl --fail --silent --show-error "$WORKER_HEALTH_URL/")"
+          for marker in "Dr.Vas AI" 'data-module="free"' 'data-module="health"' 'data-module="studio"' 'data-module="academy"' 'data-module="commerce"' 'data-module="business"'; do
+            if ! printf '%s' "$homepage" | grep -Fq "$marker"; then
+              echo "Homepage is missing expected content: $marker"
+              exit 1
+            fi
+          done
+          echo "Homepage delivery and all six module cards verified."
           printf '%s' "$response" | node -e '
             let raw = "";
             process.stdin.setEncoding("utf8");
