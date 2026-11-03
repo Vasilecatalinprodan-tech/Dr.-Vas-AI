@@ -91,3 +91,12 @@ Do not ask the user to delete real conversation history. Do not ask them to shar
 ## Previous work retained
 
 The preceding project checkpoint and project status documents contain the full product direction, six-module architecture, Supabase authentication and chat, Cloudflare Worker integration, encrypted optional private profile and consent implementation, and known legal/security limitations. In particular, the optional profile consent mechanism is not a substitute for a reviewed privacy notice, retention policy, deletion/export/access controls, security review, and legal/privacy review before commercial launch.
+
+
+## Additional refinements after the initial log entry
+
+- Fixed the history-title grouping so it continues scanning a conversation's recent messages until it finds the newest user message; this avoids leaving the title blank when the newest database row is an assistant reply. Commit: `6ce0e04827ca815ab9c76326d2d1929209296b61`.
+- Added accessible chat semantics: the conversation container is now a polite live log for screen readers, and the message input has an explicit accessible label. Commit: `154646d223c04ecf367ab942819a06321286b2dc`.
+- The typing-indicator Worker deployment and APK build for commit `3343e98ae777a5bb18bcbece074b06ad084e6bdf` both completed successfully.
+- Worker deployment for history-title correction commit `6ce0e04827ca815ab9c76326d2d1929209296b61` completed successfully. Its APK build was still running at the last check.
+- The newest accessibility commit `154646d223c04ecf367ab942819a06321286b2dc` has queued its Worker deployment and APK build; verify both final results.
