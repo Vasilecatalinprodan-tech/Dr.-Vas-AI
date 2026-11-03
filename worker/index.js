@@ -605,7 +605,7 @@ export default {
             select: "role,content,created_at",
             user_id: `eq.${user.id}`,
             conversation_id: `eq.${conversationId}`,
-            order: "created_at.asc",
+            order: "created_at.desc",
             limit: "30"
           });
 
@@ -613,6 +613,8 @@ export default {
             "chat_messages",
             `?${params.toString()}`
           );
+          // Fetch the newest 30 messages, then restore chronological order for the model.
+          history.reverse();
         }
 
         return history;
