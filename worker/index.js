@@ -115,7 +115,7 @@ function bytesToHex(bytes) {
 }
 
 function founderSignatureMessage(digest, signedAt, publicKeyId, sourceCommitSha) {
-  return new TextEncoder().encode([digest, signedAt, publicKeyId, sourceCommitSha || ""].join("\\n"));
+  return new TextEncoder().encode([digest, signedAt, publicKeyId, sourceCommitSha || ""].join("\n"));
 }
 
 async function getFounderEncryptionKey(env) {
@@ -589,7 +589,7 @@ export default {
           limit: "1"
         });
         const response = await fetch(
-          `${env.SUPABASE_URL.replace(/\\/+$/, "")}/rest/v1/drvas_founder_provenance?${params.toString()}`,
+          `${env.SUPABASE_URL.replace(/\/+$/, "")}/rest/v1/drvas_founder_provenance?${params.toString()}`,
           { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${env.SUPABASE_KEY}` } }
         );
         if (!response.ok) return json({ error: "Registrul de proveniență nu este disponibil.", setup_required: true }, 503);
@@ -686,7 +686,7 @@ export default {
           if (!signatureValid) throw new Error("FOUNDER_SIGNING_KEY_PAIR_MISMATCH");
 
           const insertResponse = await fetch(
-            `${env.SUPABASE_URL.replace(/\\/+$/, "")}/rest/v1/drvas_founder_provenance`,
+            `${env.SUPABASE_URL.replace(/\/+$/, "")}/rest/v1/drvas_founder_provenance`,
             {
               method: "POST",
               headers: {
