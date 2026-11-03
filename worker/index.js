@@ -876,8 +876,8 @@ export default {
         return json({ error: "Te rog să scrii un mesaj." }, 400);
       }
 
-      if (message.length > 12000) {
-        return json({ error: "Mesajul depășește limita de 12.000 de caractere." }, 413);
+      if (message.length > 100000) {
+        return json({ error: "Mesajul depășește limita tehnică de 100.000 de caractere. Împarte documentul în secțiuni mai mici." }, 413);
       }
 
       const allowedModules = new Set([
@@ -1502,7 +1502,7 @@ Always follow these instructions.
 
       async function askModel(model) {
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 20000);
+        const timeout = setTimeout(() => controller.abort(), 60000);
 
         try {
           const response = await fetch(
