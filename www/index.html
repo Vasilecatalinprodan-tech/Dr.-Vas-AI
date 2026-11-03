@@ -81,6 +81,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .voice-toolbar button{padding:10px 13px;font-size:12px;background:#12384a;color:#c8f8f1;border:1px solid #326477}
 .voice-toolbar button.active{background:#176b68;border-color:#59d8ce;color:#fff}
 .voice-toolbar button:disabled{opacity:.45}
+.voice-toolbar select{max-width:190px;padding:9px 10px;background:#071827;color:#d9f4f0;border:1px solid #34536a;border-radius:9px;font-size:11px}
 #voiceStatus{font-size:11px;color:#89a9b9;line-height:1.5}
 .voice-privacy{font-size:10px;color:#71899b;line-height:1.5;margin-top:7px}
 .note{text-align:center;color:#71899b;font-size:11px;margin-top:15px}
@@ -435,6 +436,8 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
      <button type="button" id="voiceAutoButton" onclick="toggleVoiceOutput()">🔊 Activează vocea</button>
      <button type="button" id="voiceReplayButton" onclick="replayLastAnswer()" disabled>↻ Reascultă</button>
      <button type="button" id="voiceStopButton" onclick="stopVoiceOutput()" disabled>■ Oprește</button>
+     <label for="speechVoiceSelect" class="voice-privacy">Voce:</label><select id="speechVoiceSelect" aria-label="Alege vocea Dr.Vas" onchange="saveSpeechVoiceChoice()"><option value="">Automat</option></select>
+     <label for="speechRateSelect" class="voice-privacy">Ritm:</label><select id="speechRateSelect" aria-label="Ritmul vocii"><option value="0.86">Calm</option><option value="0.92" selected>Natural</option><option value="1">Rapid</option><option value="1.08">Foarte rapid</option></select>
      <span id="voiceStatus" role="status" aria-live="polite">Vocea este oprită.</span>
     </div>
     <p class="voice-privacy">Microfonul se activează numai după apăsare. În modul Live, sunetul este transmis către Gemini pentru răspuns în timp real și poate consuma utilizare API; în modul dictare, recunoașterea poate fi procesată de browser. Dr.Vas nu păstrează înregistrări audio; transcrierile text se salvează în istoricul conversației.</p>
@@ -754,12 +757,36 @@ function refreshVoiceUi(statusKey){
 function speechLanguage(){
  return ({ro:"ro-RO",en:"en-GB",it:"it-IT",tr:"tr-TR",de:"de-DE",fr:"fr-FR",es:"es-ES",ru:"ru-RU"})[currentLanguage]||"ro-RO";
 }
+function speechVoiceStorageKey(){return "drvas_speech_voice_"+currentLanguage;}
+function refreshSpeechVoiceOptions(){
+ const select=el("speechVoiceSelect");
+ if(!select||!window.speechSynthesis)return;
+ const language=speechLanguage().slice(0,2).toLowerCase();
+ const voices=(window.speechSynthesis.getVoices()||[]).filter(v=>v.lang&&v.lang.toLowerCase().startsWith(language));
+ const preferredNames=/natural|neural|enhanced|premium|online|andrei|radu|david|daniel|george|james|guy|ryan|alex|thomas|mark|male/i;
+ voices.sort((a,b)=>Number(preferredNames.test(b.name))-Number(preferredNames.test(a.name))||a.name.localeCompare(b.name));
+ const saved=localStorage.getItem(speechVoiceStorageKey())||"";
+ select.replaceChildren(new Option("Automat — recomandată",""));
+ for(const voice of voices)select.add(new Option(voice.name+" ("+voice.lang+")",voice.voiceURI));
+ select.value=voices.some(v=>v.voiceURI===saved)?saved:"";
+ if(saved&&!select.value)localStorage.removeItem(speechVoiceStorageKey());
+}
+function saveSpeechVoiceChoice(){
+ const select=el("speechVoiceSelect");
+ if(!select)return;
+ if(select.value)localStorage.setItem(speechVoiceStorageKey(),select.value);
+ else localStorage.removeItem(speechVoiceStorageKey());
+ if(voiceAutoRead&&lastSpokenAnswer)speakDrVas(lastSpokenAnswer);
+}
+function selectedSpeechRate(){const rate=Number(el("speechRateSelect")?.value||0.92);return Number.isFinite(rate)?Math.min(1.2,Math.max(0.75,rate)):0.92;}
 function chooseSpeechVoice(lang){
  if(!window.speechSynthesis)return null;
  const voices=window.speechSynthesis.getVoices()||[];
  const language=lang.slice(0,2).toLowerCase();
  const matching=voices.filter(v=>v.lang&&v.lang.toLowerCase().startsWith(language));
  if(!matching.length)return null;
+ const selected=el("speechVoiceSelect")?.value;
+ if(selected){const chosen=matching.find(v=>v.voiceURI===selected);if(chosen)return chosen;}
  const preferredNames=/natural|neural|enhanced|premium|online|andrei|radu|david|daniel|george|james|guy|ryan|alex|thomas|mark/i;
  return matching.find(v=>preferredNames.test(v.name))||matching[0];
 }
@@ -797,8 +824,8 @@ function speakDrVas(text){
  const utterance=new SpeechSynthesisUtterance(spokenText);
  utterance.lang=lang;
  utterance.voice=voice;
- utterance.rate=0.91;
- utterance.pitch=0.93;
+ utterance.rate=selectedSpeechRate();
+ utterance.pitch=0.96;
  utterance.onstart=()=>refreshVoiceUi("speaking");
  utterance.onend=()=>refreshVoiceUi("ready");
  utterance.onerror=()=>refreshVoiceUi("ready");
@@ -881,7 +908,8 @@ function toggleVoiceInput(){
  catch(error){voiceListening=false;refreshVoiceUi("unsupported");}
 }
 if(window.speechSynthesis){
- window.speechSynthesis.onvoiceschanged=()=>refreshVoiceUi();
+ window.speechSynthesis.onvoiceschanged=()=>{refreshSpeechVoiceOptions();refreshVoiceUi();};
+ refreshSpeechVoiceOptions();
 }
 
 function encodePcmBase64(int16Samples){
