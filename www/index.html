@@ -702,8 +702,8 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
     <p id="cryptoDevicesNotice" class="admin-footnote" role="status">Se verifică registrul securizat…</p>
     <div class="admin-table-wrap">
      <table class="admin-log-table crypto-device-table">
-      <thead><tr><th>Echipament</th><th>Platformă</th><th>Stare</th><th>Înregistrat</th><th>Aprobat</th><th>Ultima activitate</th></tr></thead>
-      <tbody id="cryptoDevicesBody"><tr><td colspan="6">Se încarcă…</td></tr></tbody>
+      <thead><tr><th>Echipament</th><th>Platformă</th><th>Stare</th><th>Înregistrat</th><th>Aprobat</th><th>Ultima activitate</th><th>Control</th></tr></thead>
+      <tbody id="cryptoDevicesBody"><tr><td colspan="7">Se încarcă…</td></tr></tbody>
      </table>
     </div>
     <p class="admin-footnote">Nu se colectează chei private, seed phrases sau parole. Următorul pas va fi înscrierea cu cheie criptografică a dispozitivului și aprobare explicită.</p>
@@ -2258,7 +2258,7 @@ async function loadCryptoDevices(){
     const devices=Array.isArray(result.devices)?result.devices:[];
     if(!devices.length){
       const row=document.createElement("tr"),cell=document.createElement("td");
-      cell.colSpan=6;cell.textContent="Nu există încă dispozitive înscrise. Niciun echipament nu are acces la resursele Crypto.";
+      cell.colSpan=7;cell.textContent="Nu există încă dispozitive înscrise. Niciun echipament nu are acces la resursele Crypto.";
       row.appendChild(cell);tbody.appendChild(row);
     }else{
       for(const device of devices){
@@ -2277,12 +2277,57 @@ async function loadCryptoDevices(){
           if(index===2)cell.className=device.status==="authorized"?"log-ok":device.status==="revoked"?"log-error":"";
           row.appendChild(cell);
         });
+        const actionCell=document.createElement("td");
+        if(device.status==="pending" || device.status==="revoked"){
+          const approve=document.createElement("button");
+          approve.type="button";approve.textContent=device.status==="revoked"?"Reautorizează":"Autorizează";
+          approve.className="admin-action-button";
+          approve.addEventListener("click",()=>updateCryptoDeviceStatus(device.id,"authorized"));
+          actionCell.appendChild(approve);
+        }
+        if(device.status==="authorized"){
+          const revoke=document.createElement("button");
+          revoke.type="button";revoke.textContent="Revocă";
+          revoke.className="admin-action-button";
+          revoke.addEventListener("click",()=>updateCryptoDeviceStatus(device.id,"revoked"));
+          actionCell.appendChild(revoke);
+        }
+        if(!actionCell.childElementCount)actionCell.textContent="—";
+        row.appendChild(actionCell);
         tbody.appendChild(row);
       }
     }
     notice.textContent="Registru actualizat: "+devices.length+" dispozitive · "+new Date(result.generated_at).toLocaleString(currentLanguage||"ro")+".";
   }catch(error){
     notice.textContent=error.message;
+  }
+}
+
+async function updateCryptoDeviceStatus(deviceId,status){
+  if(!isDrvasAdmin || !deviceId || !["authorized","revoked"].includes(status))return;
+  const action=status==="authorized"?"autorizezi":"revoci";
+  if(!window.confirm("Confirmi că dorești să "+action+" acest dispozitiv Crypto?"))return;
+  const notice=el("cryptoDevicesNotice");
+  try{
+    const {data,error}=await supabaseClient.auth.getSession();
+    if(error||!data.session)throw new Error("Sesiunea a expirat. Conectează-te din nou.");
+    const response=await fetch(API_URL,{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        action:"crypto_device_update",
+        device_id:deviceId,
+        status,
+        access_token:data.session.access_token
+      })
+    });
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(result.error||"Nu am putut modifica accesul dispozitivului.");
+    notice.textContent=status==="authorized"
+      ?"Dispozitiv autorizat. Acest pas nu pornește automat mining sau tranzacții."
+      :"Accesul dispozitivului a fost revocat.";
+    await loadCryptoDevices();
+  }catch(error){
+    if(notice)notice.textContent=error.message||"Eroare la actualizarea dispozitivului.";
   }
 }
 
