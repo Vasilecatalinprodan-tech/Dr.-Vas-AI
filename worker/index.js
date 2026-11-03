@@ -22,6 +22,7 @@ function cleanProfileAddress(value) {
     throw new Error("Adresa trebuie completată în câmpurile formularului.");
   }
   const allowed = ["line1", "line2", "city", "region", "postcode", "country"];
+  if (Object.keys(value).some(key => !allowed.includes(key))) throw new Error("Adresa conține un câmp neacceptat.");
   const result = {};
   for (const key of allowed) result[key] = cleanProfileText(value[key], key === "line1" || key === "line2" ? 160 : 100);
   return result;
@@ -41,7 +42,8 @@ function normalizePrivateProfile(input) {
       profile[key] = cleanProfileAddress(input[key]);
     } else if (key === "date_of_birth") {
       const value = cleanProfileText(input[key], 10);
-      if (value && (!/^\d{4}-\d{2}-\d{2}$/.test(value) || Number.isNaN(Date.parse(value)) || new Date(value) > new Date())) {
+      const parsedDate = value && /^\d{4}-\d{2}-\d{2}$/.test(value) ? new Date(`${value}T00:00:00.000Z`) : null;
+      if (value && (!parsedDate || Number.isNaN(parsedDate.getTime()) || parsedDate.toISOString().slice(0, 10) !== value || value > new Date().toISOString().slice(0, 10))) {
         throw new Error("Data nașterii trebuie să fie o dată validă, în format AAAA-LL-ZZ.");
       }
       profile[key] = value;
@@ -213,6 +215,9 @@ export default {
         try {
           if (body.action === "private_profile_save") {
             const profile = normalizePrivateProfile(body.profile);
+            if (new TextEncoder().encode(JSON.stringify(profile)).length > 12000) {
+              return json({ error: "Profilul depășește limita permisă." }, 413);
+            }
             const encrypted_payload = await encryptPrivateProfile(env, profileUser.id, profile);
             await privateProfileRequest(env, profileUser.id, "POST", {
               encrypted_payload,
