@@ -905,6 +905,46 @@ function scrollToLatestMessage(target){
   });
 }
 let activeModule = "free";
+
+function selectModule(moduleName,userInitiated=false){
+  const modules={
+    free:{icon:"✦",name:"Dr.Vas Free — Asistent general",description:"Modulul general este selectat. Poți începe conversația."},
+    health:{icon:"✚",name:"Dr.Vas Health — Informații generale",description:"Informații despre sănătate, explicații și pregătirea consultațiilor. Nu înlocuiește medicul."},
+    studio:{icon:"🎬",name:"Dr.Vas Studio — Atelier creativ",description:"Cărți, traduceri, muzică originală, scenarii și materiale digitale."},
+    academy:{icon:"🎓",name:"Dr.Vas Academy",description:"Educație antreprenorială și dezvoltarea competențelor — în pregătire."},
+    commerce:{icon:"🛒",name:"Dr.Vas Commerce",description:"Comerț electronic, produse și dropshipping — în pregătire."},
+    business:{icon:"📊",name:"Dr.Vas Business",description:"Planificare, management și analiză de afaceri — în pregătire."}
+  };
+  if(!Object.prototype.hasOwnProperty.call(modules,moduleName))return;
+  const premium=["studio","academy","commerce","business"].includes(moduleName);
+  if(premium&&!isDrvasAdmin){
+    const notice=tr("Acest modul Premium necesită un abonament activ. Administratorul poate testa modulele în modul de administrare.");
+    el("moduleAccessMessage").textContent=notice;
+    return;
+  }
+  activeModule=moduleName;
+  document.querySelectorAll(".module-card").forEach(card=>{
+    const selected=card.dataset.module===moduleName;
+    card.classList.toggle("selected",selected);
+    card.setAttribute("aria-pressed",String(selected));
+  });
+  const config=modules[moduleName];
+  el("activeModuleIcon").textContent=config.icon;
+  setLocalizedText(el("activeModuleName"),config.name);
+  setLocalizedText(el("activeModuleDescription"),config.description);
+  const workspace=el("studioWorkspace");
+  if(workspace)workspace.classList.toggle("hidden",moduleName!=="studio"||!isDrvasAdmin);
+  const message=el("moduleAccessMessage");
+  if(moduleName==="studio"&&isDrvasAdmin){
+    message.textContent=tr("Previzualizare administrator. Accesul Premium pentru public va fi activat numai după implementarea și verificarea abonamentelor.");
+  }else if(moduleName==="health"){
+    message.textContent=tr("Dr.Vas Health oferă informații generale și nu înlocuiește consultația medicală.");
+  }else{
+    message.textContent="";
+  }
+  if(userInitiated&&currentUser)logClientEvent("module_selected",moduleName);
+}
+
 let voiceRecognition = null;
 let voiceListening = false;
 let voiceErrorKey = "";
