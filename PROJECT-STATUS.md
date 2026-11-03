@@ -292,3 +292,40 @@ Official current Gemini Live API documentation:
 - Commerce provides ethical e-commerce and dropshipping analysis, supplier due diligence and realistic unit economics; unauthorised spending and deceptive tactics are prohibited.
 - Business provides structured planning, management and financial modelling, with professional boundaries and explicit approval required for external actions.
 - Production Worker deployment run `41655022585` succeeded on commit `c38cec2b0b21d481653c559b7b0c1a011a995b85`; syntax validation and smoke tests passed.
+
+## Product experience and administrator privacy checkpoint — 2026-11-03
+
+Founder clarified the next product direction and supplied a portrait to use as the visual reference for the Dr.Vas assistant avatar.
+
+### Two assistant experiences
+- Dr.Vas: primary assistant, visually based on the founder-supplied portrait. The image is a visual reference for an AI avatar; do not imply the assistant is the founder or a real human.
+- Dr.Jan: a separate, original virtual guide avatar and assistant identity. Its purpose is to explain the platform and tasks step by step, including voice guidance where supported.
+- Both assistants should support typed interaction and voice interaction, with clear microphone/listening/speaking states, text fallback, and user control.
+- Dr.Jan should offer contextual guidance: explain what a screen or feature does, tell the user the next step, and help recover from errors. Do not claim visual screen-reading or automatic clicking unless actually implemented.
+- The founder wants a polished, professional experience in BOTH client and administrator accounts, not merely a basic chat screen.
+- Client dashboard should be clean and approachable, with the six customer-facing modules and clear help access.
+- Administrator dashboard should be a separate, richer control centre for operations, users, audit, project/content workflows and security.
+- Design concepts were generated during this conversation as visual direction only. They are not implemented UI and must not be described as live product features.
+
+### Strict administrator-only areas
+- Dr.Vas Crypto must be hidden from all client-facing navigation and screens. It is administrator-only. Even for administrators it remains subject to explicit device/account registration and approval; registry visibility does not authorize mining, trading, transfers or withdrawals.
+- Founder Provenance and private founder proof-management controls are administrator-only; cryptographic private keys and payloads remain in Cloudflare secrets/server-side storage.
+- Administrator Centre, operational audit, user administration, platform settings and internal diagnostics are administrator-only.
+- Social publishing administration, connected account controls, approval queue, scheduling and publication logs are administrator-only. Clients must not see or control founder-owned social accounts.
+- Secrets, provider configuration and technical controls are never exposed in the client UI or browser code.
+- The server-side ADMIN_EMAILS allowlist remains the authority. Client-side hiding is only presentation; every privileged Worker action must independently authenticate the Supabase session and verify the administrator allowlist.
+- Premium modules are NOT administrator-only by design: Studio, Academy, Commerce and Business are intended for paying clients after subscription entitlement checks and payment integration are implemented. Until then, the existing admin-only pilot gate remains in place.
+
+### Current implementation facts and next work
+- Existing six modules and verified admin dashboard remain the foundation. The Worker has server-side admin_status; Crypto device listing independently checks the allowlist.
+- A prior generated dashboard mock-up is concept art only. It visibly contains a Crypto label marked administrator-only; the production client interface must instead omit Crypto entirely, not merely show a lock or admin-only tile.
+- Next implementation order:
+  1. Audit all client-facing HTML and navigation to ensure Crypto and all internal tools are absent for non-admin users; render the Crypto controls only inside the verified admin dashboard.
+  2. Audit every privileged Worker action, not just frontend visibility, for independent server-side admin authorization.
+  3. Build a professional responsive client dashboard and separate admin control centre while preserving the current brand, Romanian flag, founder story, six modules, Supabase authentication, Worker connection and conversation history.
+  4. Add Dr.Vas and Dr.Jan assistant cards/avatars and a contextual Asistență / Ghid pas cu pas entry point.
+  5. Implement Dr.Jan guided walkthroughs with clear next-step instructions, contextual help and voice support; never claim it can see or operate the screen until that capability is truly implemented.
+  6. Integrate the supplied founder portrait as Dr.Vas's visual reference and create a distinct original Dr.Jan avatar. Store generated assets in the repository only after they are actually available and verified.
+  7. Test signed-in administrator and normal-client accounts separately on desktop and mobile.
+- Do not install or distribute the APK yet; the founder explicitly deferred phone installation while web work continues.
+- The founder asked to save this checkpoint and continue from this state without restarting the project.
