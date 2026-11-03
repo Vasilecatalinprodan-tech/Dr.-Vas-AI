@@ -1430,6 +1430,8 @@ async function privateProfileRequest(action, extra={}){
 async function loadPrivateProfile(user){
   if(!user)return;
   try{
+    const consentResult=await privateProfileRequest("privacy_consent_get");
+    el("privateProfileConsent").checked=consentResult.granted===true;
     const result=await privateProfileRequest("private_profile_get");
     const p=result.profile||{};
     el("privateLegalName").value=p.legal_name||"";
