@@ -262,3 +262,16 @@ Important limitations and next QA:
 - Current production Worker includes the API/static-asset security headers, bounded JSON request parsing, server-enforced optional-profile consent, corrected frontend JSON chat content type and Supabase atomic rate-limit calls.
 - The founder still needs to apply migration `202611030001_rate_limits.sql` once in Supabase before authenticated AI and Live routes can pass the fail-closed rate-limit check.
 
+
+
+## 14. Chat navigation bug and full interaction audit — 2026-11-03
+
+- The founder reported a blue/blank page after clicking the header CTA **VORBEȘTE CU DR.VAS**, recoverable only with F5.
+- Root cause in the front end was the focus-mode CSS/JS combination, which hid all main-page siblings and constrained the app to a fixed-height, overflow-hidden viewport. This approach was brittle and could produce a blank-looking view.
+- Updated `enterChatFocus()`: it now preserves the public dashboard and all six module cards, unhides the chat, and smoothly scrolls to it. If signed out, it scrolls to the sign-in panel. `exitChatFocus()` clears any old focus classes, hides chat, and returns to the top.
+- Added Playwright E2E regression coverage for the header chat action and the preserved dashboard.
+- Static UI audit found 50 button elements and all 50 have click handlers. All 36 distinct inline click/change handler names resolve to declared functions; no duplicate IDs were found. The scan found one dead function referencing the already-removed `saveConversationButton`; obsolete manual-save code was removed because chat messages are auto-saved in `send()`.
+- Latest code commit at checkpoint: `6664fb27cb11a83f402dc6fb751da26134218e16`. Browser E2E, Worker deployment and APK workflow for this exact commit were queued/pending when this note was written. Verify their final results before claiming completion.
+- The assistant cannot independently continue executing new repository edits while the conversation is idle. GitHub Actions workflows continue running automatically. This handoff and session log preserve the work and next actions for resumption from phone or laptop.
+- Important blocker unchanged: founder must apply `supabase/migrations/202611030001_rate_limits.sql` in Supabase before authenticated AI chat and Gemini Live endpoints can pass fail-closed rate limiting. Do not request secrets or have them pasted into chat.
+- Next actions: verify latest workflow runs and deployment; rerun static element-reference audit after cleanup; check the entire UI/backend interaction surface; test authenticated chat after migration; verify Studio create/save/reopen/export/delete and income tracker flows; then continue the Studio rendering/approval pipeline. Physical Android install remains unverified.
