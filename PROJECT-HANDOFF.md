@@ -206,3 +206,17 @@ Important limitations and next QA:
 ### Gemini Live error diagnostics — 2026-11-02
 - Fixed the Live UI lifecycle so WebSocket/server failures are no longer overwritten by the generic “voice playback stopped” status.
 - The client now surfaces structured Gemini server errors and WebSocket close code/reason when setup fails, allowing the next test to identify the actual connection problem.
+
+## 15. Security hardening continuation — 2026-11-03
+
+- Direct repository work resumed on `drvas-integrated-platform`; no manual user-side checks were requested.
+- Replaced wildcard CORS in `worker/index.js` with an allowlist for the production Worker origin, HTTPS GitHub Codespaces previews, localhost development, and the Capacitor WebView origin. The response now varies by Origin and preserves the original Capacitor origin string.
+- Security commits:
+  - `4a19665e3c3985843ab8d17b3de08f8f44bb3458` — initial CORS allowlist.
+  - `916d36d90bcc80d81d0ec74f231a518899664710` — preserve Capacitor origin in CORS responses.
+  - `4c0834bf9fa2928c90eba73aa16bc2487dd8979a` — update project status documentation.
+- CORS is not authentication and does not prevent non-browser clients from calling the Worker. Supabase JWT verification and server-side admin authorization remain mandatory.
+- Production deployment/runtime status for the latest Worker commit has not been independently confirmed. Do not tell the founder it is live until the deployment workflow and runtime are confirmed.
+- Next: review and implement abuse/rate controls for AI and Live token issuance; complete a privacy/data-retention review; confirm the private-profile encryption key and founder cryptographic key configuration by presence/format only, never by exposing values; then continue authenticated end-to-end testing.
+- Preserve the existing rule: do not enable Health Live voice or public social publishing before the relevant privacy, consent, platform approval and compliance gates are satisfied.
+
