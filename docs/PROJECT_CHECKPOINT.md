@@ -312,3 +312,6 @@ A detailed session log was added at `docs/SESSION_LOG_2026-11-03.md`. It records
 - Reopening a saved project restores its stored latest assistant output for later export.
 - Latest Studio output is now tracked only when a new assistant response is received while Dr.Vas Studio is the active module. This prevents an unrelated old chat answer from being attached to a new project.
 - Refinement commit: `49f65f41ec6e45de4e9e9189133bd3e8830ade5f`.
+
+
+- Added user-requested project deletion with explicit confirmation. Deletion is constrained by both the selected project ID and authenticated user ID, and is protected by the table's RLS DELETE policy. Commit: `8b415af5036326fb87a360d9aae21cd0a0f7c444`.
