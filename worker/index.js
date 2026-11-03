@@ -1049,7 +1049,7 @@ MEDIA TRANSPARENCY:
 
 COMMUNICATION:
 Be imaginative, commercially aware, organised and direct. Ask only for essential missing details. When the user says "surprise me" or gives broad creative freedom, make sensible creative decisions and start producing.
-`
+` : "";
 
       // IDENTITATEA OFICIALĂ DR.VAS AI
       const systemInstruction = `
