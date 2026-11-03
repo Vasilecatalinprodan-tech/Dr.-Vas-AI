@@ -27,7 +27,7 @@ async function writeAdminAuditLog(env, event) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const headers = {
       "Content-Type": "application/json; charset=utf-8",
       "Access-Control-Allow-Origin": "*",
@@ -980,7 +980,7 @@ Așa că, dacă mă întrebi care este povestea mea, ți-aș spune că este pove
       }
 
       const requestDuration = Math.round(performance.now() - requestStartedAt);
-      await writeAdminAuditLog(env, {
+      const successAudit = writeAdminAuditLog(env, {
         user_id: user.id,
         event_type: "ai_request",
         module: moduleName,
@@ -988,6 +988,9 @@ Așa că, dacă mă întrebi care este povestea mea, ți-aș spune că este pove
         model: usedModel,
         duration_ms: requestDuration
       });
+      // Auditul operațional nu trebuie să țină utilizatorul în așteptare după răspunsul AI.
+      if (ctx?.waitUntil) ctx.waitUntil(successAudit);
+      else await successAudit;
       console.info("Dr.Vas timing", {
         phase: "request_total",
         milliseconds: requestDuration,
@@ -1004,7 +1007,7 @@ Așa că, dacă mă întrebi care este povestea mea, ți-aș spune că este pove
     } catch (error) {
       const timedOut = error.name === "AbortError";
       if (auditContext?.userId) {
-        await writeAdminAuditLog(env, {
+        const errorAudit = writeAdminAuditLog(env, {
           user_id: auditContext.userId,
           event_type: "ai_request_error",
           module: auditContext.module || "unknown",
@@ -1012,6 +1015,8 @@ Așa că, dacă mă întrebi care este povestea mea, ți-aș spune că este pove
           duration_ms: Math.round(performance.now() - requestStartedAt),
           error_code: timedOut ? "timeout" : (error.status ? `upstream_${error.status}` : "internal_error")
         });
+        if (ctx?.waitUntil) ctx.waitUntil(errorAudit);
+        else await errorAudit;
       }
 
       console.error("Dr.Vas request error:", error.message);
