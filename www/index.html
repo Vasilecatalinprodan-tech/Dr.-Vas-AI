@@ -300,6 +300,26 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
        <option>TikTok</option><option>Instagram Reels</option><option>YouTube Shorts</option><option>YouTube</option><option>Facebook</option><option>Toate platformele</option>
       </select>
      </label>
+     <label>Stil și atmosferă
+      <select id="studioTone">
+       <option value="cinematic realist">Cinematic realist</option><option value="dramă emoțională">Dramă emoțională</option><option value="comedie naturală">Comedie naturală</option><option value="documentar">Documentar</option><option value="publicitar premium">Publicitar premium</option><option value="educativ clar">Educativ și clar</option><option value="dinamic viral">Dinamic, social-first</option>
+      </select>
+     </label>
+     <label>Public-țintă
+      <select id="studioAudience">
+       <option value="public general">Public general</option><option value="adulți 18+">Adulți 18+</option><option value="tineri adulți">Tineri adulți</option><option value="antreprenori și proprietari de afaceri">Antreprenori și proprietari de afaceri</option><option value="clienți locali">Clienți locali</option><option value="public educațional">Public educațional</option>
+      </select>
+     </label>
+     <label>Durata estimată
+      <select id="studioDuration">
+       <option value="30-60 secunde">30–60 secunde</option><option value="60-90 secunde">60–90 secunde</option><option value="3-5 minute">3–5 minute</option><option value="8-12 minute">8–12 minute</option><option value="20-30 minute">20–30 minute</option><option value="episod 30-45 minute">Episod 30–45 minute</option>
+      </select>
+     </label>
+     <label>Format imagine
+      <select id="studioAspect">
+       <option value="vertical 9:16">Vertical 9:16</option><option value="orizontal 16:9">Orizontal 16:9</option><option value="pătrat 1:1">Pătrat 1:1</option><option value="adaptabil multi-platformă">Adaptabil pentru mai multe platforme</option>
+      </select>
+     </label>
      <label class="studio-idea-label">Ideea ta
       <textarea id="studioIdea" rows="4" maxlength="5000" placeholder="Descrie ideea, personajele, produsul sau mesajul. Păstrează aici detaliile importante."></textarea>
      </label>
@@ -1305,7 +1325,7 @@ function buildStudioPrompt(){
    ad:"Creează o campanie video originală pentru produsul/serviciul descris: public-țintă, promisiune verificabilă, concept, scenariu, cadre, voice-over, text pe ecran, CTA și variante scurte.",
    storyboard:"Transformă ideea într-un storyboard tabelar, cadru cu cadru: durată, imagine/acțiune, mișcarea camerei, dialog/voice-over, sunet, lumină și instrucțiuni de montaj."
   };
-  const prompt="PROIECT DR.VAS STUDIO\nFORMAT: "+deliverables[el("studioDeliverable").value]+"\nPLATFORMĂ: "+el("studioPlatform").value+"\nIDEA CLIENTULUI (păstrează intenția și detaliile):\n"+idea+"\n\nLivrează materialul concret, original și gata de folosit. Separă clar scenariul de recomandările de producție. Nu pretinde că ai randat un fișier video.";
+  const prompt="PROIECT DR.VAS STUDIO — BRIEF DE PRODUCȚIE\nFORMAT: "+deliverables[el("studioDeliverable").value]+"\nPLATFORMĂ: "+el("studioPlatform").value+"\nSTIL: "+el("studioTone").value+"\nPUBLIC-ȚINTĂ: "+el("studioAudience").value+"\nDURATĂ: "+el("studioDuration").value+"\nFORMAT CADRU: "+el("studioAspect").value+"\nIDEA CLIENTULUI (păstrează intenția și toate detaliile):\n"+idea+"\n\nCERINȚE DE LIVRARE:\n1. Începe cu un rezumat creativ și obiectivul materialului.\n2. Livrează scenariul complet, cu scene numerotate, acțiune, dialog și voice-over unde este cazul.\n3. Pentru fiecare scenă precizează durata, tipul cadrului, mișcarea camerei, lumină, sunet și tranziția.\n4. Include textul exact afișat pe ecran și subtitrările propuse.\n5. Adaugă instrucțiuni de montaj, ritm, muzică/licențiere și active necesare.\n6. Încheie cu titlu, descriere, apel la acțiune și hashtaguri adaptate platformei.\n7. Semnalează afirmațiile comerciale care trebuie verificate și nu inventa rezultate, testimoniale sau certificări.\nPăstrează ideea originală a clientului, separă scenariul de notele tehnice și nu pretinde că ai randat ori publicat un fișier video.";
   el("question").value=prompt;
   el("question").focus();
   el("moduleAccessMessage").textContent="Cererea Studio este pregătită. Verific-o în caseta de mesaj și apasă Trimite.";
