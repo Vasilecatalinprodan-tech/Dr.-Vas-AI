@@ -246,3 +246,12 @@ Important limitations and next QA:
 - Production smoke test confirmed health status, all six module cards and unauthenticated admin-status rejection (401).
 - The new SQL rate-limit migration is still a prerequisite for authenticated AI chat and Live token issuance. Apply `supabase/migrations/202611030001_rate_limits.sql` in Supabase before testing those routes. The smoke test did not exercise authenticated AI requests.
 
+### Frontend compatibility, Android artifact and security headers
+
+- Main chat now sends JSON rather than `text/plain`, matching the Worker parser. The regression check prevents the old header from returning.
+- GitHub Actions run 246 passed the security/static checks, Playwright homepage/session tests, Worker deployment and production smoke tests: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/41697239638
+- Android APK workflow run 219 passed for frontend commit `49a1122d1d9496685f938f380e5337bb93ab0fd4`; physical installation/runtime testing remains outstanding.
+- Worker commit `8f5112a728c8159038a6e6a0dc7927d4432db49f` adds security headers to JSON and static-asset responses, preserving same-origin microphone access.
+- Migration commit `a934ee1fef29c175f760edb12407e7e73c229fb6` adds account-deletion cascade for rate-limit counters and hardens the SECURITY DEFINER search path.
+- CI commit `55e75923e7aff7ba383336e4655caf555c23ecfb` adds checks for these headers and SQL protections. Run 249 is the current validation/deployment run.
+
