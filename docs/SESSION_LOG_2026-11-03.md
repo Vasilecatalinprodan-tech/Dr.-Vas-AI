@@ -112,3 +112,14 @@ The preceding project checkpoint and project status documents contain the full p
 - Long-thread history loading was also hardened: opening a conversation now fetches the newest 200 messages in descending database order and reverses them for chronological display. Previously, a very long thread could load its oldest 200 messages and leave the visitor away from the latest discussion. Commit: `ef098fb7f63944f7eead7efccff13ab0acd9cd2c`.
 
 - Added translations for the automatic-save status and chat accessibility labels in English, Italian, Turkish, German, French, Spanish, and Russian, so the new controls do not unexpectedly remain Romanian when a visitor changes language. Commit: `352ae05c93c197904552a337062602cf67a9798c`.
+
+
+## Founder product expansion request — 2026-11-03
+
+- Founder asked to continue Studio and complete all modules, and introduced admin-only Crypto, paid Psychology, and child-safety / lawful reporting ideas.
+- Studio form expanded with tone, audience, duration and aspect ratio. Its generated production brief now requests a complete scene-by-scene production pack and includes accuracy/rights guardrails. Commit: `557d32b274b2b777664dba1bb6c0084b6bd3a536`.
+- Added the detailed product roadmap and safety architecture at `docs/PRODUCT_EXPANSION_AND_SAFETY_ARCHITECTURE.md`. Commit: `39578136d09fd5c6efc087913def1e8751d1b3ee`.
+- Crypto is planned as hidden from normal users and protected by server-side admin authorization, initially read-only monitoring/calculation. No covert mining or visitor-device mining.
+- Psychology requires a qualified human professional pathway, crisis-safe responses and legal/clinical governance. No automatic 112/999 call or location disclosure based only on AI inference.
+- Child-safety reporting must be human-led and lawful; no AI suspect labelling, covert monitoring or automatic criminal accusations.
+- Next development sequence: improve Studio project persistence/export; build Academy/Business/Commerce planning and dropshipping calculators; add Crypto read-only admin workspace; implement billing/entitlements; only then consider clinical Psychology and safeguarding integrations after professional/legal review.
