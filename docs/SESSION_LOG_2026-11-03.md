@@ -100,3 +100,11 @@ The preceding project checkpoint and project status documents contain the full p
 - The typing-indicator Worker deployment and APK build for commit `3343e98ae777a5bb18bcbece074b06ad084e6bdf` both completed successfully.
 - Worker deployment for history-title correction commit `6ce0e04827ca815ab9c76326d2d1929209296b61` completed successfully. Its APK build was still running at the last check.
 - The newest accessibility commit `154646d223c04ecf367ab942819a06321286b2dc` has queued its Worker deployment and APK build; verify both final results.
+
+
+## Request-in-flight safety refinement
+
+- Captured the active conversation ID, selected module, and language at the start of each send operation. User and assistant messages are now written against that captured conversation ID, rather than relying on a mutable global ID after asynchronous network calls.
+- While a reply is in progress, the new-chat, history-selection, and delete-history controls are disabled; their handlers also guard against navigation/deletion during an active send. This prevents a slow response from being accidentally attached to a different conversation if the visitor clicks around while Dr.Vas is answering.
+- Latest code commit: `be9fdee5b5f40d14b19cab0d4e067a4d079a4c32`. Cloudflare Worker deployment succeeded. The corresponding APK build was still in progress at the last check.
+- Most recent completed APK build before this safety refinement: commit `154646d223c04ecf367ab942819a06321286b2dc`, workflow run `41626703955`, artifact `DrVas-APK` ID `13225762545` (about 6.0 MB). It includes the chat persistence, auto-scroll, conversation titles, typing indicator, and screen-reader improvements.
