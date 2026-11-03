@@ -518,6 +518,18 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
     </div>
     <p class="admin-footnote">Nu se colectează chei private, seed phrases sau parole. Următorul pas va fi înscrierea cu cheie criptografică a dispozitivului și aprobare explicită.</p>
    </section>
+   <section class="crypto-admin-card" aria-labelledby="founderProvenanceHeading">
+    <div class="crypto-admin-heading">
+     <div><h4 id="founderProvenanceHeading">🔏 Dr.Vas · Dovada criptografică a originii</h4>
+      <p>Înregistrare privată criptată AES-256-GCM, amprentă SHA-256 și semnătură digitală Ed25519.</p></div>
+     <span class="crypto-status">CONTROL FONDATOR</span>
+    </div>
+    <div class="income-actions">
+     <button type="button" onclick="createFounderProvenance()">Creează dovada semnată</button>
+     <button type="button" onclick="verifyFounderProvenance()">Verifică ultima dovadă</button>
+    </div>
+    <p id="founderProvenanceNotice" class="admin-footnote" role="status">Cheile trebuie configurate în Cloudflare înainte de prima semnare. Cheia privată nu va fi salvată în GitHub.</p>
+   </section>
    <p id="adminDashboardNotice" class="admin-footnote" role="status">Se încarcă datele operaționale…</p>
    <h4>Jurnal operațional · ultimele activități</h4>
    <div class="admin-table-wrap">
@@ -1852,6 +1864,32 @@ async function refreshAdminPanel(){
       notice.classList.remove("hidden");
     }
   }
+}
+
+async function createFounderProvenance(){
+ const notice=el("founderProvenanceNotice");if(!isDrvasAdmin||!notice)return;
+ notice.textContent="Se pregătește și semnează înregistrarea…";
+ try{
+  const {data,error}=await supabaseClient.auth.getSession();if(error||!data.session)throw new Error("Sesiunea a expirat. Conectează-te din nou.");
+  const response=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+   action:"founder_provenance_create",access_token:data.session.access_token,
+   source_commit_sha:"3f900c37bbced7120eb97bbaafbea2e038cf46c7"
+  })});
+  const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.error||"Nu am putut crea dovada.");
+  notice.textContent="Dovadă creată și verificată la semnare. SHA-256: "+result.payload_sha256+" · "+result.signed_at;
+ }catch(error){notice.textContent=error.message||"Eroare la semnare.";console.error("Founder provenance create:",error);}
+}
+async function verifyFounderProvenance(){
+ const notice=el("founderProvenanceNotice");if(!notice)return;
+ notice.textContent="Se verifică semnătura și integritatea înregistrării…";
+ try{
+  const response=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"founder_provenance_verify"})});
+  const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.error||"Verificarea nu este disponibilă.");
+  if(!result.record_found){notice.textContent="Nu există încă o înregistrare semnată.";return;}
+  notice.textContent=result.verified
+   ?"✓ Semnătură Ed25519 și integritate SHA-256 verificate. Fondator: "+result.public_claim.founder.name+" · Colaborator AI: "+result.public_claim.collaborator.name+" · "+result.signed_at
+   :"⚠ Înregistrarea există, dar semnătura sau amprenta nu a putut fi verificată.";
+ }catch(error){notice.textContent=error.message||"Eroare la verificare.";console.error("Founder provenance verify:",error);}
 }
 
 async function loadCryptoDevices(){
