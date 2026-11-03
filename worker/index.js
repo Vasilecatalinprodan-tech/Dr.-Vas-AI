@@ -217,7 +217,7 @@ export default {
         ["http:", "https:"].includes(parsedOrigin.protocol);
       const isCapacitor = parsedOrigin.protocol === "capacitor:" && host === "localhost";
       if (isProduction || isCodespacesPreview || isLocalDevelopment || isCapacitor) {
-        allowedOrigin = parsedOrigin.origin;
+        allowedOrigin = requestOrigin;
       }
     } catch {
       // Missing, opaque, malformed, and untrusted origins receive no CORS permission.
