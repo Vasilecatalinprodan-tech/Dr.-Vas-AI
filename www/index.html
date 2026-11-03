@@ -2303,9 +2303,9 @@ async function getConversationIds(){
  const conversations=Array.from(seen.values());
  if(conversations.length){
   const {data:meta,error:metaError}=await supabaseClient.from("drvas_conversation_metadata").select("conversation_id,title,archived_at").eq("user_id",currentUser.id).in("conversation_id",conversations.map(x=>x.id));
-  if(metaError)throw metaError;
-  const byId=new Map((meta||[]).map(x=>[x.conversation_id,x]));
-  conversations.forEach(item=>{const saved=byId.get(item.id);if(saved){item.archived_at=saved.archived_at;if(saved.title)item.title=saved.title;}});
+  if(metaError){console.warn("Conversation metadata unavailable; apply migration 202611030006_conversation_management.sql:",metaError.message);}
+  else {const byId=new Map((meta||[]).map(x=>[x.conversation_id,x]));conversations.forEach(item=>{const saved=byId.get(item.id);if(saved){item.archived_at=saved.archived_at;if(saved.title)item.title=saved.title;}});}
+
  }
  return conversations;
 }
@@ -2379,6 +2379,8 @@ async function deleteAllConversations(){
       .delete()
       .eq("user_id",currentUser.id);
     if(error) throw error;
+    const metadataDelete=await supabaseClient.from("drvas_conversation_metadata").delete().eq("user_id",currentUser.id);
+    if(metadataDelete.error && !String(metadataDelete.error.message||"").includes("does not exist")) throw metadataDelete.error;
 
     pendingMessages = [];
     currentConversationId = makeId();
