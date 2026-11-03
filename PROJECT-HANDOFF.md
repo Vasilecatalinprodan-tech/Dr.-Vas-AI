@@ -239,3 +239,10 @@ Important limitations and next QA:
 - The current rate limit is per authenticated user, not a global IP/WAF control. Cloudflare edge-level protection remains required before a high-traffic public launch.
 - Next work: inspect and implement full account deletion/data export/retention workflows; then test authenticated conversation, privacy and admin flows. Keep Health Live disabled and premium/social integrations gated until their legal and platform prerequisites are met.
 
+### Deployment result for security hardening
+
+- GitHub Actions run 244 succeeded in full: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/41696792869
+- JavaScript validation, static security regression checks, Playwright homepage/session tests, Worker deployment and production smoke tests all passed.
+- Production smoke test confirmed health status, all six module cards and unauthenticated admin-status rejection (401).
+- The new SQL rate-limit migration is still a prerequisite for authenticated AI chat and Live token issuance. Apply `supabase/migrations/202611030001_rate_limits.sql` in Supabase before testing those routes. The smoke test did not exercise authenticated AI requests.
+
