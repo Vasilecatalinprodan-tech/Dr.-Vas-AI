@@ -366,9 +366,9 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
    <textarea id="privateInvoicePreferences" maxlength="500" rows="2" placeholder="Preferințe de facturare (opțional)"></textarea>
    <label class="remember-row" for="privateProfileConsent">
     <input id="privateProfileConsent" type="checkbox">
-    <span><strong>Îmi dau acordul pentru salvarea acestor date opționale.</strong><small>Poți retrage acordul ulterior din setările de confidențialitate. Politica aplicabilă: v1.</small></span>
+    <span><strong>Îmi dau acordul pentru salvarea acestor date opționale.</strong><small>Debifează și apasă butonul de mai jos pentru a retrage acordul și a șterge datele private salvate. Politica aplicabilă: v1.</small></span>
    </label>
-   <button type="button" id="privateProfileSaveButton" class="profile-button" onclick="savePrivateProfile()">Salvează datele private</button>
+   <button type="button" id="privateProfileSaveButton" class="profile-button" onclick="savePrivateProfile()">Aplică opțiunea de confidențialitate</button>
    <div id="privateProfileMessage" role="status" aria-live="polite"></div>
   </details>
   <button id="profileButton" class="profile-button" onclick="saveProfile()">Salvează profilul</button>
@@ -1483,7 +1483,7 @@ async function savePrivateProfile(){
     message.textContent="Nu am putut salva datele private: "+error.message;
   }finally{
     button.disabled=false;
-    setLocalizedText(button,"Salvează datele private");
+    setLocalizedText(button,"Aplică opțiunea de confidențialitate");
   }
 }
 
