@@ -528,6 +528,49 @@ export default {
         }), { status: 200, headers: { ...headers, "Cache-Control": "no-store, private" } });
       }
 
+      // Crypto Admin: listă read-only a dispozitivelor aprobate. Nu pornește mining sau tranzacții.
+      if (body.action === "crypto_devices_list") {
+        const adminToken = body.access_token;
+        if (typeof adminToken !== "string" || !adminToken.trim()) {
+          return json({ error: "Sesiune lipsă." }, 401);
+        }
+        if (!env.SUPABASE_URL || !env.SUPABASE_KEY) {
+          return json({ error: "Autentificarea nu este configurată." }, 500);
+        }
+        const authResponse = await fetch(
+          `${env.SUPABASE_URL.replace(/\\/+$/, "")}/auth/v1/user`,
+          { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${adminToken}` } }
+        );
+        if (!authResponse.ok) return json({ error: "Sesiune invalidă." }, 401);
+        const adminUser = await authResponse.json();
+        const allowedAdmins = (env.ADMIN_EMAILS || "")
+          .split(",").map(email => email.trim().toLowerCase()).filter(Boolean);
+        if (!adminUser?.email || !allowedAdmins.includes(adminUser.email.trim().toLowerCase())) {
+          return json({ error: "Acces interzis." }, 403);
+        }
+        const params = new URLSearchParams({
+          select: "id,device_name,platform,status,created_at,approved_at,last_seen_at",
+          order: "created_at.desc",
+          limit: "100"
+        });
+        const devicesResponse = await fetch(
+          `${env.SUPABASE_URL.replace(/\\/+$/, "")}/rest/v1/drvas_crypto_devices?${params.toString()}`,
+          { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${env.SUPABASE_KEY}` } }
+        );
+        if (!devicesResponse.ok) {
+          return json({
+            error: "Registrul Crypto Admin nu este încă instalat. Aplică migrarea SQL 202611030003_crypto_device_registry.sql.",
+            setup_required: true
+          }, 503);
+        }
+        const devices = await devicesResponse.json();
+        return new Response(JSON.stringify({
+          devices: Array.isArray(devices) ? devices : [],
+          total: Array.isArray(devices) ? devices.length : 0,
+          generated_at: new Date().toISOString()
+        }), { status: 200, headers: { ...headers, "Cache-Control": "no-store, private" } });
+      }
+
       // Dashboard centralizat: accesul este verificat din nou pe server la fiecare cerere.
       if (body.action === "admin_dashboard") {
         const adminToken = body.access_token;
