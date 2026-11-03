@@ -142,3 +142,12 @@ Work in bounded 30-minute blocks. At the end of each block:
 - Static audit of `www/index.html` found 30 distinct inline UI handlers; all 30 now have matching function declarations, including the restored `selectModule` handler.
 - Studio remains an administrator-only pilot. Real authenticated administrator/non-administrator browser testing is still required.
 - APK installation remains deferred; Android build workflows may run automatically as CI artifacts, but no public Release is published.
+
+
+### Module-specific AI instructions — 2026-11-03
+
+- Added dedicated text-chat instructions for Dr.Vas Academy, Dr.Vas Commerce and Dr.Vas Business in `worker/index.js`.
+- Academy now uses structured curricula, measurable learning objectives, lessons, exercises and quizzes, while avoiding false accreditation or guaranteed outcomes.
+- Commerce now covers ethical product/niche validation, supplier due diligence, landed-cost/unit-economics, fulfilment, consumer law and risk; it prohibits deceptive practices and unauthorised spending/orders.
+- Business now covers business plans, operations, cash flow, budgets, scenarios and KPIs, with clear boundaries around regulated accounting/legal/financial work and no unauthorised filings, payments or contracts.
+- Deployment run `41655022585` succeeded on commit `c38cec2b0b21d481653c559b7b0c1a011a995b85`; Worker/browser JavaScript validation and production smoke tests passed.
