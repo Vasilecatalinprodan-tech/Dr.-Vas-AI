@@ -586,6 +586,7 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
      <button type="button" class="assistant-choice" data-assistant="drvas" aria-pressed="true" onclick="selectAssistant('drvas')">✦ Dr.Vas <small>Principal</small></button>
      <button type="button" class="assistant-choice" data-assistant="jan" aria-pressed="false" onclick="selectAssistant('jan')">◈ Dr.Jan <small>Ghid inteligent</small></button>
      <button type="button" class="assistant-choice" data-assistant="aurora" aria-pressed="false" onclick="selectAssistant('aurora')">✧ Aurora <small>Învățare & idei</small></button>
+     <button type="button" class="assistant-choice" onclick="startGuidedHelp()">Ghidează-mă pas cu pas</button>
      <p class="assistant-intro" id="assistantIntro">Asistentul principal Dr.Vas este pregătit să te ajute.</p>
     </div>
     <div id="saveMessage"></div>
@@ -924,6 +925,16 @@ const ASSISTANTS = {
  jan:{name:"Dr.Jan",icon:"◈",intro:"Ghid strategic: explică pașii, organizează sarcinile și te ajută să rezolvi probleme.",welcome:"Salut! Sunt Dr.Jan. Îți voi explica lucrurile clar, pas cu pas, și verificăm împreună fiecare etapă."},
  aurora:{name:"Aurora",icon:"✧",intro:"Asistentă pentru învățare, creativitate și organizarea ideilor, cu explicații clare și încurajatoare.",welcome:"Bun venit! Sunt Aurora. Hai să explorăm ideile tale și să le transformăm în pași simpli și realizabili."}
 };
+function startGuidedHelp(){
+ selectAssistant("jan");
+ const input=el("question");
+ if(input){
+  input.value="Sunt în platforma Dr.Vas și am nevoie de ajutor. Ghidează-mă pas cu pas: explică-mi primul lucru pe care trebuie să îl fac, unde să merg și ce rezultat ar trebui să văd. Nu presupune că poți vedea ecranul meu.";
+  resizeQuestionInput();
+  input.focus();
+  setLocalizedText(el("saveMessage"),"Dr.Jan este selectat. Verifică mesajul și apasă Trimite pentru ghidare.");
+ }
+}
 function selectAssistant(assistantId){
  if(!Object.prototype.hasOwnProperty.call(ASSISTANTS,assistantId))return;
  activeAssistant=assistantId;
@@ -2131,6 +2142,7 @@ async function showChat(user,displayName){
   if(!user) return;
   currentUser = user;
   try{const savedAssistant=localStorage.getItem("drvas_assistant_"+user.id);if(savedAssistant&&ASSISTANTS[savedAssistant])activeAssistant=savedAssistant;}catch{}
+  selectAssistant(activeAssistant);
   showOnly("chatSection");
   el("accountEmail").textContent =
     (displayName || el("displayName").value.trim() || user.email || "") +
