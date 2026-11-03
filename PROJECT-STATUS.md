@@ -367,3 +367,48 @@ Founder explicitly requested that the short supplied voice sample be treated as 
 - The main text-chat request currently sends message, module, language, conversation_id and access_token. It does not yet send a selected assistant persona (Dr.Vas vs Dr.Jan). The browser speech synthesis voice selector currently chooses available device/browser voices; the founder's cloned voice is not integrated.
 - Next implementation task: add an explicit assistant identity/persona layer (Dr.Vas / Dr.Jan) to the chat experience and Worker prompt construction, with a safe default of Dr.Vas and separate voice preferences. Dr.Jan must give step-by-step contextual guidance without claiming screen access or taking actions.
 - This audit was read-only; no application source code was changed in this audit step. The checkpoint file itself is updated to preserve the findings.
+## Three-assistant platform implementation checkpoint — 2026-11-03
+
+Founder requested autonomous work while away and added a third assistant named Aurora. Implemented the first integrated version of the three-persona architecture.
+
+### Implemented in `www/index.html`
+- Added a responsive assistant selector to the signed-in chat experience: Dr.Vas (primary assistant), Dr.Jan (step-by-step guide) and Aurora (learning, creativity and idea organisation).
+- Assistant selection is saved per signed-in user in browser local storage and restored when the user returns.
+- Added a dedicated `Ghidează-mă pas cu pas` shortcut. It selects Dr.Jan and prepares a transparent guided-help request in the composer; the user reviews and sends it. Dr.Jan is explicitly instructed not to pretend it can see or control the screen.
+- Text chat requests now send the selected assistant ID to the Worker.
+- Browser speech synthesis attempts a masculine voice for Dr.Vas/Dr.Jan and a feminine voice for Aurora when the device/browser provides a matching language voice. User's cloned voice is not active; the original short sample remains only a reference. The browser's explicit voice selector remains available.
+- The selected persona is retained when switching modules and restored at sign-in. The current persona is a user-level preference, not conversation-level metadata; switching personas affects subsequent messages.
+
+### Implemented in `worker/index.js`
+- Validates assistant IDs server-side against `drvas`, `jan`, `aurora`; invalid IDs are rejected.
+- Adds separate, dedicated text-model system instructions for each persona.
+- Dr.Jan is configured for rigorous reasoning, risk anticipation, one-step-at-a-time guidance, checking results, and honest limits on screen/account access.
+- Aurora is configured for learning, creativity, curiosity, clear examples and practical planning. It has age-appropriate safeguards when a young person is involved and must not request personal information.
+- Dr.Vas remains the primary general assistant with the founder-defined platform identity.
+- Gemini Live token requests now accept the selected assistant. Live system instructions and prebuilt voice selection vary by persona: Dr.Vas `Charon`, Dr.Jan `Fenrir`, Aurora `Aoede`.
+- The fixed Dr.Vas origin-story response is now used only when Dr.Vas is selected, so Jan/Aurora can answer identity questions in their own persona.
+- The voice sample is not uploaded to the Worker, GitHub or a third-party voice-cloning service. No cloned voice is active.
+
+### Validation and deployment
+- Frontend and Worker code changes were committed on `drvas-integrated-platform`.
+- Final Worker code commit at time of checkpoint: `4c45452bb1e36658c8b0a21f47b8e8436186b3e5`.
+- Assistant selector and guided-help UI commit: `73efd8e17359cb7dd52eb74e79cdbaf416a74d95`.
+- GitHub Actions Worker deployment run `41658933152` completed successfully. All steps passed: setup, dependency installation, Worker/browser JavaScript validation, Worker deployment and production smoke test.
+- Production Worker URL remains `https://dr--vas-ai.vasilecatalinprodan.workers.dev`.
+- The Android workflow may build private artifacts automatically on pushes, but APK installation remains deferred as requested; no public APK release was made.
+
+### Not yet completed / limitations
+- No browser end-to-end test has been performed with real administrator and client accounts; founder should test the three assistant buttons and text/Live voice after refreshing the production page.
+- No video/lip-sync avatar is implemented yet. The supplied portrait has not yet been converted into a committed production avatar asset.
+- The short founder voice sample is not sufficient for reliable voice cloning and no voice-cloning provider has been configured. Standard browser voice and Gemini Live prebuilt voices are temporary fallbacks.
+- Persona choice is currently stored per user in local storage, not persisted as metadata on each conversation row.
+- The Dr.Jan guided-help shortcut prepares a prompt; it does not inspect the screen or automatically click controls.
+- Premium access remains admin-only pilot until subscriptions and entitlement checks are built. Crypto and other internal controls remain administrator-only.
+
+### Next autonomous development priorities
+1. Continue professionalising client and administrator dashboards without changing the six-module product structure.
+2. Add conversation-level assistant metadata/persistence and make persona restoration predictable when reopening older conversations.
+3. Improve multilingual labels and welcome messages for the new assistant selector.
+4. Test privileged actions and client visibility again; Crypto must remain entirely absent from client-facing screens and independently protected in the Worker.
+5. Design/prepare Dr.Vas portrait avatar and original Dr.Jan/Aurora avatars as separate visual assets; do not claim they are live until integrated and tested.
+6. Continue saving each meaningful change and test/deployment result in this file.
