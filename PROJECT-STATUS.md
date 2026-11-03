@@ -543,3 +543,11 @@ Founder requested autonomous work while away and added a third assistant named A
 - CI checks: `.github/workflows/deploy-worker.yml` updated in commit `bb582a952c7f734089c4717f223fa586ee60f0cb`; workflow run 244 was pending at the time of this note. Do not claim production deployment until the run completes successfully.
 - Important limitation: rate limits are per authenticated Supabase user, not a global per-IP firewall. Add Cloudflare edge/IP protections before a high-traffic public launch.
 
+## Deployment confirmation — 2026-11-03
+
+- GitHub Actions workflow run **244** completed successfully: `https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/41696792869`.
+- Confirmed all steps succeeded: Worker/browser JavaScript validation, security regression checks, Playwright homepage/session tests, Cloudflare Worker deployment, and production smoke tests.
+- The deployed Worker code includes the request-size guard, server-side private-profile consent check, deletion without encryption-key dependency, origin allowlist, and Supabase-backed rate-limit enforcement.
+- Production smoke test confirmed the Worker health endpoint, all six public module cards, and HTTP 401 rejection for unauthenticated administrator-status requests.
+- **Database prerequisite remains:** migration `202611030001_rate_limits.sql` must be applied in Supabase before AI chat and Gemini Live token issuance can pass the new fail-closed rate-limit check. The CI smoke test intentionally does not send authenticated AI requests.
+
