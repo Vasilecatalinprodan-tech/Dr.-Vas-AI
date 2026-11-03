@@ -134,3 +134,12 @@ After each substantial work session, update this checkpoint with: completed chan
 - CI/deploy/APK workflows triggered by these latest commits must be checked before describing the changes as deployed or built. No physical Android device test has been performed.
 - Remaining blockers: Meta/TikTok developer app IDs, OAuth secrets and app reviews; a selected public search provider; isolated and reviewed Tor gateway (disabled); real production latency/cost metrics; Gemini Live browser and Android QA; subscription/payment entitlements; actual video rendering and publishing.
 
+## Device voice selection and pacing — 2026-11-03
+
+- Added a user-selectable browser/system speech voice list filtered to the currently selected Dr.Vas language. Available voices are ranked with likely higher-quality/natural options first, but the browser does not expose reliable voice-gender metadata; the UI therefore does not falsely guarantee a masculine voice.
+- Voice choice is stored locally per language on the device, not in the server or user profile. The user can return to the automatic recommended voice at any time.
+- Added speech pace options (calm, natural, fast, very fast); default remains natural. Adjustments apply to browser speech output/replay. Gemini Live remains on its configured Charon voice until separately evaluated and safely exposed as a server-approved choice.
+- Voice options refresh when the browser loads its voice inventory and when the user changes Dr.Vas language.
+- This improves user control and makes use of the best voices installed on each device. It does not install new voices or guarantee that every browser/device has a high-quality Romanian voice; device testing is required.
+- Commits: `6cfcc408cebf1c13848cacf44744c43c44beba0c` (voice picker + pace controls), `eaff90464255433c23a062b9e062d0f3d8b51e4d` (refresh on language switch).
+
