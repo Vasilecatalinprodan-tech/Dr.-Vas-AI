@@ -206,13 +206,31 @@ export default {
       const body = await request.json();
 
       // Profil privat: datele sunt validate și criptate exclusiv în Worker.
-      if (body.action === "private_profile_get" || body.action === "private_profile_save") {
+      if (body.action === "private_profile_get" || body.action === "private_profile_save" || body.action === "private_profile_clear") {
         const profileUser = await verifySupabaseUser(env, body.access_token);
         if (!profileUser) return json({ error: "Sesiune invalidă. Conectează-te din nou." }, 401);
         if (!env.DRVAS_PROFILE_ENCRYPTION_KEY) {
           return json({ error: "Criptarea profilului nu este încă configurată pe server." }, 503);
         }
         try {
+          if (body.action === "private_profile_clear") {
+            const clearQuery = new URLSearchParams({ user_id: `eq.${profileUser.id}` });
+            const clearResponse = await fetch(
+              `${env.SUPABASE_URL.replace(/\\/+$/, "")}/rest/v1/drvas_private_profiles?${clearQuery.toString()}`,
+              {
+                method: "DELETE",
+                headers: {
+                  apikey: env.SUPABASE_KEY,
+                  Authorization: `Bearer ${env.SUPABASE_KEY}`,
+                  Prefer: "return=minimal"
+                }
+              }
+            );
+            if (!clearResponse.ok) throw new Error("PRIVATE_PROFILE_CLEAR_FAILED");
+            return new Response(JSON.stringify({ ok: true, cleared: true }), {
+              status: 200, headers: { ...headers, "Cache-Control": "no-store, private" }
+            });
+          }
           if (body.action === "private_profile_save") {
             const profile = normalizePrivateProfile(body.profile);
             if (new TextEncoder().encode(JSON.stringify(profile)).length > 12000) {
