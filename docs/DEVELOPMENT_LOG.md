@@ -24,3 +24,43 @@
 - Confirmed from deployment logs: Cloudflare uploaded /index.html, Worker deployment succeeded, production homepage HTML contained all six module markers, Worker health returned online, and unauthenticated admin status returned HTTP 401. This is server/static-delivery smoke testing only, not browser execution.
 - External browser fetch through available web viewer is unavailable, and founder cannot provide screenshots or console logs. Do not request them again.
 - Next diagnostic: inspect all startup-time DOM visibility/class mutations and add a deterministic visible startup diagnostic/failsafe that covers synchronous errors and unhandled promise rejections, while ensuring the language gate itself is always visible when required. Test the actual DOM-state transitions with a browser-capable automated test before another production deployment. Avoid another speculative patch.
+
+
+## 2026-11-03 — Session restoration must not hide the public dashboard
+
+- Founder confirmed that after refresh only the header remains: Dr.Vas logo, online status and language switch; no language buttons, hero, or module cards are visible.
+- Code trace: initLanguage() calls checkSession(); an existing Supabase session leads through showUser() -> loadProfile() -> showChat(). The showChat() function previously called enterChatFocus() automatically. Focus mode applies CSS that hides every direct child of main except #chatSection and hides the header chat CTA. If chat initialization is interrupted or its content fails to render, the public dashboard can appear blank. This is the leading code-path explanation for the reported symptom; it is not yet proven by a browser trace.
+- Created branch fix/session-restore-preserves-homepage. Changed showChat() to keep the public dashboard visible on session restoration and not enter focus mode or auto-scroll. Focus mode remains available through the explicit header chat button. This also keeps the six-workspace homepage visible while account/chat data loads.
+- Validation: extracted inline browser script parses successfully with JavaScript Function constructor. This is syntax validation only; a real browser end-to-end test remains outstanding.
+- Not deployed. Next: review PR, run production validation, deploy only after checks pass, then founder retests without needing to provide screenshots or console output.
+
+
+## 2026-11-03 — Reliability work: browser regression gate
+
+- Founder directive: preserve the full project/conversation continuity; technical reliability work is to be handled by the development workflow, not delegated to the founder. Priority is to avoid a repeat of a broken homepage when real customers are using Dr.Vas.
+- Reviewed the existing production deployment workflow. It checked Worker health, static HTML markers and JavaScript syntax, but did not execute the frontend in a real browser. These checks are not sufficient to prove the homepage renders correctly.
+- Added `.github/workflows/browser-e2e.yml`: pull requests targeting `drvas-integrated-platform` and relevant production pushes run Chromium-based browser regression tests. The workflow starts a local copy of `www/`, mocks the Supabase browser SDK boundary, and does not require production credentials or customer data.
+- Added `tests/e2e/homepage.spec.cjs` to cover: first-visit language gate, six-module dashboard with a saved language, and the session-restoration path that previously activated chat focus and hid the dashboard.
+- The tests are intended to fail if the old automatic focus behavior returns. They are a new safety gate, not yet proof of a successful run. Await the GitHub Actions result before merging or deploying.
+- Reliability roadmap: (1) make the homepage/session regression tests pass; (2) add broader browser tests for authentication, chat, module navigation and degraded dependencies; (3) add external uptime/error monitoring and alerting; (4) implement independent database backups and verify restore drills; (5) add deployment health gates and a tested rollback procedure. Do not claim high availability or disaster recovery until the controls are implemented and exercised.
+- No production deployment was triggered by these changes.
+
+
+## 2026-11-03 — Founder follow-up: source of blank homepage and test status
+
+- Founder asked whether the issue is in `worker/index.js` or `www/index.html`, whether it is fixed, and requested that the full conversation/project decisions be preserved.
+- Compared the production branch with the proposed fix. `www/index.html` on production still calls `enterChatFocus()` from `showChat()`. The CSS for `body.chat-focus-mode` hides every direct child of `main` other than the chat section. The proposed branch removes this automatic focus call. `showOnly()` on production already attempts to preserve the hero and module-selection sections, but the later focus-mode CSS overrides that visibility. This confirms the leading cause is in frontend `www/index.html`, not the Worker request handler in `worker/index.js`.
+- GitHub Actions Chromium job completed with conclusion `success` for run https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/41692218167. It checks first-visit language gate, saved-language dashboard and direct `showChat()` behavior. Important limitation: the third test invokes `showChat()` directly with a test user; it does not yet simulate a complete real Supabase persisted-session restoration. Test title was clarified to avoid overstating coverage.
+- The Cloudflare Preview bot reported a failed preview build for the earlier PR commit. Its dashboard build log is behind the user's Cloudflare account; current GitHub connector cannot retrieve that private log. Treat preview status as unresolved until inspected in Cloudflare.
+- Current state: PR #5 remains open/draft, not merged; production is unchanged. The code fix is prepared and browser regression checks pass, but the full issue is NOT declared fixed in production. Next required work: inspect Cloudflare preview build failure, add a true mocked Supabase session-restoration browser test (including profile-fetch success/failure), then run the production deployment checks and only then merge/deploy.
+- Founder explicitly asked that the conversation be preserved. This development log is the durable project record of the issue, findings, decisions, validation and outstanding work; the ChatGPT conversation remains in chat history.
+
+
+## 2026-11-03 — Expanded browser coverage for actual persisted-session startup
+
+- Latest previously completed browser workflow run `41692782910` passed all steps, including Chromium installation and the homepage regression suite, on the prior PR head. This is not the result for the newly expanded test yet.
+- Inspected the real startup chain in `www/index.html`: `initLanguage()` calls `checkSession()`, which awaits Supabase `getSession()`; a persisted user proceeds through `showUser()` and `loadProfile()`. Profile-loading errors are caught by `showUser()`. The dashboard is kept visible by `showOnly()`, while `showChat()` no longer automatically applies `chat-focus-mode`.
+- Expanded `tests/e2e/homepage.spec.cjs` so the Supabase browser stub can return a persisted session and simulate a profile-read failure. Added a browser test that exercises the actual page startup/session check and asserts that the hero and all six modules remain visible, chat focus mode stays off, and the profile error is shown.
+- Corrected the test stub syntax before validation. GitHub Actions has been triggered by the latest test commits; wait for the run result before treating the new coverage as passing.
+- This new test covers persisted-session restoration up to the profile-fetch failure boundary. It does not yet prove the complete successful profile/private-profile/chat/history loading path against a real Supabase project.
+- Production remains unchanged; PR #5 is still the review vehicle. Cloudflare Preview failure log remains inaccessible through the current GitHub connection and must not be represented as resolved.

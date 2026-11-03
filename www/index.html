@@ -2382,7 +2382,9 @@ async function showChat(user,displayName){
   try{const savedAssistant=localStorage.getItem("drvas_assistant_"+user.id);if(savedAssistant&&ASSISTANTS[savedAssistant])activeAssistant=savedAssistant;}catch{}
   selectAssistant(activeAssistant);
   showOnly("chatSection");
-  enterChatFocus();
+  // Keep the public dashboard visible after session restoration. Focus mode is
+  // entered only when the user explicitly presses the header chat button.
+
   el("accountEmail").textContent =
     (displayName || el("displayName").value.trim() || user.email || "") +
     " · " + (el("country").value || tr("Cont personal"));
