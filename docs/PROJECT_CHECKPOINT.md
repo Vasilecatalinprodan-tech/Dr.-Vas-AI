@@ -234,3 +234,14 @@ A detailed session log was added at `docs/SESSION_LOG_2026-11-03.md`. It records
 - Security remains intact: no client-side admin bypass, no hard-coded founder email, and no exposure of the allowlist secret.
 - Remaining external action: confirm/update the Cloudflare Worker secret named `ADMIN_EMAILS` so its value includes the exact address `vasilecatalinprodan@gmail.com` (lowercase; comma-separated if there are multiple admins). This secret value cannot be read or changed through the connected GitHub tools. After saving, redeploy the Worker and sign out/in or refresh the app.
 - Do not mark administrator access restored until the live `admin_status` check returns `is_admin: true` and the admin dashboard loads successfully.
+
+
+## Crypto Admin phase 1 — device registry foundation (2026-11-03)
+
+- Added migration `supabase/migrations/202611030003_crypto_device_registry.sql` defining a server-only registry for administrator-authorized devices.
+- Table stores device name/platform, SHA-256 public-key fingerprint, public JWK only, pending/authorized/revoked state, requesting/approving admin IDs, and timestamps. RLS is enabled; anon/authenticated have no table privileges; service_role only.
+- Added Worker action `crypto_devices_list`, which revalidates the Supabase session and the Cloudflare `ADMIN_EMAILS` allowlist on every request. It returns only non-secret device metadata.
+- Added a read-only Crypto device registry panel to the administrator console. It clearly states that mining and trading are disabled.
+- Commits: Worker endpoint `38a122284c1dee01763798c00618af1c75a720bf`; UI `f357a5c8bdb779d1577c06f6b27cd05cb881a16d`; SQL migration `c4577489a8209ecdc288e5d0d3c64fe5e1d8f564`; Worker URL-normalization fix `5c3d57dd2ceaedf4e22e5dfaadf5fe3e58c7efaa`.
+- Migration has NOT yet been applied to Supabase. Until it is applied, the panel will report setup required. No device enrollment, mining, wallet custody, exchange integration, or live/paper trading has been enabled.
+- Next: implement cryptographic device enrollment (private key generated and kept on the device; only public key registered), explicit admin approval/revocation, and audit events. Then build read-only market data and profitability estimates before any simulation or execution.
