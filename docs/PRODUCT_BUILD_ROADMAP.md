@@ -19,6 +19,39 @@ The founder wants a professional product with no arbitrary 1,000-word/message re
 5. **Dr.Vas Commerce** — ethical e-commerce and dropshipping, product/niche research, supplier due diligence, store content, unit economics, fulfilment, customer support and compliance by jurisdiction. No fake reviews or misleading sales practices.
 6. **Dr.Vas Business** — business plans, operations, management, budgets, cash flow, break-even, KPI and bookkeeping organisation. Clearly distinguish estimates from verified figures and regulated professional advice.
 
+## Dr.Vas Crypto — private administrator subsystem
+
+Crypto is a separate, hidden administrator-only subsystem, not a public seventh workspace. Ordinary users must not see its navigation, status, controls or API capabilities. The Worker must re-check administrator identity for every Crypto action.
+
+The founder's intended direction is controlled mining on explicitly approved administrator-owned/authorized devices, monitoring crypto accounts, and a possible later allocation of a defined portion of realised Crypto proceeds to stock-market investing after analysis. This is not yet enabled.
+
+Current implementation:
+- A server-only device registry migration exists: `supabase/migrations/202611030003_crypto_device_registry.sql`.
+- The registry stores device identity metadata and public verification keys only; client-role access is revoked.
+- The administrator panel lists registered devices.
+- The Worker now supports administrator-only approval and revocation actions; the panel exposes explicit controls.
+- Approval/revocation is an access-control record only. It does not install software, start mining, access a wallet, transfer funds or place trades.
+- Every approval/revocation attempt is written to the operational audit log.
+
+Security and release gates:
+- Do not collect private keys, seed phrases, exchange passwords or wallet recovery phrases in Dr.Vas.
+- Device registration must use a cryptographic challenge and proof of possession; a public-key fingerprint alone is not proof that a device is safe.
+- Before any mining agent exists: explicit device-owner consent, resource/power/temperature limits, transparent electricity-cost estimates, stop/revoke controls, signed updates, malware review and independent security testing.
+- Before exchange/account integration: begin read-only; use scoped API keys without withdrawal permissions; never custody user funds.
+- Before any stock-market activity: start with historical analysis and paper trading. Any later live trading needs explicit administrator approval, a segregated fixed budget, position/risk limits, daily loss cap, audit trail and a global emergency stop. No autonomous transfer of funds or withdrawals.
+- Assess UK and relevant jurisdiction rules, tax treatment, financial-services permissions, exchange terms, data protection and app-store policies before enabling mining, account integration or trading.
+- Mining and trading remain disabled until these gates are completed and separately approved.
+
+## Crypto development sequence
+
+1. Device approval/revocation controls (implemented on this branch; pending tests).
+2. Secure device enrolment with signed challenge and proof of possession.
+3. Admin-only inventory and health/telemetry with opt-in and strict resource limits.
+4. Mining profitability calculator using user-supplied or verified electricity tariffs, hardware performance and current network data; no mining execution yet.
+5. Read-only crypto account/exchange connections with least-privilege credentials and no withdrawal scopes.
+6. Market analysis and paper-trading simulator, with no live orders.
+7. Risk-controlled, explicitly approved live operations only after legal, security and financial review.
+
 ## Existing implementation found in the repository
 
 - Frontend: `www/index.html`; backend: `worker/index.js`.
