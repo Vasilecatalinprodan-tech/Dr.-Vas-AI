@@ -28,7 +28,7 @@ The founder wants a professional product with no arbitrary 1,000-word/message re
 - Studio project and income tracker use Supabase tables already inventoried in the security work.
 - Premium modules (Studio, Academy, Commerce, Business) are currently gated to administrator accounts. This is a temporary test gate, not a production subscription system.
 - No production payment/subscription entitlement system has been verified. Do not unlock public paid access until entitlements are implemented and tested server-side.
-- Conversation history is saved in Supabase, but the Worker currently loads only the newest 30 messages for a normal text request. Older messages remain in saved history but are not automatically included in the model context. Implement a rolling conversation summary plus recent-turn window, with token budgeting and a user-visible way to continue long projects; do not simply send the entire database history on every request.
+- Conversation history is saved in Supabase. The Worker now fetches up to the newest 100 messages and applies a 48,000-character context budget, retaining the newest context while keeping the full record in Supabase. This is an incremental improvement, not yet a true rolling summary: very old messages beyond the bounded window are not included in model context. Next: add persisted rolling summaries with a reviewed schema migration, token-aware budgeting and tests.
 - The Worker currently uses Gemini Interactions API with a fallback model list. Model availability, account quotas, token pricing and rate limits must be checked before choosing production tiers.
 - Current product architecture does not yet prove unlimited use. Avoid promises of infinite usage.
 
