@@ -424,3 +424,7 @@ Founder requested autonomous work while away and added a third assistant named A
 - Latest verified Worker deployment run `41659348940` on commit `4c45452bb1e36658c8b0a21f47b8e8436186b3e5` passed all checks including Worker/browser JavaScript validation, deployment and production smoke test. A later frontend-only commit `d52c69ae0918e00dd03a5bbdf2f4b5fb276c56da` is also queued/in deployment; confirm its final run before telling the founder the latest UI changes are deployed.
 - Keep the current distinction clear: assistant cards/persona prompts are implemented; photorealistic animated avatars and the founder's cloned voice are not. Dr.Vas uses the existing portrait image in the selector; Jan and Aurora currently use original CSS avatar symbols.
 - No APK installation was performed. CI may produce private APK artifacts automatically; the founder's request to defer installation remains in force.
+
+### Deployment record correction
+- Confirmed after the previous checkpoint: Worker deployment run `41659348940` corresponds to commit `d52c69ae0918e00dd03a5bbdf2f4b5fb276c56da` (not `4c45452...`) and completed successfully. It includes the latest assistant-specific voice preference key and refresh-on-switch frontend changes, plus the previously deployed persona Worker logic. GitHub Actions passed validation, deployment and production smoke test.
+- The following documentation-only checkpoint commit is `9ef6c707a5c6a8684b5ff19daf445388062b6864`.
