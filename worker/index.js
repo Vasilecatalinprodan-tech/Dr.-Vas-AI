@@ -788,11 +788,17 @@ export default {
             return json({ error: "Stare Crypto nepermisă." }, 400);
           }
           const now = new Date().toISOString();
+          // Conditional transition prevents stale/replayed admin actions overwriting a newer state.
+          const allowedPreviousStates = nextStatus === "authorized" ? ["pending", "revoked"] : ["authorized"];
+          const updateParams = new URLSearchParams({
+            id: "eq." + deviceId,
+            status: "in.(" + allowedPreviousStates.join(",") + ")"
+          });
           const patch = nextStatus === "authorized"
             ? { status: "authorized", approved_by: adminUser.id, approved_at: now, revoked_at: null }
             : { status: "revoked", revoked_at: now };
           const updateResponse = await fetch(
-            `${supabaseBase}/rest/v1/drvas_crypto_devices?id=eq.${deviceId}`,
+            `${supabaseBase}/rest/v1/drvas_crypto_devices?${updateParams.toString()}`,
             {
               method: "PATCH",
               headers: {
