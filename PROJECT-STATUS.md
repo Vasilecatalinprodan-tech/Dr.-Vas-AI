@@ -458,3 +458,11 @@ Founder requested autonomous work while away and added a third assistant named A
 - Frontend changes committed as `a7584f609c16b6da0df03eb94e32ff200febd82b`.
 - GitHub Actions Worker deployment run `41665183054` completed successfully for this commit. APK workflow `41665183136` was still running at checkpoint time.
 - Important limitation: a successful Worker deployment/health smoke test does not prove Supabase password sign-in or profile RLS works for a real account. Live endpoint checks from this environment were blocked by DNS/network restrictions. The next required diagnostic is the exact browser error shown in the sign-in message, then a signed-in end-to-end test of Supabase Auth and `profiles` access. Do not claim the user's login is fixed until that test succeeds.
+## Public module-to-login navigation fix — 2026-11-03
+
+- Founder reported that selecting language and Dr.Vas Free did not open the sign-in form and produced no error.
+- Root cause confirmed in `selectModule()`: public module cards only changed the selected module state; they did not reveal `authSection` for visitors without a signed-in user.
+- Fixed `selectModule(moduleName, userInitiated=true)` so choosing an available module while signed out opens the authentication panel, scrolls it into view and focuses the email field. The selected module is retained for the session.
+- Commit: `6896b5d4211c1dfac2ac5fadb80de47eeaf0a495`.
+- Worker deployment workflow `41665834458` was still running at checkpoint time. Do not tell the founder the fix is live until this run completes successfully.
+- Next: verify deployment success, then ask founder to refresh the site and click Dr.Vas Free. The email/password form should appear. After that, test a real sign-in and profile loading.
