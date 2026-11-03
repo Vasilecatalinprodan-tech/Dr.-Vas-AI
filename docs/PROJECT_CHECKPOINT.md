@@ -197,3 +197,8 @@ After each substantial work session, update this checkpoint with: completed chan
 - Code commit: `8f2b715985c8d1194c49438ca09978722a2b19a4`. Deployment and APK build workflows were started; confirm their final results before calling this release verified.
 - User requested that the conversation/project progress up to this point be retained. This checkpoint records the current work and next verification steps.
 - Next: verify deployment and build; test same-account refresh/resume, create-new-chat, switching between history entries, and long AI response auto-scroll. Do not test by deleting real conversation history.
+
+
+## Session archive — 2026-11-03
+
+A detailed session log was added at `docs/SESSION_LOG_2026-11-03.md`. It records the user's requests, active-conversation persistence, automatic scrolling, save-status UI, descriptive conversation-history labels, typing indicator, commit IDs, workflow results, remaining manual tests, and next development priorities. The user intends to export this work to a Word document later.
