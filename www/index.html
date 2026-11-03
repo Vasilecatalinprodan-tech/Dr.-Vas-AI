@@ -408,7 +408,7 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
  <div class="header-actions"><div class="status" id="onlineStatus">● AI ASSISTANT ONLINE</div><button type="button" class="header-chat-cta" id="headerChatCta" onclick="enterChatFocus()">VORBEȘTE CU DR.VAS</button><button type="button" class="language-switch" id="languageSwitch" onclick="showLanguageGate()">🌐 Language</button></div>
 </header>
 
-<main id="appMain" class="language-pending">
+<main id="appMain">
 <section id="languageGate" class="language-gate">
  <div class="language-card">
   <div class="logo">✚ Dr.Vas AI</div>
@@ -787,6 +787,15 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
 <footer>© 2026 Dr.Vas AI · Think • Ask • Discover · <a href="/privacy-policy.html" target="_blank" rel="noopener">Confidențialitate</a></footer>
 
 <script>
+/* Fail open: a secondary script/dependency error must never leave the whole app hidden. */
+window.addEventListener("error",function(event){
+  if(!event || !event.error)return;
+  const app=document.getElementById("appMain");
+  if(app)app.classList.remove("language-pending");
+  const status=document.getElementById("onlineStatus");
+  if(status)status.textContent="INTERFAȚĂ DISPONIBILĂ · UNELE FUNCȚII POT FI LIMITATE";
+  console.error("Dr.Vas startup/runtime error:",event.error);
+});
 const API_URL = "https://dr--vas-ai.vasilecatalinprodan.workers.dev";
 const SUPABASE_URL = "https://bqgshoqspcfbflgsnntn.supabase.co";
 const SUPABASE_KEY = "sb_publishable_sP9luSRTjqAZrQmjIzy4VA_EBzLmSPZ";
