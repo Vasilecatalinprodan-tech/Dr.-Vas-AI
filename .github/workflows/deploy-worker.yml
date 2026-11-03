@@ -47,3 +47,40 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Smoke test production Worker
+        run: |
+          set -euo pipefail
+          response=""
+          for attempt in 1 2 3 4 5 6; do
+            if response="$(curl --fail --silent --show-error "$WORKER_HEALTH_URL/health")"; then
+              break
+            fi
+            echo "Health endpoint not ready (attempt $attempt/6); waiting 10 seconds."
+            sleep 10
+          done
+          if [ -z "$response" ]; then
+            echo "Worker health endpoint did not respond successfully."
+            exit 1
+          fi
+          printf '%s' "$response" | node -e '
+            let raw = "";
+            process.stdin.setEncoding("utf8");
+            process.stdin.on("data", chunk => raw += chunk);
+            process.stdin.on("end", () => {
+              let data;
+              try { data = JSON.parse(raw); } catch { throw new Error("Health endpoint returned invalid JSON"); }
+              const checks = data.checks || {};
+              console.log(JSON.stringify(data, null, 2));
+              if (data.status !== "online" || checks.worker !== "ok") {
+                throw new Error("Worker health check failed");
+              }
+              for (const key of ["assets", "ai", "database"]) {
+                if (checks[key] !== "configured") {
+                  throw new Error("Worker configuration missing: " + key);
+                }
+              }
+            });
+          '
+        env:
+          WORKER_HEALTH_URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev
