@@ -1320,10 +1320,10 @@ async function handleAuth(){
 
 function showOnly(section){
   if(!languageReady)return;
-  const privateFlow = section === "authSection" || section === "profileSection" || section === "chatSection";
-  // Fiecare etapă este un ecran separat: alegere -> autentificare -> spațiul privat.
-  el("heroSection").classList.toggle("hidden",privateFlow);
-  el("moduleSelectionSection").classList.toggle("hidden",privateFlow);
+  // Pagina publică rămâne vizibilă ca punct de revenire; autentificarea și chatul
+  // se afișează suplimentar, astfel încât o sesiune expirată să nu lase pagina goală.
+  el("heroSection").classList.remove("hidden");
+  el("moduleSelectionSection").classList.remove("hidden");
   ["authSection","profileSection","chatSection"].forEach(id=>{
     el(id).classList.toggle("hidden",id !== section);
   });
