@@ -121,3 +121,16 @@ After each substantial work session, update this checkpoint with: completed chan
 - Publishing must be opt-in and user-confirmed. Respect each platform's publishing restrictions, media formats, privacy choices, rate limits and app review.
 - Official references checked 2026-11-03: TikTok Login Kit overview https://developers.tiktok.com/docs/en/login-kit-overview ; TikTok Content Posting API https://developers.tiktok.com/docs/en/content-posting-api-get-started ; TikTok app registration/review https://developers.tiktok.com/docs/en/getting-started-create-an-app ; Meta Instagram API docs https://www.postman.com/meta/instagram/documentation/6yqw8pt/instagram-api .
 - Current state: social UI panel only; OAuth, connected-account storage, scheduled publishing, analytics and actual publishing are not yet implemented.
+
+## Voice reliability, latency and governed research — 2026-11-03
+
+- Worker now schedules successful and failed AI-request audit writes through the Cloudflare execution context `waitUntil` when available, so an operational audit insert does not hold the completed answer open. The existing synchronous fallback remains for runtimes without `waitUntil`. This is a code-level latency improvement; production p50/p95 measurements are still required.
+- Browser Live voice now has a 15-second startup watchdog. If Gemini Live does not send `setupComplete`, the client closes the stalled session and reports a clear retry message. The timer is cleared on setup, close, error and manual stop.
+- Live playback now bounds the scheduled audio queue: if playback falls more than eight seconds behind, the stale queue is cleared rather than allowed to grow without limit. This protects memory and recovery on slow devices/networks; perceived audio quality still needs device testing.
+- Added `docs/SAFE_RESEARCH_AND_AUTONOMY.md` defining a future search-provider architecture, mandatory multilingual safety checks, restrictions for illegal exploitation/trafficking content, and a human-approved self-improvement pipeline.
+- Onion/Tor and dark-web search are **not connected or enabled**. The current app has no external search provider. A future Tor gateway must be isolated, allowlisted, legally reviewed and unable to fetch arbitrary user-supplied destinations. No anonymous proxy, marketplace crawler, illegal-content cache or automatic file execution is permitted.
+- Self-improvement is defined as monitoring, test generation, evaluation and proposing code/prompt changes in an isolated branch. Production deploys, secrets, permissions, payment controls and safety boundaries require human approval.
+- Commits: Worker background audit scheduling `97ce20bfb3739c64fa46e094c93a012ab45e975b`; frontend Live watchdog/audio queue `f6f548a5fa1b3ce9d4f385c45bafc7a280e35252`; safe research/autonomy specification `b0794d173cf4c8caf40eb787e8e330036777ce2b`.
+- CI/deploy/APK workflows triggered by these latest commits must be checked before describing the changes as deployed or built. No physical Android device test has been performed.
+- Remaining blockers: Meta/TikTok developer app IDs, OAuth secrets and app reviews; a selected public search provider; isolated and reviewed Tor gateway (disabled); real production latency/cost metrics; Gemini Live browser and Android QA; subscription/payment entitlements; actual video rendering and publishing.
+
