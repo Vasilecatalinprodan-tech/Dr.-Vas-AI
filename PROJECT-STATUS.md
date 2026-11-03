@@ -466,3 +466,12 @@ Founder requested autonomous work while away and added a third assistant named A
 - Commit: `6896b5d4211c1dfac2ac5fadb80de47eeaf0a495`.
 - Worker deployment workflow `41665834458` was still running at checkpoint time. Do not tell the founder the fix is live until this run completes successfully.
 - Next: verify deployment success, then ask founder to refresh the site and click Dr.Vas Free. The email/password form should appear. After that, test a real sign-in and profile loading.
+## All module cards open sign-in; preserve selected module — 2026-11-03
+
+- Founder clarified that sign-in must open from every module, not only Dr.Vas Free, and asked how the three assistants fit into the platform.
+- Updated `selectModule()` so all six module cards (Free, Health, Studio, Academy, Commerce, Business) route signed-out visitors to the same authentication panel. The requested module is highlighted and saved in sessionStorage during sign-in.
+- After successful authentication and profile loading, the app restores the requested module. Existing premium access restriction remains in place: Studio, Academy, Commerce and Business are not publicly enabled until subscription/entitlement checks are implemented; admin can test them. This distinction must be explained clearly, not hidden.
+- Implementation commit: `8a117ef6eada44f853526551e5167962ce14acce`.
+- The previous login-navigation fix (`6896b5d4211c1dfac2ac5fadb80de47eeaf0a495`) deployed successfully, but the broader all-module routing commit is newer and its own deployment must be verified before claiming it is live.
+- Assistant architecture already exists in the signed-in chat: three selectable personas, Dr.Vas (primary), Dr.Jan (step-by-step guide) and Aurora (creative/learning). Persona selection changes the system prompt, assistant label and voice selection; speech playback supports browser voices, and Gemini Live has configured built-in voices. Dr.Jan/Aurora have original illustrated SVG portraits with lightweight idle/speaking motion; Dr.Vas retains the founder portrait. Current mouth motion is a speaking animation, not phoneme-accurate lip sync or a photorealistic 3D avatar.
+- Next product step: make assistant selection prominent in the signed-in workspace and implement proper subscription entitlements/payment for the four premium modules; then progress to expressive animated avatars and real audio-driven lip-sync.
