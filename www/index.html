@@ -1031,6 +1031,19 @@ function getRememberedConversation(){
   try{return localStorage.getItem(ACTIVE_CONVERSATION_PREFIX+currentUser.id)}catch{return null}
 }
 
+function scrollPageToChat(){
+  const target=el("chatSection");
+  if(!target || target.classList.contains("hidden"))return;
+  const alignChat=()=>{
+    if(!target.isConnected || target.classList.contains("hidden"))return;
+    const toolbar=target.querySelector(".chat-main .chat-toolbar");
+    const anchor=toolbar || target.querySelector(".chat-main") || target;
+    const top=anchor.getBoundingClientRect().top + window.scrollY - 14;
+    window.scrollTo({top:Math.max(0,top),behavior:"auto"});
+  };
+  requestAnimationFrame(()=>requestAnimationFrame(alignChat));
+}
+
 let chatScrollFrame = 0;
 function scrollToLatestMessage(target){
   const chat=el("chat");
@@ -2339,6 +2352,8 @@ async function showChat(user,displayName){
     updateSaveButton();
     renderWelcome();
   }
+  // Bring the conversation into view automatically; the user can still scroll up.
+  scrollPageToChat();
 }
 
 function renderWelcome(){
