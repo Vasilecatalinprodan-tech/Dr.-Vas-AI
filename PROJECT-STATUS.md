@@ -598,3 +598,10 @@ Founder requested autonomous work while away and added a third assistant named A
 - Static cross-layer audit found seven frontend Worker action names; all seven have matching Worker action handlers. Worker also contains the five private-profile/privacy actions used through the shared request helper.
 - All nine frontend requests to the Worker use JSON content type. Frontend Supabase table references are `profiles`, `chat_messages`, `drvas_conversation_metadata`, `drvas_studio_projects`, and `drvas_income_opportunities`; the repository includes the four newer feature migrations for conversation metadata, Studio, income/provenance, plus the privacy/rate-limit/device migrations. Existing base profile/chat tables predate these recent migrations.
 - The APK Gradle build step completed successfully for commit `6664fb27cb11a83f402dc6fb751da26134218e16`; artifact upload was still in progress at checkpoint. This remains a build result, not physical-device validation.
+
+
+### Android build artifact confirmed — 2026-11-03
+
+- APK workflow run `41698929811` completed successfully for commit `6664fb27cb11a83f402dc6fb751da26134218e16`.
+- Artifact: `DrVas-APK`, ID `13262293447`, size 6,033,799 bytes, SHA-256 `a2063e934e0d958f1280d6c416efaaffc47c41db8b2d581fd5146730032fb402`, expires 2027-02-01.
+- APK compiled and uploaded successfully. Installation and real runtime testing on a physical Android device are still not done.
