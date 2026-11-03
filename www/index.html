@@ -1380,7 +1380,7 @@ function studioProjectData(){
  const deliverable=value("studioDeliverable");
  const labels={series:"Serial / episod",short:"Clip scurt",youtube:"Video YouTube",ad:"Reclamă",storyboard:"Storyboard",book:"Carte / e-book",translation:"Traducere",music:"Compoziție muzicală",lyrics:"Versuri / poezie",article:"Articol / blog"};
  const title=value("studioProjectTitle").trim()||((labels[deliverable]||"Proiect")+" — "+(idea.slice(0,48)||"Proiect nou"));
- return {title,project_type:deliverable,brief:{idea,deliverable,platform:value("studioPlatform"),tone:value("studioTone"),audience:value("studioAudience"),duration:value("studioDuration"),aspect:value("studioAspect"),updated_from:"drvas-studio"}};
+ return {title,project_type:deliverable,brief:{idea,deliverable,platform:value("studioPlatform"),tone:value("studioTone"),audience:value("studioAudience"),duration:value("studioDuration"),aspect:value("studioAspect"),latest_output:[...document.querySelectorAll("#chat .msg.bot")].map(node=>node.textContent||"").filter(text=>text.trim()).pop()||"",updated_from:"drvas-studio"}};
 }
 function setStudioProjectStatus(message,isError=false){
  const status=el("studioProjectStatus");if(!status)return;
