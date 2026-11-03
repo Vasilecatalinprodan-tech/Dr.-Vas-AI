@@ -85,7 +85,7 @@ Planned provenance protection: a private encrypted record (AES-256-GCM with a Cl
 ## Session checkpoint — 2026-11-03 (full-page navigation and multiline composer)
 
 - Updated `www/index.html` with document-level vertical scrolling, bottom page clearance and a floating jump-to-bottom control labelled "Jos, la ultimele butoane". Commit: `e7ebecb073a297679b9cee2e3dde4737eec4b59e`.
-- Replaced the single-line chat composer with a multiline textarea. It wraps long text, grows automatically up to 240px, then scrolls internally; Enter inserts a new line and Ctrl+Enter (or Cmd+Enter) sends. The send button remains the normal send action. Text is not sent automatically.
+- Replaced the single-line chat composer with a multiline textarea. It wraps long text automatically at the edge without requiring Enter, grows automatically up to 240px, then scrolls internally; Enter sends, while Shift+Enter inserts an intentional new line. The send button remains available. Voice transcription also triggers textarea resizing.
 - Added a Worker system-instruction rule for the explicit project-continuity phrase "salvează ce am făcut până acum": Dr.Vas must use the supplied chat history, accurately explain that authenticated chat history is auto-saved, and never claim unperformed repository or external changes.
 - User-facing verification still required: reload the production site with Ctrl+F5 and test long multiline typing, line breaks, Ctrl+Enter, and the jump-to-bottom control. Deployment status for this commit must be checked after GitHub Actions runs.
 - Existing Supabase tables and founder provenance secrets state remain as recorded in earlier checkpoint; do not infer Cloudflare secrets are configured.
@@ -121,3 +121,15 @@ Work in bounded 30-minute blocks. At the end of each block:
 - update this checkpoint/session log;
 - record tests, deployment status, unresolved issues and any user action required;
 - never claim background work continued after the conversation/tool session ended.
+
+
+## Session checkpoint — 2026-11-03 (Studio access and creative briefs)
+
+- Corrected the composer to match the requested ChatGPT-style behaviour: automatic visual wrapping at the right edge, Enter sends, Shift+Enter adds an intentional line break, and voice transcription resizes the textarea.
+- Added an explicit frontend `selectModule` handler. The six module cards previously referenced this function but no implementation existed in `www/index.html`; selecting a module could therefore fail. The handler now updates the selected card and active module, logs module selection for signed-in users, and keeps premium modules blocked for non-admin users until subscriptions are implemented.
+- Fixed the Studio workspace visibility: it was permanently marked hidden and had no code path to reveal it. It is now shown only when the authenticated user passes the server-side administrator check and selects Dr.Vas Studio.
+- Expanded Studio capability cards for books/e-books, translation/localisation, original music/lyrics, screenwriting, editorial/commercial writing and social content.
+- Improved Studio briefs so video-only platform/duration/aspect-ratio metadata is not incorrectly attached to books, translations or music. Translation briefs explicitly require source/target language clarity; book and music briefs use appropriate delivery guidance.
+- The Independent Income tracker and private Studio project workspace remain the existing storage paths; no automatic publishing, contracts, payments or media rendering are claimed.
+- APK public Release publishing was intentionally not enabled; Android builds remain workflow artifacts until the founder chooses to resume APK installation/testing.
+- Validation/deployment: check GitHub Actions for the latest commit after this checkpoint. Do not claim authenticated end-to-end Studio use or mobile runtime testing until manually verified.
