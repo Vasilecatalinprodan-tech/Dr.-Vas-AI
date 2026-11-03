@@ -220,3 +220,5 @@ Founder proposed adding revenue-generating writing, translation and music servic
 - Added account-switch isolation for Studio project state; switching Supabase users clears the selected project and form state. Commit: `cefd66e827b4da90385de5ae03213a187e997589`.
 
 - Added `docs/REVENUE_ENGINE_ROADMAP.md`: multi-module revenue streams, payment/order/entitlement architecture, build phases, IP/AI transparency, and crypto launch gates. Commit: `38f20bd4b225e5d4e8c006cbaaf0821a5a14552e`.
+
+- Localised Studio project controls and missing-database setup message across all seven non-Romanian supported languages. Added a 50,000-character cap for stored latest output. Translation validation caught and prevented a malformed Spanish dictionary entry; fixed in `f31e04f2d893098857dd4b30d0c115e29c565e64`, then Worker deployment passed. Latest localisation commit `e40cd68ca0a27c37b17bf6667eb6626816043635` was being validated/deployed at checkpoint time.
