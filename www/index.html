@@ -1873,7 +1873,6 @@ async function createFounderProvenance(){
   const {data,error}=await supabaseClient.auth.getSession();if(error||!data.session)throw new Error("Sesiunea a expirat. Conectează-te din nou.");
   const response=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
    action:"founder_provenance_create",access_token:data.session.access_token,
-   source_commit_sha:"3f900c37bbced7120eb97bbaafbea2e038cf46c7"
   })});
   const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.error||"Nu am putut crea dovada.");
   notice.textContent="Dovadă creată și verificată la semnare. SHA-256: "+result.payload_sha256+" · "+result.signed_at;
