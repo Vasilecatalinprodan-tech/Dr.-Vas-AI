@@ -258,3 +258,10 @@ Founder proposed adding revenue-generating writing, translation and music servic
 - Static frontend-to-Worker audit: all seven frontend action names resolve to Worker handlers; all nine Worker fetch call sites use JSON; all UI handler names resolve; 204 `el(...)` references resolve to existing HTML IDs after removing obsolete manual-save code.
 - Core frontend Supabase tables identified: `profiles`, `chat_messages`, `drvas_conversation_metadata`, `drvas_studio_projects`, `drvas_income_opportunities`. The two core profile/chat tables are legacy schema; the new feature migrations cover the newer functionality.
 - APK Gradle compile succeeded for commit `6664fb27cb11a83f402dc6fb751da26134218e16`; artifact upload was still running at this checkpoint. Device installation remains outstanding.
+
+
+## 2026-11-03 — APK artifact completed
+
+- Android workflow `41698929811` succeeded for commit `6664fb27cb11a83f402dc6fb751da26134218e16`.
+- Artifact `DrVas-APK` ID `13262293447`, size 6,033,799 bytes, SHA-256 `a2063e934e0d958f1280d6c416efaaffc47c41db8b2d581fd5146730032fb402`, expiry 2027-02-01.
+- Physical-device installation and runtime test still required.
