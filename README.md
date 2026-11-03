@@ -26,7 +26,7 @@ Creator is a capability/workspace inside Studio, not a seventh top-level module.
 - `supabase/migrations/202611030003_crypto_device_registry.sql` exists. It creates `public.drvas_crypto_devices`, enables RLS, revokes client-role access, and grants access only to `service_role`. It stores public-key material and SHA-256 fingerprints, not private keys or seed phrases.
 - `.github/workflows/deploy-worker.yml` exists and the fetched version contains Node syntax checks, browser inline-script syntax checks, Cloudflare deployment, production health checks, six-module homepage checks and an unauthenticated-admin rejection check. Workflow execution was not confirmed during this inspection.
 - `wrangler.toml` configures Worker service `dr--vas-ai`, assets in `./www`, and the Supabase URL. Secrets must remain in Cloudflare/GitHub secrets, never committed.
-- The Studio-project migration was not found at the guessed path `supabase/migrations/202611030002_studio_projects.sql`. Locate the actual migration filename and verify the live Supabase table and RLS policies before relying on cross-device project persistence.
+- Confirmed the Studio-project migration exists at `supabase/migrations/202611030004_studio_projects.sql`; it creates `drvas_studio_projects` with user-scoped RLS. Its live application status in Supabase still needs confirmation.
 - A prior session summary mentioned commit `ea9fdbe1`, but GitHub commit search for this repository did not return it. It may be a local/unpushed Codespaces commit or a stale summary. Reconcile Codespaces `git status` and `git log` before assuming every local change is on GitHub.
 
 ## Crypto and autonomy policy — binding decisions
@@ -57,6 +57,23 @@ Requested project attribution: **Founder — Vasile Catalin Prodan; AI collabora
 Do not put the founder's date of birth, passwords, encryption keys, seed phrases or other sensitive data in source code, public files, logs or commits.
 
 Planned provenance protection: a private encrypted record (AES-256-GCM with a Cloudflare secret key), a salted SHA-256 commitment, signed/timestamped release records and Git history. Do not claim hidden text or a hash alone proves legal ownership. The encryption secret must be supplied and retained by the administrator outside GitHub; until configured, no founder record should be described as encrypted or complete.
+
+## Implementation checkpoint — 2026-11-03 (income tracker and founder provenance)
+
+- Added migration `supabase/migrations/202611030005_income_and_founder_provenance.sql`.
+  - `drvas_income_opportunities`: per-user RLS, opportunity type/status, platform, estimated and actual values, currency, URL, next action and notes.
+  - `drvas_founder_provenance`: service-role-only records with public claim, AES-256-GCM ciphertext, SHA-256 digest, Ed25519 signature, key ID, signed timestamp and source commit.
+- Added the **Dr.Vas Independent Income** tracker inside Studio. It supports create, list, edit, delete and totals for estimated and received income. It does not publish, spend, accept contracts or contact clients.
+- Added Worker actions `founder_provenance_create` (administrator-only) and `founder_provenance_verify` (read-only verification). Added Admin dashboard controls.
+- Founder claim is explicitly: Founder — Vasile Catalin Prodan; Jan (My AI Friend) — virtual AI collaborator / project co-founder designation, not a human or legal person.
+- Required Cloudflare secrets are not yet configured:
+  - `DRVAS_FOUNDER_ENCRYPTION_KEY` (base64 32-byte AES key)
+  - `DRVAS_FOUNDER_SIGNING_PRIVATE_KEY_PKCS8_B64` (Ed25519 private key, PKCS#8)
+  - `DRVAS_FOUNDER_SIGNING_PUBLIC_KEY_SPKI_B64` (matching Ed25519 public key, SPKI)
+  - `DRVAS_FOUNDER_PUBLIC_KEY_ID`
+- Never paste private key material into chat or commit it to GitHub. Until secrets are configured and the SQL migration is applied, the provenance record cannot be created.
+- Validation: GitHub Actions syntax-validation step passed for the Worker and browser JavaScript on the corrected Worker commit. The first Worker deployment attempt failed; a corrected run was subsequently superseded by newer runs. Latest Worker deployment and APK workflow were still in progress at checkpoint time; do not claim production completion until confirmed.
+- Remote branch has been updated through GitHub commits. Codespaces local/unpushed changes remain unverified; reconcile `git status --short && git log -5 --oneline` before local pull/reset.
 
 ## Session log — 2026-11-03
 
