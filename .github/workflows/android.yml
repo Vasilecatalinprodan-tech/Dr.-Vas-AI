@@ -5,6 +5,17 @@ on:
   push:
     branches:
       - drvas-integrated-platform
+    paths:
+      - 'www/**'
+      - 'android/**'
+      - 'capacitor.config.*'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/android.yml'
+
+concurrency:
+  group: drvas-android-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
