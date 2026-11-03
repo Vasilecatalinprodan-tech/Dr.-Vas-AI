@@ -1997,16 +1997,20 @@ async function handleAuth(){
 }
 
 function enterChatFocus(){
-  if(!currentUser){showOnly("authSection");return;}
-  el("chatSection").classList.remove("hidden");
-  document.body.classList.add("chat-focus-mode");
-  document.body.classList.remove("history-open");
-  requestAnimationFrame(()=>window.scrollTo({top:0,behavior:"auto"}));
+  if(!currentUser){showOnly("authSection");el("authSection").scrollIntoView({behavior:"smooth",block:"center"});return;}
+  const chatSection=el("chatSection");
+  if(!chatSection)return;
+  // Keep the full dashboard in normal document flow. Hiding every sibling and
+  // forcing a fixed-height viewport caused blank/blue screens on some browsers.
+  document.body.classList.remove("chat-focus-mode","history-open");
+  chatSection.classList.remove("hidden");
+  requestAnimationFrame(()=>chatSection.scrollIntoView({behavior:"smooth",block:"start"}));
 }
 function exitChatFocus(){
   document.body.classList.remove("chat-focus-mode","history-open");
-  el("chatSection").classList.add("hidden");
-  window.scrollTo({top:0,behavior:"auto"});
+  const chatSection=el("chatSection");
+  if(chatSection)chatSection.classList.add("hidden");
+  window.scrollTo({top:0,behavior:"smooth"});
 }
 function toggleChatHistory(){document.body.classList.toggle("history-open");}
 function showOnly(section){
