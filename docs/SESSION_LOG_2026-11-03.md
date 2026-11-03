@@ -134,3 +134,13 @@ The preceding project checkpoint and project status documents contain the full p
 - Commits: Worker endpoint `38a122284c1dee01763798c00618af1c75a720bf`; UI `f357a5c8bdb779d1577c06f6b27cd05cb881a16d`; SQL migration `c4577489a8209ecdc288e5d0d3c64fe5e1d8f564`; Worker URL-normalization fix `5c3d57dd2ceaedf4e22e5dfaadf5fe3e58c7efaa`.
 - Migration has NOT yet been applied to Supabase. Until it is applied, the panel will report setup required. No device enrollment, mining, wallet custody, exchange integration, or live/paper trading has been enabled.
 - Next: implement cryptographic device enrollment (private key generated and kept on the device; only public key registered), explicit admin approval/revocation, and audit events. Then build read-only market data and profitability estimates before any simulation or execution.
+
+## Founder request — reliable automatic scrolling and SQL guidance (2026-11-03)
+
+- The founder reported that the page scrollbar still does not reliably move to the newest Dr.Vas reply.
+- Reworked `scrollToLatestMessage()` in `www/index.html`: it now waits for two animation frames, verifies the target is still connected, scrolls the target into view, and also explicitly scrolls the document viewport. This is intended to cover delayed layout and browser differences where `scrollIntoView()` alone does not move the page scrollbar.
+- Frontend fix commit: `27d84c60016d73effe01faa70d70749ae9aeddd8`.
+- This is a code change, not yet a verified production fix. Confirm the GitHub Actions deployment is green, then test a long Dr.Vas answer on desktop and mobile. If the page still fails to move, inspect the actual deployed DOM/CSS and browser console before making further changes.
+- Founder asked to preserve this conversation and explain required Supabase SQL. The crypto device registry migration `supabase/migrations/202611030003_crypto_device_registry.sql` is the outstanding migration for the read-only Crypto device registry. It must be applied once in Supabase SQL Editor; it does not enable mining, wallets, or trading. The earlier audit-log and private-profile migrations were previously recorded as applied and should not be rerun.
+- Do not claim that the admin panel, Crypto registry, or auto-scroll is fully verified until tested against the live site and Supabase.
+
