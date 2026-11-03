@@ -33,3 +33,14 @@
 - Created branch fix/session-restore-preserves-homepage. Changed showChat() to keep the public dashboard visible on session restoration and not enter focus mode or auto-scroll. Focus mode remains available through the explicit header chat button. This also keeps the six-workspace homepage visible while account/chat data loads.
 - Validation: extracted inline browser script parses successfully with JavaScript Function constructor. This is syntax validation only; a real browser end-to-end test remains outstanding.
 - Not deployed. Next: review PR, run production validation, deploy only after checks pass, then founder retests without needing to provide screenshots or console output.
+
+
+## 2026-11-03 — Reliability work: browser regression gate
+
+- Founder directive: preserve the full project/conversation continuity; technical reliability work is to be handled by the development workflow, not delegated to the founder. Priority is to avoid a repeat of a broken homepage when real customers are using Dr.Vas.
+- Reviewed the existing production deployment workflow. It checked Worker health, static HTML markers and JavaScript syntax, but did not execute the frontend in a real browser. These checks are not sufficient to prove the homepage renders correctly.
+- Added `.github/workflows/browser-e2e.yml`: pull requests targeting `drvas-integrated-platform` and relevant production pushes run Chromium-based browser regression tests. The workflow starts a local copy of `www/`, mocks the Supabase browser SDK boundary, and does not require production credentials or customer data.
+- Added `tests/e2e/homepage.spec.cjs` to cover: first-visit language gate, six-module dashboard with a saved language, and the session-restoration path that previously activated chat focus and hid the dashboard.
+- The tests are intended to fail if the old automatic focus behavior returns. They are a new safety gate, not yet proof of a successful run. Await the GitHub Actions result before merging or deploying.
+- Reliability roadmap: (1) make the homepage/session regression tests pass; (2) add broader browser tests for authentication, chat, module navigation and degraded dependencies; (3) add external uptime/error monitoring and alerting; (4) implement independent database backups and verify restore drills; (5) add deployment health gates and a tested rollback procedure. Do not claim high availability or disaster recovery until the controls are implemented and exercised.
+- No production deployment was triggered by these changes.
