@@ -225,3 +225,12 @@ Official current Gemini Live API documentation:
 - Latest APK build for the voice-picker change is still running: workflow run `41615775933`. Do not treat this code as tested on Android until the build succeeds and the APK is installed and tested on a device.
 - Founder reports Instagram is currently Personal and is checking whether to switch it to Creator. Do not change the account type or claim Meta OAuth is ready until the founder confirms and supplies the required Meta Developer app credentials.
 
+
+
+## Turkish and social account readiness — 2026-11-03
+
+- Turkish (tr) is already supported in language selection, speech recognition (tr-TR), browser voice selection, and Gemini Live language configuration.
+- Expanded Turkish translations for the Studio creation flow, Meta/TikTok connection disclosures and voice controls. Translation coverage is improved, not yet fully human-reviewed across every screen.
+- Founder confirmed Instagram is now a Creator account. The Meta professional-account prerequisite is met, but the Instagram account must also be linked to a Facebook Page and Dr.Vas still needs Meta developer credentials, OAuth, approved permissions and secure server-side token storage.
+- TikTok remains a separate integration requiring its own TikTok Developer app, OAuth and API approvals.
+- Latest Android APK workflow 41615804712 succeeded; artifact DrVas-APK id 13220403831 (~6.0 MB). Physical device installation/testing remains outstanding.
