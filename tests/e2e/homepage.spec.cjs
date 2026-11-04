@@ -180,6 +180,32 @@ test("successful administrator sign-in opens the exact module selected before au
   }
 });
 
+test("sign-in with a non-admin account never opens a pending private module", async ({ page }) => {
+  await openApp(page, "ro");
+  const modules = ["free", "health", "studio", "academy", "commerce", "business"];
+  await page.evaluate(() => {
+    refreshAdminPanel = async () => { isDrvasAdmin = false; };
+    loadStudioProjects = async () => {};
+    loadModuleProjectList = async () => {};
+    loadIncomeOpportunities = async () => {};
+    loadConversationList = async () => [];
+  });
+
+  for (const module of modules) {
+    await page.evaluate(selected => {
+      sessionStorage.setItem("drvas_pending_module", selected);
+      return showChat({ id: "e2e-standard-user", email: "member@example.invalid" }, "Member");
+    }, module);
+    await expect(page.locator("#moduleSelectionShell")).toBeVisible();
+    await expect(page.locator("#moduleAccessMessage")).toContainText("pilot privat");
+    await expect(page.locator("#chatSection")).toBeHidden();
+    for (const workspace of ["health", "studio", "academy", "commerce", "business"]) {
+      await expect(page.locator("#" + workspace + "Workspace")).toBeHidden();
+    }
+    expect(await page.evaluate(() => sessionStorage.getItem("drvas_pending_module"))).toBeNull();
+  }
+});
+
 test("mobile Free chat stays simple and offers only module navigation and logout", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openApp(page, "ro");
