@@ -95,6 +95,8 @@ jobs:
             [html.includes('function buildStudentAssessmentPrompt()'), 'Student Desk assessment feedback builder is missing'],
             [html.includes('function saveStudentAssessmentProject()') && html.includes('function openStudentAssessmentProject()'), 'Student Desk private project save/open functions are missing'],
             [html.includes('businessLedgerVat') && html.includes('businessLedgerIncome') && html.includes('businessLedgerExpenses'), 'Business cashbook summary is incomplete'],
+            [html.includes('function calculateBusinessBreakEven()') && html.includes('businessBreakEvenUnits'), 'Business break-even calculator is missing'],
+            [html.includes('"businessExpectedUnits"') && html.includes('"businessVariableCost"'), 'Business break-even assumptions must be saved with business plans'],
             [studioRenderMigration.toLowerCase().includes('create table if not exists public.drvas_studio_render_jobs'), 'Studio render-job migration must create its table'],
             [studioRenderMigration.toLowerCase().includes('enable row level security'), 'Studio render-job storage must enable RLS'],
             [studioRenderMigration.toLowerCase().includes('auth.uid() = user_id'), 'Studio render-job policies must enforce per-user ownership'],
