@@ -617,6 +617,50 @@ body.chat-focus-mode.module-workspace-mode #chatSection>.chat-layout{grid-column
 body.chat-focus-mode.module-workspace-mode .chat-module-rail{display:none!important}
 body.chat-focus-mode.module-workspace-mode #chatSection .history-panel{display:none!important}
 
+/* Isolated module workspaces: no global module rail or multi-column dashboard inside a module. */
+body.module-workspace-mode main{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:auto auto!important;
+  align-items:start!important;
+  gap:14px!important;
+  width:100%!important;
+  max-width:1600px!important;
+  height:auto!important;
+  min-height:calc(100vh - 75px)!important;
+  overflow:visible!important;
+}
+body.module-workspace-mode .module-selection-shell{
+  grid-column:1/-1!important;
+  grid-row:1!important;
+  width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+}
+body.module-workspace-mode #moduleSelectionSection>.modules-heading,
+body.module-workspace-mode #moduleSelectionSection>.modules-grid,
+body.module-workspace-mode #moduleSelectionSection>.active-module-bar{
+  display:none!important;
+}
+body.module-workspace-mode #moduleSelectionSection .module-card{display:none!important}
+body.module-workspace-mode #chatSection{
+  grid-column:1/-1!important;
+  grid-row:2!important;
+  width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  padding:0!important;
+}
+body.module-workspace-mode #chatSection>.chat-module-rail{display:none!important}
+body.module-workspace-mode #chatSection>.chat-layout{
+  display:block!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-column:1/-1!important;
+  width:100%!important;
+  margin:0!important;
+}
+body.module-workspace-mode #chatSection .history-panel{display:none!important}
+body.module-workspace-mode #chatSection .chat-main{width:100%!important;max-width:none!important}
 /* Authentication and profile are shown inside the module shell without exposing the module dashboard. */
 .module-selection-shell.auth-flow-mode{display:block!important}
 #moduleSelectionShell.auth-flow-mode > #moduleSelectionSection > :not(#authSection):not(#profileSection){display:none!important}
