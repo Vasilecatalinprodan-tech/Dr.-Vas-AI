@@ -55,3 +55,12 @@
 - Studio uploads use private Supabase Storage bucket drvas-media; supported upload types include MP3/WAV/MP4/M4A/AAC with a 20 MB limit.
 - Studio E2E tests mock Supabase/Creatomate; they do not prove live MP4 rendering.
 - Keep all secrets private and do not relax admin controls.
+
+
+## Continuation update — 2026-11-04, afternoon
+- Added a post-authentication routing regression test: when the administrator signs in after choosing any of the six modules, Dr.Vas opens that exact module. Free correctly uses its focused chat layout; the other modules keep the module chooser shell visible with their dedicated workspace.
+- Added a security regression test for a signed-in non-admin account: all six pending module choices remain blocked, the private-pilot notice appears, and no chat workspace opens.
+- Final browser regression run: 25 passed (11.6s), workflow run 41847917771, commit 5bba00fc.
+- Deployment run 41847917623 completed successfully for commit 5bba00fc; Worker deployment and production smoke test both passed.
+- Confirmed Worker text-chat requests include the selected module and a module-specific system instruction for Health, Studio, Academy, Commerce and Business. This is separate from the Live Voice module prompt.
+- Next engineering focus: test real module outputs and persistent project workflows beyond navigation; then test Studio's live render path and rebuild the Android APK from a fully verified commit.
