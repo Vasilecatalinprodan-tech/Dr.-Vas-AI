@@ -89,3 +89,23 @@ When resuming, read this scope record and the latest dated checkpoint first. Do 
 - The latest confirmed repository files remain: www/index.html blob b2ff7dea6aa202e612184c0ef68900617a9063db; tests/e2e/homepage.spec.cjs blob 68fcb9922eb8e441ca256348cd08f9324b37d502; this continuity document before this addition blob 7f30fb8bb3c63fd35126a9d76929e1547d022fee. The latest UI mask format is first visible email characters followed by four literal dots and @domain (e.g. alx....@gmail.com).
 - Current technical uncertainty: latest CI status and production deployment have not been confirmed by available GitHub connector results. Never state that CI passed or deployment is current without fresh evidence. An attempted external fetch of the production URL from this environment was blocked by network/DNS restrictions; user-side visual testing is the next practical step.
 - Founder/admin email is still not fully confirmed. Do not infer its full address from a prefix and do not alter Cloudflare ADMIN_EMAILS based on guesses. The connected-account email alxkvl81@gmail.com is not the designated administrator identity.
+
+
+## 2026-11-04 — Confirmed navigation, module isolation, and platform presentation requirements
+
+The owner reconfirmed the required end-user journey and presentation experience. Treat these as product requirements, not optional design suggestions:
+
+1. First/landing page: a clear welcome/entry experience branded “Vorbește cu Dr.Vas” (or the equivalent professional translation in the selected language). The language selector is available on this first page.
+2. Authentication page comes next: users can create an account or sign in to an existing account. The language selector remains available here too.
+3. After successful authentication, show the module-selection page. Do not send users directly into a chat or a module.
+4. Selecting a module opens that module's dedicated workspace. Its interface, navigation, prompts, tools, and content must be specific to that module; do not mix unrelated modules' functions or content into its workspace.
+5. Every module workspace has a clearly visible “Înapoi la module” action (professionally translated for the active language) returning to module selection.
+6. Provide a platform-level “Prezentarea Dr.Vas” action. It opens a polished presentation explaining what Dr.Vas is and what each of the six modules does. Keep the presentation accessible from the main interface/module-selection experience.
+7. The presentation should support audio narration. Investigate a user-consented voice-cloning/voice-recording workflow for the owner's voice, subject to technical feasibility, provider terms, privacy, and consent. Do not promise voice cloning until implemented and tested.
+8. Improve all supported interface languages with professional, natural, consistent terminology and tone; avoid literal/awkward machine translations.
+9. Defer presentation films/video enhancements until Dr.Vas Studio is completed. Later, enrich the platform presentation with video assets produced through Studio.
+10. Preserve the existing six-module scope, Supabase authentication, chat history, Dr.Vas branding and original image, Romanian flag, Worker authorization, and founder-only/private pilot restrictions. Do not expose gated modules or imply licensing/regulated approvals have been obtained.
+
+Implementation order: first audit the existing landing/auth/module routing and language handling in www/index.html; map current behavior against the above journey; then implement the smallest safe staged changes, preserving working authentication/session/history. Verify visually with the owner after each meaningful stage. Before broad changes, add/adjust automated regression tests for landing → auth → module selection → dedicated module → back-to-modules, language persistence, and presentation entry. The owner performs only visual/product testing; the assistant handles repository inspection, code, and test analysis. The owner will perform SQL/dashboard actions only when exact instructions are necessary.
+
+Audio/video roadmap: first complete written platform/module presentation; then add recorded narration; evaluate the owner's voice as a later opt-in enhancement; only after Studio is complete add Studio-produced presentation films.
