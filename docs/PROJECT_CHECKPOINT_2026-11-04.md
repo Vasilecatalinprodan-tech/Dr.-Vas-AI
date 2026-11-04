@@ -119,3 +119,10 @@ The Worker deployment workflow now statically validates the repair migration's e
 - Latest Worker deployment run `41829164357` passed all static checks, SBOM generation, **16 browser E2E tests**, Worker deployment and production smoke test: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/41829164357
 - The 16 tests include the Studio MP4 render request/private-preview flow, Business cashbook VAT maths, Student Desk prompt, dedicated chat navigation and break-even calculator example.
 - Break-even calculator assumptions are saved in Business Plan projects via `MODULE_PROJECT_FIELDS.business`.
+
+
+## APK refresh after Business Planner changes — 4 November 2026, 12:28 UTC
+- APK build run `41829114076` succeeded for commit `60abb3a328676a60be0ffc397aafd1d1f5d96c62`, which includes the Business break-even calculator and Studio MP4 frontend.
+- Artifact `DrVas-APK`: 6,057,923 bytes; SHA-256 `aca4e682b917fa83bc29e5e16edc3a8ec98f0712916f341e349f6074c63fa3ff`; expires 2 February 2027.
+- Download from: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/41829114076
+- The APK is built successfully but still requires physical-device installation and user acceptance testing.
