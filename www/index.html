@@ -3306,9 +3306,10 @@ async function showChat(user,displayName){
   currentUser = user;
   try{const savedAssistant=localStorage.getItem("drvas_assistant_"+user.id);if(savedAssistant&&ASSISTANTS[savedAssistant])activeAssistant=savedAssistant;}catch{}
   selectAssistant(activeAssistant);
-  showOnly("chatSection");
-  // Keep the public dashboard visible after session restoration. Focus mode is
-  // entered only when the user explicitly presses the header chat button.
+  ["authSection","profileSection","chatSection"].forEach(id=>el(id)?.classList.add("hidden"));
+  document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode");
+  document.documentElement.classList.remove("chat-focus-document");
+  // Session restoration returns to the presentation. A module opens only after the user chooses it.
 
   el("accountEmail").textContent =
     (displayName || el("displayName").value.trim() || user.email || "") +
