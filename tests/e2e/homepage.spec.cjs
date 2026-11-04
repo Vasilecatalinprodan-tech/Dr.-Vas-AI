@@ -212,7 +212,7 @@ test("text chat sends the selected module context to the Worker for all six modu
     user: { id: "e2e-chat-user", email: "owner@example.invalid" }
   });
   const sentRequests = [];
-  await page.route(/dr--vas-ai\\.vasilecatalinprodan\\.workers\\.dev/, async route => {
+  await page.route(/dr--vas-ai/, async route => {
     const body = route.request().postDataJSON() || {};
     if (body.action === "client_event") {
       await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true }) });
