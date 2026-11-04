@@ -338,6 +338,15 @@ test("Business workspace exposes the cashbook and Student Desk with working VAT 
   expect(accounting.vat).toContain("10");
   expect(accounting.rows).toBe(2);
 
+  await page.locator("#businessFixedCosts").fill("1000");
+  await page.locator("#businessUnitPrice").fill("50");
+  await page.locator("#businessVariableCost").fill("25");
+  await page.locator("#businessExpectedUnits").fill("50");
+  await expect(page.locator("#businessBreakEvenUnits")).toContainText("40");
+  await expect(page.locator("#businessBreakEvenRevenue")).toContainText("2,000");
+  await expect(page.locator("#businessContributionMargin")).toContainText("50.0%");
+  await expect(page.locator("#businessExpectedProfit")).toContainText("250");
+
   await page.locator("#studentAssessmentSubject").fill("Business Management");
   await page.locator("#studentAssessmentBrief").fill("Evaluate a business strategy using evidence.");
   await page.locator("#studentAssessmentDraft").fill("My draft explains the strategy and its limitations.");
