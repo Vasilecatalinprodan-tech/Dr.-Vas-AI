@@ -585,6 +585,64 @@ export default {
         return json({ ok: logged }, logged ? 200 : 503);
       }
 
+      // Optional server-side founder voice TTS. Provider credentials and verified voice ID stay in Worker secrets.
+      if (body.action === "voice_tts") {
+        const ttsText = typeof body.text === "string" ? body.text.trim() : "";
+        if (!ttsText || ttsText.length > 5000) {
+          return json({ error: "Textul pentru voce trebuie să aibă între 1 și 5000 de caractere." }, 400);
+        }
+        if (!env.ELEVENLABS_API_KEY || !env.ELEVENLABS_VOICE_ID) {
+          return json({ error: "Clonarea vocală Dr.Vas nu este încă configurată." }, 503);
+        }
+        const ttsUser = await verifySupabaseUser(env, body.access_token);
+        if (!ttsUser) return json({ error: "Sesiune invalidă. Conectează-te din nou." }, 401);
+        const ttsLimit = await consumeRateLimit(env, ttsUser.id, "voice_tts", 12, 60);
+        if (!ttsLimit.configured) {
+          return json({ error: "Protecția de utilizare nu este disponibilă momentan." }, 503);
+        }
+        if (!ttsLimit.allowed) return rateLimitResponse(headers, ttsLimit);
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 25000);
+        try {
+          const ttsResponse = await fetch(
+            "https://api.elevenlabs.io/v1/text-to-speech/" + encodeURIComponent(env.ELEVENLABS_VOICE_ID),
+            {
+              method: "POST",
+              headers: {
+                "xi-api-key": env.ELEVENLABS_API_KEY,
+                "Content-Type": "application/json",
+                "Accept": "audio/mpeg"
+              },
+              body: JSON.stringify({
+                text: ttsText,
+                model_id: "eleven_multilingual_v2",
+                voice_settings: { stability: 0.52, similarity_boost: 0.82, style: 0.18, use_speaker_boost: true }
+              }),
+              signal: controller.signal
+            }
+          );
+          if (!ttsResponse.ok) {
+            const providerError = (await ttsResponse.text()).slice(0, 350);
+            console.error("Dr.Vas voice provider error:", ttsResponse.status, providerError);
+            return json({ error: "Serviciul vocal nu a putut genera audio. Verifică configurarea vocii." }, 502);
+          }
+          return new Response(ttsResponse.body, {
+            status: 200,
+            headers: {
+              ...headers,
+              "Content-Type": "audio/mpeg",
+              "Cache-Control": "no-store, private",
+              "Content-Disposition": "inline; filename=drvas-voice.mp3"
+            }
+          });
+        } catch (error) {
+          console.error("Dr.Vas voice generation failed:", error.message);
+          return json({ error: "Generarea vocii a expirat sau a eșuat. Încearcă din nou." }, 502);
+        } finally {
+          clearTimeout(timeout);
+        }
+      }
+
       // Token Gemini Live de scurtă durată. Cheia Gemini nu ajunge niciodată în browser.
       if (body.action === "live_voice_token") {
         const liveAccessToken = body.access_token;
