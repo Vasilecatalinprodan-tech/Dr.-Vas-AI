@@ -2902,8 +2902,10 @@ function showLogin(){
     if(el(module+"ProjectTitle"))el(module+"ProjectTitle").value = "";
   });
   if(el("studioSavedProjects"))el("studioSavedProjects").innerHTML='<option value="">Alege un proiect salvat</option>';
-  if(el("studioProjectTitle"))el("studioProjectTitle").value = "";
-  if(el("studioIdea"))el("studioIdea").value = "";
+  ["studioProjectTitle","studioIdea","academyProjectTitle","academySubject","academyAudience","academyOutcome","academyBrief","commerceProjectTitle","commerceProduct","commercePrice","commerceBrief","businessProjectTitle","businessIdea","businessGoal","businessBrief","incomeTitle","incomePlatform","incomeUrl","incomeNextAction","incomeNotes"].forEach(id=>{if(el(id))el(id).value="";});
+  currentIncomeOpportunityId=null;
+  incomeOpportunityCache=[];
+  if(typeof renderIncomeOpportunities==="function")renderIncomeOpportunities();
   ["studioWorkspace","academyWorkspace","commerceWorkspace","businessWorkspace","adminPanel"].forEach(id=>el(id)?.classList.add("hidden"));
   document.querySelectorAll(".module-card").forEach(card=>{
     const selected=card.dataset.module==="free";
