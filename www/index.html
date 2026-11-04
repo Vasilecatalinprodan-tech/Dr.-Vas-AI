@@ -610,6 +610,13 @@ body.chat-focus-mode .chat-module-rail{display:none!important}
 body.chat-focus-mode #chatSection>.chat-layout{grid-template-columns:minmax(0,1fr)!important;grid-column:1/-1!important}
 body.chat-focus-mode #chatSection .history-panel{display:none!important}
 
+/* Legacy focus mode can coexist with the newer module-workspace class in regression and recovery flows.
+   Give the isolated conversation layout higher specificity than the older two-column shell. */
+body.chat-focus-mode.module-workspace-mode #chatSection{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto minmax(0,1fr)!important}
+body.chat-focus-mode.module-workspace-mode #chatSection>.chat-layout{grid-column:1/-1!important;grid-row:2!important;grid-template-columns:minmax(0,1fr)!important}
+body.chat-focus-mode.module-workspace-mode .chat-module-rail{display:none!important}
+body.chat-focus-mode.module-workspace-mode #chatSection .history-panel{display:none!important}
+
 /* Authentication and profile are shown inside the module shell without exposing the module dashboard. */
 .module-selection-shell.auth-flow-mode{display:block!important}
 #moduleSelectionShell.auth-flow-mode > #moduleSelectionSection > :not(#authSection):not(#profileSection){display:none!important}
