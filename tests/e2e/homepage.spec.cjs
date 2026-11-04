@@ -436,6 +436,22 @@ test("Academy, Commerce and Business projects are saved, reopened and deleted pe
     await page.evaluate(id => deleteModuleProject(id), item.id);
     await expect(page.locator("#" + item.id + "ProjectList option")).toHaveCount(1);
   }
+
+  await page.evaluate(() => selectModule("business", true));
+  await page.locator("#studentAssessmentSubject").fill("Business Management");
+  await page.locator("#studentAssessmentBrief").fill("Assess a business strategy using evidence.");
+  await page.locator("#studentAssessmentRubric").fill("Analysis 40%, evidence 30%, structure 30%.");
+  await page.locator("#studentAssessmentDraft").fill("Original student draft for feedback.");
+  await page.locator("#studentAssessmentProjectTitle").fill("Student assessment pilot");
+  await page.evaluate(() => saveStudentAssessmentProject());
+  await expect(page.locator("#studentAssessmentProjectStatus")).toContainText("salvat");
+  await expect(page.locator("#studentAssessmentProjectList option")).toHaveCount(2);
+  await page.locator("#studentAssessmentDraft").fill("Changed draft text.");
+  await page.evaluate(() => openStudentAssessmentProject());
+  await expect(page.locator("#studentAssessmentDraft")).toHaveValue("Original student draft for feedback.");
+  page.once("dialog", dialog => dialog.accept());
+  await page.evaluate(() => deleteStudentAssessmentProject());
+  await expect(page.locator("#studentAssessmentProjectList option")).toHaveCount(1);
 });
 
 test("logout removes administrator workspaces and clears private module drafts", async ({ page }) => {
@@ -451,6 +467,10 @@ test("logout removes administrator workspaces and clears private module drafts",
     document.querySelector("#businessIdea").value = "Private business idea";
     document.querySelector("#privateLegalName").value = "Private legal name";
     document.querySelector("#privateProfileConsent").checked = true;
+    currentStudioRenderJobId = "private-render-job";
+    currentStudioRenderStoragePath = "private/render.mp4";
+    document.querySelector("#studioRenderPreview").hidden = false;
+    document.querySelector("#studioSceneAudio").value = "";
     showLogin();
   });
   await expect(page.locator("#businessWorkspace")).toBeHidden();
@@ -466,7 +486,10 @@ test("logout removes administrator workspaces and clears private module drafts",
     title: document.querySelector("#businessProjectTitle").value,
     idea: document.querySelector("#businessIdea").value,
     privateName: document.querySelector("#privateLegalName").value,
-    privateConsent: document.querySelector("#privateProfileConsent").checked
+    privateConsent: document.querySelector("#privateProfileConsent").checked,
+    renderJobId: currentStudioRenderJobId,
+    renderPath: currentStudioRenderStoragePath,
+    renderPreviewHidden: document.querySelector("#studioRenderPreview").hidden
   }));
   expect(state.user).toBeNull();
   expect(state.admin).toBe(false);
@@ -476,4 +499,7 @@ test("logout removes administrator workspaces and clears private module drafts",
   expect(state.idea).toBe("");
   expect(state.privateName).toBe("");
   expect(state.privateConsent).toBe(false);
+  expect(state.renderJobId).toBeNull();
+  expect(state.renderPath).toBe("");
+  expect(state.renderPreviewHidden).toBe(true);
 });
