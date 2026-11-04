@@ -1700,9 +1700,9 @@ function updateLiveVoiceStage(state,message){
  }
 }
 function beginLiveVoiceExperience(){
- if(!currentUser){updateLiveVoiceStage("error","Pentru conversația vocală trebuie să te conectezi mai întâi.");return;}
  if(liveSocket||liveStream){updateLiveVoiceStage("closed");toggleLiveVoice();return;}
  updateLiveVoiceStage("connecting","Pregătesc conversația vocală. Browserul îți va cere accesul la microfon.");
+ if(!currentUser){updateLiveVoiceStage("error","Conectează-te pentru a continua și pentru a permite accesul la microfon.");return;}
  toggleLiveVoice();
 }
 async function toggleLiveVoice(){
