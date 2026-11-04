@@ -347,3 +347,15 @@ The user asked to preserve this session and resume tomorrow. This file is the du
 
 - Verification update: browser regression workflow `41806154793` completed successfully with **9/9 tests passed**, including the new three-persona Live avatar-stage test and the delayed browser-voice first-play test. Cloudflare Worker deploy workflow `41806093295` completed successfully. APK build workflow `41806093351` was still running at the time of this note; check its final result before reporting APK readiness.
 - Final Android result: APK build workflow `41806093351` completed with `success`. Artifact `DrVas-APK` (6,035,789 bytes; artifact ID `13309279773`) is available and not expired. This confirms compilation/package generation only; a real-device install and microphone-permission test are still required.
+
+
+### Academy / Commerce / Business buildout, private drafts and release verification — 2026-11-04
+
+- Added administrator-only structured brief builders for Academy course design, Commerce opportunity analysis and Business planning. Each builder prepares a reviewable prompt in the existing chat composer; no external transaction or publishing action is performed.
+- Added `drvas_module_projects` migration with a strict module allowlist, owner-scoped RLS policies, authenticated CRUD grants and public/anon revocation. Added save/list/open/export/delete UI for the three modules, and capture of the latest generated response for explicit user save.
+- Added CI checks for the migration's RLS, owner policy, module allowlist and no-public-access safeguards. Added the new table to the read-only Supabase verification SQL.
+- Hardened logout and account switching: revoke admin UI state, hide premium/admin workspaces, clear conversation state, all module drafts, income tracker values and private profile values/consent checkbox. This is client-side privacy hygiene in addition to server-side access controls.
+- Browser tests: latest run `41808944884`, commit `880fda5a9202a8c3457dcd56e6b05b4860be4c5d`, **13/13 passed**. Tests cover the six-module dashboard, delayed first voice playback, all three Live avatar states, new brief builders, non-admin gating, project CRUD via in-memory Supabase mock and logout cleanup.
+- Worker deploy + production smoke test: run `41808929643` completed successfully. Android APK build: run `41808929603` completed successfully; artifact `DrVas-APK`, ID `13311441980`, 6,044,092 bytes.
+- Remaining external verification: apply `supabase/migrations/202611040001_module_projects.sql` in Supabase; run `docs/SUPABASE_READONLY_VERIFICATION.sql`; test real RLS isolation with two accounts; install APK and test on a physical device. Do not mark these complete before actual confirmation.
+- Not enabled yet: public subscription billing/entitlements, finished video rendering, social OAuth/publishing, actual supplier ordering, course delivery/certification, and founder voice clone.
