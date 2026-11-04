@@ -137,7 +137,7 @@ test("first spoken answer waits for asynchronously loaded browser voices and pla
     };
     Object.defineProperty(window, "speechSynthesis", { configurable: true, value: synth });
     window.SpeechSynthesisUtterance = function (text) { this.text = text; };
-    window.voiceAutoRead = true;
+    voiceAutoRead = true;
     setTimeout(() => {
       voices = [{ name: "Andrei Romanian", lang: "ro-RO", voiceURI: "andrei-ro" }];
       [...listeners].forEach(callback => callback());
