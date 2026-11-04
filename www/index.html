@@ -1428,7 +1428,7 @@ function maskEmailForPrivacy(email){
   const local=value.slice(0,at);
   const domain=value.slice(at+1);
   const visible=local.slice(0,Math.min(3,local.length));
-  return visible+"••••••@"+domain;
+  return visible+"....@"+domain;
 }
 const authStorage = {
   getItem(key){
