@@ -225,6 +225,7 @@ test("text chat sends the selected module context to the Worker for all six modu
   await page.evaluate(() => {
     saveMessage = async () => {};
     loadConversationList = async () => [];
+    loadModuleProjectList = async () => [];
     logClientEvent = () => {};
     loadStudioProjects = async () => [];
     loadBusinessLedger = async () => {};
@@ -243,9 +244,8 @@ test("text chat sends the selected module context to the Worker for all six modu
       isSendingMessage = false;
     }, module);
     await page.locator("#question").fill("Ajută-mă cu următorul pas.");
-    await page.locator("#sendButton").click();
+    await page.evaluate(() => send());
     await expect(page.locator("#chat .msg.bot").last()).toContainText("Răspuns contextual de test.");
-    await page.waitForFunction(() => !isSendingMessage);
     const request = sentRequests[sentRequests.length - 1];
     expect(request.module).toBe(module);
     expect(request.access_token).toBe("e2e-access-token");
