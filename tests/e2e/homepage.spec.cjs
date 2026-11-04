@@ -150,3 +150,36 @@ test("first spoken answer waits for asynchronously loaded browser voices and pla
   expect(playback[0].text).toContain("Primul răspuns Dr Vas");
   expect(playback[0].voice).toBe("Andrei Romanian");
 });
+
+test("live voice room shows the selected assistant avatar and speaking animation for all three characters", async ({ page }) => {
+  await openApp(page, "ro");
+  const states = await page.evaluate(() => {
+    const result = [];
+    for (const [id, expectedName, expectedType] of [
+      ["drvas", "Dr.Vas", "img"],
+      ["jan", "Dr.Jan", "svg"],
+      ["aurora", "Sarah", "svg"]
+    ]) {
+      selectAssistant(id);
+      updateLiveVoiceStage("speaking", expectedName + " vorbește…");
+      const stage = document.querySelector("#liveVoiceStage");
+      result.push({
+        name: document.querySelector("#liveStageName")?.textContent,
+        visible: !stage.hidden && stage.classList.contains("is-open"),
+        speaking: stage.classList.contains("is-speaking"),
+        avatarType: document.querySelector("#liveStageAvatar img") ? "img" :
+          document.querySelector("#liveStageAvatar svg") ? "svg" : "missing"
+      });
+    }
+    updateLiveVoiceStage("closed");
+    return result;
+  });
+  expect(states).toHaveLength(3);
+  for (let i = 0; i < states.length; i++) {
+    expect(states[i].name).toBe(["Dr.Vas", "Dr.Jan", "Sarah"][i]);
+    expect(states[i].visible).toBe(true);
+    expect(states[i].speaking).toBe(true);
+    expect(states[i].avatarType).toBe(["img", "svg", "svg"][i]);
+  }
+  await expect(page.locator("#liveVoiceStage")).toBeHidden();
+});
