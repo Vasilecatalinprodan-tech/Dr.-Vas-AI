@@ -2149,7 +2149,8 @@ async function renderStudioVideo(){
   if(el("studioRenderPreview")){el("studioRenderPreview").hidden=true;el("studioRenderPreview").removeAttribute("src");}
   if(el("studioRenderDownload")){el("studioRenderDownload").hidden=true;el("studioRenderDownload").removeAttribute("href");}
   studioRenderMessage("Randarea a pornit. Stare: "+(result.status||"planned")+". Apasă «Verifică randarea» după câteva momente.");
-  if(el("studioIdea")?.value?.trim())await saveStudioProject();
+  if(!el("studioIdea")?.value?.trim())el("studioIdea").value=files.length?"Randare video din "+files.length+" imagini încărcate în Dr.Vas Studio.":"Teaser tipografic creat în Dr.Vas Studio.";
+  await saveStudioProject();
  }catch(error){
   console.error("Dr.Vas Studio render create:",error);
   studioRenderMessage(error.message||"Randarea MP4 nu a putut fi pornită.",true);
@@ -2738,7 +2739,7 @@ async function showUser(user){
     if(el("businessLedgerRows"))el("businessLedgerRows").replaceChildren();
     ["academy","commerce","business"].forEach(module=>{moduleProjectState[module]=null;moduleProjectOutputs[module]="";if(el(module+"ProjectList"))el(module+"ProjectList").replaceChildren(new Option("Alege un proiect salvat",""));if(el(module+"ProjectTitle"))el(module+"ProjectTitle").value="";});
     if(el("studioSavedProjects"))el("studioSavedProjects").innerHTML='<option value="">Alege un proiect salvat</option>';
-    if(el("studioSceneImages"))el("studioSceneImages").value="";if(el("studioSceneCaptions"))el("studioSceneCaptions").value="";
+    if(el("studioSceneImages"))el("studioSceneImages").value="";if(el("studioSceneAudio"))el("studioSceneAudio").value="";if(el("studioSceneCaptions"))el("studioSceneCaptions").value="";
     if(el("studioRenderPreview")){el("studioRenderPreview").pause();el("studioRenderPreview").removeAttribute("src");el("studioRenderPreview").hidden=true;}
     if(el("studioRenderDownload")){el("studioRenderDownload").removeAttribute("href");el("studioRenderDownload").hidden=true;}
     if(el("studioProjectTitle"))el("studioProjectTitle").value="";
@@ -3361,7 +3362,7 @@ function showLogin(){
     if(el(module+"ProjectTitle"))el(module+"ProjectTitle").value = "";
   });
   if(el("studioSavedProjects"))el("studioSavedProjects").innerHTML='<option value="">Alege un proiect salvat</option>';
-  if(el("studioSceneImages"))el("studioSceneImages").value="";if(el("studioSceneCaptions"))el("studioSceneCaptions").value="";
+  if(el("studioSceneImages"))el("studioSceneImages").value="";if(el("studioSceneAudio"))el("studioSceneAudio").value="";if(el("studioSceneCaptions"))el("studioSceneCaptions").value="";
   if(el("studioRenderPreview")){el("studioRenderPreview").pause();el("studioRenderPreview").removeAttribute("src");el("studioRenderPreview").hidden=true;}
   if(el("studioRenderDownload")){el("studioRenderDownload").removeAttribute("href");el("studioRenderDownload").hidden=true;}
   ["studioProjectTitle","studioIdea","academyProjectTitle","academySubject","academyLevel","academyAudience","academyFormat","academyLanguage","academyOutcome","academyBrief","commerceProjectTitle","commerceProduct","commerceMarket","commerceBudget","commerceModel","commerceChannel","commercePrice","commerceBrief","businessProjectTitle","businessIdea","businessCountry","businessBudget","businessStage","businessGoal","businessHorizon","businessBrief","incomeTitle","incomePlatform","incomeType","incomeStatus","incomeEstimated","incomeActual","incomeCurrency","incomeUrl","incomeNextAction","incomeNotes"].forEach(id=>{if(el(id))el(id).value="";});
