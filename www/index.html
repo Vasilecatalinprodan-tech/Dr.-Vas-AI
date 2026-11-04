@@ -238,6 +238,7 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 .active-module-info span{display:block;color:#9bb4c3;font-size:12px;line-height:1.5}
 .module-disclaimer{font-size:11px;color:#71899b;line-height:1.5;margin:12px 2px 0}
 .studio-workspace{margin:20px 0;padding:22px;border:1px solid #39736f;border-radius:19px;background:linear-gradient(145deg,#102d3b,#091b2b)}
+.studio-production-standard{margin:16px 0;padding:16px 18px;background:linear-gradient(135deg,#0b1c2b,#112d3d);border:1px solid #2b5867;border-radius:16px}.studio-production-brand{display:flex;align-items:center;gap:13px}.studio-brand-mark{display:inline-flex;align-items:center;justify-content:center;min-width:122px;padding:9px 12px;border:1px solid #73dcd2;border-radius:5px;color:#e7fffc;background:#071722;font-size:12px;font-weight:900;letter-spacing:1.6px;white-space:nowrap}.studio-production-brand strong,.studio-production-brand small{display:block}.studio-production-brand strong{color:#e8f7fa;font-size:13px}.studio-production-brand small{color:#93aebe;font-size:11px;margin-top:4px}.studio-production-controls{display:flex;align-items:end;gap:22px;flex-wrap:wrap;margin-top:14px}.studio-production-controls label{display:grid;gap:6px;color:#c4d9e2;font-size:12px}.studio-production-controls select{min-width:230px;padding:10px;background:#071827;border:1px solid #34536a;border-radius:9px;color:#e8f7fa}.studio-check-label{display:flex!important;align-items:center;gap:8px!important}.studio-check-label input{width:17px;height:17px;accent-color:#54d8cf}.studio-production-note{margin:12px 0 0;color:#91aebe;font-size:11px;line-height:1.55}@media(max-width:600px){.studio-production-standard{padding:13px}.studio-production-brand{align-items:flex-start;flex-direction:column}.studio-production-controls{align-items:stretch;gap:12px}.studio-production-controls select{min-width:0;width:100%}}
 .studio-workspace-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
 .studio-workspace-head h2{margin:8px 0;font-size:25px;color:#fff}
 .studio-workspace-head p{margin:0;color:#a9bfce;font-size:13px;line-height:1.6}
@@ -561,9 +562,19 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
    <p id="moduleAccessMessage" class="module-disclaimer" aria-live="polite"></p>
    <section id="studioWorkspace" class="studio-workspace hidden" aria-labelledby="studioWorkspaceTitle">
     <div class="studio-workspace-head">
-     <div><span class="tag">DR.VAS CREATIVE LAB</span><h2 id="studioWorkspaceTitle">🎬 Dr.Vas Studio</h2><p>Scrie cărți, traduce texte, compune versuri și muzică, creează scenarii și materiale digitale originale.</p></div>
-     <span class="studio-beta-label">PILOT · ACCES ADMINISTRATOR</span>
+     <div><span class="tag">DR.VAS CREATIVE LAB</span><h2 id="studioWorkspaceTitle">🎬 Dr.Vas Studio</h2><p>Studio de producție pentru scenarii, clipuri verticale, subtitrări și materiale digitale.</p></div>
+     <span class="studio-beta-label">CREATIVE WORKSPACE</span>
     </div>
+    <section class="studio-production-standard" aria-label="Standard de producție video Dr.Vas">
+     <div class="studio-production-brand"><span class="studio-brand-mark">MADE BY VPC</span><div><strong>Semnătura oficială VPC</strong><small>Marcaj discret, lizibil și prezent pe fiecare video exportat din Studio.</small></div></div>
+     <div class="studio-production-controls">
+      <label class="studio-check-label"><input id="studioSubtitles" type="checkbox" checked> Subtitrări sincronizate</label>
+      <label>Voice-over
+       <select id="studioNarration"><option value="founder_voice_pending">Vocea fondatorului VPC — după activarea clonei</option><option value="ai_narrator">Narator AI standard</option><option value="none">Fără voice-over</option></select>
+      </label>
+     </div>
+     <p class="studio-production-note">Standard social: vertical 9:16, export țintă 1080 × 1920, hook imediat, subtitrări în zona sigură și branding care nu acoperă comenzile TikTok. Randarea MP4 se activează după conectarea motorului video.</p>
+    </section>
     <div class="studio-form-grid">
      <label>Ce vrei să creezi?
       <select id="studioDeliverable">
@@ -1969,7 +1980,7 @@ let currentStudioProjectId=null;
 let currentStudioProjectOutput="";
 function newStudioProject(){
  currentStudioProjectId=null;currentStudioProjectOutput="";
- ["studioProjectTitle","studioIdea"].forEach(id=>{el(id).value="";});
+ ["studioProjectTitle","studioIdea"].forEach(id=>{el(id).value="";});if(el("studioSubtitles"))el("studioSubtitles").checked=true;if(el("studioNarration"))el("studioNarration").value="founder_voice_pending";
  el("studioDeliverable").value="series";
  el("studioSavedProjects").value="";
  setStudioProjectStatus("Proiect nou. Completează ideea și salvează când ești gata.");
@@ -1980,7 +1991,7 @@ function studioProjectData(){
  const deliverable=value("studioDeliverable");
  const labels={series:"Serial / episod",short:"Clip scurt",youtube:"Video YouTube",ad:"Reclamă",storyboard:"Storyboard",book:"Carte / e-book",translation:"Traducere",music:"Compoziție muzicală",lyrics:"Versuri / poezie",article:"Articol / blog"};
  const title=value("studioProjectTitle").trim()||((labels[deliverable]||"Proiect")+" — "+(idea.slice(0,48)||"Proiect nou"));
- return {title,project_type:deliverable,brief:{idea,deliverable,platform:value("studioPlatform"),tone:value("studioTone"),audience:value("studioAudience"),duration:value("studioDuration"),aspect:value("studioAspect"),latest_output:currentStudioProjectOutput.slice(0,50000),updated_from:"drvas-studio"}};
+ return {title,project_type:deliverable,brief:{idea,deliverable,platform:value("studioPlatform"),tone:value("studioTone"),audience:value("studioAudience"),duration:value("studioDuration"),aspect:value("studioAspect"),narration:value("studioNarration")||"founder_voice_pending",subtitles:el("studioSubtitles")?.checked!==false,branding:"MADE BY VPC",latest_output:currentStudioProjectOutput.slice(0,50000),updated_from:"drvas-studio"}};
 }
 function setStudioProjectStatus(message,isError=false){
  const status=el("studioProjectStatus");if(!status)return;
@@ -2026,7 +2037,7 @@ async function openStudioProject(){
   const b=data.brief||{};currentStudioProjectId=data.id;currentStudioProjectOutput=b.latest_output||"";
   el("studioProjectTitle").value=data.title||"";
   el("studioDeliverable").value=data.project_type||b.deliverable||"series";
-  ["studioIdea","studioPlatform","studioTone","studioAudience","studioDuration","studioAspect"].forEach((key,index)=>{const fields=["idea","platform","tone","audience","duration","aspect"];if(b[fields[index]]!==undefined)el(key).value=b[fields[index]];});
+  ["studioIdea","studioPlatform","studioTone","studioAudience","studioDuration","studioAspect","studioNarration"].forEach((key,index)=>{const fields=["idea","platform","tone","audience","duration","aspect","narration"];if(b[fields[index]]!==undefined&&el(key))el(key).value=b[fields[index]];});if(el("studioSubtitles"))el("studioSubtitles").checked=b.subtitles!==false;
   setStudioProjectStatus("Proiect încărcat. Poți continua editarea și îl poți salva din nou.");
  }catch(error){setStudioProjectStatus("Nu am putut deschide proiectul: "+error.message,true);}
 }
@@ -2127,7 +2138,9 @@ function buildStudioPrompt(){
   const kind=el("studioDeliverable").value;
   const isVideo=["series","short","youtube","ad","storyboard"].includes(kind);
   const contextLines=isVideo
-    ? "\nPLATFORMĂ: "+el("studioPlatform").value+"\nDURATĂ: "+el("studioDuration").value+"\nFORMAT VIZUAL: "+el("studioAspect").value
+    ? "\nPLATFORMĂ: "+el("studioPlatform").value+"\nDURATĂ: "+el("studioDuration").value+"\nFORMAT VIZUAL: "+el("studioAspect").value+"\nVOICE-OVER: "+(el("studioNarration")?.selectedOptions[0]?.textContent||"Narator AI standard")+"\nSUBTITRĂRI: "+(el("studioSubtitles")?.checked?"DA — sincronizate, lizibile, în zona sigură":"NU")+
+      "\nBRANDING OBLIGATORIU: MADE BY VPC — watermark discret, permanent pe fiecare cadru, cu contrast bun, poziționat în zona sigură și fără a acoperi chipuri, subtitrări sau interfața platformei."+
+      "\nSPECIFICAȚII SOCIAL: pentru TikTok/Reels/Shorts livrează master vertical 9:16 la 1080×1920, hook vizual/verbal în primele 1–2 secunde, montaj dinamic, subtitrări sincronizate și mix audio clar."
     : kind==="translation"
       ? "\nLIMBI: detectează limba-sursă și limba-țintă din brief; dacă una lipsește, întreabă înainte de traducere."
       : kind==="book"
