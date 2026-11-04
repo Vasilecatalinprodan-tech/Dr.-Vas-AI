@@ -373,28 +373,42 @@ test("selected administrator module opens before slow conversation history finis
   }
 });
 
-test("sign-in with a non-admin account never opens a pending private module", async ({ page }) => {
+test("ordinary accounts can open Free and Health after sign-in, while the four paid modules remain founder-only", async ({ page }) => {
   await openApp(page, "ro");
-  const modules = ["free", "health", "studio", "academy", "commerce", "business"];
   await page.evaluate(() => {
     refreshAdminPanel = async () => { isDrvasAdmin = false; };
     loadStudioProjects = async () => {};
     loadModuleProjectList = async () => {};
     loadIncomeOpportunities = async () => {};
     loadConversationList = async () => [];
+    loadConversation = async () => {};
   });
 
-  for (const module of modules) {
+  for (const module of ["free", "health"]) {
+    await page.evaluate(selected => {
+      sessionStorage.setItem("drvas_pending_module", selected);
+      return showChat({ id: "e2e-standard-user", email: "member@example.invalid" }, "Member");
+    }, module);
+    await expect(page.locator("#chatSection")).toBeVisible();
+    await expect(page.locator("#question")).toBeVisible();
+    await expect(page.locator("#adminPanel")).toBeHidden();
+    await expect(page.locator("#adminAccessNotice")).toBeHidden();
+    await expect(page.locator("#healthWorkspace")).toBeVisible({ visible: module === "health" });
+    expect(await page.evaluate(() => sessionStorage.getItem("drvas_pending_module"))).toBeNull();
+    await page.evaluate(() => {
+      document.querySelector("#chatSection")?.classList.add("hidden");
+      document.body.classList.remove("module-workspace-mode", "free-module-mode");
+    });
+  }
+
+  for (const module of ["studio", "academy", "commerce", "business"]) {
     await page.evaluate(selected => {
       sessionStorage.setItem("drvas_pending_module", selected);
       return showChat({ id: "e2e-standard-user", email: "member@example.invalid" }, "Member");
     }, module);
     await expect(page.locator("#moduleSelectionShell")).toBeVisible();
-    await expect(page.locator("#moduleAccessMessage")).toContainText("Accesul la module este privat");
+    await expect(page.locator("#moduleAccessMessage")).toContainText("privat");
     await expect(page.locator("#chatSection")).toBeHidden();
-    for (const workspace of ["health", "studio", "academy", "commerce", "business"]) {
-      await expect(page.locator("#" + workspace + "Workspace")).toBeHidden();
-    }
     expect(await page.evaluate(() => sessionStorage.getItem("drvas_pending_module"))).toBeNull();
   }
 });
@@ -417,6 +431,8 @@ test("text chat request carries the selected module and Worker has dedicated mod
     expect(workerSource).toContain(instruction);
   }
   expect(workerSource).toContain("Current selected module: ${moduleName}");
+  expect(workerSource).toContain('const privatePilotModules = new Set(["studio", "academy", "commerce", "business"]);');
+  expect(workerSource).not.toContain('const privatePilotModules = new Set(["health", "studio", "academy", "commerce", "business"]);');
 });
 
 test("mobile Free chat stays simple and offers only module navigation and logout", async ({ page }) => {
@@ -453,17 +469,29 @@ test("landing CTA sends visitors to authentication before showing private module
   expect(await page.evaluate(() => sessionStorage.getItem("drvas_pending_entry"))).toBe("modules");
 });
 
-test("all six modules remain private to administrators during the pilot", async ({ page }) => {
+test("module chooser clearly separates two public free modules from four founder-only future paid modules", async ({ page }) => {
   await openApp(page, "ro");
+  await expect(page.locator("#moduleSelectionSection > .modules-heading .status"))
+    .toContainText("2 MODULE GRATUITE PENTRU PUBLIC");
+  await expect(page.locator('[data-module="free"] .module-state')).toContainText("Gratuit");
+  await expect(page.locator('[data-module="health"] .module-state')).toContainText("Gratuit");
+  for (const moduleId of ["studio", "academy", "commerce", "business"]) {
+    await expect(page.locator('[data-module="' + moduleId + '"] .module-state')).toContainText("privat");
+  }
+
   await page.evaluate(() => {
     currentUser = { id: "e2e-standard-user", email: "standard@example.invalid" };
     isDrvasAdmin = false;
     showModuleSelection();
   });
-
-  for (const moduleId of ["free", "health", "studio", "academy", "commerce", "business"]) {
+  for (const moduleId of ["studio", "academy", "commerce", "business"]) {
+    await page.evaluate(() => {
+      document.querySelector("#chatSection")?.classList.add("hidden");
+      document.body.classList.remove("module-workspace-mode", "free-module-mode");
+    });
     await page.evaluate(id => selectModule(id, true), moduleId);
-    await expect(page.locator("#moduleAccessMessage")).toContainText("Accesul la module este privat");
+    await expect(page.locator("#moduleAccessMessage")).toContainText("privat");
+    await expect(page.locator("#chatSection")).toBeHidden();
   }
 });
 
