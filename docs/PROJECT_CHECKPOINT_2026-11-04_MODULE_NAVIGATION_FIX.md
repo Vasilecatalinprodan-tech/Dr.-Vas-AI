@@ -42,3 +42,18 @@ The latest source and test commits should trigger a fresh browser regression and
 3. Test while signed out: CTA -> login -> successful login -> module chooser.
 4. Test the founder/admin account: click all six module cards and verify each opens its workspace.
 5. If a module remains blocked, read the visible administrator message and verify the exact founder email in Cloudflare ADMIN_EMAILS. Do not weaken the server-side gate.
+
+
+## Second structural correction — 2026-11-04 15:27 UTC
+The next browser run (41857213735) failed 4/29 tests. Root cause was identified from DOM structure and Playwright logs: `#authSection` and `#profileSection` are siblings of `#moduleSelectionSection`, but both are children of `#moduleSelectionShell`. Hiding the entire shell therefore hid the login/profile forms too.
+
+Corrected:
+- Commit `79e3306da4c046406348f8495afc8045d593ddd7`: when entering auth/profile, keep `#moduleSelectionShell` visible but hide only `#moduleSelectionSection`; the login/profile cards can render, without exposing module cards.
+- Commit `148b9e6e283a912a1745a26f4f6db1a937f31a59`: updated browser assertions to verify the auth/profile card is visible while the module chooser itself is hidden.
+- Existing admin allowlist gate remains unchanged.
+
+Latest runs triggered from the above commits:
+- Browser regression on commit 79e3306: 41857687727
+- Worker deploy on commit 79e3306: 41857688082
+- APK build on commit 79e3306: 41857688289
+- The subsequent test-only commit 148b9e6 should trigger a new browser regression and deployment workflow. Check latest branch runs before declaring success.
