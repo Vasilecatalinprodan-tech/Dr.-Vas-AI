@@ -1266,6 +1266,9 @@ function selectModule(moduleName,userInitiated=false){
   setLocalizedText(el("activeModuleDescription"),config.description);
   const workspace=el("studioWorkspace");
   if(workspace)workspace.classList.toggle("hidden",moduleName!=="studio"||!isDrvasAdmin);
+  [["academyWorkspace","academy"],["commerceWorkspace","commerce"],["businessWorkspace","business"]].forEach(([id,key])=>{
+    const panel=el(id);if(panel)panel.classList.toggle("hidden",moduleName!==key||!isDrvasAdmin);
+  });
   const message=el("moduleAccessMessage");
   if(moduleName==="studio"&&isDrvasAdmin){
     message.textContent=tr("Previzualizare administrator. Accesul Premium pentru public va fi activat numai după implementarea și verificarea abonamentelor.");
@@ -2079,6 +2082,33 @@ function buildStudioPrompt(){
   el("question").scrollIntoView({behavior:"smooth",block:"center"});
 }
 
+
+function submitModuleBrief(prompt,notice){
+ const field=el("question");if(!field)return;
+ field.value=prompt;field.focus();
+ const message=el("moduleAccessMessage");if(message)message.textContent=tr(notice);
+ field.scrollIntoView({behavior:"smooth",block:"center"});
+}
+function buildAcademyPrompt(){
+ const v=id=>el(id)?.value?.trim()||"";
+ if(!v("academySubject")){el("academySubject").focus();return;}
+ const prompt="DR.VAS ACADEMY — PROIECTARE CURS\nSUBIECT: "+v("academySubject")+"\nNIVEL: "+v("academyLevel")+"\nPUBLIC: "+v("academyAudience")+"\nFORMAT: "+v("academyFormat")+"\nLIMBA: "+v("academyLanguage")+"\nREZULTAT: "+v("academyOutcome")+"\nCERINȚE: "+v("academyBrief")+"\n\nLivrează un curs original și practic: obiective măsurabile, structură pe module și lecții, explicații, exemple, exerciții, teme, quiz cu răspunsuri explicate, proiect final, rubrică de evaluare și resurse recomandate. Separă faptele verificate de ipoteze. Nu inventa acreditări, certificări sau garanții de angajare/venit. Pentru fiscalitate, legislație sau domenii reglementate, indică verificarea cu un profesionist local.";
+ submitModuleBrief(prompt,"Brieful Academy este pregătit. Verifică-l și apasă Trimite.");
+}
+function buildCommercePrompt(){
+ const v=id=>el(id)?.value?.trim()||"";
+ const budget=Math.max(0,Number(v("commerceBudget"))||0),price=Math.max(0,Number(v("commercePrice"))||0);
+ if(!v("commerceProduct")){el("commerceProduct").focus();return;}
+ const prompt="DR.VAS COMMERCE — ANALIZĂ OPORTUNITATE\nPRODUS/NIȘĂ: "+v("commerceProduct")+"\nPIAȚĂ: "+v("commerceMarket")+"\nBUGET MAXIM: "+budget+"\nMODEL: "+v("commerceModel")+"\nCANAL: "+v("commerceChannel")+"\nPREȚ ȚINTĂ: "+(price||"neprecizat")+"\nBRIEF: "+v("commerceBrief")+"\n\nAnalizează fără promisiuni de profit: cerere și concurență (marchează ce necesită cercetare actuală), profilul clientului, verificarea furnizorilor, mostre, termene și retururi, siguranța produsului, proprietate intelectuală, obligații UK/UE relevante, cost complet pe unitate, taxe/VAT și comisioane, cost de achiziție client, marjă, prag de rentabilitate și scenarii pesimist/bază/optimist. Respectă strict bugetul; nu presupune că toate fondurile pot fi cheltuite pe stoc sau reclame. Încheie cu o listă de verificări înainte de orice plată și recomandă să nu comandăm până nu verificăm furnizorul și o mostră.";
+ submitModuleBrief(prompt,"Analiza Commerce este pregătită. Verifică ipotezele și apasă Trimite.");
+}
+function buildBusinessPrompt(){
+ const v=id=>el(id)?.value?.trim()||"";
+ const budget=Math.max(0,Number(v("businessBudget"))||0);
+ if(!v("businessIdea")){el("businessIdea").focus();return;}
+ const prompt="DR.VAS BUSINESS — PLAN DE AFACERI\nIDEE: "+v("businessIdea")+"\nȚARA: "+v("businessCountry")+"\nBUGET DISPONIBIL: "+budget+"\nETAPĂ: "+v("businessStage")+"\nOBIECTIV: "+v("businessGoal")+"\nORIZONT: "+v("businessHorizon")+"\nDETALII: "+v("businessBrief")+"\n\nConstruiește un plan aplicabil: rezumat, client și problemă, propunere de valoare, analiză de piață și concurență (marchează ce necesită surse actuale), model de venit, prețuri, operațiuni, personal și echipamente, marketing și vânzări, buget de lansare, costuri lunare, flux de numerar, scenarii și riscuri. Arată formulele și ipotezele pentru toate cifrele; nu inventa date de piață și nu promite profit. Respectă bugetul disponibil. Adaugă un plan de acțiune etapizat pentru "+v("businessHorizon")+". Pentru contabilitate, taxe, drept, investiții sau reglementări, oferă informații generale și marchează ce trebuie verificat de un profesionist autorizat în țara aleasă.";
+ submitModuleBrief(prompt,"Planul Business este pregătit. Verifică-l și apasă Trimite.");
+}
 function toggleAuthMode(){
   authMode = authMode === "login" ? "signup" : "login";
   setLocalizedText(el("authTitle"),authMode === "login" ? "Bine ai venit!" : "Creează-ți contul");
