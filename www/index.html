@@ -2113,6 +2113,101 @@ function buildBusinessPrompt(){
  const prompt="DR.VAS BUSINESS — PLAN DE AFACERI\nIDEE: "+v("businessIdea")+"\nȚARA: "+v("businessCountry")+"\nBUGET DISPONIBIL: "+budget+"\nETAPĂ: "+v("businessStage")+"\nOBIECTIV: "+v("businessGoal")+"\nORIZONT: "+v("businessHorizon")+"\nDETALII: "+v("businessBrief")+"\n\nConstruiește un plan aplicabil: rezumat, client și problemă, propunere de valoare, analiză de piață și concurență (marchează ce necesită surse actuale), model de venit, prețuri, operațiuni, personal și echipamente, marketing și vânzări, buget de lansare, costuri lunare, flux de numerar, scenarii și riscuri. Arată formulele și ipotezele pentru toate cifrele; nu inventa date de piață și nu promite profit. Respectă bugetul disponibil. Adaugă un plan de acțiune etapizat pentru "+v("businessHorizon")+". Pentru contabilitate, taxe, drept, investiții sau reglementări, oferă informații generale și marchează ce trebuie verificat de un profesionist autorizat în țara aleasă.";
  submitModuleBrief(prompt,"Planul Business este pregătit. Verifică-l și apasă Trimite.");
 }
+
+const moduleProjectState={academy:null,commerce:null,business:null};
+const moduleProjectOutputs={academy:"",commerce:"",business:""};
+const MODULE_PROJECT_FIELDS={
+ academy:["academySubject","academyLevel","academyAudience","academyFormat","academyLanguage","academyOutcome","academyBrief"],
+ commerce:["commerceProduct","commerceMarket","commerceBudget","commerceModel","commerceChannel","commercePrice","commerceBrief"],
+ business:["businessIdea","businessCountry","businessBudget","businessStage","businessGoal","businessHorizon","businessBrief"]
+};
+const MODULE_PROJECT_PRIMARY={academy:"academySubject",commerce:"commerceProduct",business:"businessIdea"};
+function moduleProjectStatus(module,message,isError=false){
+ const node=el(module+"ProjectStatus");if(!node)return;
+ node.textContent=message;node.style.color=isError?"#ff9d9d":"#9fe5ce";
+}
+function moduleProjectBrief(module){
+ const brief={};
+ for(const id of MODULE_PROJECT_FIELDS[module]||[])brief[id]=el(id)?.value??"";
+ brief.latest_output=(moduleProjectOutputs[module]||"").slice(0,50000);
+ brief.saved_from="drvas-"+module;
+ return brief;
+}
+async function loadModuleProjectList(module,selectedId=""){
+ if(!currentUser||!MODULE_PROJECT_FIELDS[module])return;
+ const select=el(module+"ProjectList");if(!select)return;
+ const {data,error}=await supabaseClient.from("drvas_module_projects")
+  .select("id,title,updated_at").eq("user_id",currentUser.id).eq("module",module)
+  .order("updated_at",{ascending:false}).limit(100);
+ if(error)throw error;
+ select.replaceChildren(new Option("Alege un proiect salvat",""));
+ (data||[]).forEach(item=>select.add(new Option(item.title+" · "+new Date(item.updated_at).toLocaleDateString(),item.id)));
+ if(selectedId)select.value=selectedId;
+}
+async function saveModuleProject(module){
+ if(!currentUser){moduleProjectStatus(module,"Conectează-te pentru a salva proiecte.",true);return;}
+ if(!MODULE_PROJECT_FIELDS[module])return;
+ const primary=el(MODULE_PROJECT_PRIMARY[module])?.value?.trim()||"";
+ if(!primary){el(MODULE_PROJECT_PRIMARY[module])?.focus();moduleProjectStatus(module,"Completează mai întâi ideea principală.",true);return;}
+ const title=el(module+"ProjectTitle")?.value?.trim()||primary.slice(0,150);
+ const projectType={academy:"course_design",commerce:"commerce_analysis",business:"business_plan"}[module];
+ const payload={user_id:currentUser.id,module,title,project_type:projectType,brief:moduleProjectBrief(module),updated_at:new Date().toISOString()};
+ try{
+  const id=moduleProjectState[module];
+  const result=id
+   ?await supabaseClient.from("drvas_module_projects").update(payload).eq("id",id).eq("user_id",currentUser.id).eq("module",module).select("id").single()
+   :await supabaseClient.from("drvas_module_projects").insert(payload).select("id").single();
+  if(result.error)throw result.error;
+  moduleProjectState[module]=result.data.id;
+  el(module+"ProjectTitle").value=title;
+  await loadModuleProjectList(module,result.data.id);
+  moduleProjectStatus(module,"Proiect salvat privat în contul tău.");
+ }catch(error){
+  console.error("Dr.Vas module project save:",error);
+  moduleProjectStatus(module,error.message.includes("drvas_module_projects")?"Tabelul de proiecte nu este încă activ. Aplică migrarea SQL 202611040001_module_projects.sql în Supabase.":"Nu am putut salva proiectul: "+error.message,true);
+ }
+}
+async function openModuleProject(module){
+ if(!currentUser){moduleProjectStatus(module,"Conectează-te pentru a deschide proiecte.",true);return;}
+ const id=el(module+"ProjectList")?.value;
+ if(!id){moduleProjectStatus(module,"Alege un proiect salvat.",true);return;}
+ try{
+  const {data,error}=await supabaseClient.from("drvas_module_projects").select("id,module,title,brief")
+   .eq("id",id).eq("user_id",currentUser.id).eq("module",module).single();
+  if(error)throw error;
+  moduleProjectState[module]=data.id;el(module+"ProjectTitle").value=data.title||"";
+  const brief=data.brief||{};
+  for(const field of MODULE_PROJECT_FIELDS[module]){
+   if(field==="latest_output")continue;
+   if(brief[field]!==undefined&&el(field))el(field).value=String(brief[field]??"");
+  }
+  moduleProjectOutputs[module]=String(brief.latest_output||"");
+  moduleProjectStatus(module,"Proiect încărcat. Poți continua editarea.");
+ }catch(error){moduleProjectStatus(module,"Nu am putut deschide proiectul: "+error.message,true);}
+}
+async function deleteModuleProject(module){
+ if(!currentUser){moduleProjectStatus(module,"Conectează-te pentru a șterge proiecte.",true);return;}
+ const id=el(module+"ProjectList")?.value||moduleProjectState[module];
+ if(!id){moduleProjectStatus(module,"Alege un proiect salvat.",true);return;}
+ if(!window.confirm("Ștergi definitiv acest proiect?"))return;
+ try{
+  const {error}=await supabaseClient.from("drvas_module_projects").delete().eq("id",id).eq("user_id",currentUser.id).eq("module",module);
+  if(error)throw error;
+  if(moduleProjectState[module]===id){moduleProjectState[module]=null;moduleProjectOutputs[module]="";el(module+"ProjectTitle").value="";}
+  await loadModuleProjectList(module);
+  moduleProjectStatus(module,"Proiectul a fost șters.");
+ }catch(error){moduleProjectStatus(module,"Nu am putut șterge proiectul: "+error.message,true);}
+}
+function exportModuleProject(module){
+ const title=el(module+"ProjectTitle")?.value?.trim()||"DrVas-"+module;
+ const brief=moduleProjectBrief(module);
+ const lines=["# "+title,"","Modul: "+module,"","## Brief","",...Object.entries(brief).filter(([key])=>key!=="latest_output").map(([key,value])=>"**"+key+"**: "+String(value)),"","## Ultimul răspuns Dr.Vas","",brief.latest_output||"Nu există încă un răspuns salvat."];
+ const blob=new Blob([lines.join("\n")],{type:"text/markdown;charset=utf-8"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download=(title.replace(/[^a-z0-9ăâîșț_-]+/gi,"-").slice(0,70)||"drvas-proiect")+".md";
+ document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+ moduleProjectStatus(module,"Exportul proiectului a fost pregătit.");
+}
 function toggleAuthMode(){
   authMode = authMode === "login" ? "signup" : "login";
   setLocalizedText(el("authTitle"),authMode === "login" ? "Bine ai venit!" : "Creează-ți contul");
@@ -2567,6 +2662,10 @@ async function showChat(user,displayName){
   await refreshAdminPanel();
   selectModule(activeModule);
   loadStudioProjects().catch(error=>{console.warn("Studio project list unavailable:",error);setStudioProjectStatus(error.message.includes("drvas_studio_projects")?"Baza de date Studio nu este activată încă. Aplică migrarea SQL 202611030004_studio_projects.sql din Supabase.":"Nu am putut încărca proiectele: "+error.message,true);});
+  ["academy","commerce","business"].forEach(module=>loadModuleProjectList(module).catch(error=>{
+    console.warn("Module project list unavailable:",module,error);
+    moduleProjectStatus(module,error.message.includes("drvas_module_projects")?"Aplică migrarea SQL 202611040001_module_projects.sql în Supabase.":"Nu am putut încărca proiectele: "+error.message,true);
+  }));
   loadIncomeOpportunities().catch(error=>{console.warn("Income tracker unavailable:",error);incomeMessage(error.message.includes("drvas_income_opportunities")?"Aplică migrarea SQL 202611030005_income_and_founder_provenance.sql în Supabase.":"Nu am putut încărca oportunitățile: "+error.message,true);});
   const conversations = await loadConversationList();
   const rememberedId = getRememberedConversation();
@@ -2907,6 +3006,7 @@ async function send(){
     answer.textContent = displayedReply;
     lastSpokenAnswer=displayedReply;
     if(moduleId==="studio")currentStudioProjectOutput=displayedReply;
+    else if(["academy","commerce","business"].includes(moduleId))moduleProjectOutputs[moduleId]=displayedReply;
     refreshVoiceUi(voiceAutoRead?"ready":"off");
     if(voiceAutoRead)speakDrVas(displayedReply);
     if(data.action !== "conversations_deleted") await saveMessage("assistant",displayedReply,conversationId);
