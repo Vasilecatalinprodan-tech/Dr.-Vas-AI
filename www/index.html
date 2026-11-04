@@ -2921,6 +2921,7 @@ async function startDrVas(){
  }
  try{sessionStorage.removeItem("drvas_pending_entry")}catch{}
  if(currentUser?.id===session.user.id){
+  await refreshAdminPanel();
   showModuleSelection();
   return;
  }
