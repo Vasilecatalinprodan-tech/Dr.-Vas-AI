@@ -684,6 +684,27 @@ test("Academy, Commerce and Business projects are saved, reopened and deleted pe
   await expect(page.locator("#studentAssessmentProjectList option")).toHaveCount(1);
 });
 
+test("Bitcoin mining calculator estimates net result without starting mining", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    document.querySelector("#adminPanel")?.classList.remove("hidden");
+    isDrvasAdmin = true;
+    document.querySelector("#cryptoBtcPerDay").value = "0.0003";
+    document.querySelector("#cryptoBtcPrice").value = "60000";
+    document.querySelector("#cryptoPowerWatts").value = "1500";
+    document.querySelector("#cryptoElectricityRate").value = "0.25";
+    document.querySelector("#cryptoPoolFee").value = "1";
+    document.querySelector("#cryptoHardwareCost").value = "1000";
+    calculateCryptoMiningEconomics();
+  });
+  await expect(page.locator("#cryptoGrossDaily")).toContainText("18.00");
+  await expect(page.locator("#cryptoEnergyDaily")).toContainText("9.00");
+  await expect(page.locator("#cryptoNetDaily")).toContainText("8.82");
+  await expect(page.locator("#cryptoNetMonthly")).toContainText("264.60");
+  await expect(page.locator("#cryptoPayback")).toContainText("113 zile");
+  await expect(page.locator("#cryptoCalcNotice")).toContainText("Nu este o promisiune de profit");
+});
+
 test("logout removes administrator workspaces and clears private module drafts", async ({ page }) => {
   await openApp(page, "ro");
   await page.evaluate(() => {
