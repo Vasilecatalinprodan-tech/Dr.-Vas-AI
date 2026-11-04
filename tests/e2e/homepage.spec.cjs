@@ -193,6 +193,25 @@ test("public signed-in users can enter Dr.Vas Free without administrator privile
   expect(await page.locator("body").evaluate(node => node.classList.contains("free-module-mode"))).toBeTruthy();
 });
 
+test("public signed-in users can enter Dr.Vas Health without administrator privileges", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-public-health-user", email: "public-user@example.invalid" };
+    isDrvasAdmin = false;
+    showModuleSelection();
+    selectModule("health", true);
+  });
+  await expect(page.locator("#chatSection")).toBeVisible();
+  await expect(page.locator("#healthWorkspace")).toBeVisible();
+  await expect(page.locator("#studioWorkspace")).toBeHidden();
+  await expect(page.locator("#moduleSelectionStatus")).toBeHidden();
+  await expect(page.locator("#adminPanel")).toBeHidden();
+  await expect(page.locator("#adminAccessNotice")).toBeHidden();
+  expect(await page.locator("body").evaluate(node => node.classList.contains("module-workspace-mode"))).toBeTruthy();
+  expect(await page.evaluate(() => isDrvasAdmin)).toBeFalsy();
+});
+
 test("public signed-in users cannot open premium workspaces or gain administrator access", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await openApp(page, "ro");
