@@ -163,3 +163,35 @@ Priority decision: these founder-only workbenches are recorded in the product sc
 - Commit `374678b598d24218f1b140e5f23a7490f12eef12` added a browser test covering all six presentation cards, the development/compliance disclaimer, all eight supported language codes and matching browser narration locales.
 - Commit `4140d73f5e2b13c9a314ff4bd8e4a43127d5570c` made the test independent of the real Supabase session check so it can exercise language changes deterministically.
 - These are committed test changes, not evidence that the workflow has passed. No successful CI result has been retrieved for these commits in this session.
+
+
+## 2026-11-04 — continued work and conversation checkpoint
+
+User asked to continue development and save all progress and the conversation. This section records the work performed in the follow-up session and the communication rule: do not send step-by-step progress messages; report only when a coherent work block is finished.
+
+### Changes in this follow-up
+- Rechecked the current branch `drvas-integrated-platform` and the three canonical files: `www/index.html`, `tests/e2e/homepage.spec.cjs`, and this continuity document.
+- Confirmed the focused-workspace CSS override from commit `6975d1bbb1e9764a5aeee16e94c911b240b8811f` is present in the frontend.
+- Investigated the earlier failing regression assertion. The test used `gridTemplateColumns.split(" ").length`, which is not a valid way to count CSS grid tracks because a single `minmax(...)` track can itself contain whitespace. This can report two pieces even when there is one grid track.
+- Replaced that assertion with a small depth-aware parser that counts whitespace-separated tracks only outside parentheses and reports the raw computed CSS value on failure.
+- Commits:
+  - `d445a73e4b6065b7b38c011b959b6814baa3c201` — count CSS grid tracks without splitting minmax functions.
+  - `6522200ef9c99f881f49f29410d09933901de8e6` — correct whitespace handling in the parser.
+- Confirmed both commits are retrievable from GitHub. The multilingual presentation regression test and CSS isolation changes are also present in the branch.
+- Repository metadata reports `main` as the default branch; all these project updates are intentionally on `drvas-integrated-platform`. Do not merge into `main` or change the default branch without the owner's explicit instruction.
+
+### Verification status — do not overstate
+- The CSS isolation and presentation test changes are committed.
+- The CSS grid-track test now avoids the known false-positive caused by naïve string splitting.
+- A successful GitHub Actions run, full browser E2E pass, production smoke test, APK build or deployment for the latest commits has **not** been verified in this session. Combined commit status returned no status entries, which is not evidence of a pass.
+- Do not claim the original failure is conclusively fixed until the browser workflow actually runs and its result/logs are inspected.
+- The new multilingual presentation test exercises all eight language codes and checks the matching browser speech locale, but still requires CI execution.
+
+### Conversation decisions retained
+- The user explicitly asked that the completed work and the conversation be saved as project continuity, not just remembered informally.
+- The user does not want repeated progress/status messages at each step. Continue silently through a coherent block and send one concise completion report.
+- User is a visual tester of the product, not the person responsible for source-code inspection, CI logs or technical diagnosis. Assistant should do technical investigation and give the user only exact visual checks when needed.
+- Investor demo is urgent (meeting 2026-11-05). Prioritize a reliable demo path and honest descriptions of working versus in-development features. Do not imply licences, clinical approval, financial/education regulatory approval, or production readiness that has not been obtained.
+- Keep all six modules private/admin-only until the owner explicitly authorizes release and legal/compliance readiness is established.
+- Founder-only Crypto & Mining and Online Income workbenches remain separate from public modules. Crypto/mining remains estimate/read-only/paper-first; no live mining/trading or withdrawals. Online Income creation studio remains unimplemented; existing opportunity/income tracking is not equivalent to that studio.
+- Preserve Supabase authentication, user profiles, memories, chat history, Cloudflare Worker integration, original Dr.Vas branding/assets, Romanian flag, origin story and the six-module platform. Use additive changes only; never expose credentials or secrets.
