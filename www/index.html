@@ -2985,11 +2985,6 @@ async function loadProfile(user){
     el("profileMessage").textContent = "";
     await loadPrivateProfile(user);
 
-    let pendingModule="";
-    try{pendingModule=sessionStorage.getItem("drvas_pending_module")||"";sessionStorage.removeItem("drvas_pending_module")}catch{}
-    if(pendingModule&&["free","health","studio","academy","commerce","business"].includes(pendingModule)){
-      selectModule(pendingModule,false);
-    }
     if(data.display_name && data.country) await showChat(user,data.display_name);
     else showOnly("profileSection");
   })();
