@@ -80,3 +80,21 @@ Latest runs triggered from the above commits:
 - Test correction commit: `5fdaa4834f8e2fd3553b897f969bd63af7ee09e0`.
 - Workflow runs triggered for source fix: browser regression `41862547116`, Worker deploy `41862547142`, APK build `41862547132`; they were queued at the time of this note. Recheck current run status and ensure the newest test commit is included before publishing.
 - Important: APK build from `5774085` succeeded, but it predates this final auth fix. Only use the APK artifact built from the passing latest commit.
+
+## Evening continuation — 2026-11-04 20:00 UTC
+
+### Verified workflow outcomes
+- Browser regression run 41862568965 on test commit 5fdaa4834f8e2fd3553b897f969bd63af7ee09e0: **25 passed, 4 failed**.
+- All four failures reported the authentication/profile panel as hidden. The failing cases were the main CTA, persisted-session profile error, visitor module selection, and landing CTA.
+- Deployment run 41862569443 stopped before deployment because it depends on the browser regression suite. No production deployment is claimed.
+- APK run 41862547132 succeeded on app commit 0e1e3ec83b5750c647c84e9c7b37a3c6ab15e645. This artifact predates the evening follow-up code/test commits and must not be treated as the newest APK.
+
+### Follow-up changes committed
+- App commit 297025e6cac20346fa8462ee900b5d759fbd72eb: goToModules() now explicitly removes auth-flow-mode from the shell when returning to the dashboard, preventing a stale auth-only state.
+- Test commit 22454fcbd14d359d8d6b55a55c95192d731bf443:
+  - openApp() now waits for language initialization before testing controls guarded by languageReady.
+  - Auth/profile tests now correctly expect the module dashboard (#moduleSelectionSection) to be hidden while the login/profile panel is shown. The shell remains visible; private module cards are not exposed during authentication.
+- No Worker authorization check or private-module security gate was weakened.
+
+### Verification still required
+Check the newest GitHub Actions runs after commits 297025e and 22454fc. Do not call the browser suite green, deploy production, or distribute the APK until the latest corresponding workflows pass. The APK needs a fresh build from the latest app code.
