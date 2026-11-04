@@ -156,3 +156,10 @@ Priority decision: these founder-only workbenches are recorded in the product sc
 - The existing browser regression test `legacy focused workspace never exposes other modules or cross-module history` remains in place; it checks rail/history visibility and the single-column computed layout.
 - The browser E2E workflow is configured to run on pushes to `drvas-integrated-platform` when `www/**` changes. At the time of this note, the GitHub connector did not expose a run/status result for this new commit, so the fix is committed but must not yet be described as CI-passing or deployment-verified.
 - No new claim is made that the founder-only Online Income workbench is complete. The existing income/opportunity tracking UI is not a complete creative online-income production studio. Crypto/mining remains estimate/read-only/paper-first; live mining or trading is not implemented.
+
+
+## 2026-11-04 — multilingual presentation regression coverage
+
+- Commit `374678b598d24218f1b140e5f23a7490f12eef12` added a browser test covering all six presentation cards, the development/compliance disclaimer, all eight supported language codes and matching browser narration locales.
+- Commit `4140d73f5e2b13c9a314ff4bd8e4a43127d5570c` made the test independent of the real Supabase session check so it can exercise language changes deterministically.
+- These are committed test changes, not evidence that the workflow has passed. No successful CI result has been retrieved for these commits in this session.
