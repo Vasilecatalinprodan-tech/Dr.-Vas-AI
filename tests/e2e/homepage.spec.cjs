@@ -101,6 +101,45 @@ test("desktop module opens its own workspace beside its contextual chat", async 
   expect(layout.split(" ").length).toBeGreaterThanOrEqual(2);
 });
 
+test("clicking a module as a visitor opens the sign-in gate and preserves the selected module", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.locator("#headerChatCta").click();
+  await page.locator('[data-module="studio"]').click();
+  await expect(page.locator("#authSection")).toBeVisible();
+  await expect(page.locator("#moduleSelectionSection")).toHaveClass(/auth-flow-mode/);
+  await expect(page.locator("#authDescription")).toContainText("Dr.Vas Studio");
+  expect(await page.evaluate(() => sessionStorage.getItem("drvas_pending_module"))).toBe("studio");
+  await expect(page.locator("#chatSection")).toBeHidden();
+});
+
+for (const [moduleId, workspaceId] of [
+  ["free", null],
+  ["health", "healthWorkspace"],
+  ["studio", "studioWorkspace"],
+  ["academy", "academyWorkspace"],
+  ["commerce", "commerceWorkspace"],
+  ["business", "businessWorkspace"]
+]) {
+  test(`module card click opens the dedicated ${moduleId} workspace for the administrator`, async ({ page }) => {
+    await openApp(page, "ro");
+    await page.evaluate(() => {
+      currentUser = { id: "e2e-founder", email: "founder@example.invalid" };
+      isDrvasAdmin = true;
+      showModuleSelection();
+    });
+    await page.locator(`[data-module="${moduleId}"]`).click();
+    await expect(page.locator("#chatSection")).toBeVisible();
+    await expect(page.locator("#chatWorkspaceTitle")).toContainText(
+      ({free:"Dr.Vas Free",health:"Dr.Vas Health",studio:"Dr.Vas Studio",academy:"Dr.Vas Academy",commerce:"Dr.Vas Commerce",business:"Dr.Vas Business"})[moduleId]
+    );
+    if (workspaceId) await expect(page.locator(`#${workspaceId}`)).toBeVisible();
+    await expect(page.locator(".chat-back-button")).toBeVisible();
+    await expect(page.locator(".chat-logout-button")).toBeVisible();
+    expect(await page.evaluate(() => document.body.classList.contains("module-workspace-mode"))).toBe(true);
+    if (moduleId === "free") expect(await page.evaluate(() => document.body.classList.contains("free-module-mode"))).toBe(true);
+  });
+}
+
 test("mobile Free chat stays simple and offers only module navigation and logout", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openApp(page, "ro");
