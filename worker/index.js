@@ -1822,3 +1822,5 @@ Așa că, dacă mă întrebi care este povestea mea, ți-aș spune că este pove
 };
 
 // Deployment pipeline re-validates the current frontend and Worker together after the Academy/Commerce/Business pilot.
+
+// Revalidate the full 13-case browser suite before publishing the current platform build.
