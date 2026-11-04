@@ -9,6 +9,7 @@ WITH expected_objects(schema_name, object_name, object_kind) AS (
     ('public', 'drvas_privacy_consents', 'table'),
     ('public', 'drvas_crypto_devices', 'table'),
     ('public', 'drvas_studio_projects', 'table'),
+    ('public', 'drvas_module_projects', 'table'),
     ('public', 'drvas_income_opportunities', 'table'),
     ('public', 'drvas_founder_provenance', 'table'),
     ('public', 'drvas_conversation_metadata', 'table'),
@@ -46,7 +47,7 @@ FROM information_schema.role_table_grants
 WHERE table_schema = 'public'
   AND table_name IN (
     'drvas_audit_logs', 'drvas_rate_limits', 'drvas_private_profiles',
-    'drvas_privacy_consents', 'drvas_crypto_devices', 'drvas_studio_projects',
+    'drvas_privacy_consents', 'drvas_crypto_devices', 'drvas_studio_projects', 'drvas_module_projects',
     'drvas_income_opportunities', 'drvas_founder_provenance',
     'drvas_conversation_metadata'
   )
