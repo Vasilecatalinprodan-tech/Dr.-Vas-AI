@@ -171,7 +171,7 @@ test("legacy focused workspace never exposes other modules or cross-module histo
     for (const character of value.trim()) {
       if (character === "(") depth++;
       if (character === ")") depth--;
-      if (/\\s/.test(character) && depth === 0) {
+      if (character.trim() === "" && depth === 0) {
         inTrack = false;
       } else if (!inTrack) {
         count++;
