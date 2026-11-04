@@ -398,3 +398,15 @@ This section supersedes any older or contradictory wording in this document that
 - Ordinary signed-in users can now use public/free Free and general-information Health without administrator privileges. Studio, Academy, Commerce and Business remain founder-only until future paid public launch. No ordinary account was added to the administrator allowlist.
 - The initial E2E failures were diagnosed and corrected: obsolete test assertions still expected admin denial for public users, the presentation's aria-label was being reset by the translation observer, and the Student Desk test was stabilised by not re-entering an already active Business workspace. The final deployment run confirms the entire suite passes.
 - The user should now hard-refresh the production page and test with their ordinary account. This is a visual/user-session check; do not ask the user to inspect source code or logs.
+
+
+### Verified completion — 2026-11-04 22:15 UTC
+Latest integrated branch commit at verification: `4c6df7f2132cd97ebdfd9ab1ad8d4367bf635349`.
+The public-access correction is included in the deployed Worker and static-site build from the same branch state.
+GitHub Actions completed successfully:
+- Worker deployment + production smoke test: run `41923036514`, conclusion `success`; all steps including Playwright browser regression, Worker deploy and production smoke test passed.
+- Android APK build: run `41923036581`, conclusion `success`; APK artifact uploaded.
+- Separate browser regression workflow: run `41923036462`, conclusion `success`.
+The earlier runs for intermediate commits failed/cancelled during iterative corrections; these are superseded by the three successful runs above.
+At the final source audit, frontend, Worker and E2E test files were re-fetched from `drvas-integrated-platform`. Public Free/Health routing, founder-only Studio/Academy/Commerce/Business gate, and absence of the stale “6 SPAȚII DE LUCRU · PILOT PRIVAT” chooser label were confirmed.
+The final deployment was performed by the workflow after Playwright passed, and its production smoke test also passed. This confirms the Worker deployment and smoke-test endpoint, not a complete manual visual inspection of every screen on every device. User visual review can resume when they are ready.
