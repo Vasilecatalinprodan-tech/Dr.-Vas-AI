@@ -3701,10 +3701,18 @@ function showLogin(){
   if(el("saveMessage")) el("saveMessage").textContent = "";
   updateSaveButton();
   ["authSection","profileSection","chatSection"].forEach(id=>el(id).classList.add("hidden"));
+  // An async session check may finish after the visitor has explicitly opened the sign-in gate.
+  // Preserve that intent instead of sending the visitor back to the public landing page.
+  let pendingEntry=false;
+  try{pendingEntry=sessionStorage.getItem("drvas_pending_entry")==="modules"}catch{}
+  if(pendingEntry){
+    showOnly("authSection");
+    return;
+  }
   // La deconectare revenim la pagina publică, fără panouri premium sau datele proiectelor anterioare.
   el("heroSection").classList.remove("hidden");
   document.querySelector(".origin-story")?.classList.remove("hidden");
-  el("moduleSelectionShell")?.classList.remove("modules-open");
+  el("moduleSelectionShell")?.classList.remove("modules-open","auth-flow-mode");
   el("moduleSelectionSection")?.classList.remove("hidden","auth-flow-mode");
   el("landingActions")?.classList.remove("hidden");
   document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode");
@@ -3735,10 +3743,13 @@ window.addEventListener("pagehide",()=>{
 
 supabaseClient.auth.onAuthStateChange((event,session)=>{
   if(!languageReady)return;
+  // INITIAL_SESSION is also resolved by checkSession(); handling its empty
+  // callback here races with explicit login and persisted-profile rendering.
+  if(event==="INITIAL_SESSION")return;
   if(session && session.user){
     if(event==="SIGNED_IN")setTimeout(()=>logClientEvent("auth_sign_in"),0);
     setTimeout(()=>showUser(session.user),0);
-  }else{
+  }else if(event==="SIGNED_OUT"){
     showLogin();
   }
 });
