@@ -76,3 +76,17 @@ The Worker deployment workflow now statically validates the repair migration's e
 ## Studio provider status refreshed
 - The connected Runway workspace currently reports 500 plan credits, 0 purchased credits, available image models, and no available video, speech, music or sound-effect models. Video generation/editing is currently gated. Do not claim a finished MP4 renderer until a provider or tested rendering pipeline is connected.
 - Target for the next 1–2 days: deliver a complete Studio production package and activate actual video export only when provider/renderer, watermark-in-final-render and Dr.Vas-owned media storage are verified.
+
+
+## Studio MP4 renderer — 4 November 2026
+- Added a 9:16 / 1080×1920 Studio Render UI. Users can upload up to 8 private still images, add per-scene captions, optionally upload voice-over/music, or create a text-only teaser.
+- Added Worker actions `studio_render_create` and `studio_render_status`. They require a valid Supabase user session, administrator allow-list membership, the server-side `CREATOMATE_API_KEY` secret, and server-side rate-limit approval.
+- Worker validates RenderScript elements and only accepts media source URLs from signed objects in the user's private Supabase `drvas-media` bucket. It injects `MADE BY VPC` at a fixed top layer for the full video duration.
+- Added migration `supabase/migrations/202611040004_studio_render_storage.sql`: private `drvas-media` bucket, per-user storage-object policies, and RLS-protected `drvas_studio_render_jobs` table.
+- On provider completion, Worker copies the MP4 into the user's private Supabase storage; frontend creates short-lived signed URLs for preview/download. Project metadata can restore the private preview after reopening a saved Studio project.
+- Added E2E coverage for a text-only render request and private preview. That test run is in progress as of this checkpoint.
+- **Not yet production-verified:** live Supabase migration has not been applied; Creatomate API key has not been configured; no real MP4 has been rendered. The connected Runway workspace currently has image models but no video, speech, music or sound-effect models. This renderer assembles uploaded images/captions/optional supplied audio; it is not generative motion video.
+- Creatomate trial currently advertises 50 credits without a card; provider-hosted output is temporary (up to 30 days), so the private Supabase copy is intentional. References: https://creatomate.com/docs/api/reference/create-a-render and https://creatomate.com/pricing.
+
+## Repository confidentiality note
+- GitHub repository visibility was checked and is currently `public`. The available GitHub integration can read/write source but does not expose a repository-visibility change action. Before adding proprietary voice samples, confidential customer/student/health data or any secrets, the owner should change the repository to private in GitHub Settings. No provider secrets should ever be committed to the repository.
