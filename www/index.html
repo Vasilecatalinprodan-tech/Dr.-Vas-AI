@@ -2298,6 +2298,9 @@ async function showUser(user){
     if(el("studioSavedProjects"))el("studioSavedProjects").innerHTML='<option value="">Alege un proiect salvat</option>';
     if(el("studioProjectTitle"))el("studioProjectTitle").value="";
     if(el("studioIdea"))el("studioIdea").value="";
+    ["academySubject","academyLevel","academyAudience","academyFormat","academyLanguage","academyOutcome","academyBrief","academyProjectTitle","commerceProduct","commerceMarket","commerceBudget","commerceModel","commerceChannel","commercePrice","commerceBrief","commerceProjectTitle","businessIdea","businessCountry","businessBudget","businessStage","businessGoal","businessHorizon","businessBrief","businessProjectTitle","incomeTitle","incomePlatform","incomeType","incomeStatus","incomeEstimated","incomeActual","incomeCurrency","incomeUrl","incomeNextAction","incomeNotes"].forEach(id=>{if(el(id))el(id).value="";});
+    currentIncomeOpportunityId=null;incomeOpportunityCache=[];
+    if(typeof renderIncomeOpportunities==="function")renderIncomeOpportunities();
   }
   currentUser = user;
   showOnly("profileSection");
