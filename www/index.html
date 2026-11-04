@@ -2293,6 +2293,21 @@ function showOnly(section){
 async function showUser(user){
   if(!user || !languageReady) return;
   if(currentUser && currentUser.id!==user.id){
+    isDrvasAdmin=false;
+    activeModule="free";
+    currentConversationId=null;
+    conversationSaved=false;
+    pendingMessages=[];
+    loadingConversation=false;
+    if(el("question"))el("question").value="";
+    if(el("chat"))el("chat").innerHTML="";
+    if(el("conversationList"))el("conversationList").innerHTML="";
+    ["studioWorkspace","academyWorkspace","commerceWorkspace","businessWorkspace","adminPanel"].forEach(id=>el(id)?.classList.add("hidden"));
+    document.querySelectorAll(".module-card").forEach(card=>{
+      const selected=card.dataset.module==="free";
+      card.classList.toggle("selected",selected);
+      card.setAttribute("aria-pressed",String(selected));
+    });
     currentStudioProjectId=null;currentStudioProjectOutput="";
     ["academy","commerce","business"].forEach(module=>{moduleProjectState[module]=null;moduleProjectOutputs[module]="";if(el(module+"ProjectList"))el(module+"ProjectList").replaceChildren(new Option("Alege un proiect salvat",""));if(el(module+"ProjectTitle"))el(module+"ProjectTitle").value="";});
     if(el("studioSavedProjects"))el("studioSavedProjects").innerHTML='<option value="">Alege un proiect salvat</option>';
