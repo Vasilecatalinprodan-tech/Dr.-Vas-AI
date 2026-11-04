@@ -215,3 +215,31 @@ User asked to continue development and save all progress and the conversation. T
 - User: “ok continua si salveaza ce ai facut pana acum si conversatia de asemenea”.
 - Meaning: continue the Dr.Vas work and preserve both implementation progress and the conversation as a durable project record.
 - Assistant action: continued with the CSS regression-test correction and the multilingual presentation-control refinement, then updated this continuity document. Keep the agreed communication style: no repetitive step-by-step progress messages; report after a coherent block is finished.
+
+
+## 2026-11-04 — visible module isolation and account-access diagnosis
+
+### User-reported problems
+1. The account `vasilecatalinprodan@gmail.com` can enter the private modules, but a different account cannot.
+2. On opening modules other than Dr.Vas Free, the left side still shows the other modules; the user requires each module to be a separate workspace with only its own tools and functions. Dr.Vas Free's current appearance should remain unchanged.
+
+### Root cause found in source
+- The private-pilot access gate is deliberately enforced server-side in `worker/index.js` using the Cloudflare secret `ADMIN_EMAILS`. `admin_status` normalizes the authenticated email and checks exact membership in that comma-separated allowlist. The AI chat endpoint and Live voice endpoint independently enforce the same allowlist for all six modules. Thus a second account is rejected unless its exact email is added to the allowlist. This is not a Supabase password/login issue and must not be bypassed in the frontend.
+- The visual leak was caused by an old CSS rule: `body.module-workspace-mode .module-workspace{display:block!important}`. Its specificity overrode the ordinary `.hidden` class, so inactive module workspaces could remain visible simultaneously. The old desktop layout also reserved a two-column module-dashboard/chat layout and the focused chat could expose a global module rail.
+- Do not weaken the server-side allowlist. Do not add an email to Cloudflare `ADMIN_EMAILS` without the owner providing and explicitly authorizing the exact second email address.
+
+### Fixes committed
+- Commit `f296b76f23b1fa8fe0b8f70294a0600d617d3565`: module workspaces use a full-width, single-column layout; global module cards/rail and cross-module history are hidden while a dedicated module is open.
+- Commit `ba3d33e2e4a552e8a6a53bfac6b200debba6e26a`: preserve the existing Dr.Vas Free clean chat layout while applying the dedicated layout to other modules.
+- Commit `11898e9086fd0d1ab6df54e6aaf6c76000fa1bfe`: explicit high-specificity rule ensures inactive `.module-workspace.hidden` and `.studio-workspace.hidden` elements remain hidden despite the legacy display rule.
+- Commit `3de00183d49363a653193149c8283edf353043e1`: regression coverage checks each premium module independently, verifies the other workspaces are hidden, confirms the global module rail and history are hidden, and checks the one-column layout.
+- Commit `fae2cf6892df9f58d671fbb32b04a2fdbdf89381`: regression coverage protects the current Dr.Vas Free layout and confirms dedicated module tools stay hidden while Free is active.
+
+### Verification status
+- The source and tests have been fetched again from `drvas-integrated-platform`; the CSS fixes and new regression tests are present.
+- No successful GitHub Actions result or production deployment for these commits has been retrieved yet. Do not tell the user that the live site has already changed or that the tests passed until deployment and browser tests are verified.
+- The chat request already captures `activeModule` and sends it as the `module` field to the Worker, so module-specific server prompting is retained. Keep each module's own workspace tools isolated and do not mix the global module switcher into an open module.
+- Dr.Vas Free styling is explicitly preserved by the new free-mode override.
+
+### Next owner decision
+- Ask the owner whether the second account should be granted private-pilot administrator access. If yes, obtain the exact email address and explicit authorization, then update the Cloudflare Worker secret `ADMIN_EMAILS` by adding that address as another comma-separated entry. Never guess the address or change the allowlist silently.
