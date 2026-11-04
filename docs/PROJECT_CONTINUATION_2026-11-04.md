@@ -64,3 +64,11 @@
 - Deployment run 41847917623 completed successfully for commit 5bba00fc; Worker deployment and production smoke test both passed.
 - Confirmed Worker text-chat requests include the selected module and a module-specific system instruction for Health, Studio, Academy, Commerce and Business. This is separate from the Live Voice module prompt.
 - Next engineering focus: test real module outputs and persistent project workflows beyond navigation; then test Studio's live render path and rebuild the Android APK from a fully verified commit.
+
+
+## Additional verification — 2026-11-04, 14:40 UTC
+- Added deterministic source-contract coverage confirming that the text-chat request includes the selected module, access token and conversation ID, and that the Worker contains dedicated system instructions for Health, Studio, Academy, Commerce and Business.
+- The earlier attempt to exercise the full send() flow in browser E2E timed out because the browser harness did not reliably complete that mocked asynchronous path. It was replaced with deterministic contract checks; this is not represented as a live AI response test.
+- Latest browser suite: 27 passed (14.4s), run 41849903266, commit 6a7afb8c.
+- Latest Worker deploy: run 41849903284 completed successfully for commit 6a7afb8c; production Worker smoke test passed.
+- Next: test actual module workflows and data persistence, then run a real Studio render with the connected provider before treating MP4 production as fully validated. Rebuild the Android APK only from the final verified source.
