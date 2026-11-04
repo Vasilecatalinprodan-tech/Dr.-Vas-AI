@@ -359,3 +359,14 @@ A detailed session log was added at `docs/SESSION_LOG_2026-11-03.md`. It records
 - Final browser regression workflow `41807406846` on test commit `1d31f84d48f07532836450976a0c2a5e3198239a` completed successfully. The run includes 11 tests: 9 previous tests plus Academy/Commerce/Business admin brief generation and non-admin denial. Verify the log if exact per-test details are needed.
 - Latest Worker deployment validation was queued as run `41807531303` on commit `3193218f4f3f53e941453d1a7d2db3fedd0e5a2c`; do not claim the new version is live until it succeeds.
 - APK workflow `41806870440` on source commit `87551478b74fa900c791455afa4b2e04bb422a43` completed successfully. That source commit contains the new module workspaces and prompt builders; the later commits only adjust tests/docs and Worker comments. Physical device testing is still outstanding.
+
+
+## 2026-11-04 — persistent projects for Academy, Commerce and Business
+
+- Added migration `supabase/migrations/202611040001_module_projects.sql` for a shared owner-scoped project table. It enforces a module allowlist (academy/commerce/business), RLS owner policies for select/insert/update/delete, and denies anon/public table access.
+- Added save, list, open, export and delete controls to each of the three module pilot workspaces. Drafts and the latest AI output are stored in the user's own row; the application filters by user ID and module and resets in-memory IDs when accounts switch. RLS remains the authoritative boundary.
+- The latest AI response is held in the current module draft and is included the next time the user explicitly saves. No automatic background storage of these drafts was added.
+- Added browser test coverage with an in-memory Supabase query mock for save/open/delete across all three modules. This tests frontend behaviour, not the live Supabase migration; the migration must still be applied and real two-account isolation verified.
+- Source commits: `a0dbf4ed684c8dd71e2eb9999c324567bca8e3f0` (migration), `ef83b156a53a07964ec440a7626a26402e37cb69` (project controls), `f0b6bf65a8154e78b8f0e72b0b0a055ba132156d` (persistence functions), `ddd8da4601ab4884297186433043d4889ff336db` (account-switch cleanup), `88669afe540430bd9545f8576bd3a919b35f98c4` (tests).
+- Latest browser run `41807888087` is pending. Verify the final result before claiming this project persistence change is tested.
+- Supabase SQL migration is not yet confirmed applied. Do not assume project saving is live until it is run in the project's SQL Editor and a real authenticated save/open/delete test passes.
