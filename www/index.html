@@ -1699,8 +1699,8 @@ function selectModule(moduleName,userInitiated=false){
     business:{icon:"📊",name:"Dr.Vas Business",description:"Planificare, management și analiză de afaceri — în pregătire."}
   };
   if(!Object.prototype.hasOwnProperty.call(modules,moduleName))return;
-  // Every module card, free or premium, opens sign-in for visitors.
-  // Keep the requested module through the authentication/profile flow.
+  // Public users may use Dr.Vas Free; premium workspaces remain private to the founder.
+  // Preserve the requested module through the authentication/profile flow.
   if(userInitiated&&!currentUser){
     try{sessionStorage.setItem("drvas_pending_module",moduleName)}catch{}
     activeModule=moduleName;
@@ -1719,12 +1719,8 @@ function selectModule(moduleName,userInitiated=false){
     }
     return;
   }
-  if(!isDrvasAdmin){
-    // Prefer the detailed server-side admin_status reason (missing allowlist,
-    // missing account email, or an email not on the allowlist) over a generic message.
-    const serverNotice=el("adminAccessNotice");
-    const detailedNotice=serverNotice&&!serverNotice.classList.contains("hidden")?serverNotice.textContent.trim():"";
-    const notice=detailedNotice||tr("Accesul la module este privat. Contul conectat nu a fost recunoscut ca administrator de server. Verifică dacă te-ai conectat cu adresa fondatorului și dacă ADMIN_EMAILS din Cloudflare conține exact această adresă.");
+  if(moduleName!=="free"&&!isDrvasAdmin){
+    const notice=tr("Acest modul este Premium și momentan privat. Dr.Vas Free rămâne disponibil tuturor utilizatorilor conectați.");
     const status=el("moduleSelectionStatus");
     if(status){status.textContent=notice;status.classList.remove("hidden");}
     const accessMessage=el("moduleAccessMessage");
@@ -1780,7 +1776,7 @@ function selectModule(moduleName,userInitiated=false){
   }
   if(moduleName==="business"&&currentUser&&isDrvasAdmin){if(el("businessLedgerDate")&&!el("businessLedgerDate").value)el("businessLedgerDate").value=new Date().toISOString().slice(0,10);calculateBusinessBreakEven();loadBusinessLedger();loadStudentAssessmentProjects().catch(error=>console.warn("Student Desk project list:",error));loadModuleProjectList("business").catch(error=>console.warn("Business project list:",error));}
   if(userInitiated&&currentUser)logClientEvent("module_selected",moduleName);
-  if(userInitiated&&currentUser&&isDrvasAdmin){
+  if(userInitiated&&currentUser&&(moduleName==="free"||isDrvasAdmin)){
     const chatSection=el("chatSection");
     chatSection?.classList.remove("hidden");
     document.body.classList.add("module-workspace-mode");
