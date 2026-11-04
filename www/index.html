@@ -661,6 +661,20 @@ body.module-workspace-mode #chatSection>.chat-layout{
 }
 body.module-workspace-mode #chatSection .history-panel{display:none!important}
 body.module-workspace-mode #chatSection .chat-main{width:100%!important;max-width:none!important}
+/* Preserve the established Dr.Vas Free single-chat experience unchanged. */
+body.module-workspace-mode.free-module-mode main{
+  display:block!important;
+  grid-template-columns:none!important;
+  grid-template-rows:none!important;
+  max-width:1120px!important;
+}
+body.module-workspace-mode.free-module-mode .module-selection-shell{display:none!important}
+body.module-workspace-mode.free-module-mode #chatSection{
+  grid-column:auto!important;
+  grid-row:auto!important;
+  width:100%!important;
+  max-width:100%!important;
+}
 /* Authentication and profile are shown inside the module shell without exposing the module dashboard. */
 .module-selection-shell.auth-flow-mode{display:block!important}
 #moduleSelectionShell.auth-flow-mode > #moduleSelectionSection > :not(#authSection):not(#profileSection){display:none!important}
