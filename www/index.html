@@ -2963,7 +2963,12 @@ async function showUser(user){
   showOnly("profileSection");
   setLocalizedText(el("profileMessage"),"Se încarcă profilul...");
   try{await loadProfile(user)}
-  catch(error){el("profileMessage").textContent = tr("Nu am putut încărca profilul: ") + error.message;showOnly("profileSection");}
+  catch(error){
+    el("profileMessage").textContent = tr("Nu am putut încărca profilul: ") + error.message;
+    showOnly("profileSection");
+    const profile=el("profileSection");profile?.classList.remove("hidden");profile?.removeAttribute("hidden");
+    el("authSection")?.classList.add("hidden");el("chatSection")?.classList.add("hidden");
+  }
 }
 
 async function loadProfile(user){
