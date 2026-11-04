@@ -127,7 +127,7 @@ test("module selection explains a denied administrator check instead of silently
   await expect(page.locator("#moduleSelectionStatus")).toContainText("nu a fost recunoscut ca administrator");
 });
 
-test("desktop module opens its own workspace beside its contextual chat", async ({ page }) => {
+test("desktop module opens one isolated full-width workspace without the global module rail", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await openApp(page, "ro");
   await page.evaluate(() => {
@@ -139,13 +139,40 @@ test("desktop module opens its own workspace beside its contextual chat", async 
 
   await expect(page.locator("#studioWorkspace")).toBeVisible();
   await expect(page.locator("#chatSection")).toBeVisible();
+  await expect(page.locator("#moduleSelectionSection > .modules-grid")).toBeHidden();
+  await expect(page.locator(".chat-module-rail")).toBeHidden();
   await expect(page.locator("#question")).toBeVisible();
   await expect(page.locator(".chat-back-button")).toContainText("Înapoi la module");
   await expect(page.locator(".chat-logout-button")).toBeVisible();
   await expect(page.locator(".chat-module-rail")).toBeHidden();
   expect(await page.evaluate(() => document.body.classList.contains("module-workspace-mode"))).toBe(true);
   const layout = await page.locator("main").evaluate(node => getComputedStyle(node).gridTemplateColumns);
-  expect(layout.split(" ").length).toBeGreaterThanOrEqual(2);
+  expect(layout.trim().split(/\s+/)).toHaveLength(1);
+});
+
+test("each premium module shows only its own tools and keeps the other module workspaces hidden", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openApp(page, "ro");
+  const modules = ["health", "studio", "academy", "commerce", "business"];
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-isolated-user", email: "admin@example.invalid" };
+    isDrvasAdmin = true;
+    showModuleSelection();
+  });
+
+  for (const moduleName of modules) {
+    await page.evaluate(name => selectModule(name, true), moduleName);
+    await expect(page.locator("#moduleSelectionSection > .modules-grid")).toBeHidden();
+    await expect(page.locator(".chat-module-rail")).toBeHidden();
+    await expect(page.locator("#chatSection .history-panel")).toBeHidden();
+    for (const otherModule of modules) {
+      const workspace = page.locator("#" + otherModule + "Workspace");
+      if (otherModule === moduleName) await expect(workspace).toBeVisible();
+      else await expect(workspace).toBeHidden();
+    }
+    const columns = await page.locator("main").evaluate(node => getComputedStyle(node).gridTemplateColumns);
+    expect(columns.trim().split(/\s+/), moduleName + " must occupy one full-width column").toHaveLength(1);
+  }
 });
 
 test("legacy focused workspace never exposes other modules or cross-module history", async ({ page }) => {
