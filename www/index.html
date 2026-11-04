@@ -2549,9 +2549,15 @@ function buildStudioPrompt(){
 
 function submitModuleBrief(prompt,notice){
  const field=el("question");if(!field)return;
- field.value=prompt;
+ field.value=prompt;resizeQuestionInput();
  const message=el("moduleAccessMessage");if(message)message.textContent=tr(notice);
- if(currentUser)enterChatFocus();
+ if(currentUser&&isDrvasAdmin){
+  el("chatSection")?.classList.remove("hidden");
+  el("moduleSelectionShell")?.classList.add("modules-open");
+  document.body.classList.add("module-workspace-mode");
+  document.body.classList.remove("free-module-mode","chat-focus-mode","history-open");
+  document.documentElement.classList.remove("chat-focus-document");
+ }
  requestAnimationFrame(()=>{field.focus({preventScroll:true});field.scrollIntoView({behavior:"smooth",block:"center"});});
 }
 function buildHealthPrompt(){
@@ -2560,7 +2566,7 @@ function buildHealthPrompt(){
  const details=el("healthBrief")?.value.trim()||"";
  if(!details){setLocalizedText(el("saveMessage"),"Adaugă întrebarea sau informațiile pe care vrei să le discutăm.");el("healthBrief")?.focus();return;}
  const prompt="DR.VAS HEALTH — SPRIJIN INFORMATIV\nSUBIECT: "+topic+"\nOBIECTIV: "+goal+"\nINFORMAȚII FURNIZATE:\n"+details+"\n\nRăspunde prudent și clar. Explică termenii, separă faptele de incertitudini, nu formula diagnostic și nu recomanda modificarea tratamentelor. Spune ce întrebări ar fi utile pentru medic și când este necesară evaluarea urgentă. Nu inventa rezultate sau informații lipsă.";
- const input=el("question");if(input){input.value=prompt;resizeQuestionInput();input.focus();setLocalizedText(el("saveMessage"),"Contextul Health a fost pregătit în chat. Verifică mesajul și apasă Trimite.");}
+ submitModuleBrief(prompt,"Contextul Health este pregătit în chat. Verifică mesajul și apasă Trimite.");
 }
 function buildAcademyPrompt(){
  const v=id=>el(id)?.value?.trim()||"";
@@ -2957,7 +2963,7 @@ async function showUser(user){
   showOnly("profileSection");
   setLocalizedText(el("profileMessage"),"Se încarcă profilul...");
   try{await loadProfile(user)}
-  catch(error){el("profileMessage").textContent = tr("Nu am putut încărca profilul: ") + error.message}
+  catch(error){el("profileMessage").textContent = tr("Nu am putut încărca profilul: ") + error.message;showOnly("profileSection");}
 }
 
 async function loadProfile(user){
