@@ -393,7 +393,8 @@ test("ordinary accounts can open Free and Health after sign-in, while the four p
     await expect(page.locator("#question")).toBeVisible();
     await expect(page.locator("#adminPanel")).toBeHidden();
     await expect(page.locator("#adminAccessNotice")).toBeHidden();
-    await expect(page.locator("#healthWorkspace")).toBeVisible({ visible: module === "health" });
+    if (module === "health") await expect(page.locator("#healthWorkspace")).toBeVisible();
+    else await expect(page.locator("#healthWorkspace")).toBeHidden();
     expect(await page.evaluate(() => sessionStorage.getItem("drvas_pending_module"))).toBeNull();
     await page.evaluate(() => {
       document.querySelector("#chatSection")?.classList.add("hidden");
