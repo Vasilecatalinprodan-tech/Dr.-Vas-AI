@@ -265,3 +265,33 @@ Founder proposed adding revenue-generating writing, translation and music servic
 - Android workflow `41698929811` succeeded for commit `6664fb27cb11a83f402dc6fb751da26134218e16`.
 - Artifact `DrVas-APK` ID `13262293447`, size 6,033,799 bytes, SHA-256 `a2063e934e0d958f1280d6c416efaaffc47c41db8b2d581fd5146730032fb402`, expiry 2027-02-01.
 - Physical-device installation and runtime test still required.
+
+
+## 2026-11-04 — Overnight recovery and verification checkpoint
+
+- Reopened the existing project on branch `drvas-integrated-platform`; the branch exists and the prior project files are present. No new product code was changed during this audit.
+- Rechecked the saved project direction: one integrated Dr.Vas platform with six modules; Free and Health are intended to remain free, while Studio, Academy, Commerce and Business remain gated pending complete features and verified billing/entitlements.
+- Rechecked the latest recorded production deployment workflow run `41698929634`: all jobs succeeded, including Worker/browser JavaScript validation, Playwright homepage/session tests, Wrangler deployment and production smoke checks. The smoke test verifies homepage delivery, all six module markers and HTTP 401 for unauthenticated `admin_status`.
+- Rechecked browser E2E run `41699194261`: completed successfully. Jobs include homepage/session-restoration tests and the signed-out CTA / Health-Premium gating regression coverage recorded in the session log.
+- Rechecked Android workflow run `41698929811`: completed successfully. Artifact `DrVas-APK`, ID `13262293447`, size 6,033,799 bytes, SHA-256 `a2063e934e0d958f1280d6c416efaaffc47c41db8b2d581fd5146730032fb402`, expires 2027-02-01. This verifies build and upload only; installation and runtime on a physical Samsung device remain untested.
+- Re-read the current Worker source, Wrangler configuration, rate-limit migration, private-profile/privacy migration, Crypto device registry migration, and Studio projects migration. No secret values were exposed or copied into documentation.
+- Confirmed the deployment workflow includes syntax checks, frontend/Worker security assertions, Chromium browser tests, deployment and production smoke checks. Workflow currently exercises `tests/e2e/homepage.spec.cjs`; verify the actual test inventory before expanding the suite.
+- Confirmed the rate-limit migration `202611030001_rate_limits.sql` defines a service-role-only atomic RPC and RLS-protected table. The Worker intentionally fails closed if that RPC is unavailable. The migration still requires confirmation in the live Supabase project before authenticated chat and Gemini Live can be considered operational.
+- Studio projects migration `202611030004_studio_projects.sql` remains recorded as not applied to live Supabase; cloud save/reopen/delete therefore remains unverified until the migration is applied and tested with a signed-in account.
+- Crypto device registry migration `202611030003_crypto_device_registry.sql` was previously reported by the founder as applied, but live table readiness has not been independently confirmed. Do not rerun blindly.
+- The private profile/privacy migration is present in the repository. Its live deployment state should be confirmed through the authenticated application/admin checks rather than inferred from the file existing.
+- Production live URL could not be independently opened through this audit's web retrieval path. The successful GitHub Actions production smoke test is the available deployment evidence; do not describe a fresh manual HTTP probe as completed.
+- No authenticated test account was used. AI chat, conversation history writes/reads, audit log inserts, private-profile encryption/decryption, administrator panel visibility, Crypto registry readiness and Studio cloud persistence still require a signed-in end-to-end test.
+- Account deletion/export/retention remains a design and audit task. In particular, `drvas_crypto_devices.requested_by` has an `ON DELETE RESTRICT` foreign key; do not implement irreversible account deletion before all dependent tables and retention requirements are reconciled.
+- No physical Android device test was performed. No video rendering, voice cloning, audio generation, social OAuth, scheduling/publication, subscriptions or payments should be represented as implemented.
+
+### Next session — start here
+
+1. Confirm live Supabase migration state safely (without rerunning migrations): rate limits, Studio projects, Crypto registry, private profiles/privacy and audit logs.
+2. Apply `supabase/migrations/202611030001_rate_limits.sql` if and only if it is not already applied; verify the RPC with a controlled authenticated test.
+3. Apply `supabase/migrations/202611030004_studio_projects.sql` if and only if absent; then test save/reopen/export/delete with the founder's signed-in account.
+4. Run a controlled signed-in browser test for AI chat, persistence, history, admin allowlist, audit metadata and Health/Premium boundaries.
+5. Install the current APK on the Samsung phone and test launch, login, chat, microphone permissions, navigation, refresh/reopen and network failure behaviour.
+6. Continue the privacy/account lifecycle audit and Studio roadmap only after the core app is stable.
+
+The user asked to preserve this session and resume tomorrow. This file is the durable technical checkpoint; it does not claim that work continues in the background after the chat is closed.
