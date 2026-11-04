@@ -521,6 +521,7 @@ body.chat-focus-mode #question:focus{outline:2px solid #54d8cf;outline-offset:2p
 .module-state{margin-top:auto;padding-top:7px;color:#70d9c7;font-size:11px;font-weight:800}
 .chat-logout-button{background:#482b35;color:#ffe1e4;border:1px solid #754652}
 .chat-logout-button:hover{background:#603541}
+body.module-workspace-mode .header-chat-cta{display:none!important}
 body.module-workspace-mode main{display:grid;grid-template-columns:minmax(0,1.28fr) minmax(370px,.92fr);align-items:start;gap:18px;max-width:1600px;padding:18px 22px 28px;height:auto;min-height:calc(100vh - 75px);overflow:visible}
 body.module-workspace-mode .landing-actions,body.module-workspace-mode #heroSection,body.module-workspace-mode .origin-story{display:none!important}
 body.module-workspace-mode .module-selection-shell{grid-column:1;grid-row:1;display:block!important;margin:0;min-width:0}
@@ -988,7 +989,7 @@ body.free-module-mode #chatSection .chat-module-rail,body.free-module-mode #chat
 
  <div id="chatSection" class="hidden">
   <div class="chat-view-nav">
-   <strong>✦ DR.VAS · CONVERSAȚIE</strong>
+   <strong id="chatWorkspaceTitle">✦ DR.VAS · CONVERSAȚIE</strong>
    <div class="chat-view-nav-actions">
     <button type="button" class="chat-history-toggle" onclick="toggleChatHistory()">☷ Istoric</button>
     <button type="button" class="chat-back-button" onclick="goToModules()">← Înapoi la module</button>
@@ -1542,6 +1543,7 @@ function selectModule(moduleName,userInitiated=false){
     button.setAttribute("aria-current",selected?"page":"false");
   });
   const config=modules[moduleName];
+  setLocalizedText(el("chatWorkspaceTitle"),config.icon+" "+config.name);
   selectAssistant(activeAssistant);
   el("activeModuleIcon").textContent=config.icon;
   setLocalizedText(el("activeModuleName"),config.name);
