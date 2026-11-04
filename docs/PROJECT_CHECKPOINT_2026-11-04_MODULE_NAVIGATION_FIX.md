@@ -32,10 +32,11 @@ Updated tests/e2e/homepage.spec.cjs (24 tests total) to cover:
 The source and test files were committed on drvas-integrated-platform. Static repository checks confirmed the entry function, pending-entry restoration, hero CTA order, visible authorization feedback, and removal of direct showModuleSelection() CTA handlers.
 
 ## Deployment / verification status
-The deploy-worker workflow is configured to run on pushes to drvas-integrated-platform when www/** or tests/** changes. The latest automated workflow result for these new commits has not yet been independently confirmed in this checkpoint. Do not claim production deployment or a passing test suite until the workflow result is checked.
+The deploy-worker workflow is configured to run on pushes to drvas-integrated-platform when www/** or tests/** changes. The first full workflow on the initial login-first revision exposed 4 stale browser-test expectations (25 passed, 4 failed): one test still assumed the header CTA opened the module chooser before login, and three tests expected the old “pilot privat” wording. These were test expectations inconsistent with the new intended login-first flow and clearer admin-denial message; application code did not fail those assertions. Updated the visitor module test to open the chooser as an authenticated-flow state, updated the landing CTA test to assert login first, and updated the three admin-denial text assertions.
+The corrected browser regression run and deployment workflow were started for commit 4219409a9e4edc2f4e75f2360aa43a3450ba096f. At checkpoint update time, both were still in progress. Do not claim production deployment or a passing test suite until the workflow results are checked.
 
 ## Next verification
-1. Confirm the latest GitHub Actions deploy-worker run is green, including Playwright and production smoke test.
+1. Check GitHub Actions run 41852818965 (browser regression) and 41852818983 (deployment). Confirm both are green; deployment must include Playwright and production smoke test.
 2. On the production URL, perform Ctrl+F5.
 3. Test while signed out: CTA -> login -> successful login -> module chooser.
 4. Test the founder/admin account: click all six module cards and verify each opens its workspace.
