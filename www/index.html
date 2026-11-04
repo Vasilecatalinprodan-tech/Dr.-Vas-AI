@@ -768,6 +768,23 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
     <div id="businessLedgerStatus" role="status" aria-live="polite">Conectează-te și aplică migrarea pentru a activa registrul privat.</div>
     <div id="businessLedgerRows" class="business-ledger-rows"></div>
    </section>
+   <section class="studio-project-manager module-project-manager business-tool-panel" aria-labelledby="businessBreakEvenTitle">
+    <h3 id="businessBreakEvenTitle">📊 Business Planner — Prag de rentabilitate</h3>
+    <p>Calculează câte unități trebuie să vinzi pentru a acoperi costurile fixe și ce rezultat estimativ obții la volumul de vânzări ales. Este un model de planificare, nu o prognoză garantată.</p>
+    <div class="studio-form-grid">
+     <label>Costuri fixe lunare<input id="businessFixedCosts" type="number" min="0" step="0.01" value="1000" oninput="calculateBusinessBreakEven()"></label>
+     <label>Preț de vânzare / unitate<input id="businessUnitPrice" type="number" min="0.01" step="0.01" value="50" oninput="calculateBusinessBreakEven()"></label>
+     <label>Cost variabil / unitate<input id="businessVariableCost" type="number" min="0" step="0.01" value="25" oninput="calculateBusinessBreakEven()"></label>
+     <label>Vânzări estimate / lună<input id="businessExpectedUnits" type="number" min="0" step="1" value="50" oninput="calculateBusinessBreakEven()"></label>
+    </div>
+    <div class="business-ledger-summary">
+     <div><small>Prag de rentabilitate</small><strong id="businessBreakEvenUnits">—</strong></div>
+     <div><small>Venit la prag</small><strong id="businessBreakEvenRevenue">—</strong></div>
+     <div><small>Marjă contribuție</small><strong id="businessContributionMargin">—</strong></div>
+     <div><small>Rezultat lunar estimat</small><strong id="businessExpectedProfit">—</strong></div>
+    </div>
+    <p id="businessBreakEvenStatus" role="status" aria-live="polite">Completează ipotezele pentru calcul.</p>
+   </section>
    <section class="studio-project-manager module-project-manager business-tool-panel" aria-labelledby="businessAssessmentTitle">
     <h3 id="businessAssessmentTitle">🎓 Dr.Vas Student Desk — Evaluare și îndrumare academică</h3>
     <p>Instrument pentru profesori și studenți: analiză pe rubrică, feedback, structură, argumentare și citare. Susține munca proprie a studentului; nu ascunde utilizarea AI și nu fabrică surse. Elimină numele, numărul de student și orice date personale înainte de a lipi materialul.</p>
@@ -2518,7 +2535,7 @@ const moduleProjectOutputs={academy:"",commerce:"",business:""};
 const MODULE_PROJECT_FIELDS={
  academy:["academySubject","academyLevel","academyAudience","academyFormat","academyLanguage","academyOutcome","academyBrief"],
  commerce:["commerceProduct","commerceMarket","commerceBudget","commerceModel","commerceChannel","commercePrice","commerceBrief"],
- business:["businessIdea","businessCountry","businessBudget","businessStage","businessGoal","businessHorizon","businessBrief"]
+ business:["businessIdea","businessCountry","businessBudget","businessStage","businessGoal","businessHorizon","businessBrief","businessFixedCosts","businessUnitPrice","businessVariableCost","businessExpectedUnits"]
 };
 const MODULE_PROJECT_PRIMARY={academy:"academySubject",commerce:"commerceProduct",business:"businessIdea"};
 function moduleProjectStatus(module,message,isError=false){
