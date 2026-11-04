@@ -140,6 +140,46 @@ for (const [moduleId, workspaceId] of [
   });
 }
 
+test("successful administrator sign-in opens the exact module selected before authentication", async ({ page }) => {
+  await openApp(page, "ro");
+  const modules = [
+    ["free", "Dr.Vas Free"],
+    ["health", "Dr.Vas Health"],
+    ["studio", "Dr.Vas Studio"],
+    ["academy", "Dr.Vas Academy"],
+    ["commerce", "Dr.Vas Commerce"],
+    ["business", "Dr.Vas Business"]
+  ];
+
+  await page.evaluate(() => {
+    refreshAdminPanel = async () => { isDrvasAdmin = true; };
+    loadStudioProjects = async () => {};
+    loadModuleProjectList = async () => {};
+    loadIncomeOpportunities = async () => {};
+    loadConversationList = async () => [];
+  });
+
+  for (const [module, title] of modules) {
+    await page.evaluate(selected => {
+      sessionStorage.setItem("drvas_pending_module", selected);
+      return showChat({ id: "e2e-authenticated-admin", email: "owner@example.invalid" }, "Administrator");
+    }, module);
+    await expect(page.locator("#chatSection")).toBeVisible();
+    await expect(page.locator("#chatWorkspaceTitle")).toContainText(title);
+    await expect(page.locator("#moduleSelectionShell")).toBeVisible();
+    await expect(page.locator("#moduleSelectionSection")).not.toHaveClass(/auth-flow-mode/);
+    await expect(page.locator("#moduleSelectionSection [data-module='" + module + "']")).toHaveAttribute("aria-pressed", "true");
+    await expect(page.locator("#" + (module === "free" ? "healthWorkspace" : module + "Workspace"))).toBeVisible({ visible: module !== "free" });
+    expect(await page.evaluate(() => sessionStorage.getItem("drvas_pending_module"))).toBeNull();
+    if (module === "free") {
+      await expect(page.locator("#chatSection")).toBeVisible();
+      expect(await page.evaluate(() => document.body.classList.contains("free-module-mode"))).toBe(true);
+    } else {
+      await expect(page.locator("#" + module + "Workspace")).toBeVisible();
+    }
+  }
+});
+
 test("mobile Free chat stays simple and offers only module navigation and logout", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openApp(page, "ro");
