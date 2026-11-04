@@ -334,5 +334,5 @@ test("logout removes administrator workspaces and clears private module drafts",
   expect(state.projectId).toBeNull();
   expect(state.output).toBe("");
   expect(state.title).toBe("");
-  expect(state.idea).toBe("Private business idea");
+  expect(state.idea).toBe("");
 });
