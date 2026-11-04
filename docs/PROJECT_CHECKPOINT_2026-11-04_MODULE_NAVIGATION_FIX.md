@@ -132,3 +132,45 @@ The latest browser logs on commit 22454fc confirmed 25/29 passing, with all four
 
 ### User testing request
 The user wants to inspect the site while development continues. Production URL remains `https://dr--vas-ai.vasilecatalinprodan.workers.dev`, but until the new deployment passes, it may still show the previous deployed build. Explain this clearly if sharing the URL. Once deployment is green, ask the user to hard-refresh and report any visible error text/screenshots. Keep this checkpoint updated with actual final workflow outcomes and the latest APK artifact link.
+
+
+## Final continuation — 2026-11-04 20:15 UTC
+
+### Corrected diagnosis of the four authentication failures
+The browser run on commit 4b8b806 (run 41903801697) completed with 25 passed and 4 failed. All four failed because `#authSection` / `#profileSection` remained hidden:
+- primary header CTA to login;
+- persisted Supabase session with profile read failure;
+- visitor clicking a private module;
+- landing CTA to login.
+
+The earlier theory that Supabase INITIAL_SESSION timing was the remaining cause was not supported by these logs. The actual CSS defect was confirmed:
+- `.module-selection-shell{display:none!important}`
+- `.module-selection-shell.modules-open{display:block!important}`
+- `showOnly()` removed `modules-open` and added `auth-flow-mode`, but no CSS rule made the shell visible in `auth-flow-mode`.
+- Added `.module-selection-shell.auth-flow-mode{display:block!important}`. The existing child selector continues to hide the module dashboard while showing only auth/profile. No access-control checks were relaxed.
+
+Fix commit: `7263a954a0c06029812d64e0656e0cffe665b5ff`.
+Latest workflows triggered on this commit:
+- Browser regression `41904249945` — queued at checkpoint update.
+- Worker deploy `41904249874` — queued, remains dependent on passing browser tests.
+- APK build `41904249894` — queued.
+Do not report tests, deployment, production smoke test or latest APK as successful until these runs finish.
+
+### Restored founder requirements: Crypto, books and other capabilities
+The user explicitly asked to restore the 2026-11-03 requirements that had not been visible in the six-module navigation. A dedicated roadmap was committed:
+`docs/DRVAS_CRYPTO_CREATOR_INCOME_ROADMAP_2026-11-04.md`
+Commit: `49fe808741b38acab0dcf0d18b38e2b09296484d`.
+
+Key requirements:
+- Dr.Vas Crypto is founder/admin-only, hidden from ordinary users; not a seventh public module.
+- Bitcoin mining feasibility/profitability calculator first; device authorisation, power/energy limits, emergency stop and transparent costs. Mining stays OFF until explicit founder approval. No covert mining or use of visitor devices.
+- Connected-account monitoring is opt-in/read-only initially; market analysis and simulations precede any live trading. Any future trading requires separately authorised budget, loss cap and emergency stop. No automatic transfers or guaranteed-profit claims.
+- Studio books/e-books require persistent manuscript projects (outline, chapters, character/style bible, revisions, continuation across sessions, export), not just a dropdown option. Existing Studio UI already has a Book / novel / e-book deliverable and a capabilities description.
+- Independent Income Tracker for book, translation, music, video and digital-product opportunities; no applications, publishing, contracts or payments without user approval.
+- AI Evaluator & Training workbench for evaluation, annotation, benchmarks, red-team scenarios and reports, with human review and audit trail.
+- Keep six core modules and current Worker-side admin authorisation. New capabilities must use server-side secrets, per-user isolation, audit logs and rate limits.
+
+Next priorities: (1) green browser tests and deploy verification; (2) real Studio MP4 render check; (3) persistent Book Projects; (4) Crypto read-only dashboard and calculator with mining execution disabled; (5) expand income tracker and evaluator; (6) compliance/security review before activating mining, trading, publishing or public subscriptions.
+
+### User test coordination
+Production URL remains `https://dr--vas-ai.vasilecatalinprodan.workers.dev/`. It may still serve the previous deployed build until run `41904249874` succeeds. User is currently inspecting the page; ask them to report exact error text or screenshots. Do not claim live visibility into their laptop.
