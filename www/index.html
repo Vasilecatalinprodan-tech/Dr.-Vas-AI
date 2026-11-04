@@ -31,7 +31,7 @@ body{min-height:100vh;height:auto;overflow-x:hidden;overflow-y:auto;overscroll-b
 main{padding-bottom:140px}
 #pageBottomButton{display:none!important}
 body.chat-focus-mode .header-chat-cta{display:none!important}
-.header-chat-cta{background:#54d8cf;color:#061b25;border-radius:999px;padding:10px 16px;font-size:12px;font-weight:900;white-space:nowrap}
+.header-chat-cta{background:#54d8cf;color:#061b25;border-radius:999px;padding:10px 16px;font-size:12px;font-weight:900;white-space:nowrap}.hero-entry-button{margin:14px 0 4px;padding:13px 20px;font-size:14px;box-shadow:0 8px 24px #0004}.hero-entry-button:hover{transform:translateY(-1px)}
 .chat-view-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;padding:10px 12px;background:#0a1c2c;border:1px solid #25465d;border-radius:14px}
 .chat-view-nav strong{color:#65ddd5;font-size:13px;letter-spacing:.2px}
 .chat-view-nav-actions{display:flex;gap:8px;flex-wrap:wrap}
@@ -598,7 +598,7 @@ body.free-module-mode #chatSection .chat-module-rail,body.free-module-mode #chat
 <body>
 <header>
  <div class="logo">✚ Dr.Vas AI <span class="flag" role="img" aria-label="Steagul României" title="Creat în România"><i></i><i></i><i></i></span></div>
- <div class="header-actions"><div class="status" id="onlineStatus">● AI ASSISTANT ONLINE</div><button type="button" class="header-chat-cta" id="headerChatCta" onclick="showModuleSelection()">VORBEȘTE CU DR.VAS</button><button type="button" class="language-switch" id="languageSwitch" onclick="showLanguageGate()">🌐 Language</button></div>
+ <div class="header-actions"><div class="status" id="onlineStatus">● AI ASSISTANT ONLINE</div><button type="button" class="header-chat-cta" id="headerChatCta" onclick="startDrVas()">VORBEȘTE CU DR.VAS</button><button type="button" class="language-switch" id="languageSwitch" onclick="showLanguageGate()">🌐 Language</button></div>
 </header>
 
 <main id="appMain">
@@ -619,6 +619,7 @@ body.free-module-mode #chatSection .chat-module-rail,body.free-module-mode #chat
 <section id="heroSection" class="hero">
  <div class="hero-content">
   <div class="tag">INTELLIGENCE WITHOUT LIMITS</div>
+  <button type="button" class="landing-primary hero-entry-button" id="heroChatCta" onclick="startDrVas()">Vorbește cu Dr.Vas <span aria-hidden="true">→</span></button>
   <h1>Gândește diferit.<br><strong>Întreabă Dr.Vas.</strong></h1>
   <p>Un asistent inteligent, pregătit să exploreze idei,
   să explice lucruri complexe și să te ajute în fiecare zi.</p>
@@ -637,7 +638,7 @@ body.free-module-mode #chatSection .chat-module-rail,body.free-module-mode #chat
 
 <section class="landing-actions" id="landingActions">
  <div class="landing-actions-copy"><span class="tag">UN SINGUR CONT · ȘASE SPAȚII DE LUCRU</span><h2>Tehnologie care lucrează alături de tine.</h2><p>Alege limba, descoperă platforma și intră în spațiul potrivit pentru ceea ce vrei să construiești.</p></div>
- <button type="button" class="landing-primary" onclick="showModuleSelection()">Vorbește cu Dr.Vas <span aria-hidden="true">→</span></button>
+ 
 </section>
 
 <section class="panel module-selection-shell" id="moduleSelectionShell">
@@ -2885,6 +2886,41 @@ async function handleAuth(){
   }
 }
 
+async function startDrVas(){
+ if(!languageReady)return;
+ let session=null;
+ try{
+  const {data,error}=await supabaseClient.auth.getSession();
+  if(error)throw error;
+  session=data.session;
+ }catch(error){
+  console.warn("Dr.Vas entry authentication check:",error);
+ }
+ if(!session?.user){
+  try{
+   sessionStorage.setItem("drvas_pending_entry","modules");
+   sessionStorage.removeItem("drvas_pending_module");
+  }catch{}
+  authMode="login";
+  setLocalizedText(el("authTitle"),"Bine ai venit!");
+  setLocalizedText(el("authDescription"),"Conectează-te sau creează un cont pentru a intra în Dr.Vas.");
+  setLocalizedText(el("authButton"),"Conectare");
+  setLocalizedText(el("switchButton"),"Nu ai cont? Creează unul");
+  el("password").autocomplete="current-password";
+  el("authMessage").textContent="";
+  showOnly("authSection");
+  requestAnimationFrame(()=>el("authSection")?.scrollIntoView({behavior:"smooth",block:"center"}));
+  setTimeout(()=>el("email")?.focus({preventScroll:true}),350);
+  return;
+ }
+ try{sessionStorage.removeItem("drvas_pending_entry")}catch{}
+ if(currentUser?.id===session.user.id){
+  showModuleSelection();
+  return;
+ }
+ try{sessionStorage.setItem("drvas_pending_entry","modules")}catch{}
+ await showUser(session.user);
+}
 function showModuleSelection(){
  if(!languageReady)return;
  document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode","history-open");
@@ -3334,16 +3370,20 @@ async function showChat(user,displayName){
   // loaded independently by refreshAdminPanel and must not hold up navigation.
   await refreshAdminPanel();
 
-  let pendingModule=null;
+  let pendingModule=null,pendingEntry=null;
   try{
     pendingModule=sessionStorage.getItem("drvas_pending_module");
+    pendingEntry=sessionStorage.getItem("drvas_pending_entry");
     if(pendingModule)sessionStorage.removeItem("drvas_pending_module");
+    if(pendingEntry)sessionStorage.removeItem("drvas_pending_entry");
   }catch{}
   if(pendingModule&&["free","health","studio","academy","commerce","business"].includes(pendingModule)){
     activeModule=pendingModule;
     showModuleSelection();
     selectModule(pendingModule,true);
     if(isDrvasAdmin)scrollPageToChat();
+  }else if(pendingEntry==="modules"){
+    showModuleSelection();
   }else{
     // Restored sessions start on the public presentation; module navigation is always an explicit choice.
     el("chatSection")?.classList.add("hidden");
