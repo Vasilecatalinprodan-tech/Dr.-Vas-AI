@@ -400,3 +400,12 @@ A detailed session log was added at `docs/SESSION_LOG_2026-11-03.md`. It records
 - Added a read-only SQL diagnostic at `supabase/diagnostics/VERIFY_RATE_LIMITS.sql` to check table/function existence, RLS, SECURITY DEFINER, search_path and service_role execution without consuming quota or changing data.
 - **Manual Supabase action still required:** run the diagnostic in the Supabase SQL editor. If it reports missing objects, apply `supabase/migrations/202611030001_rate_limits.sql`, then rerun the diagnostic. If objects exist but the RPC still fails, inspect the Worker log's HTTP status and Supabase PostgREST error. No claim is made that the migration has been applied or that Live voice is fixed yet.
 - Browser/Worker tracing confirms this error is emitted at Worker lines around the `live_voice_token` rate-limit guard, before the Gemini token API request. Existing CI verifies syntax/security patterns but does not currently perform an authenticated end-to-end Live voice test.
+
+
+## 2026-11-04 — rate-limit RPC repair prepared
+
+- Added an idempotent Supabase repair migration: `supabase/migrations/202611040002_repair_rate_limit_rpc.sql`. It explicitly reapplies the function-level `search_path = pg_catalog, public`, restores EXECUTE only for `service_role`, and sends PostgREST a schema-cache reload notification. It does not disable RLS or remove rate limiting.
+- Improved Worker-side diagnostics: when the rate-limit RPC fails, the Worker now records the HTTP status and up to 500 characters of the Supabase error response in server logs, without logging credentials or request payloads. This will distinguish missing RPC/schema-cache issues from permission or key problems.
+- Commits: Worker diagnostic `a00a7b35d9bb5b59b547b51683b644a8c042ef48`; repair migration `0859ff233c12acce96e0573b546999fdcc5b8972`.
+- Important: code is committed, but the repair migration has not been applied to the live Supabase project and the Worker deployment has not yet been verified. Dr.Vas must not be described as repaired until the migration is applied and the next real authenticated request succeeds.
+- Next: apply `202611040002_repair_rate_limit_rpc.sql` in Supabase SQL Editor, then inspect the Cloudflare Worker logs for any remaining RPC error if the message persists. Never paste or share the service-role key.
