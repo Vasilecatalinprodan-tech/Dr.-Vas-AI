@@ -195,3 +195,10 @@ User asked to continue development and save all progress and the conversation. T
 - Keep all six modules private/admin-only until the owner explicitly authorizes release and legal/compliance readiness is established.
 - Founder-only Crypto & Mining and Online Income workbenches remain separate from public modules. Crypto/mining remains estimate/read-only/paper-first; no live mining/trading or withdrawals. Online Income creation studio remains unimplemented; existing opportunity/income tracking is not equivalent to that studio.
 - Preserve Supabase authentication, user profiles, memories, chat history, Cloudflare Worker integration, original Dr.Vas branding/assets, Romanian flag, origin story and the six-module platform. Use additive changes only; never expose credentials or secrets.
+
+
+### Presentation controls — multilingual accessibility improvement
+- Commit `493fecbc75b44e73c9b9df32f44fb8d37868d702` localizes the presentation open control and the close button's accessible label in Romanian, English, Italian, Turkish, German, French, Spanish and Russian.
+- Added stable element IDs for both controls. The existing presentation close-focus behavior can now find the close button by ID.
+- Commit `1d4ea9929704661b1431a8f670f38e4c6304083b` extends the browser regression test to check the localized open label and close-button accessible name in all eight languages, alongside module descriptions and speech locale.
+- These improvements are committed on `drvas-integrated-platform`; the browser workflow still needs to execute before this can be called tested.
