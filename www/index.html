@@ -591,7 +591,7 @@ body.free-module-mode #chatSection .chat-module-rail,body.free-module-mode #chat
 
 
 /* Authentication and profile are shown inside the module shell without exposing the module dashboard. */
-#moduleSelectionSection.auth-flow-mode > :not(#authSection):not(#profileSection){display:none!important}
+#moduleSelectionShell.auth-flow-mode > :not(#authSection):not(#profileSection){display:none!important}
 </style>
 </head>
 
@@ -2935,7 +2935,7 @@ function showModuleSelection(){
  el("heroSection")?.classList.add("hidden");
  document.querySelector(".origin-story")?.classList.add("hidden");
  el("landingActions")?.classList.add("hidden");
- el("moduleSelectionShell")?.classList.remove("hidden");
+ el("moduleSelectionShell")?.classList.remove("hidden","auth-flow-mode");
  el("moduleSelectionShell")?.classList.add("modules-open");
  el("moduleSelectionSection")?.classList.remove("hidden","auth-flow-mode");
  el("chatSection")?.classList.add("hidden");
@@ -2966,14 +2966,13 @@ function showOnly(section){
   el("heroSection")?.classList.add("hidden");
   document.querySelector(".origin-story")?.classList.add("hidden");
   el("landingActions")?.classList.add("hidden");
-  // Auth/profile are direct children of the module section. Keep that parent
-  // visible and use auth-flow-mode to hide only the dashboard content.
+  // Auth/profile are siblings of the module dashboard inside the shell.
+  // Keep the shell visible and hide only the dashboard while auth is shown.
   el("moduleSelectionShell")?.classList.remove("hidden","modules-open");
-  el("moduleSelectionSection")?.classList.remove("hidden");
-  el("moduleSelectionSection")?.classList.add("auth-flow-mode");
+  el("moduleSelectionShell")?.classList.add("auth-flow-mode");
   document.body.classList.remove("module-workspace-mode","free-module-mode");
  }else{
-  el("moduleSelectionSection")?.classList.remove("auth-flow-mode");
+  el("moduleSelectionShell")?.classList.remove("auth-flow-mode");
  }
  ["authSection","profileSection","chatSection"].forEach(id=>el(id)?.classList.toggle("hidden",id!==section));
 }
