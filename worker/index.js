@@ -224,7 +224,9 @@ async function consumeRateLimit(env, userId, bucket, limit, windowSeconds) {
       }
     );
     if (!response.ok) {
-      console.error("Dr.Vas rate-limit service unavailable:", response.status);
+      // Keep the server-side failure diagnosable without exposing credentials or request payloads.
+      const errorDetails = (await response.text()).slice(0, 500);
+      console.error("Dr.Vas rate-limit service unavailable:", response.status, errorDetails);
       return { configured: false };
     }
     const result = await response.json();
