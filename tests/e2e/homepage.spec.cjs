@@ -212,7 +212,7 @@ test("text chat sends the selected module context to the Worker for all six modu
     user: { id: "e2e-chat-user", email: "owner@example.invalid" }
   });
   const sentRequests = [];
-  await page.route("https://dr--vas-ai.vasilecatalinprodan.workers.dev", async route => {
+  await page.route(/dr--vas-ai\\.vasilecatalinprodan\\.workers\\.dev/, async route => {
     const body = route.request().postDataJSON() || {};
     if (body.action === "client_event") {
       await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true }) });
@@ -222,6 +222,14 @@ test("text chat sends the selected module context to the Worker for all six modu
     await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ reply: "Răspuns contextual de test." }) });
   });
 
+  await page.evaluate(() => {
+    saveMessage = async () => {};
+    loadConversationList = async () => [];
+    logClientEvent = () => {};
+    loadStudioProjects = async () => [];
+    loadBusinessLedger = async () => {};
+    loadStudentAssessmentProjects = async () => [];
+  });
   const modules = ["free", "health", "studio", "academy", "commerce", "business"];
   for (const module of modules) {
     await page.evaluate(selected => {
@@ -232,10 +240,12 @@ test("text chat sends the selected module context to the Worker for all six modu
       currentConversationId = crypto.randomUUID();
       conversationSaved = false;
       pendingMessages = [];
+      isSendingMessage = false;
     }, module);
     await page.locator("#question").fill("Ajută-mă cu următorul pas.");
     await page.locator("#sendButton").click();
     await expect(page.locator("#chat .msg.bot").last()).toContainText("Răspuns contextual de test.");
+    await page.waitForFunction(() => !isSendingMessage);
     const request = sentRequests[sentRequests.length - 1];
     expect(request.module).toBe(module);
     expect(request.access_token).toBe("e2e-access-token");
