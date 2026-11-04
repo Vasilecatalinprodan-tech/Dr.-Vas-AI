@@ -306,59 +306,6 @@ test("Studio creates a branded MP4 render request and restores a private complet
   await expect(page.locator("#studioRenderDownload")).toHaveAttribute("href", /media\.example\.invalid\/final\.mp4/);
 });
 
-test("Studio creates a branded MP4 render request and restores a private completed preview", async ({ page }) => {
-  const session = {
-    access_token: "e2e-studio-token",
-    user: { id: "e2e-studio-user", email: "admin@example.invalid" }
-  };
-  await openApp(page, "ro", session);
-  let createPayload = null;
-  await page.route("https://dr--vas-ai.vasilecatalinprodan.workers.dev/**", async route => {
-    const body = route.request().postDataJSON();
-    if (body.action === "studio_render_create") {
-      createPayload = body;
-      await route.fulfill({
-        status: 202,
-        contentType: "application/json",
-        body: JSON.stringify({ ok: true, job_id: "11111111-1111-4111-8111-111111111111", render_id: "render-e2e", status: "planned", duration: 9, output_format: "mp4" })
-      });
-    } else if (body.action === "studio_render_status") {
-      await route.fulfill({
-        status: 200,
-        contentType: "application/json",
-        body: JSON.stringify({ ok: true, job_id: body.job_id, status: "stored", storage_path: "e2e-studio-user/render-e2e.mp4", duration: 9, output_format: "mp4" })
-      });
-    } else {
-      await route.continue();
-    }
-  });
-  await page.evaluate(() => {
-    currentUser = { id: "e2e-studio-user", email: "admin@example.invalid" };
-    isDrvasAdmin = true;
-    supabaseClient.storage = {
-      from: () => ({
-        createSignedUrl: async () => ({ data: { signedUrl: "https://media.example.invalid/final.mp4" }, error: null })
-      })
-    };
-    selectModule("studio", true);
-  });
-  await expect(page.locator("#studioWorkspace")).toBeVisible();
-  await expect(page.locator("#studioRenderTitle")).toBeVisible();
-  await page.locator("#studioProjectTitle").fill("Dr.Vas — primul teaser");
-  await page.locator("#studioRenderCreateButton").click();
-  await expect(page.locator("#studioRenderStatus")).toContainText("Randarea a pornit");
-  expect(createPayload.action).toBe("studio_render_create");
-  expect(createPayload.render_script.output_format).toBe("mp4");
-  expect(createPayload.render_script.width).toBe(1080);
-  expect(createPayload.render_script.height).toBe(1920);
-  expect(createPayload.render_script.duration).toBe(9);
-  expect(createPayload.render_script.elements).toHaveLength(3);
-
-  await page.locator('button[onclick="checkStudioRenderStatus()"]').click();
-  await expect(page.locator("#studioRenderPreview")).toBeVisible();
-  await expect(page.locator("#studioRenderDownload")).toBeVisible();
-  await expect(page.locator("#studioRenderDownload")).toHaveAttribute("href", /media\.example\.invalid\/final\.mp4/);
-});
 
 test("Business workspace exposes the cashbook and Student Desk with working VAT maths and academic feedback brief", async ({ page }) => {
   await openApp(page, "ro");
