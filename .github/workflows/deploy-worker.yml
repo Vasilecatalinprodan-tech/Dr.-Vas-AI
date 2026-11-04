@@ -60,6 +60,7 @@ jobs:
           const moduleMigration = fs.readFileSync('supabase/migrations/202611040001_module_projects.sql', 'utf8');
           const rateLimitRepair = fs.readFileSync('supabase/migrations/202611040002_repair_rate_limit_rpc.sql', 'utf8');
           const businessCashbook = fs.readFileSync('supabase/migrations/202611040003_business_cashbook.sql', 'utf8');
+          const studioRenderMigration = fs.readFileSync('supabase/migrations/202611040004_studio_render_storage.sql', 'utf8');
           const checks = [
             [!worker.includes('"Access-Control-Allow-Origin": "*"'), 'Wildcard CORS must not be enabled'],
             [worker.includes('64 * 1024'), 'Worker request body limit is missing'],
@@ -94,6 +95,16 @@ jobs:
             [html.includes('function buildStudentAssessmentPrompt()'), 'Student Desk assessment feedback builder is missing'],
             [html.includes('function saveStudentAssessmentProject()') && html.includes('function openStudentAssessmentProject()'), 'Student Desk private project save/open functions are missing'],
             [html.includes('businessLedgerVat') && html.includes('businessLedgerIncome') && html.includes('businessLedgerExpenses'), 'Business cashbook summary is incomplete'],
+            [studioRenderMigration.toLowerCase().includes('create table if not exists public.drvas_studio_render_jobs'), 'Studio render-job migration must create its table'],
+            [studioRenderMigration.toLowerCase().includes('enable row level security'), 'Studio render-job storage must enable RLS'],
+            [studioRenderMigration.toLowerCase().includes('auth.uid() = user_id'), 'Studio render-job policies must enforce per-user ownership'],
+            [studioRenderMigration.toLowerCase().includes("values (\n  'drvas-media',\n  'drvas-media',\n  false"), 'Studio media bucket must remain private'],
+            [studioRenderMigration.toLowerCase().includes("storage.foldername(name))[1] = auth.uid()::text"), 'Studio media storage policies must isolate each user folder'],
+            [worker.includes('body.action === "studio_render_create"') && worker.includes('body.action === "studio_render_status"'), 'Studio render create/status endpoints are missing'],
+            [worker.includes('CREATOMATE_API_KEY') && worker.includes('MADE BY VPC'), 'Studio renderer must use a server-side provider secret and mandatory watermark'],
+            [worker.includes('/storage/v1/object/drvas-media/'), 'Studio MP4 output must be copied into private Supabase storage'],
+            [html.includes('function renderStudioVideo()') && html.includes('function checkStudioRenderStatus()'), 'Studio MP4 render controls are missing'],
+            [html.includes('createSignedUrl') && html.includes('studioRenderPreview'), 'Studio private MP4 preview workflow is missing'],
             [html.includes('isDrvasAdmin = false;') && html.includes('businessWorkspace'), 'Logout must reset administrator access and workspace state']
           ];
           for (const [ok, message] of checks) {
