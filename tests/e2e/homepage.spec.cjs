@@ -96,7 +96,7 @@ test("desktop chat opens as a dedicated workspace with the six-module sidebar", 
   expect(layout.columns.split(" ").length).toBeGreaterThanOrEqual(2);
 });
 
-test("mobile chat is full-screen with modules behind a Go to Modules action", async ({ page }) => {
+test("mobile chat keeps the six-module navigation accessible in a horizontal rail", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openApp(page, "ro");
   await expect(page.locator("#heroSection")).toBeVisible();
@@ -106,9 +106,11 @@ test("mobile chat is full-screen with modules behind a Go to Modules action", as
   });
 
   await expect(page.locator("#chatSection")).toBeVisible();
-  await expect(page.locator(".chat-module-rail")).toBeHidden();
+  await expect(page.locator(".chat-module-rail")).toBeVisible();
+  await expect(page.locator('.chat-module-rail [data-chat-module="studio"]')).toBeVisible();
   await expect(page.locator(".chat-back-button")).toBeVisible();
   await expect(page.locator("#question")).toBeVisible();
+  await expect(page.locator("#question")).toBeFocused();
   await page.locator(".chat-back-button").click();
   await expect(page.locator("#chatSection")).toBeHidden();
   await expect(page.locator("#moduleSelectionSection")).toBeVisible();
