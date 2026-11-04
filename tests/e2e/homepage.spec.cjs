@@ -242,15 +242,15 @@ test("text chat sends the selected module context to the Worker for all six modu
     access_token: "e2e-access-token",
     user: { id: "e2e-chat-user", email: "owner@example.invalid" }
   });
-  const sentRequests = [];
-  await page.route(/dr--vas-ai/, async route => {
-    const body = route.request().postDataJSON() || {};
-    if (body.action === "client_event") {
-      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true }) });
-      return;
-    }
-    sentRequests.push(body);
-    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ reply: "Răspuns contextual de test." }) });
+  await page.evaluate(() => {
+    window.__sentRequests = [];
+    window.fetch = async (url, options = {}) => {
+      if (String(url).includes("dr--vas-ai")) {
+        window.__sentRequests.push(JSON.parse(options.body || "{}"));
+        return { ok: true, status: 200, json: async () => ({ reply: "Răspuns contextual de test." }) };
+      }
+      throw new Error("Unexpected network request in isolated chat test: " + url);
+    };
   });
 
   await page.evaluate(() => {
@@ -277,12 +277,12 @@ test("text chat sends the selected module context to the Worker for all six modu
     await page.locator("#question").fill("Ajută-mă cu următorul pas.");
     await page.evaluate(() => send());
     await expect(page.locator("#chat .msg.bot").last()).toContainText("Răspuns contextual de test.");
-    const request = sentRequests[sentRequests.length - 1];
+    const request = await page.evaluate(() => window.__sentRequests[window.__sentRequests.length - 1]);
     expect(request.module).toBe(module);
     expect(request.access_token).toBe("e2e-access-token");
     expect(request.message).toBe("Ajută-mă cu următorul pas.");
   }
-  expect(sentRequests).toHaveLength(6);
+  expect(await page.evaluate(() => window.__sentRequests)).toHaveLength(6);
 });
 
 test("mobile Free chat stays simple and offers only module navigation and logout", async ({ page }) => {
