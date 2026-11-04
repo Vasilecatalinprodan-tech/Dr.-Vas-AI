@@ -175,6 +175,38 @@ test("each premium module shows only its own tools and keeps the other module wo
   }
 });
 
+test("public signed-in users can enter Dr.Vas Free without administrator privileges", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-public-free-user", email: "public-user@example.invalid" };
+    isDrvasAdmin = false;
+    showModuleSelection();
+    selectModule("free", true);
+  });
+  await expect(page.locator("#chatSection")).toBeVisible();
+  await expect(page.locator("#question")).toBeVisible();
+  await expect(page.locator("#moduleSelectionStatus")).toBeHidden();
+  await expect(page.locator("#adminPanel")).toBeHidden();
+  expect(await page.locator("body").evaluate(node => node.classList.contains("free-module-mode"))).toBeTruthy();
+});
+
+test("public signed-in users cannot open premium workspaces or gain administrator access", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-public-premium-user", email: "public-user@example.invalid" };
+    isDrvasAdmin = false;
+    showModuleSelection();
+    selectModule("studio", true);
+  });
+  await expect(page.locator("#chatSection")).toBeHidden();
+  await expect(page.locator("#studioWorkspace")).toBeHidden();
+  await expect(page.locator("#moduleSelectionStatus")).toBeVisible();
+  await expect(page.locator("#moduleSelectionStatus")).toContainText("Premium");
+  expect(await page.evaluate(() => isDrvasAdmin)).toBeFalsy();
+});
+
 test("Dr.Vas Free keeps its existing clean chat while all dedicated module tools stay hidden", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await openApp(page, "ro");
