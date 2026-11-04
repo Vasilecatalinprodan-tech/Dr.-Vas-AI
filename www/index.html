@@ -2294,6 +2294,7 @@ async function showUser(user){
   if(!user || !languageReady) return;
   if(currentUser && currentUser.id!==user.id){
     currentStudioProjectId=null;currentStudioProjectOutput="";
+    ["academy","commerce","business"].forEach(module=>{moduleProjectState[module]=null;moduleProjectOutputs[module]="";if(el(module+"ProjectList"))el(module+"ProjectList").replaceChildren(new Option("Alege un proiect salvat",""));if(el(module+"ProjectTitle"))el(module+"ProjectTitle").value="";});
     if(el("studioSavedProjects"))el("studioSavedProjects").innerHTML='<option value="">Alege un proiect salvat</option>';
     if(el("studioProjectTitle"))el("studioProjectTitle").value="";
     if(el("studioIdea"))el("studioIdea").value="";
