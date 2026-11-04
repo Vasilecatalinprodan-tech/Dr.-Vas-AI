@@ -480,6 +480,26 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
 .business-ledger-table th{color:#a9c5dc;font-weight:650}
 .business-ledger-table td button{padding:6px 9px}
 @media(max-width:640px){.business-tool-panel{padding:12px}.business-ledger-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Dr.Vas professional workspace layout */
+body.chat-focus-mode #chatSection{display:grid!important;grid-template-columns:210px minmax(0,1fr)!important;grid-template-rows:auto minmax(0,1fr) auto!important;gap:12px!important;align-items:stretch}
+body.chat-focus-mode #chatSection>.chat-view-nav{grid-column:1/-1!important;grid-row:1!important}
+body.chat-focus-mode .chat-module-rail{grid-column:1!important;grid-row:2!important;display:flex!important;flex-direction:column!important;align-self:stretch;min-width:0;gap:7px;padding:12px;background:rgba(9,27,42,.82);border:1px solid rgba(107,160,184,.22);border-radius:14px}
+body.chat-focus-mode .chat-module-rail-title{font-size:11px;letter-spacing:.14em;opacity:.7;padding:4px 8px}
+body.chat-focus-mode .chat-module-rail button{width:100%;min-height:46px;text-align:left;white-space:normal;line-height:1.25}
+body.chat-focus-mode #chatSection>.chat-layout{grid-column:2!important;grid-row:2!important;display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr)!important;min-width:0;min-height:0}
+body.chat-focus-mode .history-panel{display:none!important}
+body.chat-focus-mode.history-open #chatSection>.chat-layout{grid-template-rows:auto minmax(0,1fr)!important}
+body.chat-focus-mode.history-open .history-panel{display:block!important;grid-column:1!important;grid-row:1!important;max-height:180px!important;overflow:auto!important}
+body.chat-focus-mode.history-open .chat-main{grid-column:1!important;grid-row:2!important}
+.chat-account-footer{display:none}
+body.chat-focus-mode .chat-account-footer{grid-column:1/-1!important;grid-row:3!important;display:flex!important;justify-content:flex-end;align-items:center;gap:10px;min-height:48px;padding:8px 4px 0;border-top:1px solid rgba(107,160,184,.22)}
+.chat-account-footer button{padding:9px 15px;font-size:12px}
+.chat-account-footer .logout-button{background:#203747;color:#d7e8ef;border:1px solid #3c5c70}
+body.chat-focus-mode .chat-main .input-area{position:sticky;bottom:0;z-index:5}
+body.chat-focus-mode #question{scroll-margin-bottom:16px}
+body.chat-focus-mode #question:focus{outline:2px solid #54d8cf;outline-offset:2px}
+@media(max-width:850px){body.chat-focus-mode #chatSection{display:flex!important;flex-direction:column!important;gap:8px!important}body.chat-focus-mode .chat-module-rail{display:flex!important;flex-direction:row!important;flex:0 0 auto;gap:7px;overflow-x:auto;overflow-y:hidden;max-height:none;padding:8px;scrollbar-width:thin}body.chat-focus-mode .chat-module-rail-title{display:none}body.chat-focus-mode .chat-module-rail button{flex:0 0 auto;width:auto;min-width:max-content;padding:10px 12px}body.chat-focus-mode #chatSection>.chat-layout{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr)!important;flex:1 1 auto;min-height:0}body.chat-focus-mode .history-panel{display:none!important}body.chat-focus-mode.history-open .history-panel{display:block!important;max-height:22vh!important;overflow:auto!important}body.chat-focus-mode.history-open #chatSection>.chat-layout{grid-template-rows:auto minmax(0,1fr)!important}body.chat-focus-mode .chat-account-footer{flex:0 0 auto;justify-content:flex-end}}
 </style>
 </head>
 
@@ -873,12 +893,12 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
   </div>
   <aside class="chat-module-rail" aria-label="Navigare module Dr.Vas">
    <div class="chat-module-rail-title">MODULES</div>
-   <button type="button" data-chat-module="free" onclick="selectChatModule('free')"><span>✦</span> Free</button>
-   <button type="button" data-chat-module="health" onclick="selectChatModule('health')"><span>✚</span> Health</button>
-   <button type="button" data-chat-module="studio" onclick="selectChatModule('studio')"><span>🎬</span> Studio</button>
-   <button type="button" data-chat-module="academy" onclick="selectChatModule('academy')"><span>🎓</span> Academy</button>
-   <button type="button" data-chat-module="commerce" onclick="selectChatModule('commerce')"><span>🛒</span> Commerce</button>
-   <button type="button" data-chat-module="business" onclick="selectChatModule('business')"><span>📊</span> Business</button>
+   <button type="button" data-chat-module="free" onclick="selectChatModule('free')"><span>✦</span> Dr.Vas Free</button>
+   <button type="button" data-chat-module="health" onclick="selectChatModule('health')"><span>✚</span> Dr.Vas Health</button>
+   <button type="button" data-chat-module="studio" onclick="selectChatModule('studio')"><span>🎬</span> Dr.Vas Studio</button>
+   <button type="button" data-chat-module="academy" onclick="selectChatModule('academy')"><span>🎓</span> Dr.Vas Academy</button>
+   <button type="button" data-chat-module="commerce" onclick="selectChatModule('commerce')"><span>🛒</span> Dr.Vas Commerce</button>
+   <button type="button" data-chat-module="business" onclick="selectChatModule('business')"><span>📊</span> Dr.Vas Business</button>
   </aside>
   <div class="panel-head">
    <div class="avatar"><img src="drvas.jpeg" alt="Dr.Vas"></div>
@@ -889,7 +909,7 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
    <span id="accountEmail"></span>
    <div class="account-actions">
     <button onclick="editProfile()">Profilul meu</button>
-    <button onclick="logout()">Deconectare</button>
+    
    </div>
   </div>
   <p id="adminAccessNotice" class="admin-footnote hidden" role="status" aria-live="polite"></p>
@@ -1009,6 +1029,7 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
     <div class="note">Răspunsurile AI pot conține erori. Verifică informațiile importante.</div>
    </div>
   </div>
+  <div class="chat-account-footer" aria-label="Acțiuni cont"><button type="button" onclick="editProfile()">Profilul meu</button><button type="button" class="logout-button" onclick="logout()">Deconectare</button></div>
  </div>
 </main>
 
@@ -2738,7 +2759,9 @@ function selectChatModule(moduleName){
   selectModule(moduleName,true);
   if(currentUser){
     document.body.classList.add("chat-focus-mode");
+    document.documentElement.classList.add("chat-focus-document");
     el("chatSection")?.classList.remove("hidden");
+    requestAnimationFrame(()=>el("question")?.focus({preventScroll:true}));
   }
 }
 function showOnly(section){
