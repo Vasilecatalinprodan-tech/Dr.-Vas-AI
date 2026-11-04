@@ -315,7 +315,8 @@ export default {
             worker: "ok",
             assets: env.ASSETS ? "configured" : "not_configured",
             ai: env.GEMINI_API_KEY ? "configured" : "not_configured",
-            database: env.SUPABASE_URL && env.SUPABASE_KEY ? "configured" : "not_configured"
+            database: env.SUPABASE_URL && env.SUPABASE_KEY ? "configured" : "not_configured",
+            studio_renderer: env.CREATOMATE_API_KEY ? "configured" : "not_configured"
           }
         });
       }
