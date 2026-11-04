@@ -2721,6 +2721,9 @@ async function showUser(user){
     if(el("businessLedgerRows"))el("businessLedgerRows").replaceChildren();
     ["academy","commerce","business"].forEach(module=>{moduleProjectState[module]=null;moduleProjectOutputs[module]="";if(el(module+"ProjectList"))el(module+"ProjectList").replaceChildren(new Option("Alege un proiect salvat",""));if(el(module+"ProjectTitle"))el(module+"ProjectTitle").value="";});
     if(el("studioSavedProjects"))el("studioSavedProjects").innerHTML='<option value="">Alege un proiect salvat</option>';
+    if(el("studioSceneImages"))el("studioSceneImages").value="";if(el("studioSceneCaptions"))el("studioSceneCaptions").value="";
+    if(el("studioRenderPreview")){el("studioRenderPreview").pause();el("studioRenderPreview").removeAttribute("src");el("studioRenderPreview").hidden=true;}
+    if(el("studioRenderDownload")){el("studioRenderDownload").removeAttribute("href");el("studioRenderDownload").hidden=true;}
     if(el("studioProjectTitle"))el("studioProjectTitle").value="";
     if(el("studioIdea"))el("studioIdea").value="";
     ["academySubject","academyLevel","academyAudience","academyFormat","academyLanguage","academyOutcome","academyBrief","academyProjectTitle","commerceProduct","commerceMarket","commerceBudget","commerceModel","commerceChannel","commercePrice","commerceBrief","commerceProjectTitle","businessIdea","businessCountry","businessBudget","businessStage","businessGoal","businessHorizon","businessBrief","businessProjectTitle","incomeTitle","incomePlatform","incomeType","incomeStatus","incomeEstimated","incomeActual","incomeCurrency","incomeUrl","incomeNextAction","incomeNotes"].forEach(id=>{if(el(id))el(id).value="";});
@@ -3341,6 +3344,9 @@ function showLogin(){
     if(el(module+"ProjectTitle"))el(module+"ProjectTitle").value = "";
   });
   if(el("studioSavedProjects"))el("studioSavedProjects").innerHTML='<option value="">Alege un proiect salvat</option>';
+  if(el("studioSceneImages"))el("studioSceneImages").value="";if(el("studioSceneCaptions"))el("studioSceneCaptions").value="";
+  if(el("studioRenderPreview")){el("studioRenderPreview").pause();el("studioRenderPreview").removeAttribute("src");el("studioRenderPreview").hidden=true;}
+  if(el("studioRenderDownload")){el("studioRenderDownload").removeAttribute("href");el("studioRenderDownload").hidden=true;}
   ["studioProjectTitle","studioIdea","academyProjectTitle","academySubject","academyLevel","academyAudience","academyFormat","academyLanguage","academyOutcome","academyBrief","commerceProjectTitle","commerceProduct","commerceMarket","commerceBudget","commerceModel","commerceChannel","commercePrice","commerceBrief","businessProjectTitle","businessIdea","businessCountry","businessBudget","businessStage","businessGoal","businessHorizon","businessBrief","incomeTitle","incomePlatform","incomeType","incomeStatus","incomeEstimated","incomeActual","incomeCurrency","incomeUrl","incomeNextAction","incomeNotes"].forEach(id=>{if(el(id))el(id).value="";});
   currentIncomeOpportunityId=null;
   incomeOpportunityCache=[];
