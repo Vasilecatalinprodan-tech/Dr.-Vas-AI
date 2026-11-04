@@ -2232,18 +2232,16 @@ function buildStudioPrompt(){
           ? "\nMUZICĂ: oferă structură, tempo orientativ, tonalitate/acorduri unde sunt utile și indicații de interpretare."
           : "\nFORMAT: alege structura profesională potrivită tipului de material.";
   const prompt="PROIECT DR.VAS STUDIO — BRIEF CREATIV\nTIPUL LUCRĂRII: "+(deliverables[kind]||"Creează materialul original solicitat.")+"\nSTIL: "+el("studioTone").value+"\nPUBLIC-ȚINTĂ: "+el("studioAudience").value+contextLines+"\nCERINȚA ȘI MATERIALELE CLIENTULUI (păstrează intenția și detaliile):\n"+idea+"\n\nCERINȚE DE LIVRARE:\n1. Livrează un rezultat concret, bine structurat, nu doar recomandări generale.\n2. Respectă limba, tonul, publicul și formatul cerute; nu inventa informații sau surse.\n3. Separă materialul final de observațiile editoriale și recomandările de îmbunătățire.\n4. Pentru lucrări lungi, propune etape și păstrează consecvența între capitole/versiuni.\n5. Folosește numai conținut original; nu copia opere protejate și nu reproduce stilul distinctiv al unui creator în viață.\n6. Semnalează când este necesară verificarea umană, autorizarea unui traducător sau consultarea unui specialist.\n7. Precizează clar ce este text/concept și ce fișier media a fost efectiv generat. Nu pretinde că ai produs un fișier audio, o carte publicată ori o traducere autorizată dacă nu s-a întâmplat.";
-  el("question").value=prompt;
-  el("question").focus();
-  el("moduleAccessMessage").textContent="Brieful creativ este pregătit. Verifică-l în caseta de mesaj și apasă Trimite.";
-  el("question").scrollIntoView({behavior:"smooth",block:"center"});
+  submitModuleBrief(prompt,"Brieful creativ este pregătit. Verifică-l în conversație și apasă Trimite.");
 }
 
 
 function submitModuleBrief(prompt,notice){
  const field=el("question");if(!field)return;
- field.value=prompt;field.focus();
+ field.value=prompt;
  const message=el("moduleAccessMessage");if(message)message.textContent=tr(notice);
- field.scrollIntoView({behavior:"smooth",block:"center"});
+ if(currentUser)enterChatFocus();
+ requestAnimationFrame(()=>{field.focus({preventScroll:true});field.scrollIntoView({behavior:"smooth",block:"center"});});
 }
 function buildAcademyPrompt(){
  const v=id=>el(id)?.value?.trim()||"";
