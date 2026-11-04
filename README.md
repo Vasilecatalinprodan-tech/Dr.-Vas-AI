@@ -157,3 +157,8 @@ Work in bounded 30-minute blocks. At the end of each block:
 
 - Added `docs/LICENSING_IP_PRIVACY_AND_COMPLIANCE_ROADMAP.md` covering code/dependency licensing, trade marks, UK/EU privacy, health software boundaries, AI/voice/video provider rights, consumer subscriptions, accessibility, Android distribution and release gates.
 - This is a planning document, not legal advice or evidence of registration/certification. Keep the repository private and do not add a blanket open-source licence until ownership and third-party dependencies have been reviewed.
+
+
+## Business Desk and Studio MVP plan
+
+See `docs/BUSINESS_DESK_AND_STUDIO_MVP_PLAN_2026-11-04.md` for the new Dr.Vas Books cashbook, Student Desk assessment-coaching workflow, database migration, scope limits and Studio delivery plan. The cashbook requires the Supabase migration `202611040003_business_cashbook.sql` before persistent entries can be saved. The current Runway workspace has no available video models, so Studio MP4 export is not yet active.
