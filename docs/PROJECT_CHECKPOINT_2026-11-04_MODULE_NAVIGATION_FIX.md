@@ -204,3 +204,11 @@ New safe feature added:
 - The subsequent DOM nesting correction is newer than those commits; the final combined run must include the latest source and tests.
 
 Current deployment remains gated by browser E2E. The production URL may show the older deployed version.
+
+
+### Final CI snapshot — 2026-11-04 20:24 UTC
+- Latest E2E workflow for test commit `edce21f10ad46ad23b3f62a26dafc85f33a41d73`: run `41904571899`, status pending.
+- Matching Worker deploy workflow: run `41904571898`, status pending.
+- APK build for app commit `2c44c91f79f7db957e301dff87ad8aaac59ded65`: run `41904566661`, status pending.
+- Earlier run `41904249945` on commit `7263a954` still failed 25/29; its CSS selector targeted the wrong DOM level. Do not use its result as validation of the latest nested-selector correction.
+- The latest run has not yet completed. Production health endpoint could not be independently reached through the available web inspection, so deployment and smoke-test status remain unverified.
