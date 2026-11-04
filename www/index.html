@@ -2966,12 +2966,14 @@ function showOnly(section){
   el("heroSection")?.classList.add("hidden");
   document.querySelector(".origin-story")?.classList.add("hidden");
   el("landingActions")?.classList.add("hidden");
-  // Auth/profile cards are siblings of the module chooser inside this shell.
-  // Keep the shell visible, but hide the chooser itself so auth remains visible.
+  // Auth/profile are direct children of the module section. Keep that parent
+  // visible and use auth-flow-mode to hide only the dashboard content.
   el("moduleSelectionShell")?.classList.remove("hidden","modules-open");
-  el("moduleSelectionSection")?.classList.add("hidden");
-  el("moduleSelectionSection")?.classList.remove("auth-flow-mode");
+  el("moduleSelectionSection")?.classList.remove("hidden");
+  el("moduleSelectionSection")?.classList.add("auth-flow-mode");
   document.body.classList.remove("module-workspace-mode","free-module-mode");
+ }else{
+  el("moduleSelectionSection")?.classList.remove("auth-flow-mode");
  }
  ["authSection","profileSection","chatSection"].forEach(id=>el(id)?.classList.toggle("hidden",id!==section));
 }
