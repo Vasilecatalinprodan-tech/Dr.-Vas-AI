@@ -197,7 +197,7 @@ test("administrator can open the Academy, Commerce and Business pilot brief buil
   await page.locator("#academyAudience").fill("Începători");
   await page.locator("#academyOutcome").fill("Lansarea unui magazin simplu");
   await page.locator("#academyBrief").fill("Curs practic cu exerciții.");
-  await page.locator("#academyWorkspace button").click();
+  await page.locator('#academyWorkspace button[onclick="buildAcademyPrompt()"]').click();
   await expect(page.locator("#question")).toHaveValue(/DR.VAS ACADEMY/);
   await expect(page.locator("#question")).toHaveValue(/Bazele comerțului online/);
 
@@ -206,7 +206,7 @@ test("administrator can open the Academy, Commerce and Business pilot brief buil
   await page.locator("#commerceProduct").fill("Organizatoare pentru casă");
   await page.locator("#commerceBudget").fill("100");
   await page.locator("#commerceBrief").fill("Fără stoc mare la început.");
-  await page.locator("#commerceWorkspace button").click();
+  await page.locator('#commerceWorkspace button[onclick="buildCommercePrompt()"]').click();
   await expect(page.locator("#question")).toHaveValue(/DR.VAS COMMERCE/);
   await expect(page.locator("#question")).toHaveValue(/BUGET MAXIM: 100/);
 
@@ -216,7 +216,7 @@ test("administrator can open the Academy, Commerce and Business pilot brief buil
   await page.locator("#businessBudget").fill("500");
   await page.locator("#businessGoal").fill("Primii 10 clienți");
   await page.locator("#businessBrief").fill("Pornire locală.");
-  await page.locator("#businessWorkspace button").click();
+  await page.locator('#businessWorkspace button[onclick="buildBusinessPrompt()"]').click();
   await expect(page.locator("#question")).toHaveValue(/DR.VAS BUSINESS/);
   await expect(page.locator("#question")).toHaveValue(/Primii 10 clienți/);
 });
@@ -241,8 +241,7 @@ test("Academy, Commerce and Business projects are saved, reopened and deleted pe
     isDrvasAdmin = true;
     const rows = [];
     let nextId = 1;
-    supabaseClient = {
-      from(table) {
+    supabaseClient.from = function(table) {
         let operation = "select", payload = null, filters = {};
         const matches = row => Object.entries(filters).every(([key, value]) => row[key] === value);
         const execute = () => {
@@ -276,7 +275,6 @@ test("Academy, Commerce and Business projects are saved, reopened and deleted pe
           then(resolve, reject) { return Promise.resolve(execute()).then(resolve, reject); }
         };
         return query;
-      }
     };
   });
 
