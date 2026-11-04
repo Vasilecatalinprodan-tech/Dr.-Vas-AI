@@ -349,6 +349,12 @@ main{max-width:1380px;padding-top:30px}
 .input-area button{border-radius:15px;min-width:96px}
 .voice-toolbar button{border-radius:11px}
 .studio-workspace,.admin-panel{border-radius:22px;box-shadow:0 18px 45px #0003}
+.module-workspace{margin-top:18px}
+.module-workspace .studio-form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.module-workspace .studio-idea-label{grid-column:1/-1}
+.module-workspace input,.module-workspace select,.module-workspace textarea{width:100%;box-sizing:border-box}
+@media(max-width:640px){.module-workspace .studio-form-grid{grid-template-columns:1fr}.module-workspace .studio-idea-label{grid-column:auto}}
+
 footer{border-top:1px solid #1c394d;margin-top:40px}
 button{transition:transform .18s,filter .18s,box-shadow .18s}
 button:not(:disabled):hover{filter:brightness(1.08)}
@@ -621,6 +627,46 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
     <p class="studio-disclaimer">În versiunea pilot, Studio generează materiale creative text și instrucțiuni de producție. Randarea video, publicarea automată și abonamentele publice nu sunt încă active.</p>
   </section>
 
+
+  <section id="academyWorkspace" class="studio-workspace module-workspace hidden" aria-labelledby="academyWorkspaceTitle">
+   <div class="studio-workspace-head"><div><span class="tag">DR.VAS LEARNING LAB</span><h2 id="academyWorkspaceTitle">🎓 Dr.Vas Academy</h2><p>Construiește cursuri și trasee de învățare cu lecții, exerciții și proiecte practice.</p></div><span class="studio-beta-label">PILOT · ACCES ADMINISTRATOR</span></div>
+   <div class="studio-form-grid">
+    <label>Subiectul cursului<input id="academySubject" maxlength="180" placeholder="Ex.: Începe o afacere online cu buget mic"></label>
+    <label>Nivel<select id="academyLevel"><option>Începător</option><option>Intermediar</option><option>Avansat</option><option>De la zero la avansat</option></select></label>
+    <label>Public-țintă<input id="academyAudience" maxlength="180" placeholder="Ex.: Adulți fără experiență în afaceri"></label>
+    <label>Format<select id="academyFormat"><option>Mini-curs de 5 lecții</option><option>Curs complet de 10 lecții</option><option>Program de 30 de zile</option><option>Atelier practic</option><option>Ghid pas cu pas</option></select></label>
+    <label>Limba cursului<select id="academyLanguage"><option value="Română">Română</option><option value="Engleză">Engleză</option><option value="Italiană">Italiană</option><option value="Turcă">Turcă</option></select></label>
+    <label>Rezultatul urmărit<input id="academyOutcome" maxlength="300" placeholder="Ce va ști sau putea face cursantul?"></label>
+    <label class="studio-idea-label">Cerințe și materiale<textarea id="academyBrief" rows="4" maxlength="5000" placeholder="Descrie subiectele, exemplele și ce vrei să includă cursul."></textarea></label>
+   </div>
+   <div class="studio-actions"><button type="button" onclick="buildAcademyPrompt()">Construiește cursul</button><span>Primești un plan de curs, lecții, exerciții și evaluare. Verificarea umană rămâne necesară.</span></div>
+  </section>
+  <section id="commerceWorkspace" class="studio-workspace module-workspace hidden" aria-labelledby="commerceWorkspaceTitle">
+   <div class="studio-workspace-head"><div><span class="tag">DR.VAS COMMERCE LAB</span><h2 id="commerceWorkspaceTitle">🛒 Dr.Vas Commerce</h2><p>Analizează produse, furnizori, costuri și marje înainte să investești bani.</p></div><span class="studio-beta-label">PILOT · ACCES ADMINISTRATOR</span></div>
+   <div class="studio-form-grid">
+    <label>Produs / nișă<input id="commerceProduct" maxlength="180" placeholder="Ex.: Accesorii organizare casă"></label>
+    <label>Piață<select id="commerceMarket"><option>Regatul Unit</option><option>Uniunea Europeană</option><option>România</option><option>Elveția</option><option>Internațional</option></select></label>
+    <label>Buget inițial<input id="commerceBudget" type="number" min="0" max="1000000" step="1" value="100"></label>
+    <label>Model<select id="commerceModel"><option>Dropshipping</option><option>Stoc propriu mic</option><option>Print-on-demand</option><option>Produs digital</option><option>Compară modelele</option></select></label>
+    <label>Canal de vânzare<select id="commerceChannel"><option>Shopify</option><option>eBay</option><option>Etsy</option><option>Amazon</option><option>TikTok Shop</option><option>Mai multe canale</option><option>Nu știu încă</option></select></label>
+    <label>Țintă de preț<input id="commercePrice" type="number" min="0" step="0.01" placeholder="Preț de vânzare dorit"></label>
+    <label class="studio-idea-label">Cerințe<textarea id="commerceBrief" rows="4" maxlength="5000" placeholder="Descrie produsul, clientul, furnizorii cunoscuți sau restricțiile."></textarea></label>
+   </div>
+   <div class="studio-actions"><button type="button" onclick="buildCommercePrompt()">Analizează oportunitatea</button><span>Primești o analiză cu riscuri, costuri și marje orientative, nu promisiuni de profit.</span></div>
+  </section>
+  <section id="businessWorkspace" class="studio-workspace module-workspace hidden" aria-labelledby="businessWorkspaceTitle">
+   <div class="studio-workspace-head"><div><span class="tag">DR.VAS BUSINESS LAB</span><h2 id="businessWorkspaceTitle">📊 Dr.Vas Business</h2><p>Transformă o idee într-un plan de afaceri, buget și pași de implementare.</p></div><span class="studio-beta-label">PILOT · ACCES ADMINISTRATOR</span></div>
+   <div class="studio-form-grid">
+    <label>Ideea / domeniul afacerii<input id="businessIdea" maxlength="200" placeholder="Ex.: Firmă de curățenie și evacuare locuințe"></label>
+    <label>Țara de operare<select id="businessCountry"><option>Regatul Unit</option><option>România</option><option>Italia</option><option>Elveția</option><option>Altă țară</option></select></label>
+    <label>Buget disponibil<input id="businessBudget" type="number" min="0" max="10000000" step="1" value="500"></label>
+    <label>Etapa<select id="businessStage"><option>Doar idee</option><option>Cercetare de piață</option><option>La început</option><option>Deja funcționează</option><option>Vreau să extind</option></select></label>
+    <label>Obiectiv<input id="businessGoal" maxlength="300" placeholder="Ex.: Primii 10 clienți în 90 de zile"></label>
+    <label>Orizont de planificare<select id="businessHorizon"><option>30 de zile</option><option>90 de zile</option><option>6 luni</option><option>1 an</option><option>3 ani</option></select></label>
+    <label class="studio-idea-label">Detalii și constrângeri<textarea id="businessBrief" rows="4" maxlength="5000" placeholder="Experiență, echipamente, personal, concurență, costuri și orice alte detalii."></textarea></label>
+   </div>
+   <div class="studio-actions"><button type="button" onclick="buildBusinessPrompt()">Creează planul de afaceri</button><span>Estimările vor include ipoteze explicite și vor separa informațiile verificate de presupuneri.</span></div>
+  </section>
  <div id="authSection" class="auth-box hidden">
   <div class="panel-head">
    <div class="avatar">✚</div>
