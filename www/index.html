@@ -24,6 +24,48 @@ body.chat-focus-mode .header-chat-cta{display:none!important}
 .chat-view-nav button{padding:9px 12px;font-size:11px}
 .chat-back-button{background:#17364a;color:#d7edf3;border:1px solid #34566b}
 .chat-history-toggle{background:#123b43;color:#bff8ee;border:1px solid #39777b}
+/* Dedicated app-like conversation workspace */
+html.chat-focus-document,html.chat-focus-document body{height:100%;overflow:hidden}
+body.chat-focus-mode main{display:grid;grid-template-columns:190px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);column-gap:14px;row-gap:10px;max-width:none;width:100%;height:calc(100dvh - 75px);min-height:0;padding:12px 16px 14px;overflow:hidden}
+body.chat-focus-mode main>:not(#chatSection){display:none!important}
+body.chat-focus-mode footer{display:none!important}
+body.chat-focus-mode #chatSection{grid-column:1/-1;grid-row:1/-1;display:grid!important;grid-template-columns:190px minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:10px;min-width:0;min-height:0;height:100%;overflow:hidden}
+body.chat-focus-mode #chatSection>.chat-view-nav{grid-column:1/-1;grid-row:1;min-width:0;margin:0}
+body.chat-focus-mode .chat-module-rail{grid-column:1;grid-row:2;display:flex;flex-direction:column;gap:7px;min-height:0;overflow-y:auto;padding:12px;background:#091827;border:1px solid #203d54;border-radius:15px}
+.chat-module-rail{display:none}
+.chat-module-rail-title{padding:3px 8px 8px;color:#7797aa;font-size:10px;font-weight:900;letter-spacing:1.5px}
+.chat-module-rail button{display:flex;align-items:center;gap:10px;width:100%;padding:12px 11px;text-align:left;background:#12283b;color:#c5d9e4;border:1px solid transparent;border-radius:11px;font-size:13px}
+.chat-module-rail button span{width:22px;text-align:center;font-size:17px}
+.chat-module-rail button:hover,.chat-module-rail button.active{background:#173c4c;border-color:#54d8cf;color:#fff}
+body.chat-focus-mode #chatSection>.panel-head,body.chat-focus-mode #accountBar,body.chat-focus-mode #adminAccessNotice,body.chat-focus-mode #adminPanel{display:none!important}
+body.chat-focus-mode #chatSection>.chat-layout{grid-column:2;grid-row:2;display:grid!important;grid-template-columns:210px minmax(0,1fr);gap:12px;margin:0;min-width:0;min-height:0;height:100%;overflow:hidden}
+body.chat-focus-mode .history-panel{display:block;min-height:0;max-height:none;overflow-y:auto}
+body.chat-focus-mode.history-open .chat-layout{grid-template-columns:210px minmax(0,1fr)}
+body.chat-focus-mode .chat-main{display:flex;flex-direction:column;height:100%!important;min-height:0!important;max-height:none!important;padding:12px!important;overflow:hidden}
+body.chat-focus-mode .chat-main>#chat{flex:1 1 auto!important;min-height:0!important;max-height:none!important;overflow-y:auto;overscroll-behavior:contain;padding:4px 10px 18px;scroll-behavior:smooth}
+body.chat-focus-mode .chat-main .input-area{flex:0 0 auto;position:sticky;bottom:0;background:#0d2032;padding-top:10px;margin-top:8px;z-index:3}
+body.chat-focus-mode .chat-main .voice-toolbar{flex:0 0 auto}
+body.chat-focus-mode .chat-main .note{flex:0 0 auto}
+body.chat-focus-mode .chat-main .assistant-switcher{flex:0 0 auto;max-height:112px;overflow-x:auto;overflow-y:hidden}
+body.chat-focus-mode .chat-main .live-voice-stage{flex:0 0 auto;max-height:30vh;overflow:auto}
+body.chat-focus-mode .chat-main .chat-toolbar{flex:0 0 auto}
+body.chat-focus-mode .chat-main .studio-workspace,body.chat-focus-mode .chat-main .academy-workspace,body.chat-focus-mode .chat-main .commerce-workspace,body.chat-focus-mode .chat-main .business-workspace{max-height:24vh;overflow:auto}
+@media(max-width:850px){
+ body.chat-focus-mode main{height:calc(100dvh - 65px);padding:8px;display:block}
+ body.chat-focus-mode #chatSection{display:flex!important;flex-direction:column;gap:8px}
+ body.chat-focus-mode #chatSection>.chat-view-nav{flex:0 0 auto}
+ body.chat-focus-mode .chat-module-rail{display:flex;flex-direction:row;flex:0 0 auto;overflow-x:auto;overflow-y:hidden;padding:7px;gap:6px;scrollbar-width:thin}
+ body.chat-focus-mode .chat-module-rail-title{display:none}
+ body.chat-focus-mode .chat-module-rail button{width:auto;min-width:max-content;padding:9px 12px}
+ body.chat-focus-mode #chatSection>.chat-layout{display:grid!important;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);flex:1;min-height:0;height:auto}
+ body.chat-focus-mode .history-panel{display:none;max-height:22vh}
+ body.chat-focus-mode.history-open .history-panel{display:block;grid-row:1;max-height:22vh}
+ body.chat-focus-mode.history-open #chatSection>.chat-layout{grid-template-rows:auto minmax(0,1fr)}
+ body.chat-focus-mode .chat-main{min-height:0!important;padding:8px!important}
+ body.chat-focus-mode .chat-main .assistant-switcher{max-height:86px}
+ body.chat-focus-mode .chat-view-nav strong{font-size:11px}
+ body.chat-focus-mode .chat-view-nav button{padding:8px 9px;font-size:10px}
+}
 body.chat-focus-mode main{max-width:1500px;padding:12px 18px 18px;min-height:0;height:calc(100dvh - 75px);overflow:hidden}
 body.chat-focus-mode main>:not(#chatSection){display:none!important}
 body.chat-focus-mode footer{display:none!important}
@@ -731,9 +773,18 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
    <strong>✦ DR.VAS · CONVERSAȚIE</strong>
    <div class="chat-view-nav-actions">
     <button type="button" class="chat-history-toggle" onclick="toggleChatHistory()">☷ Istoric</button>
-    <button type="button" class="chat-back-button" onclick="exitChatFocus()">← Înapoi la platformă</button>
+    <button type="button" class="chat-back-button" onclick="goToModules()">← Go to Modules</button>
    </div>
   </div>
+  <aside class="chat-module-rail" aria-label="Navigare module Dr.Vas">
+   <div class="chat-module-rail-title">MODULES</div>
+   <button type="button" data-chat-module="free" onclick="selectChatModule('free')"><span>✦</span> Free</button>
+   <button type="button" data-chat-module="health" onclick="selectChatModule('health')"><span>✚</span> Health</button>
+   <button type="button" data-chat-module="studio" onclick="selectChatModule('studio')"><span>🎬</span> Studio</button>
+   <button type="button" data-chat-module="academy" onclick="selectChatModule('academy')"><span>🎓</span> Academy</button>
+   <button type="button" data-chat-module="commerce" onclick="selectChatModule('commerce')"><span>🛒</span> Commerce</button>
+   <button type="button" data-chat-module="business" onclick="selectChatModule('business')"><span>📊</span> Business</button>
+  </aside>
   <div class="panel-head">
    <div class="avatar"><img src="drvas.jpeg" alt="Dr.Vas"></div>
    <div><h2>Dr.Vas AI</h2><small>Platformă inteligentă integrată</small></div>
@@ -2263,22 +2314,44 @@ async function handleAuth(){
 }
 
 function enterChatFocus(){
-  if(!currentUser){showOnly("authSection");el("authSection").scrollIntoView({behavior:"smooth",block:"center"});return;}
+  if(!currentUser){
+    showOnly("authSection");
+    el("authSection")?.scrollIntoView({behavior:"smooth",block:"center"});
+    return;
+  }
   const chatSection=el("chatSection");
   if(!chatSection)return;
-  // Keep the full dashboard in normal document flow. Hiding every sibling and
-  // forcing a fixed-height viewport caused blank/blue screens on some browsers.
-  document.body.classList.remove("chat-focus-mode","history-open");
   chatSection.classList.remove("hidden");
-  requestAnimationFrame(()=>chatSection.scrollIntoView({behavior:"smooth",block:"start"}));
+  document.body.classList.add("chat-focus-mode");
+  document.body.classList.remove("history-open");
+  document.documentElement.classList.add("chat-focus-document");
+  requestAnimationFrame(()=>{
+    const chat=el("chat");
+    if(chat)chat.scrollTop=chat.scrollHeight;
+    el("question")?.focus({preventScroll:true});
+  });
 }
 function exitChatFocus(){
   document.body.classList.remove("chat-focus-mode","history-open");
+  document.documentElement.classList.remove("chat-focus-document");
   const chatSection=el("chatSection");
   if(chatSection)chatSection.classList.add("hidden");
-  window.scrollTo({top:0,behavior:"smooth"});
+  const modules=el("moduleSelectionSection");
+  if(modules)requestAnimationFrame(()=>modules.scrollIntoView({behavior:"smooth",block:"start"}));
 }
 function toggleChatHistory(){document.body.classList.toggle("history-open");}
+function goToModules(){
+  exitChatFocus();
+  const modules=el("moduleSelectionSection");
+  if(modules)requestAnimationFrame(()=>modules.scrollIntoView({behavior:"smooth",block:"start"}));
+}
+function selectChatModule(moduleName){
+  selectModule(moduleName,true);
+  if(currentUser){
+    document.body.classList.add("chat-focus-mode");
+    el("chatSection")?.classList.remove("hidden");
+  }
+}
 function showOnly(section){
   if(!languageReady)return;
   // Pagina publică rămâne vizibilă ca punct de revenire; autentificarea și chatul
