@@ -99,6 +99,7 @@ test("showChat keeps the landing page until the user chooses to enter the module
 });
 
 test("persisted Supabase session keeps the profile screen isolated when profile loading fails", async ({ page }) => {
+  page.once("dialog", dialog => dialog.accept());
   await openApp(page, "ro", {
     access_token: "e2e-access-token",
     user: { id: "e2e-session-user", email: "e2e@example.invalid" }
