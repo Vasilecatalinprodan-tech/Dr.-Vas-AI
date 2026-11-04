@@ -757,7 +757,7 @@ body.module-workspace-mode .studio-workspace.hidden{
   <section id="moduleSelectionSection" class="modules-section">
    <div class="modules-heading">
     <div><h2>Platforma Dr.Vas</h2><p>Alege spațiul de lucru de care ai nevoie.</p></div>
-    <div class="modules-heading-actions"><button type="button" class="presentation-open-button" id="presentationOpenButton" onclick="openDrvasPresentation()">▶ Deschide prezentarea</button><span class="status">6 SPAȚII DE LUCRU · PILOT PRIVAT</span></div>
+    <div class="modules-heading-actions"><button type="button" class="presentation-open-button" id="presentationOpenButton" onclick="openDrvasPresentation()">▶ Deschide prezentarea</button><span class="status">2 MODULE GRATUITE PENTRU PUBLIC · 4 MODULE PRIVATE ÎN PREGĂTIRE</span></div>
    </div>
    <section id="drvasPresentation" class="drvas-presentation hidden" role="dialog" aria-modal="true" aria-labelledby="drvasPresentationTitle">
     <div class="drvas-presentation-head"><div><span class="tag" id="drvasPresentationEyebrow">O SINGURĂ PLATFORMĂ · ȘASE MODULE</span><h2 id="drvasPresentationTitle">Prezentarea Dr.Vas</h2><p id="drvasPresentationIntro">Un ecosistem AI integrat, conceput pentru a sprijini oamenii, ideile și afacerile într-un singur loc.</p></div><button type="button" class="presentation-close-button" id="presentationCloseButton" onclick="closeDrvasPresentation()" aria-label="Închide prezentarea">✕</button></div>
@@ -777,27 +777,27 @@ body.module-workspace-mode .studio-workspace.hidden{
    <div class="modules-grid">
     <button class="module-card selected" data-module="free" onclick="selectModule('free',true)" aria-pressed="true">
      <span class="module-icon">✦</span><span class="module-name">Dr.Vas Free</span>
-     <span class="module-description">Asistent AI general pentru întrebări, idei și informații.</span><span class="module-state">Asistent general · pilot privat</span>
+     <span class="module-description">Asistent AI general pentru întrebări, idei și informații.</span><span class="module-state">Gratuit · acces public</span>
     </button>
     <button class="module-card" data-module="health" onclick="selectModule('health',true)" aria-pressed="false">
      <span class="module-icon">✚</span><span class="module-name">Dr.Vas Health</span>
-     <span class="module-description">Informații despre sănătate, explicații și pregătirea consultațiilor.</span><span class="module-state">Informații generale · pilot privat</span>
+     <span class="module-description">Informații despre sănătate, explicații și pregătirea consultațiilor.</span><span class="module-state">Gratuit · informații generale</span>
     </button>
     <button class="module-card" data-module="studio" onclick="selectModule('studio',true)" aria-pressed="false">
      <span class="module-icon">🎬</span><span class="module-name">Dr.Vas Studio</span>
-     <span class="module-description">Spațiu creativ pentru imagini, video și conținut digital.</span><span class="module-state">Atelier creativ · pilot privat</span>
+     <span class="module-description">Spațiu creativ pentru imagini, video și conținut digital.</span><span class="module-state">Atelier creativ · privat · acces fondator până la lansare</span>
     </button>
     <button class="module-card" data-module="academy" onclick="selectModule('academy',true)" aria-pressed="false">
      <span class="module-icon">🎓</span><span class="module-name">Dr.Vas Academy</span>
-     <span class="module-description">Învățare, explicații, cursuri și dezvoltarea competențelor.</span><span class="module-state">Învățare · pilot privat</span>
+     <span class="module-description">Învățare, explicații, cursuri și dezvoltarea competențelor.</span><span class="module-state">Învățare · privat · acces fondator până la lansare</span>
     </button>
     <button class="module-card" data-module="commerce" onclick="selectModule('commerce',true)" aria-pressed="false">
      <span class="module-icon">🛒</span><span class="module-name">Dr.Vas Commerce</span>
-     <span class="module-description">Comerț online, produse, magazin și oportunități de vânzare.</span><span class="module-state">Comerț online · pilot privat</span>
+     <span class="module-description">Comerț online, produse, magazin și oportunități de vânzare.</span><span class="module-state">Comerț online · privat · acces fondator până la lansare</span>
     </button>
     <button class="module-card" data-module="business" onclick="selectModule('business',true)" aria-pressed="false">
      <span class="module-icon">📊</span><span class="module-name">Dr.Vas Business</span>
-     <span class="module-description">Management, planificare, analiză și dezvoltarea afacerilor.</span><span class="module-state">Business Lab · pilot privat</span>
+     <span class="module-description">Management, planificare, analiză și dezvoltarea afacerilor.</span><span class="module-state">Business Lab · privat · acces fondator până la lansare</span>
     </button>
    </div>
 
@@ -1699,7 +1699,7 @@ function selectModule(moduleName,userInitiated=false){
     business:{icon:"📊",name:"Dr.Vas Business",description:"Planificare, management și analiză de afaceri — în pregătire."}
   };
   if(!Object.prototype.hasOwnProperty.call(modules,moduleName))return;
-  // Public users may use Dr.Vas Free; premium workspaces remain private to the founder.
+  // Public users may use Dr.Vas Free and general-information Health; the four future paid workspaces remain founder-only.
   // Preserve the requested module through the authentication/profile flow.
   if(userInitiated&&!currentUser){
     try{sessionStorage.setItem("drvas_pending_module",moduleName)}catch{}
@@ -1719,7 +1719,7 @@ function selectModule(moduleName,userInitiated=false){
     }
     return;
   }
-  if(moduleName!=="free"&&!isDrvasAdmin){
+  if(moduleName!=="free"&&moduleName!=="health"&&!isDrvasAdmin){
     const notice=tr("Acest modul este Premium și momentan privat. Dr.Vas Free rămâne disponibil tuturor utilizatorilor conectați.");
     const status=el("moduleSelectionStatus");
     if(status){status.textContent=notice;status.classList.remove("hidden");}
@@ -1751,7 +1751,7 @@ function selectModule(moduleName,userInitiated=false){
   el("activeModuleIcon").textContent=config.icon;
   setLocalizedText(el("activeModuleName"),config.name);
   setLocalizedText(el("activeModuleDescription"),config.description);
-  const healthWorkspace=el("healthWorkspace");if(healthWorkspace)healthWorkspace.classList.toggle("hidden",moduleName!=="health"||!isDrvasAdmin);
+  const healthWorkspace=el("healthWorkspace");if(healthWorkspace)healthWorkspace.classList.toggle("hidden",moduleName!=="health");
   const workspace=el("studioWorkspace");
   if(workspace)workspace.classList.toggle("hidden",moduleName!=="studio"||!isDrvasAdmin);
   [["academyWorkspace","academy"],["commerceWorkspace","commerce"],["businessWorkspace","business"]].forEach(([id,key])=>{
@@ -1776,7 +1776,7 @@ function selectModule(moduleName,userInitiated=false){
   }
   if(moduleName==="business"&&currentUser&&isDrvasAdmin){if(el("businessLedgerDate")&&!el("businessLedgerDate").value)el("businessLedgerDate").value=new Date().toISOString().slice(0,10);calculateBusinessBreakEven();loadBusinessLedger();loadStudentAssessmentProjects().catch(error=>console.warn("Student Desk project list:",error));loadModuleProjectList("business").catch(error=>console.warn("Business project list:",error));}
   if(userInitiated&&currentUser)logClientEvent("module_selected",moduleName);
-  if(userInitiated&&currentUser&&(moduleName==="free"||isDrvasAdmin)){
+  if(userInitiated&&currentUser&&(moduleName==="free"||moduleName==="health"||isDrvasAdmin)){
     const chatSection=el("chatSection");
     chatSection?.classList.remove("hidden");
     document.body.classList.add("module-workspace-mode");
@@ -3368,12 +3368,8 @@ async function refreshAdminPanel(){
     });
     const result = await response.json().catch(()=>({}));
     if(!response.ok){
-      if(notice){
-        notice.textContent = response.status===401
-          ? "Verificarea administratorului nu a putut valida sesiunea. Deconectează-te și conectează-te din nou."
-          : "Verificarea administratorului este temporar indisponibilă. Verifică autentificarea serverului.";
-        notice.classList.remove("hidden");
-      }
+      if(notice){notice.classList.add("hidden");notice.textContent="";}
+      console.warn("Admin status unavailable; public navigation remains available.");
       return;
     }
     isDrvasAdmin = result.is_admin === true;
@@ -3383,19 +3379,13 @@ async function refreshAdminPanel(){
       // operational metrics, audit log or device registry are loading.
       loadAdminDashboard().catch(error=>console.warn("Admin dashboard unavailable:",error));
     }else if(notice){
-      notice.textContent = result.reason === "allowlist_missing"
-        ? "Accesul de administrator nu este configurat pe server: lipsește secretul Cloudflare ADMIN_EMAILS."
-        : result.reason === "account_email_missing"
-          ? "Contul autentificat nu returnează o adresă de e-mail verificabilă. Verifică setările contului Supabase."
-          : "Contul conectat ("+maskEmailForPrivacy(currentUser?.email)+") nu este autorizat ca administrator. Verifică dacă ADMIN_EMAILS din Cloudflare include adresa oficială a administratorului Dr.Vas.";
-      notice.classList.remove("hidden");
+      // A normal public account is not an administrator; this is expected, not an error.
+      notice.classList.add("hidden");
+      notice.textContent="";
     }
   }catch(error){
     console.warn("Admin access check:",error);
-    if(notice){
-      notice.textContent = "Nu am putut verifica accesul de administrator. Verifică conexiunea și încearcă din nou.";
-      notice.classList.remove("hidden");
-    }
+    if(notice){notice.classList.add("hidden");notice.textContent="";}
   }
 }
 
@@ -3613,7 +3603,7 @@ async function showChat(user,displayName){
     activeModule=pendingModule;
     showModuleSelection();
     selectModule(pendingModule,true);
-    if(isDrvasAdmin)scrollPageToChat();
+    if(isDrvasAdmin||pendingModule==="free"||pendingModule==="health")scrollPageToChat();
   }else if(pendingEntry==="modules"){
     showModuleSelection();
   }else{
