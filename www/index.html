@@ -1363,10 +1363,34 @@ function prepareSpeechText(value){
   .replace(/\s{2,}/g," ")
   .trim();
 }
-function speakDrVas(text){
+let speechVoiceLoadPromise=null;
+function waitForSpeechVoices(){
+ if(!window.speechSynthesis)return Promise.resolve([]);
+ const current=window.speechSynthesis.getVoices()||[];
+ if(current.length)return Promise.resolve(current);
+ if(speechVoiceLoadPromise)return speechVoiceLoadPromise;
+ speechVoiceLoadPromise=new Promise(resolve=>{
+  let finished=false;
+  const finish=()=>{
+   if(finished)return;
+   finished=true;
+   window.speechSynthesis.removeEventListener?.("voiceschanged",finish);
+   resolve(window.speechSynthesis.getVoices()||[]);
+  };
+  window.speechSynthesis.addEventListener?.("voiceschanged",finish,{once:true});
+  window.setTimeout(finish,1200);
+ });
+ return speechVoiceLoadPromise.finally(()=>{speechVoiceLoadPromise=null;});
+}
+async function speakDrVas(text){
  if(!voiceAutoRead||!text||!window.speechSynthesis)return;
  const lang=speechLanguage();
- const voice=chooseSpeechVoice(lang);
+ let voice=chooseSpeechVoice(lang);
+ if(!voice){
+  await waitForSpeechVoices();
+  refreshSpeechVoiceOptions();
+  voice=chooseSpeechVoice(lang);
+ }
  if(!voice){
   refreshVoiceUi("voiceUnavailable");
   return;
@@ -1374,7 +1398,10 @@ function speakDrVas(text){
  const spokenText=prepareSpeechText(text);
  if(!spokenText)return;
  lastSpokenAnswer=text;
- window.speechSynthesis.cancel();
+ const synth=window.speechSynthesis;
+ synth.cancel();
+ // Chrome can remain paused after an interrupted or first speech request.
+ synth.resume();
  const utterance=new SpeechSynthesisUtterance(spokenText);
  utterance.lang=lang;
  utterance.voice=voice;
@@ -1382,8 +1409,12 @@ function speakDrVas(text){
  utterance.pitch=activeAssistant==="aurora"?1.08:activeAssistant==="jan"?0.90:0.98;
  utterance.onstart=()=>{document.body.classList.add("assistant-speaking");refreshVoiceUi("speaking")};
  utterance.onend=()=>{document.body.classList.remove("assistant-speaking");refreshVoiceUi("ready")};
- utterance.onerror=()=>{document.body.classList.remove("assistant-speaking");refreshVoiceUi("ready")};
- window.speechSynthesis.speak(utterance);
+ utterance.onerror=event=>{
+  document.body.classList.remove("assistant-speaking");
+  console.warn("Speech synthesis playback:",event.error);
+  refreshVoiceUi(event.error==="canceled"||event.error==="interrupted"?"ready":"voiceUnavailable");
+ };
+ synth.speak(utterance);
  refreshVoiceUi("ready");
 }
 function replayLastAnswer(){
