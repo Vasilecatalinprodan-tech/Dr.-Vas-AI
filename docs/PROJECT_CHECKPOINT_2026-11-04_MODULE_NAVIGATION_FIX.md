@@ -104,3 +104,31 @@ Check the newest GitHub Actions runs after commits 297025e and 22454fc. Do not c
 - Deploy Worker: run 41902834996, pending, test commit 22454fc; deployment remains gated by browser tests.
 - App-code validation/deploy/APK workflows from app commit 297025e: runs 41902807336 (browser regression), 41902807158 (deploy), and 41902807392 (APK build) were in progress at the time of this checkpoint update.
 - No result from these runs is assumed. Recheck them before proceeding.
+
+## Late evening continuation — 2026-11-04 20:10 UTC
+
+### Root-cause correction for the remaining 4 browser failures
+The latest browser logs on commit 22454fc confirmed 25/29 passing, with all four failures showing the auth/profile panels hidden. Inspection found two competing session flows:
+- `initLanguage()` starts `checkSession()` asynchronously.
+- Supabase's `onAuthStateChange` also emits an asynchronous `INITIAL_SESSION` event. Treating that event as a sign-out could call `showLogin()` while the persisted-session profile is being rendered.
+- Separately, the initial `checkSession()` can finish after a visitor clicks the CTA; its no-session branch could call `showLogin()` and return the user to the landing page after the sign-in panel had opened.
+
+### Changes committed
+- App commit `2444db88821b790b36754d54c4316fd7e1cdb2ca`:
+  - Ignore Supabase `INITIAL_SESSION` in the auth-state listener; `checkSession()` is the single authority for initial session restoration.
+  - Preserve an explicit pending module-entry intent in `showLogin()`, so an in-flight no-session check cannot close the sign-in panel the visitor deliberately opened.
+  - Clear stale `auth-flow-mode` when restoring the public landing view.
+- Browser-test commit `4b8b806ea5b903520aca1ee9f6efb6ba93fd2bba`:
+  - E2E Supabase stub now emits an asynchronous `INITIAL_SESSION` callback, reproducing the production event race rather than omitting it.
+- No admin allowlist, Worker authorization, or private-module access gate was weakened.
+
+### Latest workflows at checkpoint time
+- Browser regression on app commit 2444db8: `41903785102` — in progress.
+- Worker deploy on app commit 2444db8: `41903785014` — in progress.
+- APK build on app commit 2444db8: `41903785052` — in progress.
+- Browser regression on test commit 4b8b806: `41903801697` — pending.
+- Worker deploy on test commit 4b8b806: `41903801702` — pending.
+- Previous latest run 41902834918 failed 25/29; deployment 41902834996 was correctly blocked. Do not call the production URL updated until a successful deploy and smoke test are confirmed.
+
+### User testing request
+The user wants to inspect the site while development continues. Production URL remains `https://dr--vas-ai.vasilecatalinprodan.workers.dev`, but until the new deployment passes, it may still show the previous deployed build. Explain this clearly if sharing the URL. Once deployment is green, ask the user to hard-refresh and report any visible error text/screenshots. Keep this checkpoint updated with actual final workflow outcomes and the latest APK artifact link.
