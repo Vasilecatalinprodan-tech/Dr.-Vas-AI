@@ -55,6 +55,7 @@ jobs:
           const worker = fs.readFileSync('worker/index.js', 'utf8');
           const migration = fs.readFileSync('supabase/migrations/202611030001_rate_limits.sql', 'utf8');
           const moduleMigration = fs.readFileSync('supabase/migrations/202611040001_module_projects.sql', 'utf8');
+          const rateLimitRepair = fs.readFileSync('supabase/migrations/202611040002_repair_rate_limit_rpc.sql', 'utf8');
           const checks = [
             [!worker.includes('"Access-Control-Allow-Origin": "*"'), 'Wildcard CORS must not be enabled'],
             [worker.includes('64 * 1024'), 'Worker request body limit is missing'],
@@ -70,6 +71,10 @@ jobs:
             [migration.includes('ENABLE ROW LEVEL SECURITY'), 'Rate-limit storage must have RLS enabled'],
             [migration.includes('REFERENCES auth.users(id) ON DELETE CASCADE'), 'Rate-limit counters must cascade on account deletion'],
             [migration.includes('SET search_path = pg_catalog, public'), 'Rate-limit SECURITY DEFINER search path must be hardened'],
+            [rateLimitRepair.includes('ALTER FUNCTION public.drvas_consume_rate_limit(uuid, text, integer, integer)'), 'Rate-limit RPC repair migration must target the expected function signature'],
+            [rateLimitRepair.includes('SET search_path = pg_catalog, public'), 'Rate-limit RPC repair migration must harden the execution search path'],
+            [rateLimitRepair.includes('REVOKE ALL ON FUNCTION public.drvas_consume_rate_limit(uuid, text, integer, integer)') && rateLimitRepair.includes('FROM PUBLIC, anon, authenticated'), 'Rate-limit RPC repair must revoke public and user-role execution'],
+            [rateLimitRepair.includes('GRANT EXECUTE ON FUNCTION public.drvas_consume_rate_limit(uuid, text, integer, integer)') && rateLimitRepair.includes('TO service_role'), 'Rate-limit RPC repair must grant execution only to service_role'],
             [moduleMigration.toLowerCase().includes('enable row level security'), 'Module project storage must enable RLS'],
             [moduleMigration.toLowerCase().includes("module in ('academy','commerce','business')"), 'Module project storage must restrict allowed modules'],
             [moduleMigration.toLowerCase().includes('auth.uid() = user_id'), 'Module project policies must enforce per-user ownership'],
