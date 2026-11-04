@@ -174,3 +174,33 @@ Next priorities: (1) green browser tests and deploy verification; (2) real Studi
 
 ### User test coordination
 Production URL remains `https://dr--vas-ai.vasilecatalinprodan.workers.dev/`. It may still serve the previous deployed build until run `41904249874` succeeds. User is currently inspecting the page; ask them to report exact error text or screenshots. Do not claim live visibility into their laptop.
+
+
+## 20:20 UTC — deeper DOM nesting correction and Crypto calculator
+
+The first CSS visibility fix (commit 7263a954) was incomplete: a subsequent E2E run still showed 25/29 passing. The previous note describing auth/profile as direct children of `#moduleSelectionShell` was incorrect. Re-counting the actual HTML nesting showed that both auth/profile panels are direct children of `#moduleSelectionSection`, which itself is inside the shell.
+
+Corrected implementation:
+- Keep `.module-selection-shell.auth-flow-mode{display:block!important}` so the outer shell is visible.
+- Scope the hide rule to `#moduleSelectionShell.auth-flow-mode > #moduleSelectionSection > :not(#authSection):not(#profileSection)`, so the module dashboard contents are hidden while the auth/profile panels remain visible.
+- Updated four E2E expectations to assert the section remains visible while its module heading is hidden.
+- App commit: `2c44c91f79f7db957e301dff87ad8aaac59ded65`.
+- Test commit: `edce21f10ad46ad23b3f62a26dafc85f33a41d73`.
+- These newest tests have not yet been confirmed green. Earlier runs were cancelled by subsequent pushes; check a completed run on the latest test commit before deployment.
+
+Crypto implementation already present before this session:
+- Founder admin panel includes a read-only Crypto device registry.
+- Worker action `crypto_devices_list` validates the Supabase user and `ADMIN_EMAILS` server-side before reading the registry.
+- Migration `202611030003_crypto_device_registry.sql` stores public device verification keys and authorisation state; no client-role access.
+- `docs/CRYPTO_ADMIN_CONTROL_MODEL.md` explicitly states mining, wallet custody and live trading are not enabled.
+
+New safe feature added:
+- Added a founder-admin-only Bitcoin mining economics calculator to the Crypto panel.
+- Inputs: estimated BTC/day, BTC price in GBP, device watts, electricity price, pool fee and hardware cost.
+- Outputs: gross/day, electricity/day, pool fee/day, net/day, net/30 days and simple equipment payback estimate.
+- This is an offline estimate based on founder-entered values; it has no live market feed and does not start mining.
+- App commit: `0c7014600dbe3d512d250e66a81dc11e960254ea`.
+- Added E2E coverage for the calculator's example arithmetic in test commit `b50af6fe5ad8fd1aa99cd0475c4869499a7eeb73`.
+- The subsequent DOM nesting correction is newer than those commits; the final combined run must include the latest source and tests.
+
+Current deployment remains gated by browser E2E. The production URL may show the older deployed version.
