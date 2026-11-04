@@ -781,7 +781,11 @@ test("logout removes administrator workspaces and clears private module drafts",
 
 test("Dr.Vas presentation covers all six modules in all eight supported languages and narrates in the selected language", async ({ page }) => {
   await openApp(page, "ro");
-  await page.evaluate(() => openDrvasPresentation());
+  await page.evaluate(() => {
+    checkSession = async () => {};
+    showModuleSelection();
+    openDrvasPresentation();
+  });
 
   await expect(page.locator("#drvasPresentation")).toBeVisible();
   await expect(page.locator("#presentationModuleGrid .presentation-module")).toHaveCount(6);
