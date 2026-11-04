@@ -58,7 +58,8 @@ test("primary Dr.Vas CTA is above the hero description and sends visitors to log
   expect(order).toBeTruthy();
   await page.locator("#headerChatCta").click();
   await expect(page.locator("#authSection")).toBeVisible();
-  await expect(page.locator("#moduleSelectionSection")).toHaveClass(/auth-flow-mode/);
+  await expect(page.locator("#moduleSelectionShell")).toBeHidden();
+  await expect(page.locator("#moduleSelectionSection")).toBeHidden();
   expect(await page.evaluate(() => sessionStorage.getItem("drvas_pending_entry"))).toBe("modules");
   await expect(page.locator("#chatSection")).toBeHidden();
 });
@@ -98,8 +99,8 @@ test("persisted Supabase session keeps the profile screen isolated when profile 
   await expect(page.locator("#profileMessage")).toContainText("E2E profile read failure");
   await expect(page.locator("#profileSection")).toBeVisible();
   await expect(page.locator("#heroSection")).toBeHidden();
-  await expect(page.locator("#moduleSelectionShell")).toBeVisible();
-  await expect(page.locator("#moduleSelectionSection")).toHaveClass(/auth-flow-mode/);
+  await expect(page.locator("#moduleSelectionShell")).toBeHidden();
+  await expect(page.locator("#moduleSelectionSection")).toBeHidden();
   await expect(page.locator("#chatSection")).toBeHidden();
 });
 
@@ -141,7 +142,8 @@ test("clicking a module as a visitor opens the sign-in gate and preserves the se
   await page.evaluate(() => showModuleSelection());
   await page.locator('[data-module="studio"]').click();
   await expect(page.locator("#authSection")).toBeVisible();
-  await expect(page.locator("#moduleSelectionSection")).toHaveClass(/auth-flow-mode/);
+  await expect(page.locator("#moduleSelectionShell")).toBeHidden();
+  await expect(page.locator("#moduleSelectionSection")).toBeHidden();
   await expect(page.locator("#authDescription")).toContainText("Dr.Vas Studio");
   expect(await page.evaluate(() => sessionStorage.getItem("drvas_pending_module"))).toBe("studio");
   await expect(page.locator("#chatSection")).toBeHidden();
@@ -333,7 +335,7 @@ test("all six modules remain private to administrators during the pilot", async 
 
   for (const moduleId of ["free", "health", "studio", "academy", "commerce", "business"]) {
     await page.evaluate(id => selectModule(id, true), moduleId);
-    await expect(page.locator("#moduleAccessMessage")).toContainText("pilot privat");
+    await expect(page.locator("#moduleAccessMessage")).toContainText("Accesul la module este privat");
   }
 });
 
@@ -572,7 +574,7 @@ test("non-admin users cannot open any of the six private pilot workspaces", asyn
   });
   for (const moduleId of ["free", "health", "studio", "academy", "commerce", "business"]) {
     await page.evaluate(id => selectModule(id, true), moduleId);
-    await expect(page.locator("#moduleAccessMessage")).toContainText("pilot privat");
+    await expect(page.locator("#moduleAccessMessage")).toContainText("Accesul la module este privat");
     await expect(page.locator("#" + moduleId + "Workspace")).toBeHidden();
   }
 });
