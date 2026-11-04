@@ -787,7 +787,7 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
      <button id="sendButton" onclick="send()">Trimite ➤</button>
     </div>
     <div class="voice-toolbar" aria-label="Controale vocale Dr.Vas">
-     <button type="button" id="liveVoiceButton" onclick="toggleLiveVoice()">🎧 Live</button>
+     <button type="button" id="liveVoiceButton" onclick="beginLiveVoiceExperience()">🎧 Live</button>
      <button type="button" id="voiceMicButton" onclick="toggleVoiceInput()">🎙 Vorbește</button>
      <button type="button" id="voiceAutoButton" onclick="toggleVoiceOutput()">🔊 Activează vocea</button>
      <button type="button" id="voiceReplayButton" onclick="replayLastAnswer()" disabled>↻ Reascultă</button>
@@ -1690,6 +1690,11 @@ function updateLiveVoiceStage(state,message){
   avatar.replaceChildren();
   if(source)avatar.appendChild(source.cloneNode(true));else avatar.textContent=assistant.icon||"✦";
  }
+}
+function beginLiveVoiceExperience(){
+ if(liveSocket||liveStream){updateLiveVoiceStage("closed");toggleLiveVoice();return;}
+ updateLiveVoiceStage("connecting","Pregătesc conversația vocală. Browserul îți va cere accesul la microfon.");
+ toggleLiveVoice();
 }
 async function toggleLiveVoice(){
  if(liveSocket||liveStream){
