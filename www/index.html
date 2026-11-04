@@ -3139,7 +3139,9 @@ async function refreshAdminPanel(){
     isDrvasAdmin = result.is_admin === true;
     if(isDrvasAdmin){
       panel.classList.remove("hidden");
-      await loadAdminDashboard();
+      // The admin dashboard is secondary UI: never block module entry while its
+      // operational metrics, audit log or device registry are loading.
+      loadAdminDashboard().catch(error=>console.warn("Admin dashboard unavailable:",error));
     }else if(notice){
       notice.textContent = result.reason === "allowlist_missing"
         ? "Accesul de administrator nu este configurat pe server: lipsește secretul Cloudflare ADMIN_EMAILS."
@@ -3324,40 +3326,21 @@ async function showChat(user,displayName){
   document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode");
   document.documentElement.classList.remove("chat-focus-document");
   // Session restoration returns to the presentation. A module opens only after the user chooses it.
-
   el("accountEmail").textContent =
     (displayName || el("displayName").value.trim() || user.email || "") +
     " · " + (el("country").value || tr("Cont personal"));
 
+  // Resolve the server-side administrator gate first. Dashboard metrics are
+  // loaded independently by refreshAdminPanel and must not hold up navigation.
   await refreshAdminPanel();
-  let pendingModule=null;try{pendingModule=sessionStorage.getItem("drvas_pending_module");if(pendingModule)sessionStorage.removeItem("drvas_pending_module");}catch{}
-  if(pendingModule&&["free","health","studio","academy","commerce","business"].includes(pendingModule))activeModule=pendingModule;
-  selectModule(activeModule);
-  loadStudioProjects().catch(error=>{console.warn("Studio project list unavailable:",error);setStudioProjectStatus(error.message.includes("drvas_studio_projects")?"Baza de date Studio nu este activată încă. Aplică migrarea SQL 202611030004_studio_projects.sql din Supabase.":"Nu am putut încărca proiectele: "+error.message,true);});
-  ["academy","commerce","business"].forEach(module=>loadModuleProjectList(module).catch(error=>{
-    console.warn("Module project list unavailable:",module,error);
-    moduleProjectStatus(module,error.message.includes("drvas_module_projects")?"Aplică migrarea SQL 202611040001_module_projects.sql în Supabase.":"Nu am putut încărca proiectele: "+error.message,true);
-  }));
-  loadIncomeOpportunities().catch(error=>{console.warn("Income tracker unavailable:",error);incomeMessage(error.message.includes("drvas_income_opportunities")?"Aplică migrarea SQL 202611030005_income_and_founder_provenance.sql în Supabase.":"Nu am putut încărca oportunitățile: "+error.message,true);});
-  const conversations = await loadConversationList();
-  const rememberedId = getRememberedConversation();
-  const resumeId = conversations.some(item=>item.id===rememberedId)
-    ? rememberedId
-    : (conversations[0]?.id || null);
 
-  if(resumeId){
-    await openConversation(resumeId);
-  }else{
-    currentConversationId = makeId();
-    rememberActiveConversation(currentConversationId);
-    logClientEvent("conversation_created");
-    conversationSaved = false;
-    pendingMessages = [];
-    el("saveMessage").textContent = "";
-    updateSaveButton();
-    renderWelcome();
-  }
-  if(pendingModule){
+  let pendingModule=null;
+  try{
+    pendingModule=sessionStorage.getItem("drvas_pending_module");
+    if(pendingModule)sessionStorage.removeItem("drvas_pending_module");
+  }catch{}
+  if(pendingModule&&["free","health","studio","academy","commerce","business"].includes(pendingModule)){
+    activeModule=pendingModule;
     showModuleSelection();
     selectModule(pendingModule,true);
     if(isDrvasAdmin)scrollPageToChat();
@@ -3372,8 +3355,58 @@ async function showChat(user,displayName){
     document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode","history-open");
     document.documentElement.classList.remove("chat-focus-document");
   }
-}
 
+  // Conversation history is independent of module navigation. Load it after
+  // the requested workspace is visible so a slow Supabase query cannot make
+  // the module buttons appear unresponsive or strand the user on the login screen.
+  try{
+    const conversations=await loadConversationList();
+    const rememberedId=getRememberedConversation();
+    const resumeId=conversations.some(item=>item.id===rememberedId)
+      ? rememberedId
+      : (conversations[0]?.id || null);
+    if(resumeId){
+      await openConversation(resumeId);
+    }else{
+      currentConversationId=makeId();
+      rememberActiveConversation(currentConversationId);
+      logClientEvent("conversation_created");
+      conversationSaved=false;
+      pendingMessages=[];
+      el("saveMessage").textContent="";
+      updateSaveButton();
+      renderWelcome();
+    }
+  }catch(error){
+    console.warn("Conversation history unavailable; opening a fresh conversation:",error);
+    currentConversationId=makeId();
+    rememberActiveConversation(currentConversationId);
+    conversationSaved=false;
+    pendingMessages=[];
+    if(el("saveMessage"))el("saveMessage").textContent="";
+    updateSaveButton();
+    renderWelcome();
+  }
+
+  loadStudioProjects().catch(error=>{
+    console.warn("Studio project list unavailable:",error);
+    setStudioProjectStatus(error.message.includes("drvas_studio_projects")
+      ?"Baza de date Studio nu este activată încă. Aplică migrarea SQL 202611030004_studio_projects.sql din Supabase."
+      :"Nu am putut încărca proiectele: "+error.message,true);
+  });
+  ["academy","commerce","business"].forEach(module=>loadModuleProjectList(module).catch(error=>{
+    console.warn("Module project list unavailable:",module,error);
+    moduleProjectStatus(module,error.message.includes("drvas_module_projects")
+      ?"Aplică migrarea SQL 202611040001_module_projects.sql în Supabase."
+      :"Nu am putut încărca proiectele: "+error.message,true);
+  }));
+  loadIncomeOpportunities().catch(error=>{
+    console.warn("Income tracker unavailable:",error);
+    incomeMessage(error.message.includes("drvas_income_opportunities")
+      ?"Aplică migrarea SQL 202611030005_studio_projects.sql din Supabase."
+      :"Nu am putut încărca oportunitățile: "+error.message,true);
+  });
+}
 function renderWelcome(){
   el("chat").innerHTML = "";
   const welcome = document.createElement("div");
