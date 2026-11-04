@@ -1451,6 +1451,15 @@ function selectModule(moduleName,userInitiated=false){
   }else{
     message.textContent="";
   }
+  if(moduleName==="studio"&&currentUser&&isDrvasAdmin){
+    setStudioProjectStatus("Încarc proiectele Studio salvate…");
+    loadStudioProjects(currentStudioProjectId||"").then(()=>{
+      setStudioProjectStatus("Studio este pregătit. Proiectele tale private sunt încărcate.");
+    }).catch(error=>{
+      console.error("Dr.Vas Studio project list:",error);
+      setStudioProjectStatus("Nu am putut încărca lista proiectelor. Verifică migrarea Studio din Supabase și permisiunile contului.",true);
+    });
+  }
   if(moduleName==="business"&&currentUser&&isDrvasAdmin){if(el("businessLedgerDate")&&!el("businessLedgerDate").value)el("businessLedgerDate").value=new Date().toISOString().slice(0,10);calculateBusinessBreakEven();loadBusinessLedger();loadStudentAssessmentProjects().catch(error=>console.warn("Student Desk project list:",error));loadModuleProjectList("business").catch(error=>console.warn("Business project list:",error));}
   if(userInitiated&&currentUser)logClientEvent("module_selected",moduleName);
 }
@@ -2141,7 +2150,13 @@ async function renderStudioVideo(){
  const button=el("studioRenderCreateButton");if(button)button.disabled=true;
  try{
   const files=Array.from(el("studioSceneImages")?.files||[]);
+  const audioFile=el("studioSceneAudio")?.files?.[0]||null;
   if(files.length>8)throw new Error("Poți încărca maximum 8 imagini pentru un clip.");
+  if(audioFile){
+   const allowedAudio=["audio/mpeg","audio/wav","audio/mp4","audio/aac","audio/x-wav"];
+   if(!allowedAudio.includes(audioFile.type))throw new Error("Folosește un fișier audio MP3, WAV, M4A sau AAC.");
+   if(audioFile.size>20*1024*1024)throw new Error("Fișierul audio trebuie să aibă maximum 20 MB.");
+  }
   for(const file of files){
    if(!["image/jpeg","image/png","image/webp"].includes(file.type))throw new Error("Folosește doar imagini JPG, PNG sau WebP.");
    if(file.size>8*1024*1024)throw new Error("Fiecare imagine trebuie să aibă maximum 8 MB.");
@@ -2171,6 +2186,16 @@ async function renderStudioVideo(){
    const cards=[{text:"DR.VAS STUDIO",time:0},{text:title.slice(0,100),time:3},{text:idea.slice(0,150),time:6}];
    duration=9;
    cards.forEach((card,index)=>elements.push({type:"text",name:"Title-Scene-"+(index+1),track:1,time:card.time,duration:3,x:"50%",y:"48%",width:"86%",height:"30%",x_anchor:"50%",y_anchor:"50%",x_alignment:"50%",y_alignment:"50%",text:card.text,font_family:"Montserrat",font_weight:700,font_size:index===0?"8 vmin":"6 vmin",fill_color:"#ffffff",background_color:"rgba(7,17,31,0.2)",background_x_padding:"8%",background_y_padding:"8%"}));
+  }
+  if(audioFile){
+   const safeName=audioFile.name.replace(/[^a-z0-9._-]+/gi,"-").slice(0,70)||"studio-audio";
+   const audioPath=currentUser.id+"/studio-assets/"+makeId()+"-"+safeName;
+   studioRenderMessage("Încarc fișierul audio în spațiul privat…");
+   const {error:audioUploadError}=await supabaseClient.storage.from("drvas-media").upload(audioPath,audioFile,{contentType:audioFile.type==="audio/x-wav"?"audio/wav":audioFile.type,upsert:false});
+   if(audioUploadError)throw audioUploadError;
+   const {data:audioSigned,error:audioSignedError}=await supabaseClient.storage.from("drvas-media").createSignedUrl(audioPath,3600);
+   if(audioSignedError||!audioSigned?.signedUrl)throw audioSignedError||new Error("Nu am putut crea adresa temporară pentru fișierul audio.");
+   elements.push({type:"audio",name:"Studio-Voiceover",track:3,time:0,duration:"media",source:audioSigned.signedUrl,volume:1});
   }
   const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
   if(sessionError)throw sessionError;
