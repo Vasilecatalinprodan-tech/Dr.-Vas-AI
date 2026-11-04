@@ -35,3 +35,40 @@
 - Worker commit `388b4a23d13ff7daa11e296b8c0728fae0fdeaeb` adds an authenticated, server-side `voice_tts` action. It requires Cloudflare secrets `ELEVENLABS_API_KEY` and `ELEVENLABS_VOICE_ID`, validates the Supabase user, enforces a per-user `voice_tts` rate limit (12 requests/minute), calls ElevenLabs Multilingual v2, and returns audio/mpeg. Provider credentials never reach the browser.
 - Frontend commit `0897539b6a4dc697a608d7efef17777a2233379d` attempts founder-voice playback for Dr.Vas when the server endpoint is configured; if unavailable, it falls back to existing browser speech synthesis. The clone is NOT active until a verified ElevenLabs voice ID and API key are configured.
 - Next founder inputs: clean 1–2 minute spoken recording in the language(s) intended for cloning, plus a verified ElevenLabs voice ID and API key configured as Cloudflare Worker secrets (never pasted into chat or committed). The existing OGG sample is 4.5665 seconds and is below the 10-second minimum stated by ElevenLabs.
+
+
+## MP4 render integration — 4 November 2026
+
+### Implemented in code
+- Added a Studio Render panel for 9:16 MP4 output at 1080×1920.
+- Users can upload up to 8 private scene images (JPG/PNG/WebP), add one caption per scene, and optionally upload an audio narration/music track (MP3/WAV/M4A/AAC).
+- When no images are selected, Studio can create a short typographic teaser from the project title and idea.
+- The Worker accepts only authenticated administrator render requests, enforces per-user render rate limits, validates the RenderScript and permits media sources only from signed URLs in the user's private Supabase bucket.
+- The Worker injects the `MADE BY VPC` watermark as a fixed top-layer element for the full render duration; the browser cannot omit it.
+- Creatomate API credentials are read only from the Cloudflare Worker secret `CREATOMATE_API_KEY`; the browser never receives the provider key.
+- Render status is stored in `drvas_studio_render_jobs` under RLS. Completed MP4 files are copied from the provider to the private `drvas-media` Supabase bucket and exposed to the owner through short-lived signed URLs.
+- Studio project metadata stores the render job ID and private storage path; project restore can recreate a signed preview link.
+- Logout/account switching clears the preview and selected local media controls.
+
+### Database migration required
+Apply `supabase/migrations/202611040004_studio_render_storage.sql` in Supabase. It creates the per-user render-job table, private media bucket and per-user storage-object policies. It is safe to re-run.
+
+### Provider configuration required
+- Create a Creatomate account and copy the project API key.
+- Add it to the Cloudflare Worker as a secret named `CREATOMATE_API_KEY`; never put the value in GitHub or the frontend.
+- The current official Creatomate trial advertises 50 API credits without a credit card. Actual resolution, duration, credit consumption and output availability are subject to the active plan and current provider limits.
+- Creatomate's API accepts RenderScript directly at `POST https://api.creatomate.com/v2/renders`, and the status endpoint returns the final MP4 URL when complete.
+- Creatomate-hosted output files are temporary (up to 30 days); Dr.Vas therefore copies the completed file into its private Supabase storage instead of relying on the provider URL.
+
+### Important capability boundary
+This first renderer assembles uploaded still images, scene captions and an optional supplied audio track into a branded MP4. It is a real render/assembly engine, not a generative motion-video model. The currently connected Runway workspace reports no available video, speech, music or sound-effect models. Cinematic AI-generated moving footage, cloned founder narration and generated music remain separate provider capabilities that require available models, appropriate consent and/or credentials.
+
+### Verification state
+- Worker/browser JavaScript static validation and CI checks for the render migration, RLS, server-side secret, private storage and mandatory watermark passed on the last completed deployment workflow before this latest render test run.
+- Browser E2E test for Studio render request and private preview is being run separately.
+- The Creatomate API key has not yet been configured, and the Supabase migration has not yet been applied in the live project. Therefore no real MP4 has yet been rendered or saved in production.
+
+### Provider references
+- Create Render: https://creatomate.com/docs/api/reference/create-a-render
+- Render status: https://creatomate.com/docs/api/reference/get-the-status-of-a-render
+- Trial, credits and 30-day output retention: https://creatomate.com/pricing
