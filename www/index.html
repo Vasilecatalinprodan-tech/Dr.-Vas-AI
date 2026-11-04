@@ -1396,9 +1396,8 @@ function selectModule(moduleName,userInitiated=false){
     }
     return;
   }
-  const premium=["studio","academy","commerce","business"].includes(moduleName);
-  if(premium&&!isDrvasAdmin){
-    const notice=tr("Acest modul Premium necesită un abonament activ. Administratorul poate testa modulele în modul de administrare.");
+  if(!isDrvasAdmin){
+    const notice=tr("Dr.Vas este în pilot privat. Toate cele șase module sunt disponibile momentan numai administratorului.");
     el("moduleAccessMessage").textContent=notice;
     return;
   }
