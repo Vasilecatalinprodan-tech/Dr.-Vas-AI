@@ -63,3 +63,16 @@ The Worker deployment workflow now statically validates the repair migration's e
 - Updated `README.md` to link the roadmap.
 - Updated the Worker deployment workflow to generate a CycloneDX SBOM from the npm lockfile and upload it as a 90-day GitHub Actions artifact named `DrVas-SBOM`. The first run of this new step is still required to validate the installed npm version and artifact upload.
 - Do not make the repository public or add a blanket open-source licence until ownership and third-party dependencies are reviewed.
+
+
+## Business Desk MVP — 4 November 2026
+- Added Dr.Vas Books cashbook UI: income/expense entries, date, category, amount, currency, VAT rate/inclusion setting, currency-separated summaries, per-entry delete and CSV export.
+- Added migration `supabase/migrations/202611040003_business_cashbook.sql` with user-owned rows, RLS enabled, public/anon revoked and CRUD granted only to authenticated users under `auth.uid() = user_id`. This migration has NOT yet been applied/verified in the user's Supabase project; cashbook persistence remains pending until it is applied and real account tests pass.
+- Added Student Desk in Business: assignment brief, rubric and student draft inputs; it creates a formative-feedback prompt, revision guidance and citation checks without fabricated sources or deceptive authorship. Private projects use the existing `drvas_module_projects` table with project_type `student_assessment_coach`.
+- Added logout/account-switch cleanup for Student Desk drafts and local ledger data.
+- Added browser E2E coverage for the cashbook's VAT calculations and Student Desk prompt; added CI static checks for the new table's RLS and frontend functions. The next deployment workflow run must pass before these changes are treated as verified.
+- Added `docs/BUSINESS_DESK_AND_STUDIO_MVP_PLAN_2026-11-04.md` describing scope, limits and release gates.
+
+## Studio provider status refreshed
+- The connected Runway workspace currently reports 500 plan credits, 0 purchased credits, available image models, and no available video, speech, music or sound-effect models. Video generation/editing is currently gated. Do not claim a finished MP4 renderer until a provider or tested rendering pipeline is connected.
+- Target for the next 1–2 days: deliver a complete Studio production package and activate actual video export only when provider/renderer, watermark-in-final-render and Dr.Vas-owned media storage are verified.
