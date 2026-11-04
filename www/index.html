@@ -796,6 +796,13 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
      <label for="speechRateSelect" class="voice-privacy">Ritm:</label><select id="speechRateSelect" aria-label="Ritmul vocii"><option value="0.86">Calm</option><option value="0.92" selected>Natural</option><option value="1">Rapid</option><option value="1.08">Foarte rapid</option></select>
      <span id="voiceStatus" role="status" aria-live="polite">Vocea este oprită.</span>
     </div>
+    <section id="liveVoiceStage" class="live-voice-stage" aria-live="polite" aria-label="Cameră vocală Dr.Vas" hidden>
+     <button type="button" class="live-stage-close" onclick="stopLiveVoice()">Închide ✕</button>
+     <div id="liveStageAvatar" class="live-stage-avatar" aria-hidden="true"></div>
+     <div id="liveStageName" class="live-stage-name">Dr.Vas</div>
+     <div id="liveStageStatus" class="live-stage-status">Pregătesc conexiunea vocală…</div>
+     <div class="live-stage-wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </section>
     <p class="voice-privacy">Microfonul se activează numai după apăsare. În modul Live, sunetul este transmis către Gemini pentru răspuns în timp real și poate consuma utilizare API; în modul dictare, recunoașterea poate fi procesată de browser. Dr.Vas nu păstrează înregistrări audio; transcrierile text se salvează în istoricul conversației.</p>
     <div class="note">Răspunsurile AI pot conține erori. Verifică informațiile importante.</div>
    </div>
