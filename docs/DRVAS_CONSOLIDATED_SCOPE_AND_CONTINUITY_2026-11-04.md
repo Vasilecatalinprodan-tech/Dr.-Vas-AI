@@ -146,3 +146,13 @@ Priority decision: these founder-only workbenches are recorded in the product sc
 - Presentation states that Dr.Vas is under development, module availability varies, and regulated services require applicable authorisations and qualified human oversight. No video assets or claims of licensing/approval were added.
 - Frontend change committed as b4563b34886d91585cfdc761127b251b9ae15b64.
 - Automated browser tests and production deployment have not yet been confirmed for this presentation commit. Next: inspect CI, fix any failures, then visually verify the presentation and narration on production.
+
+
+## 2026-11-04 — follow-up: legacy workspace isolation fix
+
+- Commit: `6975d1bbb1e9764a5aeee16e94c911b240b8811f`.
+- Updated `www/index.html` with a higher-specificity CSS isolation override for the legacy focused-chat state when it coexists with `module-workspace-mode`.
+- The override forces the focused conversation to one content column, hides the module rail and cross-module history, and prevents the older two-column shell from taking precedence.
+- The existing browser regression test `legacy focused workspace never exposes other modules or cross-module history` remains in place; it checks rail/history visibility and the single-column computed layout.
+- The browser E2E workflow is configured to run on pushes to `drvas-integrated-platform` when `www/**` changes. At the time of this note, the GitHub connector did not expose a run/status result for this new commit, so the fix is committed but must not yet be described as CI-passing or deployment-verified.
+- No new claim is made that the founder-only Online Income workbench is complete. The existing income/opportunity tracking UI is not a complete creative online-income production studio. Crypto/mining remains estimate/read-only/paper-first; live mining or trading is not implemented.
