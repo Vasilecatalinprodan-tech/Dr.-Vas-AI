@@ -87,3 +87,47 @@ A real MP4 renderer requires a configured provider or a tested in-browser/server
 6. Desktop/mobile accessibility and keyboard tests passed.
 7. Accounting domain expert reviews terminology, calculations and product boundaries.
 8. Studio provider and media storage configured and tested before claiming MP4 generation.
+
+
+## Phase 2 — real double-entry accounting architecture
+
+The cashbook is only the first usable layer. The next accounting release must be built as a proper journal system rather than extending the cashbook with more columns.
+
+### Core entities
+- Organisations and memberships: one user may work for multiple businesses; every record belongs to an organisation, not just an individual login.
+- Chart of accounts: country- and framework-specific account codes, account type, normal balance, tax mapping and effective dates.
+- Accounting periods: open, closing, closed and locked states; period boundaries and timezone/currency settings.
+- Journal entries: draft, posted and reversed states, source document, reference, posting date, created-by and approved-by.
+- Journal lines: account, debit, credit, currency, tax code, contact and optional cost centre/project.
+- Invoices and credit notes: sequential numbering, issue/due dates, supplier/customer details, line items, tax treatment, payment status and PDF output.
+- Bank accounts and statement lines: consent-based import, matching, duplicate detection and reconciliation.
+- Audit events: immutable record of create, update, approval, posting, reversal, export and period close.
+
+### Accounting invariants
+- A posted journal must balance: total debits equal total credits in the ledger currency.
+- Posted entries are immutable. Corrections use a linked reversal and replacement journal; never silently rewrite posted financial history.
+- Use decimal/fixed-precision arithmetic, not binary floating-point, for monetary posting.
+- Never aggregate currencies without an explicit exchange rate, source, date and conversion policy.
+- Tax codes and rates must be versioned by jurisdiction and effective date; never hard-code a single VAT assumption as universal.
+- Enforce organisation membership and role permissions in the database, not only in frontend controls.
+- Every export must preserve a traceable source and the accounting period it represents.
+
+### Posting workflow
+1. Create a draft journal or derive one from an invoice/expense.
+2. Validate accounts, period, tax code, currency and required source documents.
+3. Calculate totals with fixed precision and reject an unbalanced journal.
+4. Apply approval rules where configured.
+5. Post atomically through a database function/transaction; record audit event.
+6. Reconcile bank/payment evidence and attach source records.
+7. Close a period only after validation; reopen only with explicit privileged approval and audit event.
+
+### Country launch order
+Start with one country and one clearly scoped accounting framework (UK first if the product's initial market is UK). Have a qualified accountant review the chart of accounts, VAT logic, invoice requirements, year-end reports and HMRC integration before enabling statutory filing. Add EU/Romanian/Swiss localisations as separate reviewed packages rather than one generic global tax engine.
+
+### Student Desk next phase
+- Rubric builder with criterion weights and achievement descriptors.
+- Feedback matrix linking each criterion to exact evidence in the student's draft.
+- Draft version history and change comparison.
+- Referencing helper that checks format and flags missing source details without inventing sources.
+- Teacher mode for assignment creation, class-level progress and anonymised feedback; do not store identifiable student data without a lawful basis and appropriate institutional safeguards.
+- Clear AI-assistance disclosure and configurable institution policy; no detector evasion or deceptive authorship claims.
