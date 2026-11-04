@@ -198,8 +198,8 @@ test("administrator can open the Academy, Commerce and Business pilot brief buil
   await page.locator("#academyOutcome").fill("Lansarea unui magazin simplu");
   await page.locator("#academyBrief").fill("Curs practic cu exerciții.");
   await page.locator("#academyWorkspace button").click();
-  await expect(page.locator("#question")).toContainText("DR.VAS ACADEMY");
-  await expect(page.locator("#question")).toContainText("Bazele comerțului online");
+  await expect(page.locator("#question")).toHaveValue(/DR\\.VAS ACADEMY/);
+  await expect(page.locator("#question")).toHaveValue(/Bazele comerțului online/);
 
   await page.evaluate(() => selectModule("commerce", true));
   await expect(page.locator("#commerceWorkspace")).toBeVisible();
@@ -207,8 +207,8 @@ test("administrator can open the Academy, Commerce and Business pilot brief buil
   await page.locator("#commerceBudget").fill("100");
   await page.locator("#commerceBrief").fill("Fără stoc mare la început.");
   await page.locator("#commerceWorkspace button").click();
-  await expect(page.locator("#question")).toContainText("DR.VAS COMMERCE");
-  await expect(page.locator("#question")).toContainText("100");
+  await expect(page.locator("#question")).toHaveValue(/DR\\.VAS COMMERCE/);
+  await expect(page.locator("#question")).toHaveValue(/BUGET MAXIM: 100/);
 
   await page.evaluate(() => selectModule("business", true));
   await expect(page.locator("#businessWorkspace")).toBeVisible();
@@ -217,8 +217,8 @@ test("administrator can open the Academy, Commerce and Business pilot brief buil
   await page.locator("#businessGoal").fill("Primii 10 clienți");
   await page.locator("#businessBrief").fill("Pornire locală.");
   await page.locator("#businessWorkspace button").click();
-  await expect(page.locator("#question")).toContainText("DR.VAS BUSINESS");
-  await expect(page.locator("#question")).toContainText("Primii 10 clienți");
+  await expect(page.locator("#question")).toHaveValue(/DR\\.VAS BUSINESS/);
+  await expect(page.locator("#question")).toHaveValue(/Primii 10 clienți/);
 });
 
 test("non-admin users cannot open Academy, Commerce or Business pilot workspaces", async ({ page }) => {
