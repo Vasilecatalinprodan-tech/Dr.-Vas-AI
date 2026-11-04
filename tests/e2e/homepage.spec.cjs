@@ -285,6 +285,7 @@ test("Studio creates a branded MP4 render request and restores a private complet
     isDrvasAdmin = true;
     supabaseClient.storage = {
       from: () => ({
+        upload: async () => ({ data: { path: "e2e-studio-user/studio-assets/voice.mp3" }, error: null }),
         createSignedUrl: async () => ({ data: { signedUrl: "https://media.example.invalid/final.mp4" }, error: null })
       })
     };
@@ -292,6 +293,12 @@ test("Studio creates a branded MP4 render request and restores a private complet
   });
   await expect(page.locator("#studioWorkspace")).toBeVisible();
   await expect(page.locator("#studioRenderTitle")).toBeVisible();
+  await expect(page.locator("#studioProjectStatus")).toContainText("Studio este pregătit");
+  await page.locator("#studioSceneAudio").setInputFiles({
+    name: "voice.mp3",
+    mimeType: "audio/mpeg",
+    buffer: Buffer.from("e2e-audio")
+  });
   await page.locator("#studioProjectTitle").fill("Dr.Vas — primul teaser");
   await page.locator("#studioRenderCreateButton").click();
   await expect(page.locator("#studioRenderStatus")).toContainText("Randarea a pornit");
@@ -300,7 +307,8 @@ test("Studio creates a branded MP4 render request and restores a private complet
   expect(createPayload.render_script.width).toBe(1080);
   expect(createPayload.render_script.height).toBe(1920);
   expect(createPayload.render_script.duration).toBe(9);
-  expect(createPayload.render_script.elements).toHaveLength(3);
+  expect(createPayload.render_script.elements).toHaveLength(4);
+  expect(createPayload.render_script.elements.some(element => element.type === "audio" && element.name === "Studio-Voiceover")).toBe(true);
 
   await page.locator('button[onclick="checkStudioRenderStatus()"]').click();
   await expect(page.locator("#studioRenderPreview")).toBeVisible();
