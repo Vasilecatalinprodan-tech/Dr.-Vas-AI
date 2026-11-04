@@ -135,3 +135,14 @@ Priority decision: these founder-only workbenches are recorded in the product sc
 - Added a Playwright regression test: `legacy focused workspace never exposes other modules or cross-module history`.
 - Commits: UI CSS `4743ca398f719ac1eac1c2079a5df6b6468aa50a`; regression test `385a824b079c5cfb3de804628a7c5e648b721649` (branch head at time of writing). The browser regression and Worker deployment workflows for the latest commit were observed running; the previous intermediate commit's runs were cancelled after the subsequent push. Do not report the new tests or deployment as passed until the latest runs complete successfully.
 - Next implementation: complete and test the module isolation/navigation audit, then build the platform-level “Prezentarea Dr.Vas” experience with descriptions of all six core modules, professional localization across `ro`, `en`, `it`, `tr`, `de`, `fr`, `es`, `ru`, and speech-synthesis narration. Evaluate the owner's own voice only later with explicit consent and suitable privacy/provider review.
+
+
+## 2026-11-04 — First Dr.Vas platform presentation increment
+
+- Added a platform-level Prezentarea Dr.Vas entry point to the authenticated module-selection view.
+- Added a dedicated presentation panel with an introduction and six distinct module descriptions: Free, Health, Studio, Academy, Commerce and Business.
+- Added professional presentation copy for all eight supported languages (ro, en, it, tr, de, fr, es, ru), including translated titles, descriptions, disclaimer and audio controls.
+- Added browser speech-synthesis narration using the selected interface language, with play/stop controls and graceful handling when speech synthesis is unavailable. This uses the browser's available voice; it is not the founder's cloned voice.
+- Presentation states that Dr.Vas is under development, module availability varies, and regulated services require applicable authorisations and qualified human oversight. No video assets or claims of licensing/approval were added.
+- Frontend change committed as b4563b34886d91585cfdc761127b251b9ae15b64.
+- Automated browser tests and production deployment have not yet been confirmed for this presentation commit. Next: inspect CI, fix any failures, then visually verify the presentation and narration on production.
