@@ -1720,7 +1720,7 @@ function selectModule(moduleName,userInitiated=false){
     return;
   }
   if(moduleName!=="free"&&moduleName!=="health"&&!isDrvasAdmin){
-    const notice=tr("Acest modul este Premium și momentan privat. Dr.Vas Free rămâne disponibil tuturor utilizatorilor conectați.");
+    const notice=tr("Acest modul este Premium și momentan privat. Dr.Vas Free și Dr.Vas Health rămân disponibile tuturor utilizatorilor conectați.");
     const status=el("moduleSelectionStatus");
     if(status){status.textContent=notice;status.classList.remove("hidden");}
     const accessMessage=el("moduleAccessMessage");
