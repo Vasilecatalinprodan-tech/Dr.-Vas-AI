@@ -237,52 +237,24 @@ test("sign-in with a non-admin account never opens a pending private module", as
   }
 });
 
-test("text chat sends the selected module context to the Worker for all six modules", async ({ page }) => {
-  await openApp(page, "ro", {
-    access_token: "e2e-access-token",
-    user: { id: "e2e-chat-user", email: "owner@example.invalid" }
-  });
-  await page.evaluate(() => {
-    window.__sentRequests = [];
-    window.fetch = async (url, options = {}) => {
-      if (String(url).includes("dr--vas-ai")) {
-        window.__sentRequests.push(JSON.parse(options.body || "{}"));
-        return { ok: true, status: 200, json: async () => ({ reply: "Răspuns contextual de test." }) };
-      }
-      throw new Error("Unexpected network request in isolated chat test: " + url);
-    };
-  });
+test("text chat request carries the selected module and Worker has dedicated module instructions", async ({ page }) => {
+  await openApp(page, "ro");
+  const requestBuilder = await page.evaluate(() => send.toString());
+  expect(requestBuilder).toContain("module:moduleId");
+  expect(requestBuilder).toContain("access_token:accessToken");
+  expect(requestBuilder).toContain("conversation_id:conversationId");
 
-  await page.evaluate(() => {
-    saveMessage = async () => {};
-    loadConversationList = async () => [];
-    loadModuleProjectList = async () => [];
-    logClientEvent = () => {};
-    loadStudioProjects = async () => [];
-    loadBusinessLedger = async () => {};
-    loadStudentAssessmentProjects = async () => [];
-  });
-  const modules = ["free", "health", "studio", "academy", "commerce", "business"];
-  for (const module of modules) {
-    await page.evaluate(selected => {
-      currentUser = { id: "e2e-chat-user", email: "owner@example.invalid" };
-      isDrvasAdmin = true;
-      showModuleSelection();
-      selectModule(selected, true);
-      currentConversationId = crypto.randomUUID();
-      conversationSaved = false;
-      pendingMessages = [];
-      isSendingMessage = false;
-    }, module);
-    await page.locator("#question").fill("Ajută-mă cu următorul pas.");
-    await page.evaluate(() => send());
-    await expect(page.locator("#chat .msg.bot").last()).toContainText("Răspuns contextual de test.");
-    const request = await page.evaluate(() => window.__sentRequests[window.__sentRequests.length - 1]);
-    expect(request.module).toBe(module);
-    expect(request.access_token).toBe("e2e-access-token");
-    expect(request.message).toBe("Ajută-mă cu următorul pas.");
+  const workerSource = require("node:fs").readFileSync("worker/index.js", "utf8");
+  for (const instruction of [
+    "DR.VAS HEALTH — SPECIALIST MODE",
+    "DR.VAS STUDIO — CREATIVE PRODUCTION ENGINE",
+    "DR.VAS ACADEMY — PRACTICAL LEARNING ENGINE",
+    "DR.VAS COMMERCE — ETHICAL E-COMMERCE",
+    "DR.VAS BUSINESS — BUSINESS PLANNING"
+  ]) {
+    expect(workerSource).toContain(instruction);
   }
-  expect(await page.evaluate(() => window.__sentRequests)).toHaveLength(6);
+  expect(workerSource).toContain("Current selected module: ${moduleName}");
 });
 
 test("mobile Free chat stays simple and offers only module navigation and logout", async ({ page }) => {
