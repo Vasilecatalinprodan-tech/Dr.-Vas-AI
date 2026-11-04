@@ -2877,8 +2877,8 @@ function showModuleSelection(){
  if(!languageReady)return;
  document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode","history-open");
  document.documentElement.classList.remove("chat-focus-document");
- el("heroSection")?.classList.remove("hidden");
- document.querySelector(".origin-story")?.classList.remove("hidden");
+ el("heroSection")?.classList.add("hidden");
+ document.querySelector(".origin-story")?.classList.add("hidden");
  el("landingActions")?.classList.add("hidden");
  el("moduleSelectionShell")?.classList.add("modules-open");
  el("chatSection")?.classList.add("hidden");
@@ -2892,6 +2892,8 @@ function goToModules(){
  document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode","history-open");
  document.documentElement.classList.remove("chat-focus-document");
  el("chatSection")?.classList.add("hidden");
+ el("heroSection")?.classList.add("hidden");
+ document.querySelector(".origin-story")?.classList.add("hidden");
  el("moduleSelectionShell")?.classList.add("modules-open");
  el("landingActions")?.classList.add("hidden");
  ["authSection","profileSection"].forEach(id=>el(id)?.classList.add("hidden"));
@@ -3311,6 +3313,8 @@ async function showChat(user,displayName){
     " · " + (el("country").value || tr("Cont personal"));
 
   await refreshAdminPanel();
+  let pendingModule=null;try{pendingModule=sessionStorage.getItem("drvas_pending_module");if(pendingModule)sessionStorage.removeItem("drvas_pending_module");}catch{}
+  if(pendingModule&&["free","health","studio","academy","commerce","business"].includes(pendingModule))activeModule=pendingModule;
   selectModule(activeModule);
   loadStudioProjects().catch(error=>{console.warn("Studio project list unavailable:",error);setStudioProjectStatus(error.message.includes("drvas_studio_projects")?"Baza de date Studio nu este activată încă. Aplică migrarea SQL 202611030004_studio_projects.sql din Supabase.":"Nu am putut încărca proiectele: "+error.message,true);});
   ["academy","commerce","business"].forEach(module=>loadModuleProjectList(module).catch(error=>{
@@ -3336,6 +3340,7 @@ async function showChat(user,displayName){
     updateSaveButton();
     renderWelcome();
   }
+  if(pendingModule&&isDrvasAdmin){showModuleSelection();selectModule(pendingModule,true);}
   // Bring the conversation into view automatically; the user can still scroll up.
   scrollPageToChat();
 }
@@ -3584,6 +3589,7 @@ function showLogin(){
   ["authSection","profileSection","chatSection"].forEach(id=>el(id).classList.add("hidden"));
   // La deconectare revenim la pagina publică, fără panouri premium sau datele proiectelor anterioare.
   el("heroSection").classList.remove("hidden");
+  document.querySelector(".origin-story")?.classList.remove("hidden");
   el("moduleSelectionShell")?.classList.remove("modules-open");
   el("landingActions")?.classList.remove("hidden");
   document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode");
