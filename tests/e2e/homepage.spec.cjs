@@ -126,20 +126,18 @@ test("header chat button routes signed-out visitors to sign-in without hiding th
   expect(await page.evaluate(() => document.body.classList.contains("chat-focus-mode"))).toBe(false);
 });
 
-test("health stays available while premium modules remain gated for non-admin users", async ({ page }) => {
+test("all six modules remain private to administrators during the pilot", async ({ page }) => {
   await openApp(page, "ro");
   await page.evaluate(() => {
     currentUser = { id: "e2e-standard-user", email: "standard@example.invalid" };
     isDrvasAdmin = false;
-    selectModule("health", true);
   });
 
-  await expect(page.locator("#activeModuleName")).toContainText("Dr.Vas Health");
-  await expect(page.locator("#moduleAccessMessage")).toContainText("nu înlocuiește");
-  await page.evaluate(() => selectModule("studio", true));
-  await expect(page.locator("#moduleAccessMessage")).toContainText("Premium");
-  await expect(page.locator("#studioWorkspace")).toBeHidden();
-  await expect(page.locator("#activeModuleName")).toContainText("Dr.Vas Health");
+  for (const moduleId of ["free", "health", "studio", "academy", "commerce", "business"]) {
+    await page.evaluate(id => selectModule(id, true), moduleId);
+    await expect(page.locator("#moduleAccessMessage")).toContainText("pilot privat");
+    await expect(page.locator("#" + moduleId + "Workspace")).toBeHidden();
+  }
 });
 
 
@@ -358,15 +356,15 @@ test("Business workspace exposes the cashbook and Student Desk with working VAT 
   await expect(page.locator("#question")).toHaveValue(/nu rescrie integral lucrarea/i);
 });
 
-test("non-admin users cannot open Academy, Commerce or Business pilot workspaces", async ({ page }) => {
+test("non-admin users cannot open any of the six private pilot workspaces", async ({ page }) => {
   await openApp(page, "ro");
   await page.evaluate(() => {
     currentUser = { id: "e2e-standard-user", email: "standard@example.invalid" };
     isDrvasAdmin = false;
   });
-  for (const moduleId of ["academy", "commerce", "business"]) {
+  for (const moduleId of ["free", "health", "studio", "academy", "commerce", "business"]) {
     await page.evaluate(id => selectModule(id, true), moduleId);
-    await expect(page.locator("#moduleAccessMessage")).toContainText("Premium");
+    await expect(page.locator("#moduleAccessMessage")).toContainText("pilot privat");
     await expect(page.locator("#" + moduleId + "Workspace")).toBeHidden();
   }
 });
