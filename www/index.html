@@ -1419,6 +1419,7 @@ const uiObserver=new MutationObserver(records=>{
 uiObserver.observe(document.body,{childList:true,subtree:true});
 
 const REMEMBER_SESSION_KEY = "drvas_remember_me";
+const ACCOUNT_CHOICE_SESSION_KEY = "drvas_account_choice_confirmed";
 const authStorage = {
   getItem(key){
     const storage = localStorage.getItem(REMEMBER_SESSION_KEY) === "false" ? sessionStorage : localStorage;
@@ -3825,8 +3826,30 @@ async function checkSession(){
   try{
     const {data,error} = await supabaseClient.auth.getSession();
     if(error)throw error;
-    if(data.session) await showUser(data.session.user);
-    else showLogin();
+    if(data.session){
+      let accountChoiceConfirmed=false;
+      try{accountChoiceConfirmed=sessionStorage.getItem(ACCOUNT_CHOICE_SESSION_KEY)==="true"}catch{}
+      if(!accountChoiceConfirmed){
+        const connectedEmail=data.session.user?.email||"contul conectat";
+        const continueWithAccount=window.confirm(
+          "Dr.Vas a găsit o sesiune salvată pentru: "+connectedEmail+
+          ".\n\nContinui cu acest cont?\n\nApasă „Anulează” dacă vrei să te deconectezi și să alegi alt cont."
+        );
+        if(!continueWithAccount){
+          try{sessionStorage.setItem("drvas_pending_entry","modules")}catch{}
+          const {error:signOutError}=await supabaseClient.auth.signOut();
+          if(signOutError)throw signOutError;
+          try{sessionStorage.setItem(ACCOUNT_CHOICE_SESSION_KEY,"true")}catch{}
+          showLogin();
+          setLocalizedText(el("authMessage"),"Te-ai deconectat. Acum te poți conecta cu alt cont.");
+          return;
+        }
+        try{sessionStorage.setItem(ACCOUNT_CHOICE_SESSION_KEY,"true")}catch{}
+      }
+      await showUser(data.session.user);
+    }else{
+      showLogin();
+    }
   }catch(error){
     console.error("Supabase session check:",error);
     showLogin();
