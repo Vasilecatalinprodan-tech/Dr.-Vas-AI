@@ -113,3 +113,9 @@ The Worker deployment workflow now statically validates the repair migration's e
 - Outputs break-even units/revenue, contribution margin and estimated monthly operating result; assumptions are included in saved Business Plan projects.
 - Added E2E test for a known example (1,000 fixed costs, 50 price, 25 variable cost, 50 expected units → 40 break-even units, 2,000 break-even revenue, 50% contribution margin, 250 estimated monthly result). CI static checks also validate the calculator is present.
 - Scope remains planning/management information, not statutory accounts, tax advice or a guaranteed forecast. Phase-two double-entry accounting architecture is documented in the Business Desk roadmap.
+
+
+## Business calculator verification — 4 November 2026, 12:26 UTC
+- Latest Worker deployment run `41829164357` passed all static checks, SBOM generation, **16 browser E2E tests**, Worker deployment and production smoke test: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/41829164357
+- The 16 tests include the Studio MP4 render request/private-preview flow, Business cashbook VAT maths, Student Desk prompt, dedicated chat navigation and break-even calculator example.
+- Break-even calculator assumptions are saved in Business Plan projects via `MODULE_PROJECT_FIELDS.business`.
