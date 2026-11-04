@@ -162,3 +162,8 @@ Work in bounded 30-minute blocks. At the end of each block:
 ## Business Desk and Studio MVP plan
 
 See `docs/BUSINESS_DESK_AND_STUDIO_MVP_PLAN_2026-11-04.md` for the new Dr.Vas Books cashbook, Student Desk assessment-coaching workflow, database migration, scope limits and Studio delivery plan. The cashbook requires the Supabase migration `202611040003_business_cashbook.sql` before persistent entries can be saved. The current Runway workspace has no available video models, so Studio MP4 export is not yet active.
+
+
+## Studio MP4 renderer
+
+The Studio now includes an MP4 render workflow with private scene-image/audio uploads, captions, a server-injected `MADE BY VPC` watermark and private Supabase output storage. Setup and release requirements are documented in `docs/STUDIO_VOICE_VIDEO_ROADMAP_2026-11-04.md`. Production rendering still requires the Supabase migration `202611040004_studio_render_storage.sql` and a Cloudflare Worker secret named `CREATOMATE_API_KEY`; no real production render is claimed until both are configured and tested.
