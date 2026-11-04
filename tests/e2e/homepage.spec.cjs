@@ -312,6 +312,8 @@ test("logout removes administrator workspaces and clears private module drafts",
     document.querySelector("#adminPanel")?.classList.remove("hidden");
     document.querySelector("#businessProjectTitle").value = "Private plan";
     document.querySelector("#businessIdea").value = "Private business idea";
+    document.querySelector("#privateLegalName").value = "Private legal name";
+    document.querySelector("#privateProfileConsent").checked = true;
     showLogin();
   });
   await expect(page.locator("#businessWorkspace")).toBeHidden();
@@ -325,7 +327,9 @@ test("logout removes administrator workspaces and clears private module drafts",
     projectId: moduleProjectState.business,
     output: moduleProjectOutputs.business,
     title: document.querySelector("#businessProjectTitle").value,
-    idea: document.querySelector("#businessIdea").value
+    idea: document.querySelector("#businessIdea").value,
+    privateName: document.querySelector("#privateLegalName").value,
+    privateConsent: document.querySelector("#privateProfileConsent").checked
   }));
   expect(state.user).toBeNull();
   expect(state.admin).toBe(false);
@@ -333,4 +337,6 @@ test("logout removes administrator workspaces and clears private module drafts",
   expect(state.output).toBe("");
   expect(state.title).toBe("");
   expect(state.idea).toBe("");
+  expect(state.privateName).toBe("");
+  expect(state.privateConsent).toBe(false);
 });
