@@ -1961,6 +1961,18 @@ async function startLiveVoice(){
   liveAudioContext=new AudioContextClass();
   await liveAudioContext.resume();
 
+  const audioFile=el("studioSceneAudio")?.files?.[0]||null;
+  if(audioFile){
+   if(!["audio/mpeg","audio/wav","audio/mp4","audio/aac"].includes(audioFile.type))throw new Error("Voice-over-ul trebuie să fie MP3, WAV, M4A sau AAC.");
+   if(audioFile.size>15*1024*1024)throw new Error("Fișierul audio trebuie să aibă maximum 15 MB.");
+   const audioPath=currentUser.id+"/studio-assets/"+makeId()+"-voiceover";
+   studioRenderMessage("Încarc voice-over-ul în spațiul privat…");
+   const {error:audioUploadError}=await supabaseClient.storage.from("drvas-media").upload(audioPath,audioFile,{contentType:audioFile.type,upsert:false});
+   if(audioUploadError)throw audioUploadError;
+   const {data:audioSigned,error:audioSignedError}=await supabaseClient.storage.from("drvas-media").createSignedUrl(audioPath,3600);
+   if(audioSignedError||!audioSigned?.signedUrl)throw audioSignedError||new Error("Nu am putut crea adresa temporară pentru voice-over.");
+   elements.push({type:"audio",name:"Studio-Voiceover",track:3,time:0,duration,source:audioSigned.signedUrl,volume:1,loop:false});
+  }
   const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
   if(sessionError)throw sessionError;
   const accessToken=sessionData.session?.access_token;
