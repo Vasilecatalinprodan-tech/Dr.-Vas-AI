@@ -754,7 +754,7 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
      <label>Descriere<input id="businessLedgerDescription" maxlength="240" placeholder="Ex.: Factura client 001"></label>
      <label>Categorie<input id="businessLedgerCategory" maxlength="80" value="General" placeholder="Ex.: Transport, chirie, vânzări"></label>
      <label>Sumă<input id="businessLedgerAmount" type="number" min="0.01" max="999999999" step="0.01" placeholder="0.00"></label>
-     <label>Monedă<select id="businessLedgerCurrency" onchange="loadBusinessLedger()"><option value="GBP">GBP £</option><option value="EUR">EUR €</option><option value="RON">RON</option><option value="CHF">CHF</option><option value="USD">USD $</option></select></label>
+     <label>Monedă<select id="businessLedgerCurrency" onchange="loadBusinessLedger();calculateBusinessBreakEven()"><option value="GBP">GBP £</option><option value="EUR">EUR €</option><option value="RON">RON</option><option value="CHF">CHF</option><option value="USD">USD $</option></select></label>
      <label>Cotă TVA (%)<input id="businessLedgerVatRate" type="number" min="0" max="100" step="0.01" value="0"></label>
      <label class="remember-row"><input id="businessLedgerVatIncluded" type="checkbox" checked><span>TVA inclusă în suma introdusă</span></label>
     </div>
@@ -1431,7 +1431,7 @@ function selectModule(moduleName,userInitiated=false){
   }else{
     message.textContent="";
   }
-  if(moduleName==="business"&&currentUser&&isDrvasAdmin){if(el("businessLedgerDate")&&!el("businessLedgerDate").value)el("businessLedgerDate").value=new Date().toISOString().slice(0,10);loadBusinessLedger();loadStudentAssessmentProjects().catch(error=>console.warn("Student Desk project list:",error));loadModuleProjectList("business").catch(error=>console.warn("Business project list:",error));}
+  if(moduleName==="business"&&currentUser&&isDrvasAdmin){if(el("businessLedgerDate")&&!el("businessLedgerDate").value)el("businessLedgerDate").value=new Date().toISOString().slice(0,10);calculateBusinessBreakEven();loadBusinessLedger();loadStudentAssessmentProjects().catch(error=>console.warn("Student Desk project list:",error));loadModuleProjectList("business").catch(error=>console.warn("Business project list:",error));}
   if(userInitiated&&currentUser)logClientEvent("module_selected",moduleName);
 }
 
