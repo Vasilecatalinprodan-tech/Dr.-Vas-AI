@@ -1475,7 +1475,7 @@ const DRVAS_PRESENTATION={
 function renderDrvasPresentation(){
  const data=DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro;
  const set=(id,value)=>{const node=el(id);if(node)node.textContent=value};
- set("presentationOpenButton","▶ "+data.open);set("drvasPresentationEyebrow",data.eyebrow);set("drvasPresentationTitle",data.title);set("drvasPresentationIntro",data.intro);set("drvasPresentationDisclaimer",data.disclaimer);set("presentationPlayButton", "▶ "+data.play);const close=el("presentationCloseButton");if(close)close.setAttribute("aria-label",data.close);set("presentationStopButton","■ "+data.stop);set("presentationAudioStatus",data.ready);
+ set("presentationOpenButton","▶ "+data.open);set("drvasPresentationEyebrow",data.eyebrow);set("drvasPresentationTitle",data.title);set("drvasPresentationIntro",data.intro);set("drvasPresentationDisclaimer",data.disclaimer);set("presentationPlayButton", "▶ "+data.play);const close=el("presentationCloseButton");if(close){close.setAttribute("aria-label",data.close);let saved=attributeOrigins.get(close);if(!saved){saved={};attributeOrigins.set(close,saved)}saved["aria-label"]=data.close;}set("presentationStopButton","■ "+data.stop);set("presentationAudioStatus",data.ready);
  const grid=el("presentationModuleGrid");
  if(grid){const names=["Dr.Vas Free","Dr.Vas Health","Dr.Vas Studio","Dr.Vas Academy","Dr.Vas Commerce","Dr.Vas Business"],icons=["✦","✚","🎬","🎓","🛒","📊"];grid.querySelectorAll(".presentation-module").forEach((card,i)=>{const p=card.querySelector("p");if(p)p.textContent=data.items[i]||"";const h=card.querySelector("h3");if(h)h.textContent=names[i];const icon=card.querySelector("span");if(icon)icon.textContent=icons[i]})}
 }
