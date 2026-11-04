@@ -45,14 +45,37 @@ test("first visit shows the Dr.Vas landing page, language selector and clear ent
   await expect(page.locator("#appMain")).not.toHaveClass(/language-pending/);
 });
 
-test("saved language keeps the presentation first and reveals modules only after the CTA", async ({ page }) => {
+test("primary Dr.Vas CTA is above the hero description and sends visitors to login first", async ({ page }) => {
   await openApp(page, "ro");
   await expect(page.locator("#heroSection")).toBeVisible();
   await expect(page.locator("#languageGate")).toBeVisible();
   await expect(page.locator("#moduleSelectionShell")).toBeHidden();
+  const order = await page.evaluate(() => {
+    const button = document.querySelector("#heroChatCta");
+    const description = document.querySelector("#heroSection .hero-content p");
+    return button.compareDocumentPosition(description) & Node.DOCUMENT_POSITION_FOLLOWING;
+  });
+  expect(order).toBeTruthy();
   await page.locator("#headerChatCta").click();
+  await expect(page.locator("#authSection")).toBeVisible();
+  await expect(page.locator("#moduleSelectionSection")).toHaveClass(/auth-flow-mode/);
+  expect(await page.evaluate(() => sessionStorage.getItem("drvas_pending_entry"))).toBe("modules");
+  await expect(page.locator("#chatSection")).toBeHidden();
+});
+
+test("successful login returns the visitor to the module chooser", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(async () => {
+    sessionStorage.setItem("drvas_pending_entry", "modules");
+    window.refreshAdminPanel = async () => { isDrvasAdmin = true; };
+    window.loadConversationList = async () => [];
+    window.loadStudioProjects = async () => [];
+    window.loadModuleProjectList = async () => [];
+    window.showChat({ id: "e2e-entry-user", email: "founder@example.invalid" }, "E2E");
+  });
   await expect(page.locator("#moduleSelectionShell")).toBeVisible();
-  await expect(page.locator('[data-module]')).toHaveCount(6);
+  await expect(page.locator("#moduleSelectionSection")).not.toHaveClass(/auth-flow-mode/);
+  await expect(page.locator("#chatSection")).toBeHidden();
 });
 
 test("showChat keeps the landing page until the user chooses to enter the modules", async ({ page }) => {
