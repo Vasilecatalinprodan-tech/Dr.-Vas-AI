@@ -273,6 +273,19 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 .crypto-admin-heading p{margin:0;color:#91acbd;font-size:12px;line-height:1.5}
 .crypto-status{white-space:nowrap;border:1px solid #b78a3e;border-radius:20px;padding:5px 9px;color:#f0c879;font-size:10px;font-weight:700;letter-spacing:.04em}
 .crypto-device-table{min-width:720px}
+.crypto-calculator{margin-top:18px;padding:15px;background:#091827;border:1px solid #29465b;border-radius:13px}
+.crypto-calculator h5{margin:0 0 6px;color:#d7e9ef;font-size:14px}
+.crypto-calculator p{margin:0 0 12px;color:#91acbd;font-size:12px;line-height:1.5}
+.crypto-calculator-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.crypto-calculator label{display:flex;flex-direction:column;gap:5px;color:#a9bfce;font-size:12px}
+.crypto-calculator input{width:100%;min-width:0;padding:10px;background:#071827;border:1px solid #34536a;border-radius:9px;color:#fff;font:inherit}
+.crypto-calculator-results{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-top:13px}
+.crypto-calculator-results div{padding:11px;background:#10283a;border:1px solid #29465b;border-radius:10px}
+.crypto-calculator-results small{display:block;color:#91acbd;font-size:10px}
+.crypto-calculator-results strong{display:block;margin-top:5px;color:#65ddd5;font-size:15px;overflow-wrap:anywhere}
+@media(max-width:700px){.crypto-calculator-grid,.crypto-calculator-results{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.crypto-calculator-grid,.crypto-calculator-results{grid-template-columns:1fr}}
+
 
 .admin-topline{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
 .admin-topline h3{margin:0 0 5px}
@@ -1060,6 +1073,27 @@ body.free-module-mode #chatSection .chat-module-rail,body.free-module-mode #chat
      </table>
     </div>
     <p class="admin-footnote">Nu se colectează chei private, seed phrases sau parole. Următorul pas va fi înscrierea cu cheie criptografică a dispozitivului și aprobare explicită.</p>
+    <div class="crypto-calculator" aria-labelledby="cryptoCalcHeading">
+     <h5 id="cryptoCalcHeading">₿ Calculator de rentabilitate Bitcoin</h5>
+     <p>Estimare orientativă pe baza valorilor introduse de tine. Nu citește cotații live și nu pornește mining. Verifică separat consumul real și estimarea pool-ului.</p>
+     <div class="crypto-calculator-grid">
+      <label>BTC estimat / zi<input id="cryptoBtcPerDay" type="number" min="0" step="0.00000001" value="0.0003" oninput="calculateCryptoMiningEconomics()"></label>
+      <label>Preț BTC (£)<input id="cryptoBtcPrice" type="number" min="0" step="0.01" value="60000" oninput="calculateCryptoMiningEconomics()"></label>
+      <label>Consum echipament (W)<input id="cryptoPowerWatts" type="number" min="0" step="1" value="1500" oninput="calculateCryptoMiningEconomics()"></label>
+      <label>Electricitate (£ / kWh)<input id="cryptoElectricityRate" type="number" min="0" step="0.001" value="0.25" oninput="calculateCryptoMiningEconomics()"></label>
+      <label>Comision pool (%)<input id="cryptoPoolFee" type="number" min="0" max="100" step="0.01" value="1" oninput="calculateCryptoMiningEconomics()"></label>
+      <label>Cost echipament (£)<input id="cryptoHardwareCost" type="number" min="0" step="0.01" value="1000" oninput="calculateCryptoMiningEconomics()"></label>
+     </div>
+     <div class="crypto-calculator-results" aria-live="polite">
+      <div><small>Venit brut / zi</small><strong id="cryptoGrossDaily">£0.00</strong></div>
+      <div><small>Curent / zi</small><strong id="cryptoEnergyDaily">£0.00</strong></div>
+      <div><small>Comision pool / zi</small><strong id="cryptoPoolDaily">£0.00</strong></div>
+      <div><small>Rezultat net / zi</small><strong id="cryptoNetDaily">£0.00</strong></div>
+      <div><small>Rezultat net / 30 zile</small><strong id="cryptoNetMonthly">£0.00</strong></div>
+      <div><small>Recuperare echipament</small><strong id="cryptoPayback">—</strong></div>
+     </div>
+     <p id="cryptoCalcNotice" class="admin-footnote" role="status">Calcul demonstrativ. Mining-ul și tranzacționarea rămân dezactivate.</p>
+    </div>
    </section>
    <section class="crypto-admin-card" aria-labelledby="founderProvenanceHeading">
     <div class="crypto-admin-heading">
@@ -3231,6 +3265,34 @@ async function verifyFounderProvenance(){
    ?"✓ Semnătură Ed25519 și integritate SHA-256 verificate. Fondator: "+result.public_claim.founder.name+" · Colaborator AI: "+result.public_claim.collaborator.name+" · "+result.signed_at
    :"⚠ Înregistrarea există, dar semnătura sau amprenta nu a putut fi verificată.";
  }catch(error){notice.textContent=error.message||"Eroare la verificare.";console.error("Founder provenance verify:",error);}
+}
+
+function calculateCryptoMiningEconomics(){
+  const read=id=>Number(el(id)?.value||0);
+  const btc=read("cryptoBtcPerDay"),price=read("cryptoBtcPrice");
+  const watts=read("cryptoPowerWatts"),rate=read("cryptoElectricityRate");
+  const fee=read("cryptoPoolFee"),hardware=read("cryptoHardwareCost");
+  const ids=["cryptoBtcPerDay","cryptoBtcPrice","cryptoPowerWatts","cryptoElectricityRate","cryptoPoolFee","cryptoHardwareCost"];
+  const valid=ids.every(id=>Number.isFinite(read(id))&&read(id)>=0)&&fee<=100;
+  const notice=el("cryptoCalcNotice");
+  if(!valid){
+    if(notice)notice.textContent="Verifică valorile: toate trebuie să fie pozitive, iar comisionul pool între 0 și 100%.";
+    return;
+  }
+  const gross=btc*price;
+  const energy=(watts/1000)*24*rate;
+  const pool=gross*(fee/100);
+  const net=gross-energy-pool;
+  const money=value=>"£"+value.toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2});
+  el("cryptoGrossDaily").textContent=money(gross);
+  el("cryptoEnergyDaily").textContent=money(energy);
+  el("cryptoPoolDaily").textContent=money(pool);
+  el("cryptoNetDaily").textContent=money(net);
+  el("cryptoNetMonthly").textContent=money(net*30);
+  el("cryptoPayback").textContent=net>0?(hardware/net).toFixed(0)+" zile": "Nu se recuperează";
+  if(notice)notice.textContent=net>0
+    ?"Estimare pozitivă înainte de taxe, mentenanță, amortizare și variația dificultății/recompenselor. Nu este o promisiune de profit."
+    :"La aceste ipoteze, costul energiei și comisionul depășesc venitul estimat. Nu cumpăra echipament pe baza acestui calcul.";
 }
 
 async function loadCryptoDevices(){
