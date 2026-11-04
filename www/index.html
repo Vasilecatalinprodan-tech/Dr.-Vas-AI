@@ -3352,9 +3352,21 @@ async function showChat(user,displayName){
     updateSaveButton();
     renderWelcome();
   }
-  if(pendingModule&&isDrvasAdmin){showModuleSelection();selectModule(pendingModule,true);}
-  // Bring the conversation into view automatically; the user can still scroll up.
-  scrollPageToChat();
+  if(pendingModule){
+    showModuleSelection();
+    selectModule(pendingModule,true);
+    if(isDrvasAdmin)scrollPageToChat();
+  }else{
+    // Restored sessions start on the public presentation; module navigation is always an explicit choice.
+    el("chatSection")?.classList.add("hidden");
+    el("heroSection")?.classList.remove("hidden");
+    document.querySelector(".origin-story")?.classList.remove("hidden");
+    el("landingActions")?.classList.remove("hidden");
+    el("moduleSelectionShell")?.classList.remove("modules-open");
+    el("moduleSelectionSection")?.classList.remove("hidden");
+    document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode","history-open");
+    document.documentElement.classList.remove("chat-focus-document");
+  }
 }
 
 function renderWelcome(){
