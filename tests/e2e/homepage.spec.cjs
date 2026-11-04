@@ -225,6 +225,8 @@ test("administrator can open the Academy, Commerce and Business pilot brief buil
   await page.locator("#academyOutcome").fill("Lansarea unui magazin simplu");
   await page.locator("#academyBrief").fill("Curs practic cu exerciții.");
   await page.locator('#academyWorkspace button[onclick="buildAcademyPrompt()"]').click();
+  await expect(page.locator("#chatSection")).toBeVisible();
+  await expect(page.locator("#question")).toBeVisible();
   await expect(page.locator("#question")).toHaveValue(/DR.VAS ACADEMY/);
   await expect(page.locator("#question")).toHaveValue(/Bazele comerțului online/);
 
@@ -284,6 +286,8 @@ test("Business workspace exposes the cashbook and Student Desk with working VAT 
   await page.locator("#studentAssessmentDraft").fill("My draft explains the strategy and its limitations.");
   await page.locator("#studentAssessmentRubric").fill("Analysis 40%, evidence 30%, structure 30%.");
   await page.locator('#businessWorkspace button[onclick="buildStudentAssessmentPrompt()"]').click();
+  await expect(page.locator("#chatSection")).toBeVisible();
+  await expect(page.locator("#question")).toBeVisible();
   await expect(page.locator("#question")).toHaveValue(/DR.VAS STUDENT DESK/);
   await expect(page.locator("#question")).toHaveValue(/nu rescrie integral lucrarea/i);
 });
