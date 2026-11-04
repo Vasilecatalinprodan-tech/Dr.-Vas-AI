@@ -675,6 +675,11 @@ body.module-workspace-mode.free-module-mode #chatSection{
   width:100%!important;
   max-width:100%!important;
 }
+/* The legacy workspace display rule must never override a module's hidden state. */
+body.module-workspace-mode .module-workspace.hidden,
+body.module-workspace-mode .studio-workspace.hidden{
+  display:none!important;
+}
 /* Authentication and profile are shown inside the module shell without exposing the module dashboard. */
 .module-selection-shell.auth-flow-mode{display:block!important}
 #moduleSelectionShell.auth-flow-mode > #moduleSelectionSection > :not(#authSection):not(#profileSection){display:none!important}
