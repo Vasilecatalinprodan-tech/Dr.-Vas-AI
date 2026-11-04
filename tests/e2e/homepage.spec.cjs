@@ -829,7 +829,7 @@ test("Academy, Commerce and Business projects are saved, reopened and deleted pe
     await expect(page.locator("#" + item.id + "ProjectList option")).toHaveCount(1);
   }
 
-  await page.evaluate(() => selectModule("business", true));
+  // The Business workspace is already active after the project loop; avoid re-entering it while its project list refresh is still resolving.
   await page.locator("#studentAssessmentSubject").fill("Business Management");
   await page.locator("#studentAssessmentBrief").fill("Assess a business strategy using evidence.");
   await page.locator("#studentAssessmentRubric").fill("Analysis 40%, evidence 30%, structure 30%.");
