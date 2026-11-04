@@ -114,3 +114,39 @@ test("health stays available while premium modules remain gated for non-admin us
   await expect(page.locator("#studioWorkspace")).toBeHidden();
   await expect(page.locator("#activeModuleName")).toContainText("Dr.Vas Health");
 });
+
+
+test("first spoken answer waits for asynchronously loaded browser voices and plays without Replay", async ({ page }) => {
+  await openApp(page, "ro");
+
+  const playback = await page.evaluate(async () => {
+    let voices = [];
+    const listeners = new Set();
+    window.__DRVAS_SPOKEN__ = [];
+    const synth = {
+      getVoices: () => voices,
+      addEventListener: (name, callback) => { if (name === "voiceschanged") listeners.add(callback); },
+      removeEventListener: (name, callback) => { if (name === "voiceschanged") listeners.delete(callback); },
+      cancel() {},
+      resume() {},
+      speak: utterance => {
+        window.__DRVAS_SPOKEN__.push({ text: utterance.text, voice: utterance.voice?.name || "" });
+        utterance.onstart?.();
+        utterance.onend?.();
+      }
+    };
+    Object.defineProperty(window, "speechSynthesis", { configurable: true, value: synth });
+    window.SpeechSynthesisUtterance = function (text) { this.text = text; };
+    window.voiceAutoRead = true;
+    setTimeout(() => {
+      voices = [{ name: "Andrei Romanian", lang: "ro-RO", voiceURI: "andrei-ro" }];
+      [...listeners].forEach(callback => callback());
+    }, 100);
+    await window.speakDrVas("Primul răspuns Dr Vas.");
+    return window.__DRVAS_SPOKEN__;
+  });
+
+  expect(playback).toHaveLength(1);
+  expect(playback[0].text).toContain("Primul răspuns Dr Vas");
+  expect(playback[0].voice).toBe("Andrei Romanian");
+});
