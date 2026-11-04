@@ -295,3 +295,12 @@ Founder proposed adding revenue-generating writing, translation and music servic
 6. Continue the privacy/account lifecycle audit and Studio roadmap only after the core app is stable.
 
 The user asked to preserve this session and resume tomorrow. This file is the durable technical checkpoint; it does not claim that work continues in the background after the chat is closed.
+
+
+### Additional source-level checks — 2026-11-04
+
+- Re-fetched the current frontend and Worker from the working branch after the documentation commits. Frontend: one inline script; no duplicate HTML IDs; no `eval()` or `new Function()`; no service-role/provider secret assignment detected in frontend source. The frontend contains the Supabase publishable key, which is expected to be public and must remain protected by Supabase RLS.
+- Reviewed all nine direct `innerHTML` assignment sites found by the scan: they clear containers or assign a fixed static option element; no user-generated message/title/brief is interpolated into those assignments. This is a targeted static check, not a complete XSS/security penetration test.
+- Confirmed the Worker checks the atomic rate-limit RPC for both AI chat and Live token issuance and returns HTTP 503 when the limiter is unavailable; it returns HTTP 429 when a limit is exceeded. The earlier automated string-scan flag was a false negative caused by looking for the wrong marker; direct source inspection confirmed the fail-closed branches.
+- Confirmed that the frontend does not persist access tokens via direct `localStorage.setItem` calls in the inspected source; Supabase Auth manages its own session persistence. Browser storage still contains non-secret preferences and the active conversation pointer.
+- Documentation checkpoint commits: status `9846aa1eb55757754415c091b04567072e1bf5d8`; handoff `a4bc7b99828e15055ab301739cd31c98ad277c8c`; session log `7c3826c15ae9309e951ff5fd652bd43b9d49b1ed`. The final session-log update in this section is the next commit after those three.
