@@ -59,6 +59,7 @@ jobs:
           const migration = fs.readFileSync('supabase/migrations/202611030001_rate_limits.sql', 'utf8');
           const moduleMigration = fs.readFileSync('supabase/migrations/202611040001_module_projects.sql', 'utf8');
           const rateLimitRepair = fs.readFileSync('supabase/migrations/202611040002_repair_rate_limit_rpc.sql', 'utf8');
+          const businessCashbook = fs.readFileSync('supabase/migrations/202611040003_business_cashbook.sql', 'utf8');
           const checks = [
             [!worker.includes('"Access-Control-Allow-Origin": "*"'), 'Wildcard CORS must not be enabled'],
             [worker.includes('64 * 1024'), 'Worker request body limit is missing'],
@@ -84,6 +85,15 @@ jobs:
             [moduleMigration.toLowerCase().includes('revoke all on table public.drvas_module_projects from public, anon'), 'Module project table must deny public and anonymous access'],
             [html.includes('function saveModuleProject(module)'), 'Module project save workflow is missing'],
             [html.includes('function openModuleProject(module)'), 'Module project open workflow is missing'],
+            [businessCashbook.includes('CREATE TABLE IF NOT EXISTS public.drvas_business_transactions'), 'Business cashbook migration must create its transaction table'],
+            [businessCashbook.includes('ENABLE ROW LEVEL SECURITY'), 'Business cashbook must enable row-level security'],
+            [businessCashbook.includes('auth.uid() = user_id'), 'Business cashbook policies must enforce per-user ownership'],
+            [businessCashbook.includes('TO authenticated'), 'Business cashbook must restrict access to authenticated users'],
+            [businessCashbook.includes('REFERENCES auth.users(id) ON DELETE CASCADE'), 'Business cashbook entries must cascade on account deletion'],
+            [html.includes('function saveBusinessTransaction()') && html.includes('function loadBusinessLedger()'), 'Business cashbook save/load functions are missing'],
+            [html.includes('function buildStudentAssessmentPrompt()'), 'Student Desk assessment feedback builder is missing'],
+            [html.includes('function saveStudentAssessmentProject()') && html.includes('function openStudentAssessmentProject()'), 'Student Desk private project save/open functions are missing'],
+            [html.includes('businessLedgerVat') && html.includes('businessLedgerIncome') && html.includes('businessLedgerExpenses'), 'Business cashbook summary is incomplete'],
             [html.includes('isDrvasAdmin = false;') && html.includes('businessWorkspace'), 'Logout must reset administrator access and workspace state']
           ];
           for (const [ok, message] of checks) {
