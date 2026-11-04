@@ -202,3 +202,16 @@ User asked to continue development and save all progress and the conversation. T
 - Added stable element IDs for both controls. The existing presentation close-focus behavior can now find the close button by ID.
 - Commit `1d4ea9929704661b1431a8f670f38e4c6304083b` extends the browser regression test to check the localized open label and close-button accessible name in all eight languages, alongside module descriptions and speech locale.
 - These improvements are committed on `drvas-integrated-platform`; the browser workflow still needs to execute before this can be called tested.
+
+
+### Follow-up presentation-control refinement
+- Commit `493fecbc75b44e73c9b9df32f44fb8d37868d702` adds localized open/close presentation labels for all eight languages, stable IDs for both buttons, and a translated accessible name on the close button.
+- Commit `1d4ea9929704661b1431a8f670f38e4c6304083b` extends the multilingual browser test to assert those control labels and accessible names.
+- A small in-session sanity check of the CSS track parser returned 1 for `1440px` and `minmax(0px, 1fr)`, and 2 for two separate tracks. This validates the parser logic only; it is not a browser E2E run.
+- Current source file blob identifiers on this branch at the time of this note: frontend `6d82766d1e2028caa8f6ab9191690e8fc73b654b`; E2E test `f319fc43629678a1c8239309b1f4ff7e3b4ee888`.
+- The latest continuity document is updated separately in this commit. No claim of CI success or production deployment is made.
+
+### Conversation checkpoint — latest user request
+- User: “ok continua si salveaza ce ai facut pana acum si conversatia de asemenea”.
+- Meaning: continue the Dr.Vas work and preserve both implementation progress and the conversation as a durable project record.
+- Assistant action: continued with the CSS regression-test correction and the multilingual presentation-control refinement, then updated this continuity document. Keep the agreed communication style: no repetitive step-by-step progress messages; report after a coherent block is finished.
