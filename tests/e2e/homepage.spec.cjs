@@ -233,3 +233,72 @@ test("non-admin users cannot open Academy, Commerce or Business pilot workspaces
     await expect(page.locator("#" + moduleId + "Workspace")).toBeHidden();
   }
 });
+
+test("Academy, Commerce and Business projects are saved, reopened and deleted per user", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-project-owner", email: "owner@example.invalid" };
+    isDrvasAdmin = true;
+    const rows = [];
+    let nextId = 1;
+    supabaseClient = {
+      from(table) {
+        let operation = "select", payload = null, filters = {};
+        const matches = row => Object.entries(filters).every(([key, value]) => row[key] === value);
+        const execute = () => {
+          if (table !== "drvas_module_projects") return { data: null, error: { message: "Unexpected table" } };
+          if (operation === "insert") {
+            const row = { ...payload, id: "module-project-" + nextId++, created_at: new Date().toISOString(), updated_at: payload.updated_at };
+            rows.push(row);
+            return { data: row, error: null };
+          }
+          if (operation === "update") {
+            const row = rows.find(matches);
+            if (!row) return { data: null, error: { message: "Not found" } };
+            Object.assign(row, payload);
+            return { data: row, error: null };
+          }
+          if (operation === "delete") {
+            for (let i = rows.length - 1; i >= 0; i--) if (matches(rows[i])) rows.splice(i, 1);
+            return { data: null, error: null };
+          }
+          return { data: rows.filter(matches).sort((a,b) => b.updated_at.localeCompare(a.updated_at)), error: null };
+        };
+        const query = {
+          select() { return this; },
+          eq(key, value) { filters[key] = value; return this; },
+          order() { return this; },
+          limit() { return this; },
+          insert(value) { operation = "insert"; payload = value; return this; },
+          update(value) { operation = "update"; payload = value; return this; },
+          delete() { operation = "delete"; return this; },
+          single() { const result = execute(); return Promise.resolve({ data: Array.isArray(result.data) ? result.data[0] : result.data, error: result.error }); },
+          then(resolve, reject) { return Promise.resolve(execute()).then(resolve, reject); }
+        };
+        return query;
+      }
+    };
+  });
+
+  const modules = [
+    { id: "academy", primary: "academySubject", value: "Curs de antreprenoriat", title: "Curs pilot" },
+    { id: "commerce", primary: "commerceProduct", value: "Accesorii pentru casă", title: "Analiză produs" },
+    { id: "business", primary: "businessIdea", value: "Servicii locale", title: "Plan afaceri" }
+  ];
+  for (const item of modules) {
+    await page.evaluate(id => selectModule(id, true), item.id);
+    await page.locator("#" + item.primary).fill(item.value);
+    await page.locator("#" + item.id + "ProjectTitle").fill(item.title);
+    await page.evaluate(id => saveModuleProject(id), item.id);
+    await expect(page.locator("#" + item.id + "ProjectStatus")).toContainText("salvat");
+    await expect(page.locator("#" + item.id + "ProjectList option")).toHaveCount(2);
+
+    await page.locator("#" + item.primary).fill("Valoare modificată");
+    await page.evaluate(id => openModuleProject(id), item.id);
+    await expect(page.locator("#" + item.primary)).toHaveValue(item.value);
+
+    page.once("dialog", dialog => dialog.accept());
+    await page.evaluate(id => deleteModuleProject(id), item.id);
+    await expect(page.locator("#" + item.id + "ProjectList option")).toHaveCount(1);
+  }
+});
