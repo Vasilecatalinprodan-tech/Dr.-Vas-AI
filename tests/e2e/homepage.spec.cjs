@@ -198,7 +198,7 @@ test("administrator can open the Academy, Commerce and Business pilot brief buil
   await page.locator("#academyOutcome").fill("Lansarea unui magazin simplu");
   await page.locator("#academyBrief").fill("Curs practic cu exerciții.");
   await page.locator("#academyWorkspace button").click();
-  await expect(page.locator("#question")).toHaveValue(/DR\\.VAS ACADEMY/);
+  await expect(page.locator("#question")).toHaveValue(/DR.VAS ACADEMY/);
   await expect(page.locator("#question")).toHaveValue(/Bazele comerțului online/);
 
   await page.evaluate(() => selectModule("commerce", true));
@@ -207,7 +207,7 @@ test("administrator can open the Academy, Commerce and Business pilot brief buil
   await page.locator("#commerceBudget").fill("100");
   await page.locator("#commerceBrief").fill("Fără stoc mare la început.");
   await page.locator("#commerceWorkspace button").click();
-  await expect(page.locator("#question")).toHaveValue(/DR\\.VAS COMMERCE/);
+  await expect(page.locator("#question")).toHaveValue(/DR.VAS COMMERCE/);
   await expect(page.locator("#question")).toHaveValue(/BUGET MAXIM: 100/);
 
   await page.evaluate(() => selectModule("business", true));
@@ -217,7 +217,7 @@ test("administrator can open the Academy, Commerce and Business pilot brief buil
   await page.locator("#businessGoal").fill("Primii 10 clienți");
   await page.locator("#businessBrief").fill("Pornire locală.");
   await page.locator("#businessWorkspace button").click();
-  await expect(page.locator("#question")).toHaveValue(/DR\\.VAS BUSINESS/);
+  await expect(page.locator("#question")).toHaveValue(/DR.VAS BUSINESS/);
   await expect(page.locator("#question")).toHaveValue(/Primii 10 clienți/);
 });
 
