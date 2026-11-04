@@ -248,6 +248,46 @@ test("administrator can open the Academy, Commerce and Business pilot brief buil
   await expect(page.locator("#question")).toHaveValue(/Primii 10 clienți/);
 });
 
+test("Business workspace exposes the cashbook and Student Desk with working VAT maths and academic feedback brief", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-business-user", email: "admin@example.invalid" };
+    isDrvasAdmin = true;
+    selectModule("business", true);
+  });
+  await expect(page.locator("#businessWorkspace")).toBeVisible();
+  await expect(page.locator("#businessCashbookTitle")).toBeVisible();
+  await expect(page.locator("#businessAssessmentTitle")).toBeVisible();
+
+  const accounting = await page.evaluate(() => {
+    businessLedgerState.rows = [
+      { id: "income-1", currency: "GBP", entry_type: "income", amount: 120, vat_rate: 20, vat_included: true, transaction_date: "2026-11-04", description: "Client payment", category: "Sales" },
+      { id: "expense-1", currency: "GBP", entry_type: "expense", amount: 60, vat_rate: 20, vat_included: true, transaction_date: "2026-11-04", description: "Materials", category: "Supplies" }
+    ];
+    renderBusinessLedger();
+    return {
+      income: document.querySelector("#businessLedgerIncome").textContent,
+      expenses: document.querySelector("#businessLedgerExpenses").textContent,
+      net: document.querySelector("#businessLedgerNet").textContent,
+      vat: document.querySelector("#businessLedgerVat").textContent,
+      rows: document.querySelectorAll("#businessLedgerRows tbody tr").length
+    };
+  });
+  expect(accounting.income).toContain("120");
+  expect(accounting.expenses).toContain("60");
+  expect(accounting.net).toContain("60");
+  expect(accounting.vat).toContain("10");
+  expect(accounting.rows).toBe(2);
+
+  await page.locator("#studentAssessmentSubject").fill("Business Management");
+  await page.locator("#studentAssessmentBrief").fill("Evaluate a business strategy using evidence.");
+  await page.locator("#studentAssessmentDraft").fill("My draft explains the strategy and its limitations.");
+  await page.locator("#studentAssessmentRubric").fill("Analysis 40%, evidence 30%, structure 30%.");
+  await page.locator('#businessWorkspace button[onclick="buildStudentAssessmentPrompt()"]').click();
+  await expect(page.locator("#question")).toHaveValue(/DR.VAS STUDENT DESK/);
+  await expect(page.locator("#question")).toHaveValue(/nu rescrie integral lucrarea/i);
+});
+
 test("non-admin users cannot open Academy, Commerce or Business pilot workspaces", async ({ page }) => {
   await openApp(page, "ro");
   await page.evaluate(() => {
