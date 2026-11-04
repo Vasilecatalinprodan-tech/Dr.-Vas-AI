@@ -2966,7 +2966,9 @@ function showOnly(section){
   el("heroSection")?.classList.add("hidden");
   document.querySelector(".origin-story")?.classList.add("hidden");
   el("landingActions")?.classList.add("hidden");
-  el("moduleSelectionShell")?.classList.add("hidden");
+  // Auth/profile cards are siblings of the module chooser inside this shell.
+  // Keep the shell visible, but hide the chooser itself so auth remains visible.
+  el("moduleSelectionShell")?.classList.remove("hidden","modules-open");
   el("moduleSelectionSection")?.classList.add("hidden");
   el("moduleSelectionSection")?.classList.remove("auth-flow-mode");
   document.body.classList.remove("module-workspace-mode","free-module-mode");
