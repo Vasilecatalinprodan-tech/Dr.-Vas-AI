@@ -228,3 +228,19 @@ Desktop-specific diagnostic hypothesis, not yet confirmed:
 - `showChat()` awaits `refreshAdminPanel()` before restoring pending module navigation. A different persisted Supabase account/session on desktop, a stale cached front-end, or an admin-status response difference could therefore explain phone/desktop divergence.
 - Do not weaken server-side admin checks or expose private modules. Ask user for the exact desktop behaviour/message (no response, login screen, or admin access warning), and test with hard refresh / private window. If it persists, capture the browser console/network error and inspect the desktop's current signed-in email and Worker `admin_status` result without asking the user to reveal credentials.
 - Production URL: `https://dr--vas-ai.vasilecatalinprodan.workers.dev/`.
+
+
+## 2026-11-04 20:37 UTC — HTML audit and admin diagnostic clarification
+
+- The user supplied an older www/index.html copy (1,599 lines). It is not the current branch file and must not overwrite it.
+- Canonical www/index.html on drvas-integrated-platform was 3,956 lines before this edit and already contains six dedicated module workspaces and supporting UI: Free chat/voice; Health information desk; Studio video renderer, creative deliverables, saved projects and Income Tracker; Academy course builder and saved projects; Commerce opportunity analysis and saved projects; Business plans, income/expense ledger, break-even calculator and Student Desk assessment feedback/projects. Founder-only Crypto tools remain in the admin panel, not a seventh public module.
+- Audit found that selectModule() replaced the detailed admin_status message from refreshAdminPanel() with a generic message. This obscured whether the actual reason was allowlist_missing, account_email_missing, or email_not_allowlisted.
+- Updated www/index.html so the module chooser displays the detailed server response when available. No access-control bypass or public access was introduced.
+- HTML commit: d34e726ac1386057c05443105d76cc7c254a8b1f.
+- GitHub Actions started for this commit: Worker deploy run 41908207559 and APK build run 41908207623; both were in progress at checkpoint time. Recheck outcomes before claiming deployment/build success.
+
+### Worker inspection findings — next step
+- worker/index.js action admin_status (around lines 516–542) verifies the Supabase access token at /auth/v1/user, then compares the authenticated email (trimmed/lowercased) with comma-separated env.ADMIN_EMAILS (also trimmed/lowercased).
+- It returns reason: allowlist_missing, account_email_missing, or email_not_allowlisted when the account is not recognised.
+- The main chat handler independently applies the same ADMIN_EMAILS gate to all six private pilot modules. Do not remove or weaken this check.
+- Cloudflare secret values are not readable through the GitHub repository. The precise reason exposed by the HTML after the deployment completes will determine whether to add/repair ADMIN_EMAILS or inspect the Supabase token/auth path.
