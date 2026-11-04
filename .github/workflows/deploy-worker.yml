@@ -39,6 +39,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Generate CycloneDX dependency inventory
+        run: npm sbom --sbom-format cyclonedx > drvas-sbom.cdx.json
+
       - name: Validate Worker and browser JavaScript
         run: |
           node --check worker/index.js
@@ -172,3 +175,11 @@ jobs:
           '
         env:
           WORKER_HEALTH_URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev
+
+      - name: Upload software bill of materials
+        if: always() && hashFiles('drvas-sbom.cdx.json') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: DrVas-SBOM
+          path: drvas-sbom.cdx.json
+          retention-days: 90
