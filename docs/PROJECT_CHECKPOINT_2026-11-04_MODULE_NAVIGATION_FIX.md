@@ -57,3 +57,15 @@ Latest runs triggered from the above commits:
 - Worker deploy on commit 79e3306: 41857688082
 - APK build on commit 79e3306: 41857688289
 - The subsequent test-only commit 148b9e6 should trigger a new browser regression and deployment workflow. Check latest branch runs before declaring success.
+
+
+## 2026-11-04 15:42 UTC — Root cause confirmed and corrected
+
+- The previous diagnosis was wrong: `#authSection` and `#profileSection` are direct children of `#moduleSelectionSection`, not siblings outside it. The parent relationship was confirmed by parsing the HTML element stack.
+- This explains all four remaining E2E failures: hiding `#moduleSelectionSection` also hid the authentication/profile descendants.
+- Corrected `showOnly()` in `www/index.html`: during auth/profile flow, keep `#moduleSelectionSection` visible and add `auth-flow-mode`; the existing CSS rule hides dashboard children while allowing the auth/profile panels to remain visible. Normal non-auth flow removes `auth-flow-mode`.
+- Updated four Playwright assertions to verify the parent remains visible and carries `auth-flow-mode`.
+- Source fix commit: `577408509736a9eda80e80ae6b15bf3228304925`.
+- E2E assertion commit: `a0a896db2d05a6ebd2eac64fd5d9a5a71217644d`.
+- Latest CI runs for the source-fix commit were in progress at 15:42 UTC: browser regression `41860021975`, Worker deploy `41860022353`, APK build `41860022226`. Latest test-only commit runs `41860053522` and `41860053663` were pending. Recheck before claiming success.
+- Studio backend inspection: actual MP4 rendering is wired to Creatomate; Worker requires server-side Cloudflare secret `CREATOMATE_API_KEY`, checks the founder against `ADMIN_EMAILS`, and requires configured Supabase rate limiting/storage. The key's production presence has not yet been verified; do not claim Studio MP4 is live until the production `/health` check reports `studio_renderer: configured` and an authenticated end-to-end render succeeds.
