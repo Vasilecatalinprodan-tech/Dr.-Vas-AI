@@ -302,3 +302,37 @@ test("Academy, Commerce and Business projects are saved, reopened and deleted pe
     await expect(page.locator("#" + item.id + "ProjectList option")).toHaveCount(1);
   }
 });
+
+test("logout removes administrator workspaces and clears private module drafts", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-admin-user", email: "admin@example.invalid" };
+    isDrvasAdmin = true;
+    selectModule("business", true);
+    moduleProjectState.business = "private-project-id";
+    moduleProjectOutputs.business = "Private draft output";
+    document.querySelector("#adminPanel")?.classList.remove("hidden");
+    document.querySelector("#businessProjectTitle").value = "Private plan";
+    document.querySelector("#businessIdea").value = "Private business idea";
+    showLogin();
+  });
+  await expect(page.locator("#businessWorkspace")).toBeHidden();
+  await expect(page.locator("#academyWorkspace")).toBeHidden();
+  await expect(page.locator("#commerceWorkspace")).toBeHidden();
+  await expect(page.locator("#studioWorkspace")).toBeHidden();
+  await expect(page.locator("#adminPanel")).toBeHidden();
+  const state = await page.evaluate(() => ({
+    user: currentUser,
+    admin: isDrvasAdmin,
+    projectId: moduleProjectState.business,
+    output: moduleProjectOutputs.business,
+    title: document.querySelector("#businessProjectTitle").value,
+    idea: document.querySelector("#businessIdea").value
+  }));
+  expect(state.user).toBeNull();
+  expect(state.admin).toBe(false);
+  expect(state.projectId).toBeNull();
+  expect(state.output).toBe("");
+  expect(state.title).toBe("");
+  expect(state.idea).toBe("Private business idea");
+});
