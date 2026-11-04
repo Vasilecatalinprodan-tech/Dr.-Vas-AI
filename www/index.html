@@ -1577,10 +1577,11 @@ function queueLiveAudio(base64Data){
   liveActiveSources.add(source);
   source.onended=()=>{
    liveActiveSources.delete(source);
-   if(liveActiveSources.size===0)document.body.classList.remove("assistant-speaking");
+   if(liveActiveSources.size===0){document.body.classList.remove("assistant-speaking");if(liveSocket)updateLiveVoiceStage("listening","Te ascult…");}
    try{source.disconnect()}catch{}
   };
   document.body.classList.add("assistant-speaking");
+  updateLiveVoiceStage("speaking",(ASSISTANTS[activeAssistant]?.name||"Dr.Vas")+" vorbește…");
  }catch(error){console.warn("Live audio playback:",error);}
 }
 async function sendLiveHistory(){
