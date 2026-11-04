@@ -465,6 +465,17 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
 }
 @media(prefers-reduced-motion:reduce){.chat-main>#chat{scroll-behavior:auto!important}}
 
+.business-tool-panel{margin-top:22px;padding:18px;border:1px solid rgba(148,180,205,.18);border-radius:18px;background:rgba(8,22,38,.58)}
+.business-ledger-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:16px 0}
+.business-ledger-summary>div{padding:13px;border:1px solid rgba(148,180,205,.2);border-radius:12px;background:rgba(255,255,255,.035);display:flex;flex-direction:column;gap:6px}
+.business-ledger-summary small{color:var(--muted,#aab8c8);font-size:.82rem}
+.business-ledger-summary strong{font-size:1.15rem;overflow-wrap:anywhere}
+.business-ledger-rows{overflow-x:auto;margin-top:12px}
+.business-ledger-table{width:100%;border-collapse:collapse;min-width:720px}
+.business-ledger-table th,.business-ledger-table td{padding:9px 10px;border-bottom:1px solid rgba(148,180,205,.16);text-align:left;font-size:.88rem}
+.business-ledger-table th{color:#a9c5dc;font-weight:650}
+.business-ledger-table td button{padding:6px 9px}
+@media(max-width:640px){.business-tool-panel{padding:12px}.business-ledger-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
 </head>
 
@@ -713,6 +724,48 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
    </div>
    <div class="studio-actions"><button type="button" onclick="buildBusinessPrompt()">Creează planul de afaceri</button><span>Estimările vor include ipoteze explicite și vor separa informațiile verificate de presupuneri.</span></div>
    <section class="studio-project-manager module-project-manager"><h3>📁 Planurile mele Business</h3><label>Titlu<input id="businessProjectTitle" maxlength="160" placeholder="Titlul planului"></label><div class="studio-project-controls"><button type="button" onclick="saveModuleProject('business')">Salvează planul</button><select id="businessProjectList" aria-label="Planuri salvate"><option value="">Alege un plan salvat</option></select><button type="button" onclick="openModuleProject('business')">Deschide</button><button type="button" onclick="exportModuleProject('business')">Exportă</button><button type="button" onclick="deleteModuleProject('business')">Șterge</button></div><p id="businessProjectStatus" role="status" aria-live="polite">Planurile salvate rămân private în contul tău.</p></section>
+   <section class="studio-project-manager module-project-manager business-tool-panel" aria-labelledby="businessCashbookTitle">
+    <h3 id="businessCashbookTitle">📒 Dr.Vas Books — Registru de încasări și cheltuieli</h3>
+    <p>Registru simplu de numerar, cu categorii, monedă și estimare TVA. Nu înlocuiește contabilitatea statutară, declarațiile fiscale sau verificarea unui contabil autorizat.</p>
+    <div class="studio-form-grid">
+     <label>Data<input id="businessLedgerDate" type="date"></label>
+     <label>Tip<select id="businessLedgerType"><option value="income">Încasare</option><option value="expense">Cheltuială</option></select></label>
+     <label>Descriere<input id="businessLedgerDescription" maxlength="240" placeholder="Ex.: Factura client 001"></label>
+     <label>Categorie<input id="businessLedgerCategory" maxlength="80" value="General" placeholder="Ex.: Transport, chirie, vânzări"></label>
+     <label>Sumă<input id="businessLedgerAmount" type="number" min="0.01" max="999999999" step="0.01" placeholder="0.00"></label>
+     <label>Monedă<select id="businessLedgerCurrency"><option value="GBP">GBP £</option><option value="EUR">EUR €</option><option value="RON">RON</option><option value="CHF">CHF</option><option value="USD">USD $</option></select></label>
+     <label>Cotă TVA (%)<input id="businessLedgerVatRate" type="number" min="0" max="100" step="0.01" value="0"></label>
+     <label class="remember-row"><input id="businessLedgerVatIncluded" type="checkbox" checked><span>TVA inclusă în suma introdusă</span></label>
+    </div>
+    <div class="studio-actions"><button type="button" onclick="saveBusinessTransaction()">Adaugă în registru</button><button type="button" class="switch-button" onclick="loadBusinessLedger()">Reîncarcă</button><button type="button" class="switch-button" onclick="exportBusinessLedger()">Exportă CSV</button></div>
+    <div class="business-ledger-summary" aria-live="polite">
+     <div><small>Încasări</small><strong id="businessLedgerIncome">—</strong></div>
+     <div><small>Cheltuieli</small><strong id="businessLedgerExpenses">—</strong></div>
+     <div><small>Sold net</small><strong id="businessLedgerNet">—</strong></div>
+     <div><small>TVA netă estimată</small><strong id="businessLedgerVat">—</strong></div>
+    </div>
+    <div id="businessLedgerStatus" role="status" aria-live="polite">Conectează-te și aplică migrarea pentru a activa registrul privat.</div>
+    <div id="businessLedgerRows" class="business-ledger-rows"></div>
+   </section>
+   <section class="studio-project-manager module-project-manager business-tool-panel" aria-labelledby="businessAssessmentTitle">
+    <h3 id="businessAssessmentTitle">🎓 Dr.Vas Student Desk — Evaluare și îndrumare academică</h3>
+    <p>Instrument pentru profesori și studenți: analiză pe rubrică, feedback, structură, argumentare și citare. Susține munca proprie a studentului; nu ascunde utilizarea AI și nu fabrică surse.</p>
+    <div class="studio-form-grid">
+     <label>Materie / disciplină<input id="studentAssessmentSubject" maxlength="180" placeholder="Ex.: Business Management"></label>
+     <label>Nivel<select id="studentAssessmentLevel"><option>College / Further Education</option><option>University undergraduate</option><option>Postgraduate</option><option>Professional qualification</option><option>Alt nivel</option></select></label>
+     <label>Limba lucrării<select id="studentAssessmentLanguage"><option>English</option><option>Română</option><option>Italiano</option><option>Türkçe</option><option>Deutsch</option><option>Français</option></select></label>
+     <label class="studio-idea-label">Cerința profesorului / assignment brief<textarea id="studentAssessmentBrief" rows="4" maxlength="6000" placeholder="Lipește cerința, criteriile și limita de cuvinte. Elimină datele personale."></textarea></label>
+     <label class="studio-idea-label">Rubrica de notare<textarea id="studentAssessmentRubric" rows="3" maxlength="5000" placeholder="Criterii, ponderi și nivelurile de performanță, dacă există."></textarea></label>
+     <label class="studio-idea-label">Draftul studentului<textarea id="studentAssessmentDraft" rows="7" maxlength="12000" placeholder="Studentul își introduce propriul draft pentru feedback."></textarea></label>
+    </div>
+    <div class="studio-actions"><button type="button" onclick="buildStudentAssessmentPrompt()">Analizează draftul și creează feedback</button><span>Feedback pe criterii, lacune, logică, structură și citare — nu o lucrare fals prezentată ca fiind scrisă fără AI.</span></div>
+    <div class="studio-project-manager">
+     <h4>📁 Proiecte Student Desk</h4>
+     <label>Titlu<input id="studentAssessmentProjectTitle" maxlength="160" placeholder="Titlul evaluării"></label>
+     <div class="studio-project-controls"><button type="button" onclick="saveStudentAssessmentProject()">Salvează</button><select id="studentAssessmentProjectList" aria-label="Evaluări salvate"><option value="">Alege o evaluare salvată</option></select><button type="button" onclick="openStudentAssessmentProject()">Deschide</button><button type="button" onclick="deleteStudentAssessmentProject()">Șterge</button></div>
+     <p id="studentAssessmentProjectStatus" role="status" aria-live="polite">Proiectele sunt private în contul tău.</p>
+    </div>
+   </section>
   </section>
  <div id="authSection" class="auth-box hidden">
   <div class="panel-head">
@@ -1340,6 +1393,7 @@ function selectModule(moduleName,userInitiated=false){
   }else{
     message.textContent="";
   }
+  if(moduleName==="business"&&currentUser&&isDrvasAdmin){loadBusinessLedger();loadStudentAssessmentProjects().catch(error=>console.warn("Student Desk project list:",error));loadModuleProjectList("business").catch(error=>console.warn("Business project list:",error));}
   if(userInitiated&&currentUser)logClientEvent("module_selected",moduleName);
 }
 
@@ -2204,6 +2258,127 @@ function buildCommercePrompt(){
  const prompt="DR.VAS COMMERCE — ANALIZĂ OPORTUNITATE\nPRODUS/NIȘĂ: "+v("commerceProduct")+"\nPIAȚĂ: "+v("commerceMarket")+"\nBUGET MAXIM: "+budget+"\nMODEL: "+v("commerceModel")+"\nCANAL: "+v("commerceChannel")+"\nPREȚ ȚINTĂ: "+(price||"neprecizat")+"\nBRIEF: "+v("commerceBrief")+"\n\nAnalizează fără promisiuni de profit: cerere și concurență (marchează ce necesită cercetare actuală), profilul clientului, verificarea furnizorilor, mostre, termene și retururi, siguranța produsului, proprietate intelectuală, obligații UK/UE relevante, cost complet pe unitate, taxe/VAT și comisioane, cost de achiziție client, marjă, prag de rentabilitate și scenarii pesimist/bază/optimist. Respectă strict bugetul; nu presupune că toate fondurile pot fi cheltuite pe stoc sau reclame. Încheie cu o listă de verificări înainte de orice plată și recomandă să nu comandăm până nu verificăm furnizorul și o mostră.";
  submitModuleBrief(prompt,"Analiza Commerce este pregătită. Verifică ipotezele și apasă Trimite.");
 }
+const businessLedgerState={rows:[],currency:"GBP"};
+const studentAssessmentState={id:null};
+function businessMoney(value,currency){
+ try{return new Intl.NumberFormat(undefined,{style:"currency",currency,maximumFractionDigits:2}).format(Number(value)||0);}
+ catch{return currency+" "+(Number(value)||0).toFixed(2);}
+}
+function businessLedgerStatus(message,isError=false){
+ const node=el("businessLedgerStatus");if(node){node.textContent=message;node.style.color=isError?"#ff9d9d":"#9fe5ce";}
+}
+function businessVatAmount(row){
+ const rate=Math.max(0,Number(row.vat_rate)||0),amount=Number(row.amount)||0;
+ if(!rate)return 0;
+ return row.vat_included?amount*rate/(100+rate):amount*rate/100;
+}
+function renderBusinessLedger(){
+ const currency=el("businessLedgerCurrency")?.value||"GBP";
+ const rows=businessLedgerState.rows.filter(row=>row.currency===currency);
+ const income=rows.filter(row=>row.entry_type==="income").reduce((sum,row)=>sum+Number(row.amount),0);
+ const expenses=rows.filter(row=>row.entry_type==="expense").reduce((sum,row)=>sum+Number(row.amount),0);
+ const outputVat=rows.filter(row=>row.entry_type==="income").reduce((sum,row)=>sum+businessVatAmount(row),0);
+ const inputVat=rows.filter(row=>row.entry_type==="expense").reduce((sum,row)=>sum+businessVatAmount(row),0);
+ [["businessLedgerIncome",income],["businessLedgerExpenses",expenses],["businessLedgerNet",income-expenses],["businessLedgerVat",outputVat-inputVat]].forEach(([id,value])=>{const node=el(id);if(node)node.textContent=businessMoney(value,currency);});
+ const host=el("businessLedgerRows");if(!host)return;host.replaceChildren();
+ if(!rows.length){const empty=document.createElement("p");empty.textContent="Nu există încă înregistrări pentru această monedă.";host.append(empty);return;}
+ const table=document.createElement("table");table.className="business-ledger-table";
+ const head=document.createElement("thead"),hr=document.createElement("tr");
+ ["Data","Tip","Descriere","Categorie","Sumă","TVA estimată",""].forEach(label=>{const th=document.createElement("th");th.textContent=label;hr.append(th);});head.append(hr);table.append(head);
+ const body=document.createElement("tbody");
+ rows.forEach(row=>{const tr=document.createElement("tr");
+  [row.transaction_date,row.entry_type==="income"?"Încasare":"Cheltuială",row.description,row.category,businessMoney(row.amount,currency),businessMoney(businessVatAmount(row),currency)].forEach(value=>{const td=document.createElement("td");td.textContent=value;tr.append(td);});
+  const action=document.createElement("td"),button=document.createElement("button");button.type="button";button.textContent="Șterge";button.setAttribute("aria-label","Șterge "+row.description);button.addEventListener("click",()=>deleteBusinessTransaction(row.id));action.append(button);tr.append(action);body.append(tr);
+ });table.append(body);host.append(table);
+}
+async function loadBusinessLedger(){
+ if(!currentUser){businessLedgerStatus("Conectează-te pentru a accesa registrul privat.",true);return;}
+ if(!supabaseClient){businessLedgerStatus("Conexiunea la baza de date nu este disponibilă.",true);return;}
+ const currency=el("businessLedgerCurrency")?.value||"GBP";businessLedgerState.currency=currency;
+ businessLedgerStatus("Încarc registrul...");
+ try{
+  const {data,error}=await supabaseClient.from("drvas_business_transactions").select("id,transaction_date,entry_type,description,category,amount,currency,vat_rate,vat_included").eq("user_id",currentUser.id).eq("currency",currency).order("transaction_date",{ascending:false}).limit(500);
+  if(error)throw error;
+  const other=businessLedgerState.rows.filter(row=>row.currency!==currency);
+  businessLedgerState.rows=[...other,...(data||[])];renderBusinessLedger();
+  businessLedgerStatus("Registru încărcat: "+(data||[]).length+" înregistrări pentru "+currency+".");
+ }catch(error){
+  console.error("Dr.Vas cashbook load:",error);
+  businessLedgerStatus(error.message?.includes("drvas_business_transactions")?"Tabelul registrului nu este activ. Aplică migrarea 202611040003_business_cashbook.sql în Supabase.":"Nu am putut încărca registrul: "+error.message,true);
+ }
+}
+async function saveBusinessTransaction(){
+ if(!currentUser){businessLedgerStatus("Conectează-te pentru a salva înregistrări.",true);return;}
+ const description=el("businessLedgerDescription")?.value?.trim()||"",amount=Number(el("businessLedgerAmount")?.value),rate=Number(el("businessLedgerVatRate")?.value)||0;
+ if(!description){el("businessLedgerDescription")?.focus();businessLedgerStatus("Adaugă o descriere.",true);return;}
+ if(!Number.isFinite(amount)||amount<=0){el("businessLedgerAmount")?.focus();businessLedgerStatus("Introdu o sumă mai mare decât zero.",true);return;}
+ if(!Number.isFinite(rate)||rate<0||rate>100){businessLedgerStatus("Cota TVA trebuie să fie între 0 și 100%.",true);return;}
+ const payload={user_id:currentUser.id,transaction_date:el("businessLedgerDate")?.value||new Date().toISOString().slice(0,10),entry_type:el("businessLedgerType")?.value||"income",description,category:el("businessLedgerCategory")?.value?.trim()||"General",amount,currency:el("businessLedgerCurrency")?.value||"GBP",vat_rate:rate,vat_included:Boolean(el("businessLedgerVatIncluded")?.checked)};
+ try{
+  const {error}=await supabaseClient.from("drvas_business_transactions").insert(payload);if(error)throw error;
+  el("businessLedgerDescription").value="";el("businessLedgerAmount").value="";
+  await loadBusinessLedger();
+ }catch(error){console.error("Dr.Vas cashbook save:",error);businessLedgerStatus(error.message?.includes("drvas_business_transactions")?"Aplică migrarea 202611040003_business_cashbook.sql pentru a activa registrul.":"Nu am putut salva înregistrarea: "+error.message,true);}
+}
+async function deleteBusinessTransaction(id){
+ if(!currentUser||!id)return;
+ if(!window.confirm("Ștergi această înregistrare din registru?"))return;
+ try{const {error}=await supabaseClient.from("drvas_business_transactions").delete().eq("id",id).eq("user_id",currentUser.id);if(error)throw error;await loadBusinessLedger();}
+ catch(error){businessLedgerStatus("Nu am putut șterge înregistrarea: "+error.message,true);}
+}
+function exportBusinessLedger(){
+ const currency=el("businessLedgerCurrency")?.value||"GBP",rows=businessLedgerState.rows.filter(row=>row.currency===currency);
+ if(!rows.length){businessLedgerStatus("Nu există înregistrări de exportat.",true);return;}
+ const escape=value=>'"'+String(value??"").replace(/"/g,'""')+'"';
+ const lines=[["Date","Type","Description","Category","Amount","Currency","VAT rate","VAT included","Estimated VAT"].join(","),...rows.map(row=>[row.transaction_date,row.entry_type,row.description,row.category,row.amount,row.currency,row.vat_rate,row.vat_included,businessVatAmount(row)].map(escape).join(","))];
+ const blob=new Blob(["\uFEFF"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="drvas-cashbook-"+currency+".csv";a.click();URL.revokeObjectURL(url);
+}
+function buildStudentAssessmentPrompt(){
+ const v=id=>el(id)?.value?.trim()||"",subject=v("studentAssessmentSubject"),brief=v("studentAssessmentBrief"),draft=v("studentAssessmentDraft");
+ if(!subject||!brief||!draft){businessLedgerStatus("Pentru evaluare completează disciplina, cerința și draftul studentului.",true);return;}
+ const prompt="DR.VAS STUDENT DESK — FEEDBACK ACADEMIC ȘI EVALUARE FORMATIVĂ\nDISCIPLINA: "+subject+"\nNIVEL: "+v("studentAssessmentLevel")+"\nLIMBA: "+v("studentAssessmentLanguage")+"\nCERINȚA OFICIALĂ: "+brief+"\nRUBRICA: "+(v("studentAssessmentRubric")||"Nu a fost furnizată; propune criterii provizorii și marchează-le ca atare.")+"\nDRAFTUL STUDENTULUI: \n"+draft+"\n\nSARCINĂ: Evaluează formativ draftul, nu pretinde că ești evaluatorul oficial și nu inventa nota sau cerințe. Creează: (1) rezumatul cerinței, (2) tabel criteriu/evidență/lacună/sugestie, (3) punctele tari, (4) probleme de argumentare, structură, claritate și gramatică, (5) verificarea citărilor fără a inventa surse, (6) întrebări concrete care îl ajută pe student să-și dezvolte singur ideile, (7) plan de revizuire prioritizat și (8) estimare orientativă numai dacă rubrica permite, cu incertitudini explicite. Păstrează vocea studentului; nu fabrica experiențe, date sau referințe și nu rescrie integral lucrarea pentru a fi predată ca muncă independentă. Dacă oferi un exemplu de paragraf, etichetează-l clar ca exemplu de învățare și explică ce trebuie adaptat de student.";
+ submitModuleBrief(prompt,"Student Desk: analiza este pregătită. Verifică brief-ul în chat și apasă Trimite.");
+}
+function studentAssessmentBriefData(){
+ return {subject:el("studentAssessmentSubject")?.value||"",level:el("studentAssessmentLevel")?.value||"",language:el("studentAssessmentLanguage")?.value||"",assignment:el("studentAssessmentBrief")?.value||"",rubric:el("studentAssessmentRubric")?.value||"",draft:el("studentAssessmentDraft")?.value||""};
+}
+async function loadStudentAssessmentProjects(selectedId=""){
+ if(!currentUser)return;
+ const select=el("studentAssessmentProjectList");if(!select)return;
+ const {data,error}=await supabaseClient.from("drvas_module_projects").select("id,title,updated_at").eq("user_id",currentUser.id).eq("module","business").eq("project_type","student_assessment_coach").order("updated_at",{ascending:false}).limit(100);
+ if(error)throw error;select.replaceChildren(new Option("Alege o evaluare salvată",""));
+ (data||[]).forEach(item=>select.add(new Option(item.title+" · "+new Date(item.updated_at).toLocaleDateString(),item.id)));
+ if(selectedId)select.value=selectedId;
+}
+async function saveStudentAssessmentProject(){
+ if(!currentUser){el("studentAssessmentProjectStatus").textContent="Conectează-te pentru a salva.";return;}
+ const brief=studentAssessmentBriefData();if(!brief.subject||!brief.assignment){el("studentAssessmentProjectStatus").textContent="Completează disciplina și cerința evaluării.";return;}
+ const title=el("studentAssessmentProjectTitle")?.value?.trim()||brief.subject+" — evaluare";
+ try{
+  const payload={user_id:currentUser.id,module:"business",project_type:"student_assessment_coach",title,brief,updated_at:new Date().toISOString()};
+  const result=studentAssessmentState.id
+   ?await supabaseClient.from("drvas_module_projects").update(payload).eq("id",studentAssessmentState.id).eq("user_id",currentUser.id).eq("module","business").select("id").single()
+   :await supabaseClient.from("drvas_module_projects").insert(payload).select("id").single();
+  if(result.error)throw result.error;studentAssessmentState.id=result.data.id;await loadStudentAssessmentProjects(result.data.id);el("studentAssessmentProjectStatus").textContent="Evaluarea a fost salvată privat.";
+ }catch(error){el("studentAssessmentProjectStatus").textContent="Nu am putut salva: "+error.message;}
+}
+async function openStudentAssessmentProject(){
+ const id=el("studentAssessmentProjectList")?.value;if(!id)return;
+ try{const {data,error}=await supabaseClient.from("drvas_module_projects").select("id,title,brief").eq("id",id).eq("user_id",currentUser.id).eq("module","business").eq("project_type","student_assessment_coach").single();if(error)throw error;
+  studentAssessmentState.id=data.id;el("studentAssessmentProjectTitle").value=data.title||"";
+  const map={subject:"studentAssessmentSubject",level:"studentAssessmentLevel",language:"studentAssessmentLanguage",assignment:"studentAssessmentBrief",rubric:"studentAssessmentRubric",draft:"studentAssessmentDraft"};
+  Object.entries(map).forEach(([key,id])=>{if(data.brief?.[key]!==undefined)el(id).value=data.brief[key];});
+  el("studentAssessmentProjectStatus").textContent="Evaluarea a fost încărcată.";
+ }catch(error){el("studentAssessmentProjectStatus").textContent="Nu am putut deschide: "+error.message;}
+}
+async function deleteStudentAssessmentProject(){
+ const id=el("studentAssessmentProjectList")?.value||studentAssessmentState.id;if(!id||!currentUser)return;
+ if(!window.confirm("Ștergi definitiv această evaluare salvată?"))return;
+ try{const {error}=await supabaseClient.from("drvas_module_projects").delete().eq("id",id).eq("user_id",currentUser.id).eq("module","business").eq("project_type","student_assessment_coach");if(error)throw error;
+  if(studentAssessmentState.id===id)studentAssessmentState.id=null;await loadStudentAssessmentProjects();el("studentAssessmentProjectStatus").textContent="Evaluarea a fost ștearsă.";
+ }catch(error){el("studentAssessmentProjectStatus").textContent="Nu am putut șterge: "+error.message;}
+}
+
 function buildBusinessPrompt(){
  const v=id=>el(id)?.value?.trim()||"";
  const budget=Math.max(0,Number(v("businessBudget"))||0);
