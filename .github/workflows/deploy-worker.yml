@@ -105,6 +105,7 @@ jobs:
             [worker.includes('body.action === "studio_render_create"') && worker.includes('body.action === "studio_render_status"'), 'Studio render create/status endpoints are missing'],
             [worker.includes('CREATOMATE_API_KEY') && worker.includes('MADE BY VPC'), 'Studio renderer must use a server-side provider secret and mandatory watermark'],
             [worker.includes('/storage/v1/object/drvas-media/'), 'Studio MP4 output must be copied into private Supabase storage'],
+            [worker.includes('mediaResponse.body.getReader()') && worker.includes('50 * 1024 * 1024'), 'Studio MP4 transfer must be streamed with a hard 50 MB cap'],
             [html.includes('function renderStudioVideo()') && html.includes('function checkStudioRenderStatus()'), 'Studio MP4 render controls are missing'],
             [html.includes('createSignedUrl') && html.includes('studioRenderPreview'), 'Studio private MP4 preview workflow is missing'],
             [html.includes('isDrvasAdmin = false;') && html.includes('businessWorkspace'), 'Logout must reset administrator access and workspace state']
