@@ -244,3 +244,10 @@ Desktop-specific diagnostic hypothesis, not yet confirmed:
 - It returns reason: allowlist_missing, account_email_missing, or email_not_allowlisted when the account is not recognised.
 - The main chat handler independently applies the same ADMIN_EMAILS gate to all six private pilot modules. Do not remove or weaken this check.
 - Cloudflare secret values are not readable through the GitHub repository. The precise reason exposed by the HTML after the deployment completes will determine whether to add/repair ADMIN_EMAILS or inspect the Supabase token/auth path.
+
+### Release verification for HTML diagnostics — 2026-11-04 20:38 UTC
+- Deploy workflow `41908207559` on HTML commit `d34e726ac1386057c05443105d76cc7c254a8b1f`: completed successfully. Steps verified: Worker/browser JavaScript validation, Playwright homepage and persisted-session browser tests, Worker deployment, and production smoke test — all successful.
+- APK workflow `41908207623` on the same app commit: completed successfully.
+- A static audit extracted all 85 inline onclick bindings (54 unique handlers) from the canonical HTML; every referenced handler has a corresponding function declaration (no missing onclick handlers).
+- User must hard-refresh production (Ctrl+Shift+R) and click one module to see the newly surfaced detailed server authorization reason. The reason is needed before changing Cloudflare secrets or Supabase auth. Do not ask the user to expose passwords or access tokens.
+- Production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ .
