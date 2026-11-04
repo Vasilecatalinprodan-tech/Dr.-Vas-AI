@@ -1541,15 +1541,14 @@ function chooseLanguage(code){
  if(!SUPPORTED_LANGUAGES.includes(code))return;
  if(liveSocket||liveStream)stopLiveVoice();
  currentLanguage=code;languageReady=true;localStorage.setItem(LANGUAGE_KEY,code);
- renderDrvasPresentation();
  refreshSpeechVoiceOptions();
  el("appMain").classList.remove("language-pending");el("languageGate").classList.remove("hidden");
- translatePage();refreshVoiceUi(voiceAutoRead?"ready":"off");checkSession();
+ translatePage();renderDrvasPresentation();refreshVoiceUi(voiceAutoRead?"ready":"off");checkSession();
 }
 function showLanguageGate(){el("languageGate").classList.toggle("hidden");if(languageReady)translatePage(el("languageGate"))}
 function initLanguage(){
- if(SUPPORTED_LANGUAGES.includes(currentLanguage)){renderDrvasPresentation();languageReady=true;el("appMain").classList.remove("language-pending");el("languageGate").classList.remove("hidden");translatePage();refreshSpeechVoiceOptions();refreshVoiceUi(voiceAutoRead?"ready":"off");checkSession()}
- else{currentLanguage="ro";languageReady=true;try{localStorage.setItem(LANGUAGE_KEY,"ro")}catch{}document.documentElement.lang="ro";el("appMain").classList.remove("language-pending");el("languageGate").classList.remove("hidden");translatePage();refreshSpeechVoiceOptions();refreshVoiceUi(voiceAutoRead?"ready":"off");checkSession()}
+ if(SUPPORTED_LANGUAGES.includes(currentLanguage)){languageReady=true;el("appMain").classList.remove("language-pending");el("languageGate").classList.remove("hidden");translatePage();renderDrvasPresentation();refreshSpeechVoiceOptions();refreshVoiceUi(voiceAutoRead?"ready":"off");checkSession()}
+ else{currentLanguage="ro";languageReady=true;try{localStorage.setItem(LANGUAGE_KEY,"ro")}catch{}document.documentElement.lang="ro";el("appMain").classList.remove("language-pending");el("languageGate").classList.remove("hidden");translatePage();renderDrvasPresentation();refreshSpeechVoiceOptions();refreshVoiceUi(voiceAutoRead?"ready":"off");checkSession()}
 }
 const uiObserver=new MutationObserver(records=>{
  if(!languageReady)return;
