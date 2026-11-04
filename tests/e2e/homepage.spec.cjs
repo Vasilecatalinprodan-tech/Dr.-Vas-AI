@@ -40,7 +40,7 @@ test("first visit shows the Dr.Vas landing page, language selector and clear ent
   await expect(page.locator("#languageGate")).toBeVisible();
   await expect(page.locator("#heroSection")).toBeVisible();
   await expect(page.locator("#landingActions")).toBeVisible();
-  await expect(page.locator("#landingActions button")).toContainText("Vorbește cu Dr.Vas");
+  await expect(page.locator("#heroChatCta")).toContainText("Vorbește cu Dr.Vas");
   await expect(page.locator("#moduleSelectionShell")).toBeHidden();
   await expect(page.locator("#appMain")).not.toHaveClass(/language-pending/);
 });
