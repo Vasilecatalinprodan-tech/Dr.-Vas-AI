@@ -2902,7 +2902,7 @@ function showLogin(){
     if(el(module+"ProjectTitle"))el(module+"ProjectTitle").value = "";
   });
   if(el("studioSavedProjects"))el("studioSavedProjects").innerHTML='<option value="">Alege un proiect salvat</option>';
-  ["studioProjectTitle","studioIdea","academyProjectTitle","academySubject","academyAudience","academyOutcome","academyBrief","commerceProjectTitle","commerceProduct","commercePrice","commerceBrief","businessProjectTitle","businessIdea","businessGoal","businessBrief","incomeTitle","incomePlatform","incomeUrl","incomeNextAction","incomeNotes"].forEach(id=>{if(el(id))el(id).value="";});
+  ["studioProjectTitle","studioIdea","academyProjectTitle","academySubject","academyLevel","academyAudience","academyFormat","academyLanguage","academyOutcome","academyBrief","commerceProjectTitle","commerceProduct","commerceMarket","commerceBudget","commerceModel","commerceChannel","commercePrice","commerceBrief","businessProjectTitle","businessIdea","businessCountry","businessBudget","businessStage","businessGoal","businessHorizon","businessBrief","incomeTitle","incomePlatform","incomeType","incomeStatus","incomeEstimated","incomeActual","incomeCurrency","incomeUrl","incomeNextAction","incomeNotes"].forEach(id=>{if(el(id))el(id).value="";});
   currentIncomeOpportunityId=null;
   incomeOpportunityCache=[];
   if(typeof renderIncomeOpportunities==="function")renderIncomeOpportunities();
@@ -2912,6 +2912,7 @@ function showLogin(){
     card.classList.toggle("selected",selected);
     card.setAttribute("aria-pressed",String(selected));
   });
+  if(el("question"))el("question").value="";
   if(el("chat")) el("chat").innerHTML = "";
   if(el("conversationList")) el("conversationList").innerHTML = "";
   if(el("saveMessage")) el("saveMessage").textContent = "";
