@@ -212,3 +212,19 @@ Current deployment remains gated by browser E2E. The production URL may show the
 - APK build for app commit `2c44c91f79f7db957e301dff87ad8aaac59ded65`: run `41904566661`, status pending.
 - Earlier run `41904249945` on commit `7263a954` still failed 25/29; its CSS selector targeted the wrong DOM level. Do not use its result as validation of the latest nested-selector correction.
 - The latest run has not yet completed. Production health endpoint could not be independently reached through the available web inspection, so deployment and smoke-test status remain unverified.
+
+
+## User desktop-browser report and verified release — 2026-11-04
+User reports: Dr.Vas works in the phone browser, but on the desktop browser clicking any module does not advance. This is now a priority reproduction issue; do not assume it is solved by the earlier auth CSS test.
+
+Verified release facts:
+- Browser regression run `41904571899` on test commit `edce21f10ad46ad23b3f62a26dafc85f33a41d73`: success.
+- Worker deployment run `41904571898`: success. Steps include JavaScript validation, browser regression tests, Worker deployment and production smoke test; all succeeded.
+- APK build run `41904566661` on app commit `2c44c91f79f7db957e301dff87ad8aaac59ded65`: success.
+- The APK run includes the latest app CSS/auth nesting correction and Bitcoin calculator. It predates only test-only commit `edce21f` and documentation commits.
+
+Desktop-specific diagnostic hypothesis, not yet confirmed:
+- The current `selectModule()` deliberately blocks module workspaces when the server-side `admin_status` result is not true. It displays an explanatory message in `#moduleSelectionStatus` and `#moduleAccessMessage`.
+- `showChat()` awaits `refreshAdminPanel()` before restoring pending module navigation. A different persisted Supabase account/session on desktop, a stale cached front-end, or an admin-status response difference could therefore explain phone/desktop divergence.
+- Do not weaken server-side admin checks or expose private modules. Ask user for the exact desktop behaviour/message (no response, login screen, or admin access warning), and test with hard refresh / private window. If it persists, capture the browser console/network error and inspect the desktop's current signed-in email and Worker `admin_status` result without asking the user to reveal credentials.
+- Production URL: `https://dr--vas-ai.vasilecatalinprodan.workers.dev/`.
