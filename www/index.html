@@ -1443,11 +1443,14 @@ function refreshSpeechVoiceOptions(){
  const select=el("speechVoiceSelect");
  if(!select||!window.speechSynthesis)return;
  const language=speechLanguage().slice(0,2).toLowerCase();
- const voices=(window.speechSynthesis.getVoices()||[]).filter(v=>v.lang&&v.lang.toLowerCase().startsWith(language));
- const preferredNames=/natural|neural|enhanced|premium|online|andrei|radu|david|daniel|george|james|guy|ryan|alex|thomas|mark|male/i;
- voices.sort((a,b)=>Number(preferredNames.test(b.name))-Number(preferredNames.test(a.name))||a.name.localeCompare(b.name));
+ const voices=[...(window.speechSynthesis.getVoices()||[])];
+ voices.sort((a,b)=>
+  Number(b.lang?.toLowerCase().startsWith(language))-Number(a.lang?.toLowerCase().startsWith(language))||
+  Number(Boolean(b.default))-Number(Boolean(a.default))||
+  a.name.localeCompare(b.name)
+ );
  const saved=localStorage.getItem(speechVoiceStorageKey())||"";
- select.replaceChildren(new Option("Automat — recomandată",""));
+ select.replaceChildren(new Option(voices.length?"Automat — recomandată":"Nicio voce instalată pe dispozitiv",""));
  for(const voice of voices)select.add(new Option(voice.name+" ("+voice.lang+")",voice.voiceURI));
  select.value=voices.some(v=>v.voiceURI===saved)?saved:"";
  if(saved&&!select.value)localStorage.removeItem(speechVoiceStorageKey());
@@ -1462,16 +1465,12 @@ function saveSpeechVoiceChoice(){
 function selectedSpeechRate(){const rate=Number(el("speechRateSelect")?.value||0.92);return Number.isFinite(rate)?Math.min(1.2,Math.max(0.75,rate)):0.92;}
 function chooseSpeechVoice(lang){
  if(!window.speechSynthesis)return null;
- const voices=window.speechSynthesis.getVoices()||[];
+ const voices=(window.speechSynthesis.getVoices()||[]).filter(v=>v&&v.voiceURI);
  const language=lang.slice(0,2).toLowerCase();
  const matching=voices.filter(v=>v.lang&&v.lang.toLowerCase().startsWith(language));
- if(!matching.length)return null;
  const selected=el("speechVoiceSelect")?.value;
- if(selected){const chosen=matching.find(v=>v.voiceURI===selected);if(chosen)return chosen;}
- const preferredNames=activeAssistant==="aurora"
-  ? /natural|neural|enhanced|premium|online|female|woman|zira|susan|samantha|aria|jenny|ava|karen|victoria|sara|google.*female/i
-  : /natural|neural|enhanced|premium|online|male|man|andrei|radu|david|daniel|george|james|guy|ryan|alex|thomas|mark/i;
- return matching.find(v=>preferredNames.test(v.name))||matching[0];
+ if(selected){const chosen=voices.find(v=>v.voiceURI===selected);if(chosen)return chosen;}
+ return matching[0]||voices.find(v=>v.default)||voices[0]||null;
 }
 function prepareSpeechText(value){
  return String(value||"")
@@ -1564,7 +1563,7 @@ async function speakDrVas(text){
  // Chrome can remain paused after an interrupted or first speech request.
  synth.resume();
  const utterance=new SpeechSynthesisUtterance(spokenText);
- utterance.lang=lang;
+ utterance.lang=voice.lang||lang;
  utterance.voice=voice;
  utterance.rate=selectedSpeechRate();
  utterance.pitch=activeAssistant==="aurora"?1.08:activeAssistant==="jan"?0.90:0.98;
@@ -1657,8 +1656,13 @@ function toggleVoiceInput(){
  catch(error){voiceListening=false;refreshVoiceUi("unsupported");}
 }
 if(window.speechSynthesis){
- window.speechSynthesis.onvoiceschanged=()=>{refreshSpeechVoiceOptions();refreshVoiceUi();};
+ const handleSpeechVoicesChanged=()=>{refreshSpeechVoiceOptions();refreshVoiceUi();};
+ window.speechSynthesis.addEventListener?.("voiceschanged",handleSpeechVoicesChanged);
  refreshSpeechVoiceOptions();
+ window.setTimeout(handleSpeechVoicesChanged,250);
+ window.setTimeout(handleSpeechVoicesChanged,1000);
+ window.addEventListener("pageshow",handleSpeechVoicesChanged);
+ document.addEventListener("visibilitychange",()=>{if(!document.hidden)handleSpeechVoicesChanged();});
 }
 
 function encodePcmBase64(int16Samples){
