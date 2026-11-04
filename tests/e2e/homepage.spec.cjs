@@ -10,6 +10,8 @@ window.supabase = {
     from: () => ({
       select() { return this; },
       eq() { return this; },
+      order() { return this; },
+      limit: async () => ({ data: [], error: null }),
       maybeSingle: async () => ({
         data: null,
         error: window.__DRVAS_E2E_PROFILE_ERROR__ ? { message: "E2E profile read failure" } : null
