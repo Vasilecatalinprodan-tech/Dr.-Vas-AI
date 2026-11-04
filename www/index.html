@@ -1314,6 +1314,11 @@ function selectModule(moduleName,userInitiated=false){
     card.classList.toggle("selected",selected);
     card.setAttribute("aria-pressed",String(selected));
   });
+  document.querySelectorAll(".chat-module-rail [data-chat-module]").forEach(button=>{
+    const selected=button.dataset.chatModule===moduleName;
+    button.classList.toggle("active",selected);
+    button.setAttribute("aria-current",selected?"page":"false");
+  });
   const config=modules[moduleName];
   selectAssistant(activeAssistant);
   el("activeModuleIcon").textContent=config.icon;
