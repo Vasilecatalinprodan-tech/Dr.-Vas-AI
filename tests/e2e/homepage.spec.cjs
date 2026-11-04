@@ -138,7 +138,7 @@ test("desktop module opens its own workspace beside its contextual chat", async 
 
 test("clicking a module as a visitor opens the sign-in gate and preserves the selected module", async ({ page }) => {
   await openApp(page, "ro");
-  await page.locator("#headerChatCta").click();
+  await page.evaluate(() => showModuleSelection());
   await page.locator('[data-module="studio"]').click();
   await expect(page.locator("#authSection")).toBeVisible();
   await expect(page.locator("#moduleSelectionSection")).toHaveClass(/auth-flow-mode/);
@@ -263,7 +263,7 @@ test("sign-in with a non-admin account never opens a pending private module", as
       return showChat({ id: "e2e-standard-user", email: "member@example.invalid" }, "Member");
     }, module);
     await expect(page.locator("#moduleSelectionShell")).toBeVisible();
-    await expect(page.locator("#moduleAccessMessage")).toContainText("pilot privat");
+    await expect(page.locator("#moduleAccessMessage")).toContainText("Accesul la module este privat");
     await expect(page.locator("#chatSection")).toBeHidden();
     for (const workspace of ["health", "studio", "academy", "commerce", "business"]) {
       await expect(page.locator("#" + workspace + "Workspace")).toBeHidden();
@@ -314,12 +314,13 @@ test("mobile Free chat stays simple and offers only module navigation and logout
   await expect(page.locator("#moduleSelectionShell")).toBeVisible();
 });
 
-test("landing CTA opens the module chooser without skipping the presentation", async ({ page }) => {
+test("landing CTA sends visitors to authentication before showing private modules", async ({ page }) => {
   await openApp(page, "ro");
   await page.locator("#headerChatCta").click();
-  await expect(page.locator("#moduleSelectionShell")).toBeVisible();
-  await expect(page.locator('[data-module]')).toHaveCount(6);
+  await expect(page.locator("#authSection")).toBeVisible();
+  await expect(page.locator("#moduleSelectionShell")).toBeHidden();
   await expect(page.locator("#chatSection")).toBeHidden();
+  expect(await page.evaluate(() => sessionStorage.getItem("drvas_pending_entry"))).toBe("modules");
 });
 
 test("all six modules remain private to administrators during the pilot", async ({ page }) => {
