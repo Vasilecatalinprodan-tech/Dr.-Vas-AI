@@ -808,19 +808,31 @@ test("Dr.Vas presentation covers all six modules in all eight supported language
   await expect(page.locator("#drvasPresentationDisclaimer")).toContainText("în dezvoltare");
 
   const languages = [
-    ["ro", "ro-RO"],
-    ["en", "en-GB"],
-    ["it", "it-IT"],
-    ["tr", "tr-TR"],
-    ["de", "de-DE"],
-    ["fr", "fr-FR"],
-    ["es", "es-ES"],
-    ["ru", "ru-RU"]
+    ["ro", "ro-RO", "Deschide prezentarea", "Închide prezentarea"],
+    ["en", "en-GB", "Open presentation", "Close presentation"],
+    ["it", "it-IT", "Apri la presentazione", "Chiudi la presentazione"],
+    ["tr", "tr-TR", "Tanıtımı aç", "Tanıtımı kapat"],
+    ["de", "de-DE", "Präsentation öffnen", "Präsentation schließen"],
+    ["fr", "fr-FR", "Ouvrir la présentation", "Fermer la présentation"],
+    ["es", "es-ES", "Abrir presentación", "Cerrar presentación"],
+    ["ru", "ru-RU", "Открыть презентацию", "Закрыть презентацию"]
   ];
+  const controlLabels = {
+    ro: ["Deschide prezentarea", "Închide prezentarea"],
+    en: ["Open presentation", "Close presentation"],
+    it: ["Apri la presentazione", "Chiudi la presentazione"],
+    tr: ["Tanıtımı aç", "Tanıtımı kapat"],
+    de: ["Präsentation öffnen", "Präsentation schließen"],
+    fr: ["Ouvrir la présentation", "Fermer la présentation"],
+    es: ["Abrir presentación", "Cerrar presentación"],
+    ru: ["Открыть презентацию", "Закрыть презентацию"]
+  };
 
   for (const [language, locale] of languages) {
     await page.evaluate(code => chooseLanguage(code), language);
     await expect(page.locator("#presentationModuleGrid .presentation-module")).toHaveCount(6);
+    await expect(page.locator("#presentationOpenButton")).toContainText(controlLabels[language][0]);
+    await expect(page.locator("#presentationCloseButton")).toHaveAttribute("aria-label", controlLabels[language][1]);
     const title = await page.locator("#drvasPresentationTitle").textContent();
     expect(title.trim().length).toBeGreaterThan(3);
     const narration = await page.evaluate(() => {
