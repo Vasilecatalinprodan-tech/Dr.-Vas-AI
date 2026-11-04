@@ -99,3 +99,10 @@ The Worker deployment workflow now statically validates the repair migration's e
 - Latest APK build run `41828699645` is still in progress as of this checkpoint. A previous APK build for commit `4cc9f805` completed successfully and produced artifact `DrVas-APK` (6,056,674 bytes); the latest build includes subsequent Studio render changes and should be preferred when complete.
 - Studio production prerequisites remain: apply migration `202611040004_studio_render_storage.sql` and configure Cloudflare Worker secret `CREATOMATE_API_KEY`. No real production MP4 has yet been created.
 - Added phase-two accounting architecture: double-entry journals, immutable posting/reversal, fixed-precision money, organisation-level permissions, tax localisation and Student Desk rubric/versioning. See `docs/BUSINESS_DESK_AND_STUDIO_MVP_PLAN_2026-11-04.md`.
+
+
+## Android build completed — 4 November 2026, 12:24 UTC
+- Latest APK workflow run `41828699645` completed successfully from commit `52298315d17317104950bef0c3b27d5e67f197e7`.
+- Artifact `DrVas-APK`: 6,056,746 bytes, SHA-256 `9bb05e072d9c3d7849a20ae76bedfe89a8c8d48b6090cf86c08cdff7e9c93d3c`; expires 2 February 2027.
+- Download via the GitHub Actions run page: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/41828699645
+- Build success does not equal physical-device installation or release approval; still needs install/device testing.
