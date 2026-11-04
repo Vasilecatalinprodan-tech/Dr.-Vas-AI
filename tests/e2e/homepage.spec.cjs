@@ -778,3 +778,47 @@ test("logout removes administrator workspaces and clears private module drafts",
   expect(state.renderPath).toBe("");
   expect(state.renderPreviewHidden).toBe(true);
 });
+
+test("Dr.Vas presentation covers all six modules in all eight supported languages and narrates in the selected language", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => openDrvasPresentation());
+
+  await expect(page.locator("#drvasPresentation")).toBeVisible();
+  await expect(page.locator("#presentationModuleGrid .presentation-module")).toHaveCount(6);
+  await expect(page.locator("#drvasPresentationDisclaimer")).toContainText("în dezvoltare");
+
+  const languages = [
+    ["ro", "ro-RO"],
+    ["en", "en-GB"],
+    ["it", "it-IT"],
+    ["tr", "tr-TR"],
+    ["de", "de-DE"],
+    ["fr", "fr-FR"],
+    ["es", "es-ES"],
+    ["ru", "ru-RU"]
+  ];
+
+  for (const [language, locale] of languages) {
+    await page.evaluate(code => chooseLanguage(code), language);
+    await expect(page.locator("#presentationModuleGrid .presentation-module")).toHaveCount(6);
+    const title = await page.locator("#drvasPresentationTitle").textContent();
+    expect(title.trim().length).toBeGreaterThan(3);
+    const narration = await page.evaluate(() => {
+      let spoken = null;
+      const synth = {
+        cancel() {},
+        resume() {},
+        speak: utterance => { spoken = { text: utterance.text, lang: utterance.lang }; }
+      };
+      Object.defineProperty(window, "speechSynthesis", { configurable: true, value: synth });
+      window.SpeechSynthesisUtterance = function (text) { this.text = text; };
+      speakDrvasPresentation();
+      return spoken;
+    });
+    expect(narration.text).toContain(title.trim());
+    expect(narration.lang).toBe(locale);
+  }
+
+  await page.evaluate(() => closeDrvasPresentation());
+  await expect(page.locator("#drvasPresentation")).toBeHidden();
+});
