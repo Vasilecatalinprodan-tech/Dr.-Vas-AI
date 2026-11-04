@@ -24,16 +24,17 @@ The user clarified that pressing “Vorbește cu Dr.Vas” went straight to the 
 - Added a visible module-selection status message when server-side admin authorization is missing or denied. No client-side bypass was introduced; private module access still depends on Worker admin_status.
 
 ## Regression tests
-Updated tests/e2e/homepage.spec.cjs (24 tests total) to cover:
-- Hero CTA position and login-first behavior for visitors.
-- Returning to the module chooser after successful authentication.
-- Existing module workspace tests remain in the suite.
+The first corrective attempt did not pass: run 41852818965 reported 26/29 passing, with three failures. The failing evidence showed:
+- Generic CTA opened the authentication panel while leaving the module chooser visible behind it.
+- Two remaining assertions still expected the obsolete phrase "pilot privat".
+- The deployment workflow correctly skipped publishing because the browser suite failed.
 
-The source and test files were committed on drvas-integrated-platform. Static repository checks confirmed the entry function, pending-entry restoration, hero CTA order, visible authorization feedback, and removal of direct showModuleSelection() CTA handlers.
+A second correction has now been committed:
+- `www/index.html` commit `e7f5b59240c3753b0daa360aef5c2c06cbc5a617`: authentication/profile screens now hide the module chooser completely; chooser is explicitly unhidden only when returning to module selection. This applies to generic CTA and visitor-selected module flows while preserving the pending module intent.
+- `tests/e2e/homepage.spec.cjs` commit `6c1e0ff1584357626762df053d9898e14998417c`: assertions now verify that the chooser is hidden during login and use the current Romanian administrator-denial message.
+- Server-side Worker administrator authorization has not been changed.
 
-## Deployment / verification status
-The deploy-worker workflow is configured to run on pushes to drvas-integrated-platform when www/** or tests/** changes. The first full workflow on the initial login-first revision exposed 4 stale browser-test expectations (25 passed, 4 failed): one test still assumed the header CTA opened the module chooser before login, and three tests expected the old “pilot privat” wording. These were test expectations inconsistent with the new intended login-first flow and clearer admin-denial message; application code did not fail those assertions. Updated the visitor module test to open the chooser as an authenticated-flow state, updated the landing CTA test to assert login first, and updated the three admin-denial text assertions.
-The corrected browser regression run and deployment workflow were started for commit 4219409a9e4edc2f4e75f2360aa43a3450ba096f. At checkpoint update time, both were still in progress. Do not claim production deployment or a passing test suite until the workflow results are checked.
+The latest source and test commits should trigger a fresh browser regression and deployment workflow. Check the newest runs before claiming success or asking the user to retest production.
 
 ## Next verification
 1. Check GitHub Actions run 41852818965 (browser regression) and 41852818983 (deployment). Confirm both are green; deployment must include Playwright and production smoke test.
