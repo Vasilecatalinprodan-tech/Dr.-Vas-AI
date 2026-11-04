@@ -603,6 +603,13 @@ body.free-module-mode #chatSection .chat-module-rail,body.free-module-mode #chat
 @media(max-width:420px){.modules-grid{grid-template-columns:1fr}.module-card{min-height:140px}}
 
 
+/* A module workspace must never expose navigation or conversation history from other modules. */
+body.chat-focus-mode main{grid-template-columns:minmax(0,1fr)!important}
+body.chat-focus-mode #chatSection{grid-template-columns:minmax(0,1fr)!important}
+body.chat-focus-mode .chat-module-rail{display:none!important}
+body.chat-focus-mode #chatSection>.chat-layout{grid-template-columns:minmax(0,1fr)!important;grid-column:1/-1!important}
+body.chat-focus-mode #chatSection .history-panel{display:none!important}
+
 /* Authentication and profile are shown inside the module shell without exposing the module dashboard. */
 .module-selection-shell.auth-flow-mode{display:block!important}
 #moduleSelectionShell.auth-flow-mode > #moduleSelectionSection > :not(#authSection):not(#profileSection){display:none!important}
