@@ -52,7 +52,7 @@ values (
   'drvas-media',
   false,
   52428800,
-  array['image/jpeg','image/png','image/webp','video/mp4']
+  array['image/jpeg','image/png','image/webp','video/mp4','audio/mpeg','audio/wav','audio/mp4','audio/aac']
 )
 on conflict (id) do update
 set public = false,
