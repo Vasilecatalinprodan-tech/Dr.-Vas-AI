@@ -206,6 +206,44 @@ test("sign-in with a non-admin account never opens a pending private module", as
   }
 });
 
+test("text chat sends the selected module context to the Worker for all six modules", async ({ page }) => {
+  await openApp(page, "ro", {
+    access_token: "e2e-access-token",
+    user: { id: "e2e-chat-user", email: "owner@example.invalid" }
+  });
+  const sentRequests = [];
+  await page.route("https://dr--vas-ai.vasilecatalinprodan.workers.dev", async route => {
+    const body = route.request().postDataJSON() || {};
+    if (body.action === "client_event") {
+      await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true }) });
+      return;
+    }
+    sentRequests.push(body);
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ reply: "Răspuns contextual de test." }) });
+  });
+
+  const modules = ["free", "health", "studio", "academy", "commerce", "business"];
+  for (const module of modules) {
+    await page.evaluate(selected => {
+      currentUser = { id: "e2e-chat-user", email: "owner@example.invalid" };
+      isDrvasAdmin = true;
+      showModuleSelection();
+      selectModule(selected, true);
+      currentConversationId = crypto.randomUUID();
+      conversationSaved = false;
+      pendingMessages = [];
+    }, module);
+    await page.locator("#question").fill("Ajută-mă cu următorul pas.");
+    await page.locator("#sendButton").click();
+    await expect(page.locator("#chat .msg.assistant").last()).toContainText("Răspuns contextual de test.");
+    const request = sentRequests[sentRequests.length - 1];
+    expect(request.module).toBe(module);
+    expect(request.access_token).toBe("e2e-access-token");
+    expect(request.message).toBe("Ajută-mă cu următorul pas.");
+  }
+  expect(sentRequests).toHaveLength(6);
+});
+
 test("mobile Free chat stays simple and offers only module navigation and logout", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openApp(page, "ro");
