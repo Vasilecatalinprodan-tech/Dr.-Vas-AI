@@ -471,9 +471,14 @@ test("Academy, Commerce and Business projects are saved, reopened and deleted pe
   ];
   for (const item of modules) {
     await page.evaluate(id => selectModule(id, true), item.id);
-    await page.locator("#" + item.primary).fill(item.value);
     await page.locator("#" + item.id + "ProjectTitle").fill(item.title);
-    await page.evaluate(id => saveModuleProject(id), item.id);
+    await page.locator("#" + item.primary).fill(item.value);
+    await expect(page.locator("#" + item.primary)).toHaveValue(item.value);
+    await page.evaluate(({ id, primary, value }) => {
+      const field = document.getElementById(primary);
+      if (!field || field.value.trim() !== value) throw new Error("Primary project field is empty before save: " + primary + " = " + (field?.value ?? "<missing>"));
+      return saveModuleProject(id);
+    }, { id: item.id, primary: item.primary, value: item.value });
     await expect(page.locator("#" + item.id + "ProjectStatus")).toContainText("salvat");
     await expect(page.locator("#" + item.id + "ProjectList option")).toHaveCount(2);
 
