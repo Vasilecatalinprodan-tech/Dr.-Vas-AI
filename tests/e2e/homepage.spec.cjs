@@ -229,6 +229,7 @@ test("administrator can open the Academy, Commerce and Business pilot brief buil
   await expect(page.locator("#question")).toBeVisible();
   await expect(page.locator("#question")).toHaveValue(/DR.VAS ACADEMY/);
   await expect(page.locator("#question")).toHaveValue(/Bazele comerțului online/);
+  await page.evaluate(() => goToModules());
 
   await page.evaluate(() => selectModule("commerce", true));
   await expect(page.locator("#commerceWorkspace")).toBeVisible();
@@ -238,6 +239,7 @@ test("administrator can open the Academy, Commerce and Business pilot brief buil
   await page.locator('#commerceWorkspace button[onclick="buildCommercePrompt()"]').click();
   await expect(page.locator("#question")).toHaveValue(/DR.VAS COMMERCE/);
   await expect(page.locator("#question")).toHaveValue(/BUGET MAXIM: 100/);
+  await page.evaluate(() => goToModules());
 
   await page.evaluate(() => selectModule("business", true));
   await expect(page.locator("#businessWorkspace")).toBeVisible();
