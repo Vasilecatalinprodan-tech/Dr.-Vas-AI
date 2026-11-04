@@ -585,6 +585,339 @@ export default {
         return json({ ok: logged }, logged ? 200 : 503);
       }
 
+      // Dr.Vas Studio MP4 rendering. Provider credentials remain server-side; completed media is copied to private user storage.
+      if (body.action === "studio_render_create" || body.action === "studio_render_status") {
+        const studioToken = body.access_token;
+        const studioUser = await verifySupabaseUser(env, studioToken);
+        if (!studioUser) return json({ error: "Sesiune invalidă. Conectează-te din nou." }, 401);
+        if (!env.SUPABASE_URL || !env.SUPABASE_KEY) {
+          return json({ error: "Baza de date nu este configurată pentru Dr.Vas Studio." }, 503);
+        }
+        const studioAdmins = (env.ADMIN_EMAILS || "")
+          .split(",").map(email => email.trim().toLowerCase()).filter(Boolean);
+        const studioEmail = typeof studioUser.email === "string" ? studioUser.email.trim().toLowerCase() : "";
+        if (!studioEmail || !studioAdmins.includes(studioEmail)) {
+          return json({ error: "Randarea Studio este în pilot și necesită acces de administrator." }, 403);
+        }
+        if (!env.CREATOMATE_API_KEY) {
+          return json({
+            error: "Motorul MP4 nu este conectat încă. Adaugă secretul CREATOMATE_API_KEY în Cloudflare Worker.",
+            setup_required: true
+          }, 503);
+        }
+
+        const studioBase = env.SUPABASE_URL.replace(/\/+$/, "");
+        const studioHeaders = {
+          apikey: env.SUPABASE_KEY,
+          Authorization: "Bearer " + studioToken,
+          "Content-Type": "application/json"
+        };
+        async function studioDb(path, options = {}) {
+          const response = await fetch(studioBase + "/rest/v1/" + path, {
+            ...options,
+            headers: { ...studioHeaders, ...(options.headers || {}) }
+          });
+          const raw = await response.text();
+          let data = null;
+          try { data = raw ? JSON.parse(raw) : null; } catch { data = raw; }
+          if (!response.ok) {
+            console.error("Dr.Vas Studio database error:", response.status, String(data?.message || data).slice(0, 250));
+            throw new Error("STUDIO_DATABASE_" + response.status);
+          }
+          return data;
+        }
+
+        if (body.action === "studio_render_create") {
+          const studioLimit = await consumeRateLimit(env, studioUser.id, "studio_render", 3, 3600);
+          if (!studioLimit.configured) {
+            return json({ error: "Protecția de utilizare nu este disponibilă momentan." }, 503);
+          }
+          if (!studioLimit.allowed) return rateLimitResponse(headers, studioLimit);
+
+          const supplied = body.render_script;
+          if (!supplied || typeof supplied !== "object" || Array.isArray(supplied) ||
+              !Array.isArray(supplied.elements) || supplied.elements.length < 1 || supplied.elements.length > 40) {
+            return json({ error: "Scenariul video trebuie să conțină între 1 și 40 de elemente." }, 400);
+          }
+          const duration = Number(supplied.duration);
+          if (!Number.isFinite(duration) || duration < 1 || duration > 180) {
+            return json({ error: "Durata video trebuie să fie între 1 și 180 de secunde." }, 400);
+          }
+
+          let supabaseHost = "";
+          try { supabaseHost = new URL(studioBase).hostname.toLowerCase(); } catch {}
+          if (!supabaseHost) return json({ error: "Adresa bazei de date nu este validă." }, 503);
+
+          const allowedElementTypes = new Set(["image", "text", "video", "audio", "shape"]);
+          const allowedProperties = [
+            "name", "type", "track", "time", "duration", "x", "y", "width", "height",
+            "x_anchor", "y_anchor", "x_alignment", "y_alignment", "source", "fit", "text",
+            "fill_color", "font_family", "font_weight", "font_size", "background_color",
+            "background_x_padding", "background_y_padding", "stroke_color", "stroke_width",
+            "volume", "loop", "transcript_source", "transcript_effect", "transcript_split",
+            "transcript_placement", "transcript_maximum_length", "transcript_color"
+          ];
+          const safeElements = [];
+          for (const element of supplied.elements) {
+            if (!element || typeof element !== "object" || Array.isArray(element) ||
+                !allowedElementTypes.has(element.type)) {
+              return json({ error: "Scenariul conține un tip de element video neacceptat." }, 400);
+            }
+            const safe = {};
+            for (const key of allowedProperties) {
+              if (element[key] !== undefined) safe[key] = element[key];
+            }
+            if (safe.text !== undefined &&
+                (typeof safe.text !== "string" || safe.text.length > 1600)) {
+              return json({ error: "Un text din scenariu depășește limita permisă." }, 400);
+            }
+            if (["image", "video", "audio"].includes(element.type)) {
+              if (typeof safe.source !== "string" || safe.source.length > 4000) {
+                return json({ error: "Fiecare imagine, clip sau fișier audio trebuie să aibă o adresă validă." }, 400);
+              }
+              try {
+                const mediaUrl = new URL(safe.source);
+                if (mediaUrl.protocol !== "https:" || mediaUrl.hostname.toLowerCase() !== supabaseHost ||
+                    !mediaUrl.pathname.startsWith("/storage/v1/object/sign/drvas-media/")) {
+                  return json({ error: "Fișierele media trebuie încărcate în spațiul privat Dr.Vas Studio." }, 400);
+                }
+              } catch {
+                return json({ error: "Adresa unui fișier media nu este validă." }, 400);
+              }
+            }
+            if (safe.time !== undefined && (!Number.isFinite(Number(safe.time)) || Number(safe.time) < 0 || Number(safe.time) > duration)) {
+              return json({ error: "Un element are un moment de apariție invalid." }, 400);
+            }
+            if (safe.duration !== undefined && safe.duration !== "media" &&
+                (!Number.isFinite(Number(safe.duration)) || Number(safe.duration) <= 0 || Number(safe.duration) > duration)) {
+              return json({ error: "Un element are o durată invalidă." }, 400);
+            }
+            safeElements.push(safe);
+          }
+
+          // Fixed 9:16 master; the VPC signature is injected server-side and cannot be omitted by the client.
+          safeElements.push({
+            type: "text",
+            name: "VPC-Watermark",
+            track: 1000,
+            time: 0,
+            duration,
+            x: "96%",
+            y: "96%",
+            width: "34%",
+            height: "4%",
+            x_anchor: "100%",
+            y_anchor: "100%",
+            x_alignment: "100%",
+            y_alignment: "50%",
+            text: "MADE BY VPC",
+            font_family: "Montserrat",
+            font_weight: 700,
+            font_size: "3 vmin",
+            fill_color: "#ffffff",
+            background_color: "rgba(0,0,0,0.48)",
+            background_x_padding: "22%",
+            background_y_padding: "18%"
+          });
+
+          let job;
+          try {
+            const inserted = await studioDb("drvas_studio_render_jobs?select=id", {
+              method: "POST",
+              headers: { Prefer: "return=representation" },
+              body: JSON.stringify({
+                user_id: studioUser.id,
+                status: "queued",
+                duration,
+                width: 1080,
+                height: 1920
+              })
+            });
+            job = Array.isArray(inserted) ? inserted[0] : inserted;
+            if (!job?.id) throw new Error("STUDIO_JOB_CREATE_FAILED");
+          } catch (error) {
+            console.error("Dr.Vas Studio job creation failed:", error.message);
+            return json({ error: "Nu am putut crea proiectul de randare în baza de date." }, 503);
+          }
+
+          const renderScript = {
+            output_format: "mp4",
+            width: 1080,
+            height: 1920,
+            duration,
+            fill_color: typeof supplied.fill_color === "string" && /^#[0-9a-f]{6}$/i.test(supplied.fill_color)
+              ? supplied.fill_color : "#07111f",
+            elements: safeElements
+          };
+          try {
+            const providerResponse = await fetch("https://api.creatomate.com/v2/renders", {
+              method: "POST",
+              headers: {
+                Authorization: "Bearer " + env.CREATOMATE_API_KEY,
+                "Content-Type": "application/json",
+                Accept: "application/json"
+              },
+              body: JSON.stringify(renderScript)
+            });
+            const raw = await providerResponse.text();
+            let providerData = null;
+            try { providerData = raw ? JSON.parse(raw) : null; } catch {}
+            if (!providerResponse.ok || !providerData?.id) {
+              const providerMessage = String(providerData?.hint || providerData?.error_message || "Provider render request failed").slice(0, 250);
+              await studioDb("drvas_studio_render_jobs?id=eq." + encodeURIComponent(job.id) + "&user_id=eq." + encodeURIComponent(studioUser.id), {
+                method: "PATCH",
+                body: JSON.stringify({ status: "failed", error_message: "Provider: " + providerMessage, updated_at: new Date().toISOString() })
+              });
+              console.error("Dr.Vas Studio provider error:", providerResponse.status, providerMessage);
+              return json({ error: "Motorul video nu a acceptat cererea. Verifică proiectul și creditele providerului." }, 502);
+            }
+            const providerStatus = ["planned", "waiting", "transcribing", "rendering", "succeeded", "failed"].includes(providerData.status)
+              ? providerData.status : "planned";
+            await studioDb("drvas_studio_render_jobs?id=eq." + encodeURIComponent(job.id) + "&user_id=eq." + encodeURIComponent(studioUser.id), {
+              method: "PATCH",
+              body: JSON.stringify({
+                render_id: providerData.id,
+                status: providerStatus,
+                updated_at: new Date().toISOString()
+              })
+            });
+            return json({
+              ok: true,
+              job_id: job.id,
+              render_id: providerData.id,
+              status: providerStatus,
+              duration,
+              output_format: "mp4",
+              watermark: "MADE BY VPC"
+            }, 202);
+          } catch (error) {
+            console.error("Dr.Vas Studio render start failed:", error.message);
+            await studioDb("drvas_studio_render_jobs?id=eq." + encodeURIComponent(job.id) + "&user_id=eq." + encodeURIComponent(studioUser.id), {
+              method: "PATCH",
+              body: JSON.stringify({ status: "failed", error_message: "Render start failed", updated_at: new Date().toISOString() })
+            }).catch(() => {});
+            return json({ error: "Nu am putut porni randarea MP4. Încearcă din nou." }, 502);
+          }
+        }
+
+        const statusLimit = await consumeRateLimit(env, studioUser.id, "studio_render_status", 30, 60);
+        if (!statusLimit.configured) {
+          return json({ error: "Protecția de utilizare nu este disponibilă momentan." }, 503);
+        }
+        if (!statusLimit.allowed) return rateLimitResponse(headers, statusLimit);
+
+        const requestedJobId = typeof body.job_id === "string" ? body.job_id.trim() : "";
+        if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(requestedJobId)) {
+          return json({ error: "Identificatorul proiectului video nu este valid." }, 400);
+        }
+        let jobs;
+        try {
+          jobs = await studioDb("drvas_studio_render_jobs?select=id,render_id,status,storage_path,duration&user_id=eq." +
+            encodeURIComponent(studioUser.id) + "&id=eq." + encodeURIComponent(requestedJobId) + "&limit=1");
+        } catch (error) {
+          console.error("Dr.Vas Studio job lookup failed:", error.message);
+          return json({ error: "Nu am putut verifica proiectul video." }, 503);
+        }
+        const storedJob = Array.isArray(jobs) ? jobs[0] : null;
+        if (!storedJob) return json({ error: "Proiectul video nu a fost găsit în contul tău." }, 404);
+        if (storedJob.storage_path && storedJob.status === "stored") {
+          return json({ ok: true, job_id: storedJob.id, status: "stored", storage_path: storedJob.storage_path, duration: storedJob.duration });
+        }
+        if (!storedJob.render_id) {
+          return json({ ok: true, job_id: storedJob.id, status: storedJob.status, duration: storedJob.duration });
+        }
+
+        try {
+          const providerStatusResponse = await fetch(
+            "https://api.creatomate.com/v2/renders/" + encodeURIComponent(storedJob.render_id),
+            { headers: { Authorization: "Bearer " + env.CREATOMATE_API_KEY, Accept: "application/json" } }
+          );
+          if (!providerStatusResponse.ok) {
+            const detail = (await providerStatusResponse.text()).slice(0, 250);
+            console.error("Dr.Vas Studio status provider error:", providerStatusResponse.status, detail);
+            return json({ error: "Nu am putut citi starea randării de la provider." }, 502);
+          }
+          const providerStatus = await providerStatusResponse.json();
+          if (providerStatus.status === "failed") {
+            const failure = String(providerStatus.error_message || "Randarea a eșuat.").slice(0, 500);
+            await studioDb("drvas_studio_render_jobs?id=eq." + encodeURIComponent(storedJob.id) + "&user_id=eq." + encodeURIComponent(studioUser.id), {
+              method: "PATCH",
+              body: JSON.stringify({ status: "failed", error_message: failure, updated_at: new Date().toISOString() })
+            });
+            return json({ ok: false, job_id: storedJob.id, status: "failed", error: failure }, 200);
+          }
+          if (providerStatus.status !== "succeeded") {
+            const nextStatus = ["planned", "waiting", "transcribing", "rendering"].includes(providerStatus.status)
+              ? providerStatus.status : "rendering";
+            await studioDb("drvas_studio_render_jobs?id=eq." + encodeURIComponent(storedJob.id) + "&user_id=eq." + encodeURIComponent(studioUser.id), {
+              method: "PATCH",
+              body: JSON.stringify({ status: nextStatus, updated_at: new Date().toISOString() })
+            });
+            return json({ ok: true, job_id: storedJob.id, status: nextStatus, duration: storedJob.duration });
+          }
+
+          let completedUrl;
+          try {
+            completedUrl = new URL(providerStatus.url);
+            if (completedUrl.protocol !== "https:" || completedUrl.hostname.toLowerCase() !== "cdn.creatomate.com") {
+              throw new Error("UNTRUSTED_RENDER_URL");
+            }
+          } catch {
+            return json({ error: "Adresa rezultatului video nu este validă." }, 502);
+          }
+          const mediaResponse = await fetch(completedUrl.toString());
+          if (!mediaResponse.ok || !mediaResponse.body) {
+            return json({ error: "Nu am putut prelua fișierul MP4 final." }, 502);
+          }
+          const contentLength = Number(mediaResponse.headers.get("Content-Length") || 0);
+          if (contentLength > 50 * 1024 * 1024) {
+            return json({ error: "Fișierul video depășește limita de 50 MB pentru salvarea în cont." }, 413);
+          }
+          const storagePath = studioUser.id + "/" + storedJob.render_id + ".mp4";
+          const uploadResponse = await fetch(
+            studioBase + "/storage/v1/object/drvas-media/" + encodeURIComponent(studioUser.id) + "/" + encodeURIComponent(storedJob.render_id) + ".mp4",
+            {
+              method: "POST",
+              headers: {
+                apikey: env.SUPABASE_KEY,
+                Authorization: "Bearer " + studioToken,
+                "Content-Type": "video/mp4",
+                "x-upsert": "true",
+                "Cache-Control": "3600"
+              },
+              body: mediaResponse.body
+            }
+          );
+          if (!uploadResponse.ok) {
+            const detail = (await uploadResponse.text()).slice(0, 250);
+            console.error("Dr.Vas Studio private media upload failed:", uploadResponse.status, detail);
+            return json({ error: "MP4-ul a fost randat, dar nu a putut fi salvat în spațiul privat Dr.Vas." }, 502);
+          }
+          await studioDb("drvas_studio_render_jobs?id=eq." + encodeURIComponent(storedJob.id) + "&user_id=eq." + encodeURIComponent(studioUser.id), {
+            method: "PATCH",
+            body: JSON.stringify({
+              status: "stored",
+              storage_path: storagePath,
+              error_message: null,
+              updated_at: new Date().toISOString()
+            })
+          });
+          return json({
+            ok: true,
+            job_id: storedJob.id,
+            status: "stored",
+            storage_path: storagePath,
+            duration: storedJob.duration,
+            width: 1080,
+            height: 1920,
+            output_format: "mp4"
+          });
+        } catch (error) {
+          console.error("Dr.Vas Studio render status failed:", error.message);
+          return json({ error: "Nu am putut finaliza salvarea rezultatului video." }, 502);
+        }
+      }
+
       // Optional server-side founder voice TTS. Provider credentials and verified voice ID stay in Worker secrets.
       if (body.action === "voice_tts") {
         const ttsText = typeof body.text === "string" ? body.text.trim() : "";
