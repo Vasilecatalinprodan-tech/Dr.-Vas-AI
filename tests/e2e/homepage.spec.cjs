@@ -148,6 +148,25 @@ test("desktop module opens its own workspace beside its contextual chat", async 
   expect(layout.split(" ").length).toBeGreaterThanOrEqual(2);
 });
 
+test("legacy focused workspace never exposes other modules or cross-module history", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-focus-user", email: "focus@example.invalid" };
+    isDrvasAdmin = true;
+    showModuleSelection();
+    selectModule("studio", true);
+    document.body.classList.add("chat-focus-mode");
+    document.documentElement.classList.add("chat-focus-document");
+  });
+
+  await expect(page.locator("#chatSection")).toBeVisible();
+  await expect(page.locator(".chat-module-rail")).toBeHidden();
+  await expect(page.locator("#chatSection .history-panel")).toBeHidden();
+  const columns = await page.locator("#chatSection > .chat-layout").evaluate(node => getComputedStyle(node).gridTemplateColumns);
+  expect(columns.split(" ").length).toBe(1);
+});
+
 test("clicking a module as a visitor opens the sign-in gate and preserves the selected module", async ({ page }) => {
   await openApp(page, "ro");
   await page.evaluate(() => showModuleSelection());
