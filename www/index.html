@@ -135,6 +135,11 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .live-voice-stage.is-speaking .live-stage-wave i{animation:liveWave .3s ease-in-out infinite alternate;opacity:1}
 @keyframes liveWave{from{height:5px;transform:scaleY(.7)}to{height:20px;transform:scaleY(1)}}
 @keyframes liveAvatarTalk{from{transform:scale(1)}to{transform:scale(1.045)}}
+body.assistant-speaking .assistant-choice[aria-pressed="true"] .assistant-avatar{animation:liveAvatarTalk .38s ease-in-out infinite alternate;box-shadow:0 0 0 4px #54d8cf30}
+.live-voice-stage.is-speaking .live-stage-avatar img{animation:liveAvatarTalk .38s ease-in-out infinite alternate}
+.live-voice-stage.is-speaking .live-stage-avatar .assistant-avatar-symbol svg{animation:avatarTalk .22s ease-in-out infinite alternate}
+.live-voice-stage.is-speaking .live-stage-avatar .assistant-avatar-symbol svg path[d^="M52 76"],.live-voice-stage.is-speaking .live-stage-avatar .assistant-avatar-symbol svg path[d^="M51 79"]{animation:avatarMouth .18s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}
+
 @media(prefers-reduced-motion:reduce){.live-voice-stage,.live-stage-avatar,.live-stage-wave i{animation:none!important;transition:none!important}}
 
 body.assistant-speaking .assistant-choice[aria-pressed="true"] .assistant-avatar-symbol svg{animation:avatarTalk .22s ease-in-out infinite alternate}
