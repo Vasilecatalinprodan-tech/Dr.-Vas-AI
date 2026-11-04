@@ -678,6 +678,16 @@ body.free-module-mode #chatSection .chat-module-rail,body.free-module-mode #chat
     </div>
    </div>
    <p id="moduleAccessMessage" class="module-disclaimer" aria-live="polite"></p>
+   <section id="healthWorkspace" class="studio-workspace module-workspace hidden" aria-labelledby="healthWorkspaceTitle">
+    <div class="studio-workspace-head"><div><span class="tag">DR.VAS HEALTH · INFORMATION DESK</span><h2 id="healthWorkspaceTitle">✚ Dr.Vas Health</h2><p>Înțelege informațiile medicale, pregătește consultațiile și organizează întrebările pentru profesioniștii din sănătate.</p></div><span class="studio-beta-label">INFORMAȚII GENERALE</span></div>
+    <div class="studio-production-standard"><strong>Un sprijin informativ, nu un diagnostic.</strong><p class="studio-production-note">Dr.Vas Health nu înlocuiește medicul, nu stabilește diagnostice și nu recomandă schimbarea tratamentelor. Pentru simptome severe sau urgente, solicită ajutor medical imediat.</p></div>
+    <div class="studio-form-grid">
+     <label>Despre ce ai nevoie de informații?<select id="healthTopic"><option>Explicarea unui rezultat medical</option><option>Pregătirea unei consultații</option><option>Înțelegerea unui diagnostic deja primit</option><option>Medicamente — informații generale și întrebări pentru farmacist/medic</option><option>Prevenție și stil de viață</option><option>Alt subiect de sănătate</option></select></label>
+     <label>Ce vrei să obții?<select id="healthGoal"><option>Să înțeleg termenii și explicațiile</option><option>Să pregătesc întrebări pentru medic</option><option>Să organizez informațiile pe care le am</option><option>Să înțeleg ce informații lipsesc</option></select></label>
+     <label class="studio-idea-label">Întrebarea sau informațiile pe care vrei să le discutăm<textarea id="healthBrief" rows="7" maxlength="7000" placeholder="Scrie doar informațiile pe care dorești să le discuți. Nu include nume, adresă sau alte date de identificare."></textarea></label>
+    </div>
+    <div class="studio-actions"><button type="button" onclick="buildHealthPrompt()">Discută cu Dr.Vas Health</button><span>Mesajul va fi transferat în chatul Health pentru explicații generale și pași de clarificare.</span></div>
+   </section>
    <section id="studioWorkspace" class="studio-workspace hidden" aria-labelledby="studioWorkspaceTitle">
     <div class="studio-workspace-head">
      <div><span class="tag">DR.VAS CREATIVE LAB</span><h2 id="studioWorkspaceTitle">🎬 Dr.Vas Studio</h2><p>Studio de producție pentru scenarii, clipuri verticale, subtitrări și materiale digitale.</p></div>
@@ -1346,12 +1356,12 @@ function chooseLanguage(code){
  if(liveSocket||liveStream)stopLiveVoice();
  currentLanguage=code;languageReady=true;localStorage.setItem(LANGUAGE_KEY,code);
  refreshSpeechVoiceOptions();
- el("appMain").classList.remove("language-pending");el("languageGate").classList.add("hidden");
+ el("appMain").classList.remove("language-pending");el("languageGate").classList.remove("hidden");
  translatePage();refreshVoiceUi(voiceAutoRead?"ready":"off");checkSession();
 }
 function showLanguageGate(){el("languageGate").classList.toggle("hidden");if(languageReady)translatePage(el("languageGate"))}
 function initLanguage(){
- if(SUPPORTED_LANGUAGES.includes(currentLanguage)){languageReady=true;el("appMain").classList.remove("language-pending");el("languageGate").classList.add("hidden");translatePage();refreshSpeechVoiceOptions();refreshVoiceUi(voiceAutoRead?"ready":"off");checkSession()}
+ if(SUPPORTED_LANGUAGES.includes(currentLanguage)){languageReady=true;el("appMain").classList.remove("language-pending");el("languageGate").classList.remove("hidden");translatePage();refreshSpeechVoiceOptions();refreshVoiceUi(voiceAutoRead?"ready":"off");checkSession()}
  else{currentLanguage="ro";languageReady=true;try{localStorage.setItem(LANGUAGE_KEY,"ro")}catch{}document.documentElement.lang="ro";el("appMain").classList.remove("language-pending");el("languageGate").classList.remove("hidden");translatePage();refreshSpeechVoiceOptions();refreshVoiceUi(voiceAutoRead?"ready":"off");checkSession()}
 }
 const uiObserver=new MutationObserver(records=>{
@@ -1536,6 +1546,7 @@ function selectModule(moduleName,userInitiated=false){
   el("activeModuleIcon").textContent=config.icon;
   setLocalizedText(el("activeModuleName"),config.name);
   setLocalizedText(el("activeModuleDescription"),config.description);
+  const healthWorkspace=el("healthWorkspace");if(healthWorkspace)healthWorkspace.classList.toggle("hidden",moduleName!=="health"||!isDrvasAdmin);
   const workspace=el("studioWorkspace");
   if(workspace)workspace.classList.toggle("hidden",moduleName!=="studio"||!isDrvasAdmin);
   [["academyWorkspace","academy"],["commerceWorkspace","commerce"],["businessWorkspace","business"]].forEach(([id,key])=>{
@@ -2541,6 +2552,14 @@ function submitModuleBrief(prompt,notice){
  if(currentUser)enterChatFocus();
  requestAnimationFrame(()=>{field.focus({preventScroll:true});field.scrollIntoView({behavior:"smooth",block:"center"});});
 }
+function buildHealthPrompt(){
+ const topic=el("healthTopic")?.value||"Informații generale";
+ const goal=el("healthGoal")?.value||"Explicații clare";
+ const details=el("healthBrief")?.value.trim()||"";
+ if(!details){setLocalizedText(el("saveMessage"),"Adaugă întrebarea sau informațiile pe care vrei să le discutăm.");el("healthBrief")?.focus();return;}
+ const prompt="DR.VAS HEALTH — SPRIJIN INFORMATIV\nSUBIECT: "+topic+"\nOBIECTIV: "+goal+"\nINFORMAȚII FURNIZATE:\n"+details+"\n\nRăspunde prudent și clar. Explică termenii, separă faptele de incertitudini, nu formula diagnostic și nu recomanda modificarea tratamentelor. Spune ce întrebări ar fi utile pentru medic și când este necesară evaluarea urgentă. Nu inventa rezultate sau informații lipsă.";
+ const input=el("question");if(input){input.value=prompt;resizeQuestionInput();input.focus();setLocalizedText(el("saveMessage"),"Contextul Health a fost pregătit în chat. Verifică mesajul și apasă Trimite.");}
+}
 function buildAcademyPrompt(){
  const v=id=>el(id)?.value?.trim()||"";
  if(!v("academySubject")){el("academySubject").focus();return;}
@@ -2881,6 +2900,14 @@ function goToModules(){
 function selectChatModule(moduleName){selectModule(moduleName,true);}
 function showOnly(section){
  if(!languageReady)return;
+ const enteringAuth=section==="authSection"||section==="profileSection";
+ if(enteringAuth){
+  el("heroSection")?.classList.add("hidden");
+  document.querySelector(".origin-story")?.classList.add("hidden");
+  el("landingActions")?.classList.add("hidden");
+  el("moduleSelectionShell")?.classList.remove("modules-open");
+  document.body.classList.remove("module-workspace-mode","free-module-mode");
+ }
  ["authSection","profileSection","chatSection"].forEach(id=>el(id)?.classList.toggle("hidden",id!==section));
 }
 
@@ -2896,7 +2923,7 @@ async function showUser(user){
     if(el("question"))el("question").value="";
     if(el("chat"))el("chat").innerHTML="";
     if(el("conversationList"))el("conversationList").innerHTML="";
-    ["studioWorkspace","academyWorkspace","commerceWorkspace","businessWorkspace","adminPanel"].forEach(id=>el(id)?.classList.add("hidden"));
+    ["healthWorkspace","studioWorkspace","academyWorkspace","commerceWorkspace","businessWorkspace","adminPanel"].forEach(id=>el(id)?.classList.add("hidden"));
     document.querySelectorAll(".module-card").forEach(card=>{
       const selected=card.dataset.module==="free";
       card.classList.toggle("selected",selected);
@@ -3543,7 +3570,7 @@ function showLogin(){
   if(el("privateProfileConsent"))el("privateProfileConsent").checked=false;
   if(el("privateProfileMessage"))el("privateProfileMessage").textContent="";
   if(typeof renderIncomeOpportunities==="function")renderIncomeOpportunities();
-  ["studioWorkspace","academyWorkspace","commerceWorkspace","businessWorkspace","adminPanel"].forEach(id=>el(id)?.classList.add("hidden"));
+  ["healthWorkspace","studioWorkspace","academyWorkspace","commerceWorkspace","businessWorkspace","adminPanel"].forEach(id=>el(id)?.classList.add("hidden"));
   document.querySelectorAll(".module-card").forEach(card=>{
     const selected=card.dataset.module==="free";
     card.classList.toggle("selected",selected);
