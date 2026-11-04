@@ -352,3 +352,10 @@ A detailed session log was added at `docs/SESSION_LOG_2026-11-03.md`. It records
 - Browser workflow run `41806907100` was queued when this checkpoint was written. Do not mark the new tests passed until the run completes successfully.
 - Documentation: `docs/PRODUCT_EXPANSION_AND_SAFETY_ARCHITECTURE.md`.
 - Remaining work: verify new browser tests; verify Supabase migrations `202611030004_studio_projects.sql` and `202611030005_income_and_founder_provenance.sql` have been applied before testing saved projects/income tracker; add genuine Academy lesson/progress storage only after schema and access design; do not enable public paid access before signed webhook entitlements and consumer/legal setup.
+
+### Verification correction — 2026-11-04
+
+- The first new test run failed because the test used Playwright `toContainText` on a textarea (which checks text content rather than the textarea value); the generated brief itself was present. The next attempt used a regex with an over-escaped dot and failed its assertion. Corrected the test to match the actual textarea value with a literal dot.
+- Final browser regression workflow `41807406846` on test commit `1d31f84d48f07532836450976a0c2a5e3198239a` completed successfully. The run includes 11 tests: 9 previous tests plus Academy/Commerce/Business admin brief generation and non-admin denial. Verify the log if exact per-test details are needed.
+- Latest Worker deployment validation was queued as run `41807531303` on commit `3193218f4f3f53e941453d1a7d2db3fedd0e5a2c`; do not claim the new version is live until it succeeds.
+- APK workflow `41806870440` on source commit `87551478b74fa900c791455afa4b2e04bb422a43` completed successfully. That source commit contains the new module workspaces and prompt builders; the later commits only adjust tests/docs and Worker comments. Physical device testing is still outstanding.
