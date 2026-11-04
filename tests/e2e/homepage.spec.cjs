@@ -443,7 +443,7 @@ test("Studio creates a branded MP4 render request and restores a private complet
     access_token: "e2e-studio-token",
     user: { id: "e2e-studio-user", email: "admin@example.invalid" }
   };
-  await openApp(page, "ro", session);
+  await openApp(page, "ro");
   let createPayload = null;
   await page.route("https://dr--vas-ai.vasilecatalinprodan.workers.dev/**", async route => {
     const body = route.request().postDataJSON();
@@ -467,6 +467,10 @@ test("Studio creates a branded MP4 render request and restores a private complet
   await page.evaluate(() => {
     currentUser = { id: "e2e-studio-user", email: "admin@example.invalid" };
     isDrvasAdmin = true;
+    supabaseClient.auth.getSession = async () => ({
+      data: { session: { access_token: "e2e-studio-token" } },
+      error: null
+    });
     supabaseClient.storage = {
       from: () => ({
         upload: async () => ({ data: { path: "e2e-studio-user/studio-assets/voice.mp3" }, error: null }),
