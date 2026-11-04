@@ -69,3 +69,14 @@ Latest runs triggered from the above commits:
 - E2E assertion commit: `a0a896db2d05a6ebd2eac64fd5d9a5a71217644d`.
 - Latest CI runs for the source-fix commit were in progress at 15:42 UTC: browser regression `41860021975`, Worker deploy `41860022353`, APK build `41860022226`. Latest test-only commit runs `41860053522` and `41860053663` were pending. Recheck before claiming success.
 - Studio backend inspection: actual MP4 rendering is wired to Creatomate; Worker requires server-side Cloudflare secret `CREATOMATE_API_KEY`, checks the founder against `ADMIN_EMAILS`, and requires configured Supabase rate limiting/storage. The key's production presence has not yet been verified; do not claim Studio MP4 is live until the production `/health` check reports `studio_renderer: configured` and an authenticated end-to-end render succeeds.
+
+
+## 2026-11-04 — Second root cause found and corrected
+
+- The last CI logs showed the auth and profile panels still hidden (25/29 tests passed). The actual DOM was re-inspected around the closing tags: `#authSection` and `#profileSection` are direct children of `#moduleSelectionShell`, siblings of `#moduleSelectionSection`. The prior CSS selector targeted the wrong parent.
+- Corrected the CSS selector to `#moduleSelectionShell.auth-flow-mode > :not(#authSection):not(#profileSection)`, and moved the `auth-flow-mode` class to the shell. This keeps the auth/profile panels visible and hides only the module dashboard. `showModuleSelection()` removes the mode class again.
+- Updated the four browser assertions to check the shell class, not the dashboard class.
+- Source fix commit: `0e1e3ec83b5750c647c84e9c7b37a3c6ab15e645`.
+- Test correction commit: `5fdaa4834f8e2fd3553b897f969bd63af7ee09e0`.
+- Workflow runs triggered for source fix: browser regression `41862547116`, Worker deploy `41862547142`, APK build `41862547132`; they were queued at the time of this note. Recheck current run status and ensure the newest test commit is included before publishing.
+- Important: APK build from `5774085` succeeded, but it predates this final auth fix. Only use the APK artifact built from the passing latest commit.
