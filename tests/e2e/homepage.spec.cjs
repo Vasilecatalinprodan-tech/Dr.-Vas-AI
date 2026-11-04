@@ -235,7 +235,7 @@ test("text chat sends the selected module context to the Worker for all six modu
     }, module);
     await page.locator("#question").fill("Ajută-mă cu următorul pas.");
     await page.locator("#sendButton").click();
-    await expect(page.locator("#chat .msg.assistant").last()).toContainText("Răspuns contextual de test.");
+    await expect(page.locator("#chat .msg.bot").last()).toContainText("Răspuns contextual de test.");
     const request = sentRequests[sentRequests.length - 1];
     expect(request.module).toBe(module);
     expect(request.access_token).toBe("e2e-access-token");
