@@ -281,3 +281,50 @@ User asked to continue development and save all progress and the conversation. T
 - GitHub combined commit status and pull-request workflow lookup returned no entries for the tested commit. This is not a pass result. The browser E2E suite has not yet been confirmed running successfully.
 - Cloudflare Worker deployment and the production static-assets deployment have not been confirmed. The known existing preview URL is `https://dr--vas-ai.vasilecatalinprodan.workers.dev/`; it may still serve the previously deployed build until the current branch is deployed.
 - The Cloudflare secret `ADMIN_EMAILS` is not readable from the repository and has not been independently verified in this session. Its required exact value is the founder address only: `vasilecatalinprodan@gmail.com`. Do not add other accounts.
+
+
+## 2026-11-04 — owner clarification: public Free and Health; clinician marketplace is future phased work
+
+This section is the latest authoritative product decision and supersedes any earlier wording in this document that describes all six modules as admin-only or says Health is entirely private.
+
+### Public access model
+- **Dr.Vas Free is for everyone** in the public audience. Ordinary users may create an account/sign in and use Free without administrator privileges.
+- **Dr.Vas Health is also intended for the general public** for general health information, health education, and preparation for conversations with healthcare professionals.
+- Health must not diagnose, prescribe, claim to replace a clinician, or present AI-generated guidance as a consultation with a licensed professional.
+- When a user's request requires an actual medical professional, the future product journey should direct them to an explicit action such as **“Contact a doctor or nurse”**. This professional-care route is not the same as ordinary free Health information.
+- **Studio, Academy, Commerce and Business** are separate workspaces and remain private/premium or otherwise access-gated until the owner deliberately defines and authorizes their public release, pricing, and applicable safeguards.
+- Founder/admin-only controls, dashboards, operational tools, private workbenches, secrets and customer data remain separate from public and premium customer access.
+
+### Future paid real-clinician chat — Dr.Vas Health roadmap
+- A later phase may introduce in-app chat with a real, appropriately licensed/registered doctor or nurse.
+- This service will be paid by the user. Dr.Vas will pay the clinician an agreed fee and retain a clearly disclosed platform commission.
+- Build this gradually; it is a roadmap item, **not an existing feature** and must not be advertised as currently available.
+- Before launch, establish clinician identity and registration checks, professional scope, jurisdiction/territory rules, clinical governance, safeguarding and escalation/emergency pathways, informed consent, privacy/data protection, secure communications, record retention, complaint handling, insurance/liability arrangements, transparent pricing, clinician compensation and commission terms, refunds/cancellations, and applicable medical/telehealth regulatory review.
+- The AI information layer must remain clearly distinguished from the human professional consultation. The user must know when they are interacting with AI and when they are chatting with a real clinician.
+
+### Administrator boundary — exact and exclusive
+- The only administrator is the owner account **vasilecatalinprodan@gmail.com**.
+- No other account is to be added as administrator. In particular, do not solve public Free/Health access by adding ordinary users to `ADMIN_EMAILS`.
+- Administrator status is an owner-only privilege. It is not required for public Free or general-information Health access, and it is not granted by registration, login, subscription or payment.
+- Keep the Cloudflare Worker as the server-side authority for admin-only operations. Verify the Worker allowlist contains only the exact owner email; never expose the secret in frontend code.
+- Public user authentication and module entitlement must be separate concepts: authentication establishes the user's identity; product entitlements decide which public/free or paid workspaces that user may access; admin authorization is a distinct owner-only permission.
+
+### Workspace separation — non-negotiable
+- Dr.Vas Free keeps its current clean, familiar interface.
+- When a user opens Health, Studio, Academy, Commerce or Business, show only that module's own workspace, tools, prompts, history/context and navigation. Do not show the global list of all modules inside a module workspace.
+- Each module must have a clear localized **“Back to modules”** action.
+- Do not mix features or workflows across modules. Shared platform services (authentication, account, billing, language, safe shared infrastructure) may be common, but each module's user-facing workspace and feature set must remain distinct.
+- The owner has repeatedly clarified that this is a public-facing application first, with private/admin and premium capabilities separated—not an application where every customer must be an administrator.
+
+### Work completed and honest verification state
+- The preceding checkpoint records source changes intended to permit ordinary authenticated users to use Free, keep Health/public access as a separate product decision, and deny ordinary users access to gated premium workspaces.
+- The preceding checkpoint also records CSS/workspace-isolation changes and Playwright regression tests intended to keep only the selected module visible and preserve the Free layout.
+- These repository changes must still be verified in the actual browser workflow and on the deployed site before claiming the live experience is fixed. No CI pass or deployment success is asserted by this note.
+- Known preview/production address recorded earlier: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ . It may not yet serve the latest branch build until deployment is confirmed.
+- Immediate development priority: make the public Free and general-information Health journeys work reliably; enforce the single-owner admin boundary; isolate every workspace; then progressively build premium entitlements and, much later, the real-clinician paid chat.
+
+### Conversation continuity
+- User asked to preserve all decisions and work before opening a new chat.
+- User corrected the assistant emphatically: do not ask to make another account an administrator. Only `vasilecatalinprodan@gmail.com` is admin; ordinary public users should access Free and Health without admin status.
+- User described the long-term Health business model: free AI/general information, then an optional paid real doctor/nurse chat; Dr.Vas pays the clinician and earns a commission. This is a phased future roadmap.
+- Continue in Romanian, do not send repeated progress updates, and let the assistant handle technical work. The user should only be asked for simple visual checks or an exact action that genuinely requires their access.
