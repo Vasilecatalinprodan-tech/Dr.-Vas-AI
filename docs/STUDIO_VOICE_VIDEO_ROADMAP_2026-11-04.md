@@ -64,8 +64,8 @@ Apply `supabase/migrations/202611040004_studio_render_storage.sql` in Supabase. 
 This first renderer assembles uploaded still images, scene captions and an optional supplied audio track into a branded MP4. It is a real render/assembly engine, not a generative motion-video model. The currently connected Runway workspace reports no available video, speech, music or sound-effect models. Cinematic AI-generated moving footage, cloned founder narration and generated music remain separate provider capabilities that require available models, appropriate consent and/or credentials.
 
 ### Verification state
-- Worker/browser JavaScript static validation and CI checks for the render migration, RLS, server-side secret, private storage and mandatory watermark passed on the last completed deployment workflow before this latest render test run.
-- Browser E2E test for Studio render request and private preview is being run separately.
+- Latest Worker deployment workflow run `41828699601` passed JavaScript/static security validation, **16 browser E2E tests**, Worker deployment, production smoke test and CycloneDX SBOM generation: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/41828699601
+- The Studio render request and private-preview browser test passed as part of those 16 tests.
 - The Creatomate API key has not yet been configured, and the Supabase migration has not yet been applied in the live project. Therefore no real MP4 has yet been rendered or saved in production.
 
 ### Provider references
