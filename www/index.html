@@ -2182,7 +2182,7 @@ async function checkStudioRenderStatus(){
 function newStudioProject(){
  currentStudioProjectId=null;currentStudioProjectOutput="";currentStudioRenderJobId=null;currentStudioRenderStoragePath="";
  ["studioProjectTitle","studioIdea"].forEach(id=>{el(id).value="";});if(el("studioSubtitles"))el("studioSubtitles").checked=true;if(el("studioNarration"))el("studioNarration").value="founder_voice_pending";
- if(el("studioSceneImages"))el("studioSceneImages").value="";if(el("studioSceneCaptions"))el("studioSceneCaptions").value="";
+ if(el("studioSceneImages"))el("studioSceneImages").value="";if(el("studioSceneAudio"))el("studioSceneAudio").value="";if(el("studioSceneCaptions"))el("studioSceneCaptions").value="";
  if(el("studioRenderPreview")){el("studioRenderPreview").pause();el("studioRenderPreview").removeAttribute("src");el("studioRenderPreview").hidden=true;}
  if(el("studioRenderDownload")){el("studioRenderDownload").removeAttribute("href");el("studioRenderDownload").hidden=true;}
  studioRenderMessage("Proiect nou. Creează un brief sau un teaser MP4.");
