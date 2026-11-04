@@ -372,3 +372,14 @@ This section supersedes any older or contradictory wording in this document that
 - This was unacceptable and contradicted the explicit product model. Root cause: frontend and Worker still gated Health as admin-only, stale “pilot privat” labels remained in the module chooser, and the frontend exposed the expected non-admin status as a warning.
 - User reiterated the exact intended journey: first landing page with “Vorbește cu Dr.Vas”, then login, then public Free and Health plus separate private modules. Preserve this sequence; do not change it.
 - User asked to save this conversation and make the required corrections. Continue in Romanian, do not send repeated progress updates, and never suggest granting administrator status to ordinary accounts.
+
+
+### Exact implementation and CI checkpoint — 2026-11-04 22:04 UTC
+- Frontend correction commit: `ce6c84bde2800e2dc509531e94609e47fb723d47` (latest frontend blob `088f0bd42bc9d8b769d0d14dd7d92888fd767326`).
+- Worker authorization correction commit: `37db4e3ecddc136b0554ccc863c8b283edada7aa` (Worker blob `66232db4b8011e00836195ef1de29af0fccb138d`).
+- Playwright regression coverage commit: `892aa5dfe238c64759c87799b807a52cead01abd` (test blob `996a449e2531eaf92d413593073a125a3b193180`).
+- This continuity record's previous checkpoint commit: `27746b2bdd36488d3d69250dd999c2d041ffd668`; the current record is being extended with final CI observations.
+- Re-fetched the current branch and confirmed: no user-facing “pilot privat” label remains in the module chooser; Free and Health are labelled public/free; ordinary signed-in users may enter both; the Health workspace no longer requires admin status; normal accounts no longer see the admin-not-authorized notice; Worker text chat gates only Studio, Academy, Commerce and Business; the four private modules still require the founder.
+- The Live Health voice token remains separately controlled by `GEMINI_LIVE_HEALTH_ENABLED` pending privacy review. This flag does not block Health text chat.
+- GitHub Actions run `41921816040` (Deploy Dr.Vas Worker) was in progress. Its JavaScript validation step completed successfully for both Worker and browser inline scripts; Playwright installation/test and deployment/smoke-test steps were still pending at the time of this checkpoint.
+- A separate browser E2E run `41921816001` had been queued. Do not claim E2E pass or production deployment until the run completes and its results are checked.
