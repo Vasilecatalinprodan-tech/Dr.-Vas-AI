@@ -1673,6 +1673,24 @@ async function stopLiveVoice(){
  const status=el("voiceStatus");
  if(status)status.textContent=liveFailureMessage ? (liveLabel("error")+" "+liveFailureMessage) : liveLabel("stopped");
 }
+function updateLiveVoiceStage(state,message){
+ const stage=el("liveVoiceStage");
+ if(!stage)return;
+ const avatar=el("liveStageAvatar"),name=el("liveStageName"),status=el("liveStageStatus");
+ if(state==="closed"){stage.classList.remove("is-open","is-listening","is-speaking");stage.hidden=true;return;}
+ stage.hidden=false;stage.classList.add("is-open");
+ stage.classList.toggle("is-listening",state==="listening");
+ stage.classList.toggle("is-speaking",state==="speaking");
+ const assistant=ASSISTANTS[activeAssistant]||ASSISTANTS.drvas;
+ if(name)name.textContent=assistant.name;
+ if(status)status.textContent=message||"Conversație vocală activă.";
+ if(avatar){
+  const choice=document.querySelector('.assistant-choice[data-assistant="'+activeAssistant+'"]');
+  const source=choice&&choice.querySelector(".assistant-avatar, .assistant-avatar-symbol");
+  avatar.replaceChildren();
+  if(source)avatar.appendChild(source.cloneNode(true));else avatar.textContent=assistant.icon||"✦";
+ }
+}
 async function toggleLiveVoice(){
  if(liveSocket||liveStream){
   await stopLiveVoice();
