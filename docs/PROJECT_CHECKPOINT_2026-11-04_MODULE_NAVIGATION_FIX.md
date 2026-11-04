@@ -1,44 +1,41 @@
-# Dr.Vas AI — checkpoint: module navigation fix
+# Dr.Vas AI — checkpoint: login-first entry and module navigation
 
 Date: 2026-11-04
 Repository: Vasilecatalinprodan-tech/Dr.-Vas-AI
 Branch: drvas-integrated-platform
+Production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev
 
-## Reported problem
-After pressing “Vorbește cu Dr.Vas”, the module chooser appeared, but selecting a module after authentication did not reliably open the selected workspace.
+## Corrected user report
+The user clarified that pressing “Vorbește cu Dr.Vas” went straight to the module chooser instead of first showing login, and clicking a module appeared to do nothing. The primary CTA should be placed near the top of the hero, above its descriptive paragraph.
 
-## Root cause addressed
-The post-authentication route waited for unrelated background work before displaying the selected module:
-- the administrator dashboard load (including audit metrics/device registry);
-- the conversation-history query and possible conversation restoration.
+## Confirmed code causes
+- Both the header CTA and landing CTA directly called showModuleSelection(), bypassing the authentication gate.
+- selectModule() intentionally refuses to open private workspaces unless the Worker confirms the signed-in user through the server-side admin allowlist.
+- When that check had not completed yet, or the account was not authorized, the old message was written into the chat workspace, which was hidden. The user therefore received no visible explanation and the module appeared unresponsive.
+- The Cloudflare Worker serves ./www as its static assets directory. The legacy root index.html is not the production page.
 
-A slow or failing secondary request could therefore make module selection appear unresponsive.
+## Changes committed to www/index.html
+- Added startDrVas() as the single entry point for the header and hero CTAs.
+- Visitors without a Supabase session are sent to login first. A sessionStorage intent flag returns them to the module chooser after successful authentication.
+- Existing signed-in users wait for the server-side administrator check before seeing the chooser.
+- Moved a prominent “Vorbește cu Dr.Vas” CTA into the hero above the description.
+- Removed the duplicate lower-page CTA.
+- Added a visible module-selection status message when server-side admin authorization is missing or denied. No client-side bypass was introduced; private module access still depends on Worker admin_status.
 
-## Changes
-- `refreshAdminPanel()` now starts the admin dashboard load without awaiting it. The server-side admin status check remains required and unchanged.
-- `showChat()` now consumes the pending module and opens the selected administrator workspace immediately after the server-side admin check.
-- Conversation history is loaded after the workspace is shown.
-- If history loading fails, Dr.Vas starts a fresh conversation instead of leaving the user stranded.
-- Added a Playwright regression test that deliberately leaves conversation history pending and verifies all six administrator module workspaces open immediately.
-- Updated the Studio render test to isolate its own session setup from asynchronous authentication timing.
-- Replaced a slow network-path test with deterministic checks for selected-module context and dedicated Worker instructions.
+## Regression tests
+Updated tests/e2e/homepage.spec.cjs to cover:
+- Hero CTA position and login-first behavior for visitors.
+- Returning to the module chooser after successful authentication.
+- Existing module workspace tests remain in the suite.
 
-## Security
-The server-side administrator allowlist and non-admin restrictions were preserved. No public access was enabled.
+The source and test files were committed on drvas-integrated-platform. Static repository checks confirmed the entry function, pending-entry restoration, hero CTA order, visible authorization feedback, and removal of direct showModuleSelection() CTA handlers.
 
-## Validation
-Latest verified GitHub Actions run:
-- Run ID: 41849903284
-- Result: success
-- Browser regression suite: 27/27 passed
-- Worker deployment: success
-- Production Worker smoke test: success
+## Deployment / verification status
+The deploy-worker workflow is configured to run on pushes to drvas-integrated-platform when www/** or tests/** changes. The latest automated workflow result for these new commits has not yet been independently confirmed in this checkpoint. Do not claim production deployment or a passing test suite until the workflow result is checked.
 
-## Last verified source revision
-Commit: 6a7afb8c93344d052417b91c7a2c955e1b92c2e8
-
-## Next manual check
-Sign in with the founder/admin account on the production site, press “Vorbește cu Dr.Vas”, select each module, and verify the workspace opens. Automated tests validate the route and authorization logic, but they do not replace this real-account browser check.
-
-Production Worker:
-https://dr--vas-ai.vasilecatalinprodan.workers.dev
+## Next verification
+1. Confirm the latest GitHub Actions deploy-worker run is green, including Playwright and production smoke test.
+2. On the production URL, perform Ctrl+F5.
+3. Test while signed out: CTA -> login -> successful login -> module chooser.
+4. Test the founder/admin account: click all six module cards and verify each opens its workspace.
+5. If a module remains blocked, read the visible administrator message and verify the exact founder email in Cloudflare ADMIN_EMAILS. Do not weaken the server-side gate.
