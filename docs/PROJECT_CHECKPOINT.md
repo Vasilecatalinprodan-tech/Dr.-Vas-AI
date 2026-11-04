@@ -370,3 +370,11 @@ A detailed session log was added at `docs/SESSION_LOG_2026-11-03.md`. It records
 - Source commits: `a0dbf4ed684c8dd71e2eb9999c324567bca8e3f0` (migration), `ef83b156a53a07964ec440a7626a26402e37cb69` (project controls), `f0b6bf65a8154e78b8f0e72b0b0a055ba132156d` (persistence functions), `ddd8da4601ab4884297186433043d4889ff336db` (account-switch cleanup), `88669afe540430bd9545f8576bd3a919b35f98c4` (tests).
 - Latest browser run `41807888087` is pending. Verify the final result before claiming this project persistence change is tested.
 - Supabase SQL migration is not yet confirmed applied. Do not assume project saving is live until it is run in the project's SQL Editor and a real authenticated save/open/delete test passes.
+
+
+### Latest browser verification and logout privacy hardening — 2026-11-04
+
+- The corrected browser suite completed successfully: workflow `41808240107`, commit `0adcd4472d6faed3f17157393f099d227128ee08`, **13/13 tests passed**. Coverage includes all six-module dashboard baseline, delayed first voice playback, three assistant avatar states, Academy/Commerce/Business brief builders, non-admin denial, project save/open/delete (in-memory Supabase query mock), and logout privacy cleanup.
+- Code review found that logout did not explicitly reset the in-memory admin flag or hide admin/premium workspaces. Fixed `showLogin()` to revoke the client admin presentation state, hide all premium/admin panels, clear private workspace drafts and income tracker data, reset project IDs/outputs and return the selected module to Free. Server-side Worker checks remain the security authority; this is additional client-side privacy hygiene.
+- Added a CI static check for the new module-project migration: RLS enabled, module allowlist, owner policies, no public/anon access, and presence of save/open/logout protections.
+- Latest validation/deployment workflow was triggered by the current source/workflow commits; check its final status before claiming production deployment. The real Supabase migration still requires application and a real authenticated two-account isolation test.
