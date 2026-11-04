@@ -338,3 +338,17 @@ A detailed session log was added at `docs/SESSION_LOG_2026-11-03.md`. It records
 - APK is compiled, not yet installed or runtime-tested on the founder's Samsung device.
 - Production Worker deployment is confirmed. Browser visual testing and live Supabase project save/reopen testing remain outstanding.
 - The new Studio projects migration `202611030004_studio_projects.sql` remains to be applied manually in Supabase before cloud project save/reopen can work.
+
+
+## 2026-11-04 — Academy, Commerce and Business pilot workspaces
+
+- Added administrator-only structured workspaces for Academy, Commerce and Business to `www/index.html`.
+- Academy captures course subject, level, target audience, format, language, learning outcome and requirements, then prepares a reviewable course-design brief in the existing chat composer.
+- Commerce captures product/niche, market, budget, model, sales channel and target price, then prepares a supplier/compliance/cost/margin/risk analysis brief. It does not order products or claim to verify suppliers.
+- Business captures idea, country, budget, stage, goal and planning horizon, then prepares a business-plan/cashflow/action-plan brief with explicit assumptions and professional-advice boundaries.
+- All three remain administrator-only until real subscription entitlements and payments are implemented. User reviews each prompt and explicitly sends it. No external actions or payments are triggered.
+- Added responsive workspace styling and Playwright coverage for all three builders plus a non-admin access-denial test.
+- Source commits: `ca538d0acbe1a1ea8c4db1e4b405c609cc8ab19d` (workspace UI), `87551478b74fa900c791455afa4b2e04bb422a43` (builders and module visibility), `63ec12c6139c9a0e22c30c62aabd858ea99aadb6` (tests).
+- Browser workflow run `41806907100` was queued when this checkpoint was written. Do not mark the new tests passed until the run completes successfully.
+- Documentation: `docs/PRODUCT_EXPANSION_AND_SAFETY_ARCHITECTURE.md`.
+- Remaining work: verify new browser tests; verify Supabase migrations `202611030004_studio_projects.sql` and `202611030005_income_and_founder_provenance.sql` have been applied before testing saved projects/income tracker; add genuine Academy lesson/progress storage only after schema and access design; do not enable public paid access before signed webhook entitlements and consumer/legal setup.
