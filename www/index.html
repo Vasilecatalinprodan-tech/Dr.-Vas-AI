@@ -2315,6 +2315,9 @@ async function showUser(user){
     if(el("studioIdea"))el("studioIdea").value="";
     ["academySubject","academyLevel","academyAudience","academyFormat","academyLanguage","academyOutcome","academyBrief","academyProjectTitle","commerceProduct","commerceMarket","commerceBudget","commerceModel","commerceChannel","commercePrice","commerceBrief","commerceProjectTitle","businessIdea","businessCountry","businessBudget","businessStage","businessGoal","businessHorizon","businessBrief","businessProjectTitle","incomeTitle","incomePlatform","incomeType","incomeStatus","incomeEstimated","incomeActual","incomeCurrency","incomeUrl","incomeNextAction","incomeNotes"].forEach(id=>{if(el(id))el(id).value="";});
     currentIncomeOpportunityId=null;incomeOpportunityCache=[];
+    ["privateLegalName","privatePhone","privateCompanyName","privateBusinessType","privateCompanyCountry","privateInvoicePreferences"].forEach(id=>{if(el(id))el(id).value="";});
+    if(el("privateProfileConsent"))el("privateProfileConsent").checked=false;
+    if(el("privateProfileMessage"))el("privateProfileMessage").textContent="";
     if(typeof renderIncomeOpportunities==="function")renderIncomeOpportunities();
   }
   currentUser = user;
@@ -2923,6 +2926,9 @@ function showLogin(){
   ["studioProjectTitle","studioIdea","academyProjectTitle","academySubject","academyLevel","academyAudience","academyFormat","academyLanguage","academyOutcome","academyBrief","commerceProjectTitle","commerceProduct","commerceMarket","commerceBudget","commerceModel","commerceChannel","commercePrice","commerceBrief","businessProjectTitle","businessIdea","businessCountry","businessBudget","businessStage","businessGoal","businessHorizon","businessBrief","incomeTitle","incomePlatform","incomeType","incomeStatus","incomeEstimated","incomeActual","incomeCurrency","incomeUrl","incomeNextAction","incomeNotes"].forEach(id=>{if(el(id))el(id).value="";});
   currentIncomeOpportunityId=null;
   incomeOpportunityCache=[];
+  ["privateLegalName","privatePhone","privateCompanyName","privateBusinessType","privateCompanyCountry","privateInvoicePreferences"].forEach(id=>{if(el(id))el(id).value="";});
+  if(el("privateProfileConsent"))el("privateProfileConsent").checked=false;
+  if(el("privateProfileMessage"))el("privateProfileMessage").textContent="";
   if(typeof renderIncomeOpportunities==="function")renderIncomeOpportunities();
   ["studioWorkspace","academyWorkspace","commerceWorkspace","businessWorkspace","adminPanel"].forEach(id=>el(id)?.classList.add("hidden"));
   document.querySelectorAll(".module-card").forEach(card=>{
