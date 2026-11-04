@@ -492,7 +492,13 @@ test("Academy, Commerce and Business projects are saved, reopened and deleted pe
   await page.locator("#studentAssessmentRubric").fill("Analysis 40%, evidence 30%, structure 30%.");
   await page.locator("#studentAssessmentDraft").fill("Original student draft for feedback.");
   await page.locator("#studentAssessmentProjectTitle").fill("Student assessment pilot");
-  await page.evaluate(() => saveStudentAssessmentProject());
+  await expect(page.locator("#studentAssessmentSubject")).toHaveValue("Business Management");
+  await expect(page.locator("#studentAssessmentBrief")).toHaveValue("Assess a business strategy using evidence.");
+  await page.evaluate(() => {
+    const brief = studentAssessmentBriefData();
+    if (!brief.subject || !brief.assignment) throw new Error("Student Desk form state missing: " + JSON.stringify(brief));
+    return saveStudentAssessmentProject();
+  });
   await expect(page.locator("#studentAssessmentProjectStatus")).toContainText("salvat");
   await expect(page.locator("#studentAssessmentProjectList option")).toHaveCount(2);
   await page.locator("#studentAssessmentDraft").fill("Changed draft text.");
