@@ -2163,8 +2163,12 @@ async function checkStudioRenderStatus(){
 }
 
 function newStudioProject(){
- currentStudioProjectId=null;currentStudioProjectOutput="";
+ currentStudioProjectId=null;currentStudioProjectOutput="";currentStudioRenderJobId=null;currentStudioRenderStoragePath="";
  ["studioProjectTitle","studioIdea"].forEach(id=>{el(id).value="";});if(el("studioSubtitles"))el("studioSubtitles").checked=true;if(el("studioNarration"))el("studioNarration").value="founder_voice_pending";
+ if(el("studioSceneImages"))el("studioSceneImages").value="";if(el("studioSceneCaptions"))el("studioSceneCaptions").value="";
+ if(el("studioRenderPreview")){el("studioRenderPreview").pause();el("studioRenderPreview").removeAttribute("src");el("studioRenderPreview").hidden=true;}
+ if(el("studioRenderDownload")){el("studioRenderDownload").removeAttribute("href");el("studioRenderDownload").hidden=true;}
+ studioRenderMessage("Proiect nou. Creează un brief sau un teaser MP4.");
  el("studioDeliverable").value="series";
  el("studioSavedProjects").value="";
  setStudioProjectStatus("Proiect nou. Completează ideea și salvează când ești gata.");
@@ -2175,7 +2179,7 @@ function studioProjectData(){
  const deliverable=value("studioDeliverable");
  const labels={series:"Serial / episod",short:"Clip scurt",youtube:"Video YouTube",ad:"Reclamă",storyboard:"Storyboard",book:"Carte / e-book",translation:"Traducere",music:"Compoziție muzicală",lyrics:"Versuri / poezie",article:"Articol / blog"};
  const title=value("studioProjectTitle").trim()||((labels[deliverable]||"Proiect")+" — "+(idea.slice(0,48)||"Proiect nou"));
- return {title,project_type:deliverable,brief:{idea,deliverable,platform:value("studioPlatform"),tone:value("studioTone"),audience:value("studioAudience"),duration:value("studioDuration"),aspect:value("studioAspect"),narration:value("studioNarration")||"founder_voice_pending",subtitles:el("studioSubtitles")?.checked!==false,branding:"MADE BY VPC",latest_output:currentStudioProjectOutput.slice(0,50000),updated_from:"drvas-studio"}};
+ return {title,project_type:deliverable,brief:{idea,deliverable,platform:value("studioPlatform"),tone:value("studioTone"),audience:value("studioAudience"),duration:value("studioDuration"),aspect:value("studioAspect"),narration:value("studioNarration")||"founder_voice_pending",subtitles:el("studioSubtitles")?.checked!==false,branding:"MADE BY VPC",latest_output:currentStudioProjectOutput.slice(0,50000),render_job_id:currentStudioRenderJobId,render_storage_path:currentStudioRenderStoragePath,updated_from:"drvas-studio"}};
 }
 function setStudioProjectStatus(message,isError=false){
  const status=el("studioProjectStatus");if(!status)return;
@@ -2218,8 +2222,13 @@ async function openStudioProject(){
  try{
   const {data,error}=await supabaseClient.from("drvas_studio_projects").select("id,title,project_type,brief").eq("id",id).eq("user_id",currentUser.id).single();
   if(error)throw error;
-  const b=data.brief||{};currentStudioProjectId=data.id;currentStudioProjectOutput=b.latest_output||"";
+  const b=data.brief||{};currentStudioProjectId=data.id;currentStudioProjectOutput=b.latest_output||"";currentStudioRenderJobId=b.render_job_id||null;currentStudioRenderStoragePath=b.render_storage_path||"";
   el("studioProjectTitle").value=data.title||"";
+  if(currentStudioRenderStoragePath){
+   const {data:signed,error:signedError}=await supabaseClient.storage.from("drvas-media").createSignedUrl(currentStudioRenderStoragePath,3600);
+   if(!signedError&&signed?.signedUrl){el("studioRenderPreview").src=signed.signedUrl;el("studioRenderPreview").hidden=false;el("studioRenderPreview").load();el("studioRenderDownload").href=signed.signedUrl;el("studioRenderDownload").hidden=false;}
+  }else{if(el("studioRenderPreview")){el("studioRenderPreview").removeAttribute("src");el("studioRenderPreview").hidden=true;}if(el("studioRenderDownload"))el("studioRenderDownload").hidden=true;}
+  studioRenderMessage(currentStudioRenderStoragePath?"MP4-ul salvat în spațiul privat Dr.Vas.":"Proiect încărcat. Poți crea sau continua randarea.");
   el("studioDeliverable").value=data.project_type||b.deliverable||"series";
   ["studioIdea","studioPlatform","studioTone","studioAudience","studioDuration","studioAspect","studioNarration"].forEach((key,index)=>{const fields=["idea","platform","tone","audience","duration","aspect","narration"];if(b[fields[index]]!==undefined&&el(key))el(key).value=b[fields[index]];});if(el("studioSubtitles"))el("studioSubtitles").checked=b.subtitles!==false;
   setStudioProjectStatus("Proiect încărcat. Poți continua editarea și îl poți salva din nou.");
@@ -2704,7 +2713,7 @@ async function showUser(user){
       card.classList.toggle("selected",selected);
       card.setAttribute("aria-pressed",String(selected));
     });
-    currentStudioProjectId=null;currentStudioProjectOutput="";
+    currentStudioProjectId=null;currentStudioProjectOutput="";currentStudioRenderJobId=null;currentStudioRenderStoragePath="";
     studentAssessmentState.id=null;businessLedgerState.rows=[];
     ["studentAssessmentSubject","studentAssessmentBrief","studentAssessmentRubric","studentAssessmentDraft","studentAssessmentProjectTitle"].forEach(id=>{if(el(id))el(id).value="";});
     if(el("studentAssessmentProjectList"))el("studentAssessmentProjectList").replaceChildren(new Option("Alege o evaluare salvată",""));
@@ -3317,6 +3326,8 @@ function showLogin(){
   loadingConversation = false;
   currentStudioProjectId = null;
   currentStudioProjectOutput = "";
+  currentStudioRenderJobId = null;
+  currentStudioRenderStoragePath = "";
   studentAssessmentState.id = null;
   businessLedgerState.rows = [];
   ["studentAssessmentSubject","studentAssessmentBrief","studentAssessmentRubric","studentAssessmentDraft","studentAssessmentProjectTitle"].forEach(id=>{if(el(id))el(id).value="";});
