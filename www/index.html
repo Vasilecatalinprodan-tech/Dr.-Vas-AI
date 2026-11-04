@@ -2407,6 +2407,29 @@ function businessMoney(value,currency){
  try{return new Intl.NumberFormat(undefined,{style:"currency",currency,maximumFractionDigits:2}).format(Number(value)||0);}
  catch{return currency+" "+(Number(value)||0).toFixed(2);}
 }
+function calculateBusinessBreakEven(){
+ const currency=el("businessLedgerCurrency")?.value||"GBP";
+ const fixed=Number(el("businessFixedCosts")?.value)||0;
+ const price=Number(el("businessUnitPrice")?.value)||0;
+ const variable=Number(el("businessVariableCost")?.value)||0;
+ const expected=Math.max(0,Math.floor(Number(el("businessExpectedUnits")?.value)||0));
+ const status=el("businessBreakEvenStatus");
+ if(fixed<0||price<=0||variable<0||variable>=price){
+  if(status)status.textContent="Verifică ipotezele: prețul trebuie să fie mai mare decât costul variabil, iar costurile nu pot fi negative.";
+  ["businessBreakEvenUnits","businessBreakEvenRevenue","businessContributionMargin","businessExpectedProfit"].forEach(id=>{if(el(id))el(id).textContent="—";});
+  return;
+ }
+ const contribution=price-variable;
+ const breakEvenUnits=fixed===0?0:Math.ceil(fixed/contribution);
+ const breakEvenRevenue=breakEvenUnits*price;
+ const margin=contribution/price*100;
+ const expectedProfit=contribution*expected-fixed;
+ if(el("businessBreakEvenUnits"))el("businessBreakEvenUnits").textContent=breakEvenUnits.toLocaleString()+" unități";
+ if(el("businessBreakEvenRevenue"))el("businessBreakEvenRevenue").textContent=businessMoney(breakEvenRevenue,currency);
+ if(el("businessContributionMargin"))el("businessContributionMargin").textContent=margin.toFixed(1)+"%";
+ if(el("businessExpectedProfit"))el("businessExpectedProfit").textContent=businessMoney(expectedProfit,currency);
+ if(status)status.textContent="Calcul orientativ înainte de impozite, dobânzi și alte costuri care nu au fost introduse. Monedă: "+currency+".";
+}
 function businessLedgerStatus(message,isError=false){
  const node=el("businessLedgerStatus");if(node){node.textContent=message;node.style.color=isError?"#ff9d9d":"#9fe5ce";}
 }
