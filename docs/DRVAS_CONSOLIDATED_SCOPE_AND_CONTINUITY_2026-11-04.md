@@ -270,3 +270,14 @@ User asked to continue development and save all progress and the conversation. T
 ### Verification and display
 - These are source changes on branch `drvas-integrated-platform`. Do not claim production is updated until Worker and static frontend deployment are confirmed.
 - User requested a direct way to view Dr.Vas after the changes; provide the known production URL only with an explicit note if deployment is not yet confirmed.
+
+
+### Exact commit checkpoint — public Free / private Premium correction
+- Frontend `www/index.html` commit: `5d474123984fad7b7dc00756de7741eed20f4d8a`; content SHA `8188624577843a5779837f0db56cb2606688a6c3`.
+- Cloudflare Worker `worker/index.js` commit: `b3e8a15a26ededb906d7ff38d7465361f3fd101f`; content SHA `64344a907a0819f4e3100efe59dc51cb0ce67165`.
+- Playwright regression tests commit: `67dc53b86c74d19dc2a661592b4450e19800a661`; content SHA `1428622aa3186c3777a1bb5b55888ea4c7422b5b`.
+- Continuity document checkpoint commit: `18c751d48e03d0b843fa8ab9858e42cde145d44b`; document SHA `6d0b2457e27247379c8ca8408a26b8422175919b`.
+- Re-fetched all four files from branch `drvas-integrated-platform` and confirmed the Free frontend path, both Worker premium guards, the new public-Free and Premium-denial tests, and the existing Free layout protection.
+- GitHub combined commit status and pull-request workflow lookup returned no entries for the tested commit. This is not a pass result. The browser E2E suite has not yet been confirmed running successfully.
+- Cloudflare Worker deployment and the production static-assets deployment have not been confirmed. The known existing preview URL is `https://dr--vas-ai.vasilecatalinprodan.workers.dev/`; it may still serve the previously deployed build until the current branch is deployed.
+- The Cloudflare secret `ADMIN_EMAILS` is not readable from the repository and has not been independently verified in this session. Its required exact value is the founder address only: `vasilecatalinprodan@gmail.com`. Do not add other accounts.
