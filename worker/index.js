@@ -1039,9 +1039,9 @@ export default {
           .split(",").map(email => email.trim().toLowerCase()).filter(Boolean);
         const isLiveAdmin = Boolean(liveUser.email &&
           allowedAdminEmails.includes(liveUser.email.trim().toLowerCase()));
-        const privatePilotLiveModules = new Set(["health", "studio", "academy", "commerce", "business"]);
+        const privatePilotLiveModules = new Set(["studio", "academy", "commerce", "business"]);
         if (privatePilotLiveModules.has(liveModule) && !isLiveAdmin) {
-          return json({ error: "Dr.Vas este în pilot privat. Accesul vocal la toate modulele este rezervat administratorului." }, 403);
+          return json({ error: "Acest modul vocal este privat în etapa de dezvoltare și este disponibil momentan numai proprietarului Dr.Vas." }, 403);
         }
         if (liveModule === "health" && env.GEMINI_LIVE_HEALTH_ENABLED !== "true") {
           return json({
@@ -1491,10 +1491,10 @@ export default {
         .split(",").map(email => email.trim().toLowerCase()).filter(Boolean);
       const isAdminUser = Boolean(user.email &&
         allowedAdminEmails.includes(user.email.trim().toLowerCase()));
-      const privatePilotModules = new Set(["health", "studio", "academy", "commerce", "business"]);
+      const privatePilotModules = new Set(["studio", "academy", "commerce", "business"]);
       if (privatePilotModules.has(moduleName) && !isAdminUser) {
         return json({
-          error: "Dr.Vas este în pilot privat. Accesul la toate modulele este rezervat administratorului până la aprobarea lansării."
+          error: "Acest modul este privat în etapa de dezvoltare și este disponibil momentan numai proprietarului Dr.Vas."
         }, 403);
       }
 
