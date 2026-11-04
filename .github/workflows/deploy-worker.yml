@@ -54,6 +54,7 @@ jobs:
           console.log(`Validated ${scripts.length} inline browser script(s).`);
           const worker = fs.readFileSync('worker/index.js', 'utf8');
           const migration = fs.readFileSync('supabase/migrations/202611030001_rate_limits.sql', 'utf8');
+          const moduleMigration = fs.readFileSync('supabase/migrations/202611040001_module_projects.sql', 'utf8');
           const checks = [
             [!worker.includes('"Access-Control-Allow-Origin": "*"'), 'Wildcard CORS must not be enabled'],
             [worker.includes('64 * 1024'), 'Worker request body limit is missing'],
@@ -68,7 +69,14 @@ jobs:
             [migration.includes('TO service_role'), 'Rate-limit RPC must be restricted to service_role'],
             [migration.includes('ENABLE ROW LEVEL SECURITY'), 'Rate-limit storage must have RLS enabled'],
             [migration.includes('REFERENCES auth.users(id) ON DELETE CASCADE'), 'Rate-limit counters must cascade on account deletion'],
-            [migration.includes('SET search_path = pg_catalog, public'), 'Rate-limit SECURITY DEFINER search path must be hardened']
+            [migration.includes('SET search_path = pg_catalog, public'), 'Rate-limit SECURITY DEFINER search path must be hardened'],
+            [moduleMigration.includes('ENABLE ROW LEVEL SECURITY'), 'Module project storage must enable RLS'],
+            [moduleMigration.includes("module in ('academy','commerce','business')"), 'Module project storage must restrict allowed modules'],
+            [moduleMigration.includes('auth.uid() = user_id'), 'Module project policies must enforce per-user ownership'],
+            [moduleMigration.includes('revoke all on table public.drvas_module_projects from public, anon'), 'Module project table must deny public and anonymous access'],
+            [html.includes('function saveModuleProject(module)'), 'Module project save workflow is missing'],
+            [html.includes('function openModuleProject(module)'), 'Module project open workflow is missing'],
+            [html.includes('isDrvasAdmin = false;') && html.includes('businessWorkspace'), 'Logout must reset administrator access and workspace state']
           ];
           for (const [ok, message] of checks) {
             if (!ok) throw new Error(message);
