@@ -115,7 +115,7 @@ test("persisted Supabase session keeps the profile screen isolated when profile 
   await expect(page.locator("#chatSection")).toBeHidden();
 });
 
-test("module selection explains a denied administrator check instead of silently doing nothing", async ({ page }) => {
+test("private module selection explains future paid access without showing an administrator error", async ({ page }) => {
   await openApp(page, "ro");
   await page.evaluate(() => {
     currentUser = { id: "e2e-regular-user", email: "visitor@example.invalid" };
@@ -124,7 +124,9 @@ test("module selection explains a denied administrator check instead of silently
   });
   await page.locator('[data-module="studio"]').click();
   await expect(page.locator("#moduleSelectionStatus")).toBeVisible();
-  await expect(page.locator("#moduleSelectionStatus")).toContainText("nu a fost recunoscut ca administrator");
+  await expect(page.locator("#moduleSelectionStatus")).toContainText("Premium și momentan privat");
+  await expect(page.locator("#moduleSelectionStatus")).not.toContainText("administrator");
+  await expect(page.locator("#adminAccessNotice")).toBeHidden();
 });
 
 test("desktop module opens one isolated full-width workspace without the global module rail", async ({ page }) => {
@@ -723,15 +725,35 @@ test("Business workspace exposes the cashbook and Student Desk with working VAT 
   await expect(page.locator("#question")).toHaveValue(/nu rescrie integral lucrarea/i);
 });
 
-test("non-admin users cannot open any of the six private pilot workspaces", async ({ page }) => {
+test("non-admin users can open public Free and Health but not the four future paid workspaces", async ({ page }) => {
   await openApp(page, "ro");
   await page.evaluate(() => {
     currentUser = { id: "e2e-standard-user", email: "standard@example.invalid" };
     isDrvasAdmin = false;
+    showModuleSelection();
   });
-  for (const moduleId of ["free", "health", "studio", "academy", "commerce", "business"]) {
+
+  await page.evaluate(() => selectModule("free", true));
+  await expect(page.locator("#chatSection")).toBeVisible();
+  await expect(page.locator("#healthWorkspace")).toBeHidden();
+  await page.evaluate(() => {
+    document.querySelector("#chatSection")?.classList.add("hidden");
+    document.body.classList.remove("module-workspace-mode", "free-module-mode");
+    showModuleSelection();
+    selectModule("health", true);
+  });
+  await expect(page.locator("#chatSection")).toBeVisible();
+  await expect(page.locator("#healthWorkspace")).toBeVisible();
+
+  for (const moduleId of ["studio", "academy", "commerce", "business"]) {
+    await page.evaluate(() => {
+      document.querySelector("#chatSection")?.classList.add("hidden");
+      document.body.classList.remove("module-workspace-mode", "free-module-mode");
+      showModuleSelection();
+    });
     await page.evaluate(id => selectModule(id, true), moduleId);
-    await expect(page.locator("#moduleAccessMessage")).toContainText("Accesul la module este privat");
+    await expect(page.locator("#moduleSelectionStatus")).toContainText("privat");
+    await expect(page.locator("#chatSection")).toBeHidden();
     await expect(page.locator("#" + moduleId + "Workspace")).toBeHidden();
   }
 });
@@ -944,6 +966,9 @@ test("Dr.Vas presentation covers all six modules in all eight supported language
     const narration = await page.evaluate(() => {
       let spoken = null;
       const synth = {
+        getVoices: () => [],
+        addEventListener() {},
+        removeEventListener() {},
         cancel() {},
         resume() {},
         speak: utterance => { spoken = { text: utterance.text, lang: utterance.lang }; }
