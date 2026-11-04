@@ -39,8 +39,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Generate CycloneDX dependency inventory
-        run: npm sbom --sbom-format cyclonedx > drvas-sbom.cdx.json
+      - name: Generate CycloneDX dependency inventories
+        run: |
+          npm sbom --sbom-format cyclonedx > drvas-sbom.cdx.json
+          npm sbom --omit=dev --sbom-format cyclonedx > drvas-sbom-production.cdx.json
 
       - name: Validate Worker and browser JavaScript
         run: |
@@ -205,5 +207,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: DrVas-SBOM
-          path: drvas-sbom.cdx.json
+          path: |
+            drvas-sbom.cdx.json
+            drvas-sbom-production.cdx.json
           retention-days: 90
