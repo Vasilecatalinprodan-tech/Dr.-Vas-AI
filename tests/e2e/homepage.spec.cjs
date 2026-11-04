@@ -175,6 +175,24 @@ test("each premium module shows only its own tools and keeps the other module wo
   }
 });
 
+test("Dr.Vas Free keeps its existing clean chat while all dedicated module tools stay hidden", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-free-isolation-user", email: "admin@example.invalid" };
+    isDrvasAdmin = true;
+    showModuleSelection();
+    selectModule("free", true);
+  });
+  await expect(page.locator("#chatSection")).toBeVisible();
+  await expect(page.locator("#moduleSelectionShell")).toBeHidden();
+  await expect(page.locator(".chat-module-rail")).toBeHidden();
+  for (const id of ["healthWorkspace","studioWorkspace","academyWorkspace","commerceWorkspace","businessWorkspace"]) {
+    await expect(page.locator("#" + id)).toBeHidden();
+  }
+  await expect(page.locator("#question")).toBeVisible();
+});
+
 test("legacy focused workspace never exposes other modules or cross-module history", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await openApp(page, "ro");
