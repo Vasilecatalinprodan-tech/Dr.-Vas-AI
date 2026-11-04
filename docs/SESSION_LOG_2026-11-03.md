@@ -359,3 +359,15 @@ The user asked to preserve this session and resume tomorrow. This file is the du
 - Worker deploy + production smoke test: run `41808929643` completed successfully. Android APK build: run `41808929603` completed successfully; artifact `DrVas-APK`, ID `13311441980`, 6,044,092 bytes.
 - Remaining external verification: apply `supabase/migrations/202611040001_module_projects.sql` in Supabase; run `docs/SUPABASE_READONLY_VERIFICATION.sql`; test real RLS isolation with two accounts; install APK and test on a physical device. Do not mark these complete before actual confirmation.
 - Not enabled yet: public subscription billing/entitlements, finished video rendering, social OAuth/publishing, actual supplier ordering, course delivery/certification, and founder voice clone.
+
+
+## 2026-11-04 — Live voice incident triage
+
+- Founder reported that Live voice fails on “spune-mi povestea ta” with the Romanian error “Protecția de utilizare nu este disponibilă momentan. Încearcă din nou mai târziu.”
+- Traced the response to `worker/index.js` action `live_voice_token`: `consumeRateLimit` calls the Supabase RPC `drvas_consume_rate_limit`; HTTP failure or malformed RPC output causes a fail-closed 503 before the Gemini Live token is requested. This is an infrastructure/rate-limit setup issue, not the story prompt.
+- Also confirmed normal AI chat uses the same RPC under bucket `ai_chat`; a missing RPC migration may therefore affect both text and Live voice.
+- Added `supabase/diagnostics/VERIFY_RATE_LIMITS.sql`, a read-only check for table/function existence, RLS, SECURITY DEFINER, hardened search_path and service_role permissions.
+- Added the incident, likely causes and exact manual remediation to `docs/PROJECT_CHECKPOINT.md`.
+- Commits: checkpoint `e618aade4b99911431b8b77befd25c085978d10f`; diagnostic `508a59139b83ebb40e3c3b724001e7a5141974e7`.
+- Not yet verified: whether the rate-limit migration is installed in the live Supabase project; actual RPC response; authenticated Live token issuance; microphone/streaming playback on physical Android device.
+- Safety decision: keep rate limiting fail-closed. Do not bypass abuse/cost protection or expose service-role credentials. Next action is run the read-only diagnostic in Supabase; apply migration `202611030001_rate_limits.sql` only if the diagnostic shows missing objects, then verify authenticated Live voice end-to-end.
