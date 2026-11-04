@@ -98,3 +98,9 @@ Latest runs triggered from the above commits:
 
 ### Verification still required
 Check the newest GitHub Actions runs after commits 297025e and 22454fc. Do not call the browser suite green, deploy production, or distribute the APK until the latest corresponding workflows pass. The APK needs a fresh build from the latest app code.
+
+### Latest verification queue — 2026-11-04 20:04 UTC
+- Browser regression: run 41902834918, pending, test commit 22454fc.
+- Deploy Worker: run 41902834996, pending, test commit 22454fc; deployment remains gated by browser tests.
+- App-code validation/deploy/APK workflows from app commit 297025e: runs 41902807336 (browser regression), 41902807158 (deploy), and 41902807392 (APK build) were in progress at the time of this checkpoint update.
+- No result from these runs is assumed. Recheck them before proceeding.
