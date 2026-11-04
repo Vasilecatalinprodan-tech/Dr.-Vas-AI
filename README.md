@@ -167,3 +167,13 @@ See `docs/BUSINESS_DESK_AND_STUDIO_MVP_PLAN_2026-11-04.md` for the new Dr.Vas Bo
 ## Studio MP4 renderer
 
 The Studio now includes an MP4 render workflow with private scene-image/audio uploads, captions, a server-injected `MADE BY VPC` watermark and private Supabase output storage. Setup and release requirements are documented in `docs/STUDIO_VOICE_VIDEO_ROADMAP_2026-11-04.md`. Production rendering still requires the Supabase migration `202611040004_studio_render_storage.sql` and a Cloudflare Worker secret named `CREATOMATE_API_KEY`; no real production render is claimed until both are configured and tested.
+
+
+## Private pilot access gate — 2026-11-04
+
+- Founder direction: keep all six top-level modules private until the founder approves launch and required licensing/compliance gates are complete.
+- Updated the Worker text-chat authorization so every module (free, health, studio, academy, commerce, business) requires an authenticated account whose verified email is in the server-side ADMIN_EMAILS allowlist.
+- Updated the Worker Live Voice authorization with the same six-module administrator-only gate. This prevents bypassing the UI through direct API calls or voice-token requests.
+- Updated the frontend module selector to show the private-pilot restriction for every module when the signed-in user is not the configured administrator. The backend remains the security boundary; hiding/locking the UI alone is not relied upon.
+- Changes were committed to drvas-integrated-platform: Worker commit 639e0595e1ef03dbbc552856fcdfe99f38f8a0dc; frontend commit 350322a46f3e1a6e483f3d3678101619fda3bb79.
+- Pending verification: confirm GitHub Actions deployment and production behaviour for both the founder administrator and a separate non-admin test account. Do not assume the live Worker has updated until deployment succeeds.
