@@ -243,3 +243,30 @@ User asked to continue development and save all progress and the conversation. T
 
 ### Next owner decision
 - Ask the owner whether the second account should be granted private-pilot administrator access. If yes, obtain the exact email address and explicit authorization, then update the Cloudflare Worker secret `ADMIN_EMAILS` by adding that address as another comma-separated entry. Never guess the address or change the allowlist silently.
+
+
+## 2026-11-04 — corrected public Free / private Premium access model
+
+### Owner clarification (authoritative)
+- Dr.Vas is primarily a public-facing application.
+- Any ordinary registered/logged-in user may use **Dr.Vas Free**. Free must not require administrator status.
+- Health, Studio, Academy, Commerce and Business remain separate private/premium workspaces until the owner explicitly authorizes their public launch and the required product, payment, legal and compliance work is complete.
+- The only administrator is the founder account `vasilecatalinprodan@gmail.com`. No ordinary user, including a second account, may become an administrator.
+- The Cloudflare Worker `ADMIN_EMAILS` secret is the server-side source of truth and must contain only that one founder email. Never add public users to it. The secret value itself cannot be read from GitHub source; it must be verified in Cloudflare by the owner/operator if there is any doubt.
+
+### Corrections committed in source
+- Frontend `selectModule`: a signed-in non-admin may enter `free`; non-admin attempts to enter any premium workspace receive a clear Premium/private message and remain on module selection.
+- Entering Free opens the existing general chat and preserves the existing Dr.Vas Free presentation.
+- Worker AI chat access gate now applies only to `health`, `studio`, `academy`, `commerce`, and `business`; the `free` AI chat endpoint is public to authenticated users and retains normal authentication, rate limits, audit logging and per-user data isolation.
+- Worker Live voice access gate likewise keeps Free available to ordinary signed-in users while keeping premium module Live voice private.
+- Studio rendering and founder/admin operational actions remain administrator-only; do not loosen these gates.
+- Regression tests added for non-admin Free access and non-admin Premium denial, alongside the existing isolated-workspace tests.
+
+### Admin boundary
+- Admin privileges are not granted by selecting a module, creating an account, or being a paying user.
+- Do not hardcode administrator identity in frontend JavaScript. Keep server-side verification through `ADMIN_EMAILS`; verify that Cloudflare secret contains exactly `vasilecatalinprodan@gmail.com` and no other address.
+- A public Free user must never see the admin dashboard or private project data.
+
+### Verification and display
+- These are source changes on branch `drvas-integrated-platform`. Do not claim production is updated until Worker and static frontend deployment are confirmed.
+- User requested a direct way to view Dr.Vas after the changes; provide the known production URL only with an explicit note if deployment is not yet confirmed.
