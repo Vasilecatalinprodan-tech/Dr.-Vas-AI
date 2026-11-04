@@ -328,3 +328,47 @@ This section is the latest authoritative product decision and supersedes any ear
 - User corrected the assistant emphatically: do not ask to make another account an administrator. Only `vasilecatalinprodan@gmail.com` is admin; ordinary public users should access Free and Health without admin status.
 - User described the long-term Health business model: free AI/general information, then an optional paid real doctor/nurse chat; Dr.Vas pays the clinician and earns a commission. This is a phased future roadmap.
 - Continue in Romanian, do not send repeated progress updates, and let the assistant handle technical work. The user should only be asked for simple visual checks or an exact action that genuinely requires their access.
+
+
+## 2026-11-04 — urgent correction: public-first entry flow and public Health access
+
+This section supersedes any older or contradictory wording in this document that describes the entire platform, Free or Health as “pilot privat”.
+
+### The required public journey
+1. First page: the Dr.Vas welcome/landing page with the prominent **„Vorbește cu Dr.Vas”** action and language selection.
+2. That action opens authentication: sign in or create a normal user account.
+3. After successful login, the user sees the module chooser.
+4. **Dr.Vas Free** and **Dr.Vas Health** are clearly marked as free and available to the public.
+5. **Studio, Academy, Commerce and Business** are shown separately as private/future paid modules. Until the owner authorizes their launch, only the founder/administrator can enter them.
+6. Normal public users must never be shown an administrator error merely because they are not administrators. This is expected behavior. Admin status is only for owner controls and private workspaces.
+
+### Founder-only administrator
+- Exactly one administrator: `vasilecatalinprodan@gmail.com`.
+- The Cloudflare Worker `ADMIN_EMAILS` allowlist is only for owner/admin privileges. Never add ordinary users to it to enable public access.
+- The admin dashboard and admin-only notices are hidden from ordinary users. A normal user can authenticate and use Free and Health without seeing “not authorized as administrator”.
+
+### Dr.Vas Health public scope
+- Ordinary signed-in users can enter the Health workspace and use the general-information AI chat.
+- Health provides general education, explanations and preparation for discussions with healthcare professionals. It is not a diagnosis or a substitute for clinical care.
+- Paid real-doctor/real-nurse chat remains a later roadmap item and is not implemented yet.
+- The Health real-time Live voice route remains subject to its separate privacy configuration flag `GEMINI_LIVE_HEALTH_ENABLED`; this does not block normal Health text chat.
+
+### Private/future paid scope
+- Studio, Academy, Commerce and Business remain founder-only until their paid public launch is deliberately enabled.
+- A paid customer entitlement must be implemented as a separate authorization layer later; payment/subscription must never grant administrator status.
+- No public user can access the admin dashboard, founder operational tools, private project records or secrets.
+
+### Code correction checkpoint
+- Frontend now labels the module chooser as two free public modules and four private modules in preparation.
+- Frontend module access permits normal authenticated users into Free and Health; the Health workspace is visible without admin privileges.
+- A non-admin account no longer receives an admin-authorization warning. The admin panel remains exclusive to the founder.
+- Worker text-chat authorization now reserves only Studio, Academy, Commerce and Business for the founder; Health text chat is public to authenticated users.
+- Worker Live voice still requires its separate Health privacy flag; its founder-only set now contains only the four future paid modules.
+- Playwright coverage updated to verify public Free/Health, founder-only four premium modules, hidden admin dashboard/notices for normal accounts, and the two-free/four-private module chooser.
+- Changes are committed on `drvas-integrated-platform`. Do not claim the production site has been updated until Worker and static-site deployment are verified, and do not claim E2E success until CI executes successfully.
+
+### User's latest correction and emotional context
+- User saw the live module chooser say “6 SPAȚII DE LUCRU · PILOT PRIVAT” and an ordinary account saw “Contul conectat ... nu este autorizat ca administrator”.
+- This was unacceptable and contradicted the explicit product model. Root cause: frontend and Worker still gated Health as admin-only, stale “pilot privat” labels remained in the module chooser, and the frontend exposed the expected non-admin status as a warning.
+- User reiterated the exact intended journey: first landing page with “Vorbește cu Dr.Vas”, then login, then public Free and Health plus separate private modules. Preserve this sequence; do not change it.
+- User asked to save this conversation and make the required corrections. Continue in Romanian, do not send repeated progress updates, and never suggest granting administrator status to ordinary accounts.
