@@ -61,3 +61,12 @@ A separate capability inside the private Studio/Business toolset:
 5. Build device authorisation, limits and emergency stop design; do not activate mining until independently reviewed and explicitly approved.
 6. Expand the Independent Income Tracker and AI Evaluator & Training with persistence and audit trails.
 7. Only then consider connected-account integrations, trading, publication or paid public access.
+
+
+## Existing implementation verified on 2026-11-04
+- The founder-only admin UI already contains a read-only Crypto device registry, and Worker action `crypto_devices_list` performs server-side Supabase user and administrator allowlist checks.
+- Migration `202611030003_crypto_device_registry.sql` exists. It stores device public keys/fingerprints and approval state only; it does not execute mining.
+- `docs/CRYPTO_ADMIN_CONTROL_MODEL.md` is the security design baseline. It explicitly keeps mining, custody and live trading disabled.
+- Added an admin-only Bitcoin economics calculator to the Crypto panel: user-entered BTC/day estimate, GBP/BTC price, watts, electricity tariff, pool fee and hardware cost. It computes gross, electricity cost, pool fee, net/day, net/30 days and simple equipment payback. It is not live market data and cannot start mining.
+- Automated browser coverage was added for the calculator arithmetic; wait for the latest combined E2E run before calling it verified.
+- The existing Independent Income Tracker and its per-user table are already in the project. Book/e-book appears as a Studio deliverable, but a dedicated persistent manuscript structure (chapters, character/style bible, revision history and export workflow) remains future work.
