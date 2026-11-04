@@ -3403,7 +3403,7 @@ async function showChat(user,displayName){
   loadIncomeOpportunities().catch(error=>{
     console.warn("Income tracker unavailable:",error);
     incomeMessage(error.message.includes("drvas_income_opportunities")
-      ?"Aplică migrarea SQL 202611030005_studio_projects.sql din Supabase."
+      ?"Aplică migrarea SQL 202611030005_income_and_founder_provenance.sql din Supabase."
       :"Nu am putut încărca oportunitățile: "+error.message,true);
   });
 }
