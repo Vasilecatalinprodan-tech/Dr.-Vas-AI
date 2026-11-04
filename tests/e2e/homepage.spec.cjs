@@ -76,6 +76,7 @@ test("persisted Supabase session keeps the public dashboard visible when profile
 test("desktop chat opens as a dedicated workspace with the six-module sidebar", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await openApp(page, "ro");
+  await expect(page.locator("#heroSection")).toBeVisible();
   await page.evaluate(() => {
     currentUser = { id: "e2e-session-user", email: "e2e@example.invalid" };
     window.enterChatFocus();
@@ -98,6 +99,7 @@ test("desktop chat opens as a dedicated workspace with the six-module sidebar", 
 test("mobile chat is full-screen with modules behind a Go to Modules action", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openApp(page, "ro");
+  await expect(page.locator("#heroSection")).toBeVisible();
   await page.evaluate(() => {
     currentUser = { id: "e2e-mobile-user", email: "mobile@example.invalid" };
     window.enterChatFocus();
