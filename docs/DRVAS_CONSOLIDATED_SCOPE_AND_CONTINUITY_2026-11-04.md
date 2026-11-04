@@ -63,3 +63,12 @@ This document consolidates decisions from the 3–4 November 2026 planning conve
 
 ## Continuity rule
 When resuming, read this scope record and the latest dated checkpoint first. Do not ask the user to repeat decisions already documented here. If a requirement is ambiguous, ask one focused question rather than silently dropping or inventing scope.
+
+
+## Authentication follow-up — 2026-11-04
+- User confirmed the intended founder login email is `alxkvl81@gmail.com`; the live Worker currently reports that this authenticated email is not in its `ADMIN_EMAILS` allowlist. The secret value is write-only and cannot be read through repository access. Do not hardcode an email or bypass the server-side allowlist; update the Cloudflare secret to include the exact founder email once confirmed by the owner.
+- Current canonical `worker/index.js` on `drvas-integrated-platform` is 2,248 lines, blob SHA `d23aaa100d221f957a350fbf6fc384e29816b6e2`. Its `admin_status` action validates the Supabase access token and compares normalized authenticated email against comma-separated, trimmed, lowercased `ADMIN_EMAILS`. This is an authorization refusal, not a reason to discard the remembered Supabase session.
+- User-uploaded `Pasted markdown(5).md` is an older Worker copy (~1,122 lines), not the canonical current Worker. It has no `admin_status`, no `ADMIN_EMAILS`, no Studio render action, and no rate-limit RPC integration; it has wildcard CORS and a Premium-module hard block. Never overwrite the current Worker with this older copy.
+- Updated canonical `www/index.html` to ask on each new browser tab/session whether to continue with the remembered Supabase account or sign out and choose another. The choice is stored in `sessionStorage` for the lifetime of that tab; Supabase remember-me persistence remains unchanged. Choosing another account signs out and opens the login screen. This is a user-experience change only and does not grant admin privileges.
+- Auth UX commit: `d0e21d94b2c1438d4afa471f3da922a61ab801b3`. Browser regression workflow run `41909435002` was in progress at checkpoint time: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/41909435002
+- Next: confirm CI result; user must update Cloudflare Worker secret `ADMIN_EMAILS` to include `alxkvl81@gmail.com` (preserving any other intended admin emails, comma-separated). Then hard-refresh and retest. Continue Worker/SQL review using canonical repository files, not the uploaded stale copy.
