@@ -350,6 +350,7 @@ main{max-width:1380px;padding-top:30px}
 .voice-toolbar button{border-radius:11px}
 .studio-workspace,.admin-panel{border-radius:22px;box-shadow:0 18px 45px #0003}
 .module-workspace{margin-top:18px}
+.module-project-manager{margin-top:18px}.module-project-manager>label{display:block;margin:10px 0;color:#c7dce5;font-size:12px}.module-project-manager input,.module-project-manager select{width:100%;box-sizing:border-box;margin-top:6px}
 .module-workspace .studio-form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 .module-workspace .studio-idea-label{grid-column:1/-1}
 .module-workspace input,.module-workspace select,.module-workspace textarea{width:100%;box-sizing:border-box}
@@ -640,6 +641,7 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
     <label class="studio-idea-label">Cerințe și materiale<textarea id="academyBrief" rows="4" maxlength="5000" placeholder="Descrie subiectele, exemplele și ce vrei să includă cursul."></textarea></label>
    </div>
    <div class="studio-actions"><button type="button" onclick="buildAcademyPrompt()">Construiește cursul</button><span>Primești un plan de curs, lecții, exerciții și evaluare. Verificarea umană rămâne necesară.</span></div>
+   <section class="studio-project-manager module-project-manager"><h3>📁 Proiectele mele Academy</h3><label>Titlu<input id="academyProjectTitle" maxlength="160" placeholder="Titlul cursului"></label><div class="studio-project-controls"><button type="button" onclick="saveModuleProject('academy')">Salvează cursul</button><select id="academyProjectList" aria-label="Cursuri salvate"><option value="">Alege un curs salvat</option></select><button type="button" onclick="openModuleProject('academy')">Deschide</button><button type="button" onclick="exportModuleProject('academy')">Exportă</button><button type="button" onclick="deleteModuleProject('academy')">Șterge</button></div><p id="academyProjectStatus" role="status" aria-live="polite">Cursurile salvate rămân private în contul tău.</p></section>
   </section>
   <section id="commerceWorkspace" class="studio-workspace module-workspace hidden" aria-labelledby="commerceWorkspaceTitle">
    <div class="studio-workspace-head"><div><span class="tag">DR.VAS COMMERCE LAB</span><h2 id="commerceWorkspaceTitle">🛒 Dr.Vas Commerce</h2><p>Analizează produse, furnizori, costuri și marje înainte să investești bani.</p></div><span class="studio-beta-label">PILOT · ACCES ADMINISTRATOR</span></div>
@@ -653,6 +655,7 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
     <label class="studio-idea-label">Cerințe<textarea id="commerceBrief" rows="4" maxlength="5000" placeholder="Descrie produsul, clientul, furnizorii cunoscuți sau restricțiile."></textarea></label>
    </div>
    <div class="studio-actions"><button type="button" onclick="buildCommercePrompt()">Analizează oportunitatea</button><span>Primești o analiză cu riscuri, costuri și marje orientative, nu promisiuni de profit.</span></div>
+   <section class="studio-project-manager module-project-manager"><h3>📁 Analizele mele Commerce</h3><label>Titlu<input id="commerceProjectTitle" maxlength="160" placeholder="Titlul analizei"></label><div class="studio-project-controls"><button type="button" onclick="saveModuleProject('commerce')">Salvează analiza</button><select id="commerceProjectList" aria-label="Analize salvate"><option value="">Alege o analiză salvată</option></select><button type="button" onclick="openModuleProject('commerce')">Deschide</button><button type="button" onclick="exportModuleProject('commerce')">Exportă</button><button type="button" onclick="deleteModuleProject('commerce')">Șterge</button></div><p id="commerceProjectStatus" role="status" aria-live="polite">Analizele salvate rămân private în contul tău.</p></section>
   </section>
   <section id="businessWorkspace" class="studio-workspace module-workspace hidden" aria-labelledby="businessWorkspaceTitle">
    <div class="studio-workspace-head"><div><span class="tag">DR.VAS BUSINESS LAB</span><h2 id="businessWorkspaceTitle">📊 Dr.Vas Business</h2><p>Transformă o idee într-un plan de afaceri, buget și pași de implementare.</p></div><span class="studio-beta-label">PILOT · ACCES ADMINISTRATOR</span></div>
@@ -666,6 +669,7 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
     <label class="studio-idea-label">Detalii și constrângeri<textarea id="businessBrief" rows="4" maxlength="5000" placeholder="Experiență, echipamente, personal, concurență, costuri și orice alte detalii."></textarea></label>
    </div>
    <div class="studio-actions"><button type="button" onclick="buildBusinessPrompt()">Creează planul de afaceri</button><span>Estimările vor include ipoteze explicite și vor separa informațiile verificate de presupuneri.</span></div>
+   <section class="studio-project-manager module-project-manager"><h3>📁 Planurile mele Business</h3><label>Titlu<input id="businessProjectTitle" maxlength="160" placeholder="Titlul planului"></label><div class="studio-project-controls"><button type="button" onclick="saveModuleProject('business')">Salvează planul</button><select id="businessProjectList" aria-label="Planuri salvate"><option value="">Alege un plan salvat</option></select><button type="button" onclick="openModuleProject('business')">Deschide</button><button type="button" onclick="exportModuleProject('business')">Exportă</button><button type="button" onclick="deleteModuleProject('business')">Șterge</button></div><p id="businessProjectStatus" role="status" aria-live="polite">Planurile salvate rămân private în contul tău.</p></section>
   </section>
  <div id="authSection" class="auth-box hidden">
   <div class="panel-head">
