@@ -103,6 +103,18 @@ test("persisted Supabase session keeps the profile screen isolated when profile 
   await expect(page.locator("#chatSection")).toBeHidden();
 });
 
+test("module selection explains a denied administrator check instead of silently doing nothing", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-regular-user", email: "visitor@example.invalid" };
+    isDrvasAdmin = false;
+    showModuleSelection();
+  });
+  await page.locator('[data-module="studio"]').click();
+  await expect(page.locator("#moduleSelectionStatus")).toBeVisible();
+  await expect(page.locator("#moduleSelectionStatus")).toContainText("nu a fost recunoscut ca administrator");
+});
+
 test("desktop module opens its own workspace beside its contextual chat", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await openApp(page, "ro");
