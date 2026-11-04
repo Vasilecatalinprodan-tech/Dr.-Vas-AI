@@ -589,6 +589,9 @@ body.free-module-mode #chatSection .chat-module-rail,body.free-module-mode #chat
 }
 @media(max-width:420px){.modules-grid{grid-template-columns:1fr}.module-card{min-height:140px}}
 
+
+/* Authentication and profile are shown inside the module shell without exposing the module dashboard. */
+#moduleSelectionSection.auth-flow-mode > :not(#authSection):not(#profileSection){display:none!important}
 </style>
 </head>
 
@@ -1528,6 +1531,7 @@ function selectModule(moduleName,userInitiated=false){
     return;
   }
   activeModule=moduleName;
+  el("moduleSelectionSection")?.classList.remove("hidden","auth-flow-mode");
   document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode","history-open");
   document.documentElement.classList.remove("chat-focus-document");
   el("moduleSelectionShell")?.classList.add("modules-open");
@@ -2889,7 +2893,7 @@ function showModuleSelection(){
  document.querySelector(".origin-story")?.classList.add("hidden");
  el("landingActions")?.classList.add("hidden");
  el("moduleSelectionShell")?.classList.add("modules-open");
- el("moduleSelectionSection")?.classList.remove("hidden");
+ el("moduleSelectionSection")?.classList.remove("hidden","auth-flow-mode");
  el("chatSection")?.classList.add("hidden");
  ["authSection","profileSection"].forEach(id=>el(id)?.classList.add("hidden"));
  requestAnimationFrame(()=>el("moduleSelectionShell")?.scrollIntoView({behavior:"smooth",block:"start"}));
@@ -2904,7 +2908,7 @@ function goToModules(){
  el("heroSection")?.classList.add("hidden");
  document.querySelector(".origin-story")?.classList.add("hidden");
  el("moduleSelectionShell")?.classList.add("modules-open");
- el("moduleSelectionSection")?.classList.remove("hidden");
+ el("moduleSelectionSection")?.classList.remove("hidden","auth-flow-mode");
  el("landingActions")?.classList.add("hidden");
  ["authSection","profileSection"].forEach(id=>el(id)?.classList.add("hidden"));
  requestAnimationFrame(()=>el("moduleSelectionShell")?.scrollIntoView({behavior:"smooth",block:"start"}));
@@ -2918,7 +2922,8 @@ function showOnly(section){
   document.querySelector(".origin-story")?.classList.add("hidden");
   el("landingActions")?.classList.add("hidden");
   el("moduleSelectionShell")?.classList.add("modules-open");
-  el("moduleSelectionSection")?.classList.add("hidden");
+  el("moduleSelectionSection")?.classList.remove("hidden");
+  el("moduleSelectionSection")?.classList.add("auth-flow-mode");
   document.body.classList.remove("module-workspace-mode","free-module-mode");
  }
  ["authSection","profileSection","chatSection"].forEach(id=>el(id)?.classList.toggle("hidden",id!==section));
@@ -3615,7 +3620,7 @@ function showLogin(){
   el("heroSection").classList.remove("hidden");
   document.querySelector(".origin-story")?.classList.remove("hidden");
   el("moduleSelectionShell")?.classList.remove("modules-open");
-  el("moduleSelectionSection")?.classList.remove("hidden");
+  el("moduleSelectionSection")?.classList.remove("hidden","auth-flow-mode");
   el("landingActions")?.classList.remove("hidden");
   document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode");
   document.documentElement.classList.remove("chat-focus-document");
