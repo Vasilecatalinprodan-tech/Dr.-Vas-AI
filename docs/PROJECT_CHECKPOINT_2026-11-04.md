@@ -56,3 +56,10 @@ The Worker deployment workflow now statically validates the repair migration's e
 - Install and test the APK on a physical Android device before calling it release-ready.
 - Review privacy, terms, data retention, security, accessibility, and medical-safety boundaries before public launch.
 - Keep Studio video rendering honest about provider limits, costs, watermarking, and storage ownership.
+
+
+## Licensing and release governance additions
+- Added `docs/LICENSING_IP_PRIVACY_AND_COMPLIANCE_ROADMAP.md` covering UK-first privacy, potential UK/EU medical-device obligations, AI/voice/video provider terms, code/dependency licences, trade marks, consumer subscriptions, accessibility and Android distribution. This is planning guidance, not legal advice or certification.
+- Updated `README.md` to link the roadmap.
+- Updated the Worker deployment workflow to generate a CycloneDX SBOM from the npm lockfile and upload it as a 90-day GitHub Actions artifact named `DrVas-SBOM`. The first run of this new step is still required to validate the installed npm version and artifact upload.
+- Do not make the repository public or add a blanket open-source licence until ownership and third-party dependencies are reviewed.
