@@ -2335,7 +2335,7 @@ function exportBusinessLedger(){
 }
 function buildStudentAssessmentPrompt(){
  const v=id=>el(id)?.value?.trim()||"",subject=v("studentAssessmentSubject"),brief=v("studentAssessmentBrief"),draft=v("studentAssessmentDraft");
- if(!subject||!brief||!draft){businessLedgerStatus("Pentru evaluare completează disciplina, cerința și draftul studentului.",true);return;}
+ if(!subject||!brief||!draft){const status=el("studentAssessmentProjectStatus");if(status)status.textContent="Pentru evaluare completează disciplina, cerința și draftul studentului.";return;}
  const prompt="DR.VAS STUDENT DESK — FEEDBACK ACADEMIC ȘI EVALUARE FORMATIVĂ\nDISCIPLINA: "+subject+"\nNIVEL: "+v("studentAssessmentLevel")+"\nLIMBA: "+v("studentAssessmentLanguage")+"\nCERINȚA OFICIALĂ: "+brief+"\nRUBRICA: "+(v("studentAssessmentRubric")||"Nu a fost furnizată; propune criterii provizorii și marchează-le ca atare.")+"\nDRAFTUL STUDENTULUI: \n"+draft+"\n\nSARCINĂ: Evaluează formativ draftul, nu pretinde că ești evaluatorul oficial și nu inventa nota sau cerințe. Creează: (1) rezumatul cerinței, (2) tabel criteriu/evidență/lacună/sugestie, (3) punctele tari, (4) probleme de argumentare, structură, claritate și gramatică, (5) verificarea citărilor fără a inventa surse, (6) întrebări concrete care îl ajută pe student să-și dezvolte singur ideile, (7) plan de revizuire prioritizat și (8) estimare orientativă numai dacă rubrica permite, cu incertitudini explicite. Păstrează vocea studentului; nu fabrica experiențe, date sau referințe și nu rescrie integral lucrarea pentru a fi predată ca muncă independentă. Dacă oferi un exemplu de paragraf, etichetează-l clar ca exemplu de învățare și explică ce trebuie adaptat de student.";
  submitModuleBrief(prompt,"Student Desk: analiza este pregătită. Verifică brief-ul în chat și apasă Trimite.");
 }
@@ -2606,6 +2606,11 @@ async function showUser(user){
       card.setAttribute("aria-pressed",String(selected));
     });
     currentStudioProjectId=null;currentStudioProjectOutput="";
+    studentAssessmentState.id=null;businessLedgerState.rows=[];
+    ["studentAssessmentSubject","studentAssessmentBrief","studentAssessmentRubric","studentAssessmentDraft","studentAssessmentProjectTitle"].forEach(id=>{if(el(id))el(id).value="";});
+    if(el("studentAssessmentProjectList"))el("studentAssessmentProjectList").replaceChildren(new Option("Alege o evaluare salvată",""));
+    ["businessLedgerDescription","businessLedgerAmount"].forEach(id=>{if(el(id))el(id).value="";});
+    if(el("businessLedgerRows"))el("businessLedgerRows").replaceChildren();
     ["academy","commerce","business"].forEach(module=>{moduleProjectState[module]=null;moduleProjectOutputs[module]="";if(el(module+"ProjectList"))el(module+"ProjectList").replaceChildren(new Option("Alege un proiect salvat",""));if(el(module+"ProjectTitle"))el(module+"ProjectTitle").value="";});
     if(el("studioSavedProjects"))el("studioSavedProjects").innerHTML='<option value="">Alege un proiect salvat</option>';
     if(el("studioProjectTitle"))el("studioProjectTitle").value="";
@@ -3213,6 +3218,12 @@ function showLogin(){
   loadingConversation = false;
   currentStudioProjectId = null;
   currentStudioProjectOutput = "";
+  studentAssessmentState.id = null;
+  businessLedgerState.rows = [];
+  ["studentAssessmentSubject","studentAssessmentBrief","studentAssessmentRubric","studentAssessmentDraft","studentAssessmentProjectTitle"].forEach(id=>{if(el(id))el(id).value="";});
+  if(el("studentAssessmentProjectList"))el("studentAssessmentProjectList").replaceChildren(new Option("Alege o evaluare salvată",""));
+  ["businessLedgerDescription","businessLedgerAmount"].forEach(id=>{if(el(id))el(id).value="";});
+  if(el("businessLedgerRows"))el("businessLedgerRows").replaceChildren();
   ["academy","commerce","business"].forEach(module=>{
     moduleProjectState[module] = null;
     moduleProjectOutputs[module] = "";
