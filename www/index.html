@@ -2077,6 +2077,91 @@ function updateSaveButton(){
 
 let currentStudioProjectId=null;
 let currentStudioProjectOutput="";
+let currentStudioRenderJobId=null;
+let currentStudioRenderStoragePath="";
+function studioRenderMessage(message,isError=false){
+ const node=el("studioRenderStatus");if(node){node.textContent=message;node.style.color=isError?"#ff9d9d":"#9fe5ce";}
+}
+async function renderStudioVideo(){
+ if(!currentUser){studioRenderMessage("Conectează-te pentru a crea un video privat.",true);return;}
+ const button=el("studioRenderCreateButton");if(button)button.disabled=true;
+ try{
+  const files=Array.from(el("studioSceneImages")?.files||[]);
+  if(files.length>8)throw new Error("Poți încărca maximum 8 imagini pentru un clip.");
+  for(const file of files){
+   if(!["image/jpeg","image/png","image/webp"].includes(file.type))throw new Error("Folosește doar imagini JPG, PNG sau WebP.");
+   if(file.size>8*1024*1024)throw new Error("Fiecare imagine trebuie să aibă maximum 8 MB.");
+  }
+  const sceneSeconds=Math.max(3,Math.min(6,Number(el("studioSceneDuration")?.value)||4));
+  const captions=(el("studioSceneCaptions")?.value||"").split(/\r?\n/).map(line=>line.trim());
+  const elements=[];
+  let duration=0;
+  if(files.length){
+   for(let i=0;i<files.length;i++){
+    const file=files[i],safeName=file.name.replace(/[^a-z0-9._-]+/gi,"-").slice(0,70)||"scene-image";
+    const path=currentUser.id+"/studio-assets/"+makeId()+"-"+safeName;
+    studioRenderMessage("Încarc imaginea "+(i+1)+" din "+files.length+" în spațiul privat…");
+    const {error:uploadError}=await supabaseClient.storage.from("drvas-media").upload(path,file,{contentType:file.type,upsert:false});
+    if(uploadError)throw uploadError;
+    const {data:signed,error:signedError}=await supabaseClient.storage.from("drvas-media").createSignedUrl(path,3600);
+    if(signedError||!signed?.signedUrl)throw signedError||new Error("Nu am putut crea o adresă temporară pentru imagine.");
+    const start=i*sceneSeconds;duration+=sceneSeconds;
+    elements.push({type:"image",name:"Scene-"+(i+1),track:1,time:start,duration:sceneSeconds,source:signed.signedUrl,fit:"cover",width:"100%",height:"100%"});
+    if(captions[i]){
+     elements.push({type:"text",name:"Caption-"+(i+1),track:2,time:start,duration:sceneSeconds,x:"50%",y:"84%",width:"88%",height:"18%",x_anchor:"50%",y_anchor:"50%",x_alignment:"50%",y_alignment:"50%",text:captions[i].slice(0,300),font_family:"Montserrat",font_weight:700,font_size:"5 vmin",fill_color:"#ffffff",background_color:"rgba(0,0,0,0.58)",background_x_padding:"12%",background_y_padding:"14%"});
+    }
+   }
+  }else{
+   const title=el("studioProjectTitle")?.value?.trim()||"Dr.Vas Studio";
+   const idea=el("studioIdea")?.value?.trim()||"Povești, idei și proiecte create cu Dr.Vas.";
+   const cards=[{text:"DR.VAS STUDIO",time:0},{text:title.slice(0,100),time:3},{text:idea.slice(0,150),time:6}];
+   duration=9;
+   cards.forEach((card,index)=>elements.push({type:"text",name:"Title-Scene-"+(index+1),track:1,time:card.time,duration:3,x:"50%",y:"48%",width:"86%",height:"30%",x_anchor:"50%",y_anchor:"50%",x_alignment:"50%",y_alignment:"50%",text:card.text,font_family:"Montserrat",font_weight:700,font_size:index===0?"8 vmin":"6 vmin",fill_color:"#ffffff",background_color:"rgba(7,17,31,0.2)",background_x_padding:"8%",background_y_padding:"8%"}));
+  }
+  const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
+  if(sessionError)throw sessionError;
+  const token=sessionData.session?.access_token;if(!token)throw new Error("Sesiunea a expirat. Conectează-te din nou.");
+  studioRenderMessage("Trimit scenariul către motorul MP4…");
+  const response=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+   action:"studio_render_create",access_token:token,
+   render_script:{output_format:"mp4",width:1080,height:1920,duration,fill_color:"#07111f",elements}
+  })});
+  const result=await response.json().catch(()=>({}));
+  if(!response.ok)throw new Error(result.error||"Nu am putut porni randarea MP4.");
+  currentStudioRenderJobId=result.job_id;currentStudioRenderStoragePath="";
+  if(el("studioRenderPreview")){el("studioRenderPreview").hidden=true;el("studioRenderPreview").removeAttribute("src");}
+  if(el("studioRenderDownload")){el("studioRenderDownload").hidden=true;el("studioRenderDownload").removeAttribute("href");}
+  studioRenderMessage("Randarea a pornit. Stare: "+(result.status||"planned")+". Apasă «Verifică randarea» după câteva momente.");
+  if(el("studioIdea")?.value?.trim())await saveStudioProject();
+ }catch(error){
+  console.error("Dr.Vas Studio render create:",error);
+  studioRenderMessage(error.message||"Randarea MP4 nu a putut fi pornită.",true);
+ }finally{if(button)button.disabled=false;}
+}
+async function checkStudioRenderStatus(){
+ if(!currentUser||!currentStudioRenderJobId){studioRenderMessage("Nu există o randare activă în acest proiect.",true);return;}
+ try{
+  const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();if(sessionError)throw sessionError;
+  const token=sessionData.session?.access_token;if(!token)throw new Error("Sesiunea a expirat. Conectează-te din nou.");
+  studioRenderMessage("Verific starea randării…");
+  const response=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"studio_render_status",access_token:token,job_id:currentStudioRenderJobId})});
+  const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.error||"Nu am putut verifica randarea.");
+  if(result.status==="stored"&&result.storage_path){
+   currentStudioRenderStoragePath=result.storage_path;
+   const {data:signed,error}=await supabaseClient.storage.from("drvas-media").createSignedUrl(result.storage_path,3600);
+   if(error||!signed?.signedUrl)throw error||new Error("Nu am putut crea linkul privat pentru MP4.");
+   const preview=el("studioRenderPreview");if(preview){preview.src=signed.signedUrl;preview.hidden=false;preview.load();}
+   const download=el("studioRenderDownload");if(download){download.href=signed.signedUrl;download.hidden=false;}
+   studioRenderMessage("Video MP4 salvat în spațiul privat Dr.Vas. Linkul de vizualizare expiră după 60 de minute.");
+   if(el("studioIdea")?.value?.trim())await saveStudioProject();
+  }else if(result.status==="failed"){
+   studioRenderMessage(result.error||"Randarea a eșuat. Verifică materialele și creditele.",true);
+  }else{
+   studioRenderMessage("Randarea este în curs: "+(result.status||"în așteptare")+". Verifică din nou în câteva momente.");
+  }
+ }catch(error){console.error("Dr.Vas Studio render status:",error);studioRenderMessage(error.message||"Nu am putut verifica randarea.",true);}
+}
+
 function newStudioProject(){
  currentStudioProjectId=null;currentStudioProjectOutput="";
  ["studioProjectTitle","studioIdea"].forEach(id=>{el(id).value="";});if(el("studioSubtitles"))el("studioSubtitles").checked=true;if(el("studioNarration"))el("studioNarration").value="founder_voice_pending";
