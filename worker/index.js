@@ -874,6 +874,29 @@ export default {
           if (contentLength > 50 * 1024 * 1024) {
             return json({ error: "Fișierul video depășește limita de 50 MB pentru salvarea în cont." }, 413);
           }
+          const mediaType = (mediaResponse.headers.get("Content-Type") || "").toLowerCase();
+          if (mediaType && !mediaType.includes("video/mp4") && !mediaType.includes("application/octet-stream")) {
+            return json({ error: "Providerul nu a returnat un fișier MP4 valid." }, 502);
+          }
+          const reader = mediaResponse.body.getReader();
+          const chunks = [];
+          let totalBytes = 0;
+          while (true) {
+            const chunk = await reader.read();
+            if (chunk.done) break;
+            totalBytes += chunk.value.byteLength;
+            if (totalBytes > 50 * 1024 * 1024) {
+              await reader.cancel();
+              return json({ error: "Fișierul video depășește limita de 50 MB pentru salvarea în cont." }, 413);
+            }
+            chunks.push(chunk.value);
+          }
+          const mediaBytes = new Uint8Array(totalBytes);
+          let byteOffset = 0;
+          for (const chunk of chunks) {
+            mediaBytes.set(chunk, byteOffset);
+            byteOffset += chunk.byteLength;
+          }
           const storagePath = studioUser.id + "/" + storedJob.render_id + ".mp4";
           const uploadResponse = await fetch(
             studioBase + "/storage/v1/object/drvas-media/" + encodeURIComponent(studioUser.id) + "/" + encodeURIComponent(storedJob.render_id) + ".mp4",
@@ -886,7 +909,7 @@ export default {
                 "x-upsert": "true",
                 "Cache-Control": "3600"
               },
-              body: mediaResponse.body
+              body: mediaBytes
             }
           );
           if (!uploadResponse.ok) {
