@@ -2887,16 +2887,35 @@ function showLogin(){
   if(!languageReady)return;
   if(liveSocket||liveStream)stopLiveVoice();
   currentUser = null;
+  isDrvasAdmin = false;
+  activeModule = "free";
   currentConversationId = null;
   conversationSaved = false;
   pendingMessages = [];
   loadingConversation = false;
+  currentStudioProjectId = null;
+  currentStudioProjectOutput = "";
+  ["academy","commerce","business"].forEach(module=>{
+    moduleProjectState[module] = null;
+    moduleProjectOutputs[module] = "";
+    if(el(module+"ProjectList"))el(module+"ProjectList").replaceChildren(new Option("Alege un proiect salvat",""));
+    if(el(module+"ProjectTitle"))el(module+"ProjectTitle").value = "";
+  });
+  if(el("studioSavedProjects"))el("studioSavedProjects").innerHTML='<option value="">Alege un proiect salvat</option>';
+  if(el("studioProjectTitle"))el("studioProjectTitle").value = "";
+  if(el("studioIdea"))el("studioIdea").value = "";
+  ["studioWorkspace","academyWorkspace","commerceWorkspace","businessWorkspace","adminPanel"].forEach(id=>el(id)?.classList.add("hidden"));
+  document.querySelectorAll(".module-card").forEach(card=>{
+    const selected=card.dataset.module==="free";
+    card.classList.toggle("selected",selected);
+    card.setAttribute("aria-pressed",String(selected));
+  });
   if(el("chat")) el("chat").innerHTML = "";
   if(el("conversationList")) el("conversationList").innerHTML = "";
   if(el("saveMessage")) el("saveMessage").textContent = "";
   updateSaveButton();
   ["authSection","profileSection","chatSection"].forEach(id=>el(id).classList.add("hidden"));
-  // La deconectare revenim la pagina publică de selecție a modulelor.
+  // La deconectare revenim la pagina publică, fără panouri premium sau datele proiectelor anterioare.
   el("heroSection").classList.remove("hidden");
   el("moduleSelectionSection").classList.remove("hidden");
 }
