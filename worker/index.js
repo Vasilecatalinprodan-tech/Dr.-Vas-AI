@@ -1820,3 +1820,5 @@ Așa că, dacă mă întrebi care este povestea mea, ți-aș spune că este pove
     }
   }
 };
+
+// Deployment pipeline intentionally re-validates the current frontend and Worker together.
