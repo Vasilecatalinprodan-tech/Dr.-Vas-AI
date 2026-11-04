@@ -500,13 +500,101 @@ body.chat-focus-mode .chat-main .input-area{position:sticky;bottom:0;z-index:5}
 body.chat-focus-mode #question{scroll-margin-bottom:16px}
 body.chat-focus-mode #question:focus{outline:2px solid #54d8cf;outline-offset:2px}
 @media(max-width:850px){body.chat-focus-mode #chatSection{display:flex!important;flex-direction:column!important;gap:8px!important}body.chat-focus-mode .chat-module-rail{display:flex!important;flex-direction:row!important;flex:0 0 auto;gap:7px;overflow-x:auto;overflow-y:hidden;max-height:none;padding:8px;scrollbar-width:thin}body.chat-focus-mode .chat-module-rail-title{display:none}body.chat-focus-mode .chat-module-rail button{flex:0 0 auto;width:auto;min-width:max-content;padding:10px 12px}body.chat-focus-mode #chatSection>.chat-layout{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr)!important;flex:1 1 auto;min-height:0}body.chat-focus-mode .history-panel{display:none!important}body.chat-focus-mode.history-open .history-panel{display:block!important;max-height:22vh!important;overflow:auto!important}body.chat-focus-mode.history-open #chatSection>.chat-layout{grid-template-rows:auto minmax(0,1fr)!important}body.chat-focus-mode .chat-account-footer{flex:0 0 auto;justify-content:flex-end}}
+
+
+/* DR.VAS 2026 — clear landing, module chooser and dedicated workspaces */
+.landing-actions{display:flex;align-items:center;justify-content:space-between;gap:28px;margin:26px 0 34px;padding:30px 34px;border:1px solid #2a5267;border-radius:24px;background:linear-gradient(115deg,#102c40 0%,#0a1b2c 65%,#102d36 100%);box-shadow:0 20px 55px #0004}
+.landing-actions-copy{max-width:650px}.landing-actions h2{font-size:clamp(23px,3vw,34px);margin:9px 0;color:#f1fbff}.landing-actions p{margin:0;color:#a9c3d2;line-height:1.7}
+.landing-primary{min-width:245px;padding:18px 24px;border-radius:15px;background:linear-gradient(135deg,#67e4d8,#42c7c4);color:#06202a;font-size:15px;box-shadow:0 12px 28px #54d8cf30;transition:transform .2s,box-shadow .2s}
+.landing-primary:hover{transform:translateY(-2px);box-shadow:0 17px 35px #54d8cf40}
+.module-selection-shell{display:none!important;margin-top:22px}
+.module-selection-shell.modules-open{display:block!important}
+.module-selection-shell .modules-heading{margin-bottom:22px}
+.module-selection-shell .modules-heading h2{font-size:30px;margin:0 0 7px}
+.modules-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.module-card{min-height:190px;padding:23px 21px;display:flex;align-items:flex-start;gap:10px;text-align:left;background:linear-gradient(155deg,#122c40,#0b1d2e);border:1px solid #28475d;border-radius:19px;box-shadow:0 10px 28px #0002;transition:transform .2s,border-color .2s,background .2s}
+.module-card:hover{transform:translateY(-4px);border-color:#57d9d0;background:linear-gradient(155deg,#173d4e,#10273a)}
+.module-card.selected{border-color:#64e1d7;box-shadow:0 0 0 1px #64e1d733,0 12px 30px #0003}
+.module-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:14px;background:#1b4556;font-size:24px;margin-bottom:7px}
+.module-name{font-size:17px;font-weight:800;color:#f3fbff}
+.module-description{font-size:13px;line-height:1.55;color:#a9c0cf}
+.module-state{margin-top:auto;padding-top:7px;color:#70d9c7;font-size:11px;font-weight:800}
+.chat-logout-button{background:#482b35;color:#ffe1e4;border:1px solid #754652}
+.chat-logout-button:hover{background:#603541}
+body.module-workspace-mode main{display:grid;grid-template-columns:minmax(0,1.28fr) minmax(370px,.92fr);align-items:start;gap:18px;max-width:1600px;padding:18px 22px 28px;height:auto;min-height:calc(100vh - 75px);overflow:visible}
+body.module-workspace-mode .landing-actions,body.module-workspace-mode #heroSection,body.module-workspace-mode .origin-story{display:none!important}
+body.module-workspace-mode .module-selection-shell{grid-column:1;grid-row:1;display:block!important;margin:0;min-width:0}
+body.module-workspace-mode #moduleSelectionSection>.modules-heading,body.module-workspace-mode #moduleSelectionSection>.modules-grid,body.module-workspace-mode #moduleSelectionSection>.active-module-bar{display:none!important}
+body.module-workspace-mode #moduleSelectionSection{display:block}
+body.module-workspace-mode #chatSection{grid-column:2;grid-row:1;display:block!important;min-width:0;margin:0;padding:0}
+body.module-workspace-mode #chatSection>.panel-head,body.module-workspace-mode #chatSection>#accountBar,body.module-workspace-mode #chatSection>#adminAccessNotice,body.module-workspace-mode #chatSection>#adminPanel,body.module-workspace-mode #chatSection>.chat-module-rail{display:none!important}
+body.module-workspace-mode #chatSection>.chat-view-nav{margin:0 0 12px;position:sticky;top:8px;z-index:5;box-shadow:0 8px 25px #0003}
+body.module-workspace-mode #chatSection>.chat-layout{display:block!important;margin:0}
+body.module-workspace-mode #chatSection .history-panel{display:none!important}
+body.module-workspace-mode #chatSection .chat-main{padding:15px!important;border:1px solid #25465b;border-radius:19px;background:#0c1e2e;min-height:72vh}
+body.module-workspace-mode #chatSection .chat-main>#chat{min-height:340px;max-height:54vh;overflow:auto}
+body.module-workspace-mode #chatSection .chat-main .input-area{position:sticky;bottom:0;background:#0c1e2e;padding-top:10px;z-index:2}
+body.module-workspace-mode #chatSection .chat-main .studio-workspace,body.module-workspace-mode #chatSection .chat-main .academy-workspace,body.module-workspace-mode #chatSection .chat-main .commerce-workspace,body.module-workspace-mode #chatSection .chat-main .business-workspace{display:none!important}
+body.module-workspace-mode .module-workspace{display:block!important;max-height:none!important;overflow:visible!important}
+body.module-workspace-mode #studioWorkspace,body.module-workspace-mode #academyWorkspace,body.module-workspace-mode #commerceWorkspace,body.module-workspace-mode #businessWorkspace{padding:24px;border-radius:20px;background:linear-gradient(150deg,#0d2235,#091827);border:1px solid #294a61;box-shadow:0 15px 38px #0003}
+body.module-workspace-mode .studio-workspace-head{margin-bottom:20px}
+body.module-workspace-mode .studio-form-grid{gap:14px}
+body.module-workspace-mode .studio-project-manager{margin-top:18px}
+body.module-workspace-mode #chatSection .assistant-switcher{margin-top:0}
+body.module-workspace-mode #chatSection .chat-toolbar{margin-top:8px}
+body.module-workspace-mode #chatSection .chat-main .voice-toolbar{gap:7px}
+body.module-workspace-mode.free-module-mode main{display:block;max-width:1120px;padding:18px 22px}
+body.free-module-mode .module-selection-shell{display:none!important}
+body.free-module-mode #chatSection{max-width:100%;margin:auto}
+body.free-module-mode #chatSection>.chat-view-nav{margin-bottom:14px}
+body.free-module-mode #chatSection .chat-main{min-height:calc(100vh - 180px);background:#0c1e2e;border:1px solid #25465b;border-radius:20px;padding:22px}
+body.free-module-mode #chatSection .history-panel,body.free-module-mode #chatSection .chat-history-toggle,body.free-module-mode #chatSection .assistant-switcher,body.free-module-mode #chatSection .chat-toolbar,body.free-module-mode #chatSection #saveMessage{display:none!important}
+body.free-module-mode #chatSection .chat-main>#chat{max-height:calc(100vh - 340px);min-height:45vh;overflow-y:auto}
+body.free-module-mode #chatSection .chat-main .input-area{position:sticky;bottom:0;background:#0c1e2e;padding-top:12px}
+body.free-module-mode #chatSection .chat-module-rail,body.free-module-mode #chatSection .panel-head,body.free-module-mode #chatSection #accountBar,body.free-module-mode #chatSection #adminPanel{display:none!important}
+#languageGate{max-width:100%;margin:0 auto 18px}
+#languageGate .language-card{display:flex;align-items:center;gap:20px;justify-content:space-between;padding:13px 18px;border-radius:16px;text-align:left;background:#0b1d2d;border-color:#24465b;box-shadow:none}
+#languageGate .language-card .logo{display:none}
+#languageGate .language-card .tag{margin:0;white-space:nowrap}
+#languageGate .language-card h1{font-size:15px;margin:0;white-space:nowrap}
+#languageGate .language-card>p:not(.tag){display:none}
+#languageGate .language-grid{display:flex;flex-wrap:wrap;gap:6px;margin:0}
+#languageGate .language-grid button{padding:8px 11px;font-size:11px;border-radius:10px}
+#languageGate.hidden{display:none!important}
+#appMain.language-pending{display:block;min-height:0}
+#appMain.language-pending>:not(#languageGate){display:block!important}
+@media(max-width:1050px){
+ body.module-workspace-mode main{grid-template-columns:minmax(0,1fr);gap:14px}
+ body.module-workspace-mode #chatSection{grid-column:1;grid-row:2}
+ body.module-workspace-mode #chatSection .chat-main{min-height:520px}
+ body.module-workspace-mode #chatSection .chat-main>#chat{max-height:42vh}
+}
+@media(max-width:760px){
+ .landing-actions{display:block;padding:23px 20px}
+ .landing-primary{width:100%;margin-top:20px}
+ .modules-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .module-card{min-height:185px;padding:16px 13px}
+ .module-name{font-size:14px}
+ .module-description{font-size:12px}
+ #languageGate .language-card{display:block;padding:12px}
+ #languageGate .language-card .tag{display:block;margin-bottom:8px}
+ #languageGate .language-card h1{margin-bottom:9px}
+ #languageGate .language-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+ #languageGate .language-grid button{padding:8px 4px;font-size:10px}
+ body.module-workspace-mode main{padding:10px}
+ body.module-workspace-mode #studioWorkspace,body.module-workspace-mode #academyWorkspace,body.module-workspace-mode #commerceWorkspace,body.module-workspace-mode #businessWorkspace{padding:16px}
+ body.module-workspace-mode #chatSection .chat-main{min-height:470px;padding:10px!important}
+ .chat-logout-button{padding:8px 9px!important;font-size:10px!important}
+}
+@media(max-width:420px){.modules-grid{grid-template-columns:1fr}.module-card{min-height:140px}}
+
 </style>
 </head>
 
 <body>
 <header>
  <div class="logo">✚ Dr.Vas AI <span class="flag" role="img" aria-label="Steagul României" title="Creat în România"><i></i><i></i><i></i></span></div>
- <div class="header-actions"><div class="status" id="onlineStatus">● AI ASSISTANT ONLINE</div><button type="button" class="header-chat-cta" id="headerChatCta" onclick="enterChatFocus()">VORBEȘTE CU DR.VAS</button><button type="button" class="language-switch" id="languageSwitch" onclick="showLanguageGate()">🌐 Language</button></div>
+ <div class="header-actions"><div class="status" id="onlineStatus">● AI ASSISTANT ONLINE</div><button type="button" class="header-chat-cta" id="headerChatCta" onclick="showModuleSelection()">VORBEȘTE CU DR.VAS</button><button type="button" class="language-switch" id="languageSwitch" onclick="showLanguageGate()">🌐 Language</button></div>
 </header>
 
 <main id="appMain">
@@ -543,7 +631,12 @@ body.chat-focus-mode #question:focus{outline:2px solid #54d8cf;outline-offset:2p
  <p>Dr.Vas se construiește pas cu pas, cu resurse limitate și multă perseverență. Ambiția este o platformă integrată pentru asistență AI generală, informații despre sănătate, creație, educație, comerț și sprijin pentru afaceri. Unele funcții sunt încă în dezvoltare; promitem să fim sinceri despre ce este și ce nu este disponibil.</p>
 </section>
 
-<section class="panel">
+<section class="landing-actions" id="landingActions">
+ <div class="landing-actions-copy"><span class="tag">UN SINGUR CONT · ȘASE SPAȚII DE LUCRU</span><h2>Tehnologie care lucrează alături de tine.</h2><p>Alege limba, descoperă platforma și intră în spațiul potrivit pentru ceea ce vrei să construiești.</p></div>
+ <button type="button" class="landing-primary" onclick="showModuleSelection()">Vorbește cu Dr.Vas <span aria-hidden="true">→</span></button>
+</section>
+
+<section class="panel module-selection-shell" id="moduleSelectionShell">
   <section id="moduleSelectionSection" class="modules-section">
    <div class="modules-heading">
     <div><h2>Platforma Dr.Vas</h2><p>Alege spațiul de lucru de care ai nevoie.</p></div>
@@ -888,7 +981,8 @@ body.chat-focus-mode #question:focus{outline:2px solid #54d8cf;outline-offset:2p
    <strong>✦ DR.VAS · CONVERSAȚIE</strong>
    <div class="chat-view-nav-actions">
     <button type="button" class="chat-history-toggle" onclick="toggleChatHistory()">☷ Istoric</button>
-    <button type="button" class="chat-back-button" onclick="goToModules()">← Go to Modules</button>
+    <button type="button" class="chat-back-button" onclick="goToModules()">← Înapoi la module</button>
+    <button type="button" class="chat-logout-button" onclick="logout()">Deconectare</button>
    </div>
   </div>
   <aside class="chat-module-rail" aria-label="Navigare module Dr.Vas">
@@ -1255,10 +1349,10 @@ function chooseLanguage(code){
  el("appMain").classList.remove("language-pending");el("languageGate").classList.add("hidden");
  translatePage();refreshVoiceUi(voiceAutoRead?"ready":"off");checkSession();
 }
-function showLanguageGate(){el("languageGate").classList.remove("hidden");el("appMain").classList.add("language-pending");if(languageReady)translatePage(el("languageGate"))}
+function showLanguageGate(){el("languageGate").classList.toggle("hidden");if(languageReady)translatePage(el("languageGate"))}
 function initLanguage(){
  if(SUPPORTED_LANGUAGES.includes(currentLanguage)){languageReady=true;el("appMain").classList.remove("language-pending");el("languageGate").classList.add("hidden");translatePage();refreshSpeechVoiceOptions();refreshVoiceUi(voiceAutoRead?"ready":"off");checkSession()}
- else{languageReady=false;document.documentElement.lang="en";showLanguageGate()}
+ else{currentLanguage="ro";languageReady=true;try{localStorage.setItem(LANGUAGE_KEY,"ro")}catch{}document.documentElement.lang="ro";el("appMain").classList.remove("language-pending");el("languageGate").classList.remove("hidden");translatePage();refreshSpeechVoiceOptions();refreshVoiceUi(voiceAutoRead?"ready":"off");checkSession()}
 }
 const uiObserver=new MutationObserver(records=>{
  if(!languageReady)return;
@@ -1423,6 +1517,10 @@ function selectModule(moduleName,userInitiated=false){
     return;
   }
   activeModule=moduleName;
+  document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode","history-open");
+  document.documentElement.classList.remove("chat-focus-document");
+  el("moduleSelectionShell")?.classList.add("modules-open");
+  el("landingActions")?.classList.add("hidden");
   document.querySelectorAll(".module-card").forEach(card=>{
     const selected=card.dataset.module===moduleName;
     card.classList.toggle("selected",selected);
@@ -1462,6 +1560,16 @@ function selectModule(moduleName,userInitiated=false){
   }
   if(moduleName==="business"&&currentUser&&isDrvasAdmin){if(el("businessLedgerDate")&&!el("businessLedgerDate").value)el("businessLedgerDate").value=new Date().toISOString().slice(0,10);calculateBusinessBreakEven();loadBusinessLedger();loadStudentAssessmentProjects().catch(error=>console.warn("Student Desk project list:",error));loadModuleProjectList("business").catch(error=>console.warn("Business project list:",error));}
   if(userInitiated&&currentUser)logClientEvent("module_selected",moduleName);
+  if(userInitiated&&currentUser&&isDrvasAdmin){
+    const chatSection=el("chatSection");
+    chatSection?.classList.remove("hidden");
+    document.body.classList.add("module-workspace-mode");
+    if(moduleName==="free"){
+      document.body.classList.add("free-module-mode");
+      el("moduleSelectionShell")?.classList.remove("modules-open");
+    }
+    requestAnimationFrame(()=>{el("question")?.focus({preventScroll:true});const chat=el("chat");if(chat)chat.scrollTop=chat.scrollHeight;});
+  }
 }
 
 let voiceRecognition = null;
@@ -2746,58 +2854,34 @@ async function handleAuth(){
   }
 }
 
-function enterChatFocus(){
-  if(!currentUser){
-    showOnly("authSection");
-    el("authSection")?.scrollIntoView({behavior:"smooth",block:"center"});
-    return;
-  }
-  const chatSection=el("chatSection");
-  if(!chatSection)return;
-  // Reuse the central visibility controller so chat never remains hidden after navigation.
-  showOnly("chatSection");
-  chatSection.classList.remove("hidden");
-  document.body.classList.add("chat-focus-mode");
-  document.body.classList.remove("history-open");
-  document.documentElement.classList.add("chat-focus-document");
-  requestAnimationFrame(()=>{
-    const chat=el("chat");
-    if(chat)chat.scrollTop=chat.scrollHeight;
-    el("question")?.focus({preventScroll:true});
-  });
+function showModuleSelection(){
+ if(!languageReady)return;
+ document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode","history-open");
+ document.documentElement.classList.remove("chat-focus-document");
+ el("heroSection")?.classList.remove("hidden");
+ document.querySelector(".origin-story")?.classList.remove("hidden");
+ el("landingActions")?.classList.add("hidden");
+ el("moduleSelectionShell")?.classList.add("modules-open");
+ el("chatSection")?.classList.add("hidden");
+ ["authSection","profileSection"].forEach(id=>el(id)?.classList.add("hidden"));
+ requestAnimationFrame(()=>el("moduleSelectionShell")?.scrollIntoView({behavior:"smooth",block:"start"}));
 }
-function exitChatFocus(){
-  document.body.classList.remove("chat-focus-mode","history-open");
-  document.documentElement.classList.remove("chat-focus-document");
-  const chatSection=el("chatSection");
-  if(chatSection)chatSection.classList.add("hidden");
-  const modules=el("moduleSelectionSection");
-  if(modules)requestAnimationFrame(()=>modules.scrollIntoView({behavior:"smooth",block:"start"}));
-}
+function enterChatFocus(){showModuleSelection();}
+function exitChatFocus(){goToModules();}
 function toggleChatHistory(){document.body.classList.toggle("history-open");}
 function goToModules(){
-  exitChatFocus();
-  const modules=el("moduleSelectionSection");
-  if(modules)requestAnimationFrame(()=>modules.scrollIntoView({behavior:"smooth",block:"start"}));
+ document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode","history-open");
+ document.documentElement.classList.remove("chat-focus-document");
+ el("chatSection")?.classList.add("hidden");
+ el("moduleSelectionShell")?.classList.add("modules-open");
+ el("landingActions")?.classList.add("hidden");
+ ["authSection","profileSection"].forEach(id=>el(id)?.classList.add("hidden"));
+ requestAnimationFrame(()=>el("moduleSelectionShell")?.scrollIntoView({behavior:"smooth",block:"start"}));
 }
-function selectChatModule(moduleName){
-  selectModule(moduleName,true);
-  if(currentUser){
-    document.body.classList.add("chat-focus-mode");
-    document.documentElement.classList.add("chat-focus-document");
-    el("chatSection")?.classList.remove("hidden");
-    requestAnimationFrame(()=>el("question")?.focus({preventScroll:true}));
-  }
-}
+function selectChatModule(moduleName){selectModule(moduleName,true);}
 function showOnly(section){
-  if(!languageReady)return;
-  // Pagina publică rămâne vizibilă ca punct de revenire; autentificarea și chatul
-  // se afișează suplimentar, astfel încât o sesiune expirată să nu lase pagina goală.
-  el("heroSection").classList.remove("hidden");
-  el("moduleSelectionSection").classList.remove("hidden");
-  ["authSection","profileSection","chatSection"].forEach(id=>{
-    el(id).classList.toggle("hidden",id !== section);
-  });
+ if(!languageReady)return;
+ ["authSection","profileSection","chatSection"].forEach(id=>el(id)?.classList.toggle("hidden",id!==section));
 }
 
 async function showUser(user){
@@ -3473,7 +3557,10 @@ function showLogin(){
   ["authSection","profileSection","chatSection"].forEach(id=>el(id).classList.add("hidden"));
   // La deconectare revenim la pagina publică, fără panouri premium sau datele proiectelor anterioare.
   el("heroSection").classList.remove("hidden");
-  el("moduleSelectionSection").classList.remove("hidden");
+  el("moduleSelectionShell")?.classList.remove("modules-open");
+  el("landingActions")?.classList.remove("hidden");
+  document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode");
+  document.documentElement.classList.remove("chat-focus-document");
 }
 
 async function logout(){
