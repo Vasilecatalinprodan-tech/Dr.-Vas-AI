@@ -5,7 +5,11 @@ window.supabase = {
   createClient: () => ({
     auth: {
       getSession: async () => ({ data: { session: window.__DRVAS_E2E_SESSION__ || null }, error: null }),
-      onAuthStateChange: () => ({ data: { subscription: { unsubscribe() {} } } })
+      onAuthStateChange: callback => {
+        // Match Supabase's asynchronous initial event and exercise the race with checkSession().
+        setTimeout(() => callback("INITIAL_SESSION", window.__DRVAS_E2E_SESSION__ || null), 0);
+        return { data: { subscription: { unsubscribe() {} } } };
+      }
     },
     from: () => ({
       select() { return this; },
