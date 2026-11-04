@@ -180,6 +180,37 @@ test("successful administrator sign-in opens the exact module selected before au
   }
 });
 
+test("selected administrator module opens before slow conversation history finishes loading", async ({ page }) => {
+  await openApp(page, "ro");
+  const modules = ["free", "health", "studio", "academy", "commerce", "business"];
+  await page.evaluate(() => {
+    refreshAdminPanel = async () => { isDrvasAdmin = true; };
+    loadConversationList = () => new Promise(() => {});
+    loadStudioProjects = async () => {};
+    loadModuleProjectList = async () => {};
+    loadBusinessLedger = async () => {};
+    loadStudentAssessmentProjects = async () => {};
+    loadIncomeOpportunities = async () => {};
+  });
+
+  for (const module of modules) {
+    await page.evaluate(selected => {
+      sessionStorage.setItem("drvas_pending_module", selected);
+      void showChat({ id: "e2e-slow-history-admin", email: "owner@example.invalid" }, "Administrator");
+    }, module);
+    await expect(page.locator("#chatSection")).toBeVisible();
+    await expect(page.locator("#chatWorkspaceTitle")).toContainText(
+      module === "free" ? "Dr.Vas Free" :
+      module === "health" ? "Dr.Vas Health" :
+      module === "studio" ? "Dr.Vas Studio" :
+      module === "academy" ? "Dr.Vas Academy" :
+      module === "commerce" ? "Dr.Vas Commerce" : "Dr.Vas Business"
+    );
+    if (module !== "free") await expect(page.locator("#" + module + "Workspace")).toBeVisible();
+    expect(await page.evaluate(() => sessionStorage.getItem("drvas_pending_module"))).toBeNull();
+  }
+});
+
 test("sign-in with a non-admin account never opens a pending private module", async ({ page }) => {
   await openApp(page, "ro");
   const modules = ["free", "health", "studio", "academy", "commerce", "business"];
