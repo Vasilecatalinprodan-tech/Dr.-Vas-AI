@@ -1563,7 +1563,11 @@ function selectModule(moduleName,userInitiated=false){
     return;
   }
   if(!isDrvasAdmin){
-    const notice=tr("Accesul la module este privat. Contul conectat nu a fost recunoscut ca administrator de server. Verifică dacă te-ai conectat cu adresa fondatorului și dacă ADMIN_EMAILS din Cloudflare conține exact această adresă.");
+    // Prefer the detailed server-side admin_status reason (missing allowlist,
+    // missing account email, or an email not on the allowlist) over a generic message.
+    const serverNotice=el("adminAccessNotice");
+    const detailedNotice=serverNotice&&!serverNotice.classList.contains("hidden")?serverNotice.textContent.trim():"";
+    const notice=detailedNotice||tr("Accesul la module este privat. Contul conectat nu a fost recunoscut ca administrator de server. Verifică dacă te-ai conectat cu adresa fondatorului și dacă ADMIN_EMAILS din Cloudflare conține exact această adresă.");
     const status=el("moduleSelectionStatus");
     if(status){status.textContent=notice;status.classList.remove("hidden");}
     const accessMessage=el("moduleAccessMessage");
