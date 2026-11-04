@@ -1420,6 +1420,16 @@ uiObserver.observe(document.body,{childList:true,subtree:true});
 
 const REMEMBER_SESSION_KEY = "drvas_remember_me";
 const ACCOUNT_CHOICE_SESSION_KEY = "drvas_account_choice_confirmed";
+
+function maskEmailForPrivacy(email){
+  const value=String(email||"").trim();
+  const at=value.lastIndexOf("@");
+  if(at<=0||at===value.length-1)return "contul conectat";
+  const local=value.slice(0,at);
+  const domain=value.slice(at+1);
+  const visible=local.slice(0,Math.min(3,local.length));
+  return visible+"••••••@"+domain;
+}
 const authStorage = {
   getItem(key){
     const storage = localStorage.getItem(REMEMBER_SESSION_KEY) === "false" ? sessionStorage : localStorage;
@@ -3235,7 +3245,7 @@ async function refreshAdminPanel(){
         ? "Accesul de administrator nu este configurat pe server: lipsește secretul Cloudflare ADMIN_EMAILS."
         : result.reason === "account_email_missing"
           ? "Contul autentificat nu returnează o adresă de e-mail verificabilă. Verifică setările contului Supabase."
-          : "Contul conectat ("+(currentUser?.email || "fără e-mail")+") nu este autorizat ca administrator. Verifică valoarea secretului Cloudflare ADMIN_EMAILS și folosește exact adresa contului cu care te-ai conectat.";
+          : "Contul conectat ("+maskEmailForPrivacy(currentUser?.email)+") nu este autorizat ca administrator. Verifică dacă ADMIN_EMAILS din Cloudflare include adresa oficială a administratorului Dr.Vas.";
       notice.classList.remove("hidden");
     }
   }catch(error){
@@ -3830,7 +3840,7 @@ async function checkSession(){
       let accountChoiceConfirmed=false;
       try{accountChoiceConfirmed=sessionStorage.getItem(ACCOUNT_CHOICE_SESSION_KEY)==="true"}catch{}
       if(!accountChoiceConfirmed){
-        const connectedEmail=data.session.user?.email||"contul conectat";
+        const connectedEmail=maskEmailForPrivacy(data.session.user?.email);
         const continueWithAccount=window.confirm(
           "Dr.Vas a găsit o sesiune salvată pentru: "+connectedEmail+
           ".\n\nContinui cu acest cont?\n\nApasă „Anulează” dacă vrei să te deconectezi și să alegi alt cont."
