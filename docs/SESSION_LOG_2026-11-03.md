@@ -323,3 +323,13 @@ The user asked to preserve this session and resume tomorrow. This file is the du
 - APK artifact `DrVas-APK` is available from successful run `41804465379`, artifact ID `13308733480`, size 6,034,157 bytes, not expired. Build success does not prove physical installation or runtime.
 - Worker deploy job completed successfully for the same commit. Do not overstate this as a real-device voice test.
 - Next founder-only checks: test one newly generated answer with auto-read enabled in desktop Chrome (no replay click), then repeat on Samsung Chrome/app. Also confirm Supabase migration state and run the authenticated workflows; do not rerun migrations blindly.
+
+
+### Follow-up test coverage and Supabase preparation — 2026-11-04
+
+- Added a dedicated Playwright regression test for the first spoken answer when browser speech voices load asynchronously. The test stubs the browser SpeechSynthesis API, begins with an empty voice list, emits `voiceschanged`, and asserts that the answer is spoken exactly once without pressing Replay.
+- The first test attempt exposed a test-harness state issue (the test set a window property instead of the page's top-level lexical `voiceAutoRead` variable); corrected the test setup. Latest browser run `41804968920` on commit `08c601dfb4a83460db03538f9d42e5719aff3799` completed successfully. This is a deterministic mocked-browser regression test, not a substitute for listening on the founder's real Chrome/Samsung device.
+- Added `docs/SUPABASE_READONLY_VERIFICATION.sql`, a read-only inventory of expected Dr.Vas tables, the rate-limit RPC, RLS flags, policies and grants. It performs no writes. Use this to establish live schema state before any migration is run; never rerun a migration based only on uncertainty.
+- Added `docs/VOICE_RECORDING_GUIDE.md` with a clean recording checklist, original Romanian reading script, and security gates for a future voice-clone integration.
+- Reviewed current voice provider documentation. ElevenLabs Instant Voice Cloning accepts short samples but recommends 1–2 minutes; its documented combined minimum is 10 seconds. Professional Voice Cloning recommends 30–180 minutes and includes voice-owner verification. The founder's existing 4.55-second sample is below the documented minimum for Instant Voice Cloning. Provider selection, account/plan and any paid use require founder approval. Do not upload the sample to GitHub or place provider credentials in frontend code.
+- Current Dr.Vas Live mode uses Gemini's preset voice options. The founder's personal clone is a separate future TTS integration and is not implemented yet.
