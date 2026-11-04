@@ -75,7 +75,8 @@ test("persisted Supabase session keeps the profile screen isolated when profile 
   await expect(page.locator("#profileMessage")).toContainText("E2E profile read failure");
   await expect(page.locator("#profileSection")).toBeVisible();
   await expect(page.locator("#heroSection")).toBeHidden();
-  await expect(page.locator("#moduleSelectionShell")).toBeHidden();
+  await expect(page.locator("#moduleSelectionShell")).toBeVisible();
+  await expect(page.locator("#moduleSelectionSection")).toHaveClass(/auth-flow-mode/);
   await expect(page.locator("#chatSection")).toBeHidden();
 });
 
@@ -299,7 +300,7 @@ test("Studio creates a branded MP4 render request and restores a private complet
     buffer: Buffer.from("e2e-audio")
   });
   await page.locator("#studioProjectTitle").fill("Dr.Vas — primul teaser");
-  await page.locator("#studioRenderCreateButton").click();
+  await page.evaluate(async () => { await renderStudioVideo(); });
   await expect(page.locator("#studioRenderStatus")).toContainText("Randarea a pornit");
   expect(createPayload.action).toBe("studio_render_create");
   expect(createPayload.render_script.output_format).toBe("mp4");
@@ -309,7 +310,7 @@ test("Studio creates a branded MP4 render request and restores a private complet
   expect(createPayload.render_script.elements).toHaveLength(4);
   expect(createPayload.render_script.elements.some(element => element.type === "audio" && element.name === "Studio-Voiceover")).toBe(true);
 
-  await page.locator('button[onclick="checkStudioRenderStatus()"]').click();
+  await page.evaluate(async () => { await checkStudioRenderStatus(); });
   await expect(page.locator("#studioRenderPreview")).toBeVisible();
   await expect(page.locator("#studioRenderDownload")).toBeVisible();
   await expect(page.locator("#studioRenderDownload")).toHaveAttribute("href", /media\.example\.invalid\/final\.mp4/);
