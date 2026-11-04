@@ -163,8 +163,24 @@ test("legacy focused workspace never exposes other modules or cross-module histo
   await expect(page.locator("#chatSection")).toBeVisible();
   await expect(page.locator(".chat-module-rail")).toBeHidden();
   await expect(page.locator("#chatSection .history-panel")).toBeHidden();
-  const columns = await page.locator("#chatSection > .chat-layout").evaluate(node => getComputedStyle(node).gridTemplateColumns);
-  expect(columns.split(" ").length).toBe(1);
+  const layout = await page.locator("#chatSection > .chat-layout").evaluate(node => {
+    const value = getComputedStyle(node).gridTemplateColumns;
+    let depth = 0;
+    let inTrack = false;
+    let count = 0;
+    for (const character of value.trim()) {
+      if (character === "(") depth++;
+      if (character === ")") depth--;
+      if (/\\s/.test(character) && depth === 0) {
+        inTrack = false;
+      } else if (!inTrack) {
+        count++;
+        inTrack = true;
+      }
+    }
+    return { value, count };
+  });
+  expect(layout.count, `Expected one grid track, received "${layout.value}"`).toBe(1);
 });
 
 test("clicking a module as a visitor opens the sign-in gate and preserves the selected module", async ({ page }) => {
