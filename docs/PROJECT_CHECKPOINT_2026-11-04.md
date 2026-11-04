@@ -1,0 +1,58 @@
+# Dr.Vas AI — Project checkpoint (4 November 2026)
+
+## Product direction
+Dr.Vas is one integrated platform with six modules:
+1. Dr.Vas Free — general AI assistant.
+2. Dr.Vas Health — general health information and support; never a replacement for clinicians.
+3. Dr.Vas Studio — creative and video-production tools.
+4. Dr.Vas Academy — learning and course-building tools.
+5. Dr.Vas Commerce — e-commerce and dropshipping support.
+6. Dr.Vas Business — business planning and management support.
+
+The Android app is a companion build of the same platform, not a separate product.
+
+## Repository and deployment
+- Repository: `Vasilecatalinprodan-tech/Dr.-Vas-AI`
+- Working branch: `drvas-integrated-platform`
+- Frontend: `www/index.html`
+- Cloudflare Worker: `worker/index.js`
+- Supabase project ref: `bqgshoqspcfbflgsnntn`
+- Worker production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/
+- Worker health URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/health
+
+## Verified engineering progress
+- Chat workspace was moved outside the module-selection section so module visibility rules no longer hide the chat parent.
+- Desktop chat uses a left-side six-module rail and a separate conversation area.
+- Mobile chat hides the module rail and offers a return-to-modules action.
+- Conversation scroll and fixed composer layout are covered by browser regression tests.
+- Browser voice selection now refreshes when system voices load asynchronously and falls back to an available system voice if the selected language has no installed voice.
+- The Worker has origin restrictions, authenticated sensitive endpoints, server-side rate limiting, and audit logging.
+- Academy, Commerce and Business project drafts have per-user Supabase ownership and row-level security.
+- The latest APK workflow run recorded before this checkpoint completed successfully and uploaded a `DrVas-APK` artifact. Run: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/41824074859
+- The APK artifact belongs to source commit `3d31d0d347e7ceec761777d5e02304b3d2fabe34`; it is a successful build artifact, not proof of installation or device-level testing.
+
+## Rate-limit repair — important pending verification
+The original user-facing error, “Protecția de utilizare nu este disponibilă momentan”, is returned when the Worker cannot successfully call the Supabase RPC `public.drvas_consume_rate_limit` or cannot parse its result. The Worker intentionally fails closed; do not remove or bypass this security control.
+
+Migration:
+`supabase/migrations/202611040002_repair_rate_limit_rpc.sql`
+
+It sets the function search path to `pg_catalog, public`, revokes execution from `PUBLIC`, `anon`, and `authenticated`, grants execution to `service_role`, and reloads the PostgREST schema cache.
+
+The user reported running this SQL in Supabase, but has not yet reported whether the SQL editor returned Success or an error. Do not claim the live RPC or authenticated AI chat is fixed until verified. Next verification when the user is available:
+1. Check the SQL editor result (Success or exact error).
+2. Reload the deployed app, sign in, and send a simple message.
+3. If it still fails, inspect Cloudflare Worker logs for the safe RPC status/error text and diagnose without exposing secrets.
+4. Test normal text chat, browser text-to-speech, and Live Voice separately.
+
+## CI improvement in this checkpoint
+The Worker deployment workflow now statically validates the repair migration's expected function signature, hardened search path, revoked public/user-role execution, and service-role grant before deployment. This is committed as:
+`922237b74b462ca30547a01d5d86319dea1d89b0`
+
+## Remaining release gates
+- Verify the Supabase SQL execution result and a real authenticated production chat request.
+- Test desktop and mobile flows on real browsers/devices.
+- Test browser TTS and Live Voice independently; do not treat them as the same feature.
+- Install and test the APK on a physical Android device before calling it release-ready.
+- Review privacy, terms, data retention, security, accessibility, and medical-safety boundaries before public launch.
+- Keep Studio video rendering honest about provider limits, costs, watermarking, and storage ownership.
