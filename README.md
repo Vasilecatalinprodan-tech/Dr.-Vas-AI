@@ -151,3 +151,9 @@ Work in bounded 30-minute blocks. At the end of each block:
 - Commerce now covers ethical product/niche validation, supplier due diligence, landed-cost/unit-economics, fulfilment, consumer law and risk; it prohibits deceptive practices and unauthorised spending/orders.
 - Business now covers business plans, operations, cash flow, budgets, scenarios and KPIs, with clear boundaries around regulated accounting/legal/financial work and no unauthorised filings, payments or contracts.
 - Deployment run `41655022585` succeeded on commit `c38cec2b0b21d481653c559b7b0c1a011a995b85`; Worker/browser JavaScript validation and production smoke tests passed.
+
+
+## Licensing and compliance roadmap — 2026-11-04
+
+- Added `docs/LICENSING_IP_PRIVACY_AND_COMPLIANCE_ROADMAP.md` covering code/dependency licensing, trade marks, UK/EU privacy, health software boundaries, AI/voice/video provider rights, consumer subscriptions, accessibility, Android distribution and release gates.
+- This is a planning document, not legal advice or evidence of registration/certification. Keep the repository private and do not add a blanket open-source licence until ownership and third-party dependencies have been reviewed.
