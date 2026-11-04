@@ -3360,8 +3360,10 @@ async function send(){
     answer.classList.remove("typing");
     answer.textContent = displayedReply;
     lastSpokenAnswer=displayedReply;
-    if(moduleId==="studio")currentStudioProjectOutput=displayedReply;
-    else if(["academy","commerce","business"].includes(moduleId))moduleProjectOutputs[moduleId]=displayedReply;
+    if(moduleId==="studio"){
+      currentStudioProjectOutput=displayedReply;
+      if(el("studioIdea")?.value?.trim())await saveStudioProject();
+    }else if(["academy","commerce","business"].includes(moduleId))moduleProjectOutputs[moduleId]=displayedReply;
     refreshVoiceUi(voiceAutoRead?"ready":"off");
     if(voiceAutoRead)speakDrVas(displayedReply);
     if(data.action !== "conversations_deleted") await saveMessage("assistant",displayedReply,conversationId);
