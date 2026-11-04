@@ -131,3 +131,12 @@ Start with one country and one clearly scoped accounting framework (UK first if 
 - Referencing helper that checks format and flags missing source details without inventing sources.
 - Teacher mode for assignment creation, class-level progress and anonymised feedback; do not store identifiable student data without a lawful basis and appropriate institutional safeguards.
 - Clear AI-assistance disclosure and configurable institution policy; no detector evasion or deceptive authorship claims.
+
+
+## Business Planner calculator — 4 November 2026
+- Added a live break-even calculator to the Business workspace.
+- Inputs: fixed monthly costs, selling price per unit, variable cost per unit and expected monthly unit sales.
+- Outputs: break-even units, break-even revenue, contribution-margin percentage and estimated monthly operating result.
+- The assumptions are included in saved Business Plan project briefs. Currency follows the cashbook currency selector and is clearly labelled.
+- The calculator rejects zero/negative prices and variable costs at or above selling price. It excludes tax, interest and any costs the user has not entered; it is an indicative planning tool, not a guaranteed forecast.
+- E2E tests cover a known example: fixed costs 1,000; unit price 50; variable cost 25; expected units 50; break-even 40 units; break-even revenue 2,000; contribution margin 50%; estimated monthly result 250 (in the selected currency).
