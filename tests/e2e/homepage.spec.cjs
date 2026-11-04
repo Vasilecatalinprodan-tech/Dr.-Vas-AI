@@ -166,7 +166,8 @@ test("successful administrator sign-in opens the exact module selected before au
     }, module);
     await expect(page.locator("#chatSection")).toBeVisible();
     await expect(page.locator("#chatWorkspaceTitle")).toContainText(title);
-    await expect(page.locator("#moduleSelectionShell")).toBeVisible();
+    if (module === "free") await expect(page.locator("#moduleSelectionShell")).toBeHidden();
+    else await expect(page.locator("#moduleSelectionShell")).toBeVisible();
     await expect(page.locator("#moduleSelectionSection")).not.toHaveClass(/auth-flow-mode/);
     await expect(page.locator("#moduleSelectionSection [data-module='" + module + "']")).toHaveAttribute("aria-pressed", "true");
     expect(await page.evaluate(() => sessionStorage.getItem("drvas_pending_module"))).toBeNull();
