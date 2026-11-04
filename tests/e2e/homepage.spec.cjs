@@ -73,7 +73,8 @@ test("persisted Supabase session keeps the public dashboard visible when profile
   expect(await page.evaluate(() => document.body.classList.contains("chat-focus-mode"))).toBe(false);
 });
 
-test("header chat button opens the conversation without entering destructive focus layout", async ({ page }) => {
+test("desktop chat opens as a dedicated workspace with the six-module sidebar", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
   await openApp(page, "ro");
   await page.evaluate(() => {
     currentUser = { id: "e2e-session-user", email: "e2e@example.invalid" };
@@ -81,11 +82,35 @@ test("header chat button opens the conversation without entering destructive foc
   });
 
   await expect(page.locator("#chatSection")).toBeVisible();
-  await expect(page.locator("#heroSection")).toBeVisible();
-  await expect(page.locator('[data-module]')).toHaveCount(6);
-  expect(await page.evaluate(() => document.body.classList.contains("chat-focus-mode"))).toBe(false);
-  await page.locator("#chatSection").scrollIntoViewIfNeeded();
+  await expect(page.locator("#heroSection")).toBeHidden();
+  await expect(page.locator(".chat-module-rail")).toBeVisible();
+  await expect(page.locator(".chat-module-rail [data-chat-module]")).toHaveCount(6);
+  expect(await page.evaluate(() => document.body.classList.contains("chat-focus-mode"))).toBe(true);
   await expect(page.locator("#question")).toBeVisible();
+  const layout = await page.locator("#chatSection").evaluate(node => ({
+    display: getComputedStyle(node).display,
+    columns: getComputedStyle(node).gridTemplateColumns
+  }));
+  expect(layout.display).toBe("grid");
+  expect(layout.columns.split(" ").length).toBeGreaterThanOrEqual(2);
+});
+
+test("mobile chat is full-screen with modules behind a Go to Modules action", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-mobile-user", email: "mobile@example.invalid" };
+    window.enterChatFocus();
+  });
+
+  await expect(page.locator("#chatSection")).toBeVisible();
+  await expect(page.locator(".chat-module-rail")).toBeHidden();
+  await expect(page.locator(".chat-back-button")).toBeVisible();
+  await expect(page.locator("#question")).toBeVisible();
+  await page.locator(".chat-back-button").click();
+  await expect(page.locator("#chatSection")).toBeHidden();
+  await expect(page.locator("#moduleSelectionSection")).toBeVisible();
+  expect(await page.evaluate(() => document.body.classList.contains("chat-focus-mode"))).toBe(false);
 });
 
 test("header chat button routes signed-out visitors to sign-in without hiding the dashboard", async ({ page }) => {
