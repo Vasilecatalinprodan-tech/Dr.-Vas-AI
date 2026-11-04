@@ -35,99 +35,99 @@ async function openApp(page, language = null, session = null, profileError = fal
   await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
 }
 
-test("first visit shows the language chooser", async ({ page }) => {
+test("first visit shows the Dr.Vas landing page, language selector and clear entry CTA", async ({ page }) => {
   await openApp(page);
   await expect(page.locator("#languageGate")).toBeVisible();
-  await expect(page.locator("#appMain")).toHaveClass(/language-pending/);
+  await expect(page.locator("#heroSection")).toBeVisible();
+  await expect(page.locator("#landingActions")).toBeVisible();
+  await expect(page.locator("#landingActions button")).toContainText("Vorbește cu Dr.Vas");
+  await expect(page.locator("#moduleSelectionShell")).toBeHidden();
+  await expect(page.locator("#appMain")).not.toHaveClass(/language-pending/);
 });
 
-test("saved language keeps the public dashboard visible", async ({ page }) => {
+test("saved language keeps the presentation first and reveals modules only after the CTA", async ({ page }) => {
   await openApp(page, "ro");
   await expect(page.locator("#heroSection")).toBeVisible();
+  await expect(page.locator("#languageGate")).toBeVisible();
+  await expect(page.locator("#moduleSelectionShell")).toBeHidden();
+  await page.locator("#headerChatCta").click();
+  await expect(page.locator("#moduleSelectionShell")).toBeVisible();
   await expect(page.locator('[data-module]')).toHaveCount(6);
 });
 
-test("showChat keeps the public dashboard visible instead of entering focus mode", async ({ page }) => {
+test("showChat keeps the landing page until the user chooses to enter the modules", async ({ page }) => {
   await openApp(page, "ro");
-  await expect(page.locator("#heroSection")).toBeVisible();
-
-  const enteredFocusMode = await page.evaluate(() => {
+  await page.evaluate(() => {
     if (typeof window.showChat !== "function") throw new Error("showChat() is not exposed for browser regression testing");
     window.showChat({ id: "e2e-session-user", email: "e2e@example.invalid" }, "E2E");
-    return document.body.classList.contains("chat-focus-mode");
   });
-
-  expect(enteredFocusMode).toBe(false);
   await expect(page.locator("#heroSection")).toBeVisible();
-  await expect(page.locator('[data-module]')).toHaveCount(6);
+  await expect(page.locator("#moduleSelectionShell")).toBeHidden();
+  await expect(page.locator("#chatSection")).toBeHidden();
 });
 
-test("persisted Supabase session keeps the public dashboard visible when profile loading fails", async ({ page }) => {
+test("persisted Supabase session keeps the profile screen isolated when profile loading fails", async ({ page }) => {
   await openApp(page, "ro", {
     access_token: "e2e-access-token",
     user: { id: "e2e-session-user", email: "e2e@example.invalid" }
   }, true);
 
   await expect(page.locator("#profileMessage")).toContainText("E2E profile read failure");
-  await expect(page.locator("#heroSection")).toBeVisible();
-  await expect(page.locator('[data-module]')).toHaveCount(6);
+  await expect(page.locator("#profileSection")).toBeVisible();
+  await expect(page.locator("#heroSection")).toBeHidden();
+  await expect(page.locator("#moduleSelectionShell")).toBeHidden();
   await expect(page.locator("#chatSection")).toBeHidden();
-  expect(await page.evaluate(() => document.body.classList.contains("chat-focus-mode"))).toBe(false);
 });
 
-test("desktop chat opens as a dedicated workspace with the six-module sidebar", async ({ page }) => {
+test("desktop module opens its own workspace beside its contextual chat", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await openApp(page, "ro");
-  await expect(page.locator("#heroSection")).toBeVisible();
   await page.evaluate(() => {
     currentUser = { id: "e2e-session-user", email: "e2e@example.invalid" };
-    window.enterChatFocus();
+    isDrvasAdmin = true;
+    showModuleSelection();
+    selectModule("studio", true);
   });
 
+  await expect(page.locator("#studioWorkspace")).toBeVisible();
   await expect(page.locator("#chatSection")).toBeVisible();
-  await expect(page.locator("#heroSection")).toBeHidden();
-  await expect(page.locator(".chat-module-rail")).toBeVisible();
-  await expect(page.locator(".chat-module-rail [data-chat-module]")).toHaveCount(6);
-  expect(await page.evaluate(() => document.body.classList.contains("chat-focus-mode"))).toBe(true);
   await expect(page.locator("#question")).toBeVisible();
-  const layout = await page.locator("#chatSection").evaluate(node => ({
-    display: getComputedStyle(node).display,
-    columns: getComputedStyle(node).gridTemplateColumns
-  }));
-  expect(layout.display).toBe("grid");
-  expect(layout.columns.split(" ").length).toBeGreaterThanOrEqual(2);
+  await expect(page.locator(".chat-back-button")).toContainText("Înapoi la module");
+  await expect(page.locator(".chat-logout-button")).toBeVisible();
+  await expect(page.locator(".chat-module-rail")).toBeHidden();
+  expect(await page.evaluate(() => document.body.classList.contains("module-workspace-mode"))).toBe(true);
+  const layout = await page.locator("main").evaluate(node => getComputedStyle(node).gridTemplateColumns);
+  expect(layout.split(" ").length).toBeGreaterThanOrEqual(2);
 });
 
-test("mobile chat keeps the six-module navigation accessible in a horizontal rail", async ({ page }) => {
+test("mobile Free chat stays simple and offers only module navigation and logout", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openApp(page, "ro");
-  await expect(page.locator("#heroSection")).toBeVisible();
   await page.evaluate(() => {
     currentUser = { id: "e2e-mobile-user", email: "mobile@example.invalid" };
-    window.enterChatFocus();
+    isDrvasAdmin = true;
+    showModuleSelection();
+    selectModule("free", true);
   });
 
   await expect(page.locator("#chatSection")).toBeVisible();
-  await expect(page.locator(".chat-module-rail")).toBeVisible();
-  await expect(page.locator('.chat-module-rail [data-chat-module="studio"]')).toBeVisible();
-  await expect(page.locator(".chat-back-button")).toBeVisible();
   await expect(page.locator("#question")).toBeVisible();
-  await expect(page.locator("#question")).toBeFocused();
+  await expect(page.locator(".chat-back-button")).toBeVisible();
+  await expect(page.locator(".chat-logout-button")).toBeVisible();
+  await expect(page.locator(".chat-history-toggle")).toBeHidden();
+  await expect(page.locator(".assistant-switcher")).toBeHidden();
+  await expect(page.locator(".chat-module-rail")).toBeHidden();
   await page.locator(".chat-back-button").click();
   await expect(page.locator("#chatSection")).toBeHidden();
-  await expect(page.locator("#moduleSelectionSection")).toBeVisible();
-  expect(await page.evaluate(() => document.body.classList.contains("chat-focus-mode"))).toBe(false);
+  await expect(page.locator("#moduleSelectionShell")).toBeVisible();
 });
 
-test("header chat button routes signed-out visitors to sign-in without hiding the dashboard", async ({ page }) => {
+test("landing CTA opens the module chooser without skipping the presentation", async ({ page }) => {
   await openApp(page, "ro");
   await page.locator("#headerChatCta").click();
-
-  await expect(page.locator("#authSection")).toBeVisible();
-  await expect(page.locator("#heroSection")).toBeVisible();
+  await expect(page.locator("#moduleSelectionShell")).toBeVisible();
   await expect(page.locator('[data-module]')).toHaveCount(6);
   await expect(page.locator("#chatSection")).toBeHidden();
-  expect(await page.evaluate(() => document.body.classList.contains("chat-focus-mode"))).toBe(false);
 });
 
 test("all six modules remain private to administrators during the pilot", async ({ page }) => {
@@ -135,15 +135,14 @@ test("all six modules remain private to administrators during the pilot", async 
   await page.evaluate(() => {
     currentUser = { id: "e2e-standard-user", email: "standard@example.invalid" };
     isDrvasAdmin = false;
+    showModuleSelection();
   });
 
   for (const moduleId of ["free", "health", "studio", "academy", "commerce", "business"]) {
     await page.evaluate(id => selectModule(id, true), moduleId);
     await expect(page.locator("#moduleAccessMessage")).toContainText("pilot privat");
-    await expect(page.locator("#" + moduleId + "Workspace")).toBeHidden();
   }
 });
-
 
 test("first spoken answer waits for asynchronously loaded browser voices and plays without Replay", async ({ page }) => {
   await openApp(page, "ro");
