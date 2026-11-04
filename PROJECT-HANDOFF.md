@@ -300,3 +300,8 @@ Important limitations and next QA:
 - APK workflow run `41698929811` succeeded for commit `6664fb27cb11a83f402dc6fb751da26134218e16`.
 - Artifact: `DrVas-APK`, ID `13262293447`, 6,033,799 bytes; SHA-256 `a2063e934e0d958f1280d6c416efaaffc47c41db8b2d581fd5146730032fb402`; expires 2027-02-01.
 - This confirms build and artifact upload only. Physical Android installation/runtime testing remains outstanding.
+
+
+## Recovery checkpoint — 2026-11-04
+
+Resume on `drvas-integrated-platform`. The latest recorded CI evidence was rechecked: Worker deployment + production smoke `41698929634` passed; browser E2E `41699194261` passed; Android APK build `41698929811` passed (artifact ID `13262293447`). APK compilation is not physical-device verification. Supabase migrations `202611030001_rate_limits.sql` and `202611030004_studio_projects.sql` still need live-state confirmation and application only if absent. The Crypto registry migration was reported applied by the founder but is not independently verified. Authenticated chat/history/admin/audit/private-profile/Studio tests and physical Android runtime remain outstanding. See the latest section of `docs/SESSION_LOG_2026-11-03.md` for the complete audit and ordered next-session checklist. No secrets belong in chat or repository files.
