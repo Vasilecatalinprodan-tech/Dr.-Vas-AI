@@ -106,3 +106,10 @@ The Worker deployment workflow now statically validates the repair migration's e
 - Artifact `DrVas-APK`: 6,056,746 bytes, SHA-256 `9bb05e072d9c3d7849a20ae76bedfe89a8c8d48b6090cf86c08cdff7e9c93d3c`; expires 2 February 2027.
 - Download via the GitHub Actions run page: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/41828699645
 - Build success does not equal physical-device installation or release approval; still needs install/device testing.
+
+
+## Business Planner enhancement — 4 November 2026
+- Added live break-even and contribution-margin calculator to Business: fixed monthly costs, unit selling price, variable cost per unit and expected monthly sales.
+- Outputs break-even units/revenue, contribution margin and estimated monthly operating result; assumptions are included in saved Business Plan projects.
+- Added E2E test for a known example (1,000 fixed costs, 50 price, 25 variable cost, 50 expected units → 40 break-even units, 2,000 break-even revenue, 50% contribution margin, 250 estimated monthly result). CI static checks also validate the calculator is present.
+- Scope remains planning/management information, not statutory accounts, tax advice or a guaranteed forecast. Phase-two double-entry accounting architecture is documented in the Business Desk roadmap.
