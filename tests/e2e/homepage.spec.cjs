@@ -59,7 +59,8 @@ test("primary Dr.Vas CTA is above the hero description and sends visitors to log
   await page.locator("#headerChatCta").click();
   await expect(page.locator("#authSection")).toBeVisible();
   await expect(page.locator("#moduleSelectionShell")).toBeVisible();
-  await expect(page.locator("#moduleSelectionSection")).toBeHidden();
+  await expect(page.locator("#moduleSelectionSection")).toBeVisible();
+  await expect(page.locator("#moduleSelectionSection")).toHaveClass(/auth-flow-mode/);
   expect(await page.evaluate(() => sessionStorage.getItem("drvas_pending_entry"))).toBe("modules");
   await expect(page.locator("#chatSection")).toBeHidden();
 });
@@ -100,7 +101,8 @@ test("persisted Supabase session keeps the profile screen isolated when profile 
   await expect(page.locator("#profileSection")).toBeVisible();
   await expect(page.locator("#heroSection")).toBeHidden();
   await expect(page.locator("#moduleSelectionShell")).toBeVisible();
-  await expect(page.locator("#moduleSelectionSection")).toBeHidden();
+  await expect(page.locator("#moduleSelectionSection")).toBeVisible();
+  await expect(page.locator("#moduleSelectionSection")).toHaveClass(/auth-flow-mode/);
   await expect(page.locator("#chatSection")).toBeHidden();
 });
 
@@ -143,7 +145,8 @@ test("clicking a module as a visitor opens the sign-in gate and preserves the se
   await page.locator('[data-module="studio"]').click();
   await expect(page.locator("#authSection")).toBeVisible();
   await expect(page.locator("#moduleSelectionShell")).toBeVisible();
-  await expect(page.locator("#moduleSelectionSection")).toBeHidden();
+  await expect(page.locator("#moduleSelectionSection")).toBeVisible();
+  await expect(page.locator("#moduleSelectionSection")).toHaveClass(/auth-flow-mode/);
   await expect(page.locator("#authDescription")).toContainText("Dr.Vas Studio");
   expect(await page.evaluate(() => sessionStorage.getItem("drvas_pending_module"))).toBe("studio");
   await expect(page.locator("#chatSection")).toBeHidden();
@@ -321,7 +324,8 @@ test("landing CTA sends visitors to authentication before showing private module
   await page.locator("#headerChatCta").click();
   await expect(page.locator("#authSection")).toBeVisible();
   await expect(page.locator("#moduleSelectionShell")).toBeVisible();
-  await expect(page.locator("#moduleSelectionSection")).toBeHidden();
+  await expect(page.locator("#moduleSelectionSection")).toBeVisible();
+  await expect(page.locator("#moduleSelectionSection")).toHaveClass(/auth-flow-mode/);
   await expect(page.locator("#chatSection")).toBeHidden();
   expect(await page.evaluate(() => sessionStorage.getItem("drvas_pending_entry"))).toBe("modules");
 });
