@@ -383,3 +383,18 @@ This section supersedes any older or contradictory wording in this document that
 - The Live Health voice token remains separately controlled by `GEMINI_LIVE_HEALTH_ENABLED` pending privacy review. This flag does not block Health text chat.
 - GitHub Actions run `41921816040` (Deploy Dr.Vas Worker) was in progress. Its JavaScript validation step completed successfully for both Worker and browser inline scripts; Playwright installation/test and deployment/smoke-test steps were still pending at the time of this checkpoint.
 - A separate browser E2E run `41921816001` had been queued. Do not claim E2E pass or production deployment until the run completes and its results are checked.
+
+
+### Final verification and production deployment — 2026-11-04 22:12 UTC
+- Final frontend commit: `4c6df7f2132cd97ebdfd9ab1ad8d4367bf635349`; frontend blob `cc54ab184a5d7a062723b00102d06ca186a98eab`.
+- Worker access correction commit: `37db4e3ecddc136b0554ccc863c8b283edada7aa`; Worker blob `66232db4b8011e00836195ef1de29af0fccb138d`.
+- Latest E2E test commit: `0f84e6e0cb0afb1ff39c96f40274636029a017fb`; test blob `daa5fc1ad05c11fc374925b57c3aca9e0d6064a5`.
+- Latest continuity update before this entry: `de2f1845e6d4abb749dbf019e443216a604b5d2f`.
+- Final Cloudflare deployment workflow: run `41923036514`, commit `4c6df7f2132cd97ebdfd9ab1ad8d4367bf635349`, conclusion **success**.
+- Browser regression tests in the deployment pipeline: **36 passed, 0 failed**.
+- `npx wrangler deploy` successfully uploaded the updated `www/index.html` asset and deployed the Worker.
+- Production smoke test passed: homepage delivered all six module cards; unauthenticated admin-status request correctly returned HTTP 401; health endpoint returned `status: online`, Worker `ok`, assets `configured`, AI `configured`, database `configured`, and Studio renderer `configured`.
+- This confirms the corrected public-first UI and Worker are deployed at `https://dr--vas-ai.vasilecatalinprodan.workers.dev/`.
+- Ordinary signed-in users can now use public/free Free and general-information Health without administrator privileges. Studio, Academy, Commerce and Business remain founder-only until future paid public launch. No ordinary account was added to the administrator allowlist.
+- The initial E2E failures were diagnosed and corrected: obsolete test assertions still expected admin denial for public users, the presentation's aria-label was being reset by the translation observer, and the Student Desk test was stabilised by not re-entering an already active Business workspace. The final deployment run confirms the entire suite passes.
+- The user should now hard-refresh the production page and test with their ordinary account. This is a visual/user-session check; do not ask the user to inspect source code or logs.
