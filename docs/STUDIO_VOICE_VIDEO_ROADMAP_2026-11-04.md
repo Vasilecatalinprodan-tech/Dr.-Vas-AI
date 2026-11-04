@@ -30,3 +30,8 @@
 4. Add TikTok OAuth and Content Posting API only after registering the Dr.Vas developer app and obtaining required scopes/audit. Until then, export MP4 + caption + hashtags for manual posting.
 5. Preserve the fixed MADE BY VPC mark in the actual render template, not only the prompt or preview.
 6. Complete integrated desktop/mobile, real account, voice and video tests after provider credentials and source assets are connected.
+
+## Additional voice integration code — 2026-11-04
+- Worker commit `388b4a23d13ff7daa11e296b8c0728fae0fdeaeb` adds an authenticated, server-side `voice_tts` action. It requires Cloudflare secrets `ELEVENLABS_API_KEY` and `ELEVENLABS_VOICE_ID`, validates the Supabase user, enforces a per-user `voice_tts` rate limit (12 requests/minute), calls ElevenLabs Multilingual v2, and returns audio/mpeg. Provider credentials never reach the browser.
+- Frontend commit `0897539b6a4dc697a608d7efef17777a2233379d` attempts founder-voice playback for Dr.Vas when the server endpoint is configured; if unavailable, it falls back to existing browser speech synthesis. The clone is NOT active until a verified ElevenLabs voice ID and API key are configured.
+- Next founder inputs: clean 1–2 minute spoken recording in the language(s) intended for cloning, plus a verified ElevenLabs voice ID and API key configured as Cloudflare Worker secrets (never pasted into chat or committed). The existing OGG sample is 4.5665 seconds and is below the 10-second minimum stated by ElevenLabs.
