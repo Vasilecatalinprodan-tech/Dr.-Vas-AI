@@ -110,3 +110,17 @@ Dr.Vas may provide a safe reporting route for users to submit a concern and find
 5. Build Psychology only after clinical partner, safeguarding lead, DPIA, crisis protocol and legal review are in place.
 6. Build child-safety reporting as a human-governed safeguarding workflow, never an AI criminal detector.
 7. Connect external providers and launch only after end-to-end security and operational testing.
+
+
+## 7. Admin pilot brief builders — 2026-11-04
+
+The frontend now includes first structured text-workflow pilots for all six modules:
+
+- **Studio:** existing creative brief builder for series, short-form, YouTube, adverts, storyboards, books, translation, music, lyrics and editorial work; user-owned project save/open/export/delete is backed by `drvas_studio_projects` and RLS, subject to the migration being applied in Supabase.
+- **Academy:** course brief builder capturing subject, level, audience, format, language, outcome and requirements. It prepares a prompt for the existing AI conversation; it does not yet host course lessons, issue certificates, accept payments or track learner progress.
+- **Commerce:** opportunity-analysis brief builder capturing product/niche, market, budget, model, sales channel and target price. It asks for landed-cost, supplier, compliance, margin and risk analysis; it does not source/verify suppliers or place orders.
+- **Business:** business-plan brief builder capturing idea, country, budget, stage, goal and horizon. It asks for explicit assumptions, cashflow and action plan; it is general information, not regulated professional advice.
+
+Academy, Commerce and Business pilots are shown only to the configured administrator while premium entitlements and public subscription billing are unfinished. All builders put a reviewable prompt into the existing chat composer; the user must press Send. No external publishing, purchases, supplier commitments, financial transactions or certifications are performed.
+
+New browser regression tests cover the three builders and confirm non-admin users remain blocked. Check the workflow result before treating this change as verified.
