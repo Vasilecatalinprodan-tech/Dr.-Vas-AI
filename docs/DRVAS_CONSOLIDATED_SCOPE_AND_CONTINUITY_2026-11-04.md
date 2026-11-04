@@ -42,7 +42,7 @@ This document consolidates decisions from the 3–4 November 2026 planning conve
 - Worker service: dr--vas-ai
 - Production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/
 - Supabase authentication and existing chat/history tables must be preserved.
-- The six pilot modules are server-side admin-gated. ADMIN_EMAILS is a Cloudflare Worker secret/allowlist; never bypass this in the browser. Diagnose the returned admin_status reason before changing auth configuration.
+- Access model: authenticated public users may use Dr.Vas Free and general-information Dr.Vas Health. Only Studio, Academy, Commerce and Business are founder-only until the owner authorizes their paid public launch. `ADMIN_EMAILS` is a Cloudflare Worker secret/allowlist for administrator privileges only; never add ordinary users or bypass server-side authorization. The admin dashboard and founder tools remain private.
 - Desktop and mobile navigation should remain usable: persistent left navigation on desktop and horizontal module navigation on mobile.
 
 ## Verified work at the 2026-11-04 checkpoint
@@ -410,3 +410,12 @@ GitHub Actions completed successfully:
 The earlier runs for intermediate commits failed/cancelled during iterative corrections; these are superseded by the three successful runs above.
 At the final source audit, frontend, Worker and E2E test files were re-fetched from `drvas-integrated-platform`. Public Free/Health routing, founder-only Studio/Academy/Commerce/Business gate, and absence of the stale “6 SPAȚII DE LUCRU · PILOT PRIVAT” chooser label were confirmed.
 The final deployment was performed by the workflow after Playwright passed, and its production smoke test also passed. This confirms the Worker deployment and smoke-test endpoint, not a complete manual visual inspection of every screen on every device. User visual review can resume when they are ready.
+
+
+### Continuity update — 2026-11-05 work session
+- Re-read the active branch source before making changes. The branch includes the public-first flow: welcome/language selection → sign-in/register → module chooser; Free and Health are public to authenticated users, while Studio, Academy, Commerce and Business remain founder-only.
+- Reconfirmed the Worker chat gate restricts only Studio, Academy, Commerce and Business. Health text chat is not blocked by the separate Live voice privacy flag. Live Health voice remains disabled unless `GEMINI_LIVE_HEALTH_ENABLED=true`.
+- Found that the E2E suite explicitly tested public Free access and founder-only premium access, but did not yet contain a dedicated non-admin Health workspace test, despite the earlier checkpoint saying Health was covered. Added that missing regression test in commit `4f84a00cd56752070e2a0c09ea1fb9bb172084eb`. The test asserts that a normal signed-in account can enter Health, sees the Health workspace, does not see admin controls/notices, and does not gain admin status.
+- Latest repository commit discovered before this update: `574381963f56f99a5e0d6eb19109059a6c2393e9`, adding a manually triggerable Cloudflare Worker deployment workflow. It uses the existing Cloudflare GitHub secrets and deploys the active integrated branch; no secrets are stored in the workflow.
+- This test addition and documentation correction are source changes only until the new CI workflows complete. Do not claim the new Health test passed or that a new production deployment occurred until Actions results are checked.
+- No database tables or data were changed. No admin allowlist changes were made. The sole administrator remains `vasilecatalinprodan@gmail.com`.
