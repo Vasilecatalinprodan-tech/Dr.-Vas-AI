@@ -1535,8 +1535,43 @@ function waitForSpeechVoices(){
  });
  return speechVoiceLoadPromise.finally(()=>{speechVoiceLoadPromise=null;});
 }
+let founderSpeechAudio=null;
+let founderSpeechObjectUrl=null;
+async function playFounderVoice(text){
+ if(activeAssistant!=="drvas"||!currentUser||!text)return false;
+ try{
+  const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
+  if(sessionError||!sessionData.session?.access_token)return false;
+  const response=await fetch(API_URL,{
+   method:"POST",headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({action:"voice_tts",access_token:sessionData.session.access_token,text:String(text).slice(0,5000)})
+  });
+  if(!response.ok)return false;
+  const audioBlob=await response.blob();
+  if(!audioBlob.size)return false;
+  if(founderSpeechAudio){founderSpeechAudio.pause();founderSpeechAudio.src="";}
+  if(founderSpeechObjectUrl)URL.revokeObjectURL(founderSpeechObjectUrl);
+  founderSpeechObjectUrl=URL.createObjectURL(audioBlob);
+  founderSpeechAudio=new Audio(founderSpeechObjectUrl);
+  founderSpeechAudio.onplay=()=>{document.body.classList.add("assistant-speaking");refreshVoiceUi("speaking")};
+  founderSpeechAudio.onended=()=>{document.body.classList.remove("assistant-speaking");refreshVoiceUi("ready")};
+  founderSpeechAudio.onerror=()=>{document.body.classList.remove("assistant-speaking");refreshVoiceUi("voiceUnavailable")};
+  await founderSpeechAudio.play();
+  return true;
+ }catch(error){
+  console.warn("Dr.Vas founder voice unavailable; using browser speech:",error.message);
+  return false;
+ }
+}
 async function speakDrVas(text){
  if(!voiceAutoRead||!text||!window.speechSynthesis)return;
+ const spokenText=prepareSpeechText(text);
+ if(!spokenText)return;
+ lastSpokenAnswer=text;
+ if(activeAssistant==="drvas"){
+  const played=await playFounderVoice(spokenText);
+  if(played)return;
+ }
  const lang=speechLanguage();
  let voice=chooseSpeechVoice(lang);
  if(!voice){
@@ -1548,9 +1583,6 @@ async function speakDrVas(text){
   refreshVoiceUi("voiceUnavailable");
   return;
  }
- const spokenText=prepareSpeechText(text);
- if(!spokenText)return;
- lastSpokenAnswer=text;
  const synth=window.speechSynthesis;
  synth.cancel();
  // Chrome can remain paused after an interrupted or first speech request.
@@ -1580,6 +1612,7 @@ function replayLastAnswer(){
 }
 function stopVoiceOutput(){
  if(window.speechSynthesis)window.speechSynthesis.cancel();
+ if(founderSpeechAudio){founderSpeechAudio.pause();founderSpeechAudio.currentTime=0;}
  document.body.classList.remove("assistant-speaking");
  refreshVoiceUi("stopped");
 }
