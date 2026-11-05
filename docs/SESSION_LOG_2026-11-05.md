@@ -39,3 +39,12 @@ One integrated platform with web and Android clients and six modules: Dr.Vas Fre
 ## Safety and recordkeeping
 
 Never store passwords, API keys, Supabase tokens, ElevenLabs keys, or other secrets in chat logs or GitHub. This file is a concise continuity record and does not claim to archive the full ChatGPT transcript verbatim.
+
+
+## Follow-up audit — 2026-11-05
+
+- Rechecked the Worker `voice_tts` implementation in `worker/index.js` (file blob `3abab8944486662e65c8e4d41d7a1e1e38482182`). It requires `ELEVENLABS_API_KEY` and `ELEVENLABS_VOICE_ID`, verifies the Supabase session, enforces a per-user rate limit of 12 requests per 60 seconds, calls ElevenLabs `eleven_multilingual_v2`, and streams the response as `audio/mpeg` with private/no-store caching. These are source-code facts only; the production secrets, provider account state, actual HTTP response and audible Android playback have not been verified.
+- Rechecked `.github/workflows/android.yml` (blob `51ada490623b1a52681c1c174d729ca89c0c0c42`). It is configured to run on pushes to `universal-chat-attachments` when `www/**`, Android, Capacitor config, package files or the workflow change; it runs `npm ci`, `npx cap sync android`, privacy-default checks and `./gradlew assembleDebug`, then uploads `DrVas-APK`. This confirms workflow configuration, not a successful run. The available GitHub Actions run-listing wrapper in this session does not expose push-triggered runs, and no APK artifact has been verified/downloaded here.
+- `package.json` currently declares Capacitor/CLI and Wrangler dependencies but no npm `scripts` or test-runner dependencies. The repository contains a large Playwright E2E spec at `tests/e2e/homepage.spec.cjs`, including browser speech-synthesis coverage, but a root Playwright config/package test command was not found in the inspected paths. Before claiming test coverage passes, establish the intended E2E runner/config and execute it in CI or Codespaces.
+- Attempted to check the public Worker `/health` endpoint through the available page retrieval path; it was not accessible through that path. This does not establish that the Worker is down. Verify directly in the browser or Cloudflare dashboard when doing deployment checks.
+- No new code change was made in this audit. Keep the replay fix commit `4d989ea23037fcfea718ac358c919ce166a4f7a4` as the latest functional change recorded in this checkpoint.
