@@ -53,6 +53,7 @@ test("universal chat uploader accepts private images and documents and requires 
     { name: "blood-results.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4 E2E") },
     { name: "scan.png", mimeType: "image/png", buffer: Buffer.from("png-e2e") }
   ]);
+  await picker.evaluate(input => input.dispatchEvent(new Event("change", { bubbles: true })));
   await expect(page.locator("#pendingChatFiles")).toBeVisible();
   await expect(page.locator("#pendingChatFiles")).toContainText("blood-results.pdf");
   await expect(page.locator("#pendingChatFiles")).toContainText("scan.png");
