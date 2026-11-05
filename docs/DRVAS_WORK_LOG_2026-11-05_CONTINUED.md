@@ -66,3 +66,5 @@ This log records the durable decisions, technical findings, evidence and outstan
 - The new Playwright coverage exercises the Academy, Commerce and Business project-save functions with a stubbed Supabase client and asserts each write carries the authenticated owner ID, correct module key, title and module-specific brief provenance.
 - CI runs triggered for this commit: browser regression `42002256508` and Worker deploy/regression `42002256604`. Their outcomes must be checked before claiming these new tests pass or that the Worker was redeployed.
 - These are mocked persistence regression tests, not a substitute for real production Supabase sessions or a live database write/read test.
+
+- Test harness correction in commit `50fbe3e5557d5fde85c5930cbe5243596c45083e`: the Playwright fixture now overrides the initialized Supabase client's `from()` method rather than attempting to reassign the application's `const supabaseClient`. This was caught during source review before CI results; final pass/fail remains pending.
