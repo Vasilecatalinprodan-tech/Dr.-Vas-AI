@@ -1349,3 +1349,33 @@ test("spoken chat text expands Dr.Vas and Dr.Jan names without changing written 
   expect(result.written).toContain("Dr.Vas AI");
   expect(result.logo).toContain("Dr.Vas");
 });
+
+
+test("stopping voice output cancels a founder voice request that is still loading", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    activeAssistant = "drvas";
+    currentUser = { id: "voice-test-user" };
+    voiceAutoRead = true;
+    window.__voicePlayCount = 0;
+    window.__resolveVoiceFetch = null;
+    supabaseClient.auth.getSession = async () => ({ data: { session: { access_token: "test-token" } }, error: null });
+    window.fetch = () => new Promise(resolve => { window.__resolveVoiceFetch = resolve; });
+    window.Audio = function () {
+      this.pause = () => {};
+      this.play = async () => { window.__voicePlayCount++; };
+    };
+    URL.createObjectURL = () => "blob:drvas-test";
+    URL.revokeObjectURL = () => {};
+  });
+  const pending = page.evaluate(() => speakDrVas("Dr.Vas răspunde."));
+  await expect.poll(() => page.evaluate(() => typeof window.__resolveVoiceFetch)).toBe("function");
+  await page.evaluate(() => stopVoiceOutput());
+  await page.evaluate(() => window.__resolveVoiceFetch({
+    ok: true,
+    blob: async () => new Blob(["audio"], { type: "audio/mpeg" })
+  }));
+  await pending;
+  expect(await page.evaluate(() => window.__voicePlayCount)).toBe(0);
+  expect(await page.evaluate(() => document.body.classList.contains("assistant-speaking"))).toBe(false);
+});
