@@ -166,3 +166,10 @@ This file and the dated session logs preserve technical decisions and work summa
 - CORS allowlisting remains a release follow-up: verify real production, preview, local and Codespaces origins before changing policy; keep preflight and normal response decisions consistent and add `Vary: Origin`.
 - Account deletion is still not implemented. Public deletion request URL, reauthentication, retention decisions, partial-failure handling and disposable-account testing remain release gates.
 - iOS is not claimed ready. The previous audit found no Capacitor iOS dependency; recheck package configuration and build/sign/test on macOS before claiming iPhone support.
+
+
+## Production capability signal — workflow #461
+
+- The production health payload in workflow #461 reported: Worker `ok`; assets, AI, database and `studio_renderer` configured; `file_analysis` disabled.
+- This confirms the Studio renderer configuration signal is present, but does not prove an actual paid Creatomate render has completed or that the resulting MP4 was retrieved and validated. A real render may incur provider usage/cost, so do not trigger one without the founder's explicit approval of the test and budget.
+- File analysis remains intentionally disabled/fail-closed. Do not enable it until the privacy, consent, provider and data-handling gates are approved.
