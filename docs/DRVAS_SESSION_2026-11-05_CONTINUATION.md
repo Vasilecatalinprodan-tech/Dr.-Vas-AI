@@ -1004,3 +1004,14 @@ Workflow-ul pentru commitul `82ee14e31e023b35bbcd797157cccabc50a6d17e` a eșuat 
 - instalarea Chromium și testele Playwright au fost sărite deoarece instalarea runnerului a eșuat.
 Același rezultat a apărut și pentru run-ul commitului jurnalului `11af407c584ffb0dffbc8f1d524185911995c173` (run ID `42085874839`). Prin urmare, nu există încă rezultat Playwright pentru noul test de voci. Nu modificăm arbitrar versiunea dependenței CI fără a verifica o versiune publicată și compatibilă.
 Stare curentă: codul JavaScript inline trece verificarea de sintaxă; testul automat de browser este blocat de instalarea dependenței; testul auditiv real rămâne de efectuat. Nicio lansare/deploy sau merge.
+
+
+## 2026-11-05 — remediere instalare Playwright în GitHub Actions
+
+Analiza sursei npm a confirmat că versiunea stabilă publicată pentru `@playwright/test` și `playwright-core` este `1.64.1`; `1.65.0` apare doar ca beta în lista versiunilor la data verificării. Surse: paginile npm pentru [@playwright/test](https://www.npmjs.com/package/@playwright/test) și [playwright-core](https://www.npmjs.com/package/playwright-core).
+Cauza CI: workflow-ul instala fără pin versiunea implicită, iar runnerul a încercat să rezolve `playwright-core@1.65.0`, indisponibil ca release stabil, generând ETARGET.
+Corecție în `.github/workflows/browser-e2e.yml`:
+`npm install --no-save --package-lock=false --save-exact @playwright/test@1.64.1 playwright-core@1.64.1`
+Commit: `de5f53466924e8a340960580039769dad112aee7`.
+Aceasta este o schimbare numai de dependențe pentru testare CI; nu schimbă runtime-ul aplicației, package.json sau lockfile și nu afectează producția.
+Starea workflow-ului pentru commitul nou trebuie verificată după declanșarea PR check. Până la un rezultat verde, testele E2E și testul auditiv nu sunt considerate finalizate. Fără merge/deploy.
