@@ -13,6 +13,10 @@ WITH expected_objects(schema_name, object_name, object_kind) AS (
     ('public', 'drvas_income_opportunities', 'table'),
     ('public', 'drvas_founder_provenance', 'table'),
     ('public', 'drvas_conversation_metadata', 'table'),
+    ('public', 'drvas_business_transactions', 'table'),
+    ('public', 'drvas_studio_render_jobs', 'table'),
+    ('public', 'drvas_chat_attachments', 'table'),
+    ('storage', 'objects', 'table'),
     ('public', 'drvas_consume_rate_limit(uuid,text,integer,integer)', 'function')
 )
 SELECT
@@ -50,5 +54,35 @@ WHERE table_schema = 'public'
     'drvas_privacy_consents', 'drvas_crypto_devices', 'drvas_studio_projects', 'drvas_module_projects',
     'drvas_income_opportunities', 'drvas_founder_provenance',
     'drvas_conversation_metadata'
+  )
+ORDER BY table_name, grantee, privilege_type;
+
+
+-- Private Studio/chat Storage bucket configuration (no object names or file contents).
+SELECT id, name, public, file_size_limit, allowed_mime_types
+FROM storage.buckets
+WHERE id = 'drvas-media';
+
+-- Storage object policies must scope access to the user's own folder.
+SELECT schemaname, tablename, policyname, permissive, roles, cmd, qual, with_check
+FROM pg_policies
+WHERE schemaname = 'storage'
+  AND tablename = 'objects'
+ORDER BY policyname;
+
+-- Verify that anonymous/authenticated roles cannot execute the privileged rate-limit function.
+SELECT
+  has_function_privilege('anon', 'public.drvas_consume_rate_limit(uuid,text,integer,integer)', 'EXECUTE') AS anon_can_execute,
+  has_function_privilege('authenticated', 'public.drvas_consume_rate_limit(uuid,text,integer,integer)', 'EXECUTE') AS authenticated_can_execute,
+  has_function_privilege('service_role', 'public.drvas_consume_rate_limit(uuid,text,integer,integer)', 'EXECUTE') AS service_role_can_execute;
+
+-- Explicitly surface any unexpected anon/authenticated grants on sensitive Dr.Vas tables.
+SELECT table_name, grantee, privilege_type
+FROM information_schema.role_table_grants
+WHERE table_schema = 'public'
+  AND grantee IN ('anon','authenticated')
+  AND table_name IN (
+    'drvas_private_profiles','drvas_privacy_consents','drvas_crypto_devices',
+    'drvas_rate_limits','drvas_audit_logs','drvas_founder_provenance'
   )
 ORDER BY table_name, grantee, privilege_type;
