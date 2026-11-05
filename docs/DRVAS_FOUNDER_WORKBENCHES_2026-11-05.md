@@ -31,3 +31,11 @@ The Studio save function now returns a boolean to the new Book/Music launcher. T
 
 ## Not tested / not deployed
 Per owner instruction, no tests, syntax checks, browser checks or manual checks were run. No deployment or merge was performed. Inspect the full diff and run regression/production checks only when the owner authorizes testing.
+
+
+## Follow-on development — 2026-11-05
+
+- Income tracker now supports client-side text search, stage/type filters, visible-result counts and a private CSV export. The export quotes/escapes values, uses UTF-8 BOM and protects spreadsheet cells beginning with formula characters. The existing database remains the persistence layer; only the loaded (maximum 200) rows are exported.
+- Bitcoin scenario calculator now displays break-even BTC price, maximum electricity tariff, 30-day energy consumption, annual electricity cost and approximate heat dissipation in BTU/h, alongside daily/monthly/annual net estimates and payback.
+- These are planning tools only. No live mining, device control, wallet, exchange, trading, automated tax calculation or live market feed exists. All mining inputs remain manually supplied assumptions.
+- Per owner instruction, no tests or deployment were performed. All changes remain on `founder-workbenches-development`.
