@@ -553,3 +553,7 @@ Portrait question remains open: fictional photorealistic adult portraits or real
 - Added E2E coverage for the no-browser-synthesis case and CI assertions. Workflow #470 / run `42130438370` was pending at checkpoint time.
 - Conversation checkpoint saved at `docs/CHAT-ARCHIVE-2026-11-05.md`. This is a structured project archive, not a verbatim export of all ChatGPT messages.
 - Do not claim the fix passed CI or deployed until the workflow completes.
+
+### Academy / Commerce / Business continuity improvement
+
+New AI replies now update the currently opened saved module project, preserving the latest output alongside its brief. New projects are still created only when the user explicitly saves. The change has a CI static assertion; verify the workflow before claiming the latest code is deployed.
