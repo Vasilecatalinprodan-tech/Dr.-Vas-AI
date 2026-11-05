@@ -70,3 +70,14 @@ This file and the dated session logs preserve technical decisions and work summa
 - The added checks guard owner-only RLS for Academy/Commerce/Business drafts, Business cashbook and Studio render jobs, plus private Studio media storage and numeric/currency/VAT constraints.
 - These are static checks of migration source, not proof that the migrations have been applied to live Supabase. Live RLS/storage verification remains outstanding.
 - Workflow: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42108117982
+
+
+### 2026-11-05 — Health, consent and universal attachment security audit
+- Extended `tests/e2e/data-isolation-migrations.spec.cjs` with four additional regression tests covering: private-profile and consent table service-role-only access; attachment metadata RLS and limits; explicit file-processing and separate Health-data consent; and Health assistant clinical boundaries/emergency escalation instructions.
+- The Worker code reviewed in this pass keeps Health as general information only, prohibits diagnosis/prescribing/medication changes, directs UK emergencies to 999/112 and urgent England concerns to NHS 111/urgent GP assessment. Health Live voice remains disabled unless `GEMINI_LIVE_HEALTH_ENABLED=true` is explicitly configured.
+- File analysis remains fail-closed unless `DRVAS_FILE_ANALYSIS_ENABLED=true`; Health attachments require both general file-processing consent and separate health-data consent. Attachment ownership, conversation/module binding, MIME, file size and storage path are checked server-side before processing.
+- Current production branch commits for this test expansion: `efdb7fe0f5672b88e1bd23a5e526d2064eaae838`, then corrected attachment CRUD assertion `e5d9a1dfd237c7a40e06af96b4ef3f426729bead`, then simplified storage-path assertion `e018d561662a4d0d4d779e8f780ef39fa9743c64`.
+- Latest CI run for the final commit: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42108746719 . At the time of this checkpoint it was queued/pending; do not claim the new four tests passed until that run completes successfully.
+- The tests inspect source/migration contents and do not prove live Supabase migrations or secrets are configured. Health regulatory readiness, clinical governance, DPIA/legal review and real-world data-flow verification remain release blockers.
+- Next module audit targets: Studio project save/open/render/export; Academy and Commerce saved workflows; Business cashbook and break-even calculations; Free chat persistence and voice; then Android device audio and live Supabase migration/RLS verification through an authorized console.
+- This GitHub checkpoint stores technical decisions and work summaries, not a verbatim ChatGPT transcript. The original conversation remains in ChatGPT history.
