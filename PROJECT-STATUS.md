@@ -1,7 +1,7 @@
 # Dr.Vas AI — Project Status
 
-Last updated: 2026-11-03
-Working branch: `drvas-integrated-platform`
+Last updated: 2026-11-05
+Working branch: `universal-chat-attachments`
 
 ## Product direction
 
@@ -710,3 +710,40 @@ Keep modules integrated, preserve existing auth, profile, chat/history, multilin
 - `package.json` currently declares Capacitor/CLI and Wrangler dependencies but no npm `scripts` or test-runner dependencies. The repository contains a large Playwright E2E spec at `tests/e2e/homepage.spec.cjs`, including browser speech-synthesis coverage, but a root Playwright config/package test command was not found in the inspected paths. Before claiming test coverage passes, establish the intended E2E runner/config and execute it in CI or Codespaces.
 - Attempted to check the public Worker `/health` endpoint through the available page retrieval path; it was not accessible through that path. This does not establish that the Worker is down. Verify directly in the browser or Cloudflare dashboard when doing deployment checks.
 - No new code change was made in this audit. Keep the replay fix commit `4d989ea23037fcfea718ac358c919ce166a4f7a4` as the latest functional change recorded in this checkpoint.
+
+
+## Expanded platform scope — 2026-11-05
+
+The founder has asked that the following additional destinations be planned inside the same integrated Dr.Vas platform. These are approved planning directions, not claims that the features are already implemented:
+
+- **Dr.Vas Crypto & Mining** — crypto education, market/risk explainers, mining research and transparent profitability/sensitivity calculators. Begin with education and simulations only. No custody, wallet signing, exchange trading, automatic investing or real mining operation without separate security, legal, cost and explicit founder review. Clearly disclose volatility, electricity, hardware depreciation, pool fees, network difficulty and that returns are not guaranteed.
+- **Dr.Vas Books / Book Workshop / Publishing Lab** — develop book ideas, research plans, outlines, chapters, editing, formatting, cover briefs, translations and publishing preparation. Human review and rights/originality checks required before publication.
+- **Dr.Vas Music / Music Production Lab / Music Release Lab** — original lyrics and compositions, arrangement/production briefs, multilingual adaptation, artwork/video concepts and release preparation. Respect copyright and voice/likeness consent; no unauthorized imitation or automatic distribution.
+- **Dr.Vas Translation Studio** — professional translation and localization workflows across the platform, with terminology/glossaries, language review and human verification for legal, medical and other high-stakes material.
+- **Dr.Vas Online Income / Digital Product Studio / Digital Products Lab** — develop legitimate digital products, templates, guides, courses and business models; show costs, risks and realistic assumptions rather than promising earnings.
+- **Dr.Vas AI Evaluation & Training** — structured AI quality evaluation, prompt/workflow testing and training-material creation.
+- **Business Automation / Business Operations Planner / Customer Journey & Retention Planner** — planning tools for repeatable business processes, customer journeys and retention.
+- **Commerce Profit Lab / Mining Intelligence / Mining Sensitivity Lab** — candidate specialist workspaces within Commerce and Crypto & Mining, subject to validation and avoiding duplicate standalone modules.
+
+Architecture decision: keep one account, one platform shell, shared language/authentication/profile/history and permission system. Prefer specialist workspaces within the six existing modules rather than multiplying top-level navigation entries prematurely. Treat the six current modules as the established core; the destinations above are expansion workspaces pending prioritization, product design and implementation.
+
+The founder also explicitly wants Dr.Vas Studio to include translation work, book creation and music/song production, in addition to video and social content. Build these as connected creative workflows, with saved projects and approval before release.
+
+## Current continuity branch correction — 2026-11-05
+
+The current continuation branch for the voice and Android work is `universal-chat-attachments`, not the older `drvas-integrated-platform` value retained in some historical sections above. Verify branch and commit before every change; do not switch branches or merge without approval. Current voice replay fix: `4d989ea23037fcfea718ac358c919ce166a4f7a4`. Audible Android playback and the corresponding APK build remain unverified.
+
+## Working sequence
+
+1. Finish Android APK build verification and audible voice test.
+2. Audit current branch and synchronize project status/handoff records.
+3. Complete platform-wide security, auth, history, profile, language and module-access audit.
+4. Build Studio workflows for video, translation, books and music with saved drafts, versioning, human approval and export.
+5. Design Crypto & Mining as an educational/research workspace with transparent calculators and risk disclosures; no live financial execution.
+6. Build Online Income and Digital Products workflows with realistic unit economics and no earnings guarantees.
+7. Complete Academy, Commerce and Business workflows, then subscriptions/entitlements and legal/privacy review.
+8. Add integrations and publishing only after official permissions, security review and explicit approval.
+
+## Administrator identity and privacy
+
+A designated founder administrator email was explicitly identified in an earlier project conversation. Use the already designated server-side administrator allowlist; do not expose the address in public source, screenshots, logs or documentation, and never store passwords or access tokens in project files. The exact email need not be repeated in this status document.
