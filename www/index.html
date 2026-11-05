@@ -4724,27 +4724,24 @@ async function deleteConversationAttachment(file){
  }catch(error){window.alert("Nu am putut șterge fișierul: "+error.message);}
 }
 async function deleteConversationFiles(conversationId){
- const {data,error}=await supabaseClient.from("drvas_chat_attachments").select("id,storage_path").eq("user_id",currentUser.id).eq("conversation_id",conversationId).limit(100);
- if(error)throw error;
- const files=data||[];
- if(files.length){
+ while(true){
+  const {data,error}=await supabaseClient.from("drvas_chat_attachments").select("id,storage_path").eq("user_id",currentUser.id).eq("conversation_id",conversationId).limit(100);
+  if(error)throw error;
+  const files=data||[];if(!files.length)break;
   const {error:storageError}=await supabaseClient.storage.from("drvas-media").remove(files.map(file=>file.storage_path));
   if(storageError)throw storageError;
-  const {error:metadataError}=await supabaseClient.from("drvas_chat_attachments").delete().eq("user_id",currentUser.id).eq("conversation_id",conversationId);
+  const {error:metadataError}=await supabaseClient.from("drvas_chat_attachments").delete().in("id",files.map(file=>file.id)).eq("user_id",currentUser.id);
   if(metadataError)throw metadataError;
  }
 }
 async function deleteAllConversationFiles(){
- const {data,error}=await supabaseClient.from("drvas_chat_attachments").select("id,storage_path").eq("user_id",currentUser.id).limit(1000);
- if(error)throw error;
- const files=data||[];
- for(let i=0;i<files.length;i+=100){
-  const batch=files.slice(i,i+100);
-  const {error:storageError}=await supabaseClient.storage.from("drvas-media").remove(batch.map(file=>file.storage_path));
+ while(true){
+  const {data,error}=await supabaseClient.from("drvas_chat_attachments").select("id,storage_path").eq("user_id",currentUser.id).limit(100);
+  if(error)throw error;
+  const files=data||[];if(!files.length)break;
+  const {error:storageError}=await supabaseClient.storage.from("drvas-media").remove(files.map(file=>file.storage_path));
   if(storageError)throw storageError;
- }
- if(files.length){
-  const {error:metadataError}=await supabaseClient.from("drvas_chat_attachments").delete().eq("user_id",currentUser.id);
+  const {error:metadataError}=await supabaseClient.from("drvas_chat_attachments").delete().in("id",files.map(file=>file.id)).eq("user_id",currentUser.id);
   if(metadataError)throw metadataError;
  }
 }
