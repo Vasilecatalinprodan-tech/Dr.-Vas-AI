@@ -1047,8 +1047,9 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
     const synth = { getVoices: () => [], cancel() {}, speak: utterance => { window.__drvasSpoken.push(utterance); } };
     Object.defineProperty(window, "speechSynthesis", { configurable: true, value: synth });
     window.SpeechSynthesisUtterance = function (text) { this.text = text; };
-    openDrvasPresentation();
   });
+  await expect(page.locator("#heroPresentationOpenButton")).toBeVisible();
+  await page.locator("#heroPresentationOpenButton").click();
   await expect(page.locator("#drvasPresentation")).toBeVisible();
   await expect(page.locator("#presentationModuleGrid .presentation-module")).toHaveCount(6);
   await expect(page.locator("#presentationModuleGrid .presentation-module.is-active")).toHaveCount(2);
