@@ -269,3 +269,8 @@ Fondatorul a confirmat că fiecare dezvoltare trebuie implementată în aplicaț
 - Dacă browserul nu oferă Speech Synthesis sau redarea eșuează, prezentarea rămâne vizibilă și utilizatorul poate continua manual la conectare.
 - A fost actualizat testul Playwright pentru cele opt limbi acceptate, alocarea celor două module per asistent, trecerea Dr.Vas → Dr.Jan → Sarah și revenirea la fluxul de autentificare/module. Testul trebuie confirmat în CI după commit.
 - Nu s-a schimbat autentificarea, accesul public/privat, schema bazei de date, secretele, Worker-ul sau producția. Nu s-a făcut merge/deploy.
+
+
+### Corecție după prima rulare CI — fereastra publică
+
+Prima rulare pentru prezentarea animată a avut 40/41 teste reușite. Testul nou a identificat că modalul era copilul panoului de module, ascuns pentru vizitatorii neautentificați. Am mutat modalul în afara acelui panou și am modificat regresia să apese efectiv butonul public din pagina inițială. Acum trebuie rerulat CI; nu declarăm încă testul verde. Nicio setare de producție nu a fost modificată.
