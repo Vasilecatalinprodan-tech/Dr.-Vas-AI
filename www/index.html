@@ -1314,6 +1314,49 @@ body.module-workspace-mode .studio-workspace.hidden{
       <label>Data-țintă și povestea lansării<textarea id="founderReleaseStory" maxlength="2200" placeholder="Data dorită, publicul, mesajul și planul de promovare."></textarea></label>
       <button type="button" onclick="buildFounderMusicReleasePrompt()">Creează dosarul de lansare</button>
      </article>
+     <article class="founder-tool">
+      <h5>🛍️ Commerce Profit Lab · Calculator magazin</h5><p>Calculează contribuția pe comandă, pragul de rentabilitate și scenarii lunare din costurile introduse manual.</p>
+      <label>Preț de vânzare (£)<input id="founderCommercePrice" type="number" min="0" step="0.01" value="29.99"></label>
+      <label>Cost produs (£)<input id="founderCommerceCost" type="number" min="0" step="0.01" value="8"></label>
+      <label>Transport și ambalare / comandă (£)<input id="founderCommerceShip" type="number" min="0" step="0.01" value="3"></label>
+      <label>Comision platformă și procesare (%)<input id="founderCommerceFee" type="number" min="0" max="100" step="0.1" value="12"></label>
+      <label>Cost publicitate / comandă (£)<input id="founderCommerceAds" type="number" min="0" step="0.01" value="4"></label>
+      <label>Rezervă retururi / pierderi / comandă (£)<input id="founderCommerceReturns" type="number" min="0" step="0.01" value="1"></label>
+      <label>Rezervă fiscală ipotetică (%)<input id="founderCommerceTax" type="number" min="0" max="100" step="0.1" value="0"></label>
+      <label>Comenzi estimate lunar<input id="founderCommerceOrders" type="number" min="0" step="1" value="50"></label>
+      <label>Costuri fixe lunare (£)<input id="founderCommerceFixed" type="number" min="0" step="0.01" value="50"></label>
+      <button type="button" onclick="calculateFounderCommerceProfit()">Calculează profitul</button>
+      <div class="crypto-calculator-results" aria-live="polite">
+       <div><small>Contribuție / comandă</small><strong id="founderCommerceContribution">—</strong></div>
+       <div><small>Marjă după rezerve</small><strong id="founderCommerceMargin">—</strong></div>
+       <div><small>Prag lunar comenzi</small><strong id="founderCommerceBreakEven">—</strong></div>
+       <div><small>Rezultat lunar estimat</small><strong id="founderCommerceMonthly">—</strong></div>
+      </div>
+      <p id="founderCommerceNotice" role="status">Estimare simplificată; verifică TVA, impozite, rambursări, costuri reale și regulile pieței.</p>
+     </article>
+     <article class="founder-tool">
+      <h5>📉 Mining Sensitivity Lab · Scenarii de risc</h5><p>Compară scenarii pesimist, de bază și favorabil fără cotații live. Multiplicatorii sunt ipoteze introduse de administrator.</p>
+      <label>Scenariu pesimist · BTC și producție (%)<input id="cryptoBearRevenue" type="number" min="0" max="300" step="1" value="70"></label>
+      <label>Scenariu de bază · BTC și producție (%)<input id="cryptoBaseRevenue" type="number" min="0" max="300" step="1" value="100"></label>
+      <label>Scenariu favorabil · BTC și producție (%)<input id="cryptoBullRevenue" type="number" min="0" max="300" step="1" value="130"></label>
+      <label>Tarif electricitate în scenariu pesimist (%)<input id="cryptoBearPower" type="number" min="0" max="500" step="1" value="120"></label>
+      <label>Tarif electricitate în scenariu favorabil (%)<input id="cryptoBullPower" type="number" min="0" max="500" step="1" value="90"></label>
+      <button type="button" onclick="calculateCryptoMiningScenarios()">Compară scenariile</button>
+      <div class="crypto-calculator-results" aria-live="polite">
+       <div><small>Pesimist · net / zi</small><strong id="cryptoScenarioBear">—</strong></div>
+       <div><small>Bază · net / zi</small><strong id="cryptoScenarioBase">—</strong></div>
+       <div><small>Favorabil · net / zi</small><strong id="cryptoScenarioBull">—</strong></div>
+      </div>
+      <p id="cryptoScenarioNotice" role="status">Scenariile nu sunt prognoze. Nu includ modificări automate ale dificultății rețelei sau recompense viitoare.</p>
+     </article>
+     <article class="founder-tool">
+      <h5>⚙️ Business Operations Planner · Fluxuri comerciale</h5><p>Transformă o activitate repetitivă într-un flux documentat, cu responsabil, aprobare, control și indicatori.</p>
+      <label>Activitatea / procesul<input id="founderOpsName" maxlength="180" placeholder="Ex.: preluarea și livrarea comenzilor"></label>
+      <label>Rezultatul dorit<textarea id="founderOpsOutcome" maxlength="1800" placeholder="Ce trebuie să se întâmple și cum măsurăm reușita?"></textarea></label>
+      <label>Volum și frecvență<input id="founderOpsVolume" maxlength="220" placeholder="Ex.: 20 comenzi pe zi / săptămânal"></label>
+      <label>Persoane și instrumente disponibile<textarea id="founderOpsResources" maxlength="1200" placeholder="Roluri, aplicații, furnizori și limite."></textarea></label>
+      <button type="button" onclick="buildFounderOperationsPrompt()">Proiectează fluxul de lucru</button>
+     </article>
     </div>
     <p class="founder-safety-note">Niciun proiect nu este publicat automat și nicio plată, comandă, investiție sau tranzacție nu este executată automat. Veniturile sunt estimări, nu garanții. Respectăm drepturile de autor, licențele, regulile platformelor, protecția datelor, taxele și revizia umană pentru traduceri cu miză juridică sau medicală.</p>
     <p id="founderWorkbenchStatus" class="founder-tool-status" role="status" aria-live="polite">Instrumente private pentru administrator. Cărțile și piesele folosesc funcția de salvare privată Dr.Vas Studio.</p>
@@ -3626,6 +3669,44 @@ function buildFounderMusicReleasePrompt(){
  if(!title||!credits||!story){founderWorkbenchMessage("Completează titlul, creditele și planul de lansare.",true);return;}
  const prompt="DR.VAS MUSIC RELEASE LAB — DOSAR DE LANSARE\nPIESĂ: "+title+"\nCREDITE: "+credits+"\nDREPTURI: "+rights+"\nLIMBĂ/CONȚINUT: "+content+"\nPLAN ȘI POVESTE: "+story+"\n\nCreează un dosar de lansare: metadate standardizate, ordinea și forma creditelor, checklist pentru acorduri scrise cu toți coautorii/interpreții/producătorii, confirmarea licențelor pentru beat-uri, samples, artwork și voce, verificarea titlului și a versiunilor clean/explicit, descriere editorială, pitch scurt, biografie bazată numai pe date furnizate, brief de copertă originală, plan de promovare organică și calendar. Marchează orice drept neclar drept BLOCAJ — NU DISTRIBUI. Explică faptul că platforma/distribuitorul stabilește formatele, cerințele și remunerațiile; nu inventa ISRC/UPC, nu garanta playlisturi sau venituri. Nu trimite și nu distribui automat.";
  launchFounderWorkbenchPrompt("studio",prompt,"Dosarul de lansare muzicală este pregătit. Revizuiește-l și apasă Trimite.",{type:"music-release",title});
+}
+
+function calculateFounderCommerceProfit(){
+ const ids=["founderCommercePrice","founderCommerceCost","founderCommerceShip","founderCommerceFee","founderCommerceAds","founderCommerceReturns","founderCommerceTax","founderCommerceOrders","founderCommerceFixed"];
+ const v={};ids.forEach(id=>v[id]=Number(el(id)?.value));
+ const notice=el("founderCommerceNotice"),money=n=>"£"+n.toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2});
+ if(ids.some(id=>!Number.isFinite(v[id])||v[id]<0)||v.founderCommerceFee>100||v.founderCommerceTax>100){if(notice)notice.textContent="Verifică toate valorile pozitive și procentele între 0 și 100.";return;}
+ const price=v.founderCommercePrice,fees=price*v.founderCommerceFee/100;
+ const preTax=price-v.founderCommerceCost-v.founderCommerceShip-fees-v.founderCommerceAds-v.founderCommerceReturns;
+ const tax=Math.max(0,preTax)*v.founderCommerceTax/100,contribution=preTax-tax;
+ const monthly=contribution*v.founderCommerceOrders-v.founderCommerceFixed;
+ const breakEven=contribution>0?Math.ceil(v.founderCommerceFixed/contribution):null;
+ const margin=price>0?contribution/price*100:0;
+ el("founderCommerceContribution").textContent=money(contribution);
+ el("founderCommerceMargin").textContent=margin.toFixed(1)+"%";
+ el("founderCommerceBreakEven").textContent=breakEven===null?"Nu se atinge":String(breakEven);
+ el("founderCommerceMonthly").textContent=money(monthly);
+ if(notice)notice.textContent=contribution<=0?"Atenție: fiecare comandă are contribuție nulă sau negativă înainte de costurile fixe. Nu scala publicitatea.": "Rezultat orientativ după costurile introduse. TVA-ul, taxele reale, retururile și comisioanele pot necesita model separat.";
+}
+function calculateCryptoMiningScenarios(){
+ const read=id=>Number(el(id)?.value);
+ const baseIds=["cryptoBtcPerDay","cryptoBtcPrice","cryptoPowerWatts","cryptoCoolingWatts","cryptoElectricityRate","cryptoPoolFee","cryptoMaintenanceMonthly","cryptoDowntime","cryptoTaxReserve","cryptoBearRevenue","cryptoBaseRevenue","cryptoBullRevenue","cryptoBearPower","cryptoBullPower"];
+ if(baseIds.some(id=>!Number.isFinite(read(id))||read(id)<0)){el("cryptoScenarioNotice").textContent="Completează valori numerice pozitive pentru toate ipotezele.";return;}
+ const fee=read("cryptoPoolFee"),down=read("cryptoDowntime"),tax=read("cryptoTaxReserve");
+ if(fee>100||down>100||tax>100||read("cryptoBearRevenue")>300||read("cryptoBaseRevenue")>300||read("cryptoBullRevenue")>300||read("cryptoBearPower")>500||read("cryptoBullPower")>500){el("cryptoScenarioNotice").textContent="Procentele depășesc limitele acceptate.";return;}
+ const baseBtc=read("cryptoBtcPerDay")*(1-down/100),basePrice=read("cryptoBtcPrice"),kw=((read("cryptoPowerWatts")+read("cryptoCoolingWatts"))/1000)*24,maintenance=read("cryptoMaintenanceMonthly")/30;
+ const calc=(revenuePct,powerPct)=>{const gross=baseBtc*basePrice*revenuePct/100,energy=kw*read("cryptoElectricityRate")*powerPct/100,operating=gross*(1-fee/100)-energy-maintenance;return operating-Math.max(0,operating)*tax/100;};
+ const fmt=n=>"£"+n.toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2});
+ el("cryptoScenarioBear").textContent=fmt(calc(read("cryptoBearRevenue"),read("cryptoBearPower")));
+ el("cryptoScenarioBase").textContent=fmt(calc(read("cryptoBaseRevenue"),100));
+ el("cryptoScenarioBull").textContent=fmt(calc(read("cryptoBullRevenue"),read("cryptoBullPower")));
+ el("cryptoScenarioNotice").textContent="Scenarii calculate cu producția, prețul și tariful electric ajustate conform ipotezelor tale. Nu sunt estimări de piață sau sfaturi de investiții.";
+}
+function buildFounderOperationsPrompt(){
+ const name=el("founderOpsName")?.value.trim()||"",outcome=el("founderOpsOutcome")?.value.trim()||"",volume=el("founderOpsVolume")?.value.trim()||"",resources=el("founderOpsResources")?.value.trim()||"Nespecificate";
+ if(!name||!outcome||!volume){founderWorkbenchMessage("Completează procesul, rezultatul și volumul.",true);return;}
+ const prompt="DR.VAS BUSINESS OPERATIONS PLANNER\nPROCES: "+name+"\nREZULTAT: "+outcome+"\nVOLUM/FRECVENȚĂ: "+volume+"\nRESURSE: "+resources+"\n\nProiectează fluxul complet: declanșator și intrări; pași numerotați; roluri și responsabilități; aprobări umane și separarea atribuțiilor; excepții și escaladare; verificări de calitate; evidențe și protecția datelor; riscuri și măsuri de control; indicatori KPI cu formule; timp/cost per operațiune; checklist zilnic/săptămânal; plan pilot pe 2 săptămâni. Identifică ce poate fi automatizat în siguranță și ce trebuie să rămână cu aprobare umană. Nu presupune integrare cu aplicații, nu executa tranzacții și nu trimite mesaje/comenzi.";
+ launchFounderWorkbenchPrompt("business",prompt,"Fluxul operațional este pregătit în Dr.Vas Business. Revizuiește-l și apasă Trimite.");
 }
 
 function calculateCryptoMiningEconomics(){
