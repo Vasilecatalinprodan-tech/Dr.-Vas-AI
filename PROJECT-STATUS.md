@@ -868,3 +868,10 @@ Founder feedback:
 - Improved Academy, Commerce and Business persistence: when the founder receives a new AI answer while an existing saved project is open, the latest answer is now written back into that project together with the current brief.
 - New drafts are not silently created; the user still explicitly saves a new project. Existing save/list/open/export/delete controls remain.
 - Added a CI assertion to guard this behavior. Workflow for the latest commit must be checked before claiming this change passed tests or deployed.
+
+### Latest validation — workflow #473
+
+- Workflow #473 / run `42130733280` completed SUCCESS on commit `a91e562c122e3954c051e5d31ddcaa9ece0f08b7`.
+- JavaScript validation, the full homepage/persisted-session Playwright test step (including server-side TTS without browser speech synthesis), Worker deployment, production smoke test and SBOM upload all completed successfully.
+- Cloudflare Workers Builds check passed; production Worker version `f88f84eb-45b6-45b8-84f4-0d109c88864f`.
+- This validates the latest code paths in CI and production smoke checks. It does not configure the missing Jan/Sarah voice secrets or replace live Supabase user-account tests.
