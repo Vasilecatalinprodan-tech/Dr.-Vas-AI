@@ -26,3 +26,8 @@ Acest fișier salvează cererea fondatorului și un rezumat fidel al progresului
 
 ## Starea la finalul acestei sesiuni
 Ramura de dezvoltare este izolată și conține implementările și documentația descrise mai sus. Următorul pas convenit este verificarea cumulativă a codului și a fluxurilor după ce fondatorul încheie etapa de dezvoltare.
+
+
+## Etapă nouă — Customer Journey & Retention Planner
+
+A fost adăugat în `www/index.html` un instrument nou, doar pentru fondator, în Creator & Online Income Lab. Pregătește parcursul clientului, onboarding, suport, reclamații, feedback, retenție și recomandări voluntare, cu roluri, KPI, calendar de 30 de zile și pilot. Include limite GDPR și marketing responsabil; nu trimite mesaje și nu se conectează la CRM. Codul și documentele au fost salvate prin commituri succesive pe ramura de dezvoltare. Această etapă nu a fost încă testată în browser și nu a fost publicată în producție.
