@@ -77,3 +77,14 @@ Per owner instruction, no tests, syntax checks, browser checks or manual checks 
 - Requires human review, rights clearance, transparent claims and privacy/platform compliance. It does not publish, schedule, send messages, buy ads or promise reach/sales.
 - Routes the brief through the existing founder-gated Dr.Vas Studio workflow; no new database schema, public entitlement, payment, external integration or production configuration was introduced.
 - A Playwright regression test was added to verify the generated brief and Studio routing. Awaiting CI result.
+
+
+## Animated three-assistant introduction
+
+- Public landing-page presentation entry point, available before sign-in; a second entry point remains in the authenticated module dashboard.
+- Full-screen modal-style animated window with a dimmed backdrop, step progress, speaker avatar motion, active speech indicator and two visible module cards for the current speaker.
+- Dr.Vas introduces Free and Health; Dr.Jan introduces Studio and Business; Sarah introduces Academy and Commerce.
+- Uses browser-native speech synthesis in the selected supported language. Each speaker uses a distinct pitch and, where available, a different installed system voice. Exact voice quality and availability depend on the visitor's browser/device; this is not voice cloning or a hosted recorded voice service.
+- When the narration finishes, the modal closes and routes through the existing startDrVas() flow: signed-out visitors see sign-in/register; signed-in visitors return to module selection. Visitors can skip with Continue. If speech is unavailable, a manual Continue action remains available.
+- Regression coverage verifies all eight supported languages, all six module cards, module ownership, speaker sequence and return flow. Awaiting CI.
+- No auth rules, entitlements, database, secrets, Worker configuration or production deployment changed.
