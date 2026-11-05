@@ -1319,6 +1319,32 @@ test("presentation reuses one available language voice when fewer than three pre
   expect(await page.evaluate(() => window.__drvasSpoken[0].voice?.name)).toBe("Microsoft Andrei");
 });
 
+test("presentation attempts default device speech when the browser reports no installed voices", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    window.__drvasSpoken = [];
+    window.__drvasResumeCalls = 0;
+    Object.defineProperty(window, "speechSynthesis", {
+      configurable: true,
+      value: {
+        getVoices: () => [],
+        cancel() {},
+        resume() { window.__drvasResumeCalls++; },
+        addEventListener() {},
+        removeEventListener() {},
+        speak: utterance => window.__drvasSpoken.push(utterance)
+      }
+    });
+    window.SpeechSynthesisUtterance = function (text) { this.text = text; };
+  });
+  await page.evaluate(async () => { currentLanguage = "ro"; await speakDrvasPresentation(); });
+  await expect(page.locator("#presentationAudioStatus")).toContainText("Încerc redarea cu vocea implicită");
+  expect(await page.evaluate(() => window.__drvasSpoken.length)).toBe(1);
+  expect(await page.evaluate(() => window.__drvasSpoken[0].voice)).toBeUndefined();
+  expect(await page.evaluate(() => window.__drvasSpoken[0].lang)).toBe("ro-RO");
+  expect(await page.evaluate(() => window.__drvasResumeCalls)).toBeGreaterThanOrEqual(1);
+});
+
 test("Studio builds a visual timeline from selected production assets", async ({ page }) => {
   await openApp(page, "ro");
   const pixel = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=", "base64");
