@@ -143,3 +143,22 @@ Source changes in `www/index.html`:
 No real mining, wallets, trades, withdrawals, automatic publishing, music rendering/distribution, marketplace posting or model training was enabled. No migration, Worker route, secret, payment, entitlement, RLS policy or production data was changed. New feature scope and boundaries are recorded in `docs/DRVAS_FOUNDER_WORKBENCHES_2026-11-05.md`.
 
 Per owner instruction, no tests, syntax checks, browser checks or manual tests were run; no deployment or merge was performed. Inspect the diff and run checks only after the owner authorizes testing.
+
+
+## 2026-11-05 — Income pipeline and mining break-even enhancements (saved, not tested)
+
+Continued the founder-led development on `founder-workbenches-development`; no production branch or live deployment was changed.
+
+### Income pipeline
+- Added client-side search across opportunity title, platform/client, next action and notes.
+- Added status and opportunity-type filters; filtering changes the visible list while financial totals continue to describe the full saved portfolio and the interface shows visible-versus-total counts.
+- Added CSV export for all currently loaded opportunities (up to the existing 200-row query limit), with UTF-8 BOM, quoted/escaped fields and spreadsheet-formula prefix protection. Export requires a signed-in account and includes the private opportunity details, so the UI labels it as a private account export.
+- No schema change: existing user-scoped `drvas_income_opportunities` records and RLS remain the persistence layer.
+
+### Mining economics
+- Added a BTC break-even price and maximum electricity tariff to the existing manual scenario calculator. The values are calculated from the owner's entered BTC/day, uptime, pool fee, total equipment/cooling energy, electricity tariff and monthly maintenance assumptions.
+- Clarified in the calculator notice that these are arithmetic thresholds, not forecasts. The calculator still does not query live BTC prices/difficulty, control devices, mine, connect wallets or trade.
+
+### Integrity / scope
+- Corrected CSV export encoding so the downloaded file contains an actual UTF-8 BOM and CRLF rows, and formula-like cell values are prefixed to reduce spreadsheet formula injection risk.
+- No tests, syntax checks, browser checks or manual tests were run, per owner instruction. No deployment, database migration, production secret, payment, entitlement, or live mining capability was added.
