@@ -42,3 +42,12 @@ These are static regression checks against the migration source files. They help
 ## Conversation continuity
 
 This checkpoint preserves technical work and decisions, not a verbatim transcript. The original conversation remains in ChatGPT chat history. Continue from the latest production branch and confirm the pending CI run before recording a passing test count.
+
+
+## CI test discovery correction
+
+After the corrected workflow completed successfully, its log showed `53 passed`, but inspection of `.github/workflows/deploy-worker.yml` revealed that the Playwright command explicitly named only `homepage.spec.cjs`. The new migration regression file was therefore not included in that successful run. The workflow command has now been updated to execute both `homepage.spec.cjs` and `data-isolation-migrations.spec.cjs`.
+
+- Workflow update commit: `4fc1f5d73fd19002d22672f9408e8e3331442731`.
+- The next CI run must pass before the three new migration assertions can be counted as tested.
+- The earlier 53 passing browser tests remain valid for the homepage suite, but must not be represented as including the new migration regression tests.
