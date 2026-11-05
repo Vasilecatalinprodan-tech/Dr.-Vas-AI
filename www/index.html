@@ -2341,11 +2341,25 @@ function selectModule(moduleName,userInitiated=false){
     return;
   }
   if(moduleName!=="free"&&moduleName!=="health"&&!isDrvasAdmin){
-    const notice=tr("Acest modul este Premium și momentan privat. Dr.Vas Free și Dr.Vas Health rămân disponibile tuturor utilizatorilor conectați.");
     const status=el("moduleSelectionStatus");
+    const notice=tr("Verific accesul de administrator pentru acest modul…");
     if(status){status.textContent=notice;status.classList.remove("hidden");}
-    const accessMessage=el("moduleAccessMessage");
-    if(accessMessage)accessMessage.textContent=notice;
+    // Re-check the server allowlist on every blocked founder-module click.
+    // This recovers from a stale UI state without weakening server-side access control.
+    refreshAdminPanel().then(()=>{
+      if(isDrvasAdmin){
+        selectModule(moduleName,true);
+        return;
+      }
+      const accessNotice=el("adminAccessNotice");
+      const diagnostic=accessNotice?.textContent||tr("Contul nu are acces de administrator confirmat de server.");
+      if(status){status.textContent=diagnostic;status.classList.remove("hidden");}
+      const accessMessage=el("moduleAccessMessage");
+      if(accessMessage)accessMessage.textContent=diagnostic;
+    }).catch(error=>{
+      const diagnostic=tr("Nu am putut verifica accesul administratorului: ")+(error?.message||"eroare de conexiune");
+      if(status){status.textContent=diagnostic;status.classList.remove("hidden");}
+    });
     return;
   }
   const selectionStatus=el("moduleSelectionStatus");
@@ -4167,37 +4181,58 @@ async function savePrivateProfile(){
 async function refreshAdminPanel(){
   const panel = el("adminPanel");
   const notice = el("adminAccessNotice");
-  if(!panel) return;
+  const selectionStatus = el("moduleSelectionStatus");
+  if(!panel) return false;
   panel.classList.add("hidden");
   isDrvasAdmin = false;
   if(notice){notice.classList.add("hidden");notice.textContent="";}
   try{
     const {data,error} = await supabaseClient.auth.getSession();
-    if(error || !data.session) return;
+    if(error) throw error;
+    if(!data.session){
+      if(notice){notice.textContent=tr("Conectează-te pentru a verifica accesul de administrator.");notice.classList.remove("hidden");}
+      return false;
+    }
     const response = await fetch(API_URL,{
       method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({action:"admin_status",access_token:data.session.access_token})
     });
     const result = await response.json().catch(()=>({}));
     if(!response.ok){
-      if(notice){notice.classList.add("hidden");notice.textContent="";}
-      console.warn("Admin status unavailable; public navigation remains available.");
-      return;
+      const diagnostic=response.status===401
+        ?tr("Sesiunea de administrator a expirat. Deconectează-te și conectează-te din nou.")
+        :tr("Verificarea administratorului nu este disponibilă momentan. Încearcă din nou.");
+      if(notice){notice.textContent=diagnostic;notice.classList.remove("hidden");}
+      if(selectionStatus){selectionStatus.textContent=diagnostic;selectionStatus.classList.remove("hidden");}
+      console.warn("Admin status unavailable:",response.status,result.error||"");
+      return false;
     }
     isDrvasAdmin = result.is_admin === true;
     if(isDrvasAdmin){
+      if(notice){notice.classList.add("hidden");notice.textContent="";}
+      if(selectionStatus){selectionStatus.textContent="";selectionStatus.classList.add("hidden");}
       panel.classList.remove("hidden");
       // The admin dashboard is secondary UI: never block module entry while its
       // operational metrics, audit log or device registry are loading.
       loadAdminDashboard().catch(error=>console.warn("Admin dashboard unavailable:",error));
-    }else if(notice){
-      // A normal public account is not an administrator; this is expected, not an error.
-      notice.classList.add("hidden");
-      notice.textContent="";
+      return true;
     }
+    const diagnostics={
+      allowlist_missing:tr("Accesul administrator nu este configurat pe server. În Cloudflare Worker trebuie configurat secretul ADMIN_EMAILS cu adresa contului tău Supabase."),
+      email_not_allowlisted:tr("Contul cu care ești conectat nu este recunoscut ca administrator. Verifică dacă secretul Cloudflare ADMIN_EMAILS conține exact adresa acestui cont Supabase."),
+      account_email_missing:tr("Contul Supabase nu are o adresă de e-mail disponibilă pentru verificarea administratorului."),
+      unauthorized:tr("Contul nu are drepturi de administrator.")
+    };
+    const diagnostic=diagnostics[result.reason]||tr("Contul nu are acces de administrator confirmat de server.");
+    if(notice){notice.textContent=diagnostic;notice.classList.remove("hidden");}
+    if(selectionStatus){selectionStatus.textContent=diagnostic;selectionStatus.classList.remove("hidden");}
+    return false;
   }catch(error){
     console.warn("Admin access check:",error);
-    if(notice){notice.classList.add("hidden");notice.textContent="";}
+    const diagnostic=tr("Nu am putut verifica accesul administratorului. Verifică conexiunea și încearcă din nou.")+(error?.message?" "+error.message:"");
+    if(notice){notice.textContent=diagnostic;notice.classList.remove("hidden");}
+    if(selectionStatus){selectionStatus.textContent=diagnostic;selectionStatus.classList.remove("hidden");}
+    return false;
   }
 }
 
