@@ -80,3 +80,19 @@ Next sequence:
 Crypto safety boundary: no real financial execution, wallet custody, trading, investment automation or earnings promises without a separate approved scope and security/legal review. Mining calculations must show electricity, hardware depreciation, pool fees, network difficulty and coin-price assumptions. Publishing books/music and social posts requires rights/originality review and founder approval.
 
 This log is a continuity summary. The original ChatGPT conversation remains in ChatGPT history; this file does not claim to be a verbatim transcript.
+
+
+## Repository-wide parallel planning audit — 2026-11-05
+
+Founder asked to continue all Dr.Vas workstreams progressively and save all meaningful progress.
+
+- Searched the repository branches. Found eight: `drvas-account-deletion-hardening`, `drvas-integrated-platform`, `drvas-modules-long-input`, `fix/session-restore-preserves-homepage`, `founder-workbenches-development`, `hotfix/ui-startup-failsafe`, `main`, and `universal-chat-attachments`.
+- Confirmed the Android workflow is configured to build on pushes to both `drvas-integrated-platform` and `universal-chat-attachments`, and to upload `DrVas-APK`. Workflow configuration does not prove a successful current run.
+- Confirmed root `package.json` contains Capacitor/CLI and Wrangler dependencies but no npm scripts or test-runner dependencies. Playwright E2E specs exist; no configured root test command was found in the inspected package file.
+- Found stale historical branch references in the project status/handoff. Added explicit continuation-branch corrections and a warning not to merge/switch branches without inspecting differences and founder approval.
+- Updated `PROJECT-STATUS.md` and `PROJECT-HANDOFF.md` with the parallel development programme and operating rules.
+- Created `docs/DRVAS_PARALLEL_ROADMAP.md` covering platform foundation, voice/accessibility, Studio video/translation/books/music, Crypto & Mining, Online Income/Digital Products, Academy, Commerce, Business, Health and commercial/release work.
+- Re-fetched the updated files from GitHub and verified the new sections and roadmap contents are present.
+- No application source code was changed in this planning/audit pass; no APK build, test suite, deployment, or device audio test was claimed.
+
+Next action: verify latest Actions run/artifact for the current branch; then install/test the APK and audible TTS. After that establish a reliable test runner and begin the platform foundation audit before implementing persistent project workspaces.
