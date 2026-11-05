@@ -1,6 +1,7 @@
 # Dr.Vas AI — Project handoff and recovery notes
 
-Last updated: 2026-11-02
+Last updated: 2026-11-05
+Current continuation branch: `universal-chat-attachments`
 
 This file is the durable project checkpoint. Update it whenever a meaningful decision, code change, deployment, or test is completed.
 
@@ -424,3 +425,26 @@ These names came from prior project discussions and the founder's latest request
 10. Preserve original ChatGPT conversation in chat history; GitHub session logs are continuity summaries, not verbatim transcript exports.
 
 The founder's designated administrator email was already stated in an earlier conversation and is recovered as project context; no need to ask the founder to repeat it. Never put the address or credentials in source code or public docs.
+
+
+## Parallel development handoff — 2026-11-05
+
+The founder has instructed that work continue across the full Dr.Vas ecosystem in parallel where practical, with progressive implementation and durable saving. Use `docs/DRVAS_PARALLEL_ROADMAP.md` as the detailed workstream map.
+
+**Current continuation source of truth:** repository `Vasilecatalinprodan-tech/Dr.-Vas-AI`, branch `universal-chat-attachments`, unless a fresh repository inspection establishes otherwise. The last recorded functional voice replay fix is commit `4d989ea23037fcfea718ac358c919ce166a4f7a4`. The Android APK and audible voice playback still require real run/device verification.
+
+**Branch caution:** repository search lists eight branches. The Android workflow runs on two of them. Older handoff sections mention `drvas-integrated-platform`; treat those as historical checkpoints. Do not merge branches, switch source-of-truth, force-push or reset without inspecting diffs and obtaining explicit approval.
+
+**Test caution:** `package.json` currently has no npm scripts or test-runner dependencies. E2E Playwright specs exist, but no verified root runner/config was found. Establish a supported test workflow before reporting test success.
+
+**Workstreams to progress:**
+- Core platform: auth, profile, history, sessions, language, permissions, privacy, audit, responsive UI and Android.
+- Voice/accessibility: server TTS, fallback, replay/stop, Android audio and Gemini Live with explicit user controls.
+- Studio: video/serials, translation/localisation, books/publishing and original music.
+- Crypto & Mining: education and transparent simulation only initially; no wallet custody, live trading or automatic investment.
+- Online Income/Digital Products: validated models, costs, margins, risks and compliance; no guaranteed income claims.
+- Academy, Commerce and Business: structured learning, e-commerce operations and business workflows.
+- Health: general education only until clinician-led and legally compliant clinical workflows are approved.
+- Commercial/release: subscriptions, server-side entitlements, privacy/compliance and Google Play readiness.
+
+Keep the six existing core modules and integrate specialist workspaces beneath them. Shared projects should have drafts, versioning, export and founder approval before publication or external financial actions. Save meaningful changes in project status, handoff and dated session logs. ChatGPT history retains the original conversation; GitHub notes are summaries, not verbatim transcript archives.
