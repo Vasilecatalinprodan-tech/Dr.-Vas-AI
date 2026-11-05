@@ -1430,3 +1430,35 @@ Verificare efectivă a capabilităților disponibile în această conversație:
 - Nu a fost creat un preview nou, nu s-a publicat Pages și nu s-a făcut deploy/merge/SQL.
 
 Concluzie pentru continuare: pentru un preview real al branch-ului trebuie folosit Codespaces/port forwarding sau configurat un mediu de preview dedicat cu backend izolat. Nu se va afirma că pagina actualizată este live până când URL-ul de preview este creat și verificat efectiv.
+
+
+## 2026-11-05 — utilizatorul cere publicarea efectivă a modificărilor, nu doar commituri
+
+### Cererea utilizatorului
+> „fa tot ce trebuie in pula mea ca pagina este la fel...ce dracu faci modificari si nu le publici....nu facem chat aici trebuie modificate cum am cerut...salveaza tot ce faci si ai facut inclusiv chatul”
+
+Utilizatorul subliniază că dorește implementare efectivă în produs și publicarea modificărilor verificate, nu instrucțiuni repetate sau conversație fără livrare.
+
+### Diagnostic GitHub verificat direct
+- PR #7: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/7
+- PR este încă open, nemerged; head branch `universal-chat-attachments`, base `drvas-integrated-platform`.
+- Branch stabil `drvas-integrated-platform` HEAD: `ab0e2778306f77547f6ce87a174ba33bbff229df`.
+- Branch de lucru comparat cu baza: 106 commituri înainte, 0 în urmă.
+- Fișierul `www/index.html` diferă între branch-uri: blob SHA pe branch de lucru `6d63fa9c5581758149f46b7d0aba6a5f7cde2eaf`; blob SHA pe branch stabil `cb520a327d548489a31993edf3e691ee52491041`. Așadar pagina publicată nu conține încă revizia de lucru.
+- Workflow-ul `.github/workflows/deploy-worker.yml` de pe branch-ul stabil este declanșat de push doar pe `drvas-integrated-platform`; pasul checkout folosește explicit `ref: drvas-integrated-platform`. Acesta este motivul tehnic pentru care commiturile de pe branch-ul de lucru nu au schimbat URL-ul public.
+- Workflow-ul oficial efectuează deploy Cloudflare Worker și smoke test în producție; nu este un preview deployment.
+- PR #7 include și migrarea `supabase/migrations/202611050001_chat_attachments.sql`, schimbări Worker, frontend și politică de confidențialitate. PR-ul însuși consemnează condiții obligatorii înainte de activarea analizei documentelor medicale: aplicarea și verificarea migrării în Supabase, confirmarea serviciilor Gemini Paid Services/DPA/retention, temei legal UK GDPR pentru date speciale și DPIA, apoi flag-ul `DRVAS_FILE_ANALYSIS_ENABLED` numai după îndeplinirea condițiilor.
+- Nu există în această sesiune o conexiune Supabase care să inspecteze/aplice migrarea și nu există confirmare că DPIA, DPA/retention sau configurarea serviciilor externe sunt gata.
+- Pentru commitul jurnalului `21246021523d39dad1e88111344d8d457b379a2b`, endpointul GitHub check-runs a raportat 0 check-runs; workflow-ul browser nu pornește la actualizări doar documentare. Nu s-a pretins un test nou pentru acest commit.
+- CI anterior documentat pentru codul din PR a raportat 43/43 în run #247, dar acesta nu este o confirmare de integrare live Supabase/Gemini și nu satisface condițiile de lansare pentru Health file analysis.
+
+### Decizie de siguranță privind publicarea
+- Nu s-a făcut merge sau deploy din PR #7: integrarea integrală ar publica simultan funcționalitatea de atașamente/analiză documente și migrarea încă neaplicată, fără verificările legale și de furnizor confirmate. Ar putea produce erori de funcționalitate sau prelucrare nesigură a datelor medicale.
+- Nu s-a schimbat branch-ul stabil, nu s-a executat SQL și nu s-au modificat secrete/feature flags.
+- Nu s-a creat încă un preview URL separat. Nu se va prezenta URL-ul public existent drept versiunea nouă.
+- Pasul tehnic corect este separarea unui release sigur (UI/polish/prezentare/Studio nepericuloase) de fluxul Health attachments, apoi teste complete, deploy controlat și verificare live. Pentru asta trebuie revizuit diff-ul și pregătit un release branch/PR separat; nu se poate declara finalizat doar prin commituri de jurnal.
+
+### Limitarea accesului la terminal
+Conexiunea GitHub disponibilă permite operații repository prin API, dar nu expune o sesiune shell/Codespaces pentru a executa `git switch`, `git pull` sau a porni serverul local. Nu se va pretinde că aceste comenzi au fost rulate.
+
+Această înregistrare păstrează cererea utilizatorului, cauza reală a paginii neschimbate, diferența de branch și motivul pentru care PR-ul complet nu a fost publicat încă. Este rezumat tehnic al conversației, nu export literal integral al chatului ChatGPT.
