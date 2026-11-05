@@ -428,7 +428,7 @@ The final deployment was performed by the workflow after Playwright passed, and 
 - The platform is public-first, not a whole-app private pilot. Visitors can reach the welcome page and choose a language; authentication is required before entering Free or Health.
 - Signed-in ordinary users can use Dr.Vas Free and general-information Dr.Vas Health without administrator status.
 - Studio, Academy, Commerce and Business remain founder-only until a separate paid entitlement system, privacy/legal review, provider readiness and explicit owner approval are complete. Payment must never grant administrator status.
-- The only administrator remains `vasilecatalinprodan@gmail.com`; do not expand `ADMIN_EMAILS` to include ordinary accounts.
+- The only administrator is the single founder account configured in the Cloudflare `ADMIN_EMAILS` secret; do not expand it to include ordinary accounts.
 - Within a selected workspace, expose only that module's tools. Use the return-to-modules navigation; do not show a global module rail inside the focused workspace.
 
 ### Health workflow
