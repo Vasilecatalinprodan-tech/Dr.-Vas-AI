@@ -133,6 +133,7 @@ test("users can review and withdraw file-processing consent from their profile",
   await page.evaluate(() => {
     currentUser = { id: "e2e-consent-user", email: "consent@example.invalid" };
     document.querySelector("#profileSection").classList.remove("hidden");
+    document.querySelector("#fileProcessingPrivacyPanel").open = true;
     window.__DRVAS_CONSENT_CALLS__ = [];
     window.confirm = () => true;
     privateProfileRequest = async (action, extra = {}) => {
