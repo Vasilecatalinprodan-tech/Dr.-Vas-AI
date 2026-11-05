@@ -965,10 +965,10 @@ body.presentation-open{overflow:hidden!important}
      <div class="studio-production-controls">
       <label class="studio-check-label"><input id="studioSubtitles" type="checkbox" checked> Subtitrări sincronizate</label>
       <label>Voice-over
-       <select id="studioNarration"><option value="founder_voice_pending">Vocea fondatorului VPC — după activarea clonei</option><option value="ai_narrator">Narator AI standard</option><option value="none">Fără voice-over</option></select>
+       <select id="studioNarration"><option value="founder_voice_pending">Vocea fondatorului VPC — în configurare</option><option value="ai_narrator">Narator AI standard</option><option value="none">Fără voice-over</option></select>
       </label>
      </div>
-     <p class="studio-production-note">Standard social: vertical 9:16, export țintă 1080 × 1920, hook imediat, subtitrări în zona sigură și branding care nu acoperă comenzile TikTok. Exportul MP4 folosește un motor de randare conectat la server.</p>
+     <p class="studio-production-note">Standard social: vertical 9:16, export țintă 1080 × 1920, hook imediat, subtitrări în zona sigură și branding care nu acoperă comenzile TikTok. Exportul MP4 este disponibil în pilotul de administrator după configurarea motorului de randare.</p>
     </section>
     <section class="studio-project-manager studio-render-panel" aria-labelledby="studioRenderTitle">
      <h3 id="studioRenderTitle">🎞 Studio Render — Export MP4 1080 × 1920</h3>
@@ -1097,7 +1097,7 @@ body.presentation-open{overflow:hidden!important}
      </div>
      <p class="studio-disclaimer">După conectare, fiecare utilizator își va putea autoriza propriile conturi. Programarea și publicarea vor fi activate numai pentru funcțiile permise de Meta și TikTok și după aprobarea aplicațiilor Dr.Vas.</p>
     </section>
-    <p class="studio-disclaimer">În versiunea pilot, Studio generează materiale creative text și instrucțiuni de producție. Randarea video, publicarea automată și abonamentele publice nu sunt încă active.</p>
+    <p class="studio-disclaimer">În pilotul actual, Studio oferă instrumente creative, proiecte private și randare MP4 pentru administrator, dacă motorul video este configurat. Publicarea automată pe rețele sociale și abonamentele publice nu sunt încă active.</p>
   </section>
 
 
@@ -3039,6 +3039,7 @@ function studioRenderMessage(message,isError=false){
 }
 async function renderStudioVideo(){
  if(!currentUser){studioRenderMessage("Conectează-te pentru a crea un video privat.",true);return;}
+ stopStudioRenderPolling();
  const button=el("studioRenderCreateButton");if(button)button.disabled=true;
  try{
   const files=Array.from(el("studioSceneImages")?.files||[]);
@@ -3114,6 +3115,7 @@ async function renderStudioVideo(){
  }finally{if(button)button.disabled=false;}
 }
 async function checkStudioRenderStatus(){
+ if(studioRenderPollTimer){window.clearTimeout(studioRenderPollTimer);studioRenderPollTimer=null;}
  if(!currentUser||!currentStudioRenderJobId){stopStudioRenderPolling();studioRenderMessage("Nu există o randare activă în acest proiect.",true);return;}
  try{
   const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();if(sessionError)throw sessionError;
@@ -3203,6 +3205,7 @@ async function saveStudioProject(){
 }
 async function openStudioProject(){
  if(!currentUser){setStudioProjectStatus("Autentifică-te pentru a deschide proiectele.",true);return;}
+ stopStudioRenderPolling();
  const id=el("studioSavedProjects").value;if(!id){setStudioProjectStatus("Alege mai întâi un proiect salvat.",true);return;}
  try{
   const {data,error}=await supabaseClient.from("drvas_studio_projects").select("id,title,project_type,brief").eq("id",id).eq("user_id",currentUser.id).single();
