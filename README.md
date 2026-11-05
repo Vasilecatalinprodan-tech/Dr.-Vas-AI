@@ -3,7 +3,7 @@
 Last verified: 2026-11-05  
 Repository: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI  
 Working branch: `drvas-integrated-platform`  
-Current access model (supersedes older pilot notes below): public-first. Visitors see the welcome/language screen, then sign in or register. Signed-in ordinary users can use **Dr.Vas Free** and **Dr.Vas Health** for free. **Studio, Academy, Commerce and Business** remain founder-only until the owner explicitly authorizes their paid public launch. Only `vasilecatalinprodan@gmail.com` is an administrator; never add ordinary users to `ADMIN_EMAILS`. The four premium modules must not grant administrator privileges through payment.
+Current access model (supersedes older pilot notes below): public-first. Visitors see the welcome/language screen, then sign in or register. Signed-in ordinary users can use **Dr.Vas Free** and **Dr.Vas Health** for free. **Studio, Academy, Commerce and Business** remain founder-only until the owner explicitly authorizes their paid public launch. Only the single founder account configured in the Cloudflare `ADMIN_EMAILS` secret is an administrator; never add ordinary users to that allowlist. The four premium modules must not grant administrator privileges through payment.
 
 Latest verified product, access and workflow details are maintained in `docs/DRVAS_CONSOLIDATED_SCOPE_AND_CONTINUITY_2026-11-04.md`.
 
