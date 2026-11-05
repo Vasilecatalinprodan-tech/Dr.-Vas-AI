@@ -111,3 +111,60 @@ test("last selected module is remembered across browser reloads per account", as
   });
   expect(afterLogout).toBeNull();
 });
+
+
+for (const scenario of [
+  { module: "academy", primary: "academySubject", title: "academyProjectTitle", value: "Curs restaurat după redeschidere" },
+  { module: "commerce", primary: "commerceProduct", title: "commerceProjectTitle", value: "Produs restaurat după redeschidere" },
+  { module: "business", primary: "businessIdea", title: "businessProjectTitle", value: "Plan restaurat după redeschidere" }
+]) {
+  test(\`\${scenario.module} project can be saved, listed and reopened with its original fields\`, async ({ page }) => {
+    await openApp(page);
+    await page.evaluate(() => {
+      const rows = [];
+      const calls = [];
+      window.__DRVAS_ROUNDTRIP_CALLS__ = calls;
+      supabaseClient.from = table => {
+        const query = { filters: [], selected: false };
+        query.select = function () { this.selected = true; return this; };
+        query.eq = function (key, value) { this.filters.push([key, value]); return this; };
+        query.order = function () { return this; };
+        query.limit = async function () {
+          const result = rows.filter(row => this.filters.every(([key, value]) => row[key] === value));
+          return { data: result.map(row => ({ id: row.id, title: row.title, updated_at: row.updated_at })), error: null };
+        };
+        query.single = async function () {
+          const result = rows.find(row => this.filters.every(([key, value]) => row[key] === value));
+          return { data: result || null, error: result ? null : { message: "Project not found" } };
+        };
+        query.insert = function (payload) {
+          calls.push({ operation: "insert", table, payload });
+          const row = { ...payload, id: "e2e-roundtrip-" + payload.module };
+          rows.push(row);
+          return { select() { return this; }, single: async () => ({ data: { id: row.id }, error: null }) };
+        };
+        return query;
+      };
+    });
+    await page.evaluate(async ({ primary, title, value, module }) => {
+      document.getElementById(primary).value = value;
+      document.getElementById(title).value = value + " — titlu";
+      await saveModuleProject(module);
+      document.getElementById(primary).value = "Valoare modificată temporar";
+      document.getElementById(title).value = "Titlu temporar";
+      const picker = document.getElementById(module + "ProjectList");
+      picker.value = "e2e-roundtrip-" + module;
+      await openModuleProject(module);
+    }, scenario);
+    const restored = await page.evaluate(({ primary, title }) => ({
+      primary: document.getElementById(primary).value,
+      title: document.getElementById(title).value,
+      calls: window.__DRVAS_ROUNDTRIP_CALLS__
+    }), scenario);
+    expect(restored.primary).toBe(scenario.value);
+    expect(restored.title).toBe(scenario.value + " — titlu");
+    expect(restored.calls).toHaveLength(1);
+    expect(restored.calls[0].payload.user_id).toBe("e2e-module-owner");
+    expect(restored.calls[0].payload.module).toBe(scenario.module);
+  });
+}
