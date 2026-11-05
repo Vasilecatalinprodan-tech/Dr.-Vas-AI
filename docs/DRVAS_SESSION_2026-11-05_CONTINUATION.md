@@ -81,3 +81,8 @@ Această conversație continuă checkpoint-ul anterior. Repository-ul păstreaz�
 A fost implementat direct în `www/index.html` instrumentul privat **Content & Campaign Planner**, în Creator & Online Income Lab. Include formular pentru brand, public, obiectiv, canale, frecvență/resurse, ofertă/buget și limite de drepturi; generează un brief editorial pe 30 de zile cu piloni, calendar, hook-uri, scenarii, CTA, materiale, responsabilități, KPI, ipoteze A/B și buget etapizat. Brief-ul este trimis către fluxul existent Dr.Vas Studio, rezervat fondatorului. Nu publică și nu programează automat, nu trimite mesaje și nu cheltuie buget.
 
 A fost adăugat test Playwright pentru generarea brief-ului și rutarea în Studio. Așteptăm rezultatul CI. Implementarea și testul sunt salvate în commituri separate pe `founder-workbenches-development`. Această conversație este consemnată prin rezumat tehnic și decizii, nu prin transcriere literală completă; istoricul complet rămâne în ChatGPT.
+
+
+## Actualizare — corecția finală a testului Bitcoin și CI
+
+Run #193 a confirmat că valorile numerice ale calculatorului trec după neutralizarea explicită a mentenanței, downtime-ului și rezervei fiscale. Singura aserțiune rămasă era textul vechi al avertizării: interfața spune acum că pragurile sunt matematice, „nu predicții”. Testul a fost aliniat la textul actual și salvat în commitul `38604f93842b53d8206ba35a1ba7c8deef9d3334`. Run #196 a fost anulat de mecanismul de concurență în timp ce se adăugau commituri; trebuie verificată o nouă rulare pentru ultimul commit. Nu s-a făcut merge/deploy.
