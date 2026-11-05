@@ -1354,3 +1354,31 @@ Fișier principal: `www/index.html`.
 - Nu s-a făcut merge, deploy de producție, modificare în baza de date Supabase sau aplicare a migrării `202611050001_chat_attachments.sql`.
 - `DRVAS_FILE_ANALYSIS_ENABLED` rămâne dezactivat.
 - Jurnalul păstrează cererea utilizatorului, deciziile, modificările, verificările și blocajele pentru reluarea proiectului. Este un jurnal de continuitate al sesiunii, nu un export binar al interfeței ChatGPT.
+
+
+## 2026-11-05 — continuare solicitată: previzualizarea paginii actualizate și salvarea conversației
+
+### Cererea utilizatorului
+Utilizatorul a cerut să continuăm dezvoltarea, să păstrăm toate modificările și discuția pentru continuitate și să poată vedea pagina Dr.Vas cu toate modificările recente.
+
+### Verificarea metodei de previzualizare
+- Branch-ul de lucru rămâne `universal-chat-attachments`.
+- `www/index.html` este pagina completă cu prezentarea animată, timeline-ul Studio, cardurile îmbunătățite și restul UI-ului.
+- Configurația curentă a frontendului declară explicit `API_URL = https://dr--vas-ai.vasilecatalinprodan.workers.dev` și Supabase URL-ul proiectului. Prin urmare, o previzualizare statică a branch-ului arată noul frontend, dar orice operație autentificată/API va folosi Worker-ul și Supabase existente, nu o clonă backend izolată.
+- Workflow-ul de deploy existent este destinat branch-ului `drvas-integrated-platform`, cu checkout explicit al acelui branch; nu este un preview deployment pentru `universal-chat-attachments`.
+- Pentru a evita publicarea prematură, nu s-a făcut deploy în producție și nu s-a modificat workflow-ul de deploy. PR #7 rămâne Draft și nemerged.
+- Calea recomandată pentru a vedea imediat pagina actualizată este previzualizarea locală din Codespaces, pornind un server static pe folderul `www` și deschizând portul 4173. Aceasta nu publică modificările pentru vizitatori și nu modifică site-ul live.
+- Pentru simpla vizualizare a paginii și a animațiilor, nu este necesară autentificarea. Pentru acțiuni care trimit date, se va ține cont că API-ul indicat în frontend este încă Worker-ul existent de producție; nu se vor testa operații de randare, ștergere sau modificări de date fără o verificare separată.
+
+### Pașii de previzualizare pentru utilizator
+1. Deschide Codespace-ul repo-ului Dr.-Vas-AI și verifică branch-ul `universal-chat-attachments`.
+2. În terminal rulează `git pull origin universal-chat-attachments`.
+3. Pornește pagina cu `python3 -m http.server 4173 --directory www`.
+4. În fila Ports, deschide portul `4173` (vizibilitate Private) prin Open in Browser.
+5. Selectează limba, apoi poți vizualiza pagina și deschide prezentarea Dr.Vas. Nu este necesară autentificarea pentru a vedea prezentarea.
+6. Pentru oprirea serverului, revino la terminal și apasă Ctrl+C.
+
+### Starea Git și protecția producției
+- La începutul acestei continuări, ultima versiune verificată a fost `30d0f36cbfbd94c5a737a638ad500d05da115c5e`; actualizarea jurnalului de mai jos va crea următorul commit.
+- Nu s-a făcut merge, deploy, schimbare de secret, aplicare de migrare sau modificare de date în Supabase.
+- Continuarea cerută de utilizator și pașii de previzualizare sunt consemnați aici pentru următoarea sesiune.
