@@ -285,6 +285,19 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 .crypto-calculator-results strong{display:block;margin-top:5px;color:#65ddd5;font-size:15px;overflow-wrap:anywhere}
 @media(max-width:700px){.crypto-calculator-grid,.crypto-calculator-results{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:420px){.crypto-calculator-grid,.crypto-calculator-results{grid-template-columns:1fr}}
+.founder-workbench{margin:18px 0;padding:18px;border:1px solid #39736f;border-radius:15px;background:linear-gradient(145deg,#102d38,#0a1b29)}
+.founder-workbench h4{margin:0 0 7px;color:#75e3d8;font-size:16px}
+.founder-workbench-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+.founder-tool{padding:14px;border:1px solid #294c5d;border-radius:12px;background:#091a28;min-width:0}
+.founder-tool h5{margin:0 0 8px;color:#d7e9ef;font-size:14px}
+.founder-tool p{margin:5px 0 10px;color:#91acbd;font-size:11px;line-height:1.5}
+.founder-tool label{display:flex;flex-direction:column;gap:5px;margin:9px 0;color:#c8dce5;font-size:11px}
+.founder-tool input,.founder-tool select,.founder-tool textarea{width:100%;min-width:0;padding:9px;border:1px solid #34536a;border-radius:8px;background:#071827;color:#fff;font:inherit}
+.founder-tool textarea{min-height:68px;resize:vertical}
+.founder-tool button{margin-top:7px;padding:10px 13px;font-size:11px}
+.founder-tool-status{min-height:18px;margin-top:10px;color:#9fe5ce;font-size:11px;line-height:1.5}
+.founder-safety-note{padding:11px;border:1px solid #80643b;border-radius:10px;background:#2b2417;color:#f1d49b;font-size:11px;line-height:1.5}
+@media(max-width:700px){.founder-workbench-grid{grid-template-columns:1fr}}
 
 
 .admin-topline{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
@@ -1205,6 +1218,51 @@ body.module-workspace-mode .studio-workspace.hidden{
      </div>
      <p id="cryptoCalcNotice" class="admin-footnote" role="status">Calcul demonstrativ. Mining-ul și tranzacționarea rămân dezactivate.</p>
     </div>
+   </section>
+   <section class="founder-workbench" aria-labelledby="founderProductionHeading">
+    <div class="crypto-admin-heading">
+     <div><h4 id="founderProductionHeading">✍️ Dr.Vas Creator & Online Income Lab</h4>
+      <p>Atelier privat pentru cărți, muzică originală, traduceri, produse digitale și planuri comerciale. Proiectele creative sunt salvate în Dr.Vas Studio înainte de trimiterea brief-ului către asistent.</p></div>
+     <span class="crypto-status">DOAR FONDATOR</span>
+    </div>
+    <div class="founder-workbench-grid">
+     <article class="founder-tool">
+      <h5>📚 Book Workshop · Cărți și e-bookuri</h5><p>Concept, structură, capitole, personaje și continuitate editorială.</p>
+      <label>Titlul provizoriu<input id="founderBookTitle" maxlength="140" placeholder="Titlul cărții"></label>
+      <label>Genul<select id="founderBookGenre"><option>Roman dramatic</option><option>Thriller / mister</option><option>Dezvoltare personală</option><option>Business și antreprenoriat</option><option>Memorii / autobiografie</option><option>Carte educațională</option><option>Copii și familie</option><option>Alt gen</option></select></label>
+      <label>Limba<select id="founderBookLanguage"><option>Română</option><option>Engleză</option><option>Italiană</option><option>Turcă</option><option>Germană</option><option>Franceză</option><option>Spaniolă</option><option>Rusă</option></select></label>
+      <label>Publicul și ideea principală<textarea id="founderBookConcept" maxlength="5000" placeholder="Subiect, mesaj, public și ce vrei să simtă cititorul."></textarea></label>
+      <label>Dimensiune<select id="founderBookLength"><option>Ghid scurt / 8–12 capitole</option><option>Carte medie / 12–18 capitole</option><option>Roman amplu / 20–30 capitole</option><option>Stabilim după schiță</option></select></label>
+      <button type="button" onclick="buildFounderBookPrompt()">Creează proiectul de carte</button>
+     </article>
+     <article class="founder-tool">
+      <h5>🎵 Music Lab · Melodii și producție</h5><p>Piese originale, versuri, structură, tempo, tonalitate și brief de producție.</p>
+      <label>Titlul piesei<input id="founderMusicTitle" maxlength="140" placeholder="Titlul melodiei"></label>
+      <label>Limba<select id="founderMusicLanguage"><option>Română</option><option>Engleză</option><option>Italiană</option><option>Turcă</option><option>Instrumentală</option></select></label>
+      <label>Gen și atmosferă<input id="founderMusicStyle" maxlength="180" placeholder="Ex.: pop cinematic, baladă dramatică"></label>
+      <label>Povestea piesei<textarea id="founderMusicTheme" maxlength="4000" placeholder="Mesaj, emoție, poveste și idei proprii."></textarea></label>
+      <label>Voce și structură<select id="founderMusicFormat"><option>Voce masculină · strofe/refren/punte</option><option>Voce feminină · strofe/refren/punte</option><option>Duet · dialog muzical</option><option>Instrumental · fără voce</option><option>Structură propusă de Dr.Vas</option></select></label>
+      <button type="button" onclick="buildFounderMusicPrompt()">Creează proiectul muzical</button>
+     </article>
+     <article class="founder-tool">
+      <h5>💷 Online Income · Plan de venit</h5><p>Plan legal de ofertare, promovare și urmărire a încasărilor.</p>
+      <label>Serviciu sau produs<input id="founderIncomeOffer" maxlength="180" placeholder="Ex.: e-book, traduceri, piese originale"></label>
+      <label>Canal preferat<select id="founderIncomeChannel"><option>Marketplace freelance</option><option>Editură / platformă de e-book</option><option>Platformă muzicală</option><option>Magazin digital propriu</option><option>Rețele sociale</option><option>Mai multe canale · comparație</option></select></label>
+      <label>Buget inițial maxim (£)<input id="founderIncomeBudget" type="number" min="0" max="100000" step="1" value="100"></label>
+      <label>Obiectiv și resurse<textarea id="founderIncomeGoal" maxlength="3000" placeholder="Timp, competențe, limbi, public și obiectiv."></textarea></label>
+      <button type="button" onclick="buildFounderIncomePrompt()">Construiește planul de venit</button>
+     </article>
+     <article class="founder-tool">
+      <h5>🧠 AI Evaluation & Training Lab</h5><p>Evaluează răspunsuri AI pe criterii explicite, dovezi, erori și limite.</p>
+      <label>Modelul evaluat<input id="founderEvalSystem" maxlength="160" placeholder="Numele sistemului / modelului"></label>
+      <label>Sarcina testată<input id="founderEvalTask" maxlength="500" placeholder="Ce trebuia să facă modelul?"></label>
+      <label>Criterii<select id="founderEvalCriteria"><option>Acuratețe, logică și relevanță</option><option>Instrucțiuni și completitudine</option><option>Siguranță, confidențialitate și robustețe</option><option>Traducere și calitatea limbii</option><option>Evaluare completă · toate criteriile</option></select></label>
+      <label>Răspuns AI și dovezi<textarea id="founderEvalOutput" maxlength="7000" placeholder="Răspunsul modelului și surse/referințe. Nu include date personale sensibile."></textarea></label>
+      <button type="button" onclick="buildFounderEvaluationPrompt()">Evaluează răspunsul AI</button>
+     </article>
+    </div>
+    <p class="founder-safety-note">Niciun proiect nu este publicat automat și nicio plată, comandă, investiție sau tranzacție nu este executată automat. Veniturile sunt estimări, nu garanții. Respectăm drepturile de autor, licențele, regulile platformelor, protecția datelor, taxele și revizia umană pentru traduceri cu miză juridică sau medicală.</p>
+    <p id="founderWorkbenchStatus" class="founder-tool-status" role="status" aria-live="polite">Instrumente private pentru administrator. Cărțile și piesele folosesc salvarea privată Dr.Vas Studio.</p>
    </section>
    <section class="crypto-admin-card" aria-labelledby="founderProvenanceHeading">
     <div class="crypto-admin-heading">
@@ -3425,6 +3483,47 @@ async function verifyFounderProvenance(){
    ?"✓ Semnătură Ed25519 și integritate SHA-256 verificate. Fondator: "+result.public_claim.founder.name+" · Colaborator AI: "+result.public_claim.collaborator.name+" · "+result.signed_at
    :"⚠ Înregistrarea există, dar semnătura sau amprenta nu a putut fi verificată.";
  }catch(error){notice.textContent=error.message||"Eroare la verificare.";console.error("Founder provenance verify:",error);}
+}
+
+function founderWorkbenchMessage(message,isError=false){
+ const node=el("founderWorkbenchStatus");if(!node)return;
+ node.textContent=message;node.style.color=isError?"#ff9d9d":"#9fe5ce";
+}
+async function launchFounderWorkbenchPrompt(moduleId,prompt,notice,studioProject=null){
+ if(!currentUser||!isDrvasAdmin){founderWorkbenchMessage("Acces rezervat administratorului confirmat de server.",true);return;}
+ if(!["studio","academy","business"].includes(moduleId)){founderWorkbenchMessage("Modul de lucru nepermis.",true);return;}
+ selectModule(moduleId);
+ if(studioProject){
+  newStudioProject();el("studioDeliverable").value=studioProject.type;
+  el("studioProjectTitle").value=studioProject.title.slice(0,120);el("studioIdea").value=prompt;
+  await saveStudioProject();
+ }
+ submitModuleBrief(prompt,notice);
+ founderWorkbenchMessage("Brief pregătit în "+(moduleId==="studio"?"Dr.Vas Studio":moduleId==="academy"?"AI Evaluation & Training":"Dr.Vas Business")+". Revizuiește mesajul în chat și apasă Trimite.");
+}
+function buildFounderBookPrompt(){
+ const title=el("founderBookTitle")?.value.trim()||"Carte nouă",genre=el("founderBookGenre")?.value||"Roman",language=el("founderBookLanguage")?.value||"Română",concept=el("founderBookConcept")?.value.trim()||"",length=el("founderBookLength")?.value||"Stabilim după schiță";
+ if(!concept){founderWorkbenchMessage("Descrie ideea cărții înainte de a crea proiectul.",true);el("founderBookConcept")?.focus();return;}
+ const prompt="DR.VAS BOOK WORKSHOP — PROIECT EDITORIAL ORIGINAL\nTITLU: "+title+"\nGEN: "+genre+"\nLIMBA: "+language+"\nDIMENSIUNE: "+length+"\nCONCEPT:\n"+concept+"\n\nCreează sinopsisul, publicul-țintă, structura capitolelor, personajele/arcul narativ dacă este ficțiune și o fișă de continuitate pentru nume, cronologie și fapte. Scrie capitole în ordinea aprobată de autor, păstrează vocea și ideile acestuia și oferă editare, corectură și descriere editorială. Cere confirmare înainte de schimbări majore. Folosește conținut original, nu copia texte protejate, nu imita stilul identificabil al unui autor viu și nu inventa citări.";
+ launchFounderWorkbenchPrompt("studio",prompt,"Brief de carte pregătit. Revizuiește-l și apasă Trimite.",{type:"book",title});
+}
+function buildFounderMusicPrompt(){
+ const title=el("founderMusicTitle")?.value.trim()||"Piesă nouă",language=el("founderMusicLanguage")?.value||"Română",style=el("founderMusicStyle")?.value.trim()||"Propune direcții originale",theme=el("founderMusicTheme")?.value.trim()||"",format=el("founderMusicFormat")?.value||"Structură propusă de Dr.Vas";
+ if(!theme){founderWorkbenchMessage("Descrie povestea și mesajul piesei.",true);el("founderMusicTheme")?.focus();return;}
+ const prompt="DR.VAS MUSIC LAB — CREAȚIE ORIGINALĂ\nTITLU: "+title+"\nLIMBA: "+language+"\nGEN: "+style+"\nVOCE / STRUCTURĂ: "+format+"\nPOVESTE:\n"+theme+"\n\nLivrează conceptul muzical, structura (intro/strofe/refren/punte/outro), versuri originale dacă există voce, indicații de interpretare, tempo și tonalitate orientative, instrumentație, dinamică și prompt separat pentru generator audio. Păstrează ideile autorului. Nu reproduce versuri/compoziții existente și nu imita vocea ori stilul identificabil al unui artist viu. Nu promite distribuție sau monetizare automată.";
+ launchFounderWorkbenchPrompt("studio",prompt,"Brief muzical pregătit. Revizuiește-l și apasă Trimite.",{type:"music",title});
+}
+function buildFounderIncomePrompt(){
+ const offer=el("founderIncomeOffer")?.value.trim()||"",channel=el("founderIncomeChannel")?.value||"Comparație între canale",budget=Number(el("founderIncomeBudget")?.value||0),goal=el("founderIncomeGoal")?.value.trim()||"";
+ if(!offer||!goal||!Number.isFinite(budget)||budget<0){founderWorkbenchMessage("Completează oferta, obiectivul și bugetul valid.",true);return;}
+ const prompt="DR.VAS ONLINE INCOME — PLAN LEGAL ȘI REALIST\nOFERTĂ: "+offer+"\nCANAL: "+channel+"\nBUGET MAXIM: £"+budget.toFixed(2)+"\nRESURSE ȘI OBIECTIV:\n"+goal+"\n\nAnalizează cererea și clientul-țintă; propune trei oferte și prețuri; verifică cerințele canalelor; calculează comisioane, costuri, marjă și prag de rentabilitate cu ipoteze explicite; indică mostre/portofoliu; creează plan de lansare pe 30 de zile și indicatori pentru estimat versus încasat. Include drepturi de autor, licențe, protecția datelor, taxe și obligații față de consumatori. Nu garanta venituri, nu inventa tarife și nu recomanda scheme înșelătoare, spam sau încălcarea regulilor. Nu cheltui bani și nu publica fără aprobarea fondatorului.";
+ launchFounderWorkbenchPrompt("business",prompt,"Planul de venit este pregătit în Dr.Vas Business. Revizuiește-l și apasă Trimite.");
+}
+function buildFounderEvaluationPrompt(){
+ const system=el("founderEvalSystem")?.value.trim()||"Sistem AI neprecizat",task=el("founderEvalTask")?.value.trim()||"",criteria=el("founderEvalCriteria")?.value||"Evaluare completă",output=el("founderEvalOutput")?.value.trim()||"";
+ if(!task||!output){founderWorkbenchMessage("Completează sarcina și răspunsul AI.",true);el("founderEvalOutput")?.focus();return;}
+ const prompt="DR.VAS AI EVALUATION & TRAINING LAB\nSISTEM: "+system+"\nSARCINĂ: "+task+"\nCRITERII: "+criteria+"\nRĂSPUNS:\n"+output+"\n\nEvaluează cerința și criteriile, separă afirmațiile verificabile de opinii, apreciază acuratețea numai pe dovezile disponibile, identifică erori/contradicții/omisiuni/halucinații, evaluează claritatea/completitudinea/relevanța/siguranța, acordă scoruri doar cu justificare și nivel de încredere, oferă corecturi și benchmark-uri/cazuri-limită. Nu inventa surse sau scoruri; când nu există dovezi marchează «neverificabil». Nu pretinde corectitudine absolută. Nu folosi date personale/confidențiale pentru training fără drepturi și consimțământ. Orice set de training necesită proveniență, licență, revizie umană și separarea datelor de evaluare de cele de antrenare.";
+ launchFounderWorkbenchPrompt("academy",prompt,"Evaluarea AI este pregătită. Revizuiește criteriile și apasă Trimite.");
 }
 
 function calculateCryptoMiningEconomics(){
