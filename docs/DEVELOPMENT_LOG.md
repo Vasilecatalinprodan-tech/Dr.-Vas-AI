@@ -219,3 +219,9 @@ Founder feedback:
 - Adjusted voice enable/replay behavior to allow the authenticated server audio path on supported audio browsers without Web Speech synthesis.
 - Added Playwright coverage and CI assertions. Workflow #470 / run `42130438370` was pending at the time of documentation.
 - Saved a structured conversation checkpoint at `docs/CHAT-ARCHIVE-2026-11-05.md`; it is not a verbatim transcript export.
+
+### Saved module project continuity
+
+- For Academy, Commerce and Business, new AI replies now persist into the currently opened saved project automatically.
+- This only updates an existing project ID; it does not create unsolicited new projects.
+- Added a CI static assertion for the persistence hook.
