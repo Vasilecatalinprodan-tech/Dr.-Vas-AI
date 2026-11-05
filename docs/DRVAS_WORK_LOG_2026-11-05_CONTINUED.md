@@ -95,5 +95,35 @@ Owner's creative direction:
 - Dr.Jan presenter: create an original AI presenter portrait/avatar.
 - All three should be animated as realistic human presenters with natural speech/lip-sync, introducing the Dr.Vas story and presenting modules and the platform.
 
-Assets still required from owner: one clear portrait of the owner, one clear portrait of Sarah, and a clean 30–60 second voice recording of the owner speaking naturally for voice reference. No portrait or voice asset has been uploaded in this turn, and no avatar/video has been generated yet.
-Runway connection check: authenticated personal workspace is on the Free plan with 500 credits but currently exposes no video or speech models. The plans card was shown; Pro includes custom voice with lip-sync. No plan purchase or paid generation was made. Treat realistic talking-video production as pending until suitable video/speech capability and the required reference assets are available.
+Asset status corrected on 2026-11-05: the owner had already supplied all three reference assets in earlier conversations. They were found and inspected in the private Dr.Vas Library: `Drvas.jpeg` (owner portrait), `sarah(1).jpeg` (Sarah portrait), and `drvasvoice.ogg` (owner voice sample, Opus mono 48 kHz, approximately 4.57 seconds). Do not ask the owner to re-upload these. Keep the original files private; never commit them to GitHub or send them to an external provider without explicit approval. The voice clip is preserved, but is too short to assume reliable high-quality voice cloning; request a longer recording only when that work is actually scheduled and provider requirements are known.
+No avatar, age-progressed portrait, voice clone or talking video has been generated yet. The attempted Sarah image generation was blocked by the Free-plan image-generation limit.
+Runway connection check: authenticated personal workspace is on the Free plan with 500 credits but currently exposes no video or speech models. No plan purchase or paid generation was made. Treat realistic talking-video production as pending; it does not block the core first release. See `docs/DRVAS_ASSET_CONTINUITY_AND_PRESENTER_PLAN_2026-11-05.md`.
+
+
+## Follow-up — focused Supabase/Studio source audit (2026-11-05)
+The current branch versions of `worker/index.js` and the following migrations were inspected:
+- `supabase/migrations/202611030004_studio_projects.sql`
+- `supabase/migrations/202611040004_studio_render_storage.sql`
+- `supabase/migrations/202611040001_module_projects.sql`
+- `supabase/migrations/202611040003_business_cashbook.sql`
+
+### Confirmed from source
+- Studio project rows use `user_id` ownership and RLS for select/insert/update/delete; the policies require `auth.uid() = user_id`.
+- Academy/Commerce/Business project rows use the same ownership condition and constrain the `module` column to the three intended modules.
+- Business cashbook rows are user-owned, with amount/date/currency/VAT constraints and RLS for all CRUD operations.
+- Studio render-job rows and private media objects are user-scoped. The `drvas-media` bucket is configured as private; storage object policies require the first path segment to equal the authenticated user's UUID.
+- The Worker verifies the Supabase access token, checks the founder allowlist before allowing render create/status actions, applies a 3-per-hour render limit and a 30-per-minute status-check limit, and scopes job lookup/update queries by the authenticated user ID.
+- Render input is allowlisted and validated; media inputs must use signed URLs from the configured Supabase project's private `drvas-media` bucket. Completed output is accepted only from HTTPS `cdn.creatomate.com`, bounded to 50 MB, then uploaded under the user's own storage folder.
+- These are code/migration-source checks only. They do not prove that migrations were applied in production Supabase, that live RLS behaves as intended, or that an actual authenticated MP4 render/storage/preview/download flow succeeds.
+
+### Safety boundary / no production changes
+- No SQL was executed against production, no schema/data was changed, and no credentials or secrets were requested or modified.
+- Production migration state cannot be read through the currently available connected tools. The next verification step is a read-only check in the Supabase dashboard (migration history/table presence and RLS state) before any SQL is applied.
+- Do not apply migrations again blindly: the scripts use `create table if not exists` and recreate named policies, but the actual production migration history must be checked first.
+- No frontend/Worker source code was changed during this audit. No new deployment or CI run is claimed from this source review.
+
+### CI and branch checkpoint
+- The most recent successful browser regression is run `42003477722`: 39 Playwright tests passed on source/test commit `af55b9eea346a74a1e2e799f934bad87dd65267d`.
+- The most recent successful Worker deploy/regression is run `42003477696`: deploy and production smoke test passed on the same commit.
+- Presenter continuity documentation was added afterward in commit `7dc4d02e100898ee44b90084b063e776ec4fef61`; this was documentation-only and did not change deployed application code.
+- The Android debug APK remains from successful build run `42003085088` (on commit `fce0dadc80d81c7237cecb5bd83a0f82a4940368`); it is not a signed Play release and has not been physically tested.
