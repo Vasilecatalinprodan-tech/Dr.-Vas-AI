@@ -135,30 +135,19 @@ test("users can review and withdraw file-processing consent from their profile",
     document.querySelector("#profileSection").classList.remove("hidden");
     window.__DRVAS_CONSENT_CALLS__ = [];
     window.confirm = () => true;
-    supabaseClient.auth.getSession = async () => ({
-      data: { session: { access_token: "e2e-consent-token" } },
-      error: null
-    });
-    const originalFetch = window.fetch.bind(window);
-    window.fetch = async (url, options = {}) => {
-      if (String(url) === API_URL) {
-        const body = JSON.parse(options.body || "{}");
-        window.__DRVAS_CONSENT_CALLS__.push(body);
-        if (body.action === "file_processing_consent_get") {
-          return new Response(JSON.stringify({
-            ok: true,
-            file_processing_granted: true,
-            health_data_processing_granted: true
-          }), { status: 200, headers: { "Content-Type": "application/json" } });
-        }
-        if (body.action === "file_processing_consent" && body.granted === false) {
-          return new Response(JSON.stringify({ ok: true, recorded: true, granted: false, revoked: true }), {
-            status: 200,
-            headers: { "Content-Type": "application/json" }
-          });
-        }
+    privateProfileRequest = async (action, extra = {}) => {
+      window.__DRVAS_CONSENT_CALLS__.push({ action, ...extra });
+      if (action === "file_processing_consent_get") {
+        return {
+          ok: true,
+          file_processing_granted: true,
+          health_data_processing_granted: true
+        };
       }
-      return originalFetch(url, options);
+      if (action === "file_processing_consent" && extra.granted === false) {
+        return { ok: true, recorded: true, granted: false, revoked: true };
+      }
+      throw new Error("Unexpected consent action: " + action);
     };
   });
 
