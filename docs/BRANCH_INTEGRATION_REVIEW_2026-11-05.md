@@ -42,6 +42,13 @@ The feature branch's workbench records describe additional components and safegu
 - No successful current-branch production deployment is confirmed here.
 - No APK artifact or physical device audio test is confirmed here.
 
+## Other open pull requests found
+
+- PR #2, `drvas-account-deletion-hardening` → `drvas-integrated-platform`, is open and unmerged. It contains the account-deletion/security hardening specification only; it is not an implemented account-deletion feature.
+- PR #3, `drvas-modules-long-input` → `drvas-integrated-platform`, is an open draft and unmerged. Its scope includes 100,000-character input, longer provider timeout/context handling, Crypto technical specification and admin device authorize/re-authorize/revoke routes, plus privacy/entitlement/advertising roadmap documents. Its body explicitly says end-to-end/security/runtime tests remain outstanding and it is not deployed.
+- The current continuation Worker contains the read-only `crypto_devices_list` action, but inspection did not find `crypto_device_authorize` or `crypto_device_revoke` actions. Treat device authorization/revocation as pending until reviewed and safely integrated.
+- Do not merge PR #2 or PR #3 automatically. PR #2's retention/deletion requirements need legal/product decisions and destructive-action tests. PR #3 is draft and needs full security/code review, current-branch compatibility checks and CI.
+
 ## Integration recommendation
 
 1. Keep `universal-chat-attachments` as the continuation branch for the latest voice/Android fixes.
