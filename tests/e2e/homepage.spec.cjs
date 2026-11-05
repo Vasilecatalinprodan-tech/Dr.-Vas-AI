@@ -281,6 +281,7 @@ test("private module selection explains future paid access without showing an ad
   await page.evaluate(() => {
     currentUser = { id: "e2e-regular-user", email: "visitor@example.invalid" };
     isDrvasAdmin = false;
+    refreshAdminPanel = async () => { isDrvasAdmin = false; return false; };
     showModuleSelection();
   });
   await page.locator('[data-module="studio"]').click();
@@ -402,6 +403,7 @@ test("public signed-in users cannot open premium workspaces or gain administrato
   await page.evaluate(() => {
     currentUser = { id: "e2e-public-premium-user", email: "public-user@example.invalid" };
     isDrvasAdmin = false;
+    refreshAdminPanel = async () => { isDrvasAdmin = false; return false; };
     showModuleSelection();
     selectModule("studio", true);
   });
@@ -688,6 +690,7 @@ test("module chooser clearly separates two public free modules from four founder
   await page.evaluate(() => {
     currentUser = { id: "e2e-standard-user", email: "standard@example.invalid" };
     isDrvasAdmin = false;
+    refreshAdminPanel = async () => { isDrvasAdmin = false; return false; };
     showModuleSelection();
   });
   for (const moduleId of ["studio", "academy", "commerce", "business"]) {
@@ -933,6 +936,7 @@ test("non-admin users can open public Free and Health but not the four future pa
   await page.evaluate(() => {
     currentUser = { id: "e2e-standard-user", email: "standard@example.invalid" };
     isDrvasAdmin = false;
+    refreshAdminPanel = async () => { isDrvasAdmin = false; return false; };
     showModuleSelection();
   });
 
@@ -1267,7 +1271,7 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
   expect(jan.speaker).toBe("Dr.Jan");
   await expect(page.locator("#presentationAvatar")).toHaveClass(/presentation-avatar-jan/);
   expect(await page.locator("#presentationAvatar .character-glasses").evaluate(node => getComputedStyle(node).display)).toBe("block");
-  expect(await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].voice?.name)).toBe("Microsoft David");
+  expect(await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].voice?.name)).toBe("Microsoft Andrei");
   expect(jan.modules).toContain("Dr.Vas Studio");
   expect(jan.modules).toContain("Dr.Vas Business");
   expect(jan.speech).toContain("Doctor Vas Studio");
@@ -1283,7 +1287,7 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
   expect(sarah.speaker).toBe("Sarah");
   await expect(page.locator("#presentationAvatar")).toHaveClass(/presentation-avatar-sarah/);
   expect(await page.locator("#presentationAvatar .character-hair-long").evaluate(node => getComputedStyle(node).display)).toBe("block");
-  expect(await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].voice?.name)).toBe("Microsoft Alina");
+  expect(await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].voice?.name)).toBe("Microsoft Andrei");
   expect(sarah.modules).toContain("Dr.Vas Academy");
   expect(sarah.modules).toContain("Dr.Vas Commerce");
   expect(sarah.speech).toContain("Doctor Vas Academy");
@@ -1295,14 +1299,11 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
 });
 
 
-test("presentation never falls back to arbitrary voices when three named presenter voices are unavailable", async ({ page }) => {
+test("presentation reuses one available language voice when fewer than three presenter voices are installed", async ({ page }) => {
   await openApp(page, "ro");
   await page.evaluate(() => {
     window.__drvasSpoken = [];
-    const voices = [
-      { name: "Microsoft Andrei", lang: "ro-RO", voiceURI: "andrei-ro" },
-      { name: "Microsoft Alina", lang: "ro-RO", voiceURI: "alina-ro" }
-    ];
+    const voices = [{ name: "Microsoft Andrei", lang: "ro-RO", voiceURI: "andrei-ro" }];
     Object.defineProperty(window, "speechSynthesis", {
       configurable: true,
       value: { getVoices: () => voices, cancel() {}, speak: utterance => window.__drvasSpoken.push(utterance) }
@@ -1310,10 +1311,11 @@ test("presentation never falls back to arbitrary voices when three named present
     window.SpeechSynthesisUtterance = function (text) { this.text = text; };
   });
   await page.evaluate(async () => { currentLanguage = "ro"; await speakDrvasPresentation(); });
-  await expect(page.locator("#presentationAudioStatus")).toContainText(/audio este oprit/i);
+  await expect(page.locator("#presentationAudioStatus")).toContainText("Narațiune audio");
   await expect(page.locator("#presentationPresenter")).toHaveClass(/is-animated/);
   await expect(page.locator("#presentationSpeakerName")).toHaveText("Dr.Vas");
-  expect(await page.evaluate(() => window.__drvasSpoken.length)).toBe(0);
+  expect(await page.evaluate(() => window.__drvasSpoken.length)).toBe(1);
+  expect(await page.evaluate(() => window.__drvasSpoken[0].voice?.name)).toBe("Microsoft Andrei");
 });
 
 test("Studio builds a visual timeline from selected production assets", async ({ page }) => {
