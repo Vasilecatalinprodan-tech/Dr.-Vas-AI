@@ -1833,6 +1833,28 @@ function prepareDrvasPresentationSpeechText(value){
  // Keep the visible brand unchanged; expand the abbreviation only in the spoken narration.
  return String(value||"").replace(/\bDr\.(?=[A-Z])/g,"Doctor ");
 }
+function getDrvasPresentationVoiceProfile(voices,locale){
+ const lang=(locale||"ro-RO").slice(0,2).toLowerCase();
+ const local=voices.filter(v=>(v.lang||"").toLowerCase().startsWith(lang));
+ const pool=local.length?local:voices;
+ const femaleHints=/\b(female|woman|zira|alina|jenny|aria|samantha|victoria|karen|moira|tessa|fiona|ava|serena|hazel|susan|sonia|heera|natasha|linda|sara|sarah|catherine|olivia|emma|amelia|libby|michelle|eva|laura|lucia|paulina|helena|ana|ioana)\b/i;
+ const maleHints=/\b(male|man|andrei|david|mark|daniel|james| george|guy|ryan|thomas|alex|peter|jorge|juan|luca|paul|matthew|christopher|fred|aaron|liam|enrique|stefan|carlos)\b/i;
+ const score=(voice,pattern)=>pattern.test((voice.name||"")+" "+(voice.voiceURI||""))?10:0;
+ const female=pool.filter(v=>score(v,femaleHints)>0).sort((a,b)=>score(b,femaleHints)-score(a,femaleHints));
+ const male=pool.filter(v=>score(v,maleHints)>0).sort((a,b)=>score(b,maleHints)-score(a,maleHints));
+ const used=new Set();
+ const take=(list,preferred)=>{
+  const selected=list.find(v=>!used.has(v.voiceURI||v.name));
+  if(selected){used.add(selected.voiceURI||selected.name);return selected;}
+  const fallback=preferred.find(v=>!used.has(v.voiceURI||v.name));
+  if(fallback){used.add(fallback.voiceURI||fallback.name);return fallback;}
+  return null;
+ };
+ const drvas=take(male,pool);
+ const jan=take(male,pool);
+ const sarah=take(female,[]);
+ return {drvas,jan,sarah,hasFemale:!!sarah};
+}
 function speakDrvasPresentation(){
  const data=DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro;
  if(!("speechSynthesis" in window)||!("SpeechSynthesisUtterance" in window)){
@@ -1843,6 +1865,11 @@ function speakDrvasPresentation(){
  const run=drvasPresentationRun,lines=DRVAS_PRESENTER_LINES[currentLanguage]||DRVAS_PRESENTER_LINES.ro;
  drvasPresentationQueue=lines.slice();drvasPresentationIndex=0;
  const locales={ro:"ro-RO",en:"en-GB",it:"it-IT",tr:"tr-TR",de:"de-DE",fr:"fr-FR",es:"es-ES",ru:"ru-RU"};
+ const voiceProfile=getDrvasPresentationVoiceProfile(voices,lang);
+ const voiceStatus=el("presentationAudioStatus");
+ if(!voiceProfile.hasFemale){
+  if(voiceStatus)voiceStatus.textContent="Atenție: browserul nu a identificat o voce feminină disponibilă pentru Sarah. Selectează/instalează o voce feminină în setările sistemului pentru redare corectă.";
+ }
  const speakNext=()=>{
   if(run!==drvasPresentationRun)return;
   if(drvasPresentationIndex>=drvasPresentationQueue.length){
@@ -1852,10 +1879,9 @@ function speakDrvasPresentation(){
   const index=drvasPresentationIndex,key=["drvas","jan","sarah"][index],speaker=DRVAS_PRESENTERS[key];
   updateDrvasPresentationScene(index);
   const utterance=new SpeechSynthesisUtterance(prepareDrvasPresentationSpeechText(drvasPresentationQueue[index]));
-  const lang=locales[currentLanguage]||"ro-RO",voices=window.speechSynthesis.getVoices?.()||[];
-  const matching=voices.filter(v=>(v.lang||"").toLowerCase().startsWith(lang.slice(0,2)));
-  const candidates=matching.length?matching:voices;
-  if(candidates.length)utterance.voice=candidates[index%candidates.length];
+  const lang=locales[currentLanguage]||"ro-RO";
+  const voiceForSpeaker=[voiceProfile.drvas,voiceProfile.jan,voiceProfile.sarah][index];
+  if(voiceForSpeaker)utterance.voice=voiceForSpeaker;
   utterance.lang=lang;utterance.rate=index===2?0.94:0.96;utterance.pitch=speaker.pitch;
   utterance.onstart=()=>{
    if(run!==drvasPresentationRun)return;
