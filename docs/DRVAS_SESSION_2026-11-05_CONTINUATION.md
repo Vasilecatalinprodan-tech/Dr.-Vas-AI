@@ -62,3 +62,8 @@ Fondatorul a confirmat: „corect si sa continuam sa dezvoltam,diseara vreau sa 
 - Continuă apoi dezvoltarea pe ramura de lucru, cu commituri mici și documentate. Nu cere utilizatorului să repete deciziile deja salvate.
 
 Acest checkpoint este un rezumat tehnic de continuitate, nu transcrierea integrală a conversației ChatGPT.
+
+
+## Actualizare — verificarea run #188 și corecția testului
+
+La reluarea din chatul nou s-a verificat efectiv jobul GitHub Actions pentru PR #6. Run #188 / ID `42041335612` s-a încheiat cu 38/39 teste Playwright reușite. Singurul eșec: testul vechi al calculatorului Bitcoin aștepta venit brut de £18.00 fără a seta noul input de indisponibilitate; aplicația aplica implicit 5% downtime și afișa corect £17.10. Testul a fost făcut determinist prin setarea explicită a downtime și rezervei fiscale la 0 pentru scenariul său legacy și prin actualizarea textului de avertizare verificat. Corecția și jurnalul au fost salvate în commituri succesive pe ramura de dezvoltare. Este necesară o nouă rulare CI pentru confirmare. PR #6 rămâne nemerged, iar producția nu a fost modificată.
