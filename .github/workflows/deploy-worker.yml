@@ -64,6 +64,7 @@ jobs:
           const rateLimitRepair = fs.readFileSync('supabase/migrations/202611040002_repair_rate_limit_rpc.sql', 'utf8');
           const businessCashbook = fs.readFileSync('supabase/migrations/202611040003_business_cashbook.sql', 'utf8');
           const studioRenderMigration = fs.readFileSync('supabase/migrations/202611040004_studio_render_storage.sql', 'utf8');
+          const chatAttachmentMigration = fs.readFileSync('supabase/migrations/202611050001_chat_attachments.sql', 'utf8');
           const checks = [
             [!worker.includes('"Access-Control-Allow-Origin": "*"'), 'Wildcard CORS must not be enabled'],
             [worker.includes('"free", "health", "studio", "academy", "commerce", "business"'), 'Worker must recognize all six product modules'],
@@ -116,7 +117,21 @@ jobs:
             [worker.includes('mediaResponse.body.getReader()') && worker.includes('50 * 1024 * 1024'), 'Studio MP4 transfer must be streamed with a hard 50 MB cap'],
             [html.includes('function renderStudioVideo()') && html.includes('function checkStudioRenderStatus()'), 'Studio MP4 render controls are missing'],
             [html.includes('createSignedUrl') && html.includes('studioRenderPreview'), 'Studio private MP4 preview workflow is missing'],
-            [html.includes('isDrvasAdmin = false;') && html.includes('businessWorkspace'), 'Logout must reset administrator access and workspace state']
+            [html.includes('isDrvasAdmin = false;') && html.includes('businessWorkspace'), 'Logout must reset administrator access and workspace state'],
+            [chatAttachmentMigration.includes('create table if not exists public.drvas_chat_attachments'), 'Chat attachment metadata migration is missing'],
+            [chatAttachmentMigration.toLowerCase().includes('enable row level security'), 'Chat attachment metadata must enable RLS'],
+            [chatAttachmentMigration.includes('auth.uid() = user_id'), 'Chat attachment metadata must enforce per-user ownership'],
+            [chatAttachmentMigration.includes("'health_data_processing'") && chatAttachmentMigration.includes("'file_processing'"), 'Attachment consent types must be recorded'],
+            [chatAttachmentMigration.includes("'application/pdf'") && chatAttachmentMigration.includes("'image/webp'"), 'Private storage bucket must accept PDFs and images'],
+            [worker.includes('body.action === "file_processing_consent"'), 'Worker must record explicit file-processing consent'],
+            [worker.includes('env.DRVAS_FILE_ANALYSIS_ENABLED !== "true"'), 'Multimodal file analysis must remain fail-closed until approved'],
+            [worker.includes('body.attachment_ids') && worker.includes('drvas_chat_attachments'), 'Worker must validate attachment ownership and metadata'],
+            [worker.includes('storage/v1/object/sign/drvas-media/'), 'Worker must use short-lived private storage URLs'],
+            [worker.includes('type: item.mime_type === "application/pdf" ? "document" : "image"'), 'Worker must route PDFs and images as multimodal inputs'],
+            [worker.includes('method: "HEAD"') && worker.includes('headers.get("content-length")') && worker.includes('headers.get("content-type")'), 'Worker must verify real Storage object size and MIME before Gemini'],
+            [worker.includes('new TextDecoder("utf-8", { fatal: true })'), 'Worker must reject invalid UTF-8 attachment text'],
+            [html.includes('id="chatFileInput"') && html.includes('function uploadPendingChatFiles'), 'Universal chat attachment UI and upload workflow are missing'],
+            [html.includes('id="healthDataProcessingConsent"') && html.includes('id="fileProcessingConsent"'), 'File and Health data processing consent controls are missing']
           ];
           for (const [ok, message] of checks) {
             if (!ok) throw new Error(message);

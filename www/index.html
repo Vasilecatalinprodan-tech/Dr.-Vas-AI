@@ -221,6 +221,16 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 .module-description{font-size:12px;line-height:1.5;color:#a9bfce;font-weight:400}
 .module-state{font-size:10px;color:#60e2d7;letter-spacing:1px;text-transform:uppercase;margin-top:auto}
 .module-card:not(.selected) .module-state{color:#7896a9}
+.module-card{isolation:isolate;overflow:hidden;min-height:164px;box-shadow:0 12px 28px #0003}
+.module-card::before{content:"";position:absolute;z-index:-1;inset:0;background:radial-gradient(circle at 100% 0%,#56d8d01c,transparent 52%);opacity:.8;pointer-events:none}
+.module-card:hover{transform:translateY(-4px);border-color:#70e5dd;box-shadow:0 18px 34px #0005,0 0 0 1px #70e5dd22}
+.module-card:focus-visible{outline:3px solid #80e9e1;outline-offset:3px}
+.module-card.selected{border:1px solid #70e5dd;background:linear-gradient(145deg,#17495a,#102b3d);box-shadow:0 0 0 1px #55d8d044,0 15px 34px #0005}
+.module-icon{display:grid;place-items:center;width:46px;height:46px;border:1px solid #4c8390;border-radius:14px;background:linear-gradient(145deg,#1a4a5a,#102638);box-shadow:inset 0 1px #ffffff16,0 8px 18px #0003}
+.modules-heading h2{font-size:clamp(23px,2.3vw,30px);letter-spacing:-.04em}
+.modules-heading-actions .status{display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border:1px solid #315a6e;border-radius:999px;background:#0b2030;color:#a8c4d2;font-size:10px;font-weight:800;letter-spacing:.06em}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid #72e3dc;outline-offset:3px}
+@media(max-width:680px){.module-card{min-height:140px;padding:15px}.module-icon{width:40px;height:40px}.modules-heading-actions{width:100%;align-items:flex-start;flex-direction:column}}
 .active-module-bar{margin-top:15px;padding:15px 17px;border:1px solid #285266;border-radius:14px;background:#0a1c2b;display:flex;align-items:center;gap:12px}
 .active-module-icon{font-size:25px}
 .active-module-info{min-width:0}
@@ -229,7 +239,32 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 .module-disclaimer{font-size:11px;color:#71899b;line-height:1.5;margin:12px 2px 0}
 .studio-workspace{margin:20px 0;padding:22px;border:1px solid #39736f;border-radius:19px;background:linear-gradient(145deg,#102d3b,#091b2b)}
 .studio-production-standard{margin:16px 0;padding:16px 18px;background:linear-gradient(135deg,#0b1c2b,#112d3d);border:1px solid #2b5867;border-radius:16px}.studio-production-brand{display:flex;align-items:center;gap:13px}.studio-brand-mark{display:inline-flex;align-items:center;justify-content:center;min-width:122px;padding:9px 12px;border:1px solid #73dcd2;border-radius:5px;color:#e7fffc;background:#071722;font-size:12px;font-weight:900;letter-spacing:1.6px;white-space:nowrap}.studio-production-brand strong,.studio-production-brand small{display:block}.studio-production-brand strong{color:#e8f7fa;font-size:13px}.studio-production-brand small{color:#93aebe;font-size:11px;margin-top:4px}.studio-production-controls{display:flex;align-items:end;gap:22px;flex-wrap:wrap;margin-top:14px}.studio-production-controls label{display:grid;gap:6px;color:#c4d9e2;font-size:12px}.studio-production-controls select{min-width:230px;padding:10px;background:#071827;border:1px solid #34536a;border-radius:9px;color:#e8f7fa}.studio-check-label{display:flex!important;align-items:center;gap:8px!important}.studio-check-label input{width:17px;height:17px;accent-color:#54d8cf}.studio-production-note{margin:12px 0 0;color:#91aebe;font-size:11px;line-height:1.55}@media(max-width:600px){.studio-production-standard{padding:13px}.studio-production-brand{align-items:flex-start;flex-direction:column}.studio-production-controls{align-items:stretch;gap:12px}.studio-production-controls select{min-width:0;width:100%}}
-.studio-workspace-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.studio-workspace{position:relative;isolation:isolate}
+.studio-workspace-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;padding-bottom:18px;border-bottom:1px solid #2d5065}
+.studio-workspace-head h2{letter-spacing:-.035em}
+.studio-workspace .studio-project-manager,.studio-workspace .studio-production-standard,.studio-workspace .income-tracker,.studio-workspace .studio-social{box-shadow:0 18px 42px #0004;border-radius:18px}
+.studio-workspace .studio-form-grid input,.studio-workspace .studio-form-grid select,.studio-workspace .studio-form-grid textarea,.studio-workspace .studio-project-controls input,.studio-workspace .studio-project-controls select{min-height:44px;border:1px solid #42647a;border-radius:11px;background:linear-gradient(180deg,#0c2435,#081a29);color:#f5fbff;transition:border-color .18s,box-shadow .18s}
+.studio-workspace .studio-form-grid input:focus,.studio-workspace .studio-form-grid select:focus,.studio-workspace .studio-form-grid textarea:focus,.studio-workspace .studio-project-controls input:focus,.studio-workspace .studio-project-controls select:focus{outline:none;border-color:#68d9d1;box-shadow:0 0 0 3px #68d9d128}
+.studio-workspace .studio-actions button,.studio-workspace .income-actions button,.studio-workspace .studio-project-controls button{min-height:42px;border-radius:11px;font-weight:800;letter-spacing:.01em;transition:transform .18s,filter .18s,box-shadow .18s}
+.studio-workspace .studio-actions button:hover,.studio-workspace .income-actions button:hover,.studio-workspace .studio-project-controls button:hover{transform:translateY(-1px);filter:brightness(1.08)}
+.studio-scene-timeline-wrap{grid-column:1/-1;margin-top:4px;padding:14px;border:1px solid #34586f;border-radius:14px;background:linear-gradient(145deg,#0b2132,#071725)}
+.studio-scene-timeline-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;color:#e6f6fa;font-size:12px}
+.studio-scene-timeline-heading span{color:#7fded6;font-size:11px;font-weight:800}
+.studio-scene-timeline{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px;min-height:72px}
+.studio-scene-card{min-width:0;padding:8px;border:1px solid #355a70;border-radius:12px;background:#102a3c;cursor:grab;transition:border-color .18s,transform .18s,opacity .18s}
+.studio-scene-card:active{cursor:grabbing}
+.studio-scene-card.is-dragging-over{border-color:#73e2d9;transform:translateY(-2px);box-shadow:0 0 0 2px #73e2d933}
+.studio-scene-thumb{display:grid;place-items:center;width:100%;height:78px;overflow:hidden;border-radius:8px;background:#071522;color:#78dcd5}
+.studio-scene-thumb img,.studio-scene-thumb video{width:100%;height:100%;object-fit:cover}
+.studio-scene-card strong{display:block;margin-top:8px;color:#edfaff;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.studio-scene-card small{display:block;margin-top:3px;color:#9bb7c7;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.studio-timeline-empty{grid-column:1/-1;margin:0;padding:16px;border:1px dashed #355a70;border-radius:10px;color:#8faaba;font-size:11px;text-align:center}
+.studio-workspace .studio-render-panel{background:linear-gradient(145deg,#102a3e,#091827);border-color:#4c7388}
+.studio-workspace .studio-render-panel h3{color:#f4ffff;font-size:18px;letter-spacing:-.02em}
+.studio-workspace .studio-render-panel video{border:1px solid #4a7185;box-shadow:0 16px 34px #0007}
+.studio-workspace .studio-capabilities>div{border-radius:14px;border:1px solid #2c5066;background:linear-gradient(145deg,#102b40,#0a1c2b);padding:16px}
+.studio-workspace .studio-social-card{border-radius:14px;border:1px solid #31556c;background:linear-gradient(145deg,#112d42,#0a1b2a)}
+.studio-workspace .studio-disclaimer{border-left:3px solid #c49b5a;padding:10px 12px;background:#081827;border-radius:0 9px 9px 0}
 .studio-workspace-head h2{margin:8px 0;font-size:25px;color:#fff}
 .studio-workspace-head p{margin:0;color:#a9bfce;font-size:13px;line-height:1.6}
 .studio-beta-label{font-size:10px;letter-spacing:1px;color:#f0c879;border:1px solid #806b3c;border-radius:20px;padding:8px 11px}
@@ -713,7 +748,10 @@ body.module-workspace-mode .studio-workspace.hidden{
 
 /* Dr.Vas platform presentation */
 .modules-heading-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.presentation-open-button{background:#153c4b;color:#d8fffb;border:1px solid #39777b;padding:10px 14px;font-size:12px}
+.presentation-open-button,.hero-presentation-button{background:linear-gradient(135deg,#ff343b 0%,#e30d24 100%)!important;color:#090909!important;border:2px solid #050505!important;border-radius:12px;padding:11px 17px;font-size:12px;font-weight:950;letter-spacing:.045em;text-transform:uppercase;box-shadow:0 7px 0 #050505,0 13px 26px #0006;transition:transform .18s ease,box-shadow .18s ease,filter .18s ease}
+.presentation-open-button:hover,.hero-presentation-button:hover{filter:brightness(1.08);transform:translateY(-2px);box-shadow:0 9px 0 #050505,0 18px 30px #0007}
+.presentation-open-button:active,.hero-presentation-button:active{transform:translateY(3px);box-shadow:0 3px 0 #050505,0 7px 14px #0006}
+.presentation-open-button:focus-visible,.hero-presentation-button:focus-visible{outline:3px solid #fff;outline-offset:4px}
 .hero-presentation-button{display:inline-flex;align-items:center;gap:8px;margin:0 0 10px;padding:11px 16px;box-shadow:0 8px 24px #0004}
 body.presentation-open{overflow:hidden!important}
 .drvas-presentation{position:fixed;z-index:10000;left:50%;top:50%;transform:translate(-50%,-48%) scale(.97);width:min(940px,calc(100vw - 28px));max-height:calc(100dvh - 28px);overflow-y:auto;margin:0;padding:24px;background:linear-gradient(145deg,#102b40,#091827);border:1px solid #3a7184;border-radius:22px;box-shadow:0 0 0 100vmax rgba(1,7,15,.84),0 22px 70px #0009;opacity:0;transition:opacity .32s ease,transform .32s cubic-bezier(.2,.8,.2,1)}
@@ -726,9 +764,40 @@ body.presentation-open{overflow:hidden!important}
 .presentation-progress{display:flex;align-items:center;gap:12px;margin:18px 0 10px;color:#8fb8c8;font-size:11px;font-weight:800}
 .presentation-progress-track{height:5px;flex:1;overflow:hidden;border-radius:99px;background:#18374a}
 .presentation-progress-track span{display:block;width:0;height:100%;border-radius:99px;background:linear-gradient(90deg,#54d8cf,#9ce8d8);transition:width .45s ease}
-.presentation-scene{display:flex;align-items:center;gap:20px;padding:18px;margin:12px 0 16px;border:1px solid #31596e;border-radius:18px;background:radial-gradient(ellipse at 18% 10%,#1a5261,#102b40 55%,#0b1d2e);min-height:150px}
+.presentation-scene{display:flex;align-items:center;gap:20px;padding:18px;margin:12px 0 16px;border:1px solid #31596e;border-radius:18px;background-image:radial-gradient(ellipse at 18% 10%,#1a5261,#102b40 55%,#0b1d2e),linear-gradient(125deg,#0b1d2e,#174356,#0b1d2e);background-size:100% 100%,220% 220%;background-position:center,0% 50%;animation:presentationStageDrift 14s ease-in-out infinite alternate;min-height:150px;overflow:hidden}
+@keyframes presentationStageDrift{to{background-position:center,100% 50%}}
+#presentationPresenter.scene-enter{animation:presentationSceneEnter .48s cubic-bezier(.2,.8,.2,1) both}
+@keyframes presentationSceneEnter{from{opacity:0;transform:translateY(13px) scale(.965);filter:blur(4px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
 .presentation-presenter{display:flex;align-items:center;gap:14px;min-width:245px;position:relative}
-.presentation-avatar{width:94px;height:94px;flex:0 0 94px;display:grid;place-items:center;border-radius:50%;font-size:42px;font-weight:900;color:#efffff;border:2px solid #79e4d9;background:radial-gradient(circle at 35% 25%,#4baeb1,#16445a 72%);box-shadow:0 0 0 7px #54d8cf14,0 0 30px #54d8cf25;transition:transform .25s,box-shadow .25s}
+.presentation-avatar{width:116px;height:116px;flex:0 0 116px;position:relative;display:grid;place-items:center;overflow:visible;border-radius:50%;color:#efffff;border:2px solid #79e4d9;background:radial-gradient(circle at 35% 25%,#4baeb1,#16445a 72%);box-shadow:0 0 0 7px #54d8cf14,0 0 30px #54d8cf25;transition:transform .35s,box-shadow .35s}
+.presenter-character-art{position:relative;z-index:2;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 8px 10px #0005)}
+.character-orbit{position:absolute;inset:8px;border:1px solid #8cebe5aa;border-radius:50%;pointer-events:none}
+.character-orbit-one{animation:characterOrbit 9s linear infinite}
+.character-orbit-two{inset:-5px;border-style:dashed;opacity:.35;animation:characterOrbit 16s linear infinite reverse}
+@keyframes characterOrbit{to{transform:rotate(360deg)}}
+.character-status-light{position:absolute;z-index:3;right:5px;bottom:12px;width:13px;height:13px;border-radius:50%;background:#6df0c4;border:2px solid #092033;box-shadow:0 0 13px #6df0c4}
+.character-hair-long,.character-glasses,.character-earrings{display:none}
+.presentation-avatar-jan .character-glasses{display:block}
+.presentation-avatar-sarah .character-hair-long,.presentation-avatar-sarah .character-earrings{display:block}
+.presentation-avatar-sarah .character-hair-long{fill:#59314c}
+.character-mouth{transform-origin:90px 108px}
+.character-blink{opacity:0;transform-origin:center;animation:characterBlink 5.2s infinite}
+@keyframes characterBlink{0%,46%,49%,100%{opacity:0}47%,48%{opacity:1}}
+.presentation-avatar-jan{border-color:#8ac9df;background:radial-gradient(circle at 35% 25%,#4c8fa9,#20364d 72%)}
+.presentation-avatar-jan .character-hair{fill:#4d3428}
+.presentation-avatar-jan .character-hair-detail{fill:#9a7258}
+.presentation-avatar-sarah{border-color:#e4b6e2;background:radial-gradient(circle at 35% 25%,#bd83bb,#4a345d 72%)}
+.presentation-avatar-sarah .character-hair{fill:#59314c}
+.presentation-avatar-sarah .character-hair-detail{fill:#bd7da6}
+.presentation-avatar-sarah .character-shoulders{fill:#d6b3d8}
+.presentation-presenter.is-animated .presentation-avatar{animation:presentationAvatarIdle 2.8s ease-in-out infinite alternate}
+@keyframes presentationAvatarIdle{from{transform:translateY(0) scale(1)}to{transform:translateY(-3px) scale(1.025)}}
+.presentation-presenter.is-speaking .presentation-avatar{animation:presentationAvatarTalk .42s ease-in-out infinite alternate}
+.presentation-presenter.is-speaking .character-mouth{animation:characterMouth .18s ease-in-out infinite alternate}
+.presentation-presenter.is-speaking .presenter-character-art{animation:characterTalk .42s ease-in-out infinite alternate}
+@keyframes characterMouth{from{transform:scaleY(.35)}to{transform:scaleY(1.45)}}
+@keyframes characterTalk{from{transform:translateY(0) rotate(-1deg)}to{transform:translateY(-3px) rotate(1deg)}}
+@media(prefers-reduced-motion:reduce){.character-orbit,.character-blink,.presentation-presenter.is-speaking .presentation-avatar,.presentation-presenter.is-speaking .character-mouth,.presentation-presenter.is-speaking .presenter-character-art,.presentation-presenter.is-animated .presentation-avatar,.presentation-scene,#presentationPresenter.scene-enter{animation:none!important}}
 .presentation-avatar-jan{border-color:#8ac9df;background:radial-gradient(circle at 35% 25%,#4c8fa9,#20364d 72%);box-shadow:0 0 0 7px #74b8df14,0 0 30px #74b8df25}
 .presentation-avatar-sarah{border-color:#e4b6e2;background:radial-gradient(circle at 35% 25%,#bd83bb,#4a345d 72%);box-shadow:0 0 0 7px #d9a5db14,0 0 30px #d9a5db25}
 .presentation-presenter.is-speaking .presentation-avatar{animation:presentationAvatarTalk .42s ease-in-out infinite alternate}
@@ -760,6 +829,39 @@ body.presentation-open{overflow:hidden!important}
 @media(max-width:480px){.presentation-module-grid{grid-template-columns:1fr}.modules-heading-actions{align-items:flex-start;flex-direction:column}.presentation-presenter-copy strong{font-size:18px}.presentation-speaking-indicator{margin-left:auto}}
 @media(prefers-reduced-motion:reduce){.drvas-presentation,.drvas-presentation:not(.hidden),.presentation-progress-track span,.presentation-avatar,.presentation-module{animation:none!important;transition:none!important}}
 
+.chat-file-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:10px 12px;margin-top:8px;border:1px solid #29465b;border-radius:13px;background:#091827}
+.chat-file-button{display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid #477185;border-radius:10px;color:#d8f4f1;background:#123044;font-size:13px;font-weight:700;cursor:pointer}
+.chat-file-consent{display:flex;align-items:flex-start;gap:7px;flex:1 1 260px;color:#a9bfce;font-size:11px;line-height:1.45}
+.chat-file-consent[hidden]{display:none!important}
+.chat-file-consent input{flex:0 0 auto;width:16px;height:16px;margin:1px 0 0;accent-color:#62e5dc}
+.pending-chat-files,.conversation-attachments{display:flex;flex-wrap:wrap;gap:8px;padding:8px 0}
+.pending-chat-files[hidden],.conversation-attachments[hidden]{display:none!important}
+.chat-file-chip,.conversation-file-link{display:inline-flex;align-items:center;gap:8px;max-width:100%;padding:8px 10px;border:1px solid #31566a;border-radius:10px;background:#0c2233;color:#d8e8ef;font-size:12px;overflow-wrap:anywhere}
+.chat-file-chip button{border:0;background:transparent;color:#ffb8b8;padding:0 3px;cursor:pointer;font-size:16px}
+.conversation-attachments{border-top:1px solid #29465b;margin-top:8px}
+.conversation-attachments:empty{display:none}
+.conversation-attachments-title{flex-basis:100%;color:#91b5c5;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.msg-attachment-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.msg-attachment{padding:5px 8px;border-radius:8px;background:#0b2636;border:1px solid #31566a;color:#bfe8e5;font-size:11px;overflow-wrap:anywhere}
+#chatFileInput{display:none}
+@media(max-width:560px){.chat-file-toolbar{align-items:flex-start}.chat-file-consent{flex-basis:100%}.chat-file-button{min-height:42px}}
+
+
+@media(max-width:680px){
+ .drvas-presentation{width:calc(100vw - 16px);max-height:calc(100dvh - 16px);padding:16px;border-radius:16px}
+ .drvas-presentation-head h2{font-size:22px}
+ .presentation-scene{flex-direction:column;align-items:stretch;gap:12px;padding:14px}
+ .presentation-presenter{min-width:0;width:100%;flex-wrap:wrap;gap:10px}
+ .presentation-avatar{width:90px;height:90px;flex-basis:90px}
+ .presentation-presenter-copy strong{font-size:17px}
+ .presentation-speaking-copy{font-size:13px;line-height:1.65}
+ .presentation-module-grid{grid-template-columns:1fr;gap:9px}
+ .presentation-module{padding:13px}
+ .presentation-audio-controls{align-items:stretch}
+ .presentation-audio-controls button{flex:1 1 100%}
+ .studio-scene-timeline{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:360px){.drvas-presentation{padding:12px}.presentation-avatar{width:82px;height:82px;flex-basis:82px}.presentation-presenter-copy strong{font-size:15px}}
 </style>
 </head>
 
@@ -815,7 +917,24 @@ body.presentation-open{overflow:hidden!important}
     <div class="presentation-progress" aria-label="Progresul prezentării"><span id="presentationStepLabel">1 / 3</span><div class="presentation-progress-track"><span id="presentationProgressBar"></span></div></div>
     <div class="presentation-scene" id="presentationScene">
      <div class="presentation-presenter" id="presentationPresenter">
-      <div class="presentation-avatar presentation-avatar-drvas" id="presentationAvatar" aria-hidden="true">✦</div>
+      <div class="presentation-avatar presentation-avatar-drvas" id="presentationAvatar" aria-hidden="true">
+       <span class="character-orbit character-orbit-one"></span><span class="character-orbit character-orbit-two"></span>
+       <svg class="presenter-character-art" viewBox="0 0 180 180" role="presentation" aria-hidden="true">
+        <defs><linearGradient id="presenterSkin" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe0c6"/><stop offset="1" stop-color="#c98d72"/></linearGradient><linearGradient id="presenterCoat" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8f4f5"/><stop offset="1" stop-color="#8db5c4"/></linearGradient></defs>
+        <path class="character-shoulders" d="M18 180c4-39 28-57 72-57s68 18 72 57" fill="url(#presenterCoat)"/>
+        <path class="character-hair-long" d="M42 63c-12 31-5 85 17 111l16-7-8-67 46-1-7 68 17 7c20-26 26-79 10-111-22 14-69 14-91 0z" fill="#59314c"/>
+        <path d="M73 119h34v27H73z" fill="url(#presenterSkin)"/>
+        <ellipse cx="90" cy="79" rx="48" ry="55" fill="url(#presenterSkin)"/>
+        <path class="character-hair" d="M42 76C35 30 58 12 94 15c34 2 51 24 44 62-8-16-15-26-27-31-20 13-40 15-69 9z" fill="#26384b"/>
+        <path class="character-hair-detail" d="M47 59c12-28 29-36 53-36 15 0 28 7 36 20-22-9-46-4-62 7-9 6-18 9-27 9z" fill="#526d82"/>
+        <ellipse cx="70" cy="82" rx="5" ry="4" fill="#23384a"/><ellipse cx="110" cy="82" rx="5" ry="4" fill="#23384a"/>
+        <g class="character-glasses" fill="none" stroke="#c6e4ed" stroke-width="3"><rect x="54" y="70" width="32" height="24" rx="9"/><rect x="94" y="70" width="32" height="24" rx="9"/><path d="M86 80h8"/></g>
+        <g class="character-earrings" fill="#f2d38c" stroke="#fff0c6" stroke-width="1"><circle cx="43" cy="105" r="3.5"/><circle cx="137" cy="105" r="3.5"/></g>
+        <path class="character-blink" d="M63 82h14M103 82h14" fill="none" stroke="#23384a" stroke-width="4" stroke-linecap="round"/>
+        <path d="M84 94q6 5 12 0" fill="none" stroke="#a96f62" stroke-width="3" stroke-linecap="round"/><path class="character-mouth" d="M76 108q14 11 28 0" fill="none" stroke="#874d50" stroke-width="4" stroke-linecap="round"/>
+        <path d="M55 72q14-9 27-2M99 70q14-7 27 2" fill="none" stroke="#293d50" stroke-width="4" stroke-linecap="round"/><path d="M70 143l20 17 20-17" fill="none" stroke="#4c7d92" stroke-width="5"/>
+       </svg><span class="character-status-light"></span>
+      </div>
       <div class="presentation-presenter-copy"><strong id="presentationSpeakerName">Dr.Vas</strong><span id="presentationSpeakerRole">Asistentul principal</span><small id="presentationSpeakerModules">Dr.Vas Free · Dr.Vas Health</small></div>
       <span class="presentation-speaking-indicator" id="presentationSpeakingIndicator" aria-hidden="true"><i></i><i></i><i></i></span>
      </div>
@@ -897,16 +1016,17 @@ body.presentation-open{overflow:hidden!important}
      <div class="studio-production-controls">
       <label class="studio-check-label"><input id="studioSubtitles" type="checkbox" checked> Subtitrări sincronizate</label>
       <label>Voice-over
-       <select id="studioNarration"><option value="founder_voice_pending">Vocea fondatorului VPC — după activarea clonei</option><option value="ai_narrator">Narator AI standard</option><option value="none">Fără voice-over</option></select>
+       <select id="studioNarration"><option value="founder_voice_pending">Vocea fondatorului VPC — în configurare</option><option value="ai_narrator">Narator AI standard</option><option value="none">Fără voice-over</option></select>
       </label>
      </div>
-     <p class="studio-production-note">Standard social: vertical 9:16, export țintă 1080 × 1920, hook imediat, subtitrări în zona sigură și branding care nu acoperă comenzile TikTok. Exportul MP4 folosește un motor de randare conectat la server.</p>
+     <p class="studio-production-note">Standard social: vertical 9:16, export țintă 1080 × 1920, hook imediat, subtitrări în zona sigură și branding care nu acoperă comenzile TikTok. Exportul MP4 este disponibil în pilotul de administrator după configurarea motorului de randare.</p>
     </section>
     <section class="studio-project-manager studio-render-panel" aria-labelledby="studioRenderTitle">
      <h3 id="studioRenderTitle">🎞 Studio Render — Export MP4 1080 × 1920</h3>
      <p>Încarcă până la 8 imagini pentru scenele clipului sau creează un teaser tipografic. Fișierele sunt păstrate privat în contul tău. Watermark-ul MADE BY VPC este adăugat de server pe fiecare cadru.</p>
      <div class="studio-form-grid">
-      <label class="studio-idea-label">Imagini pentru scene (opțional)<input id="studioSceneImages" type="file" accept="image/jpeg,image/png,image/webp" multiple></label>
+      <label class="studio-idea-label">Imagini sau video pentru scene (opțional)<input id="studioSceneImages" type="file" accept="image/jpeg,image/png,image/webp,video/mp4" multiple onchange="previewStudioSceneTimeline(this.files)"><small>JPG, PNG, WebP sau MP4 · maximum 8 materiale · imagini 8 MB fiecare · video 40 MB fiecare. Ordinea de aici stabilește ordinea scenelor în export.</small></label>
+      <div class="studio-scene-timeline-wrap"><div class="studio-scene-timeline-heading"><strong>Timeline de producție</strong><span id="studioSceneTimelineCount">0 scene</span></div><div id="studioSceneTimeline" class="studio-scene-timeline" aria-live="polite"><p class="studio-timeline-empty">Adaugă imagini sau clipuri MP4 pentru a construi timeline-ul. Poți trage scenele pentru a le reordona.</p></div></div>
       <label class="studio-idea-label">Voice-over / muzică (opțional)<input id="studioSceneAudio" type="file" accept="audio/mpeg,audio/wav,audio/mp4,audio/aac"></label>
       <label>Durata fiecărei scene<select id="studioSceneDuration"><option value="3">3 secunde</option><option value="4" selected>4 secunde</option><option value="5">5 secunde</option><option value="6">6 secunde</option></select></label>
       <label class="studio-idea-label">Texte pentru scene<textarea id="studioSceneCaptions" rows="3" maxlength="3000" placeholder="Un text pe fiecare linie, în ordinea scenelor. Aceste texte apar ca subtitrări pe video. Dacă nu ai imagini, Studio creează un teaser tipografic."></textarea></label>
@@ -1029,7 +1149,7 @@ body.presentation-open{overflow:hidden!important}
      </div>
      <p class="studio-disclaimer">După conectare, fiecare utilizator își va putea autoriza propriile conturi. Programarea și publicarea vor fi activate numai pentru funcțiile permise de Meta și TikTok și după aprobarea aplicațiilor Dr.Vas.</p>
     </section>
-    <p class="studio-disclaimer">În versiunea pilot, Studio generează materiale creative text și instrucțiuni de producție. Randarea video, publicarea automată și abonamentele publice nu sunt încă active.</p>
+    <p class="studio-disclaimer">În pilotul actual, Studio oferă instrumente creative, proiecte private și randare MP4 pentru administrator, dacă motorul video este configurat. Publicarea automată pe rețele sociale și abonamentele publice nu sunt încă active.</p>
   </section>
 
 
@@ -1196,6 +1316,13 @@ body.presentation-open{overflow:hidden!important}
    </label>
    <button type="button" id="privateProfileSaveButton" class="profile-button" onclick="savePrivateProfile()">Aplică opțiunea de confidențialitate</button>
    <div id="privateProfileMessage" role="status" aria-live="polite"></div>
+  </details>
+  <details id="fileProcessingPrivacyPanel" class="private-profile-panel">
+   <summary>Consimțământ pentru fișiere și documente</summary>
+   <p>Poți retrage oricând acordul pentru procesarea fișierelor. Retragerea oprește folosirea viitoare a funcției de analiză a fișierelor, inclusiv în Dr.Vas Health.</p>
+   <div id="fileProcessingConsentStatus" role="status" aria-live="polite">Se verifică starea acordului...</div>
+   <button type="button" id="revokeFileProcessingConsentButton" class="profile-button" onclick="revokeFileProcessingConsent()" disabled>Retrage acordul pentru fișiere</button>
+   <small>Retragerea nu șterge automat fișierele încărcate anterior. Pentru ștergerea lor, folosește ștergerea conversației sau a istoricului.</small>
   </details>
   <button id="profileButton" class="profile-button" onclick="saveProfile()">Salvează profilul</button>
   <div id="profileMessage"></div>
@@ -1495,6 +1622,14 @@ body.presentation-open{overflow:hidden!important}
     <div id="chat" role="log" aria-live="polite" aria-relevant="additions text" aria-label="Conversația cu Dr.Vas">
      <div class="msg bot">Bun venit la Dr.Vas AI! Cu ce te pot ajuta astăzi?</div>
     </div>
+    <div id="conversationAttachments" class="conversation-attachments" aria-label="Fișierele acestei conversații"></div>
+    <div id="pendingChatFiles" class="pending-chat-files" hidden></div>
+    <div class="chat-file-toolbar">
+     <label class="chat-file-button" for="chatFileInput">📎 Atașează fișiere</label>
+     <input id="chatFileInput" type="file" accept="image/jpeg,image/png,image/webp,application/pdf,text/plain,text/csv,.jpg,.jpeg,.png,.webp,.pdf,.txt,.csv" multiple>
+     <label id="fileProcessingConsentWrap" class="chat-file-consent" hidden><input id="fileProcessingConsent" type="checkbox"> Sunt de acord ca fișierele selectate să fie stocate privat în Dr.Vas și transmise către Google Gemini pentru analiză. Pot elimina datele de identificare înainte de încărcare.</label>
+     <label id="healthDataProcessingConsentWrap" class="chat-file-consent" hidden><input id="healthDataProcessingConsent" type="checkbox"> Dr.Vas Health poate procesa date medicale sensibile. Înțeleg că răspunsul este informativ, nu un diagnostic, și consimt explicit la această prelucrare.</label>
+    </div>
     <div class="input-area">
      <textarea id="question" aria-label="Mesaj pentru Dr.Vas" placeholder="Scrie mesajul tău aici..." rows="1" wrap="soft" maxlength="12000" autocomplete="off"></textarea>
      <button id="sendButton" onclick="send()">Trimite ➤</button>
@@ -1757,6 +1892,19 @@ const DRVAS_PRESENTER_LINES={
 let drvasPresentationRun=0;
 let drvasPresentationQueue=[];
 let drvasPresentationIndex=0;
+let drvasPresentationVisualTimer=null;
+function startVisualDrvasPresentation(run,index=0,reason=""){
+ if(run!==drvasPresentationRun)return;
+ if(index>=3){
+  const status=el("presentationAudioStatus");if(status)status.textContent="Prezentarea vizuală animată s-a încheiat. Audio nu a pornit: "+reason;
+  return;
+ }
+ updateDrvasPresentationScene(index);
+ const presenter=el("presentationPresenter");if(presenter)presenter.classList.add("is-animated");
+ const speaker=DRVAS_PRESENTERS[["drvas","jan","sarah"][index]];
+ const status=el("presentationAudioStatus");if(status)status.textContent="Prezentare vizuală animată · "+speaker.name+". "+reason;
+ drvasPresentationVisualTimer=window.setTimeout(()=>startVisualDrvasPresentation(run,index+1,reason),6500);
+}
 function renderDrvasPresentation(){
  const data=DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro;
  const set=(id,value)=>{const node=el(id);if(node)node.textContent=value};
@@ -1768,8 +1916,8 @@ function renderDrvasPresentation(){
 function updateDrvasPresentationScene(index){
  const key=["drvas","jan","sarah"][index],speaker=DRVAS_PRESENTERS[key],data=DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro;
  const presenter=el("presentationPresenter"),avatar=el("presentationAvatar"),grid=el("presentationModuleGrid");
- if(presenter)presenter.classList.remove("is-speaking");
- if(avatar){avatar.className="presentation-avatar presentation-avatar-"+key;avatar.textContent=speaker.symbol;}
+ if(presenter){presenter.classList.remove("is-speaking","is-animated","scene-enter");void presenter.offsetWidth;presenter.classList.add("scene-enter");}
+ if(avatar){avatar.className="presentation-avatar presentation-avatar-"+key;avatar.dataset.presenter=key;}
  const set=(id,value)=>{const node=el(id);if(node)node.textContent=value};
  set("presentationSpeakerName",speaker.name);set("presentationSpeakerRole",speaker.role[currentLanguage]||speaker.role.ro);
  const moduleNames=["Dr.Vas Free","Dr.Vas Health","Dr.Vas Studio","Dr.Vas Academy","Dr.Vas Commerce","Dr.Vas Business"];
@@ -1798,22 +1946,83 @@ function finishDrvasPresentation(){
 }
 function stopDrvasPresentationSpeech(){
  drvasPresentationRun++;
+ if(drvasPresentationVisualTimer)window.clearTimeout(drvasPresentationVisualTimer);
+ drvasPresentationVisualTimer=null;
  if("speechSynthesis" in window)window.speechSynthesis.cancel();
- const presenter=el("presentationPresenter");if(presenter)presenter.classList.remove("is-speaking");
+ const presenter=el("presentationPresenter");if(presenter)presenter.classList.remove("is-speaking","is-animated");
  const stop=el("presentationStopButton");if(stop)stop.disabled=true;
  const play=el("presentationPlayButton");if(play)play.disabled=false;
  const status=el("presentationAudioStatus");if(status)status.textContent=(DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro).ready;
 }
-function speakDrvasPresentation(){
+function prepareDrvasPresentationSpeechText(value){
+ // Keep the visible brand unchanged; expand the abbreviation only in the spoken narration.
+ return String(value||"").replace(/\bDr\.(?=[A-Z])/g,"Doctor ");
+}
+function getDrvasPresentationVoiceProfile(voices,locale){
+ const lang=(locale||"ro-RO").slice(0,2).toLowerCase();
+ const local=voices.filter(v=>(v.lang||"").toLowerCase().startsWith(lang));
+ const preferredPool=[...local,...voices.filter(v=>!local.includes(v))];
+ const femaleHints=/\b(female|woman|zira|alina|jenny|aria|samantha|victoria|karen|moira|tessa|fiona|ava|serena|hazel|susan|sonia|heera|natasha|linda|sara|sarah|catherine|olivia|emma|amelia|libby|michelle|eva|laura|lucia|paulina|helena|ana|ioana)\b/i;
+ const maleHints=/\b(male|man|andrei|david|mark|daniel|james| george|guy|ryan|thomas|alex|peter|jorge|juan|luca|paul|matthew|christopher|fred|aaron|liam|enrique|stefan|carlos)\b/i;
+ const score=(voice,pattern)=>pattern.test((voice.name||"")+" "+(voice.voiceURI||""))?10:0;
+ const byName=(a,b)=>String(a.name||a.voiceURI||"").localeCompare(String(b.name||b.voiceURI||""));
+ const localeFirst=(a,b)=>(local.includes(a)?0:1)-(local.includes(b)?0:1)||byName(a,b);
+ const female=preferredPool.filter(v=>score(v,femaleHints)>0).sort(localeFirst);
+ const male=preferredPool.filter(v=>score(v,maleHints)>0).sort(localeFirst);
+ const used=new Set();
+ const take=list=>{
+  const selected=list.find(v=>!used.has(v.voiceURI||v.name));
+  if(!selected)return null;
+  used.add(selected.voiceURI||selected.name);
+  return selected;
+ };
+ // Assign only explicitly matched voices, in a stable order. Never use a random browser default.
+ const sarah=take(female);
+ const drvas=take(male);
+ const jan=take(male);
+ return {drvas,jan,sarah,hasFemale:!!sarah,hasAllDistinct:!!(drvas&&jan&&sarah)};
+}
+function getDrvasPresentationVoices(){
+ const synth=window.speechSynthesis;
+ const initial=synth.getVoices?.()||[];
+ if(initial.length)return Promise.resolve(initial);
+ return new Promise(resolve=>{
+  let settled=false;
+  const finish=()=>{
+   if(settled)return;
+   settled=true;
+   synth.removeEventListener?.("voiceschanged",finish);
+   resolve(synth.getVoices?.()||[]);
+  };
+  synth.addEventListener?.("voiceschanged",finish,{once:true});
+  window.setTimeout(finish,1200);
+ });
+}
+async function speakDrvasPresentation(){
  const data=DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro;
- if(!("speechSynthesis" in window)||!("SpeechSynthesisUtterance" in window)){
-  const status=el("presentationAudioStatus");if(status)status.textContent=data.unavailable;
-  el("presentationContinueButton")?.classList.remove("hidden");return;
- }
  stopDrvasPresentationSpeech();
  const run=drvasPresentationRun,lines=DRVAS_PRESENTER_LINES[currentLanguage]||DRVAS_PRESENTER_LINES.ro;
- drvasPresentationQueue=lines.slice();drvasPresentationIndex=0;
+ if(!("speechSynthesis" in window)||!("SpeechSynthesisUtterance" in window)){
+  el("presentationContinueButton")?.classList.remove("hidden");
+  startVisualDrvasPresentation(run,0,data.unavailable);
+  return;
+ }
  const locales={ro:"ro-RO",en:"en-GB",it:"it-IT",tr:"tr-TR",de:"de-DE",fr:"fr-FR",es:"es-ES",ru:"ru-RU"};
+ const lang=locales[currentLanguage]||"ro-RO";
+ const voices=await getDrvasPresentationVoices();
+ if(run!==drvasPresentationRun)return;
+ drvasPresentationQueue=lines.slice();drvasPresentationIndex=0;
+ const voiceProfile=getDrvasPresentationVoiceProfile(voices,lang);
+ const voiceStatus=el("presentationAudioStatus");
+ if(!voiceProfile.hasAllDistinct){
+  const missing=[!voiceProfile.drvas?"Dr.Vas (voce masculină)":"",!voiceProfile.jan?"Dr.Jan (a doua voce masculină distinctă)":"",!voiceProfile.sarah?"Sarah (voce feminină)":""].filter(Boolean).join(", ");
+  const reason="Audio este oprit pentru a nu folosi voci aleatorii. Instalează în Windows trei voci distincte pentru limba selectată: "+missing+".";
+  if(voiceStatus)voiceStatus.textContent=reason;
+  const stop=el("presentationStopButton");if(stop)stop.disabled=true;
+  const play=el("presentationPlayButton");if(play)play.disabled=false;
+  startVisualDrvasPresentation(run,0,reason);
+  return;
+ }
  const speakNext=()=>{
   if(run!==drvasPresentationRun)return;
   if(drvasPresentationIndex>=drvasPresentationQueue.length){
@@ -1822,11 +2031,9 @@ function speakDrvasPresentation(){
   }
   const index=drvasPresentationIndex,key=["drvas","jan","sarah"][index],speaker=DRVAS_PRESENTERS[key];
   updateDrvasPresentationScene(index);
-  const utterance=new SpeechSynthesisUtterance(drvasPresentationQueue[index]);
-  const lang=locales[currentLanguage]||"ro-RO",voices=window.speechSynthesis.getVoices?.()||[];
-  const matching=voices.filter(v=>(v.lang||"").toLowerCase().startsWith(lang.slice(0,2)));
-  const candidates=matching.length?matching:voices;
-  if(candidates.length)utterance.voice=candidates[index%candidates.length];
+  const utterance=new SpeechSynthesisUtterance(prepareDrvasPresentationSpeechText(drvasPresentationQueue[index]));
+  const voiceForSpeaker=[voiceProfile.drvas,voiceProfile.jan,voiceProfile.sarah][index];
+  if(voiceForSpeaker)utterance.voice=voiceForSpeaker;
   utterance.lang=lang;utterance.rate=index===2?0.94:0.96;utterance.pitch=speaker.pitch;
   utterance.onstart=()=>{
    if(run!==drvasPresentationRun)return;
@@ -1853,6 +2060,49 @@ function speakDrvasPresentation(){
  };
  speakNext();
 }
+
+Object.assign(UI.en,{
+ "📎 Atașează fișiere":"📎 Attach files",
+ "Sunt de acord ca fișierele selectate să fie stocate privat în Dr.Vas și transmise către Google Gemini pentru analiză. Pot elimina datele de identificare înainte de încărcare.":"I agree that selected files may be stored privately in Dr.Vas and sent to Google Gemini for analysis. I can remove identifying details before uploading.",
+ "Dr.Vas Health poate procesa date medicale sensibile. Înțeleg că răspunsul este informativ, nu un diagnostic, și consimt explicit la această prelucrare.":"Dr.Vas Health may process sensitive health data. I understand the response is informational, not a diagnosis, and I explicitly consent to this processing.",
+ "Fișiere din această conversație":"Files in this conversation","Atașează din nou":"Attach again","Șterge":"Delete"
+});
+Object.assign(UI.it,{
+ "📎 Atașează fișiere":"📎 Allega file",
+ "Sunt de acord ca fișierele selectate să fie stocate privat în Dr.Vas și transmise către Google Gemini pentru analiză. Pot elimina datele de identificare înainte de încărcare.":"Acconsento che i file selezionati siano archiviati privatamente in Dr.Vas e inviati a Google Gemini per l'analisi. Posso rimuovere i dati identificativi prima del caricamento.",
+ "Dr.Vas Health poate procesa date medicale sensibile. Înțeleg că răspunsul este informativ, nu un diagnostic, și consimt explicit la această prelucrare.":"Dr.Vas Health può trattare dati sanitari sensibili. Comprendo che la risposta è informativa, non una diagnosi, e acconsento esplicitamente al trattamento.",
+ "Fișiere din această conversație":"File in questa conversazione","Atașează din nou":"Allega di nuovo","Șterge":"Elimina"
+});
+Object.assign(UI.tr,{
+ "📎 Atașează fișiere":"📎 Dosya ekle",
+ "Sunt de acord ca fișierele selectate să fie stocate privat în Dr.Vas și transmise către Google Gemini pentru analiză. Pot elimina datele de identificare înainte de încărcare.":"Seçilen dosyaların Dr.Vas'ta özel olarak saklanmasını ve analiz için Google Gemini'ye gönderilmesini kabul ediyorum. Yüklemeden önce kimlik bilgilerini kaldırabilirim.",
+ "Dr.Vas Health poate procesa date medicale sensibile. Înțeleg că răspunsul este informativ, nu un diagnostic, și consimt explicit la această prelucrare.":"Dr.Vas Health hassas sağlık verilerini işleyebilir. Yanıtın teşhis değil bilgilendirme amaçlı olduğunu anlıyor ve bu işleme açıkça onay veriyorum.",
+ "Fișiere din această conversație":"Bu konuşmadaki dosyalar","Atașează din nou":"Yeniden ekle","Șterge":"Sil"
+});
+Object.assign(UI.de,{
+ "📎 Atașează fișiere":"📎 Dateien anhängen",
+ "Sunt de acord ca fișierele selectate să fie stocate privat în Dr.Vas și transmise către Google Gemini pentru analiză. Pot elimina datele de identificare înainte de încărcare.":"Ich stimme zu, dass ausgewählte Dateien privat in Dr.Vas gespeichert und zur Analyse an Google Gemini übermittelt werden. Identifizierende Angaben kann ich vor dem Hochladen entfernen.",
+ "Dr.Vas Health poate procesa date medicale sensibile. Înțeleg că răspunsul este informativ, nu un diagnostic, și consimt explicit la această prelucrare.":"Dr.Vas Health kann sensible Gesundheitsdaten verarbeiten. Ich verstehe, dass die Antwort informativ und keine Diagnose ist, und stimme der Verarbeitung ausdrücklich zu.",
+ "Fișiere din această conversație":"Dateien in dieser Unterhaltung","Atașează din nou":"Erneut anhängen","Șterge":"Löschen"
+});
+Object.assign(UI.fr,{
+ "📎 Atașează fișiere":"📎 Joindre des fichiers",
+ "Sunt de acord ca fișierele selectate să fie stocate privat în Dr.Vas și transmise către Google Gemini pentru analiză. Pot elimina datele de identificare înainte de încărcare.":"J'accepte que les fichiers sélectionnés soient stockés de manière privée dans Dr.Vas et transmis à Google Gemini pour analyse. Je peux retirer les éléments identifiants avant l'envoi.",
+ "Dr.Vas Health poate procesa date medicale sensibile. Înțeleg că răspunsul este informativ, nu un diagnostic, și consimt explicit la această prelucrare.":"Dr.Vas Health peut traiter des données de santé sensibles. Je comprends que la réponse est informative et non un diagnostic, et je consens explicitement à ce traitement.",
+ "Fișiere din această conversație":"Fichiers de cette conversation","Atașează din nou":"Joindre à nouveau","Șterge":"Supprimer"
+});
+Object.assign(UI.es,{
+ "📎 Atașează fișiere":"📎 Adjuntar archivos",
+ "Sunt de acord ca fișierele selectate să fie stocate privat în Dr.Vas și transmise către Google Gemini pentru analiză. Pot elimina datele de identificare înainte de încărcare.":"Acepto que los archivos seleccionados se almacenen de forma privada en Dr.Vas y se envíen a Google Gemini para su análisis. Puedo eliminar los datos identificativos antes de subirlos.",
+ "Dr.Vas Health poate procesa date medicale sensibile. Înțeleg că răspunsul este informativ, nu un diagnostic, și consimt explicit la această prelucrare.":"Dr.Vas Health puede procesar datos de salud sensibles. Entiendo que la respuesta es informativa, no un diagnóstico, y doy mi consentimiento explícito para este tratamiento.",
+ "Fișiere din această conversație":"Archivos de esta conversación","Atașează din nou":"Adjuntar de nuevo","Șterge":"Eliminar"
+});
+Object.assign(UI.ru,{
+ "📎 Atașează fișiere":"📎 Прикрепить файлы",
+ "Sunt de acord ca fișierele selectate să fie stocate privat în Dr.Vas și transmise către Google Gemini pentru analiză. Pot elimina datele de identificare înainte de încărcare.":"Я согласен на приватное хранение выбранных файлов в Dr.Vas и передачу Google Gemini для анализа. Перед загрузкой я могу удалить идентифицирующие данные.",
+ "Dr.Vas Health poate procesa date medicale sensibile. Înțeleg că răspunsul este informativ, nu un diagnostic, și consimt explicit la această prelucrare.":"Dr.Vas Health может обрабатывать конфиденциальные медицинские данные. Я понимаю, что ответ носит информационный характер, а не является диагнозом, и явно соглашаюсь на такую обработку.",
+ "Fișiere din această conversație":"Файлы в этом разговоре","Atașează din nou":"Прикрепить снова","Șterge":"Удалить"
+});
 
 function tr(s){return (UI[currentLanguage]||{})[s]||s}
 function setLocalizedText(target,source){
@@ -2100,7 +2350,9 @@ function selectModule(moduleName,userInitiated=false){
   }
   const selectionStatus=el("moduleSelectionStatus");
   if(selectionStatus){selectionStatus.textContent="";selectionStatus.classList.add("hidden");}
+  if(activeModule!==moduleName)clearPendingChatFiles();
   activeModule=moduleName;
+  renderPendingChatFiles();
   if(currentUser)rememberActiveModule(moduleName);
   el("moduleSelectionSection")?.classList.remove("hidden","auth-flow-mode");
   document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode","history-open");
@@ -2316,6 +2568,8 @@ function prepareSpeechText(value){
   .replace(/__(.*?)__/g,"$1")
   .replace(/_(.*?)_/g,"$1")
   .replace(/[`~]/g,"")
+  .replace(/\bDr\.\s*Vas\b/gi,"Doctor Vas")
+  .replace(/\bDr\.\s*Jan\b/gi,"Doctor Jan")
   .replace(/^\s*[-*+]\s+/gm,"")
   .replace(/^\s*\d+[.)]\s+/gm,"")
   .replace(/[|<>]/g," ")
@@ -2345,7 +2599,9 @@ function waitForSpeechVoices(){
 }
 let founderSpeechAudio=null;
 let founderSpeechObjectUrl=null;
+let founderSpeechRequestId=0;
 async function playFounderVoice(text){
+ const requestId=++founderSpeechRequestId;
  if(activeAssistant!=="drvas"||!currentUser||!text)return false;
  try{
   const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
@@ -2356,6 +2612,7 @@ async function playFounderVoice(text){
   });
   if(!response.ok)return false;
   const audioBlob=await response.blob();
+  if(requestId!==founderSpeechRequestId||!voiceAutoRead||activeAssistant!=="drvas")return true;
   if(!audioBlob.size)return false;
   if(founderSpeechAudio){founderSpeechAudio.pause();founderSpeechAudio.src="";}
   if(founderSpeechObjectUrl)URL.revokeObjectURL(founderSpeechObjectUrl);
@@ -2419,6 +2676,7 @@ function replayLastAnswer(){
  refreshVoiceUi("speaking");
 }
 function stopVoiceOutput(){
+ founderSpeechRequestId++;
  if(window.speechSynthesis)window.speechSynthesis.cancel();
  if(founderSpeechAudio){founderSpeechAudio.pause();founderSpeechAudio.currentTime=0;}
  document.body.classList.remove("assistant-speaking");
@@ -2431,7 +2689,8 @@ function toggleVoiceOutput(){
  }
  voiceAutoRead=!voiceAutoRead;
  logClientEvent(voiceAutoRead?"voice_output_enabled":"voice_output_disabled");
- if(voiceAutoRead&&lastSpokenAnswer)speakDrVas(lastSpokenAnswer);
+ if(!voiceAutoRead)stopVoiceOutput();
+ else if(lastSpokenAnswer)speakDrVas(lastSpokenAnswer);
  refreshVoiceUi(voiceAutoRead?"ready":"off");
 }
 function toggleVoiceInput(){
@@ -2838,24 +3097,89 @@ let currentStudioProjectId=null;
 let currentStudioProjectOutput="";
 let currentStudioRenderJobId=null;
 let currentStudioRenderStoragePath="";
+let studioRenderPollTimer=null;
+let studioRenderPollAttempts=0;
+let studioSceneOrder=[];
+let studioScenePreviewUrls=[];
+let studioSceneDraggingIndex=null;
+function clearStudioSceneTimeline(){
+ studioScenePreviewUrls.forEach(url=>URL.revokeObjectURL(url));
+ studioScenePreviewUrls=[];studioSceneOrder=[];studioSceneDraggingIndex=null;
+ const timeline=el("studioSceneTimeline");if(timeline)timeline.innerHTML='<p class="studio-timeline-empty">Adaugă imagini sau clipuri MP4 pentru a construi timeline-ul. Poți trage scenele pentru a le reordona.</p>';
+ const count=el("studioSceneTimelineCount");if(count)count.textContent="0 scene";
+}
+function previewStudioSceneTimeline(fileList){
+ clearStudioSceneTimeline();
+ const files=Array.from(fileList||[]).slice(0,8);
+ studioSceneOrder=files.map((_,index)=>index);
+ renderStudioSceneTimeline(files);
+}
+function renderStudioSceneTimeline(files){
+ const timeline=el("studioSceneTimeline");if(!timeline)return;
+ timeline.replaceChildren();
+ const count=el("studioSceneTimelineCount");if(count)count.textContent=files.length+" "+(files.length===1?"scenă":"scene");
+ if(!files.length){timeline.innerHTML='<p class="studio-timeline-empty">Adaugă imagini sau clipuri MP4 pentru a construi timeline-ul. Poți trage scenele pentru a le reordona.</p>';return;}
+ studioSceneOrder.forEach((fileIndex,position)=>{
+  const file=files[fileIndex];if(!file)return;
+  const card=document.createElement("article");card.className="studio-scene-card";card.draggable=true;card.dataset.position=String(position);
+  const thumb=document.createElement("div");thumb.className="studio-scene-thumb";
+  const url=URL.createObjectURL(file);studioScenePreviewUrls.push(url);
+  const media=document.createElement(file.type==="video/mp4"?"video":"img");media.src=url;
+  if(media.tagName==="VIDEO"){media.muted=true;media.playsInline=true;media.preload="metadata";}else media.alt="Previzualizare "+file.name;
+  thumb.appendChild(media);
+  const title=document.createElement("strong");title.textContent="Scena "+String(position+1).padStart(2,"0");
+  const detail=document.createElement("small");detail.textContent=file.name+" · "+(file.type==="video/mp4"?"MP4":"Imagine");
+  card.append(thumb,title,detail);
+  card.addEventListener("dragstart",event=>{studioSceneDraggingIndex=position;event.dataTransfer?.setData("text/plain",String(position));if(event.dataTransfer)event.dataTransfer.effectAllowed="move";});
+  card.addEventListener("dragover",event=>{event.preventDefault();card.classList.add("is-dragging-over");});
+  card.addEventListener("dragleave",()=>card.classList.remove("is-dragging-over"));
+  card.addEventListener("drop",event=>{
+   event.preventDefault();card.classList.remove("is-dragging-over");
+   const from=Number(event.dataTransfer?.getData("text/plain")??studioSceneDraggingIndex),to=position;
+   if(Number.isInteger(from)&&from>=0&&from<studioSceneOrder.length&&from!==to){
+    const next=studioSceneOrder.slice();const [moved]=next.splice(from,1);next.splice(to,0,moved);studioSceneOrder=next;
+    studioScenePreviewUrls.forEach(url=>URL.revokeObjectURL(url));studioScenePreviewUrls=[];
+    renderStudioSceneTimeline(files);
+   }
+   studioSceneDraggingIndex=null;
+  });
+  timeline.appendChild(card);
+ });
+}
+function stopStudioRenderPolling(){
+ if(studioRenderPollTimer)window.clearTimeout(studioRenderPollTimer);
+ studioRenderPollTimer=null;studioRenderPollAttempts=0;
+}
+function scheduleStudioRenderPolling(delay=4500){
+ if(studioRenderPollTimer)window.clearTimeout(studioRenderPollTimer);
+ if(studioRenderPollAttempts>=30){studioRenderMessage("Randarea durează mai mult decât estimarea. Poți verifica manual starea fără să pierzi proiectul.");return;}
+ studioRenderPollTimer=window.setTimeout(async()=>{
+  studioRenderPollTimer=null;studioRenderPollAttempts++;
+  await checkStudioRenderStatus();
+ },delay);
+}
 function studioRenderMessage(message,isError=false){
  const node=el("studioRenderStatus");if(node){node.textContent=message;node.style.color=isError?"#ff9d9d":"#9fe5ce";}
 }
 async function renderStudioVideo(){
  if(!currentUser){studioRenderMessage("Conectează-te pentru a crea un video privat.",true);return;}
+ stopStudioRenderPolling();
  const button=el("studioRenderCreateButton");if(button)button.disabled=true;
  try{
-  const files=Array.from(el("studioSceneImages")?.files||[]);
+  const selectedFiles=Array.from(el("studioSceneImages")?.files||[]);
+  if(selectedFiles.length>8)throw new Error("Poți încărca maximum 8 scene (imagini sau clipuri MP4) pentru un video.");
+  const files=studioSceneOrder.length?studioSceneOrder.map(index=>selectedFiles[index]).filter(Boolean):selectedFiles;
   const audioFile=el("studioSceneAudio")?.files?.[0]||null;
-  if(files.length>8)throw new Error("Poți încărca maximum 8 imagini pentru un clip.");
+  if(files.length>8)throw new Error("Poți încărca maximum 8 scene (imagini sau clipuri MP4) pentru un video.");
   if(audioFile){
    const allowedAudio=["audio/mpeg","audio/wav","audio/mp4","audio/aac","audio/x-wav"];
    if(!allowedAudio.includes(audioFile.type))throw new Error("Folosește un fișier audio MP3, WAV, M4A sau AAC.");
    if(audioFile.size>20*1024*1024)throw new Error("Fișierul audio trebuie să aibă maximum 20 MB.");
   }
   for(const file of files){
-   if(!["image/jpeg","image/png","image/webp"].includes(file.type))throw new Error("Folosește doar imagini JPG, PNG sau WebP.");
-   if(file.size>8*1024*1024)throw new Error("Fiecare imagine trebuie să aibă maximum 8 MB.");
+   if(!["image/jpeg","image/png","image/webp","video/mp4"].includes(file.type))throw new Error("Folosește doar imagini JPG, PNG, WebP sau video MP4.");
+   const isVideo=file.type==="video/mp4";
+   if(file.size>(isVideo?40:8)*1024*1024)throw new Error(isVideo?"Fiecare video MP4 trebuie să aibă maximum 40 MB.":"Fiecare imagine trebuie să aibă maximum 8 MB.");
   }
   const sceneSeconds=Math.max(3,Math.min(6,Number(el("studioSceneDuration")?.value)||4));
   const captions=(el("studioSceneCaptions")?.value||"").split(/\r?\n/).map(line=>line.trim());
@@ -2865,13 +3189,14 @@ async function renderStudioVideo(){
    for(let i=0;i<files.length;i++){
     const file=files[i],safeName=file.name.replace(/[^a-z0-9._-]+/gi,"-").slice(0,70)||"scene-image";
     const path=currentUser.id+"/studio-assets/"+makeId()+"-"+safeName;
-    studioRenderMessage("Încarc imaginea "+(i+1)+" din "+files.length+" în spațiul privat…");
+    studioRenderMessage("Încarc scena "+(i+1)+" din "+files.length+" în spațiul privat…");
     const {error:uploadError}=await supabaseClient.storage.from("drvas-media").upload(path,file,{contentType:file.type,upsert:false});
     if(uploadError)throw uploadError;
     const {data:signed,error:signedError}=await supabaseClient.storage.from("drvas-media").createSignedUrl(path,3600);
     if(signedError||!signed?.signedUrl)throw signedError||new Error("Nu am putut crea o adresă temporară pentru imagine.");
     const start=i*sceneSeconds;duration+=sceneSeconds;
-    elements.push({type:"image",name:"Scene-"+(i+1),track:1,time:start,duration:sceneSeconds,source:signed.signedUrl,fit:"cover",width:"100%",height:"100%"});
+    const isVideo=file.type==="video/mp4";
+    elements.push({type:isVideo?"video":"image",name:"Scene-"+(i+1),track:1,time:start,duration:sceneSeconds,source:signed.signedUrl,fit:"cover",width:"100%",height:"100%"});
     if(captions[i]){
      elements.push({type:"text",name:"Caption-"+(i+1),track:2,time:start,duration:sceneSeconds,x:"50%",y:"84%",width:"88%",height:"18%",x_anchor:"50%",y_anchor:"50%",x_alignment:"50%",y_alignment:"50%",text:captions[i].slice(0,300),font_family:"Montserrat",font_weight:700,font_size:"5 vmin",fill_color:"#ffffff",background_color:"rgba(0,0,0,0.58)",background_x_padding:"12%",background_y_padding:"14%"});
     }
@@ -2903,10 +3228,11 @@ async function renderStudioVideo(){
   })});
   const result=await response.json().catch(()=>({}));
   if(!response.ok)throw new Error(result.error||"Nu am putut porni randarea MP4.");
-  currentStudioRenderJobId=result.job_id;currentStudioRenderStoragePath="";
+  currentStudioRenderJobId=result.job_id;currentStudioRenderStoragePath="";studioRenderPollAttempts=0;
   if(el("studioRenderPreview")){el("studioRenderPreview").hidden=true;el("studioRenderPreview").removeAttribute("src");}
   if(el("studioRenderDownload")){el("studioRenderDownload").hidden=true;el("studioRenderDownload").removeAttribute("href");}
-  studioRenderMessage("Randarea a pornit. Stare: "+(result.status||"planned")+". Apasă «Verifică randarea» după câteva momente.");
+  studioRenderMessage("Randarea a pornit. Verificăm automat progresul și te anunțăm când MP4-ul este gata.");
+  scheduleStudioRenderPolling(4500);
   if(!el("studioIdea")?.value?.trim())el("studioIdea").value=files.length?"Randare video din "+files.length+" imagini încărcate în Dr.Vas Studio.":"Teaser tipografic creat în Dr.Vas Studio.";
   await saveStudioProject();
  }catch(error){
@@ -2915,7 +3241,8 @@ async function renderStudioVideo(){
  }finally{if(button)button.disabled=false;}
 }
 async function checkStudioRenderStatus(){
- if(!currentUser||!currentStudioRenderJobId){studioRenderMessage("Nu există o randare activă în acest proiect.",true);return;}
+ if(studioRenderPollTimer){window.clearTimeout(studioRenderPollTimer);studioRenderPollTimer=null;}
+ if(!currentUser||!currentStudioRenderJobId){stopStudioRenderPolling();studioRenderMessage("Nu există o randare activă în acest proiect.",true);return;}
  try{
   const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();if(sessionError)throw sessionError;
   const token=sessionData.session?.access_token;if(!token)throw new Error("Sesiunea a expirat. Conectează-te din nou.");
@@ -2928,20 +3255,28 @@ async function checkStudioRenderStatus(){
    if(error||!signed?.signedUrl)throw error||new Error("Nu am putut crea linkul privat pentru MP4.");
    const preview=el("studioRenderPreview");if(preview){preview.src=signed.signedUrl;preview.hidden=false;preview.load();}
    const download=el("studioRenderDownload");if(download){download.href=signed.signedUrl;download.hidden=false;}
+   stopStudioRenderPolling();
    studioRenderMessage("Video MP4 salvat în spațiul privat Dr.Vas. Linkul de vizualizare expiră după 60 de minute.");
    if(el("studioIdea")?.value?.trim())await saveStudioProject();
   }else if(result.status==="failed"){
+   stopStudioRenderPolling();
    studioRenderMessage(result.error||"Randarea a eșuat. Verifică materialele și creditele.",true);
   }else{
-   studioRenderMessage("Randarea este în curs: "+(result.status||"în așteptare")+". Verifică din nou în câteva momente.");
+   studioRenderMessage("Randarea este în curs: "+(result.status||"în așteptare")+". Verificare automată în câteva secunde…");
+   scheduleStudioRenderPolling(4500);
   }
- }catch(error){console.error("Dr.Vas Studio render status:",error);studioRenderMessage(error.message||"Nu am putut verifica randarea.",true);}
+ }catch(error){
+  console.error("Dr.Vas Studio render status:",error);
+  studioRenderMessage(error.message||"Nu am putut verifica randarea. Reîncercăm automat.",true);
+  if(currentStudioRenderJobId)scheduleStudioRenderPolling(7000);
+ }
 }
 
 function newStudioProject(){
+ stopStudioRenderPolling();
  currentStudioProjectId=null;currentStudioProjectOutput="";currentStudioRenderJobId=null;currentStudioRenderStoragePath="";
  ["studioProjectTitle","studioIdea"].forEach(id=>{el(id).value="";});if(el("studioSubtitles"))el("studioSubtitles").checked=true;if(el("studioNarration"))el("studioNarration").value="founder_voice_pending";
- if(el("studioSceneImages"))el("studioSceneImages").value="";if(el("studioSceneAudio"))el("studioSceneAudio").value="";if(el("studioSceneCaptions"))el("studioSceneCaptions").value="";
+ if(el("studioSceneImages"))el("studioSceneImages").value="";clearStudioSceneTimeline();if(el("studioSceneAudio"))el("studioSceneAudio").value="";if(el("studioSceneCaptions"))el("studioSceneCaptions").value="";
  if(el("studioRenderPreview")){el("studioRenderPreview").pause();el("studioRenderPreview").removeAttribute("src");el("studioRenderPreview").hidden=true;}
  if(el("studioRenderDownload")){el("studioRenderDownload").removeAttribute("href");el("studioRenderDownload").hidden=true;}
  studioRenderMessage("Proiect nou. Creează un brief sau un teaser MP4.");
@@ -2996,6 +3331,7 @@ async function saveStudioProject(){
 }
 async function openStudioProject(){
  if(!currentUser){setStudioProjectStatus("Autentifică-te pentru a deschide proiectele.",true);return;}
+ stopStudioRenderPolling();
  const id=el("studioSavedProjects").value;if(!id){setStudioProjectStatus("Alege mai întâi un proiect salvat.",true);return;}
  try{
   const {data,error}=await supabaseClient.from("drvas_studio_projects").select("id,title,project_type,brief").eq("id",id).eq("user_id",currentUser.id).single();
@@ -3010,6 +3346,7 @@ async function openStudioProject(){
   el("studioDeliverable").value=data.project_type||b.deliverable||"series";
   ["studioIdea","studioPlatform","studioTone","studioAudience","studioDuration","studioAspect","studioNarration"].forEach((key,index)=>{const fields=["idea","platform","tone","audience","duration","aspect","narration"];if(b[fields[index]]!==undefined&&el(key))el(key).value=b[fields[index]];});if(el("studioSubtitles"))el("studioSubtitles").checked=b.subtitles!==false;
   setStudioProjectStatus("Proiect încărcat. Poți continua editarea și îl poți salva din nou.");
+  if(currentStudioRenderJobId&&!currentStudioRenderStoragePath){studioRenderPollAttempts=0;scheduleStudioRenderPolling(1200);}
  }catch(error){setStudioProjectStatus("Nu am putut deschide proiectul: "+error.message,true);}
 }
 async function deleteStudioProject(){
@@ -3057,7 +3394,7 @@ function renderIncomeOpportunities(){
   if(item.next_action){const next=document.createElement("p");next.textContent="Următorul pas: "+item.next_action;card.appendChild(next);}
   const actions=document.createElement("div");actions.className="income-item-actions";
   const edit=document.createElement("button");edit.type="button";edit.textContent="Editează";edit.addEventListener("click",()=>editIncomeOpportunity(item.id));actions.appendChild(edit);
-  const remove=document.createElement("button");remove.type="button";remove.textContent="Șterge";remove.addEventListener("click",()=>deleteIncomeOpportunity(item.id));actions.appendChild(remove);
+  const remove=document.createElement("button");remove.type="button";remove.textContent=tr("Șterge");remove.addEventListener("click",()=>deleteIncomeOpportunity(item.id));actions.appendChild(remove);
   card.appendChild(actions);list.appendChild(card);
  });
  if(!filtered.length){const empty=document.createElement("p");empty.className="income-tracker-intro";empty.textContent=incomeOpportunityCache.length?"Nu există rezultate pentru filtrele selectate.":"Nu ai înregistrat încă oportunități. Adaugă prima oportunitate mai sus.";list.appendChild(empty);}
@@ -3120,7 +3457,7 @@ function buildStudioPrompt(){
   const idea=el("studioIdea").value.trim();
   if(!idea){el("studioIdea").focus();el("moduleAccessMessage").textContent="Scrie mai întâi ideea proiectului.";return;}
   const deliverables={
-   series:"Dezvoltă un serial dramatic original: concept, titlu, personaje, relații și secrete, arc narativ, structură de episod și scenariu complet cu scene și dialog natural. Încheie episodul cu un cliffhanger credibil.",
+   series:"Dezvoltă un serial dramatic original ca pentru o producție profesionistă: show bible, concept, titlu, univers, personaje cu biografii și motivații, relații, secrete, conflicte, arc de sezon, structură și continuitate. Pentru planul zilnic, pregătește două episoade distincte pe zi, fiecare cu recap scurt, hook în primele secunde, scene numerotate, dialog natural, indicații de imagine/sunet, durată estimată și cliffhanger propriu. Păstrează o fișă de continuitate pentru a evita contradicțiile dintre episoade.",
    short:"Creează un pachet complet pentru un clip vertical scurt: hook în primele 2 secunde, scenariu cu replici și acțiuni, indicații de cadre, text pe ecran, ritm de montaj, descriere, CTA și hashtaguri.",
    youtube:"Creează un pachet YouTube: titlu, idee de thumbnail, introducere puternică, scenariu structurat, indicații vizuale și sonore, capitole, descriere, CTA și taguri.",
    ad:"Creează o campanie video originală pentru produsul/serviciul descris: public-țintă, promisiune verificabilă, concept, scenariu, cadre, voice-over, text pe ecran, CTA și variante scurte.",
@@ -3664,6 +4001,7 @@ async function loadProfile(user){
     el("country").value = data.country || "";
     el("profileMessage").textContent = "";
     await loadPrivateProfile(user);
+    await loadFileProcessingConsent(user);
 
     if(data.display_name && data.country) await showChat(user,data.display_name);
     else showOnly("profileSection");
@@ -3733,6 +4071,53 @@ async function loadPrivateProfile(user){
     el("privateInvoicePreferences").value=p.invoice_preferences||"";
   }catch(error){
     el("privateProfileMessage").textContent="Datele private nu au putut fi încărcate: "+error.message;
+  }
+}
+
+async function loadFileProcessingConsent(user){
+  const status=el("fileProcessingConsentStatus");
+  const button=el("revokeFileProcessingConsentButton");
+  if(!user||!status||!button)return;
+  status.textContent="Se verifică starea acordului...";
+  button.disabled=true;
+  try{
+    const result=await privateProfileRequest("file_processing_consent_get");
+    const general=result.file_processing_granted===true;
+    const health=result.health_data_processing_granted===true;
+    if(general||health){
+      status.textContent=health
+        ?"Acord activ: procesare fișiere și date medicale sensibile."
+        :"Acord activ: procesare generală a fișierelor. Nu există acord activ pentru date medicale sensibile.";
+      button.disabled=false;
+    }else{
+      status.textContent="Nu există un acord activ pentru procesarea fișierelor.";
+      button.disabled=true;
+    }
+  }catch(error){
+    status.textContent="Nu am putut verifica starea acordului. Nu trimite fișiere până când verificarea nu este disponibilă.";
+    console.warn("File processing consent status unavailable:",error);
+  }
+}
+
+async function revokeFileProcessingConsent(){
+  if(!currentUser)return;
+  const button=el("revokeFileProcessingConsentButton");
+  const status=el("fileProcessingConsentStatus");
+  if(!window.confirm("Retragi acordul pentru procesarea tuturor fișierelor, inclusiv a datelor medicale din Dr.Vas Health? Fișierele încărcate anterior nu vor fi șterse automat."))return;
+  button.disabled=true;
+  setLocalizedText(button,"Se retrage acordul...");
+  try{
+    const result=await privateProfileRequest("file_processing_consent",{granted:false});
+    if(!result.ok||result.revoked!==true)throw new Error("Serverul nu a confirmat retragerea acordului.");
+    if(el("fileProcessingConsent"))el("fileProcessingConsent").checked=false;
+    if(el("healthDataProcessingConsent"))el("healthDataProcessingConsent").checked=false;
+    status.textContent="Acord retras. Procesarea viitoare a fișierelor este dezactivată, inclusiv pentru Dr.Vas Health. Fișierele încărcate anterior nu au fost șterse.";
+    button.disabled=true;
+  }catch(error){
+    status.textContent="Nu am putut retrage acordul: "+error.message;
+    button.disabled=false;
+  }finally{
+    setLocalizedText(button,"Retrage acordul pentru fișiere");
   }
 }
 
@@ -4280,7 +4665,8 @@ async function deleteConversation(conversation){
  if(!currentUser||isSendingMessage)return;
  if(!window.confirm("Ștergi definitiv această conversație și toate mesajele ei? Acțiunea nu poate fi anulată."))return;
  try{
-  const {error}=await supabaseClient.from("chat_messages").delete().eq("user_id",currentUser.id).eq("conversation_id",conversation.id);if(error)throw error;
+  await deleteConversationFiles(conversation.id);
+   const {error}=await supabaseClient.from("chat_messages").delete().eq("user_id",currentUser.id).eq("conversation_id",conversation.id);if(error)throw error;
   const meta=await supabaseClient.from("drvas_conversation_metadata").delete().eq("user_id",currentUser.id).eq("conversation_id",conversation.id);if(meta.error)throw meta.error;
   if(currentConversationId===conversation.id){currentConversationId=makeId();rememberActiveConversation(currentConversationId);conversationSaved=false;pendingMessages=[];renderWelcome();updateSaveButton();}
   await loadConversationList();
@@ -4301,9 +4687,12 @@ async function deleteAllConversations(){
   const button = document.querySelector(".delete-history-button");
   button.disabled = true;
   setLocalizedText(button,"Se șterge...");
-  try{
+  try{await deleteAllConversationFiles();
+
     const {error} = await supabaseClient.from("chat_messages")
+
       .delete()
+
       .eq("user_id",currentUser.id);
     if(error) throw error;
     const metadataDelete=await supabaseClient.from("drvas_conversation_metadata").delete().eq("user_id",currentUser.id);
@@ -4329,6 +4718,7 @@ async function openConversation(conversationId){
   if(!currentUser || loadingConversation || isSendingMessage) return;
   loadingConversation = true;
   currentConversationId = conversationId;
+  clearPendingChatFiles();
   rememberActiveConversation(conversationId);
   logClientEvent("conversation_opened");
   conversationSaved = true;
@@ -4355,6 +4745,7 @@ async function openConversation(conversationId){
     if(!data || !data.length) renderWelcome();
     else [...data].reverse().forEach(message=>appendMessage(message.role,message.content));
 
+    await loadConversationAttachments(conversationId,activeModule);
     updateActiveConversation();
     scrollToLatestMessage(chat.lastElementChild);
   }catch(error){
@@ -4368,6 +4759,8 @@ async function openConversation(conversationId){
 function newConversation(){
   if(!currentUser || isSendingMessage) return;
   currentConversationId = makeId();
+  clearPendingChatFiles();
+  el("conversationAttachments")?.replaceChildren();
   rememberActiveConversation(currentConversationId);
   logClientEvent("conversation_created");
   conversationSaved = false;
@@ -4403,6 +4796,8 @@ async function saveMessage(role,content,conversationId=currentConversationId){
 function showLogin(){
   if(!languageReady)return;
   if(liveSocket||liveStream)stopLiveVoice();
+  clearPendingChatFiles();
+  el("conversationAttachments")?.replaceChildren();
   currentUser = null;
   isDrvasAdmin = false;
   activeModule = "free";
@@ -4522,101 +4917,233 @@ async function checkSession(){
   }
 }
 
-async function send(){
-  const input = el("question");
-  const button = el("sendButton");
-  const message = input.value.trim();
 
-  if(!message || button.disabled || !currentUser || isSendingMessage) return;
-  if(!currentConversationId) currentConversationId = makeId();
-  const conversationId = currentConversationId;
-  const moduleId = activeModule;
-  const language = currentLanguage;
-  rememberActiveConversation(conversationId);
+let pendingChatFiles = [];
+let pendingUploadedAttachments = [];
 
-  isSendingMessage = true;
-  setChatNavigationDisabled(true);
-  button.disabled = true;
-  input.value = "";
-  resizeQuestionInput();
-
-  appendMessage("user",message);
-  const answer = appendMessage("assistant",tr("Dr.Vas gândește..."));
-  answer.classList.add("typing");
-
-  try{
-    await saveMessage("user",message,conversationId);
-    conversationSaved = true;
-    pendingMessages = [];
-    setLocalizedText(el("saveMessage"),"Mesajul tău este salvat automat în cont.");
-    updateSaveButton();
-
-    const {data:sessionData,error:sessionError} = await supabaseClient.auth.getSession();
-    if(sessionError) throw sessionError;
-    const accessToken = sessionData.session?.access_token;
-    if(!accessToken) throw new Error("Sesiunea a expirat. Conectează-te din nou.");
-
-    const startedAt = performance.now();
-
-    const response = await fetch(API_URL,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        message:message,
-        module:moduleId,
-        assistant:activeAssistant,
-        language:language,
-        conversation_id:conversationId,
-        access_token:accessToken
-      })
-    });
-
-    const data = await response.json();
-    const elapsed = ((performance.now()-startedAt)/1000).toFixed(2);
-
-    if(!response.ok) throw new Error(data.error || "HTTP " + response.status);
-    if(!data.reply) throw new Error("Răspuns invalid de la server");
-
-    const displayedReply = localizeReply(data.reply);
-    answer.classList.remove("typing");
-    answer.textContent = displayedReply;
-    lastSpokenAnswer=displayedReply;
-    if(moduleId==="studio"){
-      currentStudioProjectOutput=displayedReply;
-      if(el("studioIdea")?.value?.trim())await saveStudioProject();
-    }else if(["academy","commerce","business"].includes(moduleId))moduleProjectOutputs[moduleId]=displayedReply;
-    refreshVoiceUi(voiceAutoRead?"ready":"off");
-    if(voiceAutoRead)speakDrVas(displayedReply);
-    if(data.action !== "conversations_deleted") await saveMessage("assistant",displayedReply,conversationId);
-    conversationSaved = true;
-    pendingMessages = [];
-    setLocalizedText(el("saveMessage"),"Conversația este salvată automat.");
-    updateSaveButton();
-
-    if(data.action === "conversations_deleted"){
-      pendingMessages = [];
-      currentConversationId = makeId();
-      conversationSaved = false;
-      el("saveMessage").textContent = data.reply;
-      updateSaveButton();
-      await loadConversationList();
-    }
-
-    console.info("Dr.Vas response time:",elapsed,"seconds","Module:",activeModule);
-    if(conversationSaved) await loadConversationList();
-
-  }catch(error){
-    answer.classList.remove("typing");
-    answer.textContent = tr("Eroare: ") + tr(error.message);
-    refreshVoiceUi(voiceAutoRead?"ready":"off");
-    console.error("Dr.Vas AI:",error);
-  }finally{
-    isSendingMessage = false;
-    setChatNavigationDisabled(false);
-    button.disabled = false;
-    input.focus();
-    scrollToLatestMessage(answer);
+function chatFileMime(file){
+ const allowed=new Set(["image/jpeg","image/png","image/webp","application/pdf","text/plain","text/csv"]);
+ if(allowed.has(file.type))return file.type;
+ if(file.type&&file.type!=="application/octet-stream")return "";
+ const extension=(file.name.split(".").pop()||"").toLowerCase();
+ return ({jpg:"image/jpeg",jpeg:"image/jpeg",png:"image/png",webp:"image/webp",pdf:"application/pdf",txt:"text/plain",csv:"text/csv"})[extension]||"";
+}
+function normalizeChatFile(file){
+ const mime=chatFileMime(file);if(!mime)return null;
+ return file.type===mime?file:new File([file],file.name,{type:mime,lastModified:file.lastModified});
+}
+function chatFileSizeLabel(size){
+ return size<1024*1024?(size/1024).toFixed(0)+" KB":(size/(1024*1024)).toFixed(1)+" MB";
+}
+function renderPendingChatFiles(){
+ const host=el("pendingChatFiles");if(!host)return;
+ host.replaceChildren();
+ const all=[...pendingChatFiles.map((file,index)=>({name:file.name,size:file.size,index,uploaded:false})),
+  ...pendingUploadedAttachments.map((file,index)=>({name:file.original_name,size:file.file_size,index,uploaded:true}))];
+ host.hidden=!all.length;
+ all.forEach(item=>{
+  const chip=document.createElement("span");chip.className="chat-file-chip";
+  const name=document.createElement("span");name.textContent=item.name+" · "+chatFileSizeLabel(item.size);
+  const remove=document.createElement("button");remove.type="button";remove.setAttribute("aria-label","Elimină "+item.name);remove.textContent="×";
+  remove.addEventListener("click",()=>{if(item.uploaded)removeUploadedChatAttachment(item.index);else{pendingChatFiles.splice(item.index,1);renderPendingChatFiles();}});
+  chip.append(name,remove);host.appendChild(chip);
+ });
+ const showConsent=all.length>0;
+ el("fileProcessingConsentWrap").hidden=!showConsent;
+ el("healthDataProcessingConsentWrap").hidden=!showConsent||activeModule!=="health";
+}
+function removeUploadedChatAttachment(index){
+ pendingUploadedAttachments.splice(index,1);
+ renderPendingChatFiles();
+}
+function clearPendingChatFiles(){
+ pendingChatFiles=[];pendingUploadedAttachments=[];
+ if(el("chatFileInput"))el("chatFileInput").value="";
+ if(el("fileProcessingConsent"))el("fileProcessingConsent").checked=false;
+ if(el("healthDataProcessingConsent"))el("healthDataProcessingConsent").checked=false;
+ renderPendingChatFiles();
+}
+function handleChatFilesSelected(event){
+ const chosen=Array.from(event.target.files||[]);
+ if(pendingChatFiles.length+pendingUploadedAttachments.length+chosen.length>5){window.alert("Poți atașa maximum 5 fișiere la un mesaj.");event.target.value="";return;}
+ for(const originalFile of chosen){
+  const file=normalizeChatFile(originalFile);
+  if(!file){window.alert("Format neacceptat: "+originalFile.name+". Folosește JPG, PNG, WebP, PDF, TXT sau CSV.");continue;}
+  if(file.size<1||file.size>15*1024*1024){window.alert("Fișierul "+file.name+" trebuie să aibă maximum 15 MB.");continue;}
+  if(pendingChatFiles.some(item=>item.name===file.name&&item.size===file.size))continue;
+  pendingChatFiles.push(file);
+ }
+ event.target.value="";renderPendingChatFiles();
+}
+async function uploadPendingChatFiles(files,conversationId,moduleId,accessToken){
+ if(!files.length)return [];
+ const totalBytes=files.reduce((sum,file)=>sum+file.size,0);
+ if(totalBytes>20*1024*1024)throw new Error("Dimensiunea totală a fișierelor depășește 20 MB.");
+ const generalConsent=el("fileProcessingConsent")?.checked===true;
+ const healthConsent=moduleId==="health"&&el("healthDataProcessingConsent")?.checked===true;
+ if(!generalConsent||(moduleId==="health"&&!healthConsent)){
+  throw new Error(moduleId==="health"?"Pentru Dr.Vas Health confirmă ambele acorduri de procesare înainte de a trimite documente.":"Confirmă acordul de procesare a fișierelor înainte de a le trimite.");
+ }
+ const capabilityResponse=await fetch(API_URL+"/health",{cache:"no-store"});
+ const capability=await capabilityResponse.json();
+ if(!capabilityResponse.ok||capability.checks?.file_analysis!=="enabled"){
+  throw new Error("Încărcarea și analiza fișierelor nu este încă activată. Dr.Vas o va activa după confirmarea contractuală și de protecție a datelor.");
+ }
+ const consentResponse=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"file_processing_consent",access_token:accessToken,module:moduleId,granted:true})});
+ const consentData=await consentResponse.json();
+ if(!consentResponse.ok||!consentData.ok)throw new Error(consentData.error||"Nu am putut înregistra acordul de procesare.");
+ const uploaded=[];
+ try{
+  for(const file of files){
+   const safeName=file.name.normalize("NFKD").replace(/[^a-z0-9._-]+/gi,"-").replace(/^-+|-+$/g,"").slice(0,100)||"attachment";
+   const path=currentUser.id+"/"+conversationId+"/"+moduleId+"/"+crypto.randomUUID()+"-"+safeName;
+   const {error:uploadError}=await supabaseClient.storage.from("drvas-media").upload(path,file,{contentType:file.type,upsert:false});
+   if(uploadError)throw uploadError;
+   const record={user_id:currentUser.id,conversation_id:conversationId,module:moduleId,original_name:file.name.slice(0,255),mime_type:file.type,file_size:file.size,storage_path:path};
+   const {data,error:recordError}=await supabaseClient.from("drvas_chat_attachments").insert(record).select("id,original_name,mime_type,file_size,storage_path,created_at").single();
+   if(recordError){await supabaseClient.storage.from("drvas-media").remove([path]);throw recordError;}
+   uploaded.push(data);
   }
+  return uploaded;
+ }catch(error){
+  for(const item of uploaded){
+   try{await supabaseClient.storage.from("drvas-media").remove([item.storage_path]);await supabaseClient.from("drvas_chat_attachments").delete().eq("id",item.id).eq("user_id",currentUser.id);}catch(cleanupError){console.warn("Attachment cleanup failed:",cleanupError);}
+  }
+  throw error;
+ }
+}
+function appendMessageAttachments(messageElement,attachments){
+ if(!messageElement||!attachments?.length)return;
+ const list=document.createElement("div");list.className="msg-attachment-list";
+ attachments.forEach(file=>{const item=document.createElement("span");item.className="msg-attachment";item.textContent="📎 "+file.original_name;list.appendChild(item);});
+ messageElement.appendChild(list);
+}
+async function loadConversationAttachments(conversationId,moduleId=activeModule){
+ const host=el("conversationAttachments");if(!host)return;
+ host.replaceChildren();
+ if(!currentUser||!conversationId)return;
+ try{
+  const {data,error}=await supabaseClient.from("drvas_chat_attachments").select("id,original_name,mime_type,file_size,storage_path,created_at").eq("user_id",currentUser.id).eq("conversation_id",conversationId).eq("module",moduleId).order("created_at",{ascending:true}).limit(50);
+  if(error)throw error;
+  if(!data?.length)return;
+  const title=document.createElement("strong");title.className="conversation-attachments-title";title.textContent=tr("Fișiere din această conversație");host.appendChild(title);
+  for(const file of data){
+   const {data:signed,error:signedError}=await supabaseClient.storage.from("drvas-media").createSignedUrl(file.storage_path,3600);
+   if(signedError)continue;
+   const row=document.createElement("div");row.className="chat-file-chip";
+   const link=document.createElement("a");link.className="conversation-file-link";link.href=signed.signedUrl;link.target="_blank";link.rel="noopener noreferrer";link.textContent="📎 "+file.original_name+" · "+chatFileSizeLabel(file.file_size);
+   const reuse=document.createElement("button");reuse.type="button";reuse.textContent=tr("Atașează din nou");reuse.addEventListener("click",()=>{if(pendingUploadedAttachments.length+pendingChatFiles.length>=5){window.alert("Poți atașa maximum 5 fișiere.");return;}if(!pendingUploadedAttachments.some(item=>item.id===file.id)){pendingUploadedAttachments.push(file);renderPendingChatFiles();}});
+   const remove=document.createElement("button");remove.type="button";remove.textContent="Șterge";remove.addEventListener("click",()=>deleteConversationAttachment(file));
+   row.append(link,reuse,remove);host.appendChild(row);
+  }
+ }catch(error){console.warn("Conversation attachments unavailable:",error);}
+}
+async function deleteConversationAttachment(file){
+ if(!currentUser||!file||!window.confirm("Ștergi definitiv fișierul "+file.original_name+"?"))return;
+ try{
+  const {error:storageError}=await supabaseClient.storage.from("drvas-media").remove([file.storage_path]);
+  if(storageError)throw storageError;
+  const {error}=await supabaseClient.from("drvas_chat_attachments").delete().eq("id",file.id).eq("user_id",currentUser.id);
+  if(error)throw error;
+  pendingUploadedAttachments=pendingUploadedAttachments.filter(item=>item.id!==file.id);
+  renderPendingChatFiles();await loadConversationAttachments(currentConversationId,activeModule);
+ }catch(error){window.alert("Nu am putut șterge fișierul: "+error.message);}
+}
+async function deleteConversationFiles(conversationId){
+ while(true){
+  const {data,error}=await supabaseClient.from("drvas_chat_attachments").select("id,storage_path").eq("user_id",currentUser.id).eq("conversation_id",conversationId).limit(100);
+  if(error)throw error;
+  const files=data||[];if(!files.length)break;
+  const {error:storageError}=await supabaseClient.storage.from("drvas-media").remove(files.map(file=>file.storage_path));
+  if(storageError)throw storageError;
+  const {error:metadataError}=await supabaseClient.from("drvas_chat_attachments").delete().in("id",files.map(file=>file.id)).eq("user_id",currentUser.id);
+  if(metadataError)throw metadataError;
+ }
+}
+async function deleteAllConversationFiles(){
+ while(true){
+  const {data,error}=await supabaseClient.from("drvas_chat_attachments").select("id,storage_path").eq("user_id",currentUser.id).limit(100);
+  if(error)throw error;
+  const files=data||[];if(!files.length)break;
+  const {error:storageError}=await supabaseClient.storage.from("drvas-media").remove(files.map(file=>file.storage_path));
+  if(storageError)throw storageError;
+  const {error:metadataError}=await supabaseClient.from("drvas_chat_attachments").delete().in("id",files.map(file=>file.id)).eq("user_id",currentUser.id);
+  if(metadataError)throw metadataError;
+ }
+}
+el("chatFileInput").addEventListener("change",handleChatFilesSelected);
+
+async function send(){
+ const input=el("question"),button=el("sendButton");
+ const typedMessage=input.value.trim();
+ const filesToUpload=[...pendingChatFiles];
+ const existingAttachments=[...pendingUploadedAttachments];
+ if(!typedMessage&&!filesToUpload.length&&!existingAttachments.length)return;
+ if(button.disabled||!currentUser||isSendingMessage)return;
+ const hasAttachments=filesToUpload.length>0||existingAttachments.length>0;
+ if(hasAttachments&&(!el("fileProcessingConsent")?.checked||(activeModule==="health"&&!el("healthDataProcessingConsent")?.checked))){window.alert(activeModule==="health"?"Bifează acordul general și acordul pentru date medicale înainte de trimitere.":"Bifează acordul pentru procesarea fișierelor înainte de trimitere.");return;}
+ const message=typedMessage||(activeModule==="health"?"Te rog să explici și să analizezi documentele medicale atașate, fără a stabili un diagnostic.":"Te rog să analizezi fișierele atașate și să explici informațiile relevante.");
+ if(!currentConversationId)currentConversationId=makeId();
+ const conversationId=currentConversationId,moduleId=activeModule,language=currentLanguage;
+ rememberActiveConversation(conversationId);
+ isSendingMessage=true;setChatNavigationDisabled(true);button.disabled=true;input.value="";resizeQuestionInput();
+ const userBubble=appendMessage("user",message);
+ const answer=appendMessage("assistant",tr("Dr.Vas gândește..."));answer.classList.add("typing");
+ try{
+  const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
+  if(sessionError)throw sessionError;
+  const accessToken=sessionData.session?.access_token;
+  if(!accessToken)throw new Error("Sesiunea a expirat. Conectează-te din nou.");
+  await saveMessage("user",message,conversationId);
+  conversationSaved=true;pendingMessages=[];setLocalizedText(el("saveMessage"),"Mesajul tău este salvat automat în cont.");updateSaveButton();
+
+  if(filesToUpload.length){
+   const uploaded=await uploadPendingChatFiles(filesToUpload,conversationId,moduleId,accessToken);
+   pendingUploadedAttachments.push(...uploaded);pendingChatFiles=[];
+   renderPendingChatFiles();
+  }
+  const attachments=[...pendingUploadedAttachments];
+  if(attachments.length>5)throw new Error("Poți analiza maximum 5 fișiere într-un singur mesaj.");
+  if(attachments.reduce((sum,file)=>sum+Number(file.file_size||0),0)>20*1024*1024)throw new Error("Dimensiunea totală a fișierelor depășește 20 MB.");
+  if(attachments.length){
+   appendMessageAttachments(userBubble,attachments);
+   await loadConversationAttachments(conversationId,moduleId);
+  }
+
+  const startedAt=performance.now();
+  const response=await fetch(API_URL,{
+   method:"POST",headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({
+    message,module:moduleId,assistant:activeAssistant,language,
+    conversation_id:conversationId,access_token:accessToken,
+    attachment_ids:attachments.map(file=>file.id)
+   })
+  });
+  const data=await response.json();
+  const elapsed=((performance.now()-startedAt)/1000).toFixed(2);
+  if(!response.ok)throw new Error(data.error||"HTTP "+response.status);
+  if(!data.reply)throw new Error("Răspuns invalid de la server");
+  const displayedReply=localizeReply(data.reply);
+  answer.classList.remove("typing");answer.textContent=displayedReply;lastSpokenAnswer=displayedReply;
+  if(moduleId==="studio"){
+   currentStudioProjectOutput=displayedReply;
+   if(el("studioIdea")?.value?.trim())await saveStudioProject();
+  }else if(["academy","commerce","business"].includes(moduleId))moduleProjectOutputs[moduleId]=displayedReply;
+  refreshVoiceUi(voiceAutoRead?"ready":"off");if(voiceAutoRead)speakDrVas(displayedReply);
+  if(data.action!=="conversations_deleted")await saveMessage("assistant",displayedReply,conversationId);
+  conversationSaved=true;pendingMessages=[];setLocalizedText(el("saveMessage"),"Conversația este salvată automat.");updateSaveButton();
+  if(data.action==="conversations_deleted"){
+   pendingMessages=[];currentConversationId=makeId();conversationSaved=false;el("saveMessage").textContent=data.reply;updateSaveButton();await loadConversationList();
+  }
+  if(attachments.length)clearPendingChatFiles();
+  console.info("Dr.Vas response time:",elapsed,"seconds","Module:",moduleId);
+  if(conversationSaved)await loadConversationList();
+ }catch(error){
+  answer.classList.remove("typing");answer.textContent=tr("Eroare: ")+tr(error.message);
+  refreshVoiceUi(voiceAutoRead?"ready":"off");console.error("Dr.Vas AI:",error);
+ }finally{
+  isSendingMessage=false;setChatNavigationDisabled(false);button.disabled=false;input.focus();scrollToLatestMessage(answer);
+ }
 }
 
 function resizeQuestionInput(){

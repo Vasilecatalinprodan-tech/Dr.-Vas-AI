@@ -41,6 +41,135 @@ async function openApp(page, language = null, session = null, profileError = fal
   await page.waitForFunction(() => document.documentElement.lang === "ro" && !document.querySelector("#appMain")?.classList.contains("language-pending"));
 }
 
+test("universal chat uploader accepts private images and documents and requires Health consent", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-attachment-user" };
+    activeModule = "health";
+    // The uploader lives inside chatSection; make its real workspace visible
+    // so the test checks the pending-file UI rather than a hidden ancestor.
+    document.querySelector("#chatSection").classList.remove("hidden");
+    renderPendingChatFiles();
+  });
+  const picker = page.locator("#chatFileInput");
+  await picker.evaluate(input => input.addEventListener("change", () => {
+    window.__DRVAS_E2E_SELECTED_FILES__ = Array.from(input.files || []).map(file => ({ name: file.name, type: file.type, size: file.size }));
+  }, { capture: true, once: true }));
+  await picker.setInputFiles([
+    { name: "blood-results.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4 E2E") },
+    { name: "scan.png", mimeType: "image/png", buffer: Buffer.from("png-e2e") }
+  ]);
+  const selectedFiles = await page.evaluate(() => window.__DRVAS_E2E_SELECTED_FILES__ || []);
+  expect(selectedFiles).toHaveLength(2);
+  const pendingFiles = await page.evaluate(() => pendingChatFiles.map(file => ({ name: file.name, type: file.type, size: file.size })));
+  expect(pendingFiles).toHaveLength(2);
+  await expect(page.locator("#pendingChatFiles")).toBeVisible();
+  await expect(page.locator("#pendingChatFiles")).toContainText("blood-results.pdf");
+  await expect(page.locator("#pendingChatFiles")).toContainText("scan.png");
+  await expect(page.locator("#fileProcessingConsentWrap")).toBeVisible();
+  await expect(page.locator("#healthDataProcessingConsentWrap")).toBeVisible();
+  await page.locator("#fileProcessingConsent").check();
+  await page.locator("#healthDataProcessingConsent").check();
+  await page.evaluate(() => {
+    activeModule = "free";
+    renderPendingChatFiles();
+  });
+  await expect(page.locator("#healthDataProcessingConsentWrap")).toBeHidden();
+  await expect(page.locator("#fileProcessingConsentWrap")).toBeVisible();
+  await page.locator("#pendingChatFiles button").first().click();
+  await expect(page.locator("#pendingChatFiles")).toContainText("scan.png");
+  await expect(page.locator("#pendingChatFiles")).not.toContainText("blood-results.pdf");
+  await page.locator("#pendingChatFiles button").first().click();
+  await expect(page.locator("#pendingChatFiles")).toBeHidden();
+  await expect(page.locator("#fileProcessingConsentWrap")).toBeHidden();
+});
+
+test("chat attachment picker rejects unsupported files, more than five files and files above 15 MB", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-attachment-user" };
+    activeModule = "free";
+    document.querySelector("#chatSection").classList.remove("hidden");
+    window.__DRVAS_E2E_ALERTS__ = [];
+    window.alert = message => window.__DRVAS_E2E_ALERTS__.push(String(message));
+    renderPendingChatFiles();
+  });
+  const picker = page.locator("#chatFileInput");
+  await picker.setInputFiles(Array.from({ length: 6 }, (_, index) => ({
+    name: `file-${index + 1}.pdf`,
+    mimeType: "application/pdf",
+    buffer: Buffer.from("%PDF-1.4 test")
+  })));
+  expect(await page.evaluate(() => pendingChatFiles.length)).toBe(0);
+  expect(await page.evaluate(() => window.__DRVAS_E2E_ALERTS__.at(-1))).toContain("maximum 5");
+
+  await picker.setInputFiles({
+    name: "malware.exe",
+    mimeType: "application/x-msdownload",
+    buffer: Buffer.from("not a supported document")
+  });
+  expect(await page.evaluate(() => pendingChatFiles.length)).toBe(0);
+  expect(await page.evaluate(() => window.__DRVAS_E2E_ALERTS__.at(-1))).toContain("Format neacceptat");
+
+  await picker.setInputFiles({
+    name: "oversized.pdf",
+    mimeType: "application/pdf",
+    buffer: Buffer.alloc(15 * 1024 * 1024 + 1, 65)
+  });
+  expect(await page.evaluate(() => pendingChatFiles.length)).toBe(0);
+  expect(await page.evaluate(() => window.__DRVAS_E2E_ALERTS__.at(-1))).toContain("maximum 15 MB");
+
+  await picker.setInputFiles({
+    name: "valid.txt",
+    mimeType: "text/plain",
+    buffer: Buffer.from("Dr.Vas attachment boundary test")
+  });
+  expect(await page.evaluate(() => pendingChatFiles.map(file => file.name))).toEqual(["valid.txt"]);
+  await expect(page.locator("#pendingChatFiles")).toContainText("valid.txt");
+});
+
+test("users can review and withdraw file-processing consent from their profile", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-consent-user", email: "consent@example.invalid" };
+    showOnly("profileSection");
+    document.querySelector("#fileProcessingPrivacyPanel").open = true;
+    window.__DRVAS_CONSENT_CALLS__ = [];
+    window.confirm = () => true;
+    privateProfileRequest = async (action, extra = {}) => {
+      window.__DRVAS_CONSENT_CALLS__.push({ action, ...extra });
+      if (action === "file_processing_consent_get") {
+        return {
+          ok: true,
+          file_processing_granted: true,
+          health_data_processing_granted: true
+        };
+      }
+      if (action === "file_processing_consent" && extra.granted === false) {
+        return { ok: true, recorded: true, granted: false, revoked: true };
+      }
+      throw new Error("Unexpected consent action: " + action);
+    };
+  });
+
+  await page.evaluate(() => loadFileProcessingConsent(currentUser));
+  await expect(page.locator("#fileProcessingConsentStatus")).toContainText("Acord activ");
+  await expect(page.locator("#revokeFileProcessingConsentButton")).toBeEnabled();
+
+  await page.locator("#revokeFileProcessingConsentButton").click();
+  await expect(page.locator("#fileProcessingConsentStatus")).toContainText("Acord retras");
+  await expect(page.locator("#revokeFileProcessingConsentButton")).toBeDisabled();
+  const state = await page.evaluate(() => ({
+    calls: window.__DRVAS_CONSENT_CALLS__,
+    generalCheckbox: document.querySelector("#fileProcessingConsent").checked,
+    healthCheckbox: document.querySelector("#healthDataProcessingConsent").checked
+  }));
+  expect(state.calls.map(call => call.action)).toEqual(["file_processing_consent_get", "file_processing_consent"]);
+  expect(state.calls[1].granted).toBe(false);
+  expect(state.generalCheckbox).toBe(false);
+  expect(state.healthCheckbox).toBe(false);
+});
+
 test("first visit shows the Dr.Vas landing page, language selector and clear entry CTA", async ({ page }) => {
   await openApp(page);
   await expect(page.locator("#languageGate")).toBeVisible();
@@ -1082,32 +1211,51 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
     window.__drvasSpoken = [];
     window.__drvasStartCount = 0;
     window.startDrVas = () => { window.__drvasStartCount++; };
-    const synth = { getVoices: () => [], cancel() {}, speak: utterance => { window.__drvasSpoken.push(utterance); } };
+    const presentationVoices = [
+      { name: "Microsoft Andrei", lang: "ro-RO", voiceURI: "andrei-ro" },
+      { name: "Microsoft David", lang: "ro-RO", voiceURI: "david-ro" },
+      { name: "Microsoft Alina", lang: "ro-RO", voiceURI: "alina-ro" }
+    ];
+    const synth = { getVoices: () => presentationVoices, cancel() {}, speak: utterance => { window.__drvasSpoken.push(utterance); } };
     Object.defineProperty(window, "speechSynthesis", { configurable: true, value: synth });
     window.SpeechSynthesisUtterance = function (text) { this.text = text; };
   });
   await expect(page.locator("#heroPresentationOpenButton")).toBeVisible();
   await page.locator("#heroPresentationOpenButton").click();
   await expect(page.locator("#drvasPresentation")).toBeVisible();
+  await expect(page.locator("#presentationAvatar .presenter-character-art")).toBeVisible();
+  await expect(page.locator("#presentationAvatar .character-orbit")).toHaveCount(2);
+  const presentationButtonStyle = await page.locator("#heroPresentationOpenButton").evaluate(node => {
+    const style = getComputedStyle(node);
+    return { color: style.color, borderColor: style.borderTopColor, background: style.backgroundImage };
+  });
+  expect(presentationButtonStyle.color).toBe("rgb(9, 9, 9)");
+  expect(presentationButtonStyle.borderColor).toBe("rgb(5, 5, 5)");
+  expect(presentationButtonStyle.background).toContain("linear-gradient");
   await expect(page.locator("#presentationModuleGrid .presentation-module")).toHaveCount(6);
   await expect(page.locator("#presentationModuleGrid .presentation-module.is-active")).toHaveCount(2);
   await expect(page.locator("#presentationSpeakerName")).toHaveText("Dr.Vas");
+  await expect.poll(() => page.evaluate(() => window.__drvasSpoken[0]?.voice?.name || "")).toBe("Microsoft Andrei");
   const languages = [["ro","ro-RO"],["en","en-GB"],["it","it-IT"],["tr","tr-TR"],["de","de-DE"],["fr","fr-FR"],["es","es-ES"],["ru","ru-RU"]];
   const openLabels = {ro:"Deschide prezentarea",en:"Open presentation",it:"Apri la presentazione",tr:"Tanıtımı aç",de:"Präsentation öffnen",fr:"Ouvrir la présentation",es:"Abrir presentación",ru:"Открыть презентацию"};
   for (const [language, locale] of languages) {
-    const first = await page.evaluate(code => {
-      stopDrvasPresentationSpeech(); currentLanguage = code; renderDrvasPresentation(); speakDrvasPresentation();
+    const first = await page.evaluate(async code => {
+      stopDrvasPresentationSpeech(); currentLanguage = code; renderDrvasPresentation(); await speakDrvasPresentation();
       const utterance = window.__drvasSpoken[window.__drvasSpoken.length - 1];
-      return { text: utterance.text, lang: utterance.lang, speaker: document.querySelector("#presentationSpeakerName").textContent };
+      return { text: utterance.text, lang: utterance.lang, speaker: document.querySelector("#presentationSpeakerName").textContent, expandedNames: prepareDrvasPresentationSpeechText("Dr.Vas și Dr.Jan") };
     }, language);
     expect(first.lang).toBe(locale);
     expect(first.speaker).toBe("Dr.Vas");
-    expect(first.text).toContain("Dr.Vas Free");
-    expect(first.text).toContain("Dr.Vas Health");
+    expect(first.expandedNames).toBe("Doctor Vas și Doctor Jan");
+    expect(first.text).toContain("Doctor Vas Free");
+    expect(first.text).toContain("Doctor Vas Health");
+    expect(first.text).not.toContain("Dr.Vas");
+    expect(first.text).not.toContain("Dr.Jan");
+    await expect(page.locator("#presentationSpeakerName")).toHaveText("Dr.Vas");
     await expect(page.locator("#presentationOpenButton")).toContainText(openLabels[language]);
   }
-  await page.evaluate(() => {
-    stopDrvasPresentationSpeech(); currentLanguage = "ro"; renderDrvasPresentation(); speakDrvasPresentation();
+  await page.evaluate(async () => {
+    stopDrvasPresentationSpeech(); currentLanguage = "ro"; renderDrvasPresentation(); await speakDrvasPresentation();
     window.__drvasSpoken[window.__drvasSpoken.length - 1].onend();
   });
   await page.waitForTimeout(500);
@@ -1117,9 +1265,14 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
     speech: window.__drvasSpoken[window.__drvasSpoken.length - 1].text
   }));
   expect(jan.speaker).toBe("Dr.Jan");
+  await expect(page.locator("#presentationAvatar")).toHaveClass(/presentation-avatar-jan/);
+  expect(await page.locator("#presentationAvatar .character-glasses").evaluate(node => getComputedStyle(node).display)).toBe("block");
+  expect(await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].voice?.name)).toBe("Microsoft David");
   expect(jan.modules).toContain("Dr.Vas Studio");
   expect(jan.modules).toContain("Dr.Vas Business");
-  expect(jan.speech).toContain("Dr.Vas Studio");
+  expect(jan.speech).toContain("Doctor Vas Studio");
+  expect(jan.speech).toContain("Doctor Vas Business");
+  expect(jan.speech).toContain("Doctor Jan");
   await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].onend());
   await page.waitForTimeout(500);
   const sarah = await page.evaluate(() => ({
@@ -1128,11 +1281,120 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
     speech: window.__drvasSpoken[window.__drvasSpoken.length - 1].text
   }));
   expect(sarah.speaker).toBe("Sarah");
+  await expect(page.locator("#presentationAvatar")).toHaveClass(/presentation-avatar-sarah/);
+  expect(await page.locator("#presentationAvatar .character-hair-long").evaluate(node => getComputedStyle(node).display)).toBe("block");
+  expect(await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].voice?.name)).toBe("Microsoft Alina");
   expect(sarah.modules).toContain("Dr.Vas Academy");
   expect(sarah.modules).toContain("Dr.Vas Commerce");
-  expect(sarah.speech).toContain("Dr.Vas Academy");
+  expect(sarah.speech).toContain("Doctor Vas Academy");
+  expect(sarah.speech).toContain("Doctor Vas Commerce");
   await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].onend());
   await page.waitForTimeout(1450);
   await expect(page.locator("#drvasPresentation")).toBeHidden();
   expect(await page.evaluate(() => window.__drvasStartCount)).toBe(1);
+});
+
+
+test("presentation never falls back to arbitrary voices when three named presenter voices are unavailable", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    window.__drvasSpoken = [];
+    const voices = [
+      { name: "Microsoft Andrei", lang: "ro-RO", voiceURI: "andrei-ro" },
+      { name: "Microsoft Alina", lang: "ro-RO", voiceURI: "alina-ro" }
+    ];
+    Object.defineProperty(window, "speechSynthesis", {
+      configurable: true,
+      value: { getVoices: () => voices, cancel() {}, speak: utterance => window.__drvasSpoken.push(utterance) }
+    });
+    window.SpeechSynthesisUtterance = function (text) { this.text = text; };
+  });
+  await page.evaluate(async () => { currentLanguage = "ro"; await speakDrvasPresentation(); });
+  await expect(page.locator("#presentationAudioStatus")).toContainText(/audio este oprit/i);
+  await expect(page.locator("#presentationPresenter")).toHaveClass(/is-animated/);
+  await expect(page.locator("#presentationSpeakerName")).toHaveText("Dr.Vas");
+  expect(await page.evaluate(() => window.__drvasSpoken.length)).toBe(0);
+});
+
+test("Studio builds a visual timeline from selected production assets", async ({ page }) => {
+  await openApp(page, "ro");
+  const pixel = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=", "base64");
+  await page.locator("#studioSceneImages").setInputFiles([
+    { name: "opening.png", mimeType: "image/png", buffer: pixel },
+    { name: "closeup.png", mimeType: "image/png", buffer: pixel }
+  ]);
+  await expect(page.locator("#studioSceneTimeline .studio-scene-card")).toHaveCount(2);
+  await expect(page.locator("#studioSceneTimelineCount")).toHaveText("2 scene");
+  await expect(page.locator("#studioSceneTimeline .studio-scene-card").first()).toContainText("Scena 01");
+  await expect(page.locator("#studioSceneTimeline .studio-scene-card").nth(1)).toContainText("Scena 02");
+});
+
+test("Dr.Vas Studio accepts MP4 scene footage alongside still images", async ({ page }) => {
+  await openApp(page, "ro");
+  const input = page.locator("#studioSceneImages");
+  await expect(input).toHaveAttribute("accept", /video\/mp4/);
+  await expect(input).toHaveAttribute("multiple", "");
+  await expect(page.locator("#studioRenderCreateButton")).toHaveText("Randează video MP4");
+});
+
+
+test("spoken chat text expands Dr.Vas and Dr.Jan names without changing written branding", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(() => ({
+    spoken: prepareSpeechText("Dr.Vas răspunde împreună cu Dr.Jan. Intră în Dr.Vas Studio."),
+    written: document.title,
+    logo: document.querySelector("header")?.innerText || ""
+  }));
+  expect(result.spoken).toBe("Doctor Vas răspunde împreună cu Doctor Jan. Intră în Doctor Vas Studio.");
+  expect(result.written).toContain("Dr.Vas AI");
+  expect(result.logo).toContain("Dr.Vas");
+});
+
+
+test("stopping voice output cancels a founder voice request that is still loading", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    activeAssistant = "drvas";
+    currentUser = { id: "voice-test-user" };
+    voiceAutoRead = true;
+    window.__voicePlayCount = 0;
+    window.__resolveVoiceFetch = null;
+    supabaseClient.auth.getSession = async () => ({ data: { session: { access_token: "test-token" } }, error: null });
+    window.fetch = () => new Promise(resolve => { window.__resolveVoiceFetch = resolve; });
+    window.Audio = function () {
+      this.pause = () => {};
+      this.play = async () => { window.__voicePlayCount++; };
+    };
+    URL.createObjectURL = () => "blob:drvas-test";
+    URL.revokeObjectURL = () => {};
+  });
+  const pending = page.evaluate(() => speakDrVas("Dr.Vas răspunde."));
+  await expect.poll(() => page.evaluate(() => typeof window.__resolveVoiceFetch)).toBe("function");
+  await page.evaluate(() => stopVoiceOutput());
+  await page.evaluate(() => window.__resolveVoiceFetch({
+    ok: true,
+    blob: async () => new Blob(["audio"], { type: "audio/mpeg" })
+  }));
+  await pending;
+  expect(await page.evaluate(() => window.__voicePlayCount)).toBe(0);
+  expect(await page.evaluate(() => document.body.classList.contains("assistant-speaking"))).toBe(false);
+});
+
+
+test("Studio explains its eight-item limit for mixed image and MP4 scenes", async ({ page }) => {
+  await openApp(page, "ro");
+  const pixel = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=", "base64");
+  await page.locator("#studioSceneImages").setInputFiles(
+    Array.from({ length: 9 }, (_, index) => ({
+      name: `scene-${index + 1}.png`,
+      mimeType: "image/png",
+      buffer: pixel
+    }))
+  );
+  await page.evaluate(async () => {
+    currentUser = { id: "studio-limit-test" };
+    await renderStudioVideo();
+  });
+  await expect(page.locator("#studioRenderStatus")).toContainText("maximum 8 scene");
+  await expect(page.locator("#studioRenderStatus")).toContainText("clipuri MP4");
 });
