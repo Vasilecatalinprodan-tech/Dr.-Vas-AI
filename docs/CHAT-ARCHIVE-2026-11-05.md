@@ -56,3 +56,10 @@ Production: https://dr--vas-ai.vasilecatalinprodan.workers.dev
 - Fixed the speech playback gate so authenticated server-side TTS is attempted even if browser `speechSynthesis` is missing. Added an E2E test for that case and CI source assertions.
 - Improved Academy / Commerce / Business continuity: when an existing saved project is open, a new AI reply is automatically persisted into that project with the current brief. New projects are still created only after the user explicitly saves.
 - The latest CI workflow for these changes is #473 / run `42130733280`; it was still in progress when this archive update was written. Verify its final result before claiming the newest changes passed or deployed.
+
+## Latest deployment result
+
+- Workflow #473 / run `42130733280` completed SUCCESS for the latest feature commit `a91e562c122e3954c051e5d31ddcaa9ece0f08b7`.
+- JavaScript validation, Playwright homepage/persisted-session tests (including the no-browser-speech TTS test), Worker deployment, production smoke test and SBOM upload all passed.
+- Cloudflare Worker production version: `f88f84eb-45b6-45b8-84f4-0d109c88864f`.
+- The repository archive now contains the user's exact two instructions from this session and the project work/decisions. It is still not a full verbatim export of all ChatGPT conversation messages.
