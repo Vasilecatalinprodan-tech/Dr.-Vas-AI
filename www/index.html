@@ -1608,6 +1608,19 @@ let currentConversationId = null;
 let loadingConversation = false;
 let isSendingMessage = false;
 const ACTIVE_CONVERSATION_PREFIX = "drvas_active_conversation:";
+const ACTIVE_MODULE_PREFIX = "drvas_active_module:";
+function rememberActiveModule(moduleName){
+  if(!currentUser || !["free","health","studio","academy","commerce","business"].includes(moduleName))return;
+  try{localStorage.setItem(ACTIVE_MODULE_PREFIX+currentUser.id,moduleName)}catch(error){console.warn("Active module storage unavailable:",error)}
+}
+function getRememberedModule(){
+  if(!currentUser)return null;
+  try{const value=localStorage.getItem(ACTIVE_MODULE_PREFIX+currentUser.id);return ["free","health","studio","academy","commerce","business"].includes(value)?value:null}catch{return null}
+}
+function clearRememberedModule(userId){
+  if(!userId)return;
+  try{localStorage.removeItem(ACTIVE_MODULE_PREFIX+userId)}catch{}
+}
 
 function setChatNavigationDisabled(disabled){
   document.querySelectorAll(".new-chat-button,.delete-history-button,.conversation-item")
@@ -1729,6 +1742,7 @@ function selectModule(moduleName,userInitiated=false){
   const selectionStatus=el("moduleSelectionStatus");
   if(selectionStatus){selectionStatus.textContent="";selectionStatus.classList.add("hidden");}
   activeModule=moduleName;
+  if(currentUser)rememberActiveModule(moduleName);
   el("moduleSelectionSection")?.classList.remove("hidden","auth-flow-mode");
   document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode","history-open");
   document.documentElement.classList.remove("chat-focus-document");
@@ -3599,22 +3613,18 @@ async function showChat(user,displayName){
     if(pendingEntry)sessionStorage.removeItem("drvas_pending_entry");
   }catch{}
   if(pendingModule&&["free","health","studio","academy","commerce","business"].includes(pendingModule)){
-    activeModule=pendingModule;
     showModuleSelection();
     selectModule(pendingModule,true);
     if(isDrvasAdmin||pendingModule==="free"||pendingModule==="health")scrollPageToChat();
   }else if(pendingEntry==="modules"){
     showModuleSelection();
   }else{
-    // Restored sessions start on the public presentation; module navigation is always an explicit choice.
-    el("chatSection")?.classList.add("hidden");
-    el("heroSection")?.classList.remove("hidden");
-    document.querySelector(".origin-story")?.classList.remove("hidden");
-    el("landingActions")?.classList.remove("hidden");
-    el("moduleSelectionShell")?.classList.remove("hidden","modules-open");
-    el("moduleSelectionSection")?.classList.remove("hidden","auth-flow-mode");
-    document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode","history-open");
-    document.documentElement.classList.remove("chat-focus-document");
+    // A returning authenticated user resumes the last module instead of being sent back to the landing page.
+    const rememberedModule=getRememberedModule();
+    const resumableModule=rememberedModule&&((rememberedModule==="free"||rememberedModule==="health")||isDrvasAdmin)?rememberedModule:"free";
+    showModuleSelection();
+    selectModule(resumableModule,true);
+    if(resumableModule==="free"||resumableModule==="health"||isDrvasAdmin)scrollPageToChat();
   }
 
   // Conversation history is independent of module navigation. Load it after
@@ -3929,6 +3939,7 @@ function showLogin(){
 }
 
 async function logout(){
+  const signedOutUserId=currentUser?.id;
   await logClientEvent("auth_sign_out");
   if(liveSocket||liveStream)await stopLiveVoice();
   if(voiceRecognition&&voiceListening)voiceRecognition.stop();
@@ -3938,6 +3949,7 @@ async function logout(){
     alert(tr("Nu am putut încheia sesiunea: ") + error.message);
     return;
   }
+  clearRememberedModule(signedOutUserId);
   showLogin();
   setLocalizedText(el("authMessage"),"Te-ai deconectat cu succes.");
 }
@@ -3968,25 +3980,7 @@ async function checkSession(){
     const {data,error} = await supabaseClient.auth.getSession();
     if(error)throw error;
     if(data.session){
-      let accountChoiceConfirmed=false;
-      try{accountChoiceConfirmed=sessionStorage.getItem(ACCOUNT_CHOICE_SESSION_KEY)==="true"}catch{}
-      if(!accountChoiceConfirmed){
-        const connectedEmail=maskEmailForPrivacy(data.session.user?.email);
-        const continueWithAccount=window.confirm(
-          "Dr.Vas a găsit o sesiune salvată pentru: "+connectedEmail+
-          ".\n\nContinui cu acest cont?\n\nApasă „Anulează” dacă vrei să te deconectezi și să alegi alt cont."
-        );
-        if(!continueWithAccount){
-          try{sessionStorage.setItem("drvas_pending_entry","modules")}catch{}
-          const {error:signOutError}=await supabaseClient.auth.signOut();
-          if(signOutError)throw signOutError;
-          try{sessionStorage.setItem(ACCOUNT_CHOICE_SESSION_KEY,"true")}catch{}
-          showLogin();
-          setLocalizedText(el("authMessage"),"Te-ai deconectat. Acum te poți conecta cu alt cont.");
-          return;
-        }
-        try{sessionStorage.setItem(ACCOUNT_CHOICE_SESSION_KEY,"true")}catch{}
-      }
+      // A valid remembered session is resumed directly; switching accounts remains available through explicit logout.
       await showUser(data.session.user);
     }else{
       showLogin();
