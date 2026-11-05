@@ -1829,6 +1829,10 @@ function stopDrvasPresentationSpeech(){
  const play=el("presentationPlayButton");if(play)play.disabled=false;
  const status=el("presentationAudioStatus");if(status)status.textContent=(DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro).ready;
 }
+function prepareDrvasPresentationSpeechText(value){
+ // Keep the visible brand unchanged; expand the abbreviation only in the spoken narration.
+ return String(value||"").replace(/\bDr\.(?=[A-Z])/g,"Doctor ");
+}
 function speakDrvasPresentation(){
  const data=DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro;
  if(!("speechSynthesis" in window)||!("SpeechSynthesisUtterance" in window)){
@@ -1847,7 +1851,7 @@ function speakDrvasPresentation(){
   }
   const index=drvasPresentationIndex,key=["drvas","jan","sarah"][index],speaker=DRVAS_PRESENTERS[key];
   updateDrvasPresentationScene(index);
-  const utterance=new SpeechSynthesisUtterance(drvasPresentationQueue[index]);
+  const utterance=new SpeechSynthesisUtterance(prepareDrvasPresentationSpeechText(drvasPresentationQueue[index]));
   const lang=locales[currentLanguage]||"ro-RO",voices=window.speechSynthesis.getVoices?.()||[];
   const matching=voices.filter(v=>(v.lang||"").toLowerCase().startsWith(lang.slice(0,2)));
   const candidates=matching.length?matching:voices;
