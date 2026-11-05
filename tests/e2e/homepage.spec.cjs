@@ -216,6 +216,23 @@ test("successful login returns the visitor to the module chooser", async ({ page
   await expect(page.locator("#chatSection")).toBeHidden();
 });
 
+test("signed-in workspace header masks the founder's personal name and email", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(async () => {
+    window.refreshAdminPanel = async () => { isDrvasAdmin = true; };
+    window.loadConversationList = async () => [];
+    window.loadStudioProjects = async () => [];
+    window.loadModuleProjectList = async () => [];
+    await showChat(
+      { id: "e2e-identity-mask-user", email: "private-founder@example.invalid" },
+      "Vasile-Cătălin Prodan"
+    );
+  });
+  await expect(page.locator("#accountEmail")).toContainText("Cont administrator");
+  await expect(page.locator("#accountEmail")).not.toContainText("private-founder@example.invalid");
+  await expect(page.locator("#accountEmail")).not.toContainText("Vasile-Cătălin Prodan");
+});
+
 test("showChat resumes the last selected module instead of returning to the landing page", async ({ page }) => {
   await openApp(page, "ro");
   await page.evaluate(() => {
