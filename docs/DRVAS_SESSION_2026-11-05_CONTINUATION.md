@@ -451,3 +451,65 @@ Cererea fondatorului:
 > „salveaza tot sa nu pierden nimic din ce am facut”
 
 Acest jurnal păstrează rezultatul SQL exact ca valori și interpretarea tehnică pentru continuitate. Nu este o transcriere literală integrală a conversației ChatGPT; istoricul original rămâne în ChatGPT, iar exportul de date ChatGPT este metoda pentru o copie completă.
+
+
+## Continuare — următoarea verificare de securitate Supabase (read-only)
+
+După confirmarea că RLS este activ pe toate cele șapte tabele inspectate, următoarea etapă este verificarea exactă a politicilor și privilegiilor pentru tabelele de consimțământ și rate limits, precum și reconfirmarea expresiilor politicilor Storage. RLS activ, singur, nu demonstrează că accesul aplicației este corect configurat.
+
+Următoarele interogări sunt pregătite pentru rulare manuală în Supabase SQL Editor. Sunt exclusiv SELECT și nu modifică baza de date:
+
+```sql
+SELECT
+    schemaname,
+    tablename,
+    policyname,
+    permissive,
+    roles,
+    cmd,
+    qual,
+    with_check
+FROM pg_policies
+WHERE (schemaname = 'public' AND tablename IN (
+    'drvas_privacy_consents',
+    'drvas_rate_limits',
+    'chat_messages',
+    'drvas_chat_attachments'
+))
+OR (schemaname = 'storage' AND tablename = 'objects')
+ORDER BY schemaname, tablename, policyname;
+```
+
+```sql
+SELECT
+    table_schema,
+    table_name,
+    grantee,
+    privilege_type,
+    is_grantable
+FROM information_schema.role_table_grants
+WHERE (table_schema = 'public' AND table_name IN (
+    'drvas_privacy_consents',
+    'drvas_rate_limits',
+    'chat_messages',
+    'drvas_business_transactions',
+    'drvas_studio_projects',
+    'drvas_studio_render_jobs'
+))
+OR (table_schema = 'storage' AND table_name = 'objects')
+ORDER BY table_schema, table_name, grantee, privilege_type;
+```
+
+Scop:
+- verificăm dacă politicile pentru consimțăminte și rate limits există și corespund modului în care Worker-ul accesează datele;
+- confirmăm condițiile exacte owner-only pentru Storage și compatibilitatea căilor de obiecte;
+- verificăm privilegiile acordate rolurilor, fără a cere sau expune chei ori secrete.
+
+Stare păstrată:
+- RLS activ: true pe toate cele șapte tabele raportate; RLS forced: false pe toate.
+- Migrarea atașamentelor rămâne neaplicată; PR #7 este Draft și nemerged; nu s-a făcut deploy.
+- Nu s-a executat SQL de scriere și nu s-au schimbat politici, bucket, secrete sau date.
+- Analiza fișierelor Health rămâne dezactivată până la testele Storage/Gemini și verificările UK GDPR/DPIA.
+- Următorul pas este ca fondatorul să ruleze cele două SELECT-uri și să transmită rezultatele; apoi se face revizia finală a migrării și planului de backup/rollback.
+
+Această secțiune consemnează planul de verificare și interogările exacte pentru continuitate. Nu este transcriere literală integrală a conversației ChatGPT.
