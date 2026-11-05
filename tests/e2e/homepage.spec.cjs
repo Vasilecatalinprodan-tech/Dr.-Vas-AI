@@ -1265,6 +1265,8 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
     speech: window.__drvasSpoken[window.__drvasSpoken.length - 1].text
   }));
   expect(jan.speaker).toBe("Dr.Jan");
+  await expect(page.locator("#presentationAvatar")).toHaveClass(/presentation-avatar-jan/);
+  expect(await page.locator("#presentationAvatar .character-glasses").evaluate(node => getComputedStyle(node).display)).toBe("block");
   expect(await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].voice?.name)).toBe("Microsoft David");
   expect(jan.modules).toContain("Dr.Vas Studio");
   expect(jan.modules).toContain("Dr.Vas Business");
@@ -1279,6 +1281,8 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
     speech: window.__drvasSpoken[window.__drvasSpoken.length - 1].text
   }));
   expect(sarah.speaker).toBe("Sarah");
+  await expect(page.locator("#presentationAvatar")).toHaveClass(/presentation-avatar-sarah/);
+  expect(await page.locator("#presentationAvatar .character-hair-long").evaluate(node => getComputedStyle(node).display)).toBe("block");
   expect(await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].voice?.name)).toBe("Microsoft Alina");
   expect(sarah.modules).toContain("Dr.Vas Academy");
   expect(sarah.modules).toContain("Dr.Vas Commerce");
