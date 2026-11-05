@@ -1236,6 +1236,9 @@ body.module-workspace-mode .studio-workspace.hidden{
       <div><small>Rezultat net / an</small><strong id="cryptoNetAnnual">£0.00</strong></div>
       <div><small>Preț BTC prag rentabilitate</small><strong id="cryptoBreakEvenBtc">—</strong></div>
       <div><small>Tarif maxim energie</small><strong id="cryptoMaxElectricity">—</strong></div>
+      <div><small>Consum energie / 30 zile</small><strong id="cryptoMonthlyKwh">—</strong></div>
+      <div><small>Cost energie / an</small><strong id="cryptoAnnualEnergyCost">—</strong></div>
+      <div><small>Căldură disipată</small><strong id="cryptoHeatLoad">—</strong></div>
      </div>
      <p id="cryptoCalcNotice" class="admin-footnote" role="status">Calcul demonstrativ. Mining-ul și tranzacționarea rămân dezactivate.</p>
     </div>
@@ -3599,6 +3602,9 @@ function calculateCryptoMiningEconomics(){
  if(breakEvenNode)breakEvenNode.textContent=breakEvenDenominator>0?money((energy+maintenance/30)/breakEvenDenominator):"Nu se calculează";
  const maxEnergyNode=el("cryptoMaxElectricity");
  if(maxEnergyNode)maxEnergyNode.textContent=energyKwh>0?money(Math.max(0,(gross*(1-fee/100)-maintenance/30)/energyKwh))+"/kWh":"—";
+ const monthlyKwhNode=el("cryptoMonthlyKwh");if(monthlyKwhNode)monthlyKwhNode.textContent=(energyKwh*30).toLocaleString("en-GB",{maximumFractionDigits:1})+" kWh";
+ const annualEnergyNode=el("cryptoAnnualEnergyCost");if(annualEnergyNode)annualEnergyNode.textContent=money(energy*365);
+ const heatNode=el("cryptoHeatLoad");if(heatNode)heatNode.textContent=((watts+cooling)*3.412).toLocaleString("en-GB",{maximumFractionDigits:0})+" BTU/h";
  if(notice)notice.textContent=net>0?"Scenariu orientativ după energie, răcire, indisponibilitate, mentenanță și rezerva fiscală introdusă. Pragurile BTC/energie sunt matematice, nu predicții. Nu includ toate taxele, amortizarea, dificultatea rețelei sau volatilitatea BTC.":"În acest scenariu, costurile depășesc venitul estimat. Nu cumpăra echipament pe baza acestui calcul.";
 }
 
