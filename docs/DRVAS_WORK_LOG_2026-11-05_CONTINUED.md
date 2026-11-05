@@ -241,3 +241,10 @@ Fondatorul a confirmat că fiecare dezvoltare trebuie implementată în aplicaț
 - The form captures brand/project, audience, campaign objective, channels, cadence/resources and offer/budget/rights limits. The generated 30-day editorial brief includes content pillars, daily calendar, hooks, scripts, CTAs, asset requirements, ownership, platform adaptation, reuse strategy, weekly goals, A/B test hypotheses, staged budget and measurable KPIs.
 - Added a Playwright regression test verifying required inputs, generated brief content, safety boundary and routing to the existing founder-gated Studio workflow.
 - No automated publishing/scheduling, ad spend, customer messaging, database schema, secrets, entitlements or production changes. New code and test are saved on the development branch; CI is pending.
+
+
+## 2026-11-05 — Regression assertion wording correction
+
+- Run #193 confirmed the numeric Bitcoin baseline now passes after explicitly setting downtime, maintenance and tax reserve to zero.
+- The remaining failure was only a stale notice substring: the UI now says thresholds are mathematical, "nu predicții". Updated the test to assert the current exact wording.
+- Saved in commit `38604f93842b53d8206ba35a1ba7c8deef9d3334`. The newer run #196 was cancelled by workflow concurrency while commits were still arriving; the latest test commit requires a fresh uncancelled CI run.
