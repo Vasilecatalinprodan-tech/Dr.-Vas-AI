@@ -41,6 +41,39 @@ async function openApp(page, language = null, session = null, profileError = fal
   await page.waitForFunction(() => document.documentElement.lang === "ro" && !document.querySelector("#appMain")?.classList.contains("language-pending"));
 }
 
+test("universal chat uploader accepts private images and documents and requires Health consent", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-attachment-user" };
+    activeModule = "health";
+    renderPendingChatFiles();
+  });
+  const picker = page.locator("#chatFileInput");
+  await picker.setInputFiles([
+    { name: "blood-results.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4 E2E") },
+    { name: "scan.png", mimeType: "image/png", buffer: Buffer.from("png-e2e") }
+  ]);
+  await expect(page.locator("#pendingChatFiles")).toBeVisible();
+  await expect(page.locator("#pendingChatFiles")).toContainText("blood-results.pdf");
+  await expect(page.locator("#pendingChatFiles")).toContainText("scan.png");
+  await expect(page.locator("#fileProcessingConsentWrap")).toBeVisible();
+  await expect(page.locator("#healthDataProcessingConsentWrap")).toBeVisible();
+  await page.locator("#fileProcessingConsent").check();
+  await page.locator("#healthDataProcessingConsent").check();
+  await page.evaluate(() => {
+    activeModule = "free";
+    renderPendingChatFiles();
+  });
+  await expect(page.locator("#healthDataProcessingConsentWrap")).toBeHidden();
+  await expect(page.locator("#fileProcessingConsentWrap")).toBeVisible();
+  await page.locator("#pendingChatFiles button").first().click();
+  await expect(page.locator("#pendingChatFiles")).toContainText("scan.png");
+  await expect(page.locator("#pendingChatFiles")).not.toContainText("blood-results.pdf");
+  await page.locator("#pendingChatFiles button").first().click();
+  await expect(page.locator("#pendingChatFiles")).toBeHidden();
+  await expect(page.locator("#fileProcessingConsentWrap")).toBeHidden();
+});
+
 test("first visit shows the Dr.Vas landing page, language selector and clear entry CTA", async ({ page }) => {
   await openApp(page);
   await expect(page.locator("#languageGate")).toBeVisible();
