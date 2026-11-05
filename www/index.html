@@ -786,12 +786,14 @@ body.presentation-open{overflow:hidden!important}
 .presentation-avatar-sarah .character-hair{fill:#59314c}
 .presentation-avatar-sarah .character-hair-detail{fill:#bd7da6}
 .presentation-avatar-sarah .character-shoulders{fill:#d6b3d8}
+.presentation-presenter.is-animated .presentation-avatar{animation:presentationAvatarIdle 2.8s ease-in-out infinite alternate}
+@keyframes presentationAvatarIdle{from{transform:translateY(0) scale(1)}to{transform:translateY(-3px) scale(1.025)}}
 .presentation-presenter.is-speaking .presentation-avatar{animation:presentationAvatarTalk .42s ease-in-out infinite alternate}
 .presentation-presenter.is-speaking .character-mouth{animation:characterMouth .18s ease-in-out infinite alternate}
 .presentation-presenter.is-speaking .presenter-character-art{animation:characterTalk .42s ease-in-out infinite alternate}
 @keyframes characterMouth{from{transform:scaleY(.35)}to{transform:scaleY(1.45)}}
 @keyframes characterTalk{from{transform:translateY(0) rotate(-1deg)}to{transform:translateY(-3px) rotate(1deg)}}
-@media(prefers-reduced-motion:reduce){.character-orbit,.character-blink,.presentation-presenter.is-speaking .presentation-avatar,.presentation-presenter.is-speaking .character-mouth,.presentation-presenter.is-speaking .presenter-character-art,.presentation-scene,#presentationPresenter.scene-enter{animation:none!important}}
+@media(prefers-reduced-motion:reduce){.character-orbit,.character-blink,.presentation-presenter.is-speaking .presentation-avatar,.presentation-presenter.is-speaking .character-mouth,.presentation-presenter.is-speaking .presenter-character-art,.presentation-presenter.is-animated .presentation-avatar,.presentation-scene,#presentationPresenter.scene-enter{animation:none!important}}
 .presentation-avatar-jan{border-color:#8ac9df;background:radial-gradient(circle at 35% 25%,#4c8fa9,#20364d 72%);box-shadow:0 0 0 7px #74b8df14,0 0 30px #74b8df25}
 .presentation-avatar-sarah{border-color:#e4b6e2;background:radial-gradient(circle at 35% 25%,#bd83bb,#4a345d 72%);box-shadow:0 0 0 7px #d9a5db14,0 0 30px #d9a5db25}
 .presentation-presenter.is-speaking .presentation-avatar{animation:presentationAvatarTalk .42s ease-in-out infinite alternate}
@@ -1866,6 +1868,19 @@ const DRVAS_PRESENTER_LINES={
 let drvasPresentationRun=0;
 let drvasPresentationQueue=[];
 let drvasPresentationIndex=0;
+let drvasPresentationVisualTimer=null;
+function startVisualDrvasPresentation(run,index=0,reason=""){
+ if(run!==drvasPresentationRun)return;
+ if(index>=3){
+  const status=el("presentationAudioStatus");if(status)status.textContent="Prezentarea vizuală animată s-a încheiat. Audio nu a pornit: "+reason;
+  return;
+ }
+ updateDrvasPresentationScene(index);
+ const presenter=el("presentationPresenter");if(presenter)presenter.classList.add("is-animated");
+ const speaker=DRVAS_PRESENTERS[["drvas","jan","sarah"][index]];
+ const status=el("presentationAudioStatus");if(status)status.textContent="Prezentare vizuală animată · "+speaker.name+". "+reason;
+ drvasPresentationVisualTimer=window.setTimeout(()=>startVisualDrvasPresentation(run,index+1,reason),6500);
+}
 function renderDrvasPresentation(){
  const data=DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro;
  const set=(id,value)=>{const node=el(id);if(node)node.textContent=value};
@@ -1877,7 +1892,7 @@ function renderDrvasPresentation(){
 function updateDrvasPresentationScene(index){
  const key=["drvas","jan","sarah"][index],speaker=DRVAS_PRESENTERS[key],data=DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro;
  const presenter=el("presentationPresenter"),avatar=el("presentationAvatar"),grid=el("presentationModuleGrid");
- if(presenter){presenter.classList.remove("is-speaking","scene-enter");void presenter.offsetWidth;presenter.classList.add("scene-enter");}
+ if(presenter){presenter.classList.remove("is-speaking","is-animated","scene-enter");void presenter.offsetWidth;presenter.classList.add("scene-enter");}
  if(avatar){avatar.className="presentation-avatar presentation-avatar-"+key;avatar.dataset.presenter=key;}
  const set=(id,value)=>{const node=el(id);if(node)node.textContent=value};
  set("presentationSpeakerName",speaker.name);set("presentationSpeakerRole",speaker.role[currentLanguage]||speaker.role.ro);
@@ -1907,8 +1922,10 @@ function finishDrvasPresentation(){
 }
 function stopDrvasPresentationSpeech(){
  drvasPresentationRun++;
+ if(drvasPresentationVisualTimer)window.clearTimeout(drvasPresentationVisualTimer);
+ drvasPresentationVisualTimer=null;
  if("speechSynthesis" in window)window.speechSynthesis.cancel();
- const presenter=el("presentationPresenter");if(presenter)presenter.classList.remove("is-speaking");
+ const presenter=el("presentationPresenter");if(presenter)presenter.classList.remove("is-speaking","is-animated");
  const stop=el("presentationStopButton");if(stop)stop.disabled=true;
  const play=el("presentationPlayButton");if(play)play.disabled=false;
  const status=el("presentationAudioStatus");if(status)status.textContent=(DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro).ready;
@@ -1959,12 +1976,13 @@ function getDrvasPresentationVoices(){
 }
 async function speakDrvasPresentation(){
  const data=DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro;
- if(!("speechSynthesis" in window)||!("SpeechSynthesisUtterance" in window)){
-  const status=el("presentationAudioStatus");if(status)status.textContent=data.unavailable;
-  el("presentationContinueButton")?.classList.remove("hidden");return;
- }
  stopDrvasPresentationSpeech();
  const run=drvasPresentationRun,lines=DRVAS_PRESENTER_LINES[currentLanguage]||DRVAS_PRESENTER_LINES.ro;
+ if(!("speechSynthesis" in window)||!("SpeechSynthesisUtterance" in window)){
+  el("presentationContinueButton")?.classList.remove("hidden");
+  startVisualDrvasPresentation(run,0,data.unavailable);
+  return;
+ }
  const locales={ro:"ro-RO",en:"en-GB",it:"it-IT",tr:"tr-TR",de:"de-DE",fr:"fr-FR",es:"es-ES",ru:"ru-RU"};
  const lang=locales[currentLanguage]||"ro-RO";
  const voices=await getDrvasPresentationVoices();
@@ -1974,9 +1992,11 @@ async function speakDrvasPresentation(){
  const voiceStatus=el("presentationAudioStatus");
  if(!voiceProfile.hasAllDistinct){
   const missing=[!voiceProfile.drvas?"Dr.Vas (voce masculină)":"",!voiceProfile.jan?"Dr.Jan (a doua voce masculină distinctă)":"",!voiceProfile.sarah?"Sarah (voce feminină)":""].filter(Boolean).join(", ");
-  if(voiceStatus)voiceStatus.textContent="Prezentarea animată este disponibilă, dar audio este oprit pentru a nu folosi voci aleatorii. Instalează în Windows trei voci distincte pentru limba selectată: "+missing+".";
+  const reason="Audio este oprit pentru a nu folosi voci aleatorii. Instalează în Windows trei voci distincte pentru limba selectată: "+missing+".";
+  if(voiceStatus)voiceStatus.textContent=reason;
   const stop=el("presentationStopButton");if(stop)stop.disabled=true;
   const play=el("presentationPlayButton");if(play)play.disabled=false;
+  startVisualDrvasPresentation(run,0,reason);
   return;
  }
  const speakNext=()=>{
