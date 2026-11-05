@@ -1418,46 +1418,91 @@ export default {
         }), { status: 200, headers: { ...headers, "Cache-Control": "no-store, private" } });
       }
 
-      if (body.action === "file_processing_consent") {
+      if (body.action === "file_processing_consent_get" || body.action === "file_processing_consent") {
         const consentUser = await verifySupabaseUser(env, body.access_token);
         if (!consentUser) return json({ error: "Sesiune invalidă. Conectează-te din nou." }, 401);
+        const consentBaseUrl = env.SUPABASE_URL.replace(/\/+$/, "") + "/rest/v1/drvas_privacy_consents";
+
+        if (body.action === "file_processing_consent_get") {
+          const readLatestConsent = async consentType => {
+            const query = new URLSearchParams({
+              select: "granted,policy_version,recorded_at",
+              user_id: "eq." + consentUser.id,
+              consent_type: "eq." + consentType,
+              order: "recorded_at.desc,id.desc",
+              limit: "1"
+            });
+            const response = await fetch(consentBaseUrl + "?" + query.toString(), {
+              headers: {
+                apikey: env.SUPABASE_KEY,
+                Authorization: "Bearer " + env.SUPABASE_KEY
+              }
+            });
+            if (!response.ok) throw new Error("FILE_CONSENT_READ_FAILED");
+            const rows = await response.json();
+            return Array.isArray(rows) && rows.length ? rows[0] : null;
+          };
+          try {
+            const [generalConsent, healthConsent] = await Promise.all([
+              readLatestConsent("file_processing"),
+              readLatestConsent("health_data_processing")
+            ]);
+            return new Response(JSON.stringify({
+              ok: true,
+              file_processing_granted: generalConsent?.granted === true,
+              health_data_processing_granted: healthConsent?.granted === true,
+              file_processing_recorded_at: generalConsent?.recorded_at || null,
+              health_data_processing_recorded_at: healthConsent?.recorded_at || null
+            }), { status: 200, headers: { ...headers, "Cache-Control": "no-store, private" } });
+          } catch (error) {
+            console.error("Dr.Vas file consent read failed:", error.message);
+            return json({ error: "Nu am putut verifica acordurile pentru procesarea fișierelor." }, 503);
+          }
+        }
+
         const consentModule = body.module;
         const consentModules = new Set(["free", "health", "studio", "academy", "commerce", "business"]);
-        if (!consentModules.has(consentModule) || body.granted !== true) {
+        if (typeof body.granted !== "boolean" ||
+            (body.granted === true && !consentModules.has(consentModule))) {
           return json({ error: "Acordul pentru procesarea fișierelor nu este valid." }, 400);
         }
+
+        // Withdrawal is global: it revokes both general file processing and the
+        // separate sensitive-health-data permission, regardless of the current module.
         const consentRecords = [{
           user_id: consentUser.id,
           consent_type: "file_processing",
           policy_version: "chat-files-v1",
-          granted: true
+          granted: body.granted
         }];
-        if (consentModule === "health") {
+        if (body.granted === false || consentModule === "health") {
           consentRecords.push({
             user_id: consentUser.id,
             consent_type: "health_data_processing",
             policy_version: "health-files-v1",
-            granted: true
+            granted: body.granted
           });
         }
-        const consentResponse = await fetch(
-          env.SUPABASE_URL.replace(/\/+$/, "") + "/rest/v1/drvas_privacy_consents",
-          {
-            method: "POST",
-            headers: {
-              apikey: env.SUPABASE_KEY,
-              Authorization: "Bearer " + env.SUPABASE_KEY,
-              "Content-Type": "application/json",
-              Prefer: "return=minimal"
-            },
-            body: JSON.stringify(consentRecords)
-          }
-        );
+        const consentResponse = await fetch(consentBaseUrl, {
+          method: "POST",
+          headers: {
+            apikey: env.SUPABASE_KEY,
+            Authorization: "Bearer " + env.SUPABASE_KEY,
+            "Content-Type": "application/json",
+            Prefer: "return=minimal"
+          },
+          body: JSON.stringify(consentRecords)
+        });
         if (!consentResponse.ok) {
           console.error("Dr.Vas file consent write failed:", consentResponse.status);
-          return json({ error: "Nu am putut salva acordul de procesare. Fișierele nu au fost încărcate." }, 503);
+          return json({ error: "Nu am putut salva modificarea acordului. Starea anterioară a rămas neschimbată." }, 503);
         }
-        return new Response(JSON.stringify({ ok: true, recorded: true }), {
+        return new Response(JSON.stringify({
+          ok: true,
+          recorded: true,
+          granted: body.granted,
+          revoked: body.granted === false
+        }), {
           status: 200, headers: { ...headers, "Cache-Control": "no-store, private" }
         });
       }
