@@ -55,3 +55,13 @@ Founder feedback:
 - Before generating/replacing portrait assets, confirm whether the founder wants fictional photorealistic AI-generated adult faces or supplied real-person photographs. If using supplied photographs, obtain the image and permission from the person shown. Do not use a minor's photograph to create an adult identity.
 - Future talking-head/lip-sync animation is a separate scope from static photorealistic portrait replacement and requires a suitable licensed video/animation provider, source assets and approved usage costs.
 - No new voice provider secrets were created, no paid voice provider was activated, and no new portrait assets were generated in this checkpoint.
+
+## Implementation checkpoint — assistant-specific TTS routing
+
+- The Worker now accepts only the assistant IDs `drvas`, `jan` and `aurora` for `voice_tts`, verifies the authenticated Supabase session, applies the existing per-user rate limit, and selects the provider voice ID only from server-side secrets.
+- Secret mapping: `ELEVENLABS_VOICE_ID` for Dr.Vas (backward compatible), `ELEVENLABS_JAN_VOICE_ID` for Dr.Jan, and `ELEVENLABS_SARAH_VOICE_ID` for Sarah. No provider IDs or API keys are sent to the browser.
+- The frontend now sends the selected assistant identity to the Worker for all three assistants. If a dedicated voice is not configured or the provider is unavailable, it falls back to the device's browser speech engine; therefore genuinely distinct voices are not yet guaranteed until the three voice profiles are configured and tested.
+- Do not invent voice IDs or add secrets to source control. The founder must choose the voices and add the three IDs plus the provider API key using Cloudflare Worker secrets. Do not activate paid voice usage without explicit budget approval.
+- Added a browser regression test that checks the frontend sends the correct assistant identity for Dr.Vas, Dr.Jan and Sarah, and CI static assertions for the server-side secret mapping.
+- Remaining: run the deployment workflow; configure the two new secret IDs after voice selection; verify actual voice gender/identity and Romanian/English pronunciation; test on Samsung S24, desktop browser and a newly built APK. Existing installed APK remains untouched.
+- Avatar work remains blocked on the founder's choice between fictional photorealistic adult portraits and real-person photographs with permission. No portraits were generated or replaced in this change.
