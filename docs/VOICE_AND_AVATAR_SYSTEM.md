@@ -73,3 +73,9 @@ Founder feedback:
 - Added an E2E test for a signed-in assistant using Worker TTS when `speechSynthesis` is unavailable, plus CI source assertions.
 - Workflow #470 is pending at the time of this note; do not claim this follow-up has passed or deployed until its run result is checked.
 - Dedicated Jan/Sarah provider IDs and real device audio checks remain required for genuinely distinct voices.
+
+## Validation result — workflow #473
+
+The browser-independent server TTS fix and the Academy/Commerce/Business saved-project continuity hook were included in workflow #473 / run `42130733280`, which completed SUCCESS. The Playwright browser suite, JavaScript validation, Worker deploy, production smoke test and SBOM upload passed. Production Worker version: `f88f84eb-45b6-45b8-84f4-0d109c88864f`.
+
+This still does not mean Jan/Sarah voice IDs are configured or the actual sound has been verified on the Samsung device.
