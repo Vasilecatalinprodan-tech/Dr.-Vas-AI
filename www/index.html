@@ -2629,13 +2629,19 @@ async function playFounderVoice(text){
  }
 }
 async function speakDrVas(text){
- if(!voiceAutoRead||!text||!window.speechSynthesis)return;
+ if(!voiceAutoRead||!text)return;
  const spokenText=prepareSpeechText(text);
  if(!spokenText)return;
  lastSpokenAnswer=text;
+ // Prefer the secured server-generated founder voice even when Android WebView
+ // does not expose the browser SpeechSynthesis API.
  if(activeAssistant==="drvas"){
   const played=await playFounderVoice(spokenText);
   if(played)return;
+ }
+ if(!("speechSynthesis" in window)||!("SpeechSynthesisUtterance" in window)){
+  refreshVoiceUi("voiceUnavailable");
+  return;
  }
  const lang=speechLanguage();
  let voice=chooseSpeechVoice(lang);
@@ -2668,7 +2674,7 @@ async function speakDrVas(text){
  refreshVoiceUi("ready");
 }
 function replayLastAnswer(){
- if(!lastSpokenAnswer||!window.speechSynthesis)return;
+ if(!lastSpokenAnswer||(activeAssistant!=="drvas"&&!window.speechSynthesis))return;
  const wasEnabled=voiceAutoRead;
  voiceAutoRead=true;
  speakDrVas(lastSpokenAnswer);
@@ -2683,7 +2689,10 @@ function stopVoiceOutput(){
  refreshVoiceUi("stopped");
 }
 function toggleVoiceOutput(){
- if(!window.speechSynthesis){
+ // Dr.Vas has a server-side audio voice; it must remain available on Android
+ // even on WebViews without SpeechSynthesis.
+ const hasServerVoice=activeAssistant==="drvas"&&Boolean(currentUser);
+ if(!window.speechSynthesis&&!hasServerVoice){
   refreshVoiceUi("unsupported");
   return;
  }
