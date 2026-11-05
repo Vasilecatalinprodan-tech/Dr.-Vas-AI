@@ -776,6 +776,10 @@ body.presentation-open{overflow:hidden!important}
 .character-orbit-two{inset:-5px;border-style:dashed;opacity:.35;animation:characterOrbit 16s linear infinite reverse}
 @keyframes characterOrbit{to{transform:rotate(360deg)}}
 .character-status-light{position:absolute;z-index:3;right:5px;bottom:12px;width:13px;height:13px;border-radius:50%;background:#6df0c4;border:2px solid #092033;box-shadow:0 0 13px #6df0c4}
+.character-hair-long,.character-glasses,.character-earrings{display:none}
+.presentation-avatar-jan .character-glasses{display:block}
+.presentation-avatar-sarah .character-hair-long,.presentation-avatar-sarah .character-earrings{display:block}
+.presentation-avatar-sarah .character-hair-long{fill:#59314c}
 .character-mouth{transform-origin:90px 108px}
 .character-blink{opacity:0;transform-origin:center;animation:characterBlink 5.2s infinite}
 @keyframes characterBlink{0%,46%,49%,100%{opacity:0}47%,48%{opacity:1}}
@@ -842,6 +846,22 @@ body.presentation-open{overflow:hidden!important}
 #chatFileInput{display:none}
 @media(max-width:560px){.chat-file-toolbar{align-items:flex-start}.chat-file-consent{flex-basis:100%}.chat-file-button{min-height:42px}}
 
+
+@media(max-width:680px){
+ .drvas-presentation{width:calc(100vw - 16px);max-height:calc(100dvh - 16px);padding:16px;border-radius:16px}
+ .drvas-presentation-head h2{font-size:22px}
+ .presentation-scene{flex-direction:column;align-items:stretch;gap:12px;padding:14px}
+ .presentation-presenter{min-width:0;width:100%;flex-wrap:wrap;gap:10px}
+ .presentation-avatar{width:90px;height:90px;flex-basis:90px}
+ .presentation-presenter-copy strong{font-size:17px}
+ .presentation-speaking-copy{font-size:13px;line-height:1.65}
+ .presentation-module-grid{grid-template-columns:1fr;gap:9px}
+ .presentation-module{padding:13px}
+ .presentation-audio-controls{align-items:stretch}
+ .presentation-audio-controls button{flex:1 1 100%}
+ .studio-scene-timeline{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:360px){.drvas-presentation{padding:12px}.presentation-avatar{width:82px;height:82px;flex-basis:82px}.presentation-presenter-copy strong{font-size:15px}}
 </style>
 </head>
 
@@ -901,11 +921,15 @@ body.presentation-open{overflow:hidden!important}
        <span class="character-orbit character-orbit-one"></span><span class="character-orbit character-orbit-two"></span>
        <svg class="presenter-character-art" viewBox="0 0 180 180" role="presentation" aria-hidden="true">
         <defs><linearGradient id="presenterSkin" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe0c6"/><stop offset="1" stop-color="#c98d72"/></linearGradient><linearGradient id="presenterCoat" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8f4f5"/><stop offset="1" stop-color="#8db5c4"/></linearGradient></defs>
-        <path class="character-shoulders" d="M18 180c4-39 28-57 72-57s68 18 72 57" fill="url(#presenterCoat)"/><path d="M73 119h34v27H73z" fill="url(#presenterSkin)"/>
+        <path class="character-shoulders" d="M18 180c4-39 28-57 72-57s68 18 72 57" fill="url(#presenterCoat)"/>
+        <path class="character-hair-long" d="M42 63c-12 31-5 85 17 111l16-7-8-67 46-1-7 68 17 7c20-26 26-79 10-111-22 14-69 14-91 0z" fill="#59314c"/>
+        <path d="M73 119h34v27H73z" fill="url(#presenterSkin)"/>
         <ellipse cx="90" cy="79" rx="48" ry="55" fill="url(#presenterSkin)"/>
         <path class="character-hair" d="M42 76C35 30 58 12 94 15c34 2 51 24 44 62-8-16-15-26-27-31-20 13-40 15-69 9z" fill="#26384b"/>
         <path class="character-hair-detail" d="M47 59c12-28 29-36 53-36 15 0 28 7 36 20-22-9-46-4-62 7-9 6-18 9-27 9z" fill="#526d82"/>
         <ellipse cx="70" cy="82" rx="5" ry="4" fill="#23384a"/><ellipse cx="110" cy="82" rx="5" ry="4" fill="#23384a"/>
+        <g class="character-glasses" fill="none" stroke="#c6e4ed" stroke-width="3"><rect x="54" y="70" width="32" height="24" rx="9"/><rect x="94" y="70" width="32" height="24" rx="9"/><path d="M86 80h8"/></g>
+        <g class="character-earrings" fill="#f2d38c" stroke="#fff0c6" stroke-width="1"><circle cx="43" cy="105" r="3.5"/><circle cx="137" cy="105" r="3.5"/></g>
         <path class="character-blink" d="M63 82h14M103 82h14" fill="none" stroke="#23384a" stroke-width="4" stroke-linecap="round"/>
         <path d="M84 94q6 5 12 0" fill="none" stroke="#a96f62" stroke-width="3" stroke-linecap="round"/><path class="character-mouth" d="M76 108q14 11 28 0" fill="none" stroke="#874d50" stroke-width="4" stroke-linecap="round"/>
         <path d="M55 72q14-9 27-2M99 70q14-7 27 2" fill="none" stroke="#293d50" stroke-width="4" stroke-linecap="round"/><path d="M70 143l20 17 20-17" fill="none" stroke="#4c7d92" stroke-width="5"/>
