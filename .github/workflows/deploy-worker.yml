@@ -66,6 +66,11 @@ jobs:
           const studioRenderMigration = fs.readFileSync('supabase/migrations/202611040004_studio_render_storage.sql', 'utf8');
           const checks = [
             [!worker.includes('"Access-Control-Allow-Origin": "*"'), 'Wildcard CORS must not be enabled'],
+            [worker.includes('"free", "health", "studio", "academy", "commerce", "business"'), 'Worker must recognize all six product modules'],
+            [worker.includes('const privatePilotModules = new Set(["studio", "academy", "commerce", "business"]);'), 'Only the four future paid modules may remain founder-gated'],
+            [worker.includes('allowedAdminEmails.includes(user.email.trim().toLowerCase())') && worker.includes('if (privatePilotModules.has(moduleName) && !isAdminUser)'), 'Premium access must be based on the verified Supabase user and server-side admin allowlist'],
+            [worker.includes('liveModule === "health" && env.GEMINI_LIVE_HEALTH_ENABLED !== "true"'), 'Health Live voice must remain separately privacy-gated'],
+            [!worker.includes('const privatePilotModules = new Set(["free", "health"'), 'Free and Health must never be added to the private module gate'],
             [worker.includes('64 * 1024'), 'Worker request body limit is missing'],
             [worker.includes('"X-Content-Type-Options": "nosniff"'), 'API security headers are missing'],
             [worker.includes('assetHeaders.set("X-Frame-Options", "DENY")'), 'Static asset frame protection is missing'],
