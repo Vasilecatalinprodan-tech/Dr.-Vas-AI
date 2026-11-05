@@ -48,3 +48,35 @@ Never store passwords, API keys, Supabase tokens, ElevenLabs keys, or other secr
 - `package.json` currently declares Capacitor/CLI and Wrangler dependencies but no npm `scripts` or test-runner dependencies. The repository contains a large Playwright E2E spec at `tests/e2e/homepage.spec.cjs`, including browser speech-synthesis coverage, but a root Playwright config/package test command was not found in the inspected paths. Before claiming test coverage passes, establish the intended E2E runner/config and execute it in CI or Codespaces.
 - Attempted to check the public Worker `/health` endpoint through the available page retrieval path; it was not accessible through that path. This does not establish that the Worker is down. Verify directly in the browser or Cloudflare dashboard when doing deployment checks.
 - No new code change was made in this audit. Keep the replay fix commit `4d989ea23037fcfea718ac358c919ce166a4f7a4` as the latest functional change recorded in this checkpoint.
+
+
+## Expanded scope and continuation agreement — 2026-11-05
+
+The founder confirmed that work should continue progressively across the whole Dr.Vas vision and that project decisions/progress should be preserved. Prior conversation retrieval identified the designated administrator email already specified for the Dr.Vas project; retain it only as private project context and use the existing server-side admin allowlist. Do not reproduce the address in public documentation or store credentials/secrets.
+
+Additional destinations recovered from earlier Dr.Vas conversations and reconfirmed by the founder:
+
+- **Dr.Vas Crypto & Mining** (also discussed as Crypto & Mining, Mining Intelligence and Mining Sensitivity Lab): proposed education, research and transparent mining/crypto scenario calculators. Start simulation-only; no real mining operation, wallet custody/signing, exchange connection, trading or automatic investing without separate explicit approval and security/legal review.
+- **Dr.Vas Books** (Book Workshop / Publishing Lab): create books from concept through outline, drafting, editing, formatting, translation and publishing preparation.
+- **Dr.Vas Music** (Music Production Lab / Music Release Lab): original songs/lyrics and production plans, multilingual adaptation and release preparation. Respect copyright and voice/likeness consent.
+- **Translation Studio**: translation and localization across Dr.Vas, with glossaries and human review; medical/legal/high-stakes outputs require qualified review.
+- **Dr.Vas Online Income** (Digital Product Studio / Digital Products Lab): develop legitimate digital products and income models with transparent costs, realistic assumptions and no guaranteed-earnings claims.
+- **Dr.Vas AI Evaluation & Training**: evaluation/testing and training materials.
+- **Business Automation**, **Business Operations Planner**, **Customer Journey & Retention Planner**, **Commerce Profit Lab**: candidate specialist tools to group under existing modules after design.
+
+These are proposed expansion workspaces, not claims of implementation and not yet a decision to create a separate top-level navigation item for every name. Keep the six established core modules and one integrated account/platform. The founder specifically wants Studio to grow beyond video/social content to include translations, books and music.
+
+A weekly task named “Verifică săptămânal buildurile Dr.Vas” was successfully created. It checks the latest Android GitHub Actions build on the continuation branch and reports the exact result without changing code or deploying.
+
+Next sequence:
+1. Verify Android APK Actions run and install/test voice, replay and stop.
+2. Audit current branch and update status/handoff.
+3. Audit core platform functionality, access control, privacy, data and language.
+4. Build Studio project workflows for video, translation, books and music, with drafts, revisions, exports and founder approval.
+5. Design Crypto & Mining as research/education/simulation first, with explicit costs and risk disclosures.
+6. Build Online Income/Digital Products and AI Evaluation workflows.
+7. Complete Academy, Commerce and Business, billing/entitlements and release/compliance preparation.
+
+Crypto safety boundary: no real financial execution, wallet custody, trading, investment automation or earnings promises without a separate approved scope and security/legal review. Mining calculations must show electricity, hardware depreciation, pool fees, network difficulty and coin-price assumptions. Publishing books/music and social posts requires rights/originality review and founder approval.
+
+This log is a continuity summary. The original ChatGPT conversation remains in ChatGPT history; this file does not claim to be a verbatim transcript.
