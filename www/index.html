@@ -802,13 +802,7 @@ body.presentation-open{overflow:hidden!important}
  
 </section>
 
-<section class="panel module-selection-shell" id="moduleSelectionShell">
-  <section id="moduleSelectionSection" class="modules-section">
-   <div class="modules-heading">
-    <div><h2>Platforma Dr.Vas</h2><p>Alege spațiul de lucru de care ai nevoie.</p></div>
-    <div class="modules-heading-actions"><button type="button" class="presentation-open-button" id="presentationOpenButton" onclick="openDrvasPresentation()">▶ Deschide prezentarea</button><span class="status">2 MODULE GRATUITE PENTRU PUBLIC · 4 MODULE PRIVATE ÎN PREGĂTIRE</span></div>
-   </div>
-   <section id="drvasPresentation" class="drvas-presentation hidden" role="dialog" aria-modal="true" aria-labelledby="drvasPresentationTitle" aria-describedby="presentationSpeakingCopy">
+<section id="drvasPresentation" class="drvas-presentation hidden" role="dialog" aria-modal="true" aria-labelledby="drvasPresentationTitle" aria-describedby="presentationSpeakingCopy">
     <div class="drvas-presentation-head"><div><span class="tag" id="drvasPresentationEyebrow">O SINGURĂ PLATFORMĂ · ȘASE MODULE</span><h2 id="drvasPresentationTitle">Prezentarea Dr.Vas</h2><p id="drvasPresentationIntro">Un ecosistem AI integrat, conceput pentru a sprijini oamenii, ideile și afacerile într-un singur loc.</p></div><button type="button" class="presentation-close-button" id="presentationCloseButton" onclick="finishDrvasPresentation()" aria-label="Închide prezentarea">✕</button></div>
     <div class="presentation-progress" aria-label="Progresul prezentării"><span id="presentationStepLabel">1 / 3</span><div class="presentation-progress-track"><span id="presentationProgressBar"></span></div></div>
     <div class="presentation-scene" id="presentationScene">
@@ -830,6 +824,14 @@ body.presentation-open{overflow:hidden!important}
     <p class="presentation-disclaimer" id="drvasPresentationDisclaimer">Dr.Vas este în dezvoltare. Disponibilitatea funcțiilor diferă între module. Informațiile prezentate nu reprezintă aprobări sau licențe profesionale; serviciile reglementate necesită autorizările aplicabile și supraveghere umană calificată.</p>
     <div class="presentation-audio-controls"><button type="button" onclick="speakDrvasPresentation()" id="presentationPlayButton">↻ Reia prezentarea</button><button type="button" class="presentation-stop-button" onclick="stopDrvasPresentationSpeech()" id="presentationStopButton" disabled>■ Oprește audio</button><button type="button" class="presentation-continue-button" id="presentationContinueButton" onclick="finishDrvasPresentation()">Continuă la conectare →</button><span id="presentationAudioStatus" role="status" aria-live="polite">Cei trei asistenți îți prezintă platforma.</span></div>
    </section>
+
+
+<section class="panel module-selection-shell" id="moduleSelectionShell">
+  <section id="moduleSelectionSection" class="modules-section">
+   <div class="modules-heading">
+    <div><h2>Platforma Dr.Vas</h2><p>Alege spațiul de lucru de care ai nevoie.</p></div>
+    <div class="modules-heading-actions"><button type="button" class="presentation-open-button" id="presentationOpenButton" onclick="openDrvasPresentation()">▶ Deschide prezentarea</button><span class="status">2 MODULE GRATUITE PENTRU PUBLIC · 4 MODULE PRIVATE ÎN PREGĂTIRE</span></div>
+   </div>
    <p id="moduleSelectionStatus" class="module-selection-status hidden" role="status" aria-live="polite"></p>
 
    <div class="modules-grid">
