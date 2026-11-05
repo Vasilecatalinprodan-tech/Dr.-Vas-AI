@@ -1452,3 +1452,47 @@ test("Studio explains its eight-item limit for mixed image and MP4 scenes", asyn
   await expect(page.locator("#studioRenderStatus")).toContainText("maximum 8 scene");
   await expect(page.locator("#studioRenderStatus")).toContainText("clipuri MP4");
 });
+
+
+test("long-form chat input exposes the documented 100,000-character ceiling", async ({ page }) => {
+  await openApp(page, "ro");
+  const question = page.locator("#question");
+  await expect(question).toHaveAttribute("maxlength", "100000");
+});
+
+test("Crypto device controls require administrator state and send explicit audited status changes", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(async () => {
+    const calls = [];
+    isDrvasAdmin = true;
+    window.confirm = () => true;
+    supabaseClient.auth.getSession = async () => ({
+      data: { session: { access_token: "e2e-admin-token" } },
+      error: null
+    });
+    window.fetch = async (url, options) => {
+      const payload = JSON.parse(options.body);
+      calls.push({ url, payload });
+      return {
+        ok: true,
+        json: async () => calls.length === 1
+          ? { updated: true, device: { id: payload.device_id, status: payload.status } }
+          : { devices: [], generated_at: "2026-11-05T00:00:00.000Z" }
+      };
+    };
+    await updateCryptoDeviceStatus("123e4567-e89b-12d3-a456-426614174000", "authorized");
+    const authorizedCalls = calls.slice();
+    calls.length = 0;
+    isDrvasAdmin = false;
+    await updateCryptoDeviceStatus("123e4567-e89b-12d3-a456-426614174000", "revoked");
+    return { authorizedCalls, blockedCalls: calls };
+  });
+  expect(result.authorizedCalls).toHaveLength(2);
+  expect(result.authorizedCalls[0].payload).toMatchObject({
+    action: "crypto_device_update",
+    device_id: "123e4567-e89b-12d3-a456-426614174000",
+    status: "authorized",
+    access_token: "e2e-admin-token"
+  });
+  expect(result.blockedCalls).toHaveLength(0);
+});
