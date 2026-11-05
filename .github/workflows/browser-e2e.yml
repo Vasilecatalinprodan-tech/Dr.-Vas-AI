@@ -3,14 +3,9 @@ name: Dr.Vas browser regression tests
 on:
   pull_request:
     branches: [drvas-integrated-platform]
-    paths:
-      - 'www/**'
-      - 'tests/e2e/**'
-      - 'worker/**'
-      - 'supabase/migrations/**'
-      - '.github/workflows/browser-e2e.yml'
+    types: [opened, reopened, ready_for_review]
   push:
-    branches: [drvas-integrated-platform]
+    branches: [universal-chat-attachments]
     paths:
       - 'www/**'
       - 'tests/e2e/**'
