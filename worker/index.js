@@ -1908,12 +1908,32 @@ export default {
             return json({ error: "Adresa temporară a fișierului nu a trecut verificarea de securitate." }, 502);
           }
 
+          // Never trust client-supplied metadata for the real object size or MIME type.
+          // The shared bucket also stores larger Studio assets, so enforce the chat limit here.
+          const objectHead = await fetch(signedUrl.toString(), { method: "HEAD" });
+          if (!objectHead.ok) {
+            return json({ error: "Nu am putut verifica dimensiunea reală a fișierului: " + item.original_name }, 502);
+          }
+          const actualBytes = Number(objectHead.headers.get("content-length"));
+          const actualMime = (objectHead.headers.get("content-type") || "").split(";")[0].trim().toLowerCase();
+          if (!Number.isSafeInteger(actualBytes) || actualBytes < 1 ||
+              actualBytes > 15 * 1024 * 1024 || actualBytes !== Number(item.file_size) ||
+              actualMime !== item.mime_type) {
+            return json({ error: "Fișierul nu corespunde metadatelor sau depășește limita permisă: " + item.original_name }, 400);
+          }
+
           if (item.mime_type === "text/plain" || item.mime_type === "text/csv") {
             const textResponse = await fetch(signedUrl.toString());
             if (!textResponse.ok) return json({ error: "Nu am putut citi fișierul text: " + item.original_name }, 502);
-            const extractedText = await textResponse.text();
-            if (new TextEncoder().encode(extractedText).byteLength > 300000) {
-              return json({ error: "Fișierul text este prea mare pentru analiză: " + item.original_name }, 413);
+            const textBytes = await textResponse.arrayBuffer();
+            if (textBytes.byteLength !== actualBytes || textBytes.byteLength > 300000) {
+              return json({ error: "Fișierul text este prea mare sau nu corespunde dimensiunii verificate: " + item.original_name }, 413);
+            }
+            let extractedText;
+            try {
+              extractedText = new TextDecoder("utf-8", { fatal: true }).decode(textBytes);
+            } catch {
+              return json({ error: "Fișierul text nu este codificat UTF-8 valid: " + item.original_name }, 400);
             }
             modelInputParts.push({
               type: "text",
