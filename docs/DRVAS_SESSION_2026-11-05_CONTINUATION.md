@@ -241,3 +241,15 @@ Corecție de test salvată:
 - Regula CSS pentru `[hidden]` rămâne necesară pentru ascunderea corectă a listei când nu există fișiere.
 
 Run #231 a ajuns la toate cele 43 de teste, dar a păstrat un singur eșec la testul upload; celelalte 42 au trecut. Urmează o nouă rulare pe commitul de test corectat. Nu există încă rezultat verde pentru upload și nu se face merge/deploy.
+
+
+## 2026-11-05 — a doua problemă CSS din testul de upload
+
+Run #233 (ID `42055014377`) a trecut de verificarea listei de fișiere și a confirmat că fixture-ul de test deschide acum workspace-ul. A descoperit însă că `#healthDataProcessingConsentWrap` rămânea vizibil după schimbarea modulului din Health în Free: clasa CSS `.chat-file-consent{display:flex}` suprascria atributul HTML `hidden`.
+
+Corecție salvată în:
+- Commit: `1cd3449db213d91cc0c3cb39b76a5166084ffa76`
+- Fișier: `www/index.html`
+- Adăugată regula `.chat-file-consent[hidden]{display:none!important}`, păstrând și regula pentru lista de atașamente.
+
+Run #233 a avut 42/43 teste trecute; un singur eșec a fost această ascundere a consimțământului Health. Urmează rerulare pe commitul corectat. Nicio modificare de producție, Supabase sau secrete.
