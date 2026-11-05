@@ -1508,3 +1508,25 @@ Am înregistrat cererea și acțiunile din această sesiune ca rezumat tehnic. N
 
 ### Următorul pas
 Aștept rezultatul rulărilor E2E cu noua politică de concurență; dacă apare o eroare, corectez cauza și salvez imediat. După stabilizarea testelor, continui cu separarea unui release sigur pentru Studio/UI de funcțiile de atașamente medicale care au încă prerequisite de conformitate.
+
+
+## 2026-11-05 — dezvoltare simultană: chat vocal, Studio și modulele platformei
+
+### Corecție nouă în fluxul vocal
+- Am urmărit fluxul complet `speakDrVas()` → `playFounderVoice()` → audio.
+- Am identificat o cursă asincronă: dacă utilizatorul apăsa Stop în timp ce vocea fondatorului era încă solicitată de server, răspunsul audio putea ajunge ulterior și porni redarea după oprire.
+- Am introdus un identificator de generație pentru solicitările vocale. O solicitare mai veche nu mai poate porni redarea după Stop sau după dezactivarea citirii automate.
+- Dezactivarea citirii automate oprește acum și audio-ul deja pornit / încărcat, nu doar schimbă preferința.
+- Frontend commit: `a9e2e7670b1c058c78c4bbecf07fc9ab32345fd1`.
+
+### Test nou
+- Am adăugat test Playwright care simulează o solicitare TTS întârziată, apasă Stop înainte de răspunsul serverului și verifică faptul că audio nu pornește ulterior și animația de vorbire rămâne oprită.
+- Test commit: `77b48d86a55c4b14c2ce3983ab1f47797275110e`.
+- Suita are acum 44 teste E2E în fișierul principal (43 anterioare + testul nou).
+- Run #305 pentru expansiunea numelor în pronunție a trecut cu succes: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42095929331
+- Run #306 pentru schimbarea politicii de concurență era încă în curs la ultima verificare; run #307 a fost anulat automat. Nu declar testul nou trecut până nu există o rulare completă pe commiturile noi.
+
+### Concurență și salvare
+- Am păstrat modificările exclusiv pe `universal-chat-attachments`.
+- Nu am făcut merge sau deploy. Nu am activat analiza fișierelor medicale și nu am aplicat migrarea Supabase.
+- Jurnalul consemnează implementările și starea reală a testelor; nu este export literal al conversației ChatGPT.
