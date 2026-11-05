@@ -1805,6 +1805,9 @@ export default {
       ].filter(Boolean).join("\n\n");
 
       const attachmentIds = body.attachment_ids === undefined ? [] : body.attachment_ids;
+      if (Array.isArray(attachmentIds) && attachmentIds.length && typeof conversationId !== "string") {
+        return json({ error: "Fișierele pot fi analizate numai într-o conversație validă." }, 400);
+      }
       if (!Array.isArray(attachmentIds) || attachmentIds.length > 5 ||
           attachmentIds.some(id => typeof id !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) ||
           new Set(attachmentIds).size !== attachmentIds.length) {
@@ -1895,7 +1898,11 @@ export default {
             return json({ error: "Nu am putut accesa în siguranță fișierul privat: " + item.original_name }, 503);
           }
           const signedData = await signedResponse.json();
-          const signedUrl = new URL(signedData.signedURL || signedData.signedUrl || "", supabaseUrl);
+          const signedPath = String(signedData.signedURL || signedData.signedUrl || "");
+          const normalizedSignedPath = signedPath.startsWith("/storage/v1/")
+            ? signedPath
+            : "/storage/v1" + (signedPath.startsWith("/") ? signedPath : "/" + signedPath);
+          const signedUrl = new URL(normalizedSignedPath, supabaseUrl);
           if (signedUrl.origin !== new URL(supabaseUrl).origin ||
               !signedUrl.pathname.startsWith("/storage/v1/object/sign/drvas-media/")) {
             return json({ error: "Adresa temporară a fișierului nu a trecut verificarea de securitate." }, 502);
