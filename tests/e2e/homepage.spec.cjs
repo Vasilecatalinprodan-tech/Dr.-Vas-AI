@@ -1223,6 +1223,15 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
   await expect(page.locator("#heroPresentationOpenButton")).toBeVisible();
   await page.locator("#heroPresentationOpenButton").click();
   await expect(page.locator("#drvasPresentation")).toBeVisible();
+  await expect(page.locator("#presentationAvatar .presenter-character-art")).toBeVisible();
+  await expect(page.locator("#presentationAvatar .character-orbit")).toHaveCount(2);
+  const presentationButtonStyle = await page.locator("#heroPresentationOpenButton").evaluate(node => {
+    const style = getComputedStyle(node);
+    return { color: style.color, borderColor: style.borderTopColor, background: style.backgroundImage };
+  });
+  expect(presentationButtonStyle.color).toBe("rgb(9, 9, 9)");
+  expect(presentationButtonStyle.borderColor).toBe("rgb(5, 5, 5)");
+  expect(presentationButtonStyle.background).toContain("linear-gradient");
   await expect(page.locator("#presentationModuleGrid .presentation-module")).toHaveCount(6);
   await expect(page.locator("#presentationModuleGrid .presentation-module.is-active")).toHaveCount(2);
   await expect(page.locator("#presentationSpeakerName")).toHaveText("Dr.Vas");
@@ -1279,4 +1288,32 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
   await page.waitForTimeout(1450);
   await expect(page.locator("#drvasPresentation")).toBeHidden();
   expect(await page.evaluate(() => window.__drvasStartCount)).toBe(1);
+});
+
+
+test("presentation never falls back to arbitrary voices when three named presenter voices are unavailable", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    window.__drvasSpoken = [];
+    const voices = [
+      { name: "Microsoft Andrei", lang: "ro-RO", voiceURI: "andrei-ro" },
+      { name: "Microsoft Alina", lang: "ro-RO", voiceURI: "alina-ro" }
+    ];
+    Object.defineProperty(window, "speechSynthesis", {
+      configurable: true,
+      value: { getVoices: () => voices, cancel() {}, speak: utterance => window.__drvasSpoken.push(utterance) }
+    });
+    window.SpeechSynthesisUtterance = function (text) { this.text = text; };
+  });
+  await page.evaluate(async () => { currentLanguage = "ro"; await speakDrvasPresentation(); });
+  await expect(page.locator("#presentationAudioStatus")).toContainText("audio este oprit");
+  expect(await page.evaluate(() => window.__drvasSpoken.length)).toBe(0);
+});
+
+test("Dr.Vas Studio accepts MP4 scene footage alongside still images", async ({ page }) => {
+  await openApp(page, "ro");
+  const input = page.locator("#studioSceneImages");
+  await expect(input).toHaveAttribute("accept", /video\/mp4/);
+  await expect(input).toHaveAttribute("multiple", "");
+  await expect(page.locator("#studioRenderCreateButton")).toHaveText("Randează video MP4");
 });
