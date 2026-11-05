@@ -1441,7 +1441,7 @@ export default {
           });
         }
         const consentResponse = await fetch(
-          env.SUPABASE_URL.replace(/\\/+$/, "") + "/rest/v1/drvas_privacy_consents",
+          env.SUPABASE_URL.replace(/\/+$/, "") + "/rest/v1/drvas_privacy_consents",
           {
             method: "POST",
             headers: {
