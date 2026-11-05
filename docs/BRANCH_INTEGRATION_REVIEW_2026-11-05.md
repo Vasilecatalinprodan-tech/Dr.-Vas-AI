@@ -2,61 +2,58 @@
 
 Date: 2026-11-05  
 Repository: `Vasilecatalinprodan-tech/Dr.-Vas-AI`  
-Current continuation branch: `universal-chat-attachments`  
-Feature branch inspected: `founder-workbenches-development`
+Current continuation branch: `universal-chat-attachments`
 
-## Why this review exists
+## Key finding: PR #6 was already merged
 
-A repository-wide branch search found eight branches. The branch `founder-workbenches-development` contains substantial founder-only workbench implementation that is not present in the current continuation branch. It must not be overlooked, but it must not be merged blindly.
+A repository-wide branch search found eight branches. The founder workbench branch contains the implementation history for multiple admin-only tools. GitHub PR metadata confirms:
 
-## Comparison result
+- PR #6: **merged** into `drvas-integrated-platform`.
+- PR title: “Integrate founder workbenches and customer journey planner”.
+- Merge commit: `1c4fdd930969b4d474458c1ad19e46c9577ecc55`.
+- PR head at merge: `7fd8467da50a3555bb1b3e13443ee20dd9d5aa0c`.
+- PR recorded 42/42 Playwright tests passing on run #217, commit `7fd8467da50a3555bb1b3e13443ee20dd9d5aa0c`.
+- A separate Cloudflare preview build check reported failure for the PR head. The PR body describes an independent production deploy workflow and a pre-merge 52-assertion preflight; however, the actual successful production deployment and live smoke test are not confirmed by this review.
+- PR #6 is not open; it is closed because it was merged.
 
-GitHub compare was run with base `universal-chat-attachments` and head `founder-workbenches-development`:
+## Branch comparison
 
-- Status: `diverged`.
-- Feature branch is 58 commits ahead and 147 commits behind the current continuation branch at the time of comparison.
-- Merge base: `5bb13b80d5dcc3e1ce348cd1c39ec29af7a0fa17`.
-- The compare response listed the following files in the feature branch's ahead-side comparison: `docs/DRVAS_FOUNDER_WORKBENCHES_2026-11-05.md`, `docs/DRVAS_PRESENTATION_THREE_ASSISTANTS_2026-11-05.md`, `docs/DRVAS_SESSION_2026-11-05_CONTINUATION.md`, `docs/DRVAS_WORK_LOG_2026-11-05_CONTINUED.md`, `tests/e2e/homepage.spec.cjs`, and `www/index.html`.
-- This is a divergent history, not a simple fast-forward. Do not merge or reset either branch until a full diff and tests are reviewed.
+GitHub compare of `universal-chat-attachments` against `drvas-integrated-platform` reported divergent histories, with the continuation branch 146 commits ahead and 4 behind at the time of comparison. Merge base: `ab0e2778306f77547f6ce87a174ba33bbff229df`. The compare showed differences across Android/browser/deploy workflows, frontend, Worker, E2E tests, attachment migration and documentation. This requires deliberate review, not a blind merge.
 
-## Existing founder-only features found in the feature branch
+A separate comparison of `universal-chat-attachments` against `founder-workbenches-development` also reported divergence. That feature branch's ahead-side changes were documented in the prior feature log. It must not be merged again: PR #6 already integrated its relevant work into `drvas-integrated-platform`.
 
-Inspection of `www/index.html` and its feature record shows these implemented source-level workbenches:
+## Workbench presence verified in source
 
-- Creator & Online Income Lab, restricted to the founder/admin dashboard.
-- Book Workshop and Music Lab, staging structured briefs through the existing Studio save/open/export workflow.
-- Online Income planner and AI Evaluation & Training Lab.
-- Digital Product Studio, Publishing Lab and Music Release Lab.
-- Commerce Profit Lab and Business Operations Planner.
-- Mining Sensitivity Lab and a Bitcoin profitability calculator with manually entered revenue, electricity, cooling, downtime, pool fee, maintenance and tax-reserve assumptions.
-- Customer Journey & Retention Planner and Content & Campaign Planner.
-- Existing private income tracker search/filter/CSV export and cashflow reporting.
-- An administrator-only, read-only crypto device registry. Mining and trading are explicitly disabled.
-- An animated three-assistant public introduction (Dr.Vas, Dr.Jan and Sarah), with browser-native speech synthesis and a manual continue fallback.
+Fetched `www/index.html` from both `universal-chat-attachments` and `drvas-integrated-platform`. Both contain the following source markers:
+- Creator & Online Income Lab
+- Book Workshop
+- Music Release Lab
+- Content & Campaign Planner
 
-The feature branch's Worker contains admin-verified, read-only crypto device listing and related cryptographic provenance functions. The inspected workbench record says no database migration, production secret, Worker route for live mining, payment, entitlement, RLS or production data was changed in this feature increment.
+Both also contain voice replay-related code markers. This establishes source presence only, not that every workbench action works at runtime or that the latest code is deployed.
+
+The feature branch's workbench records describe additional components and safeguards, including Digital Product Studio, Publishing Lab, AI Evaluation & Training, Commerce Profit Lab, Mining Sensitivity/BTC calculations, Business Operations Planner, Customer Journey & Retention Planner, private income tracking/reporting, and read-only crypto device registry. Exact parity and runtime behavior of each should be confirmed by inspecting current branch code and running relevant tests.
 
 ## Test and deployment status
 
-- The feature branch workbench record explicitly says the initial workbench increments were not tested or deployed at the time of those changes.
-- The continuation notes record subsequent Playwright regression work and historical CI runs. The last recorded calculator test change is commit `e2d5893274366c70b834a1beeebd2149ac0af97e`; the notes say a fresh completed CI run is still required for that latest test commit.
-- The three-assistant presentation notes record an earlier failing test and a code/test correction, with a fresh CI run required.
-- Do not treat a historical passing run for an earlier commit as proof that the latest branch head passes.
-- No merge or production deployment of `founder-workbenches-development` is confirmed by this inspection.
+- PR #6 recorded 42/42 Playwright tests passing on run #217 for its merged head. Do not infer that later commits on `universal-chat-attachments` pass from that historical result.
+- The latest current-branch Android Actions run/artifact and audible Android TTS still need verification.
+- Current root `package.json` has no npm scripts or test-runner dependencies in the fetched continuation branch; Playwright specs exist, so confirm the actual workflow's installation/configuration before relying on local test instructions.
+- No successful current-branch production deployment is confirmed here.
+- No APK artifact or physical device audio test is confirmed here.
 
 ## Integration recommendation
 
-1. Preserve `universal-chat-attachments` as the current continuation branch while verifying the Android voice replay fix.
-2. Determine the exact current head of `founder-workbenches-development`, inspect its full diff against the merge base and the current branch, and identify any overlapping edits to `www/index.html` and E2E tests.
-3. Run the feature branch's latest CI and fix all failures; establish a reproducible local/CI test command.
-4. Port or merge the feature work in small reviewed increments onto the continuation branch, resolving conflicts deliberately. Preserve newer session restore, voice/TTS and privacy fixes.
-5. Re-run regression tests and Android build after integration. Deploy only after the founder approves the tested release.
-6. Keep all founder-only workbench actions server-authorized; do not rely solely on hidden UI or localStorage flags.
+1. Keep `universal-chat-attachments` as the continuation branch for the latest voice/Android fixes.
+2. Do not re-merge PR #6. Its work was already merged into `drvas-integrated-platform` and key workbench source markers are present on both branches.
+3. Review the four commits by which the continuation branch is behind the integrated branch and the 146 ahead commits/file diff. Identify whether any stable-branch fixes need to be ported without losing newer voice, attachment, session or privacy work.
+4. Verify current branch Actions, Android APK, voice TTS and relevant E2E tests.
+5. After a deliberate reconciliation plan, integrate any missing changes in small commits, run regression/Android checks, and deploy only after approval and green production smoke tests.
 
-## Important safety limits
+## Safety boundaries
 
-- Crypto remains simulation/research only. No mining execution, wallet custody/signing, exchange connection, trade, transfer, visitor-device compute or automatic investing.
+- Crypto remains simulation/research only: no mining execution, wallet custody/signing, exchange connection, trade, transfer, visitor-device compute or automatic investing.
 - Books/music/digital products remain drafts until rights, content, metadata and platform requirements are reviewed; no automatic publishing or distribution.
 - Business/commerce calculators are estimates, not tax/accounting advice or demand forecasts.
 - Customer journey/campaign tools create reviewable plans only; no CRM, messaging, ad spend or automatic publishing.
-- The feature branch is not production-ready merely because the controls appear in its HTML source.
+- Keep founder-only workbench actions behind server-side authorization. Hidden UI or localStorage is not an access-control boundary.
