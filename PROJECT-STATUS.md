@@ -808,3 +808,10 @@ Outstanding verification: live Supabase status for `202611030001_rate_limits.sql
 - The production health payload in workflow #461 reported: Worker `ok`; assets, AI, database and `studio_renderer` configured; `file_analysis` disabled.
 - This confirms the Studio renderer configuration signal is present, but does not prove an actual paid Creatomate render has completed or that the resulting MP4 was retrieved and validated. A real render may incur provider usage/cost, so do not trigger one without the founder's explicit approval of the test and budget.
 - File analysis remains intentionally disabled/fail-closed. Do not enable it until the privacy, consent, provider and data-handling gates are approved.
+
+
+## Cloudflare integration check — correction at 21:30 UTC, 5 November 2026
+
+- The earlier Cloudflare Workers Builds check failures recorded above were superseded by a successful build for code commit `516d2a7c07c80c285d533f2afd163809024a95d1`.
+- Latest Cloudflare check: SUCCESS, build ID `fec26213-f7a7-4cf3-a9ce-4a07b16aa2e4`, deployed Worker version `5cd23e4b-e866-4b9d-af44-918f85e09de1`.
+- The repository's own Wrangler workflow #461 also completed SUCCESS. Both deployment paths are now green for the latest code commit.
