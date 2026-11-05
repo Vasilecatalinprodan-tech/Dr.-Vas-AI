@@ -278,3 +278,9 @@ Verificare:
 Conversația:
 - Istoricul integral al acestei sesiuni rămâne în istoricul ChatGPT.
 - Acest jurnal păstrează cererea exactă, decizia, implementarea, testele și commiturile pentru continuitatea proiectului; nu este o transcriere literală completă a chatului.
+
+
+### Actualizare test pronunție — 2026-11-05
+- Testul a fost extins explicit pentru ambele nume: helperul trebuie să transforme „Dr.Vas și Dr.Jan” în „Doctor Vas și Doctor Jan”, în timp ce numele vizibil al prezentatorului rămâne „Dr.Vas”.
+- Commit test final: 4e822c62ce4c64bc4ea61eb95cdf1b5d9d77d85c (înlocuiește commitul de test anterior ca versiune curentă).
+- Workflow observat pe commitul de checkpoint anterior: run #239, ID 42057953961, pending la momentul verificării. Se verifică separat starea noului commit; nu se presupune că testele sunt verzi.
