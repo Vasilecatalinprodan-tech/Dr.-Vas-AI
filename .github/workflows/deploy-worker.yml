@@ -107,6 +107,7 @@ jobs:
             [moduleMigration.toLowerCase().includes('auth.uid() = user_id'), 'Module project policies must enforce per-user ownership'],
             [moduleMigration.toLowerCase().includes('revoke all on table public.drvas_module_projects from public, anon'), 'Module project table must deny public and anonymous access'],
             [html.includes('function saveModuleProject(module)'), 'Module project save workflow is missing'],
+            [html.includes('if(moduleProjectState[moduleId])await saveModuleProject(moduleId)'), 'Latest AI replies must update an already saved Academy, Commerce or Business project'],
             [html.includes('function openModuleProject(module)'), 'Module project open workflow is missing'],
             [businessCashbook.toLowerCase().includes('create table if not exists public.drvas_business_transactions'), 'Business cashbook migration must create its transaction table'],
             [businessCashbook.toLowerCase().includes('enable row level security'), 'Business cashbook must enable row-level security'],
