@@ -463,3 +463,10 @@ The final deployment was performed by the workflow after Playwright passed, and 
 - Android code was not changed in this block; the existing successful debug APK artifact remains from run `41923036581`. No new APK was built because the changes after that build were tests, documentation and CI assertions only.
 - Production `/health` reported `studio_renderer: configured`, confirming the Creatomate secret is present; this does not prove a complete authenticated MP4 render, private storage write, preview or download. No end-to-end production render was performed in this block.
 - No physical-device test, Google Play release, subscription/payment launch, Health Live voice activation, clinical approval, legal sign-off, or live application of unverified Supabase migrations is claimed.
+
+### Android privacy hardening — 2026-11-05
+- Reviewed the current Android manifest. The app requests internet access and microphone/audio-settings permissions for voice features; no camera, contacts or location permissions were present in the manifest reviewed.
+- Changed `android:allowBackup` from `true` to `false` to reduce the risk of account/session-related app data being copied through Android backup. Server-side Supabase chat history remains the intended durable history store. This does not replace secure session handling or account deletion controls.
+- Added an Android CI guard that checks `allowBackup="false"` and confirms the INTERNET permission remains present before building the APK.
+- Manifest change commit: `98629b4081fcd0aa2430c61907516fe80ccbc6ce`. Android CI guard commit: `7923bdf9db5cadf1b60fcde53e920ca0ba7c8651`.
+- Fresh APK workflow was triggered by the manifest change; record its final result and artifact only after the workflow completes. No physical-device installation test is implied.
