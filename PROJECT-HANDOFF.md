@@ -557,3 +557,9 @@ Portrait question remains open: fictional photorealistic adult portraits or real
 ### Academy / Commerce / Business continuity improvement
 
 New AI replies now update the currently opened saved module project, preserving the latest output alongside its brief. New projects are still created only when the user explicitly saves. The change has a CI static assertion; verify the workflow before claiming the latest code is deployed.
+
+### Latest validation — 2026-11-05
+
+Workflow #473 / run `42130733280` completed SUCCESS. Playwright browser regression suite, JavaScript validation, Worker deploy, production smoke test and SBOM upload passed. Cloudflare Workers Builds check deployed Worker version `f88f84eb-45b6-45b8-84f4-0d109c88864f` from code commit `a91e562c122e3954c051e5d31ddcaa9ece0f08b7`.
+
+Remaining external gates: configure distinct Jan/Sarah voice secrets after approval, test audible voice profiles on Samsung, run live Supabase read-only/RLS checks and two-account module persistence tests.
