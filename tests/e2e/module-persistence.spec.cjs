@@ -41,7 +41,23 @@ async function openApp(page) {
   await page.evaluate(() => {
     currentUser = { id: "e2e-module-owner", email: "owner@example.invalid" };
     isDrvasAdmin = true;
-    supabaseClient = window.supabase.createClient();
+    const client = supabaseClient;
+    client.from = table => {
+      const query = {
+        select() { return this; },
+        eq(key, value) { (this.filters ||= []).push([key, value]); return this; },
+        order() { return this; },
+        limit: async () => ({ data: [], error: null }),
+        insert(payload) {
+          window.__DRVAS_DB_CALLS__.push({ operation: "insert", table, payload });
+          return {
+            select() { return this; },
+            single: async () => ({ data: { id: "e2e-project-" + payload.module }, error: null })
+          };
+        }
+      };
+      return query;
+    };
   });
 }
 
