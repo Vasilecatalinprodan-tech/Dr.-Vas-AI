@@ -513,3 +513,32 @@ Stare păstrată:
 - Următorul pas este ca fondatorul să ruleze cele două SELECT-uri și să transmită rezultatele; apoi se face revizia finală a migrării și planului de backup/rollback.
 
 Această secțiune consemnează planul de verificare și interogările exacte pentru continuitate. Nu este transcriere literală integrală a conversației ChatGPT.
+
+
+## 2026-11-05 — rezultat complet politici RLS (pg_policies)
+
+Utilizatorul a transmis următorul rezultat exact din Supabase SQL Editor pentru politicile din `public` și `storage.objects`:
+
+```text
+schemaname,tablename,policyname,permissive,roles,cmd,qual,with_check
+public,chat_messages,Users can delete their own messages,PERMISSIVE,{authenticated},DELETE,(auth.uid() = user_id),null
+public,chat_messages,Users can read their own messages,PERMISSIVE,{authenticated},SELECT,(auth.uid() = user_id),null
+public,chat_messages,Users can save their own messages,PERMISSIVE,{authenticated},INSERT,null,(auth.uid() = user_id)
+storage,objects,Users can delete their own DrVas media,PERMISSIVE,{authenticated},DELETE,((bucket_id = 'drvas-media'::text) AND ((storage.foldername(name))[1] = (auth.uid())::text)),null
+storage,objects,Users can read their own DrVas media,PERMISSIVE,{authenticated},SELECT,((bucket_id = 'drvas-media'::text) AND ((storage.foldername(name))[1] = (auth.uid())::text)),null
+storage,objects,Users can update their own DrVas media,PERMISSIVE,{authenticated},UPDATE,((bucket_id = 'drvas-media'::text) AND ((storage.foldername(name))[1] = (auth.uid())::text)),((bucket_id = 'drvas-media'::text) AND ((storage.foldername(name))[1] = (auth.uid())::text))
+storage,objects,Users can upload their own DrVas media,PERMISSIVE,{authenticated},INSERT,null,((bucket_id = 'drvas-media'::text) AND ((storage.foldername(name))[1] = (auth.uid())::text))
+```
+
+Interpretare și puncte de verificat:
+- `chat_messages` are politici PERMISSIVE pentru rolul `authenticated`: SELECT și DELETE sunt limitate la `auth.uid() = user_id`; INSERT verifică aceeași condiție în `WITH CHECK`.
+- `storage.objects` are politici PERMISSIVE pentru rolul `authenticated` pe bucket-ul `drvas-media`: SELECT, DELETE, INSERT și UPDATE verifică faptul că primul segment al căii obiectului este UID-ul utilizatorului. UPDATE verifică atât `USING`, cât și `WITH CHECK`.
+- Acest model de cale este compatibil cu o structură de tip `{user_id}/{conversation_id}/{module}/{filename}` la nivelul verificării primului folder, dar politicile nu validează separat conversation_id sau modulul. Worker-ul trebuie să verifice ownership-ul, conversația și modulul înainte de a genera signed URL sau a procesa fișierul.
+- În rezultatul actual NU apar politici pentru `drvas_privacy_consents`, `drvas_rate_limits` sau `drvas_chat_attachments`. Pentru ultimele două tabele relevante, aceasta trebuie tratată ca „nu au fost returnate în acest rezultat”, nu ca dovadă absolută că nu există în orice context. `drvas_chat_attachments` nu exista la ultima verificare de inventar. Pentru consimțăminte și rate limits trebuie verificat modul în care aplicația/Worker-ul le accesează și privilegiile efective înainte de a decide dacă lipsa politicilor este intenționată (de exemplu acces exclusiv server-side) sau o problemă.
+- RLS este confirmat activ pe `chat_messages`, `drvas_privacy_consents`, `drvas_rate_limits`, `drvas_business_transactions`, `drvas_studio_projects`, `drvas_studio_render_jobs` și `storage.objects`; `relforcerowsecurity=false` pe toate.
+- Nu s-a executat nicio comandă SQL de scriere și nu s-au modificat politici, permisiuni, bucket, secrete sau date.
+- Migrarea `202611050001_chat_attachments.sql` rămâne neaplicată; PR #7 rămâne Draft și nemerged; nu s-a făcut deploy; `DRVAS_FILE_ANALYSIS_ENABLED` rămâne dezactivat.
+
+Următorul pas planificat:
+- Utilizatorul rulează interogarea read-only pentru `information_schema.role_table_grants` asupra tabelelor relevante (interogarea este în secțiunea anterioară a jurnalului).
+- După primirea privilegiilor, se verifică accesul Worker-ului și al rolului authenticated, apoi se revizuiește migrarea și planul de backup/rollback. Nu se aplică migrarea fără revizie finală și confirmare explicită.
