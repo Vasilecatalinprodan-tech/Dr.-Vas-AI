@@ -1234,6 +1234,8 @@ body.module-workspace-mode .studio-workspace.hidden{
       <div><small>Recuperare echipament</small><strong id="cryptoPayback">—</strong></div>
       <div><small>Mentenanță / zi</small><strong id="cryptoMaintenanceDaily">£1.67</strong></div>
       <div><small>Rezultat net / an</small><strong id="cryptoNetAnnual">£0.00</strong></div>
+      <div><small>Preț BTC prag rentabilitate</small><strong id="cryptoBreakEvenBtc">—</strong></div>
+      <div><small>Tarif maxim energie</small><strong id="cryptoMaxElectricity">—</strong></div>
      </div>
      <p id="cryptoCalcNotice" class="admin-footnote" role="status">Calcul demonstrativ. Mining-ul și tranzacționarea rămân dezactivate.</p>
     </div>
@@ -3583,7 +3585,8 @@ function calculateCryptoMiningEconomics(){
  const valid=ids.every(id=>Number.isFinite(read(id))&&read(id)>=0)&&fee<=100&&downtime<=100&&taxReserve<=100;
  const notice=el("cryptoCalcNotice");
  if(!valid){if(notice)notice.textContent="Verifică valorile: numere pozitive; comision, indisponibilitate și rezervă fiscală între 0 și 100%.";return;}
- const uptime=1-downtime/100,gross=btc*uptime*price,energy=((watts+cooling)/1000)*24*rate,pool=gross*(fee/100);
+ const uptime=1-downtime/100,btcAfterDowntime=btc*uptime,energyKwh=((watts+cooling)/1000)*24;
+ const gross=btcAfterDowntime*price,energy=energyKwh*rate,pool=gross*(fee/100);
  const operating=gross-energy-pool-(maintenance/30),reserve=Math.max(0,operating)*(taxReserve/100),net=operating-reserve;
  const money=value=>"£"+value.toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2});
  el("cryptoGrossDaily").textContent=money(gross);el("cryptoEnergyDaily").textContent=money(energy);el("cryptoPoolDaily").textContent=money(pool);
@@ -3591,7 +3594,12 @@ function calculateCryptoMiningEconomics(){
  el("cryptoPayback").textContent=net>0?(hardware/net).toFixed(0)+" zile":"Nu se recuperează";
  const maintenanceNode=el("cryptoMaintenanceDaily");if(maintenanceNode)maintenanceNode.textContent=money(maintenance/30);
  const annualNode=el("cryptoNetAnnual");if(annualNode)annualNode.textContent=money(net*365);
- if(notice)notice.textContent=net>0?"Scenariu orientativ după energie, răcire, indisponibilitate, mentenanță și rezervă fiscală introdusă manual. Nu include toate taxele, amortizarea, schimbarea dificultății sau volatilitatea BTC.":"În acest scenariu, costurile depășesc venitul estimat. Nu cumpăra echipament pe baza acestui calcul.";
+ const breakEvenNode=el("cryptoBreakEvenBtc");
+ const breakEvenDenominator=btcAfterDowntime*(1-fee/100);
+ if(breakEvenNode)breakEvenNode.textContent=breakEvenDenominator>0?money((energy+maintenance/30)/breakEvenDenominator):"Nu se calculează";
+ const maxEnergyNode=el("cryptoMaxElectricity");
+ if(maxEnergyNode)maxEnergyNode.textContent=energyKwh>0?money(Math.max(0,(gross*(1-fee/100)-maintenance/30)/energyKwh))+"/kWh":"—";
+ if(notice)notice.textContent=net>0?"Scenariu orientativ după energie, răcire, indisponibilitate, mentenanță și rezerva fiscală introdusă. Pragurile BTC/energie sunt matematice, nu predicții. Nu includ toate taxele, amortizarea, dificultatea rețelei sau volatilitatea BTC.":"În acest scenariu, costurile depășesc venitul estimat. Nu cumpăra echipament pe baza acestui calcul.";
 }
 
 async function loadCryptoDevices(){
