@@ -197,3 +197,12 @@ Founder feedback:
 - Do not apply three copies. Apply this exact migration once in the correct Dr.Vas Supabase project. Then verify the table, RLS and four policies, and test all three module values with two disposable user accounts.
 - No live Supabase connector or authorized database session is available in this development session. Therefore the SQL has been reviewed and documented, but has NOT been executed against the live database. Do not claim the Academy/Commerce/Business project persistence is fixed until the migration has been applied and verified in Supabase.
 - User-facing next action: Supabase Dashboard → correct Dr.Vas project → SQL Editor → New query → paste the full contents of `supabase/migrations/202611040001_module_projects.sql` → Run. Then run the read-only checks in `docs/SUPABASE_READONLY_VERIFICATION.sql` and complete the two-account isolation tests described in `docs/SUPABASE_LIVE_VERIFICATION_GUIDE.md`. Never paste secrets into chat.
+
+## 2026-11-05 — assistant-specific voice routing implementation
+
+- Replaced founder-only TTS routing with assistant-aware routing for `drvas`, `jan` and `aurora`.
+- Worker validates assistant IDs, verifies the Supabase session before reporting voice configuration, enforces the existing per-user rate limit and selects the matching voice ID from Worker secrets only.
+- Frontend passes the selected assistant identity. Device speech remains a fallback when a dedicated voice secret/provider response is unavailable; same-sounding fallback voices are still possible until each profile is configured.
+- Added browser E2E coverage for the assistant identity in TTS requests and CI static checks for the Worker mapping.
+- Founder reports successful execution of shared Academy/Commerce/Business migration `202611040001_module_projects.sql`; live database/RLS verification remains pending.
+- No new provider secrets, paid TTS calls, avatar files or APK changes were made.
