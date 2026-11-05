@@ -1310,6 +1310,19 @@ test("presentation never falls back to arbitrary voices when three named present
   expect(await page.evaluate(() => window.__drvasSpoken.length)).toBe(0);
 });
 
+test("Studio builds a visual timeline from selected production assets", async ({ page }) => {
+  await openApp(page, "ro");
+  const pixel = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=", "base64");
+  await page.locator("#studioSceneImages").setInputFiles([
+    { name: "opening.png", mimeType: "image/png", buffer: pixel },
+    { name: "closeup.png", mimeType: "image/png", buffer: pixel }
+  ]);
+  await expect(page.locator("#studioSceneTimeline .studio-scene-card")).toHaveCount(2);
+  await expect(page.locator("#studioSceneTimelineCount")).toHaveText("2 scene");
+  await expect(page.locator("#studioSceneTimeline .studio-scene-card").first()).toContainText("Scena 01");
+  await expect(page.locator("#studioSceneTimeline .studio-scene-card").nth(1)).toContainText("Scena 02");
+});
+
 test("Dr.Vas Studio accepts MP4 scene footage alongside still images", async ({ page }) => {
   await openApp(page, "ro");
   const input = page.locator("#studioSceneImages");
