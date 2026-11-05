@@ -800,3 +800,61 @@ A fost inspectat și `www/index.html` (4.864 linii), plus două migrări existen
 - `DRVAS_FILE_ANALYSIS_ENABLED` rămâne dezactivat.
 - Rezultatele și concluziile sunt salvate în acest jurnal prin commitul următor.
 
+
+
+## 2026-11-05 — rezultate SQL RLS și RPC rate limit + cerință vocală Sarah
+
+Utilizatorul a transmis rezultatele complete pentru interogarea țintită `pg_policies` și verificarea funcției `drvas_consume_rate_limit`.
+
+### Rezultatul RLS transmis
+
+Politicile returnate pentru schema `public`:
+
+- `chat_messages`: SELECT și DELETE condiționate de `auth.uid() = user_id`; INSERT condiționat prin `WITH CHECK (auth.uid() = user_id)`.
+- `drvas_business_transactions`: patru politici owner-only pentru INSERT, DELETE, SELECT și UPDATE; UPDATE verifică atât rândul existent (`USING`) cât și noul rând (`WITH CHECK`) cu `auth.uid() = user_id`.
+- `drvas_studio_projects`: patru politici owner-only pentru INSERT, DELETE, SELECT și UPDATE, cu verificare de proprietate și pentru noul rând la UPDATE.
+- `drvas_studio_render_jobs`: patru politici owner-only pentru INSERT, DELETE, SELECT și UPDATE, cu verificare de proprietate și pentru noul rând la UPDATE.
+- Nu au fost returnate politici pentru `drvas_privacy_consents`, `drvas_rate_limits` sau `drvas_chat_attachments` în această interogare.
+
+### Interpretare actualizată
+
+- Inconsecvența anterioară pentru Business Cashbook și Studio Projects este rezolvată: politicile există în Supabase live și corespund modelului owner-only din migrările inspectate.
+- Studio Render Jobs are, de asemenea, politici CRUD owner-only. Aceasta înlătură suspiciunea anterioară că operațiile Worker/Studio cu tokenul utilizatorului ar fi blocate din cauza lipsei politicilor.
+- Pentru `drvas_privacy_consents` și `drvas_rate_limits`, lipsa politicilor vizibile nu implică automat o vulnerabilitate; trebuie corelată cu RLS activ, granturile și accesul exclusiv server-side observat în Worker.
+- `drvas_chat_attachments` nu a apărut în rezultat. Inventarul anterior nu găsise tabelul live; migrarea de atașamente rămâne neaplicată. Nu presupunem că tabelul există sau că fluxul poate fi activat.
+
+### Rezultatul RPC transmis
+
+Interogarea a returnat un singur rând:
+
+```text
+schema_name,function_name,arguments,security_definer,function_settings,anon_can_execute,authenticated_can_execute,service_role_can_execute
+public,drvas_consume_rate_limit,"p_user_id uuid, p_bucket text, p_limit integer, p_window_seconds integer",true,"[""search_path=pg_catalog, public""]",false,false,true
+```
+
+Interpretare:
+- Funcția este `SECURITY DEFINER`.
+- `search_path` este setat explicit la `pg_catalog, public`.
+- EXECUTE este refuzat pentru `anon` și `authenticated`, permis numai pentru `service_role`.
+- Această expunere prin EXECUTE este restrictivă și corespunde folosirii RPC-ului din Worker cu cheia server-side.
+- Totuși, `SECURITY DEFINER` înseamnă că funcția rulează cu privilegiile proprietarului; înainte de concluzia finală trebuie inspectate definiția completă, proprietarul și dacă funcția folosește nume de obiecte calificate/schema și un search_path sigur. Nu se schimbă funcția sau permisiunile în această etapă.
+
+### Cerință vocală pentru prezentare
+
+Utilizatorul a corectat cerința de prezentare vocală:
+- Prezentarea trebuie să folosească trei voci distincte, asociate corect celor trei roluri/personaje.
+- Vocea personajului **Sarah** trebuie să fie clar feminină, de adult, naturală și potrivită rolului; nu trebuie să fie o voce masculină.
+- Vocile celorlalte două roluri trebuie să rămână distincte una de alta și de vocea Sarah.
+- Înainte de modificare, trebuie inspectată maparea actuală rol → voice ID/provider/voice settings și verificat fluxul TTS. Nu se presupun numele celor două roluri rămase și nu se schimbă brandingul sau pronunția numelor.
+- Testele trebuie să confirme separat că sunt selectate trei identități vocale diferite și că Sarah folosește o voce feminină. Dacă providerul nu garantează genul vocii prin metadate, trebuie făcută verificare auditivă cu mostre scurte înainte de acceptare.
+
+### Starea de lucru și siguranță
+
+- Aceste rezultate SQL au fost furnizate de utilizator; interogările sunt read-only.
+- Nu s-au executat comenzi SQL de scriere și nu s-au modificat tabele, funcții, granturi, politici RLS, bucketuri sau secrete.
+- Migrarea `202611050001_chat_attachments.sql` rămâne neaplicată.
+- PR #7 rămâne Draft, deschis și nemerged; nu s-a făcut deploy.
+- `DRVAS_FILE_ANALYSIS_ENABLED` rămâne dezactivat până la verificarea Storage, Paid Services/retention, DPA și cerințelor UK GDPR/DPIA.
+- Următoarea etapă: inspectarea definiției/proprietarului RPC rate-limit și apoi auditul efectiv al mapării vocale din cod; orice modificare se face pe branch-ul de lucru, cu teste și commit documentat, fără schimbări live neautorizate.
+
+Cererea utilizatorului: „salveaza tot si continuam”. Acest checkpoint consemnează rezultatele SQL și cerința vocală pentru continuitate; nu este o transcriere literală integrală a chatului.
