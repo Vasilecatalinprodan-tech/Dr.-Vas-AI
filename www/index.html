@@ -2517,7 +2517,7 @@ function refreshVoiceUi(statusKey){
  replay.textContent=voiceLabel("replay");
  replay.disabled=!lastSpokenAnswer;
  stop.textContent=voiceLabel("stop");
- stop.disabled=!(window.speechSynthesis&&(window.speechSynthesis.speaking||window.speechSynthesis.pending));
+ stop.disabled=!(Boolean(window.speechSynthesis&&(window.speechSynthesis.speaking||window.speechSynthesis.pending))||Boolean(founderSpeechAudio&&!founderSpeechAudio.paused&&!founderSpeechAudio.ended));
  if(status&&statusKey)status.textContent=voiceLabel(statusKey);
 }
 function speechLanguage(){
@@ -2673,13 +2673,17 @@ async function speakDrVas(text){
  synth.speak(utterance);
  refreshVoiceUi("ready");
 }
-function replayLastAnswer(){
+async function replayLastAnswer(){
  if(!lastSpokenAnswer||(activeAssistant!=="drvas"&&!window.speechSynthesis))return;
  const wasEnabled=voiceAutoRead;
  voiceAutoRead=true;
- speakDrVas(lastSpokenAnswer);
- voiceAutoRead=wasEnabled;
- refreshVoiceUi("speaking");
+ refreshVoiceUi("ready");
+ try{
+  // Keep voice enabled until the server audio request has started playback.
+  await speakDrVas(lastSpokenAnswer);
+ }finally{
+  voiceAutoRead=wasEnabled;
+ }
 }
 function stopVoiceOutput(){
  founderSpeechRequestId++;
