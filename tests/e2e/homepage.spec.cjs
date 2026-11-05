@@ -979,17 +979,27 @@ test("founder content campaign planner builds a 30-day brief for the private Stu
 test("Business cashbook monthly cashflow report summarizes and filters saved transactions", async ({ page }) => {
   await openApp(page, "ro");
   await page.evaluate(() => {
+    currentUser = { id: "e2e-cashflow-user", email: "admin@example.invalid" };
+    isDrvasAdmin = true;
+    selectModule("business", true);
+    const today = new Date();
+    const monthDate = offset => {
+      const date = new Date(today.getFullYear(), today.getMonth() + offset, Math.min(today.getDate(), 20));
+      return [date.getFullYear(), String(date.getMonth() + 1).padStart(2, "0"), String(date.getDate()).padStart(2, "0")].join("-");
+    };
     businessLedgerState.currency = "GBP";
     businessLedgerState.rows = [
-      { id:"cf1", transaction_date:"2026-11-05", entry_type:"income", description:"November sales", category:"Sales", amount:1200, currency:"GBP", vat_rate:0, vat_included:true },
-      { id:"cf2", transaction_date:"2026-11-03", entry_type:"expense", description:"November costs", category:"Costs", amount:300, currency:"GBP", vat_rate:0, vat_included:true },
-      { id:"cf3", transaction_date:"2026-10-20", entry_type:"income", description:"October sales", category:"Sales", amount:900, currency:"GBP", vat_rate:0, vat_included:true },
-      { id:"cf4", transaction_date:"2026-10-02", entry_type:"expense", description:"October costs", category:"Costs", amount:200, currency:"GBP", vat_rate:0, vat_included:true },
-      { id:"cf5", transaction_date:"2026-09-10", entry_type:"income", description:"September sales", category:"Sales", amount:500, currency:"GBP", vat_rate:0, vat_included:true }
+      { id:"cf1", transaction_date:monthDate(0), entry_type:"income", description:"Current month sales", category:"Sales", amount:1200, currency:"GBP", vat_rate:0, vat_included:true },
+      { id:"cf2", transaction_date:monthDate(0), entry_type:"expense", description:"Current month costs", category:"Costs", amount:300, currency:"GBP", vat_rate:0, vat_included:true },
+      { id:"cf3", transaction_date:monthDate(-1), entry_type:"income", description:"Previous month sales", category:"Sales", amount:900, currency:"GBP", vat_rate:0, vat_included:true },
+      { id:"cf4", transaction_date:monthDate(-1), entry_type:"expense", description:"Previous month costs", category:"Costs", amount:200, currency:"GBP", vat_rate:0, vat_included:true },
+      { id:"cf5", transaction_date:monthDate(-2), entry_type:"income", description:"Two months ago sales", category:"Sales", amount:500, currency:"GBP", vat_rate:0, vat_included:true }
     ];
+    document.querySelector("#businessLedgerCurrency").value = "GBP";
     document.querySelector("#businessCashflowRange").value = "90";
     renderBusinessLedger();
   });
+  await expect(page.locator("#businessWorkspace")).toBeVisible();
   await expect(page.locator("#businessCashflowIncome")).toContainText("2,600");
   await expect(page.locator("#businessCashflowExpenses")).toContainText("500");
   await expect(page.locator("#businessCashflowNet")).toContainText("2,100");
