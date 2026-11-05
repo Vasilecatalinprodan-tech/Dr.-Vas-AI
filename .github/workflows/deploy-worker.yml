@@ -73,7 +73,13 @@ jobs:
             [worker.includes('allowedAdminEmails.includes(user.email.trim().toLowerCase())') && worker.includes('if (privatePilotModules.has(moduleName) && !isAdminUser)'), 'Premium access must be based on the verified Supabase user and server-side admin allowlist'],
             [worker.includes('liveModule === "health" && env.GEMINI_LIVE_HEALTH_ENABLED !== "true"'), 'Health Live voice must remain separately privacy-gated'],
             [!worker.includes('const privatePilotModules = new Set(["free", "health"'), 'Free and Health must never be added to the private module gate'],
-            [worker.includes('64 * 1024'), 'Worker request body limit is missing'],
+            [worker.includes('512 * 1024'), 'Worker request body limit must allow bounded long-form requests'],
+            [worker.includes('message.length > 100000'), 'Worker long-form message cap is missing'],
+            [worker.includes('limit: "100"') && worker.includes('const maxHistoryCharacters = 48000'), 'Conversation history must use a bounded 48,000-character context budget'],
+            [worker.includes('controller.abort(), 60000'), 'AI provider timeout must be 60 seconds'],
+            [worker.includes('body.action === "crypto_device_update"'), 'Crypto device approval/revocation endpoint is missing'],
+            [worker.includes('allowedPreviousStates') && worker.includes('status: "in.(" + allowedPreviousStates.join(",") + ")'), 'Crypto device status transitions must be conditional'],
+            [worker.includes('event_type: nextStatus === "authorized" ? "crypto_device_authorized" : "crypto_device_revoked"'), 'Crypto device state changes must be audited'],
             [worker.includes('"X-Content-Type-Options": "nosniff"'), 'API security headers are missing'],
             [worker.includes('assetHeaders.set("X-Frame-Options", "DENY")'), 'Static asset frame protection is missing'],
             [worker.includes('drvas_consume_rate_limit'), 'Atomic rate-limit RPC is not wired into the Worker'],
@@ -132,7 +138,9 @@ jobs:
             [worker.includes('method: "HEAD"') && worker.includes('headers.get("content-length")') && worker.includes('headers.get("content-type")'), 'Worker must verify real Storage object size and MIME before Gemini'],
             [worker.includes('new TextDecoder("utf-8", { fatal: true })'), 'Worker must reject invalid UTF-8 attachment text'],
             [html.includes('id="chatFileInput"') && html.includes('function uploadPendingChatFiles'), 'Universal chat attachment UI and upload workflow are missing'],
-            [html.includes('id="healthDataProcessingConsent"') && html.includes('id="fileProcessingConsent"'), 'File and Health data processing consent controls are missing']
+            [html.includes('id="healthDataProcessingConsent"') && html.includes('id="fileProcessingConsent"'), 'File and Health data processing consent controls are missing'],
+            [html.includes('maxlength="100000"'), 'Frontend long-form message limit is missing'],
+            [html.includes('async function updateCryptoDeviceStatus') && html.includes('crypto_device_update'), 'Crypto admin approval/revocation controls are missing']
           ];
           for (const [ok, message] of checks) {
             if (!ok) throw new Error(message);
