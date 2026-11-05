@@ -1307,6 +1307,8 @@ test("presentation never falls back to arbitrary voices when three named present
   });
   await page.evaluate(async () => { currentLanguage = "ro"; await speakDrvasPresentation(); });
   await expect(page.locator("#presentationAudioStatus")).toContainText("audio este oprit");
+  await expect(page.locator("#presentationPresenter")).toHaveClass(/is-animated/);
+  await expect(page.locator("#presentationSpeakerName")).toHaveText("Dr.Vas");
   expect(await page.evaluate(() => window.__drvasSpoken.length)).toBe(0);
 });
 
