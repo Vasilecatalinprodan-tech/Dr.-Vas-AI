@@ -1141,10 +1141,11 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
     const first = await page.evaluate(code => {
       stopDrvasPresentationSpeech(); currentLanguage = code; renderDrvasPresentation(); speakDrvasPresentation();
       const utterance = window.__drvasSpoken[window.__drvasSpoken.length - 1];
-      return { text: utterance.text, lang: utterance.lang, speaker: document.querySelector("#presentationSpeakerName").textContent };
+      return { text: utterance.text, lang: utterance.lang, speaker: document.querySelector("#presentationSpeakerName").textContent, expandedNames: prepareDrvasPresentationSpeechText("Dr.Vas și Dr.Jan") };
     }, language);
     expect(first.lang).toBe(locale);
     expect(first.speaker).toBe("Dr.Vas");
+    expect(first.expandedNames).toBe("Doctor Vas și Doctor Jan");
     expect(first.text).toContain("Doctor Vas Free");
     expect(first.text).toContain("Doctor Vas Health");
     expect(first.text).not.toContain("Dr.Vas");
