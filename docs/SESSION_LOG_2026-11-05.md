@@ -96,3 +96,12 @@ Founder asked to continue all Dr.Vas workstreams progressively and save all mean
 - No application source code was changed in this planning/audit pass; no APK build, test suite, deployment, or device audio test was claimed.
 
 Next action: verify latest Actions run/artifact for the current branch; then install/test the APK and audible TTS. After that establish a reliable test runner and begin the platform foundation audit before implementing persistent project workspaces.
+
+
+## Founder workbench branch discovery — 2026-11-05
+
+- Inspected `founder-workbenches-development` after the repository-wide branch search. It contains substantial source-level founder-only workbenches not present in the current continuation branch: Creator & Online Income Lab, Book Workshop, Music Lab, Digital Product Studio, Publishing Lab, Music Release Lab, AI Evaluation & Training, Online Income planner, Commerce Profit Lab, Mining Sensitivity/BTC calculator, Business Operations Planner, Customer Journey & Retention Planner, Content & Campaign Planner, private income tracker/report enhancements, read-only crypto device registry and animated three-assistant introduction.
+- Inspected feature-branch source and its dated feature/session records. The records explicitly distinguish implemented source from untested/undeployed status and describe safety boundaries (no live mining, wallet/trading, automatic publishing, payment, or public entitlement changes).
+- Compared `universal-chat-attachments` (base) to `founder-workbenches-development` (head). GitHub reports divergent histories: feature branch 58 commits ahead, 147 behind, merge base `5bb13b80d5dcc3e1ce348cd1c39ec29af7a0fa17`. Do not merge blindly.
+- Added `docs/BRANCH_INTEGRATION_REVIEW_2026-11-05.md` documenting the feature inventory, branch divergence, test caveats and controlled integration plan.
+- No source code was merged or changed, and no production deployment occurred in this review.
