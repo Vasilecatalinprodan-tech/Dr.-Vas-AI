@@ -3167,6 +3167,7 @@ async function renderStudioVideo(){
  const button=el("studioRenderCreateButton");if(button)button.disabled=true;
  try{
   const selectedFiles=Array.from(el("studioSceneImages")?.files||[]);
+  if(selectedFiles.length>8)throw new Error("Poți încărca maximum 8 scene (imagini sau clipuri MP4) pentru un video.");
   const files=studioSceneOrder.length?studioSceneOrder.map(index=>selectedFiles[index]).filter(Boolean):selectedFiles;
   const audioFile=el("studioSceneAudio")?.files?.[0]||null;
   if(files.length>8)throw new Error("Poți încărca maximum 8 scene (imagini sau clipuri MP4) pentru un video.");
