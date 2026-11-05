@@ -754,7 +754,10 @@ body.presentation-open{overflow:hidden!important}
 .presentation-progress{display:flex;align-items:center;gap:12px;margin:18px 0 10px;color:#8fb8c8;font-size:11px;font-weight:800}
 .presentation-progress-track{height:5px;flex:1;overflow:hidden;border-radius:99px;background:#18374a}
 .presentation-progress-track span{display:block;width:0;height:100%;border-radius:99px;background:linear-gradient(90deg,#54d8cf,#9ce8d8);transition:width .45s ease}
-.presentation-scene{display:flex;align-items:center;gap:20px;padding:18px;margin:12px 0 16px;border:1px solid #31596e;border-radius:18px;background:radial-gradient(ellipse at 18% 10%,#1a5261,#102b40 55%,#0b1d2e);min-height:150px}
+.presentation-scene{display:flex;align-items:center;gap:20px;padding:18px;margin:12px 0 16px;border:1px solid #31596e;border-radius:18px;background-image:radial-gradient(ellipse at 18% 10%,#1a5261,#102b40 55%,#0b1d2e),linear-gradient(125deg,#0b1d2e,#174356,#0b1d2e);background-size:100% 100%,220% 220%;background-position:center,0% 50%;animation:presentationStageDrift 14s ease-in-out infinite alternate;min-height:150px;overflow:hidden}
+@keyframes presentationStageDrift{to{background-position:center,100% 50%}}
+#presentationPresenter.scene-enter{animation:presentationSceneEnter .48s cubic-bezier(.2,.8,.2,1) both}
+@keyframes presentationSceneEnter{from{opacity:0;transform:translateY(13px) scale(.965);filter:blur(4px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
 .presentation-presenter{display:flex;align-items:center;gap:14px;min-width:245px;position:relative}
 .presentation-avatar{width:116px;height:116px;flex:0 0 116px;position:relative;display:grid;place-items:center;overflow:visible;border-radius:50%;color:#efffff;border:2px solid #79e4d9;background:radial-gradient(circle at 35% 25%,#4baeb1,#16445a 72%);box-shadow:0 0 0 7px #54d8cf14,0 0 30px #54d8cf25;transition:transform .35s,box-shadow .35s}
 .presenter-character-art{position:relative;z-index:2;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 8px 10px #0005)}
@@ -778,7 +781,7 @@ body.presentation-open{overflow:hidden!important}
 .presentation-presenter.is-speaking .presenter-character-art{animation:characterTalk .42s ease-in-out infinite alternate}
 @keyframes characterMouth{from{transform:scaleY(.35)}to{transform:scaleY(1.45)}}
 @keyframes characterTalk{from{transform:translateY(0) rotate(-1deg)}to{transform:translateY(-3px) rotate(1deg)}}
-@media(prefers-reduced-motion:reduce){.character-orbit,.character-blink,.presentation-presenter.is-speaking .presentation-avatar,.presentation-presenter.is-speaking .character-mouth,.presentation-presenter.is-speaking .presenter-character-art{animation:none!important}}
+@media(prefers-reduced-motion:reduce){.character-orbit,.character-blink,.presentation-presenter.is-speaking .presentation-avatar,.presentation-presenter.is-speaking .character-mouth,.presentation-presenter.is-speaking .presenter-character-art,.presentation-scene,#presentationPresenter.scene-enter{animation:none!important}}
 .presentation-avatar-jan{border-color:#8ac9df;background:radial-gradient(circle at 35% 25%,#4c8fa9,#20364d 72%);box-shadow:0 0 0 7px #74b8df14,0 0 30px #74b8df25}
 .presentation-avatar-sarah{border-color:#e4b6e2;background:radial-gradient(circle at 35% 25%,#bd83bb,#4a345d 72%);box-shadow:0 0 0 7px #d9a5db14,0 0 30px #d9a5db25}
 .presentation-presenter.is-speaking .presentation-avatar{animation:presentationAvatarTalk .42s ease-in-out infinite alternate}
@@ -1864,7 +1867,7 @@ function renderDrvasPresentation(){
 function updateDrvasPresentationScene(index){
  const key=["drvas","jan","sarah"][index],speaker=DRVAS_PRESENTERS[key],data=DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro;
  const presenter=el("presentationPresenter"),avatar=el("presentationAvatar"),grid=el("presentationModuleGrid");
- if(presenter)presenter.classList.remove("is-speaking");
+ if(presenter){presenter.classList.remove("is-speaking","scene-enter");void presenter.offsetWidth;presenter.classList.add("scene-enter");}
  if(avatar){avatar.className="presentation-avatar presentation-avatar-"+key;avatar.dataset.presenter=key;}
  const set=(id,value)=>{const node=el(id);if(node)node.textContent=value};
  set("presentationSpeakerName",speaker.name);set("presentationSpeakerRole",speaker.role[currentLanguage]||speaker.role.ro);
