@@ -4609,26 +4609,40 @@ function handleChatFilesSelected(event){
 }
 async function uploadPendingChatFiles(files,conversationId,moduleId,accessToken){
  if(!files.length)return [];
+ const totalBytes=files.reduce((sum,file)=>sum+file.size,0);
+ if(totalBytes>20*1024*1024)throw new Error("Dimensiunea totală a fișierelor depășește 20 MB.");
  const generalConsent=el("fileProcessingConsent")?.checked===true;
  const healthConsent=moduleId==="health"&&el("healthDataProcessingConsent")?.checked===true;
  if(!generalConsent||(moduleId==="health"&&!healthConsent)){
   throw new Error(moduleId==="health"?"Pentru Dr.Vas Health confirmă ambele acorduri de procesare înainte de a trimite documente.":"Confirmă acordul de procesare a fișierelor înainte de a le trimite.");
  }
+ const capabilityResponse=await fetch(API_URL+"/health",{cache:"no-store"});
+ const capability=await capabilityResponse.json();
+ if(!capabilityResponse.ok||capability.checks?.file_analysis!=="enabled"){
+  throw new Error("Încărcarea și analiza fișierelor nu este încă activată. Dr.Vas o va activa după confirmarea contractuală și de protecție a datelor.");
+ }
  const consentResponse=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"file_processing_consent",access_token:accessToken,module:moduleId,granted:true})});
  const consentData=await consentResponse.json();
  if(!consentResponse.ok||!consentData.ok)throw new Error(consentData.error||"Nu am putut înregistra acordul de procesare.");
  const uploaded=[];
- for(const file of files){
-  const safeName=file.name.normalize("NFKD").replace(/[^a-z0-9._-]+/gi,"-").replace(/^-+|-+$/g,"").slice(0,100)||"attachment";
-  const path=currentUser.id+"/"+conversationId+"/"+moduleId+"/"+crypto.randomUUID()+"-"+safeName;
-  const {error:uploadError}=await supabaseClient.storage.from("drvas-media").upload(path,file,{contentType:file.type,upsert:false});
-  if(uploadError)throw uploadError;
-  const record={user_id:currentUser.id,conversation_id:conversationId,module:moduleId,original_name:file.name.slice(0,255),mime_type:file.type,file_size:file.size,storage_path:path};
-  const {data,error:recordError}=await supabaseClient.from("drvas_chat_attachments").insert(record).select("id,original_name,mime_type,file_size,storage_path,created_at").single();
-  if(recordError){await supabaseClient.storage.from("drvas-media").remove([path]);throw recordError;}
-  uploaded.push(data);
+ try{
+  for(const file of files){
+   const safeName=file.name.normalize("NFKD").replace(/[^a-z0-9._-]+/gi,"-").replace(/^-+|-+$/g,"").slice(0,100)||"attachment";
+   const path=currentUser.id+"/"+conversationId+"/"+moduleId+"/"+crypto.randomUUID()+"-"+safeName;
+   const {error:uploadError}=await supabaseClient.storage.from("drvas-media").upload(path,file,{contentType:file.type,upsert:false});
+   if(uploadError)throw uploadError;
+   const record={user_id:currentUser.id,conversation_id:conversationId,module:moduleId,original_name:file.name.slice(0,255),mime_type:file.type,file_size:file.size,storage_path:path};
+   const {data,error:recordError}=await supabaseClient.from("drvas_chat_attachments").insert(record).select("id,original_name,mime_type,file_size,storage_path,created_at").single();
+   if(recordError){await supabaseClient.storage.from("drvas-media").remove([path]);throw recordError;}
+   uploaded.push(data);
+  }
+  return uploaded;
+ }catch(error){
+  for(const item of uploaded){
+   try{await supabaseClient.storage.from("drvas-media").remove([item.storage_path]);await supabaseClient.from("drvas_chat_attachments").delete().eq("id",item.id).eq("user_id",currentUser.id);}catch(cleanupError){console.warn("Attachment cleanup failed:",cleanupError);}
+  }
+  throw error;
  }
- return uploaded;
 }
 function appendMessageAttachments(messageElement,attachments){
  if(!messageElement||!attachments?.length)return;
