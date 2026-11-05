@@ -2599,7 +2599,9 @@ function waitForSpeechVoices(){
 }
 let founderSpeechAudio=null;
 let founderSpeechObjectUrl=null;
+let founderSpeechRequestId=0;
 async function playFounderVoice(text){
+ const requestId=++founderSpeechRequestId;
  if(activeAssistant!=="drvas"||!currentUser||!text)return false;
  try{
   const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
@@ -2610,6 +2612,7 @@ async function playFounderVoice(text){
   });
   if(!response.ok)return false;
   const audioBlob=await response.blob();
+  if(requestId!==founderSpeechRequestId||!voiceAutoRead||activeAssistant!=="drvas")return true;
   if(!audioBlob.size)return false;
   if(founderSpeechAudio){founderSpeechAudio.pause();founderSpeechAudio.src="";}
   if(founderSpeechObjectUrl)URL.revokeObjectURL(founderSpeechObjectUrl);
@@ -2673,6 +2676,7 @@ function replayLastAnswer(){
  refreshVoiceUi("speaking");
 }
 function stopVoiceOutput(){
+ founderSpeechRequestId++;
  if(window.speechSynthesis)window.speechSynthesis.cancel();
  if(founderSpeechAudio){founderSpeechAudio.pause();founderSpeechAudio.currentTime=0;}
  document.body.classList.remove("assistant-speaking");
@@ -2685,7 +2689,8 @@ function toggleVoiceOutput(){
  }
  voiceAutoRead=!voiceAutoRead;
  logClientEvent(voiceAutoRead?"voice_output_enabled":"voice_output_disabled");
- if(voiceAutoRead&&lastSpokenAnswer)speakDrVas(lastSpokenAnswer);
+ if(!voiceAutoRead)stopVoiceOutput();
+ else if(lastSpokenAnswer)speakDrVas(lastSpokenAnswer);
  refreshVoiceUi(voiceAutoRead?"ready":"off");
 }
 function toggleVoiceInput(){
