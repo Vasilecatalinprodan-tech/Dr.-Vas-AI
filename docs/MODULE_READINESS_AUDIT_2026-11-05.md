@@ -212,3 +212,12 @@ Founder feedback:
 - Assistant-aware TTS is now deployed. The frontend identifies Dr.Vas, Dr.Jan or Sarah in each TTS request; the Worker validates the identity, checks the authenticated session and rate limit, then selects the corresponding server-side secret. Dr.Vas retains the existing `ELEVENLABS_VOICE_ID`; Jan and Sarah require `ELEVENLABS_JAN_VOICE_ID` and `ELEVENLABS_SARAH_VOICE_ID`.
 - Workflow #466 passed including the new assistant-identity browser test and production smoke test. This does not prove audible voice differentiation on a physical device; provider voice IDs and Samsung S24 tests remain pending.
 - No new paid voice usage was initiated and the installed APK was not changed.
+
+## 2026-11-05 — final work-session validation
+
+- Assistant-aware server TTS now runs before browser Web Speech API fallback checks, so audio-element playback is not blocked when `speechSynthesis` is unavailable.
+- Existing Academy, Commerce and Business project records now receive the latest AI reply automatically while that saved project is open; new project creation remains user-initiated.
+- Workflow #473 / run `42130733280` passed JavaScript checks, browser regression suite, Worker deploy, production smoke test and SBOM upload. Production Worker version `f88f84eb-45b6-45b8-84f4-0d109c88864f`.
+- User reports the shared module-project migration ran successfully. Live RLS/grant checks and two-account tests are still pending.
+- Distinct voice provider secrets for Jan and Sarah and real-device audio testing remain pending. Static photorealistic portraits have not been integrated; no avatar asset pipeline was committed.
+- Structured conversation archive saved at `docs/CHAT-ARCHIVE-2026-11-05.md`; not a verbatim ChatGPT transcript export.
