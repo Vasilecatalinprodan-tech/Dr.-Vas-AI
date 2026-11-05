@@ -307,6 +307,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .crypto-admin-heading h4{margin:0 0 6px;color:#d7e9ef}
 .crypto-admin-heading p{margin:0;color:#91acbd;font-size:12px;line-height:1.5}
 .crypto-status{white-space:nowrap;border:1px solid #b78a3e;border-radius:20px;padding:5px 9px;color:#f0c879;font-size:10px;font-weight:700;letter-spacing:.04em}
+.admin-action-button{padding:7px 10px;margin:2px;border:1px solid #39777b;border-radius:8px;background:#123b43;color:#bff8ee;font-size:11px;font-weight:700;cursor:pointer}.admin-action-button:hover{border-color:#66e6dc;background:#17545a}
 .crypto-device-table{min-width:720px}
 .crypto-calculator{margin-top:18px;padding:15px;background:#091827;border:1px solid #29465b;border-radius:13px}
 .crypto-calculator h5{margin:0 0 6px;color:#d7e9ef;font-size:14px}
@@ -1393,8 +1394,8 @@ body.presentation-open{overflow:hidden!important}
     <p id="cryptoDevicesNotice" class="admin-footnote" role="status">Se verifică registrul securizat…</p>
     <div class="admin-table-wrap">
      <table class="admin-log-table crypto-device-table">
-      <thead><tr><th>Echipament</th><th>Platformă</th><th>Stare</th><th>Înregistrat</th><th>Aprobat</th><th>Ultima activitate</th></tr></thead>
-      <tbody id="cryptoDevicesBody"><tr><td colspan="6">Se încarcă…</td></tr></tbody>
+      <thead><tr><th>Echipament</th><th>Platformă</th><th>Stare</th><th>Înregistrat</th><th>Aprobat</th><th>Ultima activitate</th><th>Control</th></tr></thead>
+      <tbody id="cryptoDevicesBody"><tr><td colspan="7">Se încarcă…</td></tr></tbody>
      </table>
     </div>
     <p class="admin-footnote">Nu se colectează chei private, seed phrases sau parole. Următorul pas va fi înscrierea cu cheie criptografică a dispozitivului și aprobare explicită.</p>
@@ -1631,7 +1632,7 @@ body.presentation-open{overflow:hidden!important}
      <label id="healthDataProcessingConsentWrap" class="chat-file-consent" hidden><input id="healthDataProcessingConsent" type="checkbox"> Dr.Vas Health poate procesa date medicale sensibile. Înțeleg că răspunsul este informativ, nu un diagnostic, și consimt explicit la această prelucrare.</label>
     </div>
     <div class="input-area">
-     <textarea id="question" aria-label="Mesaj pentru Dr.Vas" placeholder="Scrie mesajul tău aici..." rows="1" wrap="soft" maxlength="12000" autocomplete="off"></textarea>
+     <textarea id="question" aria-label="Mesaj pentru Dr.Vas" placeholder="Scrie mesajul tău aici..." rows="1" wrap="soft" maxlength="100000" autocomplete="off"></textarea>
      <button id="sendButton" onclick="send()">Trimite ➤</button>
     </div>
     <div class="voice-toolbar" aria-label="Controale vocale Dr.Vas">
@@ -4418,7 +4419,7 @@ async function loadCryptoDevices(){
     const devices=Array.isArray(result.devices)?result.devices:[];
     if(!devices.length){
       const row=document.createElement("tr"),cell=document.createElement("td");
-      cell.colSpan=6;cell.textContent="Nu există încă dispozitive înscrise. Niciun echipament nu are acces la resursele Crypto.";
+      cell.colSpan=7;cell.textContent="Nu există încă dispozitive înscrise. Niciun echipament nu are acces la resursele Crypto.";
       row.appendChild(cell);tbody.appendChild(row);
     }else{
       for(const device of devices){
@@ -4437,12 +4438,57 @@ async function loadCryptoDevices(){
           if(index===2)cell.className=device.status==="authorized"?"log-ok":device.status==="revoked"?"log-error":"";
           row.appendChild(cell);
         });
+        const actionCell=document.createElement("td");
+        if(device.status==="pending" || device.status==="revoked"){
+          const approve=document.createElement("button");
+          approve.type="button";approve.textContent=device.status==="revoked"?"Reautorizează":"Autorizează";
+          approve.className="admin-action-button";
+          approve.addEventListener("click",()=>updateCryptoDeviceStatus(device.id,"authorized"));
+          actionCell.appendChild(approve);
+        }
+        if(device.status==="authorized"){
+          const revoke=document.createElement("button");
+          revoke.type="button";revoke.textContent="Revocă";
+          revoke.className="admin-action-button";
+          revoke.addEventListener("click",()=>updateCryptoDeviceStatus(device.id,"revoked"));
+          actionCell.appendChild(revoke);
+        }
+        if(!actionCell.childElementCount)actionCell.textContent="—";
+        row.appendChild(actionCell);
         tbody.appendChild(row);
       }
     }
     notice.textContent="Registru actualizat: "+devices.length+" dispozitive · "+new Date(result.generated_at).toLocaleString(currentLanguage||"ro")+".";
   }catch(error){
     notice.textContent=error.message;
+  }
+}
+
+async function updateCryptoDeviceStatus(deviceId,status){
+  if(!isDrvasAdmin || !deviceId || !["authorized","revoked"].includes(status))return;
+  const action=status==="authorized"?"autorizezi":"revoci";
+  if(!window.confirm("Confirmi că dorești să "+action+" acest dispozitiv Crypto?"))return;
+  const notice=el("cryptoDevicesNotice");
+  try{
+    const {data,error}=await supabaseClient.auth.getSession();
+    if(error||!data.session)throw new Error("Sesiunea a expirat. Conectează-te din nou.");
+    const response=await fetch(API_URL,{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        action:"crypto_device_update",
+        device_id:deviceId,
+        status,
+        access_token:data.session.access_token
+      })
+    });
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(result.error||"Nu am putut modifica accesul dispozitivului.");
+    notice.textContent=status==="authorized"
+      ?"Dispozitiv autorizat. Acest pas nu pornește automat mining sau tranzacții."
+      :"Accesul dispozitivului a fost revocat.";
+    await loadCryptoDevices();
+  }catch(error){
+    if(notice)notice.textContent=error.message||"Eroare la actualizarea dispozitivului.";
   }
 }
 
