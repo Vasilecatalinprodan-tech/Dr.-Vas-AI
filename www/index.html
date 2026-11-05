@@ -2605,19 +2605,20 @@ function waitForSpeechVoices(){
 let founderSpeechAudio=null;
 let founderSpeechObjectUrl=null;
 let founderSpeechRequestId=0;
-async function playFounderVoice(text){
+async function playAssistantVoice(text){
  const requestId=++founderSpeechRequestId;
- if(activeAssistant!=="drvas"||!currentUser||!text)return false;
+ const assistantId=activeAssistant;
+ if(!["drvas","jan","aurora"].includes(assistantId)||!currentUser||!text)return false;
  try{
   const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
   if(sessionError||!sessionData.session?.access_token)return false;
   const response=await fetch(API_URL,{
    method:"POST",headers:{"Content-Type":"application/json"},
-   body:JSON.stringify({action:"voice_tts",access_token:sessionData.session.access_token,text:String(text).slice(0,5000)})
+   body:JSON.stringify({action:"voice_tts",assistant:assistantId,access_token:sessionData.session.access_token,text:String(text).slice(0,5000)})
   });
   if(!response.ok)return false;
   const audioBlob=await response.blob();
-  if(requestId!==founderSpeechRequestId||!voiceAutoRead||activeAssistant!=="drvas")return true;
+  if(requestId!==founderSpeechRequestId||!voiceAutoRead||activeAssistant!==assistantId)return true;
   if(!audioBlob.size)return false;
   if(founderSpeechAudio){founderSpeechAudio.pause();founderSpeechAudio.src="";}
   if(founderSpeechObjectUrl)URL.revokeObjectURL(founderSpeechObjectUrl);
@@ -2629,7 +2630,7 @@ async function playFounderVoice(text){
   await founderSpeechAudio.play();
   return true;
  }catch(error){
-  console.warn("Dr.Vas founder voice unavailable; using browser speech:",error.message);
+  console.warn("Dedicated assistant voice unavailable; using device speech fallback:",error.message);
   return false;
  }
 }
@@ -2638,10 +2639,8 @@ async function speakDrVas(text){
  const spokenText=prepareSpeechText(text);
  if(!spokenText)return;
  lastSpokenAnswer=text;
- if(activeAssistant==="drvas"){
-  const played=await playFounderVoice(spokenText);
-  if(played)return;
- }
+ const dedicatedVoicePlayed=await playAssistantVoice(spokenText);
+ if(dedicatedVoicePlayed)return;
  const lang=speechLanguage();
  let voice=chooseSpeechVoice(lang);
  if(!voice){
