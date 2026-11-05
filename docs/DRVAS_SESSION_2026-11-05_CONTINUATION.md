@@ -307,3 +307,13 @@ Verificare și limite:
 - Fișierul `.github/workflows/deploy-worker.yml` verifică acum static că Worker-ul păstrează HEAD, Content-Length, Content-Type și decodificarea UTF-8 strictă pentru atașamente.
 - Commit: 6787cfffd8d046d8792b0f5df7a2c63666898303.
 - Acest guard previne eliminarea accidentală a validărilor de securitate într-o modificare ulterioară; nu înlocuiește testul E2E cu Storage real.
+
+
+## 2026-11-05 — corecție test audio după verificarea CI #245
+
+- Run #245 (ID `42060480814`) s-a încheiat cu 42/43 teste trecute. Toate validările statice și testele anterioare au trecut; singurul eșec a fost testul de prezentare, care încă aștepta forma scrisă `Dr.Vas Studio` în textul trimis către voce.
+- Comportamentul aplicației este cel cerut: prezentarea rostește forma extinsă „Doctor Vas Studio / Business / Academy / Commerce”, iar interfața păstrează numele vizibile „Dr.Vas …”. Testul vechi nu reflecta această regulă vocală.
+- Corecție de test salvată pe `universal-chat-attachments`: commit `6e95886b024147c1cebda742dc44da5b13a7024e` în `tests/e2e/homepage.spec.cjs`. Acum verifică formele extinse în replicile lui Jan și Sarah, inclusiv „Doctor Jan”, fără a schimba verificările numelor vizibile ale modulelor.
+- Urmează verificarea/rularea CI pe noul commit. Nu declarăm testele verzi până nu există un run complet reușit.
+- PR #7 rămâne draft, neintegrat. Nu s-a făcut merge, deploy, execuție de migrare SQL sau activare a `DRVAS_FILE_ANALYSIS_ENABLED`.
+- Istoricul complet al conversației rămâne în ChatGPT; acest jurnal tehnic păstrează deciziile și schimbările, nu transcrierea literală integrală.
