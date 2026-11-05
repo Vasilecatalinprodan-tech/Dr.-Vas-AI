@@ -65,3 +65,11 @@ Founder feedback:
 - Added a browser regression test that checks the frontend sends the correct assistant identity for Dr.Vas, Dr.Jan and Sarah, and CI static assertions for the server-side secret mapping.
 - Remaining: run the deployment workflow; configure the two new secret IDs after voice selection; verify actual voice gender/identity and Romanian/English pronunciation; test on Samsung S24, desktop browser and a newly built APK. Existing installed APK remains untouched.
 - Avatar work remains blocked on the founder's choice between fictional photorealistic adult portraits and real-person photographs with permission. No portraits were generated or replaced in this change.
+
+## Follow-up fix — server-side voice independent of browser speech support
+
+- Corrected the playback gate: `speakDrVas()` now attempts authenticated Worker TTS before checking whether browser `speechSynthesis` exists. This matters on WebViews/browsers that can play an audio element but do not expose the Web Speech synthesis API.
+- The voice toggle no longer rejects a signed-in user solely because browser speech synthesis is absent. Browser TTS remains a fallback only after the dedicated server-side voice request fails.
+- Added an E2E test for a signed-in assistant using Worker TTS when `speechSynthesis` is unavailable, plus CI source assertions.
+- Workflow #470 is pending at the time of this note; do not claim this follow-up has passed or deployed until its run result is checked.
+- Dedicated Jan/Sarah provider IDs and real device audio checks remain required for genuinely distinct voices.
