@@ -78,3 +78,33 @@ No Storage buckets were returned during the audit. Re-inventory Storage before l
 ## Release gate
 
 Do not advertise account deletion as implemented until the endpoint, UI, reauthentication, public request route, retention decisions and all tests above have been completed. This document is an engineering specification, not evidence that deletion currently works.
+
+
+## Additional release-readiness findings carried forward from PR #2
+
+### Frontend and public deletion requirements
+
+- Add a clearly labelled **Delete account** action in authenticated account/settings UI, separate from “delete conversation history”.
+- Explain what is deleted, narrow legal-retention exceptions and irreversibility.
+- Require recent reauthentication in addition to explicit confirmation; a checkbox alone is insufficient for a high-impact destructive action.
+- On confirmed success, clear local app state and sign out only after the server confirms completion.
+- Provide a public account-deletion request page/URL suitable for app-store listing requirements where account creation is supported.
+
+### CORS and database hardening follow-up
+
+- Replace wildcard CORS only after verifying every real production, preview, local and Codespaces origin. Do not guess origins or silently break development.
+- Ensure preflight and normal responses use the same origin decision and add `Vary: Origin`.
+- Recheck table grants whenever a new table is introduced. RLS does not protect against table-level `TRUNCATE` privileges; keep destructive client-role grants revoked.
+- Keep service-role credentials only in Cloudflare secrets and review Storage policies whenever buckets are added.
+
+### Privacy notice review (historical audit)
+
+The reviewed privacy notice was labelled a working draft. Before public release, confirm the controller's legal identity and privacy contact, purpose/lawful basis/retention for each processing category, processor/subprocessor details and international-transfer safeguards, the applicable Article 9 condition and safeguards for identifiable Health data, and that voice, memory, encryption, analytics and AI-provider descriptions match the deployed product. Do not invent company details or generic promises.
+
+### iOS readiness (historical repository audit)
+
+The PR #2 audit found Capacitor Android/core/CLI dependencies but no `@capacitor/ios` dependency. iOS packaging is separate: add and sync the iOS platform in a controlled change, then build/sign/test with Xcode on macOS. Do not claim iPhone readiness from the Android APK or web build. Recheck current package configuration before acting.
+
+### PR #2 disposition
+
+PR #2 was documentation-only. Its additional account-deletion, CORS, privacy-notice and iOS release-readiness findings have been carried into this current specification. The original branch is superseded; no account-deletion implementation or destructive database operation was deployed by that PR.
