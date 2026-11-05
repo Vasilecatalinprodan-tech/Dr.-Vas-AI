@@ -976,6 +976,17 @@ test("founder content campaign planner builds a 30-day brief for the private Stu
   expect(brief.status).toContain("Dr.Vas Studio");
 });
 
+test("Bitcoin mining calculator exposes its monthly maintenance assumption", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    document.querySelector("#adminPanel")?.classList.remove("hidden");
+    isDrvasAdmin = true;
+    calculateCryptoMiningEconomics();
+  });
+  await expect(page.locator("#cryptoMaintenanceMonthly")).toHaveValue("50");
+  await expect(page.locator("#cryptoMaintenanceDaily")).toContainText("1.67");
+});
+
 test("logout removes administrator workspaces and clears private module drafts", async ({ page }) => {
   await openApp(page, "ro");
   await page.evaluate(() => {
