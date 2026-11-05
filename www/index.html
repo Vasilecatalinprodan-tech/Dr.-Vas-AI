@@ -4647,100 +4647,75 @@ async function loadConversationAttachments(conversationId,moduleId=activeModule)
 el("chatFileInput").addEventListener("change",handleChatFilesSelected);
 
 async function send(){
-  const input = el("question");
-  const button = el("sendButton");
-  const message = input.value.trim();
+ const input=el("question"),button=el("sendButton");
+ const typedMessage=input.value.trim();
+ const filesToUpload=[...pendingChatFiles];
+ const existingAttachments=[...pendingUploadedAttachments];
+ if(!typedMessage&&!filesToUpload.length&&!existingAttachments.length)return;
+ if(button.disabled||!currentUser||isSendingMessage)return;
+ const message=typedMessage||(activeModule==="health"?"Te rog să explici și să analizezi documentele medicale atașate, fără a stabili un diagnostic.":"Te rog să analizezi fișierele atașate și să explici informațiile relevante.");
+ if(!currentConversationId)currentConversationId=makeId();
+ const conversationId=currentConversationId,moduleId=activeModule,language=currentLanguage;
+ rememberActiveConversation(conversationId);
+ isSendingMessage=true;setChatNavigationDisabled(true);button.disabled=true;input.value="";resizeQuestionInput();
+ const userBubble=appendMessage("user",message);
+ if(existingAttachments.length)appendMessageAttachments(userBubble,existingAttachments);
+ const answer=appendMessage("assistant",tr("Dr.Vas gândește..."));answer.classList.add("typing");
+ try{
+  const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
+  if(sessionError)throw sessionError;
+  const accessToken=sessionData.session?.access_token;
+  if(!accessToken)throw new Error("Sesiunea a expirat. Conectează-te din nou.");
+  await saveMessage("user",message,conversationId);
+  conversationSaved=true;pendingMessages=[];setLocalizedText(el("saveMessage"),"Mesajul tău este salvat automat în cont.");updateSaveButton();
 
-  if(!message || button.disabled || !currentUser || isSendingMessage) return;
-  if(!currentConversationId) currentConversationId = makeId();
-  const conversationId = currentConversationId;
-  const moduleId = activeModule;
-  const language = currentLanguage;
-  rememberActiveConversation(conversationId);
-
-  isSendingMessage = true;
-  setChatNavigationDisabled(true);
-  button.disabled = true;
-  input.value = "";
-  resizeQuestionInput();
-
-  appendMessage("user",message);
-  const answer = appendMessage("assistant",tr("Dr.Vas gândește..."));
-  answer.classList.add("typing");
-
-  try{
-    await saveMessage("user",message,conversationId);
-    conversationSaved = true;
-    pendingMessages = [];
-    setLocalizedText(el("saveMessage"),"Mesajul tău este salvat automat în cont.");
-    updateSaveButton();
-
-    const {data:sessionData,error:sessionError} = await supabaseClient.auth.getSession();
-    if(sessionError) throw sessionError;
-    const accessToken = sessionData.session?.access_token;
-    if(!accessToken) throw new Error("Sesiunea a expirat. Conectează-te din nou.");
-
-    const startedAt = performance.now();
-
-    const response = await fetch(API_URL,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        message:message,
-        module:moduleId,
-        assistant:activeAssistant,
-        language:language,
-        conversation_id:conversationId,
-        access_token:accessToken
-      })
-    });
-
-    const data = await response.json();
-    const elapsed = ((performance.now()-startedAt)/1000).toFixed(2);
-
-    if(!response.ok) throw new Error(data.error || "HTTP " + response.status);
-    if(!data.reply) throw new Error("Răspuns invalid de la server");
-
-    const displayedReply = localizeReply(data.reply);
-    answer.classList.remove("typing");
-    answer.textContent = displayedReply;
-    lastSpokenAnswer=displayedReply;
-    if(moduleId==="studio"){
-      currentStudioProjectOutput=displayedReply;
-      if(el("studioIdea")?.value?.trim())await saveStudioProject();
-    }else if(["academy","commerce","business"].includes(moduleId))moduleProjectOutputs[moduleId]=displayedReply;
-    refreshVoiceUi(voiceAutoRead?"ready":"off");
-    if(voiceAutoRead)speakDrVas(displayedReply);
-    if(data.action !== "conversations_deleted") await saveMessage("assistant",displayedReply,conversationId);
-    conversationSaved = true;
-    pendingMessages = [];
-    setLocalizedText(el("saveMessage"),"Conversația este salvată automat.");
-    updateSaveButton();
-
-    if(data.action === "conversations_deleted"){
-      pendingMessages = [];
-      currentConversationId = makeId();
-      conversationSaved = false;
-      el("saveMessage").textContent = data.reply;
-      updateSaveButton();
-      await loadConversationList();
-    }
-
-    console.info("Dr.Vas response time:",elapsed,"seconds","Module:",activeModule);
-    if(conversationSaved) await loadConversationList();
-
-  }catch(error){
-    answer.classList.remove("typing");
-    answer.textContent = tr("Eroare: ") + tr(error.message);
-    refreshVoiceUi(voiceAutoRead?"ready":"off");
-    console.error("Dr.Vas AI:",error);
-  }finally{
-    isSendingMessage = false;
-    setChatNavigationDisabled(false);
-    button.disabled = false;
-    input.focus();
-    scrollToLatestMessage(answer);
+  if(filesToUpload.length){
+   const uploaded=await uploadPendingChatFiles(filesToUpload,conversationId,moduleId,accessToken);
+   pendingUploadedAttachments.push(...uploaded);pendingChatFiles=[];
+   renderPendingChatFiles();
   }
+  const attachments=[...pendingUploadedAttachments];
+  if(attachments.length>5)throw new Error("Poți analiza maximum 5 fișiere într-un singur mesaj.");
+  if(attachments.reduce((sum,file)=>sum+Number(file.file_size||0),0)>20*1024*1024)throw new Error("Dimensiunea totală a fișierelor depășește 20 MB.");
+  if(attachments.length){
+   appendMessageAttachments(userBubble,attachments);
+   await loadConversationAttachments(conversationId,moduleId);
+  }
+
+  const startedAt=performance.now();
+  const response=await fetch(API_URL,{
+   method:"POST",headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({
+    message,module:moduleId,assistant:activeAssistant,language,
+    conversation_id:conversationId,access_token:accessToken,
+    attachment_ids:attachments.map(file=>file.id)
+   })
+  });
+  const data=await response.json();
+  const elapsed=((performance.now()-startedAt)/1000).toFixed(2);
+  if(!response.ok)throw new Error(data.error||"HTTP "+response.status);
+  if(!data.reply)throw new Error("Răspuns invalid de la server");
+  const displayedReply=localizeReply(data.reply);
+  answer.classList.remove("typing");answer.textContent=displayedReply;lastSpokenAnswer=displayedReply;
+  if(moduleId==="studio"){
+   currentStudioProjectOutput=displayedReply;
+   if(el("studioIdea")?.value?.trim())await saveStudioProject();
+  }else if(["academy","commerce","business"].includes(moduleId))moduleProjectOutputs[moduleId]=displayedReply;
+  refreshVoiceUi(voiceAutoRead?"ready":"off");if(voiceAutoRead)speakDrVas(displayedReply);
+  if(data.action!=="conversations_deleted")await saveMessage("assistant",displayedReply,conversationId);
+  conversationSaved=true;pendingMessages=[];setLocalizedText(el("saveMessage"),"Conversația este salvată automat.");updateSaveButton();
+  if(data.action==="conversations_deleted"){
+   pendingMessages=[];currentConversationId=makeId();conversationSaved=false;el("saveMessage").textContent=data.reply;updateSaveButton();await loadConversationList();
+  }
+  if(attachments.length)clearPendingChatFiles();
+  console.info("Dr.Vas response time:",elapsed,"seconds","Module:",moduleId);
+  if(conversationSaved)await loadConversationList();
+ }catch(error){
+  answer.classList.remove("typing");answer.textContent=tr("Eroare: ")+tr(error.message);
+  refreshVoiceUi(voiceAutoRead?"ready":"off");console.error("Dr.Vas AI:",error);
+ }finally{
+  isSendingMessage=false;setChatNavigationDisabled(false);button.disabled=false;input.focus();scrollToLatestMessage(answer);
+ }
 }
 
 function resizeQuestionInput(){
