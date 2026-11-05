@@ -42,6 +42,31 @@ WHERE schemaname = 'public'
   AND tablename LIKE 'drvas_%'
 ORDER BY tablename, policyname;
 
+-- Focused verification for the shared Academy / Commerce / Business project table.
+-- Expected: RLS is true, four owner-scoped policies exist, authenticated has CRUD,
+-- and anon/public have no table privileges.
+SELECT
+  c.relrowsecurity AS rls_enabled,
+  (SELECT count(*) FROM pg_policies p
+    WHERE p.schemaname = 'public'
+      AND p.tablename = 'drvas_module_projects'
+      AND p.policyname IN (
+        'Users can read their own module projects',
+        'Users can create their own module projects',
+        'Users can update their own module projects',
+        'Users can delete their own module projects'
+      )) AS expected_owner_policy_count,
+  has_table_privilege('authenticated', 'public.drvas_module_projects', 'SELECT') AS authenticated_can_select,
+  has_table_privilege('authenticated', 'public.drvas_module_projects', 'INSERT') AS authenticated_can_insert,
+  has_table_privilege('authenticated', 'public.drvas_module_projects', 'UPDATE') AS authenticated_can_update,
+  has_table_privilege('authenticated', 'public.drvas_module_projects', 'DELETE') AS authenticated_can_delete,
+  has_table_privilege('anon', 'public.drvas_module_projects', 'SELECT') AS anon_can_select,
+  has_table_privilege('anon', 'public.drvas_module_projects', 'INSERT') AS anon_can_insert,
+  has_table_privilege('anon', 'public.drvas_module_projects', 'UPDATE') AS anon_can_update,
+  has_table_privilege('anon', 'public.drvas_module_projects', 'DELETE') AS anon_can_delete
+FROM pg_class c
+WHERE c.oid = 'public.drvas_module_projects'::regclass;
+
 -- Privilege overview for selected sensitive tables (does not reveal row contents).
 SELECT
   table_name,
