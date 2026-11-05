@@ -30,6 +30,30 @@ jobs:
         with:
           node-version: 22
 
+      - name: Validate Worker, inline browser JavaScript and attachment migration
+        run: |
+          node --check worker/index.js
+          node <<'NODE'
+          const fs = require('fs');
+          const vm = require('vm');
+          const html = fs.readFileSync('www/index.html', 'utf8');
+          const scripts = [...html.matchAll(/<script(?:\\s[^>]*)?>([\\s\\S]*?)<\\/script>/gi)]
+            .map(match => match[1]).filter(script => script.trim());
+          if (!scripts.length) throw new Error('No inline browser script found');
+          scripts.forEach((script, index) => new vm.Script(script, { filename: `drvas-inline-${index}.js` }));
+          const migration = fs.readFileSync('supabase/migrations/202611050001_chat_attachments.sql', 'utf8');
+          for (const marker of [
+            'create table if not exists public.drvas_chat_attachments',
+            'enable row level security',
+            'auth.uid() = user_id',
+            "'health_data_processing'",
+            "'file_processing'"
+          ]) {
+            if (!migration.toLowerCase().includes(marker.toLowerCase())) throw new Error('Attachment migration missing: ' + marker);
+          }
+          console.log(`Validated Worker, ${scripts.length} inline script(s), and private attachment migration.`);
+          NODE
+
       - name: Install browser test runner
         run: npm install --no-save --package-lock=false @playwright/test
 
