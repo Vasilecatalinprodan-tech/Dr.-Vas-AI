@@ -539,3 +539,10 @@ The Worker now maps the authenticated TTS request to one of three server-side se
 Founder confirms the shared module-project migration was executed successfully. Still perform read-only verification of table/RLS/policies/grants and disposable two-account tests. This report does not itself inspect the live database.
 
 Portrait question remains open: fictional photorealistic adult portraits or real-person photos with consent. Existing installed APK must not be modified/reinstalled without explicit permission.
+
+### Validation follow-up — 2026-11-05
+
+- Assistant-aware voice change passed workflow #462 / run `42115725365`: JS validation, browser regression suite (including all three assistant IDs), Worker deployment and production smoke test succeeded.
+- Cloudflare check passed for the tested code commit, deployed Worker version `7ace1c79-c5d3-4a80-8ce3-2a1dfd897986`.
+- Integration branch was fast-forwarded to the current main head `1190c06b986ae9e65d0efd85f1fbd1719831ed3c`.
+- Remaining external setup: choose distinct voice profiles, approve provider usage/budget, add Jan and Sarah voice IDs as Worker secrets, and test actual audio on Samsung S24. Do not claim the three voices already sound different until this is completed.
