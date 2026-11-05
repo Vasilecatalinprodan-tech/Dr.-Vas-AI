@@ -1179,3 +1179,41 @@ Status actual:
 - Verificarea audio reală pentru vocile Dr.Vas, Dr.Jan și Sarah încă trebuie făcută pe browserul/dispozitivul utilizatorului.
 
 Nu s-au schimbat TTS Live, secretele, baza de date sau producția. Nu s-a făcut merge.
+
+
+## 2026-11-05 — extindere teste E2E pentru limitele atașamentelor
+
+### Modificare de test
+În `tests/e2e/homepage.spec.cjs` am adăugat un test separat:
+`chat attachment picker rejects unsupported files, more than five files and files above 15 MB`.
+
+Testul verifică în browser:
+- respingerea a șase fișiere într-o singură selecție (limita este 5);
+- respingerea unui executabil `.exe` cu MIME nepermis;
+- respingerea unui PDF cu dimensiunea 15 MB + 1 byte;
+- acceptarea ulterioară a unui fișier TXT valid după cazurile respinse;
+- afișarea fișierului valid în lista de atașamente în așteptare.
+
+Nu a fost schimbat codul aplicației pentru această etapă; am crescut acoperirea testelor înainte de a activa funcționalitatea reală.
+
+### Rezultat GitHub Actions
+Commit test: `8e9e3e9f491d9e05bc0906fbac986ab4a6f5cb2a`.
+Run `42088700797`: status final `success`.
+Log confirmat:
+- `Running 44 tests using 1 worker`
+- `44 passed (22.6s)`
+- validare Worker, scripturi inline și migrare: success;
+- instalare Playwright, Chromium și server static: success.
+
+Run: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42088700797
+
+### Observații de securitate și lucru rămas
+- Încărcarea efectivă este blocată intenționat cât timp endpoint-ul `/health` raportează `file_analysis: disabled`; nu am activat flag-ul.
+- Consimțământul de procesare este înregistrat server-side la upload. Interfața actuală nu are încă un flux explicit de retragere a consimțământului pentru procesarea fișierelor; trebuie proiectat și testat înainte de lansarea publică.
+- Ștergerea fișierelor din conversație există în UI și elimină obiectul privat plus metadatele; încărcarea reală nu a fost testată cu Supabase deoarece migrarea nu este aplicată și mediul nu a fost conectat pentru această validare.
+- Migrarea `202611050001_chat_attachments.sql` rămâne neaplicată.
+- Nu s-au schimbat secrete, setări Live TTS, producția sau schema activă.
+
+### Stare PR
+PR #7: `open`, Draft=true, merged=false. Head la salvarea acestui jurnal: `8e9e3e9f491d9e05bc0906fbac986ab4a6f5cb2a`.
+Branch compare: 74 commituri înainte, 0 în urmă față de `drvas-integrated-platform`.
