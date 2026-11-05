@@ -1496,3 +1496,31 @@ test("Crypto device controls require administrator state and send explicit audit
   });
   expect(result.blockedCalls).toHaveLength(0);
 });
+
+
+test("dedicated voice requests carry the selected Dr.Vas assistant identity", async ({ page }) => {
+  await openApp(page, "ro", { access_token: "e2e-voice-token", user: { id: "e2e-voice-user" } });
+  await page.evaluate(async () => {
+    currentUser = { id: "e2e-voice-user" };
+    voiceAutoRead = true;
+    window.__DRVAS_E2E_VOICE_REQUESTS__ = [];
+    window.fetch = async (_url, options) => {
+      window.__DRVAS_E2E_VOICE_REQUESTS__.push(JSON.parse(options.body));
+      return new Response(new Blob(["audio"]), { status: 200, headers: { "Content-Type": "audio/mpeg" } });
+    };
+    window.URL.createObjectURL = () => "blob:e2e-voice";
+    window.URL.revokeObjectURL = () => {};
+    window.Audio = class {
+      constructor(src) { this.src = src; this.onplay = null; this.onended = null; this.onerror = null; }
+      async play() { this.onplay?.(); this.onended?.(); }
+      pause() {}
+    };
+    for (const assistant of ["drvas", "jan", "aurora"]) {
+      activeAssistant = assistant;
+      await speakDrVas("Test de voce dedicata.");
+    }
+  });
+  const requests = await page.evaluate(() => window.__DRVAS_E2E_VOICE_REQUESTS__);
+  expect(requests.map(request => request.assistant)).toEqual(["drvas", "jan", "aurora"]);
+  expect(requests.every(request => request.action === "voice_tts" && request.access_token === "e2e-voice-token")).toBeTruthy();
+});
