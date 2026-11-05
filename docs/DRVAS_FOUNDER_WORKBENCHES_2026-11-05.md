@@ -39,3 +39,12 @@ Per owner instruction, no tests, syntax checks, browser checks or manual checks 
 - Bitcoin scenario calculator now displays break-even BTC price, maximum electricity tariff, 30-day energy consumption, annual electricity cost and approximate heat dissipation in BTU/h, alongside daily/monthly/annual net estimates and payback.
 - These are planning tools only. No live mining, device control, wallet, exchange, trading, automated tax calculation or live market feed exists. All mining inputs remain manually supplied assumptions.
 - Per owner instruction, no tests or deployment were performed. All changes remain on `founder-workbenches-development`.
+
+
+## Follow-on workbenches — publishing and digital products
+
+- Added **Digital Product Studio** for original e-books, guides, templates, workbooks, mini-courses and digital resource bundles. It creates a structured product brief including target customer, realistic promise, deliverables, pricing hypothesis, market validation, sales-page copy, cost/margin assumptions, quality, accessibility, IP/licensing, privacy, refunds and consumer/tax checks.
+- Added **Publishing Lab** to prepare book metadata and an editorial readiness package: title/author/market, categories and keywords, short/long descriptions, author bio based only on supplied facts, manuscript and cover checks, print-format considerations and an ISBN/platform checklist. It does not fabricate identifiers, platform fees or approvals.
+- Added **Music Release Lab** to organize credits, collaborator permissions, composition/recording/artwork licences, explicit-content status, metadata, cover brief and release/promotion checklist. Unclear rights are explicitly treated as a blocker before distribution.
+- Each action stages a human-reviewable brief through the existing founder-only Studio save/open route. Nothing is automatically uploaded, published, distributed, sold or paid for.
+- These features remain untested and undeployed by owner instruction; no database schema or production configuration was changed.
