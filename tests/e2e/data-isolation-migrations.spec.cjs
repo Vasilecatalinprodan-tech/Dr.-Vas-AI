@@ -75,7 +75,7 @@ test("Chat attachment metadata is owner-scoped, bounded and restricted to suppor
     ));
   }
   expect(sql).toMatch(/file_size between 1 and 15728640/i);
-  expect(sql).toMatch(/storage_path like user_id::text \|\| '\\/%'/i);
+  expect(sql).toContain("storage_path like user_id::text || '/%'");
   expect(sql).toMatch(/module in \('free','health','studio','academy','commerce','business'\)/i);
   expect(sql).toMatch(/'application\/pdf'[\s\S]*'text\/plain'[\s\S]*'text\/csv'/i);
   expect(sql).toMatch(/set public = false/i);
