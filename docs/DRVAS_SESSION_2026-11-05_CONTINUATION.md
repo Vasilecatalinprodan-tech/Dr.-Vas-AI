@@ -1551,3 +1551,12 @@ Aștept rezultatul rulărilor E2E cu noua politică de concurență; dacă apare
 - PR #7 rămâne deschis, Draft, cu baza `drvas-integrated-platform` și head `universal-chat-attachments`.
 - Nu am făcut merge sau deploy. Funcțiile de atașamente medicale rămân nepublicate până la verificarea migrației, a bucket-ului, a retenției și a cerințelor UK GDPR.
 - Nu am executat SQL în Supabase și nu am modificat secrete.
+
+
+## 2026-11-05 — verificare în profunzime Studio și corectarea limitei reale
+
+- În timp ce am verificat interacțiunea dintre selectorul de fișiere și timeline, am descoperit o problemă reală: previzualizarea păstra primele 8 scene, iar validarea ulterioară număra lista ordonată, nu selecția originală. Astfel, un utilizator putea selecta 9 fișiere, iar validarea de randare să vadă doar 8.
+- Am mutat verificarea limitei înainte de aplicarea ordinii timeline-ului, astfel încât toate fișierele selectate să fie numărate corect. Mesajul de eroare rămâne explicit pentru imagini și clipuri MP4.
+- Commit corecție: `3a67acaac41e6250135f211d0fe9da7999b1d655`.
+- Testul automat adăugat pentru 9 fișiere acoperă exact acest defect și va verifica această corecție în rularea declanșată de commitul de mai sus.
+- Nu am publicat modificările pe Worker/site. Toate schimbările rămân pe branch-ul de lucru.
