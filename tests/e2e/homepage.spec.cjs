@@ -940,6 +940,7 @@ test("Bitcoin mining calculator estimates net result without starting mining", a
     // Keep this legacy arithmetic case independent of the newly added downtime/tax assumptions.
     document.querySelector("#cryptoDowntime").value = "0";
     document.querySelector("#cryptoTaxReserve").value = "0";
+    document.querySelector("#cryptoMaintenanceMonthly").value = "0";
     calculateCryptoMiningEconomics();
   });
   await expect(page.locator("#cryptoGrossDaily")).toContainText("18.00");
