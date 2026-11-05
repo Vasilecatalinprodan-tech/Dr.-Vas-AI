@@ -285,6 +285,19 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 .crypto-calculator-results strong{display:block;margin-top:5px;color:#65ddd5;font-size:15px;overflow-wrap:anywhere}
 @media(max-width:700px){.crypto-calculator-grid,.crypto-calculator-results{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:420px){.crypto-calculator-grid,.crypto-calculator-results{grid-template-columns:1fr}}
+.founder-workbench{margin:18px 0;padding:18px;border:1px solid #39736f;border-radius:15px;background:linear-gradient(145deg,#102d38,#0a1b29)}
+.founder-workbench h4{margin:0 0 7px;color:#75e3d8;font-size:16px}
+.founder-workbench-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+.founder-tool{padding:14px;border:1px solid #294c5d;border-radius:12px;background:#091a28;min-width:0}
+.founder-tool h5{margin:0 0 8px;color:#d7e9ef;font-size:14px}
+.founder-tool p{margin:5px 0 10px;color:#91acbd;font-size:11px;line-height:1.5}
+.founder-tool label{display:flex;flex-direction:column;gap:5px;margin:9px 0;color:#c8dce5;font-size:11px}
+.founder-tool input,.founder-tool select,.founder-tool textarea{width:100%;min-width:0;padding:9px;border:1px solid #34536a;border-radius:8px;background:#071827;color:#fff;font:inherit}
+.founder-tool textarea{min-height:68px;resize:vertical}
+.founder-tool button{margin-top:7px;padding:10px 13px;font-size:11px}
+.founder-tool-status{min-height:18px;margin-top:10px;color:#9fe5ce;font-size:11px;line-height:1.5}
+.founder-safety-note{padding:11px;border:1px solid #80643b;border-radius:10px;background:#2b2417;color:#f1d49b;font-size:11px;line-height:1.5}
+@media(max-width:700px){.founder-workbench-grid{grid-template-columns:1fr}}
 
 
 .admin-topline{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
@@ -343,6 +356,12 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 .income-form .income-wide{grid-column:1/-1}
 .income-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
 .income-actions button{padding:9px 13px;border:1px solid #3c8e91;border-radius:8px;background:#123c4a;color:#d9fffb;cursor:pointer}
+.income-pipeline-tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:end;margin:12px 0}
+.income-pipeline-tools label{display:flex;flex-direction:column;gap:5px;color:#a9bfce;font-size:11px}
+.income-pipeline-tools input,.income-pipeline-tools select{width:100%;min-width:0;padding:9px;background:#071827;border:1px solid #34536a;border-radius:8px;color:#fff;font:inherit}
+.income-pipeline-tools button{padding:10px 12px}
+#incomeFilterCount{grid-column:1/-1;color:#91acbd;font-size:11px}
+@media(max-width:650px){.income-pipeline-tools{grid-template-columns:1fr 1fr}}
 .income-summary{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0;color:#d6e8ee;font-size:13px}
 .income-list{display:grid;gap:9px;margin-top:12px}
 .income-item{padding:12px;border:1px solid #29485e;border-radius:10px;background:#0c1b2b}
@@ -491,6 +510,14 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
 .business-ledger-table{width:100%;border-collapse:collapse;min-width:720px}
 .business-ledger-table th,.business-ledger-table td{padding:9px 10px;border-bottom:1px solid rgba(148,180,205,.16);text-align:left;font-size:.88rem}
 .business-ledger-table th{color:#a9c5dc;font-weight:650}
+.business-cashflow-report{margin:18px 0;padding:16px;border:1px solid rgba(66,190,164,.24);border-radius:15px;background:rgba(8,35,48,.48)}
+.business-cashflow-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.business-cashflow-heading h4{margin:0 0 6px}
+.business-cashflow-heading p{margin:0;color:var(--muted,#aab8c8);font-size:.9rem;max-width:680px}
+.business-cashflow-heading label{min-width:190px}
+.business-cashflow-totals{margin-bottom:12px}
+.business-cashflow-month{font-weight:650}
+
 .business-ledger-table td button{padding:6px 9px}
 @media(max-width:640px){.business-tool-panel{padding:12px}.business-ledger-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
@@ -687,22 +714,51 @@ body.module-workspace-mode .studio-workspace.hidden{
 /* Dr.Vas platform presentation */
 .modules-heading-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .presentation-open-button{background:#153c4b;color:#d8fffb;border:1px solid #39777b;padding:10px 14px;font-size:12px}
-.drvas-presentation{margin:18px 0;padding:24px;background:linear-gradient(145deg,#102b40,#091827);border:1px solid #3a6578;border-radius:20px;box-shadow:0 16px 42px #0004}
+.hero-presentation-button{display:inline-flex;align-items:center;gap:8px;margin:0 0 10px;padding:11px 16px;box-shadow:0 8px 24px #0004}
+body.presentation-open{overflow:hidden!important}
+.drvas-presentation{position:fixed;z-index:10000;left:50%;top:50%;transform:translate(-50%,-48%) scale(.97);width:min(940px,calc(100vw - 28px));max-height:calc(100dvh - 28px);overflow-y:auto;margin:0;padding:24px;background:linear-gradient(145deg,#102b40,#091827);border:1px solid #3a7184;border-radius:22px;box-shadow:0 0 0 100vmax rgba(1,7,15,.84),0 22px 70px #0009;opacity:0;transition:opacity .32s ease,transform .32s cubic-bezier(.2,.8,.2,1)}
+.drvas-presentation:not(.hidden){opacity:1;transform:translate(-50%,-50%) scale(1);animation:presentationWindowIn .42s cubic-bezier(.2,.8,.2,1) both}
+@keyframes presentationWindowIn{from{opacity:0;transform:translate(-50%,-46%) scale(.94)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 .drvas-presentation-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
 .drvas-presentation-head h2{margin:8px 0;font-size:27px;color:#f0ffff}
 .drvas-presentation-head p{max-width:760px;color:#afc5d2;line-height:1.65;margin:0}
 .presentation-close-button{background:#17364a;color:#d7edf3;border:1px solid #34566b;padding:9px 13px}
-.presentation-module-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:22px 0}
-.presentation-module{padding:17px;background:#0b1e2e;border:1px solid #29485e;border-radius:14px;min-width:0}
+.presentation-progress{display:flex;align-items:center;gap:12px;margin:18px 0 10px;color:#8fb8c8;font-size:11px;font-weight:800}
+.presentation-progress-track{height:5px;flex:1;overflow:hidden;border-radius:99px;background:#18374a}
+.presentation-progress-track span{display:block;width:0;height:100%;border-radius:99px;background:linear-gradient(90deg,#54d8cf,#9ce8d8);transition:width .45s ease}
+.presentation-scene{display:flex;align-items:center;gap:20px;padding:18px;margin:12px 0 16px;border:1px solid #31596e;border-radius:18px;background:radial-gradient(ellipse at 18% 10%,#1a5261,#102b40 55%,#0b1d2e);min-height:150px}
+.presentation-presenter{display:flex;align-items:center;gap:14px;min-width:245px;position:relative}
+.presentation-avatar{width:94px;height:94px;flex:0 0 94px;display:grid;place-items:center;border-radius:50%;font-size:42px;font-weight:900;color:#efffff;border:2px solid #79e4d9;background:radial-gradient(circle at 35% 25%,#4baeb1,#16445a 72%);box-shadow:0 0 0 7px #54d8cf14,0 0 30px #54d8cf25;transition:transform .25s,box-shadow .25s}
+.presentation-avatar-jan{border-color:#8ac9df;background:radial-gradient(circle at 35% 25%,#4c8fa9,#20364d 72%);box-shadow:0 0 0 7px #74b8df14,0 0 30px #74b8df25}
+.presentation-avatar-sarah{border-color:#e4b6e2;background:radial-gradient(circle at 35% 25%,#bd83bb,#4a345d 72%);box-shadow:0 0 0 7px #d9a5db14,0 0 30px #d9a5db25}
+.presentation-presenter.is-speaking .presentation-avatar{animation:presentationAvatarTalk .42s ease-in-out infinite alternate}
+@keyframes presentationAvatarTalk{from{transform:translateY(0) scale(1)}to{transform:translateY(-3px) scale(1.045)}}
+.presentation-presenter-copy{display:flex;flex-direction:column;gap:5px;min-width:0}
+.presentation-presenter-copy strong{font-size:20px;color:#f2ffff}
+.presentation-presenter-copy span{font-size:12px;color:#9edbd8}
+.presentation-presenter-copy small{font-size:11px;line-height:1.45;color:#aac0ce}
+.presentation-speaking-indicator{display:flex;align-items:center;gap:3px;height:22px;margin-left:auto;opacity:.25}
+.presentation-speaking-indicator i{width:4px;height:6px;border-radius:9px;background:#70e5d9}
+.presentation-presenter.is-speaking .presentation-speaking-indicator{opacity:1}
+.presentation-presenter.is-speaking .presentation-speaking-indicator i{animation:liveWave .28s ease-in-out infinite alternate}
+.presentation-presenter.is-speaking .presentation-speaking-indicator i:nth-child(2){animation-delay:.12s}
+.presentation-presenter.is-speaking .presentation-speaking-indicator i:nth-child(3){animation-delay:.22s}
+.presentation-speaking-copy{flex:1;margin:0;color:#e0f2f5;font-size:14px;line-height:1.75;min-width:0}
+.presentation-module-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}
+.presentation-module{display:none;padding:17px;background:#0b1e2e;border:1px solid #29485e;border-radius:14px;min-width:0;animation:presentationModuleIn .38s ease both}
+.presentation-module.is-active{display:block}
+@keyframes presentationModuleIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .presentation-module>span{font-size:24px}.presentation-module h3{font-size:15px;color:#65ddd5;margin:10px 0 7px}
 .presentation-module p{font-size:12px;line-height:1.6;color:#b4c8d5;margin:0}
 .presentation-disclaimer{font-size:11px;line-height:1.6;color:#9ab0bd;padding:12px 14px;background:#091827;border-left:3px solid #c39b56;border-radius:8px}
 .presentation-audio-controls{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:16px}
 .presentation-audio-controls button{padding:10px 14px;font-size:12px}
 .presentation-stop-button{background:#263b4b;color:#d9e7ed;border:1px solid #456174}
-#presentationAudioStatus{font-size:11px;color:#9ab7c5}
-@media(max-width:760px){.presentation-module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.drvas-presentation{padding:17px}.drvas-presentation-head h2{font-size:22px}}
-@media(max-width:480px){.presentation-module-grid{grid-template-columns:1fr}.modules-heading-actions{align-items:flex-start;flex-direction:column}}
+.presentation-continue-button{background:#54d8cf;color:#061b25}
+#presentationAudioStatus{flex:1 1 100%;font-size:11px;color:#9ab7c5}
+@media(max-width:760px){.drvas-presentation{padding:17px}.drvas-presentation-head h2{font-size:22px}.presentation-scene{align-items:flex-start;flex-direction:column;gap:12px}.presentation-presenter{min-width:0;width:100%}.presentation-avatar{width:76px;height:76px;flex-basis:76px;font-size:34px}.presentation-speaking-copy{font-size:13px}.presentation-module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.presentation-module-grid{grid-template-columns:1fr}.modules-heading-actions{align-items:flex-start;flex-direction:column}.presentation-presenter-copy strong{font-size:18px}.presentation-speaking-indicator{margin-left:auto}}
+@media(prefers-reduced-motion:reduce){.drvas-presentation,.drvas-presentation:not(.hidden),.presentation-progress-track span,.presentation-avatar,.presentation-module{animation:none!important;transition:none!important}}
 
 </style>
 </head>
@@ -731,6 +787,7 @@ body.module-workspace-mode .studio-workspace.hidden{
 <section id="heroSection" class="hero">
  <div class="hero-content">
   <div class="tag">INTELLIGENCE WITHOUT LIMITS</div>
+  <button type="button" class="presentation-open-button hero-presentation-button" id="heroPresentationOpenButton" onclick="openDrvasPresentation()">▶ Deschide prezentarea</button>
   <button type="button" class="landing-primary hero-entry-button" id="heroChatCta" onclick="startDrVas()">Vorbește cu Dr.Vas <span aria-hidden="true">→</span></button>
   <h1>Gândește diferit.<br><strong>Întreabă Dr.Vas.</strong></h1>
   <p>Un asistent inteligent, pregătit să exploreze idei,
@@ -753,14 +810,17 @@ body.module-workspace-mode .studio-workspace.hidden{
  
 </section>
 
-<section class="panel module-selection-shell" id="moduleSelectionShell">
-  <section id="moduleSelectionSection" class="modules-section">
-   <div class="modules-heading">
-    <div><h2>Platforma Dr.Vas</h2><p>Alege spațiul de lucru de care ai nevoie.</p></div>
-    <div class="modules-heading-actions"><button type="button" class="presentation-open-button" id="presentationOpenButton" onclick="openDrvasPresentation()">▶ Deschide prezentarea</button><span class="status">2 MODULE GRATUITE PENTRU PUBLIC · 4 MODULE PRIVATE ÎN PREGĂTIRE</span></div>
-   </div>
-   <section id="drvasPresentation" class="drvas-presentation hidden" role="dialog" aria-modal="true" aria-labelledby="drvasPresentationTitle">
-    <div class="drvas-presentation-head"><div><span class="tag" id="drvasPresentationEyebrow">O SINGURĂ PLATFORMĂ · ȘASE MODULE</span><h2 id="drvasPresentationTitle">Prezentarea Dr.Vas</h2><p id="drvasPresentationIntro">Un ecosistem AI integrat, conceput pentru a sprijini oamenii, ideile și afacerile într-un singur loc.</p></div><button type="button" class="presentation-close-button" id="presentationCloseButton" onclick="closeDrvasPresentation()" aria-label="Închide prezentarea">✕</button></div>
+<section id="drvasPresentation" class="drvas-presentation hidden" role="dialog" aria-modal="true" aria-labelledby="drvasPresentationTitle" aria-describedby="presentationSpeakingCopy">
+    <div class="drvas-presentation-head"><div><span class="tag" id="drvasPresentationEyebrow">O SINGURĂ PLATFORMĂ · ȘASE MODULE</span><h2 id="drvasPresentationTitle">Prezentarea Dr.Vas</h2><p id="drvasPresentationIntro">Un ecosistem AI integrat, conceput pentru a sprijini oamenii, ideile și afacerile într-un singur loc.</p></div><button type="button" class="presentation-close-button" id="presentationCloseButton" onclick="finishDrvasPresentation()" aria-label="Închide prezentarea">✕</button></div>
+    <div class="presentation-progress" aria-label="Progresul prezentării"><span id="presentationStepLabel">1 / 3</span><div class="presentation-progress-track"><span id="presentationProgressBar"></span></div></div>
+    <div class="presentation-scene" id="presentationScene">
+     <div class="presentation-presenter" id="presentationPresenter">
+      <div class="presentation-avatar presentation-avatar-drvas" id="presentationAvatar" aria-hidden="true">✦</div>
+      <div class="presentation-presenter-copy"><strong id="presentationSpeakerName">Dr.Vas</strong><span id="presentationSpeakerRole">Asistentul principal</span><small id="presentationSpeakerModules">Dr.Vas Free · Dr.Vas Health</small></div>
+      <span class="presentation-speaking-indicator" id="presentationSpeakingIndicator" aria-hidden="true"><i></i><i></i><i></i></span>
+     </div>
+     <p class="presentation-speaking-copy" id="presentationSpeakingCopy" aria-live="polite">Bun venit! Eu sunt Dr.Vas.</p>
+    </div>
     <div class="presentation-module-grid" id="presentationModuleGrid">
      <article class="presentation-module"><span>✦</span><h3>Dr.Vas Free</h3><p>Asistență AI generală pentru întrebări, idei, explicații și organizarea informațiilor.</p></article>
      <article class="presentation-module"><span>✚</span><h3>Dr.Vas Health</h3><p>Informații generale despre sănătate și sprijin pentru înțelegerea documentelor și pregătirea consultațiilor. Nu înlocuiește profesioniștii medicali.</p></article>
@@ -770,8 +830,16 @@ body.module-workspace-mode .studio-workspace.hidden{
      <article class="presentation-module"><span>📊</span><h3>Dr.Vas Business</h3><p>Instrumente de planificare, analiză, organizare și dezvoltare a afacerilor.</p></article>
     </div>
     <p class="presentation-disclaimer" id="drvasPresentationDisclaimer">Dr.Vas este în dezvoltare. Disponibilitatea funcțiilor diferă între module. Informațiile prezentate nu reprezintă aprobări sau licențe profesionale; serviciile reglementate necesită autorizările aplicabile și supraveghere umană calificată.</p>
-    <div class="presentation-audio-controls"><button type="button" onclick="speakDrvasPresentation()" id="presentationPlayButton">▶ Ascultă prezentarea</button><button type="button" class="presentation-stop-button" onclick="stopDrvasPresentationSpeech()" id="presentationStopButton" disabled>■ Oprește audio</button><span id="presentationAudioStatus" role="status" aria-live="polite">Narațiune audio prin vocea disponibilă în browser.</span></div>
+    <div class="presentation-audio-controls"><button type="button" onclick="speakDrvasPresentation()" id="presentationPlayButton">↻ Reia prezentarea</button><button type="button" class="presentation-stop-button" onclick="stopDrvasPresentationSpeech()" id="presentationStopButton" disabled>■ Oprește audio</button><button type="button" class="presentation-continue-button" id="presentationContinueButton" onclick="finishDrvasPresentation()">Continuă la conectare →</button><span id="presentationAudioStatus" role="status" aria-live="polite">Cei trei asistenți îți prezintă platforma.</span></div>
    </section>
+
+
+<section class="panel module-selection-shell" id="moduleSelectionShell">
+  <section id="moduleSelectionSection" class="modules-section">
+   <div class="modules-heading">
+    <div><h2>Platforma Dr.Vas</h2><p>Alege spațiul de lucru de care ai nevoie.</p></div>
+    <div class="modules-heading-actions"><button type="button" class="presentation-open-button" id="presentationOpenButton" onclick="openDrvasPresentation()">▶ Deschide prezentarea</button><span class="status">2 MODULE GRATUITE PENTRU PUBLIC · 4 MODULE PRIVATE ÎN PREGĂTIRE</span></div>
+   </div>
    <p id="moduleSelectionStatus" class="module-selection-status hidden" role="status" aria-live="polite"></p>
 
    <div class="modules-grid">
@@ -936,6 +1004,13 @@ body.module-workspace-mode .studio-workspace.hidden{
       <span id="incomeStatusMessage" role="status" aria-live="polite" class="income-tracker-intro">Datele sunt private în contul tău.</span>
      </div>
      <div class="income-summary"><span id="incomeEstimatedTotal">Estimat: —</span><span id="incomeActualTotal">Încasat: —</span><span id="incomeOpportunityCount">Oportunități: 0</span></div>
+     <div class="income-pipeline-tools" aria-label="Filtrare și export oportunități">
+      <label>Caută<input id="incomeSearch" type="search" maxlength="120" placeholder="Titlu, platformă sau următorul pas" oninput="renderIncomeOpportunities()"></label>
+      <label>Stadiu<select id="incomeFilterStatus" onchange="renderIncomeOpportunities()"><option value="">Toate stadiile</option><option value="idea">Idee</option><option value="research">Cercetare</option><option value="ready">Pregătit</option><option value="submitted">Trimis</option><option value="accepted">Acceptat</option><option value="paid">Plătit</option><option value="rejected">Respins</option></select></label>
+      <label>Tip<select id="incomeFilterType" onchange="renderIncomeOpportunities()"><option value="">Toate tipurile</option><option value="writing">Scriere / carte</option><option value="translation">Traducere</option><option value="music">Muzică / versuri</option><option value="video">Video / conținut</option><option value="digital_product">Produs digital</option><option value="freelance">Servicii freelance</option><option value="other">Altele</option></select></label>
+      <button type="button" onclick="exportIncomeOpportunities()">Exportă CSV</button>
+      <span id="incomeFilterCount" role="status" aria-live="polite">Se afișează toate oportunitățile.</span>
+     </div>
      <div id="incomeOpportunityList" class="income-list" aria-live="polite"><p class="income-tracker-intro">Autentifică-te pentru a încărca oportunitățile tale.</p></div>
     </section>
     <div class="studio-capabilities">
@@ -1019,6 +1094,18 @@ body.module-workspace-mode .studio-workspace.hidden{
      <div><small>Sold net</small><strong id="businessLedgerNet">—</strong></div>
      <div><small>TVA netă estimată</small><strong id="businessLedgerVat">—</strong></div>
     </div>
+    <section class="business-cashflow-report" aria-labelledby="businessCashflowTitle">
+     <div class="business-cashflow-heading"><div><h4 id="businessCashflowTitle">📈 Cashflow — raport pe perioadă</h4><p>Rezumat calculat numai din încasările și cheltuielile salvate în registru, pentru moneda selectată. Nu este o prognoză.</p></div>
+      <label>Perioada<select id="businessCashflowRange" onchange="renderBusinessCashflow()"><option value="30">Ultimele 30 de zile</option><option value="90" selected>Ultimele 90 de zile</option><option value="180">Ultimele 6 luni</option><option value="365">Ultimele 12 luni</option></select></label>
+     </div>
+     <div class="business-ledger-summary business-cashflow-totals" aria-live="polite">
+      <div><small>Încasări în perioadă</small><strong id="businessCashflowIncome">—</strong></div>
+      <div><small>Cheltuieli în perioadă</small><strong id="businessCashflowExpenses">—</strong></div>
+      <div><small>Flux net</small><strong id="businessCashflowNet">—</strong></div>
+      <div><small>Medie netă / lună</small><strong id="businessCashflowAverage">—</strong></div>
+     </div>
+     <div id="businessCashflowRows" class="business-ledger-rows" aria-live="polite"><p>Adaugă tranzacții pentru a vedea evoluția lunară.</p></div>
+    </section>
     <div id="businessLedgerStatus" role="status" aria-live="polite">Conectează-te și aplică migrarea pentru a activa registrul privat.</div>
     <div id="businessLedgerRows" class="business-ledger-rows"></div>
    </section>
@@ -1194,6 +1281,10 @@ body.module-workspace-mode .studio-workspace.hidden{
       <label>Electricitate (£ / kWh)<input id="cryptoElectricityRate" type="number" min="0" step="0.001" value="0.25" oninput="calculateCryptoMiningEconomics()"></label>
       <label>Comision pool (%)<input id="cryptoPoolFee" type="number" min="0" max="100" step="0.01" value="1" oninput="calculateCryptoMiningEconomics()"></label>
       <label>Cost echipament (£)<input id="cryptoHardwareCost" type="number" min="0" step="0.01" value="1000" oninput="calculateCryptoMiningEconomics()"></label>
+      <label>Consum răcire (W)<input id="cryptoCoolingWatts" type="number" min="0" step="1" value="0" oninput="calculateCryptoMiningEconomics()"></label>
+      <label>Indisponibilitate (%)<input id="cryptoDowntime" type="number" min="0" max="100" step="0.1" value="5" oninput="calculateCryptoMiningEconomics()"></label>
+      <label>Mentenanță lunară (£)<input id="cryptoMaintenanceMonthly" type="number" min="0" step="0.01" value="50" oninput="calculateCryptoMiningEconomics()"></label>
+      <label>Rezervă fiscală estimată (%)<input id="cryptoTaxReserve" type="number" min="0" max="100" step="0.1" value="0" oninput="calculateCryptoMiningEconomics()"></label>
      </div>
      <div class="crypto-calculator-results" aria-live="polite">
       <div><small>Venit brut / zi</small><strong id="cryptoGrossDaily">£0.00</strong></div>
@@ -1202,9 +1293,153 @@ body.module-workspace-mode .studio-workspace.hidden{
       <div><small>Rezultat net / zi</small><strong id="cryptoNetDaily">£0.00</strong></div>
       <div><small>Rezultat net / 30 zile</small><strong id="cryptoNetMonthly">£0.00</strong></div>
       <div><small>Recuperare echipament</small><strong id="cryptoPayback">—</strong></div>
+      <div><small>Mentenanță / zi</small><strong id="cryptoMaintenanceDaily">£1.67</strong></div>
+      <div><small>Rezultat net / an</small><strong id="cryptoNetAnnual">£0.00</strong></div>
+      <div><small>Preț BTC prag rentabilitate</small><strong id="cryptoBreakEvenBtc">—</strong></div>
+      <div><small>Tarif maxim energie</small><strong id="cryptoMaxElectricity">—</strong></div>
+      <div><small>Consum energie / 30 zile</small><strong id="cryptoMonthlyKwh">—</strong></div>
+      <div><small>Cost energie / an</small><strong id="cryptoAnnualEnergyCost">—</strong></div>
+      <div><small>Căldură disipată</small><strong id="cryptoHeatLoad">—</strong></div>
      </div>
      <p id="cryptoCalcNotice" class="admin-footnote" role="status">Calcul demonstrativ. Mining-ul și tranzacționarea rămân dezactivate.</p>
     </div>
+   </section>
+   <section class="founder-workbench" aria-labelledby="founderProductionHeading">
+    <div class="crypto-admin-heading">
+     <div><h4 id="founderProductionHeading">✍️ Dr.Vas Creator & Online Income Lab</h4>
+      <p>Atelier privat pentru cărți, muzică originală, traduceri, produse digitale și planuri comerciale. Proiectele creative pot fi salvate în Dr.Vas Studio înainte de trimiterea brief-ului către asistent.</p></div>
+     <span class="crypto-status">DOAR FONDATOR</span>
+    </div>
+    <div class="founder-workbench-grid">
+     <article class="founder-tool">
+      <h5>📚 Book Workshop · Cărți și e-bookuri</h5><p>Concept, structură, capitole, personaje și continuitate editorială.</p>
+      <label>Titlul provizoriu<input id="founderBookTitle" maxlength="140" placeholder="Titlul cărții"></label>
+      <label>Genul<select id="founderBookGenre"><option>Roman dramatic</option><option>Thriller / mister</option><option>Dezvoltare personală</option><option>Business și antreprenoriat</option><option>Memorii / autobiografie</option><option>Carte educațională</option><option>Copii și familie</option><option>Alt gen</option></select></label>
+      <label>Limba<select id="founderBookLanguage"><option>Română</option><option>Engleză</option><option>Italiană</option><option>Turcă</option><option>Germană</option><option>Franceză</option><option>Spaniolă</option><option>Rusă</option></select></label>
+      <label>Publicul și ideea principală<textarea id="founderBookConcept" maxlength="5000" placeholder="Subiect, mesaj, public și ce vrei să simtă cititorul."></textarea></label>
+      <label>Dimensiune<select id="founderBookLength"><option>Ghid scurt / 8–12 capitole</option><option>Carte medie / 12–18 capitole</option><option>Roman amplu / 20–30 capitole</option><option>Stabilim după schiță</option></select></label>
+      <button type="button" onclick="buildFounderBookPrompt()">Creează proiectul de carte</button>
+     </article>
+     <article class="founder-tool">
+      <h5>🎵 Music Lab · Melodii și producție</h5><p>Piese originale, versuri, structură, tempo, tonalitate și brief de producție.</p>
+      <label>Titlul piesei<input id="founderMusicTitle" maxlength="140" placeholder="Titlul melodiei"></label>
+      <label>Limba<select id="founderMusicLanguage"><option>Română</option><option>Engleză</option><option>Italiană</option><option>Turcă</option><option>Instrumentală</option></select></label>
+      <label>Gen și atmosferă<input id="founderMusicStyle" maxlength="180" placeholder="Ex.: pop cinematic, baladă dramatică"></label>
+      <label>Povestea piesei<textarea id="founderMusicTheme" maxlength="4000" placeholder="Mesaj, emoție, poveste și idei proprii."></textarea></label>
+      <label>Voce și structură<select id="founderMusicFormat"><option>Voce masculină · strofe/refren/punte</option><option>Voce feminină · strofe/refren/punte</option><option>Duet · dialog muzical</option><option>Instrumental · fără voce</option><option>Structură propusă de Dr.Vas</option></select></label>
+      <button type="button" onclick="buildFounderMusicPrompt()">Creează proiectul muzical</button>
+     </article>
+     <article class="founder-tool">
+      <h5>💷 Online Income · Plan de venit</h5><p>Plan legal de ofertare, promovare și urmărire a încasărilor.</p>
+      <label>Serviciu sau produs<input id="founderIncomeOffer" maxlength="180" placeholder="Ex.: e-book, traduceri, piese originale"></label>
+      <label>Canal preferat<select id="founderIncomeChannel"><option>Marketplace freelance</option><option>Editură / platformă de e-book</option><option>Platformă muzicală</option><option>Magazin digital propriu</option><option>Rețele sociale</option><option>Mai multe canale · comparație</option></select></label>
+      <label>Buget inițial maxim (£)<input id="founderIncomeBudget" type="number" min="0" max="100000" step="1" value="100"></label>
+      <label>Obiectiv și resurse<textarea id="founderIncomeGoal" maxlength="3000" placeholder="Timp, competențe, limbi, public și obiectiv."></textarea></label>
+      <button type="button" onclick="buildFounderIncomePrompt()">Construiește planul de venit</button>
+     </article>
+     <article class="founder-tool">
+      <h5>🧠 AI Evaluation & Training Lab</h5><p>Evaluează răspunsuri AI pe criterii explicite, dovezi, erori și limite.</p>
+      <label>Modelul evaluat<input id="founderEvalSystem" maxlength="160" placeholder="Numele sistemului / modelului"></label>
+      <label>Sarcina testată<input id="founderEvalTask" maxlength="500" placeholder="Ce trebuia să facă modelul?"></label>
+      <label>Criterii<select id="founderEvalCriteria"><option>Acuratețe, logică și relevanță</option><option>Instrucțiuni și completitudine</option><option>Siguranță, confidențialitate și robustețe</option><option>Traducere și calitatea limbii</option><option>Evaluare completă · toate criteriile</option></select></label>
+      <label>Răspuns AI și dovezi<textarea id="founderEvalOutput" maxlength="7000" placeholder="Răspunsul modelului și surse/referințe. Nu include date personale sensibile."></textarea></label>
+      <button type="button" onclick="buildFounderEvaluationPrompt()">Evaluează răspunsul AI</button>
+     </article>
+     <article class="founder-tool">
+      <h5>📦 Digital Product Studio · Produse digitale</h5><p>Construiește ghiduri, șabloane, mini-cursuri și pachete descărcabile, cu ofertă și livrabile clare.</p>
+      <label>Tipul produsului<select id="founderDigitalType"><option>E-book / ghid practic</option><option>Șablon / checklist / workbook</option><option>Mini-curs video sau text</option><option>Pachet de resurse digitale</option><option>Abonament cu conținut</option></select></label>
+      <label>Titlul produsului<input id="founderDigitalTitle" maxlength="140" placeholder="Numele produsului"></label>
+      <label>Clientul-țintă<input id="founderDigitalCustomer" maxlength="220" placeholder="Cui îi este destinat?"></label>
+      <label>Problema rezolvată și rezultatul promis<textarea id="founderDigitalPromise" maxlength="3500" placeholder="Ce problemă reală rezolvă și ce rezultat realist oferă?"></textarea></label>
+      <label>Conținut și materiale incluse<textarea id="founderDigitalDeliverables" maxlength="3500" placeholder="Module, capitole, fișiere, exerciții, suport."></textarea></label>
+      <label>Preț ipotetic (£)<input id="founderDigitalPrice" type="number" min="0" max="100000" step="0.01" value="9.99"></label>
+      <button type="button" onclick="buildFounderDigitalProductPrompt()">Creează produsul digital</button>
+     </article>
+     <article class="founder-tool">
+      <h5>🛒 Publishing Lab · Pregătire publicare carte</h5><p>Pregătește metadatele editoriale și lista de verificare înainte de încărcarea manuală la o editură sau platformă.</p>
+      <label>Titlu și subtitlu<input id="founderPublishTitle" maxlength="220" placeholder="Titlu — subtitlu"></label>
+      <label>Autor / pseudonim<input id="founderPublishAuthor" maxlength="140" placeholder="Numele care va apărea pe copertă"></label>
+      <label>Limba și piața<select id="founderPublishMarket"><option>Română · România</option><option>Engleză · Regatul Unit</option><option>Engleză · internațional</option><option>Italiană · Italia</option><option>Turcă · Turcia</option><option>Mai multe piețe</option></select></label>
+      <label>Gen, categorie și cuvinte-cheie<textarea id="founderPublishKeywords" maxlength="1800" placeholder="Categorie, subcategorie și 5–10 cuvinte-cheie relevante."></textarea></label>
+      <label>Descriere editorială<textarea id="founderPublishDescription" maxlength="4000" placeholder="Rezumatul cărții, publicul și diferențiatorul."></textarea></label>
+      <label>Format și dimensiune<select id="founderPublishFormat"><option>E-book</option><option>Paperback</option><option>Hardcover</option><option>E-book + tipărit</option></select></label>
+      <label>Număr estimat de pagini<input id="founderPublishPages" type="number" min="1" max="3000" step="1" placeholder="Ex.: 220"></label>
+      <button type="button" onclick="buildFounderPublishingPrompt()">Pregătește pachetul editorial</button>
+     </article>
+     <article class="founder-tool">
+      <h5>🎧 Music Release Lab · Pregătire lansare piesă</h5><p>Organizează creditele, drepturile, metadatele și materialele necesare unei lansări muzicale.</p>
+      <label>Titlul piesei<input id="founderReleaseTitle" maxlength="140" placeholder="Titlul exact al piesei"></label>
+      <label>Artiști și colaboratori<input id="founderReleaseCredits" maxlength="500" placeholder="Interpret, compozitor, textier, producător"></label>
+      <label>Deținerea drepturilor<select id="founderReleaseRights"><option>Toate drepturile sunt ale mele / am documente</option><option>Există coautori sau colaboratori</option><option>Am licențe pentru materialele folosite</option><option>Încă trebuie clarificate drepturile</option></select></label>
+      <label>Limba și conținut explicit<select id="founderReleaseContent"><option>Română · fără conținut explicit</option><option>Română · conținut explicit</option><option>Engleză · fără conținut explicit</option><option>Engleză · conținut explicit</option><option>Altă limbă / de stabilit</option></select></label>
+      <label>Data-țintă și povestea lansării<textarea id="founderReleaseStory" maxlength="2200" placeholder="Data dorită, publicul, mesajul și planul de promovare."></textarea></label>
+      <button type="button" onclick="buildFounderMusicReleasePrompt()">Creează dosarul de lansare</button>
+     </article>
+     <article class="founder-tool">
+      <h5>🛍️ Commerce Profit Lab · Calculator magazin</h5><p>Calculează contribuția pe comandă, pragul de rentabilitate și scenarii lunare din costurile introduse manual.</p>
+      <label>Preț de vânzare (£)<input id="founderCommercePrice" type="number" min="0" step="0.01" value="29.99"></label>
+      <label>Cost produs (£)<input id="founderCommerceCost" type="number" min="0" step="0.01" value="8"></label>
+      <label>Transport și ambalare / comandă (£)<input id="founderCommerceShip" type="number" min="0" step="0.01" value="3"></label>
+      <label>Comision platformă și procesare (%)<input id="founderCommerceFee" type="number" min="0" max="100" step="0.1" value="12"></label>
+      <label>Cost publicitate / comandă (£)<input id="founderCommerceAds" type="number" min="0" step="0.01" value="4"></label>
+      <label>Rezervă retururi / pierderi / comandă (£)<input id="founderCommerceReturns" type="number" min="0" step="0.01" value="1"></label>
+      <label>Rezervă fiscală ipotetică (%)<input id="founderCommerceTax" type="number" min="0" max="100" step="0.1" value="0"></label>
+      <label>Comenzi estimate lunar<input id="founderCommerceOrders" type="number" min="0" step="1" value="50"></label>
+      <label>Costuri fixe lunare (£)<input id="founderCommerceFixed" type="number" min="0" step="0.01" value="50"></label>
+      <button type="button" onclick="calculateFounderCommerceProfit()">Calculează profitul</button>
+      <div class="crypto-calculator-results" aria-live="polite">
+       <div><small>Contribuție / comandă</small><strong id="founderCommerceContribution">—</strong></div>
+       <div><small>Marjă după rezerve</small><strong id="founderCommerceMargin">—</strong></div>
+       <div><small>Prag lunar comenzi</small><strong id="founderCommerceBreakEven">—</strong></div>
+       <div><small>Rezultat lunar estimat</small><strong id="founderCommerceMonthly">—</strong></div>
+      </div>
+      <p id="founderCommerceNotice" role="status">Estimare simplificată; verifică TVA, impozite, rambursări, costuri reale și regulile pieței.</p>
+     </article>
+     <article class="founder-tool">
+      <h5>📉 Mining Sensitivity Lab · Scenarii de risc</h5><p>Compară scenarii pesimist, de bază și favorabil fără cotații live. Multiplicatorii sunt ipoteze introduse de administrator.</p>
+      <label>Scenariu pesimist · BTC și producție (%)<input id="cryptoBearRevenue" type="number" min="0" max="300" step="1" value="70"></label>
+      <label>Scenariu de bază · BTC și producție (%)<input id="cryptoBaseRevenue" type="number" min="0" max="300" step="1" value="100"></label>
+      <label>Scenariu favorabil · BTC și producție (%)<input id="cryptoBullRevenue" type="number" min="0" max="300" step="1" value="130"></label>
+      <label>Tarif electricitate în scenariu pesimist (%)<input id="cryptoBearPower" type="number" min="0" max="500" step="1" value="120"></label>
+      <label>Tarif electricitate în scenariu favorabil (%)<input id="cryptoBullPower" type="number" min="0" max="500" step="1" value="90"></label>
+      <button type="button" onclick="calculateCryptoMiningScenarios()">Compară scenariile</button>
+      <div class="crypto-calculator-results" aria-live="polite">
+       <div><small>Pesimist · net / zi</small><strong id="cryptoScenarioBear">—</strong></div>
+       <div><small>Bază · net / zi</small><strong id="cryptoScenarioBase">—</strong></div>
+       <div><small>Favorabil · net / zi</small><strong id="cryptoScenarioBull">—</strong></div>
+      </div>
+      <p id="cryptoScenarioNotice" role="status">Scenariile nu sunt prognoze. Nu includ modificări automate ale dificultății rețelei sau recompense viitoare.</p>
+     </article>
+     <article class="founder-tool">
+      <h5>⚙️ Business Operations Planner · Fluxuri comerciale</h5><p>Transformă o activitate repetitivă într-un flux documentat, cu responsabil, aprobare, control și indicatori.</p>
+      <label>Activitatea / procesul<input id="founderOpsName" maxlength="180" placeholder="Ex.: preluarea și livrarea comenzilor"></label>
+      <label>Rezultatul dorit<textarea id="founderOpsOutcome" maxlength="1800" placeholder="Ce trebuie să se întâmple și cum măsurăm reușita?"></textarea></label>
+      <label>Volum și frecvență<input id="founderOpsVolume" maxlength="220" placeholder="Ex.: 20 comenzi pe zi / săptămânal"></label>
+      <label>Persoane și instrumente disponibile<textarea id="founderOpsResources" maxlength="1200" placeholder="Roluri, aplicații, furnizori și limite."></textarea></label>
+      <button type="button" onclick="buildFounderOperationsPrompt()">Proiectează fluxul de lucru</button>
+     </article>
+     <article class="founder-tool">
+      <h5>🤝 Customer Journey & Retention Planner · Relația cu clienții</h5><p>Planifică parcursul clientului, onboarding-ul, suportul și retenția fără mesaje automate sau colectare de date personale.</p>
+      <label>Produsul / serviciul<input id="founderCrmOffer" maxlength="180" placeholder="Ex.: magazin online, curs digital, servicii locale"></label>
+      <label>Segmentul de clienți<textarea id="founderCrmAudience" maxlength="1200" placeholder="Nevoi, context și criterii non-sensibile ale publicului."></textarea></label>
+      <label>Canalul principal<select id="founderCrmChannel"><option>Magazin online / e-mail cu consimțământ</option><option>Social media / mesaje inițiate de client</option><option>Serviciu local / telefon cu acord</option><option>Platformă educațională</option><option>Mai multe canale · comparație</option></select></label>
+      <label>Experiența promisă și obiectivul<textarea id="founderCrmOutcome" maxlength="1600" placeholder="Ce primește clientul și ce ar însemna o experiență bună?"></textarea></label>
+      <label>Suport și limite<textarea id="founderCrmSupport" maxlength="1200" placeholder="Ore de suport, retururi, reclamații, echipă și resurse."></textarea></label>
+      <button type="button" onclick="buildFounderCustomerJourneyPrompt()">Construiește planul relației cu clienții</button>
+     </article>
+     <article class="founder-tool">
+      <h5>📅 Content & Campaign Planner · Calendar editorial</h5><p>Construiește campanii și calendare de conținut pe 30 de zile pentru canalele selectate. Nu publică și nu trimite automat.</p>
+      <label>Brand / produs / proiect<input id="founderCampaignBrand" maxlength="180" placeholder="Ex.: Dr.Vas Studio, magazin online, serviciu local"></label>
+      <label>Public și nevoie<textarea id="founderCampaignAudience" maxlength="1200" placeholder="Cui te adresezi și ce problemă reală are?"></textarea></label>
+      <label>Obiectivul campaniei<select id="founderCampaignGoal"><option>Creșterea notorietății</option><option>Educație și încredere</option><option>Trafic către site / profil</option><option>Lead-uri cu acordul persoanei</option><option>Vânzări și conversii</option><option>Lansare de produs / serviciu</option><option>Comunitate și retenție</option></select></label>
+      <label>Canale<textarea id="founderCampaignChannels" maxlength="500" placeholder="Ex.: TikTok, YouTube Shorts, Instagram, Facebook"></textarea></label>
+      <label>Frecvență și resurse<textarea id="founderCampaignCadence" maxlength="900" placeholder="Ex.: 1 video/zi, 3 postări/săptămână; telefon, cameră, editor"></textarea></label>
+      <label>Ofertă, buget și limite<textarea id="founderCampaignOffer" maxlength="1000" placeholder="Oferta, bugetul maxim, drepturi asupra imaginilor/muzicii și ce nu promitem."></textarea></label>
+      <button type="button" onclick="buildFounderCampaignCalendarPrompt()">Generează calendarul de campanie</button>
+     </article>
+    </div>
+    <p class="founder-safety-note">Niciun proiect nu este publicat automat și nicio plată, comandă, investiție sau tranzacție nu este executată automat. Veniturile sunt estimări, nu garanții. Respectăm drepturile de autor, licențele, regulile platformelor, protecția datelor, taxele și revizia umană pentru traduceri cu miză juridică sau medicală.</p>
+    <p id="founderWorkbenchStatus" class="founder-tool-status" role="status" aria-live="polite">Instrumente private pentru administrator. Cărțile și piesele folosesc funcția de salvare privată Dr.Vas Studio.</p>
    </section>
    <section class="crypto-admin-card" aria-labelledby="founderProvenanceHeading">
     <div class="crypto-admin-heading">
@@ -1472,27 +1707,151 @@ const DRVAS_PRESENTATION={
  es:{open:"Abrir presentación",close:"Cerrar presentación",eyebrow:"UNA PLATAFORMA · SEIS MÓDULOS",title:"Presentación de Dr.Vas",intro:"Un ecosistema de IA integrado, diseñado para apoyar a personas, ideas y empresas desde un mismo espacio.",items:["Asistencia general de IA para preguntas, ideas, explicaciones y organización de información.","Información general sobre salud y ayuda para comprender documentos y preparar consultas. No sustituye a los profesionales sanitarios.","Un estudio creativo para textos, libros, guiones, música original y contenido digital.","Aprendizaje estructurado, explicaciones, cursos y desarrollo de habilidades.","Apoyo para comercio electrónico, productos, tiendas y planificación de ventas.","Herramientas para planificación empresarial, análisis, organización y crecimiento."],disclaimer:"Dr.Vas está en desarrollo. Las funciones disponibles varían según el módulo. Esta presentación no implica aprobación ni licencia profesional; los servicios regulados requieren las autorizaciones correspondientes y supervisión humana cualificada.",play:"Escuchar la presentación",stop:"Detener audio",unavailable:"La reproducción de voz no está disponible en este navegador.",ready:"La narración utiliza una voz disponible en su navegador.",speaking:"La presentación se está reproduciendo."},
  ru:{open:"Открыть презентацию",close:"Закрыть презентацию",eyebrow:"ОДНА ПЛАТФОРМА · ШЕСТЬ МОДУЛЕЙ",title:"Знакомство с Dr.Vas",intro:"Интегрированная экосистема ИИ, созданная для поддержки людей, идей и бизнеса в одном пространстве.",items:["Общая помощь ИИ: вопросы, идеи, объяснения и организация информации.","Общая информация о здоровье, помощь в понимании документов и подготовке к консультациям. Не заменяет медицинских специалистов.","Творческая студия для текстов, книг, сценариев, оригинальной музыки и цифрового контента.","Структурированное обучение, объяснения, курсы и развитие навыков.","Поддержка электронной торговли, товаров, магазинов и планирования продаж.","Инструменты для бизнес-планирования, анализа, организации и роста."],disclaimer:"Dr.Vas находится в разработке. Доступность функций зависит от модуля. Эта презентация не означает наличия профессионального одобрения или лицензии; регулируемые услуги требуют соответствующих разрешений и квалифицированного контроля специалистов.",play:"Прослушать презентацию",stop:"Остановить звук",unavailable:"Озвучивание не поддерживается этим браузером.",ready:"Для озвучивания используется голос, доступный в браузере.",speaking:"Презентация воспроизводится."}
 };
+const DRVAS_PRESENTERS={
+ drvas:{name:"Dr.Vas",symbol:"✦",role:{ro:"Asistentul principal",en:"The main assistant",it:"Assistente principale",tr:"Ana asistan",de:"Der Hauptassistent",fr:"Assistant principal",es:"Asistente principal",ru:"Главный помощник"},modules:[0,1],pitch:0.91},
+ jan:{name:"Dr.Jan",symbol:"◈",role:{ro:"Ghidul tău strategic",en:"Your strategic guide",it:"La tua guida strategica",tr:"Stratejik rehberin",de:"Dein strategischer Begleiter",fr:"Votre guide stratégique",es:"Tu guía estratégico",ru:"Ваш стратегический помощник"},modules:[2,5],pitch:1},
+ sarah:{name:"Sarah",symbol:"✧",role:{ro:"Ghid pentru învățare și idei",en:"Your guide to learning and ideas",it:"Guida per imparare e sviluppare idee",tr:"Öğrenme ve fikir rehberin",de:"Begleiterin für Lernen und Ideen",fr:"Guide pour apprendre et créer",es:"Guía para aprender y crear",ru:"Помощница в обучении и идеях"},modules:[3,4],pitch:1.16}
+};
+const DRVAS_PRESENTER_LINES={
+ ro:[
+  "Bun venit! Eu sunt Dr.Vas. Începem cu Dr.Vas Free, asistentul general pentru întrebări, explicații, idei și ajutor de zi cu zi. Al doilea este Dr.Vas Health, care oferă informații generale despre sănătate și te ajută să te pregătești pentru consultații. Nu înlocuiește medicul.",
+  "Salut! Eu sunt Dr.Jan. Dr.Vas Studio este atelierul creativ pentru texte, cărți, scenarii, muzică originală și conținut digital. Dr.Vas Business te ajută să structurezi idei, să planifici activități și să analizezi decizii de afaceri.",
+  "Bună! Eu sunt Sarah. Dr.Vas Academy este spațiul pentru învățare, explicații și dezvoltarea competențelor. Dr.Vas Commerce te sprijină să explorezi produse, magazine și idei de comerț online. Împreună, cele șase module formează o singură platformă. Unele funcții sunt încă în dezvoltare, iar activitățile reglementate necesită profesioniști autorizați. Acum te poți conecta și poți alege modulul potrivit."
+ ],
+ en:[
+  "Welcome! I'm Dr.Vas. First is Dr.Vas Free, your general assistant for questions, explanations, ideas and everyday help. Second is Dr.Vas Health, which provides general health information and helps you prepare for appointments. It does not replace a clinician.",
+  "Hello! I'm Dr.Jan. Dr.Vas Studio is the creative workshop for writing, books, scripts, original music and digital content. Dr.Vas Business helps you organise ideas, plan activities and think through business decisions.",
+  "Hi! I'm Sarah. Dr.Vas Academy is your space for learning, explanations and building skills. Dr.Vas Commerce helps you explore products, online stores and e-commerce ideas. Together, the six modules form one integrated platform. Some features are still in development, and regulated activities require qualified professionals. You can now sign in and choose your workspace."
+ ],
+ it:[
+  "Benvenuto! Sono Dr.Vas. Il primo modulo è Dr.Vas Free, l'assistente generale per domande, spiegazioni, idee e aiuto quotidiano. Il secondo è Dr.Vas Health, con informazioni generali sulla salute e supporto per preparare le visite. Non sostituisce un medico.",
+  "Ciao! Sono Dr.Jan. Dr.Vas Studio è il laboratorio creativo per testi, libri, sceneggiature, musica originale e contenuti digitali. Dr.Vas Business ti aiuta a organizzare idee, pianificare attività e valutare decisioni aziendali.",
+  "Ciao! Sono Sarah. Dr.Vas Academy è lo spazio per imparare, ricevere spiegazioni e sviluppare competenze. Dr.Vas Commerce ti aiuta a esplorare prodotti, negozi online e idee di commercio elettronico. Insieme, i sei moduli formano un'unica piattaforma. Alcune funzioni sono ancora in sviluppo e le attività regolamentate richiedono professionisti qualificati. Ora puoi accedere e scegliere il tuo spazio."
+ ],
+ tr:[
+  "Hoş geldin! Ben Dr.Vas. İlk modül Dr.Vas Free; sorular, açıklamalar, fikirler ve günlük yardım için genel asistanındır. İkincisi Dr.Vas Health; genel sağlık bilgileri sunar ve doktor randevularına hazırlanmanı destekler. Doktorun yerini almaz.",
+  "Merhaba! Ben Dr.Jan. Dr.Vas Studio; yazı, kitap, senaryo, özgün müzik ve dijital içerik için yaratıcı atölyendir. Dr.Vas Business fikirleri düzenlemene, faaliyetleri planlamana ve iş kararlarını değerlendirmeni sağlar.",
+  "Merhaba! Ben Sarah. Dr.Vas Academy öğrenme, açıklamalar ve beceri geliştirme alanındır. Dr.Vas Commerce ürünleri, çevrimiçi mağazaları ve e-ticaret fikirlerini keşfetmene yardımcı olur. Altı modül tek bir entegre platform oluşturur. Bazı özellikler hâlâ geliştiriliyor; düzenlemeye tabi işler yetkin profesyoneller gerektirir. Şimdi giriş yapıp çalışma alanını seçebilirsin."
+ ],
+ de:[
+  "Willkommen! Ich bin Dr.Vas. Dr.Vas Free ist dein allgemeiner Assistent für Fragen, Erklärungen, Ideen und Alltagshilfe. Dr.Vas Health bietet allgemeine Gesundheitsinformationen und hilft bei der Vorbereitung auf Arzttermine. Es ersetzt keine medizinische Fachkraft.",
+  "Hallo! Ich bin Dr.Jan. Dr.Vas Studio ist die Kreativwerkstatt für Texte, Bücher, Drehbücher, eigene Musik und digitale Inhalte. Dr.Vas Business hilft dir, Ideen zu strukturieren, Aktivitäten zu planen und Geschäftsentscheidungen zu durchdenken.",
+  "Hallo! Ich bin Sarah. Dr.Vas Academy ist dein Bereich zum Lernen und Entwickeln von Fähigkeiten. Dr.Vas Commerce unterstützt dich beim Erkunden von Produkten, Onlineshops und E-Commerce-Ideen. Zusammen bilden die sechs Module eine integrierte Plattform. Einige Funktionen sind noch in Entwicklung; regulierte Tätigkeiten erfordern qualifizierte Fachkräfte. Du kannst dich jetzt anmelden und deinen Arbeitsbereich auswählen."
+ ],
+ fr:[
+  "Bienvenue ! Je suis Dr.Vas. Dr.Vas Free est votre assistant général pour les questions, les explications, les idées et l'aide quotidienne. Dr.Vas Health fournit des informations générales sur la santé et aide à préparer les rendez-vous. Il ne remplace pas un professionnel de santé.",
+  "Bonjour ! Je suis Dr.Jan. Dr.Vas Studio est l'atelier créatif pour les textes, les livres, les scénarios, la musique originale et les contenus numériques. Dr.Vas Business vous aide à organiser vos idées, planifier vos activités et réfléchir aux décisions professionnelles.",
+  "Bonjour ! Je suis Sarah. Dr.Vas Academy est votre espace d'apprentissage et de développement des compétences. Dr.Vas Commerce vous aide à explorer les produits, les boutiques en ligne et les idées de commerce électronique. Ensemble, les six modules forment une plateforme intégrée. Certaines fonctions sont encore en développement et les activités réglementées nécessitent des professionnels qualifiés. Vous pouvez maintenant vous connecter et choisir votre espace."
+ ],
+ es:[
+  "¡Bienvenido! Soy Dr.Vas. Dr.Vas Free es tu asistente general para preguntas, explicaciones, ideas y ayuda diaria. Dr.Vas Health ofrece información general de salud y ayuda a preparar consultas. No sustituye a un profesional sanitario.",
+  "¡Hola! Soy Dr.Jan. Dr.Vas Studio es el taller creativo para textos, libros, guiones, música original y contenido digital. Dr.Vas Business te ayuda a organizar ideas, planificar actividades y analizar decisiones empresariales.",
+  "¡Hola! Soy Sarah. Dr.Vas Academy es tu espacio para aprender y desarrollar habilidades. Dr.Vas Commerce te ayuda a explorar productos, tiendas online e ideas de comercio electrónico. Juntos, los seis módulos forman una plataforma integrada. Algunas funciones siguen en desarrollo y las actividades reguladas requieren profesionales cualificados. Ahora puedes iniciar sesión y elegir tu espacio."
+ ],
+ ru:[
+  "Добро пожаловать! Я Dr.Vas. Dr.Vas Free — универсальный помощник для вопросов, объяснений, идей и повседневных задач. Dr.Vas Health предоставляет общую информацию о здоровье и помогает подготовиться к приёму врача. Он не заменяет медицинского специалиста.",
+  "Здравствуйте! Я Dr.Jan. Dr.Vas Studio — творческая мастерская для текстов, книг, сценариев, оригинальной музыки и цифрового контента. Dr.Vas Business помогает структурировать идеи, планировать работу и обдумывать деловые решения.",
+  "Привет! Я Sarah. Dr.Vas Academy — пространство для обучения и развития навыков. Dr.Vas Commerce помогает изучать товары, интернет-магазины и идеи электронной торговли. Вместе шесть модулей образуют единую платформу. Некоторые функции ещё разрабатываются, а регулируемая деятельность требует квалифицированных специалистов. Теперь вы можете войти и выбрать своё рабочее пространство."
+ ]
+};
+let drvasPresentationRun=0;
+let drvasPresentationQueue=[];
+let drvasPresentationIndex=0;
 function renderDrvasPresentation(){
  const data=DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro;
  const set=(id,value)=>{const node=el(id);if(node)node.textContent=value};
- set("presentationOpenButton","▶ "+data.open);set("drvasPresentationEyebrow",data.eyebrow);set("drvasPresentationTitle",data.title);set("drvasPresentationIntro",data.intro);set("drvasPresentationDisclaimer",data.disclaimer);set("presentationPlayButton", "▶ "+data.play);const close=el("presentationCloseButton");if(close){close.setAttribute("aria-label",data.close);let saved=attributeOrigins.get(close);if(!saved){saved={};attributeOrigins.set(close,saved)}saved["aria-label"]=data.close;}set("presentationStopButton","■ "+data.stop);set("presentationAudioStatus",data.ready);
- const grid=el("presentationModuleGrid");
- if(grid){const names=["Dr.Vas Free","Dr.Vas Health","Dr.Vas Studio","Dr.Vas Academy","Dr.Vas Commerce","Dr.Vas Business"],icons=["✦","✚","🎬","🎓","🛒","📊"];grid.querySelectorAll(".presentation-module").forEach((card,i)=>{const p=card.querySelector("p");if(p)p.textContent=data.items[i]||"";const h=card.querySelector("h3");if(h)h.textContent=names[i];const icon=card.querySelector("span");if(icon)icon.textContent=icons[i]})}
+ set("presentationOpenButton","▶ "+data.open);set("heroPresentationOpenButton","▶ "+data.open);set("presentationContinueButton",({ro:"Continuă la conectare →",en:"Continue to sign in →",it:"Continua per accedere →",tr:"Girişe devam et →",de:"Weiter zur Anmeldung →",fr:"Continuer vers la connexion →",es:"Continuar para iniciar sesión →",ru:"Перейти ко входу →"})[currentLanguage]||"Continue →");set("drvasPresentationEyebrow",data.eyebrow);set("drvasPresentationTitle",data.title);set("drvasPresentationIntro",data.intro);set("drvasPresentationDisclaimer",data.disclaimer);set("presentationPlayButton","↻ "+(data.play||"Replay"));set("presentationStopButton","■ "+data.stop);
+ const close=el("presentationCloseButton");if(close){close.setAttribute("aria-label",data.close);let saved=attributeOrigins.get(close);if(!saved){saved={};attributeOrigins.set(close,saved)}saved["aria-label"]=data.close;}
+ const names=["Dr.Vas Free","Dr.Vas Health","Dr.Vas Studio","Dr.Vas Academy","Dr.Vas Commerce","Dr.Vas Business"],icons=["✦","✚","🎬","🎓","🛒","📊"],grid=el("presentationModuleGrid");
+ if(grid)grid.querySelectorAll(".presentation-module").forEach((card,i)=>{const p=card.querySelector("p"),h=card.querySelector("h3"),icon=card.querySelector("span");if(p)p.textContent=data.items[i]||"";if(h)h.textContent=names[i];if(icon)icon.textContent=icons[i]});
 }
-function openDrvasPresentation(){stopDrvasPresentationSpeech();renderDrvasPresentation();el("drvasPresentation")?.classList.remove("hidden");el("drvasPresentation")?.scrollIntoView({behavior:"smooth",block:"center"});el("presentationCloseButton")?.focus()}
-function closeDrvasPresentation(){stopDrvasPresentationSpeech();el("drvasPresentation")?.classList.add("hidden")}
-function stopDrvasPresentationSpeech(){if("speechSynthesis" in window)window.speechSynthesis.cancel();const stop=el("presentationStopButton");if(stop)stop.disabled=true;const play=el("presentationPlayButton");if(play)play.disabled=false;const status=el("presentationAudioStatus");if(status)status.textContent=(DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro).ready}
+function updateDrvasPresentationScene(index){
+ const key=["drvas","jan","sarah"][index],speaker=DRVAS_PRESENTERS[key],data=DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro;
+ const presenter=el("presentationPresenter"),avatar=el("presentationAvatar"),grid=el("presentationModuleGrid");
+ if(presenter)presenter.classList.remove("is-speaking");
+ if(avatar){avatar.className="presentation-avatar presentation-avatar-"+key;avatar.textContent=speaker.symbol;}
+ const set=(id,value)=>{const node=el(id);if(node)node.textContent=value};
+ set("presentationSpeakerName",speaker.name);set("presentationSpeakerRole",speaker.role[currentLanguage]||speaker.role.ro);
+ const moduleNames=["Dr.Vas Free","Dr.Vas Health","Dr.Vas Studio","Dr.Vas Academy","Dr.Vas Commerce","Dr.Vas Business"];
+ set("presentationSpeakerModules",speaker.modules.map(i=>moduleNames[i]).join(" · "));
+ set("presentationSpeakingCopy",(DRVAS_PRESENTER_LINES[currentLanguage]||DRVAS_PRESENTER_LINES.ro)[index]);
+ set("presentationStepLabel",(index+1)+" / 3");
+ const progress=el("presentationProgressBar");if(progress)progress.style.width=((index+1)/3*100)+"%";
+ if(grid)grid.querySelectorAll(".presentation-module").forEach((card,i)=>card.classList.toggle("is-active",speaker.modules.includes(i)));
+}
+function openDrvasPresentation(){
+ stopDrvasPresentationSpeech();renderDrvasPresentation();
+ const modal=el("drvasPresentation");if(modal)modal.classList.remove("hidden");
+ document.body.classList.add("presentation-open");
+ el("presentationContinueButton")?.classList.remove("hidden");
+ el("presentationCloseButton")?.focus();
+ speakDrvasPresentation();
+}
+function closeDrvasPresentation(){
+ stopDrvasPresentationSpeech();
+ el("drvasPresentation")?.classList.add("hidden");
+ document.body.classList.remove("presentation-open");
+}
+function finishDrvasPresentation(){
+ closeDrvasPresentation();
+ startDrVas();
+}
+function stopDrvasPresentationSpeech(){
+ drvasPresentationRun++;
+ if("speechSynthesis" in window)window.speechSynthesis.cancel();
+ const presenter=el("presentationPresenter");if(presenter)presenter.classList.remove("is-speaking");
+ const stop=el("presentationStopButton");if(stop)stop.disabled=true;
+ const play=el("presentationPlayButton");if(play)play.disabled=false;
+ const status=el("presentationAudioStatus");if(status)status.textContent=(DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro).ready;
+}
 function speakDrvasPresentation(){
  const data=DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro;
- if(!("speechSynthesis" in window)||!("SpeechSynthesisUtterance" in window)){const status=el("presentationAudioStatus");if(status)status.textContent=data.unavailable;return}
+ if(!("speechSynthesis" in window)||!("SpeechSynthesisUtterance" in window)){
+  const status=el("presentationAudioStatus");if(status)status.textContent=data.unavailable;
+  el("presentationContinueButton")?.classList.remove("hidden");return;
+ }
  stopDrvasPresentationSpeech();
- const names=["Dr.Vas Free","Dr.Vas Health","Dr.Vas Studio","Dr.Vas Academy","Dr.Vas Commerce","Dr.Vas Business"];
- const utterance=new SpeechSynthesisUtterance([data.title,data.intro,...names.map((name,i)=>name+". "+data.items[i]),data.disclaimer].join(". "));
+ const run=drvasPresentationRun,lines=DRVAS_PRESENTER_LINES[currentLanguage]||DRVAS_PRESENTER_LINES.ro;
+ drvasPresentationQueue=lines.slice();drvasPresentationIndex=0;
  const locales={ro:"ro-RO",en:"en-GB",it:"it-IT",tr:"tr-TR",de:"de-DE",fr:"fr-FR",es:"es-ES",ru:"ru-RU"};
- utterance.lang=locales[currentLanguage]||"ro-RO";utterance.rate=0.94;utterance.pitch=1;
- utterance.onstart=()=>{const status=el("presentationAudioStatus");if(status)status.textContent=data.speaking;const stop=el("presentationStopButton");if(stop)stop.disabled=false;const play=el("presentationPlayButton");if(play)play.disabled=true};
- utterance.onend=()=>stopDrvasPresentationSpeech();utterance.onerror=()=>{stopDrvasPresentationSpeech();const status=el("presentationAudioStatus");if(status)status.textContent=data.unavailable};
- window.speechSynthesis.speak(utterance);
+ const speakNext=()=>{
+  if(run!==drvasPresentationRun)return;
+  if(drvasPresentationIndex>=drvasPresentationQueue.length){
+   const status=el("presentationAudioStatus");if(status)status.textContent=data.speaking;
+   window.setTimeout(()=>{if(run===drvasPresentationRun)finishDrvasPresentation()},900);return;
+  }
+  const index=drvasPresentationIndex,key=["drvas","jan","sarah"][index],speaker=DRVAS_PRESENTERS[key];
+  updateDrvasPresentationScene(index);
+  const utterance=new SpeechSynthesisUtterance(drvasPresentationQueue[index]);
+  const lang=locales[currentLanguage]||"ro-RO",voices=window.speechSynthesis.getVoices?.()||[];
+  const matching=voices.filter(v=>(v.lang||"").toLowerCase().startsWith(lang.slice(0,2)));
+  const candidates=matching.length?matching:voices;
+  if(candidates.length)utterance.voice=candidates[index%candidates.length];
+  utterance.lang=lang;utterance.rate=index===2?0.94:0.96;utterance.pitch=speaker.pitch;
+  utterance.onstart=()=>{
+   if(run!==drvasPresentationRun)return;
+   el("presentationPresenter")?.classList.add("is-speaking");
+   const status=el("presentationAudioStatus");if(status)status.textContent=speaker.name+"…";
+   const stop=el("presentationStopButton");if(stop)stop.disabled=false;
+   const play=el("presentationPlayButton");if(play)play.disabled=true;
+  };
+  utterance.onend=()=>{
+   if(run!==drvasPresentationRun)return;
+   el("presentationPresenter")?.classList.remove("is-speaking");
+   drvasPresentationIndex++;
+   window.setTimeout(speakNext,420);
+  };
+  utterance.onerror=()=>{
+   if(run!==drvasPresentationRun)return;
+   el("presentationPresenter")?.classList.remove("is-speaking");
+   const status=el("presentationAudioStatus");if(status)status.textContent=data.unavailable;
+   const stop=el("presentationStopButton");if(stop)stop.disabled=true;
+   const play=el("presentationPlayButton");if(play)play.disabled=false;
+   el("presentationContinueButton")?.classList.remove("hidden");
+  };
+  window.speechSynthesis.speak(utterance);
+ };
+ speakNext();
 }
 
 function tr(s){return (UI[currentLanguage]||{})[s]||s}
@@ -2628,9 +2987,11 @@ async function saveStudioProject(){
   el("studioProjectTitle").value=project.title;
   await loadStudioProjects(currentStudioProjectId);
   setStudioProjectStatus("Proiect salvat în contul tău. Îl poți redeschide de pe alt dispozitiv.");
+  return true;
  }catch(error){
   console.error("Dr.Vas Studio save:",error);
   setStudioProjectStatus(error.message.includes("drvas_studio_projects")?"Tabelul de proiecte nu este încă activ în Supabase. Aplică migrarea SQL din proiect.":"Nu am putut salva proiectul: "+error.message,true);
+  return false;
  }
 }
 async function openStudioProject(){
@@ -2683,7 +3044,13 @@ function resetIncomeForm(){
 function moneyLabel(amount,currency){return Number(amount||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+" "+currency;}
 function renderIncomeOpportunities(){
  const list=el("incomeOpportunityList");if(!list)return;list.replaceChildren();
- incomeOpportunityCache.forEach(item=>{
+ const query=(el("incomeSearch")?.value||"").trim().toLocaleLowerCase();
+ const statusFilter=el("incomeFilterStatus")?.value||"",typeFilter=el("incomeFilterType")?.value||"";
+ const filtered=incomeOpportunityCache.filter(item=>{
+  const searchable=[item.title,item.platform,item.next_action,item.notes].join(" ").toLocaleLowerCase();
+  return (!query||searchable.includes(query))&&(!statusFilter||item.status===statusFilter)&&(!typeFilter||item.opportunity_type===typeFilter);
+ });
+ filtered.forEach(item=>{
   const card=document.createElement("article");card.className="income-item";
   const title=document.createElement("strong");title.textContent=item.title;card.appendChild(title);
   const details=document.createElement("p");details.textContent=(item.platform||"Platformă neprecizată")+" · "+item.opportunity_type+" · "+item.status+" · Estimat: "+moneyLabel(item.estimated_amount,item.currency)+" · Încasat: "+moneyLabel(item.actual_amount,item.currency);card.appendChild(details);
@@ -2693,13 +3060,32 @@ function renderIncomeOpportunities(){
   const remove=document.createElement("button");remove.type="button";remove.textContent="Șterge";remove.addEventListener("click",()=>deleteIncomeOpportunity(item.id));actions.appendChild(remove);
   card.appendChild(actions);list.appendChild(card);
  });
- if(!incomeOpportunityCache.length){const empty=document.createElement("p");empty.className="income-tracker-intro";empty.textContent="Nu ai înregistrat încă oportunități. Adaugă prima oportunitate mai sus.";list.appendChild(empty);}
+ if(!filtered.length){const empty=document.createElement("p");empty.className="income-tracker-intro";empty.textContent=incomeOpportunityCache.length?"Nu există rezultate pentru filtrele selectate.":"Nu ai înregistrat încă oportunități. Adaugă prima oportunitate mai sus.";list.appendChild(empty);}
  const currencies=[...new Set(incomeOpportunityCache.map(x=>x.currency||"GBP"))];
  const total=field=>currency=>incomeOpportunityCache.filter(x=>(x.currency||"GBP")===currency).reduce((sum,x)=>sum+Number(x[field]||0),0);
  el("incomeEstimatedTotal").textContent="Estimat: "+(currencies.length?currencies.map(c=>moneyLabel(total("estimated_amount")(c),c)).join(" · "):"0.00 GBP");
  el("incomeActualTotal").textContent="Încasat: "+(currencies.length?currencies.map(c=>moneyLabel(total("actual_amount")(c),c)).join(" · "):"0.00 GBP");
  el("incomeOpportunityCount").textContent="Oportunități: "+incomeOpportunityCache.length;
+ const count=el("incomeFilterCount");if(count)count.textContent="Afișate "+filtered.length+" din "+incomeOpportunityCache.length+" oportunități.";
 }
+function exportIncomeOpportunities(){
+ if(!currentUser){incomeMessage("Autentifică-te pentru a exporta datele.",true);return;}
+ const headers=["Titlu","Platformă / client","Tip","Stadiu","Estimat","Încasat","Monedă","Următoarea acțiune","Link","Note","Actualizat"];
+ const safe=value=>{
+  let text=String(value??"");
+  if(/^[\s\u0000-\u001f]*[=+@-]/.test(text))text="'"+text;
+  return '"'+text.replace(/"/g,'""')+'"';
+ };
+ const rows=incomeOpportunityCache.map(item=>[
+  item.title,item.platform,item.opportunity_type,item.status,item.estimated_amount,item.actual_amount,item.currency,item.next_action,item.target_url,item.notes,item.updated_at
+ ]);
+ const csv="\uFEFF"+[headers,...rows].map(row=>row.map(safe).join(",")).join("\r\n");
+ const blob=new Blob([csv],{type:"text/csv;charset=utf-8"}),url=URL.createObjectURL(blob);
+ const link=document.createElement("a");link.href=url;link.download="drvas-income-opportunities-"+new Date().toISOString().slice(0,10)+".csv";
+ document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);
+ incomeMessage("Export CSV pregătit pentru "+rows.length+" oportunități. Păstrează fișierul în siguranță.");
+}
+
 async function loadIncomeOpportunities(){
  if(!currentUser)return;
  const {data,error}=await supabaseClient.from("drvas_income_opportunities").select("*").eq("user_id",currentUser.id).order("updated_at",{ascending:false}).limit(200);
@@ -2834,6 +3220,33 @@ function businessVatAmount(row){
  if(!rate)return 0;
  return row.vat_included?amount*rate/(100+rate):amount*rate/100;
 }
+function renderBusinessCashflow(){
+ const currency=el("businessLedgerCurrency")?.value||businessLedgerState.currency||"GBP";
+ const days=Math.max(1,Number(el("businessCashflowRange")?.value)||90);
+ const today=new Date(),start=new Date(today);
+ start.setHours(0,0,0,0);start.setDate(start.getDate()-(days-1));
+ const dateKey=date=>[date.getFullYear(),String(date.getMonth()+1).padStart(2,"0"),String(date.getDate()).padStart(2,"0")].join("-");
+ const startKey=dateKey(start),todayKey=dateKey(today);
+ const rows=businessLedgerState.rows.filter(row=>row.currency===currency&&row.transaction_date>=startKey&&row.transaction_date<=todayKey);
+ const income=rows.filter(row=>row.entry_type==="income").reduce((sum,row)=>sum+Number(row.amount||0),0);
+ const expenses=rows.filter(row=>row.entry_type==="expense").reduce((sum,row)=>sum+Number(row.amount||0),0);
+ const net=income-expenses,months=Math.max(1,days/30.4375);
+ [["businessCashflowIncome",income],["businessCashflowExpenses",expenses],["businessCashflowNet",net],["businessCashflowAverage",net/months]].forEach(([id,value])=>{const node=el(id);if(node)node.textContent=businessMoney(value,currency);});
+ const host=el("businessCashflowRows");if(!host)return;host.replaceChildren();
+ if(!rows.length){const empty=document.createElement("p");empty.textContent="Nu există tranzacții în perioada selectată pentru "+currency+".";host.append(empty);return;}
+ const monthsByKey=new Map();
+ rows.forEach(row=>{const key=String(row.transaction_date||"").slice(0,7);if(!/^\d{4}-\d{2}$/.test(key))return;const item=monthsByKey.get(key)||{income:0,expenses:0};if(row.entry_type==="income")item.income+=Number(row.amount||0);else if(row.entry_type==="expense")item.expenses+=Number(row.amount||0);monthsByKey.set(key,item);});
+ const table=document.createElement("table");table.className="business-ledger-table";
+ const head=document.createElement("thead"),header=document.createElement("tr");
+ ["Lună","Încasări","Cheltuieli","Flux net"].forEach(label=>{const th=document.createElement("th");th.textContent=label;header.append(th);});head.append(header);table.append(head);
+ const body=document.createElement("tbody");
+ [...monthsByKey.entries()].sort((a,b)=>b[0].localeCompare(a[0])).forEach(([key,item])=>{
+  const [year,month]=key.split("-").map(Number),tr=document.createElement("tr"),label=document.createElement("td");
+  label.className="business-cashflow-month";label.textContent=new Date(year,month-1,1).toLocaleDateString(undefined,{month:"long",year:"numeric"});tr.append(label);
+  [item.income,item.expenses,item.income-item.expenses].forEach(value=>{const td=document.createElement("td");td.textContent=businessMoney(value,currency);tr.append(td);});body.append(tr);
+ });
+ table.append(body);host.append(table);
+}
 function renderBusinessLedger(){
  const currency=el("businessLedgerCurrency")?.value||"GBP";
  const rows=businessLedgerState.rows.filter(row=>row.currency===currency);
@@ -2842,6 +3255,7 @@ function renderBusinessLedger(){
  const outputVat=rows.filter(row=>row.entry_type==="income").reduce((sum,row)=>sum+businessVatAmount(row),0);
  const inputVat=rows.filter(row=>row.entry_type==="expense").reduce((sum,row)=>sum+businessVatAmount(row),0);
  [["businessLedgerIncome",income],["businessLedgerExpenses",expenses],["businessLedgerNet",income-expenses],["businessLedgerVat",outputVat-inputVat]].forEach(([id,value])=>{const node=el(id);if(node)node.textContent=businessMoney(value,currency);});
+ renderBusinessCashflow();
  const host=el("businessLedgerRows");if(!host)return;host.replaceChildren();
  if(!rows.length){const empty=document.createElement("p");empty.textContent="Nu există încă înregistrări pentru această monedă.";host.append(empty);return;}
  const table=document.createElement("table");table.className="business-ledger-table";
@@ -3427,32 +3841,147 @@ async function verifyFounderProvenance(){
  }catch(error){notice.textContent=error.message||"Eroare la verificare.";console.error("Founder provenance verify:",error);}
 }
 
+function founderWorkbenchMessage(message,isError=false){
+ const node=el("founderWorkbenchStatus");if(!node)return;
+ node.textContent=message;node.style.color=isError?"#ff9d9d":"#9fe5ce";
+}
+async function launchFounderWorkbenchPrompt(moduleId,prompt,notice,studioProject=null){
+ if(!currentUser||!isDrvasAdmin){founderWorkbenchMessage("Acces rezervat administratorului confirmat de server.",true);return;}
+ if(!["studio","academy","business"].includes(moduleId)){founderWorkbenchMessage("Modul de lucru nepermis.",true);return;}
+ selectModule(moduleId);
+ let studioSaved=null;
+ if(studioProject){
+  newStudioProject();el("studioDeliverable").value=studioProject.type;
+  el("studioProjectTitle").value=studioProject.title.slice(0,120);el("studioIdea").value=prompt;
+  studioSaved=await saveStudioProject();
+ }
+ submitModuleBrief(prompt,notice);
+ const workspaceName=moduleId==="studio"?"Dr.Vas Studio":moduleId==="academy"?"AI Evaluation & Training":"Dr.Vas Business";
+ founderWorkbenchMessage(studioProject?(studioSaved?"Proiectul a fost salvat în Dr.Vas Studio. Brief-ul este pregătit; revizuiește mesajul în chat și apasă Trimite.":"Brief-ul este pregătit, dar salvarea proiectului nu a fost confirmată. Verifică mesajul din Proiectele mele Studio."):"Brief pregătit în "+workspaceName+". Revizuiește mesajul în chat și apasă Trimite.",Boolean(studioProject&&!studioSaved));
+}
+function buildFounderBookPrompt(){
+ const title=el("founderBookTitle")?.value.trim()||"Carte nouă",genre=el("founderBookGenre")?.value||"Roman",language=el("founderBookLanguage")?.value||"Română",concept=el("founderBookConcept")?.value.trim()||"",length=el("founderBookLength")?.value||"Stabilim după schiță";
+ if(!concept){founderWorkbenchMessage("Descrie ideea cărții înainte de a crea proiectul.",true);el("founderBookConcept")?.focus();return;}
+ const prompt="DR.VAS BOOK WORKSHOP — PROIECT EDITORIAL ORIGINAL\nTITLU: "+title+"\nGEN: "+genre+"\nLIMBA: "+language+"\nDIMENSIUNE: "+length+"\nCONCEPT:\n"+concept+"\n\nCreează sinopsisul, publicul-țintă, structura capitolelor, personajele/arcul narativ dacă este ficțiune și o fișă de continuitate pentru nume, cronologie și fapte. Scrie capitole în ordinea aprobată de autor, păstrează vocea și ideile acestuia și oferă editare, corectură și descriere editorială. Cere confirmare înainte de schimbări majore. Folosește conținut original, nu copia texte protejate, nu imita stilul identificabil al unui autor viu și nu inventa citări.";
+ launchFounderWorkbenchPrompt("studio",prompt,"Brief de carte pregătit. Revizuiește-l și apasă Trimite.",{type:"book",title});
+}
+function buildFounderMusicPrompt(){
+ const title=el("founderMusicTitle")?.value.trim()||"Piesă nouă",language=el("founderMusicLanguage")?.value||"Română",style=el("founderMusicStyle")?.value.trim()||"Propune direcții originale",theme=el("founderMusicTheme")?.value.trim()||"",format=el("founderMusicFormat")?.value||"Structură propusă de Dr.Vas";
+ if(!theme){founderWorkbenchMessage("Descrie povestea și mesajul piesei.",true);el("founderMusicTheme")?.focus();return;}
+ const prompt="DR.VAS MUSIC LAB — CREAȚIE ORIGINALĂ\nTITLU: "+title+"\nLIMBA: "+language+"\nGEN: "+style+"\nVOCE / STRUCTURĂ: "+format+"\nPOVESTE:\n"+theme+"\n\nLivrează conceptul muzical, structura (intro/strofe/refren/punte/outro), versuri originale dacă există voce, indicații de interpretare, tempo și tonalitate orientative, instrumentație, dinamică și prompt separat pentru generator audio. Păstrează ideile autorului. Nu reproduce versuri/compoziții existente și nu imita vocea ori stilul identificabil al unui artist viu. Nu promite distribuție sau monetizare automată.";
+ launchFounderWorkbenchPrompt("studio",prompt,"Brief muzical pregătit. Revizuiește-l și apasă Trimite.",{type:"music",title});
+}
+function buildFounderIncomePrompt(){
+ const offer=el("founderIncomeOffer")?.value.trim()||"",channel=el("founderIncomeChannel")?.value||"Comparație între canale",budget=Number(el("founderIncomeBudget")?.value||0),goal=el("founderIncomeGoal")?.value.trim()||"";
+ if(!offer||!goal||!Number.isFinite(budget)||budget<0){founderWorkbenchMessage("Completează oferta, obiectivul și bugetul valid.",true);return;}
+ const prompt="DR.VAS ONLINE INCOME — PLAN LEGAL ȘI REALIST\nOFERTĂ: "+offer+"\nCANAL: "+channel+"\nBUGET MAXIM: £"+budget.toFixed(2)+"\nRESURSE ȘI OBIECTIV:\n"+goal+"\n\nAnalizează cererea și clientul-țintă; propune trei oferte și prețuri; verifică cerințele canalelor; calculează comisioane, costuri, marjă și prag de rentabilitate cu ipoteze explicite; indică mostre/portofoliu; creează plan de lansare pe 30 de zile și indicatori pentru estimat versus încasat. Include drepturi de autor, licențe, protecția datelor, taxe și obligații față de consumatori. Nu garanta venituri, nu inventa tarife și nu recomanda scheme înșelătoare, spam sau încălcarea regulilor. Nu cheltui bani și nu publica fără aprobarea fondatorului.";
+ launchFounderWorkbenchPrompt("business",prompt,"Planul de venit este pregătit în Dr.Vas Business. Revizuiește-l și apasă Trimite.");
+}
+function buildFounderEvaluationPrompt(){
+ const system=el("founderEvalSystem")?.value.trim()||"Sistem AI neprecizat",task=el("founderEvalTask")?.value.trim()||"",criteria=el("founderEvalCriteria")?.value||"Evaluare completă",output=el("founderEvalOutput")?.value.trim()||"";
+ if(!task||!output){founderWorkbenchMessage("Completează sarcina și răspunsul AI.",true);el("founderEvalOutput")?.focus();return;}
+ const prompt="DR.VAS AI EVALUATION & TRAINING LAB\nSISTEM: "+system+"\nSARCINĂ: "+task+"\nCRITERII: "+criteria+"\nRĂSPUNS:\n"+output+"\n\nEvaluează cerința și criteriile, separă afirmațiile verificabile de opinii, apreciază acuratețea numai pe dovezile disponibile, identifică erori/contradicții/omisiuni/halucinații, evaluează claritatea/completitudinea/relevanța/siguranța, acordă scoruri doar cu justificare și nivel de încredere, oferă corecturi și benchmark-uri/cazuri-limită. Nu inventa surse sau scoruri; când nu există dovezi marchează «neverificabil». Nu pretinde corectitudine absolută. Nu folosi date personale/confidențiale pentru training fără drepturi și consimțământ. Orice set de training necesită proveniență, licență, revizie umană și separarea datelor de evaluare de cele de antrenare.";
+ launchFounderWorkbenchPrompt("academy",prompt,"Evaluarea AI este pregătită. Revizuiește criteriile și apasă Trimite.");
+}
+
+function buildFounderDigitalProductPrompt(){
+ const type=el("founderDigitalType")?.value||"E-book / ghid practic",title=el("founderDigitalTitle")?.value.trim()||"Produs digital nou",customer=el("founderDigitalCustomer")?.value.trim()||"",promise=el("founderDigitalPromise")?.value.trim()||"",deliverables=el("founderDigitalDeliverables")?.value.trim()||"",price=Number(el("founderDigitalPrice")?.value||0);
+ if(!customer||!promise||!deliverables||!Number.isFinite(price)||price<0){founderWorkbenchMessage("Completează clientul, rezultatul, livrabilele și un preț valid.",true);return;}
+ const prompt="DR.VAS DIGITAL PRODUCT STUDIO — BRIEF DE PRODUS ORIGINAL\nTIP: "+type+"\nTITLU: "+title+"\nCLIENT-ȚINTĂ: "+customer+"\nPROBLEMĂ ȘI REZULTAT PROMIS: "+promise+"\nLIVRABILE: "+deliverables+"\nPREȚ IPOTETIC: £"+price.toFixed(2)+"\n\nConstruiește: validarea problemei și a cererii înainte de investiții; profilul clientului; propunerea de valoare și limitele promisiunii; structura completă pe module/capitole; conținutul efectiv și materialele auxiliare; standardul de calitate și verificare; pagina de vânzare, FAQ și mesajele de onboarding; ipoteze de preț, comisioane, costuri, marjă și prag de rentabilitate; checklist de accesibilitate, drepturi/licențe, protecția datelor, rambursări, taxe și reguli pentru consumatori. Separă faptele de ipoteze, nu inventa cerere sau rezultate și nu promite câștiguri garantate. Nu publica și nu încasa bani fără aprobarea fondatorului.";
+ launchFounderWorkbenchPrompt("studio",prompt,"Brief-ul produsului digital este pregătit. Revizuiește-l și apasă Trimite.",{type:"digital-product",title});
+}
+function buildFounderPublishingPrompt(){
+ const title=el("founderPublishTitle")?.value.trim()||"",author=el("founderPublishAuthor")?.value.trim()||"",market=el("founderPublishMarket")?.value||"Mai multe piețe",keywords=el("founderPublishKeywords")?.value.trim()||"",description=el("founderPublishDescription")?.value.trim()||"",format=el("founderPublishFormat")?.value||"E-book",pages=Number(el("founderPublishPages")?.value||0);
+ if(!title||!author||!description||!Number.isFinite(pages)||pages<0){founderWorkbenchMessage("Completează titlul, autorul, descrierea și numărul valid de pagini.",true);return;}
+ const prompt="DR.VAS PUBLISHING LAB — PACHET EDITORIAL\nTITLU: "+title+"\nAUTOR: "+author+"\nPIAȚĂ/LIMBĂ: "+market+"\nCATEGORII ȘI CUVINTE-CHEIE: "+(keywords||"Propune după conținutul manuscrisului") +"\nDESCRIERE FURNIZATĂ: "+description+"\nFORMAT: "+format+"\nPAGINI ESTIMATE: "+(pages||"De stabilit")+"\n\nPregătește un pachet editorial: descriere scurtă și lungă, biografie autor pe baza datelor furnizate (nu inventa), categorii și cuvinte-cheie motivate, public-țintă, text pentru coperta spate, checklist de manuscris și corectură, verificarea fonturilor/diacriticelor și a imaginilor, specificații de copertă de confirmat la platformă, alegerea formatului și a dimensiunii tiparului, estimarea cotorului numai după numărul final de pagini și hârtie, ISBN și drepturi de autor — explică când sunt necesare și cine le emite, declarații privind conținutul generat cu AI dacă platforma le cere, verificarea prețului/royalty doar pe baza tarifelor actuale oficiale. Nu inventa ISBN, aprobări, costuri sau acceptarea platformei. Nu încărca și nu publica automat.";
+ launchFounderWorkbenchPrompt("studio",prompt,"Pachetul editorial este pregătit în Dr.Vas Studio. Revizuiește-l și apasă Trimite.",{type:"publishing-pack",title});
+}
+function buildFounderMusicReleasePrompt(){
+ const title=el("founderReleaseTitle")?.value.trim()||"",credits=el("founderReleaseCredits")?.value.trim()||"",rights=el("founderReleaseRights")?.value||"Încă trebuie clarificate drepturile",content=el("founderReleaseContent")?.value||"Altă limbă / de stabilit",story=el("founderReleaseStory")?.value.trim()||"";
+ if(!title||!credits||!story){founderWorkbenchMessage("Completează titlul, creditele și planul de lansare.",true);return;}
+ const prompt="DR.VAS MUSIC RELEASE LAB — DOSAR DE LANSARE\nPIESĂ: "+title+"\nCREDITE: "+credits+"\nDREPTURI: "+rights+"\nLIMBĂ/CONȚINUT: "+content+"\nPLAN ȘI POVESTE: "+story+"\n\nCreează un dosar de lansare: metadate standardizate, ordinea și forma creditelor, checklist pentru acorduri scrise cu toți coautorii/interpreții/producătorii, confirmarea licențelor pentru beat-uri, samples, artwork și voce, verificarea titlului și a versiunilor clean/explicit, descriere editorială, pitch scurt, biografie bazată numai pe date furnizate, brief de copertă originală, plan de promovare organică și calendar. Marchează orice drept neclar drept BLOCAJ — NU DISTRIBUI. Explică faptul că platforma/distribuitorul stabilește formatele, cerințele și remunerațiile; nu inventa ISRC/UPC, nu garanta playlisturi sau venituri. Nu trimite și nu distribui automat.";
+ launchFounderWorkbenchPrompt("studio",prompt,"Dosarul de lansare muzicală este pregătit. Revizuiește-l și apasă Trimite.",{type:"music-release",title});
+}
+
+function calculateFounderCommerceProfit(){
+ const ids=["founderCommercePrice","founderCommerceCost","founderCommerceShip","founderCommerceFee","founderCommerceAds","founderCommerceReturns","founderCommerceTax","founderCommerceOrders","founderCommerceFixed"];
+ const v={};ids.forEach(id=>v[id]=Number(el(id)?.value));
+ const notice=el("founderCommerceNotice"),money=n=>"£"+n.toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2});
+ if(ids.some(id=>!Number.isFinite(v[id])||v[id]<0)||v.founderCommerceFee>100||v.founderCommerceTax>100){if(notice)notice.textContent="Verifică toate valorile pozitive și procentele între 0 și 100.";return;}
+ const price=v.founderCommercePrice,fees=price*v.founderCommerceFee/100;
+ const preTax=price-v.founderCommerceCost-v.founderCommerceShip-fees-v.founderCommerceAds-v.founderCommerceReturns;
+ const tax=Math.max(0,preTax)*v.founderCommerceTax/100,contribution=preTax-tax;
+ const monthly=contribution*v.founderCommerceOrders-v.founderCommerceFixed;
+ const breakEven=contribution>0?Math.ceil(v.founderCommerceFixed/contribution):null;
+ const margin=price>0?contribution/price*100:0;
+ el("founderCommerceContribution").textContent=money(contribution);
+ el("founderCommerceMargin").textContent=margin.toFixed(1)+"%";
+ el("founderCommerceBreakEven").textContent=breakEven===null?"Nu se atinge":String(breakEven);
+ el("founderCommerceMonthly").textContent=money(monthly);
+ if(notice)notice.textContent=contribution<=0?"Atenție: fiecare comandă are contribuție nulă sau negativă înainte de costurile fixe. Nu scala publicitatea.": "Rezultat orientativ după costurile introduse. TVA-ul, taxele reale, retururile și comisioanele pot necesita model separat.";
+}
+function calculateCryptoMiningScenarios(){
+ const read=id=>Number(el(id)?.value);
+ const baseIds=["cryptoBtcPerDay","cryptoBtcPrice","cryptoPowerWatts","cryptoCoolingWatts","cryptoElectricityRate","cryptoPoolFee","cryptoMaintenanceMonthly","cryptoDowntime","cryptoTaxReserve","cryptoBearRevenue","cryptoBaseRevenue","cryptoBullRevenue","cryptoBearPower","cryptoBullPower"];
+ if(baseIds.some(id=>!Number.isFinite(read(id))||read(id)<0)){el("cryptoScenarioNotice").textContent="Completează valori numerice pozitive pentru toate ipotezele.";return;}
+ const fee=read("cryptoPoolFee"),down=read("cryptoDowntime"),tax=read("cryptoTaxReserve");
+ if(fee>100||down>100||tax>100||read("cryptoBearRevenue")>300||read("cryptoBaseRevenue")>300||read("cryptoBullRevenue")>300||read("cryptoBearPower")>500||read("cryptoBullPower")>500){el("cryptoScenarioNotice").textContent="Procentele depășesc limitele acceptate.";return;}
+ const baseBtc=read("cryptoBtcPerDay")*(1-down/100),basePrice=read("cryptoBtcPrice"),kw=((read("cryptoPowerWatts")+read("cryptoCoolingWatts"))/1000)*24,maintenance=read("cryptoMaintenanceMonthly")/30;
+ const calc=(revenuePct,powerPct)=>{const gross=baseBtc*basePrice*revenuePct/100,energy=kw*read("cryptoElectricityRate")*powerPct/100,operating=gross*(1-fee/100)-energy-maintenance;return operating-Math.max(0,operating)*tax/100;};
+ const fmt=n=>"£"+n.toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2});
+ el("cryptoScenarioBear").textContent=fmt(calc(read("cryptoBearRevenue"),read("cryptoBearPower")));
+ el("cryptoScenarioBase").textContent=fmt(calc(read("cryptoBaseRevenue"),100));
+ el("cryptoScenarioBull").textContent=fmt(calc(read("cryptoBullRevenue"),read("cryptoBullPower")));
+ el("cryptoScenarioNotice").textContent="Scenarii calculate cu producția, prețul și tariful electric ajustate conform ipotezelor tale. Nu sunt estimări de piață sau sfaturi de investiții.";
+}
+function buildFounderOperationsPrompt(){
+ const name=el("founderOpsName")?.value.trim()||"",outcome=el("founderOpsOutcome")?.value.trim()||"",volume=el("founderOpsVolume")?.value.trim()||"",resources=el("founderOpsResources")?.value.trim()||"Nespecificate";
+ if(!name||!outcome||!volume){founderWorkbenchMessage("Completează procesul, rezultatul și volumul.",true);return;}
+ const prompt="DR.VAS BUSINESS OPERATIONS PLANNER\nPROCES: "+name+"\nREZULTAT: "+outcome+"\nVOLUM/FRECVENȚĂ: "+volume+"\nRESURSE: "+resources+"\n\nProiectează fluxul complet: declanșator și intrări; pași numerotați; roluri și responsabilități; aprobări umane și separarea atribuțiilor; excepții și escaladare; verificări de calitate; evidențe și protecția datelor; riscuri și măsuri de control; indicatori KPI cu formule; timp/cost per operațiune; checklist zilnic/săptămânal; plan pilot pe 2 săptămâni. Identifică ce poate fi automatizat în siguranță și ce trebuie să rămână cu aprobare umană. Nu presupune integrare cu aplicații, nu executa tranzacții și nu trimite mesaje/comenzi.";
+ launchFounderWorkbenchPrompt("business",prompt,"Fluxul operațional este pregătit în Dr.Vas Business. Revizuiește-l și apasă Trimite.");
+}
+
+function buildFounderCustomerJourneyPrompt(){
+ const offer=el("founderCrmOffer")?.value.trim()||"",audience=el("founderCrmAudience")?.value.trim()||"",channel=el("founderCrmChannel")?.value||"",outcome=el("founderCrmOutcome")?.value.trim()||"",support=el("founderCrmSupport")?.value.trim()||"Nespecificat";
+ if(!offer||!audience||!outcome){founderWorkbenchMessage("Completează oferta, segmentul de clienți și experiența promisă.",true);return;}
+ const prompt="DR.VAS CUSTOMER JOURNEY & RETENTION PLANNER\nOFERTĂ: "+offer+"\nSEGMENT: "+audience+"\nCANAL: "+channel+"\nEXPERIENȚĂ/OBIECTIV: "+outcome+"\nSUPORT/LIMITE: "+support+"\n\nConstruiește un plan practic pentru: (1) descoperire și informare corectă, fără promisiuni înșelătoare; (2) evaluarea potrivirii și așteptări clare înainte de cumpărare; (3) onboarding și livrare; (4) suport, reclamații și rezolvarea problemelor; (5) feedback și îmbunătățire; (6) retenție și recomandări voluntare. Pentru fiecare etapă definește nevoia clientului, acțiunea companiei, responsabilul, timpul de răspuns, mesaj-model neintruziv, indicatorul KPI și riscul. Include un calendar de 30 de zile, măsurători pentru conversie, satisfacție, retururi și retenție, plus un test pilot cu buget limitat. Respectă GDPR și regulile locale: colectează minimul de date, documentează temeiul legal/consimțământul unde este necesar, oferă dezabonare și nu trimite marketing nesolicitat. Nu inventa date despre clienți, nu segmenta după categorii sensibile și nu trimite mesaje automat. Marchează ipotezele și verificările juridice/fiscale care necesită specialist.";
+ launchFounderWorkbenchPrompt("business",prompt,"Planul Customer Journey este pregătit în Dr.Vas Business. Revizuiește-l și apasă Trimite.");
+}
+
+function buildFounderCampaignCalendarPrompt(){
+ const brand=el("founderCampaignBrand")?.value.trim()||"",audience=el("founderCampaignAudience")?.value.trim()||"",goal=el("founderCampaignGoal")?.value||"",channels=el("founderCampaignChannels")?.value.trim()||"",cadence=el("founderCampaignCadence")?.value.trim()||"",offer=el("founderCampaignOffer")?.value.trim()||"Nespecificat";
+ if(!brand||!audience||!channels||!cadence){founderWorkbenchMessage("Completează brandul, publicul, canalele și frecvența/resursele.",true);return;}
+ const prompt="DR.VAS CONTENT & CAMPAIGN PLANNER — CALENDAR EDITORIAL 30 DE ZILE\nBRAND/PROIECT: "+brand+"\nPUBLIC/NEVOIE: "+audience+"\nOBIECTIV: "+goal+"\nCANALE: "+channels+"\nFRECVENȚĂ/RESURSE: "+cadence+"\nOFERTĂ/BUGET/LIMITE: "+offer+"\n\nConstruiește un plan editorial executabil pe 30 de zile. Începe cu poziționarea, mesajul central și 3-5 piloni de conținut. Creează un calendar tabelar cu ziua, canalul, formatul, subiectul, hook-ul original, structura/scenariul, CTA, materialele necesare, responsabilul și KPI. Adaptează nativ materialul pentru fiecare platformă; propune reutilizare fără duplicare mecanică. Include 4 săptămâni cu obiectiv săptămânal, test A/B cu ipoteză și criteriu de oprire, buget etapizat și un tablou de măsurare pentru reach, retenție, engagement relevant, clickuri, lead-uri cu consimțământ și conversii. Separă ipotezele de datele verificate. Nu inventa rezultate sau tendințe, nu promite viralitate/vânzări, nu folosi engagement fals, spam, profilare sensibilă ori mesaje nesolicitate. Verifică drepturile pentru muzică, imagini, persoane și materiale; respectă regulile platformelor, publicitatea transparentă și protecția datelor. Încheie cu checklist de producție, aprobare umană și revizuire săptămânală. Nu publica și nu programa automat.";
+ launchFounderWorkbenchPrompt("studio",prompt,"Calendarul editorial este pregătit în Dr.Vas Studio. Revizuiește materialele și salvează proiectul înainte de producție.");
+}
+
 function calculateCryptoMiningEconomics(){
-  const read=id=>Number(el(id)?.value||0);
-  const btc=read("cryptoBtcPerDay"),price=read("cryptoBtcPrice");
-  const watts=read("cryptoPowerWatts"),rate=read("cryptoElectricityRate");
-  const fee=read("cryptoPoolFee"),hardware=read("cryptoHardwareCost");
-  const ids=["cryptoBtcPerDay","cryptoBtcPrice","cryptoPowerWatts","cryptoElectricityRate","cryptoPoolFee","cryptoHardwareCost"];
-  const valid=ids.every(id=>Number.isFinite(read(id))&&read(id)>=0)&&fee<=100;
-  const notice=el("cryptoCalcNotice");
-  if(!valid){
-    if(notice)notice.textContent="Verifică valorile: toate trebuie să fie pozitive, iar comisionul pool între 0 și 100%.";
-    return;
-  }
-  const gross=btc*price;
-  const energy=(watts/1000)*24*rate;
-  const pool=gross*(fee/100);
-  const net=gross-energy-pool;
-  const money=value=>"£"+value.toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2});
-  el("cryptoGrossDaily").textContent=money(gross);
-  el("cryptoEnergyDaily").textContent=money(energy);
-  el("cryptoPoolDaily").textContent=money(pool);
-  el("cryptoNetDaily").textContent=money(net);
-  el("cryptoNetMonthly").textContent=money(net*30);
-  el("cryptoPayback").textContent=net>0?(hardware/net).toFixed(0)+" zile": "Nu se recuperează";
-  if(notice)notice.textContent=net>0
-    ?"Estimare pozitivă înainte de taxe, mentenanță, amortizare și variația dificultății/recompenselor. Nu este o promisiune de profit."
-    :"La aceste ipoteze, costul energiei și comisionul depășesc venitul estimat. Nu cumpăra echipament pe baza acestui calcul.";
+ const read=id=>Number(el(id)?.value||0);
+ const btc=read("cryptoBtcPerDay"),price=read("cryptoBtcPrice"),watts=read("cryptoPowerWatts"),cooling=read("cryptoCoolingWatts");
+ const rate=read("cryptoElectricityRate"),fee=read("cryptoPoolFee"),hardware=read("cryptoHardwareCost"),maintenance=read("cryptoMaintenanceMonthly");
+ const downtime=read("cryptoDowntime"),taxReserve=read("cryptoTaxReserve");
+ const ids=["cryptoBtcPerDay","cryptoBtcPrice","cryptoPowerWatts","cryptoCoolingWatts","cryptoElectricityRate","cryptoPoolFee","cryptoHardwareCost","cryptoMaintenanceMonthly","cryptoDowntime","cryptoTaxReserve"];
+ const valid=ids.every(id=>Number.isFinite(read(id))&&read(id)>=0)&&fee<=100&&downtime<=100&&taxReserve<=100;
+ const notice=el("cryptoCalcNotice");
+ if(!valid){if(notice)notice.textContent="Verifică valorile: numere pozitive; comision, indisponibilitate și rezervă fiscală între 0 și 100%.";return;}
+ const uptime=1-downtime/100,btcAfterDowntime=btc*uptime,energyKwh=((watts+cooling)/1000)*24;
+ const gross=btcAfterDowntime*price,energy=energyKwh*rate,pool=gross*(fee/100);
+ const operating=gross-energy-pool-(maintenance/30),reserve=Math.max(0,operating)*(taxReserve/100),net=operating-reserve;
+ const money=value=>"£"+value.toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2});
+ el("cryptoGrossDaily").textContent=money(gross);el("cryptoEnergyDaily").textContent=money(energy);el("cryptoPoolDaily").textContent=money(pool);
+ el("cryptoNetDaily").textContent=money(net);el("cryptoNetMonthly").textContent=money(net*30);
+ el("cryptoPayback").textContent=net>0?(hardware/net).toFixed(0)+" zile":"Nu se recuperează";
+ const maintenanceNode=el("cryptoMaintenanceDaily");if(maintenanceNode)maintenanceNode.textContent=money(maintenance/30);
+ const annualNode=el("cryptoNetAnnual");if(annualNode)annualNode.textContent=money(net*365);
+ const breakEvenNode=el("cryptoBreakEvenBtc");
+ const breakEvenDenominator=btcAfterDowntime*(1-fee/100);
+ if(breakEvenNode)breakEvenNode.textContent=breakEvenDenominator>0?money((energy+maintenance/30)/breakEvenDenominator):"Nu se calculează";
+ const maxEnergyNode=el("cryptoMaxElectricity");
+ if(maxEnergyNode)maxEnergyNode.textContent=energyKwh>0?money(Math.max(0,(gross*(1-fee/100)-maintenance/30)/energyKwh))+"/kWh":"—";
+ const monthlyKwhNode=el("cryptoMonthlyKwh");if(monthlyKwhNode)monthlyKwhNode.textContent=(energyKwh*30).toLocaleString("en-GB",{maximumFractionDigits:1})+" kWh";
+ const annualEnergyNode=el("cryptoAnnualEnergyCost");if(annualEnergyNode)annualEnergyNode.textContent=money(energy*365);
+ const heatNode=el("cryptoHeatLoad");if(heatNode)heatNode.textContent=((watts+cooling)*3.412).toLocaleString("en-GB",{maximumFractionDigits:0})+" BTU/h";
+ if(notice)notice.textContent=net>0?"Scenariu orientativ după energie, răcire, indisponibilitate, mentenanță și rezerva fiscală introdusă. Pragurile BTC/energie sunt matematice, nu predicții. Nu includ toate taxele, amortizarea, dificultatea rețelei sau volatilitatea BTC.":"În acest scenariu, costurile depășesc venitul estimat. Nu cumpăra echipament pe baza acestui calcul.";
 }
 
 async function loadCryptoDevices(){
@@ -4110,6 +4639,7 @@ el("password").addEventListener("keydown",e=>{
   if(e.key === "Enter") handleAuth();
 });
 
+calculateCryptoMiningEconomics();
 initLanguage();
 </script>
 

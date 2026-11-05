@@ -1,0 +1,99 @@
+# Dr.Vas founder workbenches — 2026-11-05
+
+## Owner instruction
+Continue building the integrated Dr.Vas platform, include Crypto & Mining and lawful income-generation tools (books, music and digital services), save the work, and do not run tests yet.
+
+## Development checkpoint
+- Repository: `Vasilecatalinprodan-tech/Dr.-Vas-AI`
+- Development branch: `founder-workbenches-development`
+- Base checkpoint: `5bb13b80d5dcc3e1ce348cd1c39ec29af7a0fa17`
+- Work is isolated from `drvas-integrated-platform`; it is not deployed or live.
+
+## Implemented in `www/index.html`
+1. Added an admin-dashboard-only **Creator & Online Income Lab**, nested in the server-confirmed admin panel. Prompt launch checks the signed-in user and `isDrvasAdmin`, then routes work through the existing founder-gated Studio, Academy or Business chat module.
+2. **Book Workshop** captures title, genre, language, concept/audience and length. It prepares a structured book brief (synopsis, chapter outline, continuity notes, author-approved writing sequence, editing and publication description). The brief is staged as a native Studio project using the existing save/open/export workflow.
+3. **Music Lab** captures title, language, genre/mood, story and voice/structure preference. It prepares original lyrics/concept, song structure, performance notes, tempo/key guidance, instrumentation and an audio-generator brief. The brief is staged as a native Studio project.
+4. **Online Income planner** captures the proposed service/product, channel, startup budget and owner resources. It prepares market validation, offers/pricing, channel checks, fee/cost calculations, margin/break-even assumptions and a 30-day launch plan. Existing persistent Income Tracker remains the place for estimated and actual receipts.
+5. **AI Evaluation & Training Lab** captures model/system, task, criteria and output/evidence. It prepares a structured evaluation, error and unsupported-claim analysis, confidence-qualified scoring, corrected examples and benchmark cases.
+6. Bitcoin profitability calculator now includes cooling load, downtime, monthly maintenance and a manually entered tax reserve; it displays daily, monthly and annual estimates and payback.
+
+## Safety and access boundaries
+- The new workbench remains inside the founder-only admin dashboard. No public module access or premium entitlement was changed.
+- Book/music prompts require original work and prohibit copying protected text or imitating an identifiable living artist/author.
+- No automatic publishing, marketplace posting, client outreach, payment, purchase or spending.
+- Crypto calculator remains a user-input simulation. No live market feed, mining process, wallet/exchange connection, trade, withdrawal or visitor-device compute was enabled.
+- Device registry remains read-only. Real mining requires explicit device authorization, transparent power/temperature limits, revocation, audit logs and emergency stop.
+- AI evaluation requires evidence, uncertainty labels, human review and dataset rights/provenance. No autonomous model training or deployment was added.
+- No database migration, production secret, Worker route, payment, entitlement, RLS policy or production data was changed.
+
+## Save-state behavior
+The Studio save function now returns a boolean to the new Book/Music launcher. The workbench reports whether the project save was confirmed instead of claiming success when Supabase persistence fails.
+
+## Not tested / not deployed
+Per owner instruction, no tests, syntax checks, browser checks or manual checks were run. No deployment or merge was performed. Inspect the full diff and run regression/production checks only when the owner authorizes testing.
+
+
+## Follow-on development — 2026-11-05
+
+- Income tracker now supports client-side text search, stage/type filters, visible-result counts and a private CSV export. The export quotes/escapes values, uses UTF-8 BOM and protects spreadsheet cells beginning with formula characters. The existing database remains the persistence layer; only the loaded (maximum 200) rows are exported.
+- Bitcoin scenario calculator now displays break-even BTC price, maximum electricity tariff, 30-day energy consumption, annual electricity cost and approximate heat dissipation in BTU/h, alongside daily/monthly/annual net estimates and payback.
+- These are planning tools only. No live mining, device control, wallet, exchange, trading, automated tax calculation or live market feed exists. All mining inputs remain manually supplied assumptions.
+- Per owner instruction, no tests or deployment were performed. All changes remain on `founder-workbenches-development`.
+
+
+## Follow-on workbenches — publishing and digital products
+
+- Added **Digital Product Studio** for original e-books, guides, templates, workbooks, mini-courses and digital resource bundles. It creates a structured product brief including target customer, realistic promise, deliverables, pricing hypothesis, market validation, sales-page copy, cost/margin assumptions, quality, accessibility, IP/licensing, privacy, refunds and consumer/tax checks.
+- Added **Publishing Lab** to prepare book metadata and an editorial readiness package: title/author/market, categories and keywords, short/long descriptions, author bio based only on supplied facts, manuscript and cover checks, print-format considerations and an ISBN/platform checklist. It does not fabricate identifiers, platform fees or approvals.
+- Added **Music Release Lab** to organize credits, collaborator permissions, composition/recording/artwork licences, explicit-content status, metadata, cover brief and release/promotion checklist. Unclear rights are explicitly treated as a blocker before distribution.
+- Each action stages a human-reviewable brief through the existing founder-only Studio save/open route. Nothing is automatically uploaded, published, distributed, sold or paid for.
+- These features remain untested and undeployed by owner instruction; no database schema or production configuration was changed.
+
+
+## Commerce, mining sensitivity and business operations additions
+
+- **Commerce Profit Lab:** estimates unit contribution, margin, monthly break-even order count and monthly result using user-entered costs and percentage reserves. It is not a VAT/tax filing tool and does not forecast demand.
+- **Mining Sensitivity Lab:** calculates three manually parameterized daily scenarios from revenue/prodution and electricity tariff multipliers. No live market/network data, mining control, wallet or transaction capability.
+- **Business Operations Planner:** prepares an SOP/workflow draft with roles, approvals, exceptions, quality checks, KPIs, costs and pilot steps. No external integrations or automatic execution.
+- All three tools are founder-only and prepare calculations or drafts for review. No public access, automatic publishing, sales, payments, orders, mining, trading or deployment.
+- Owner requested uninterrupted development and saving of the full progress. This feature record and the dated work log serve as repository continuity records; they do not replace the original ChatGPT transcript.
+- No tests or manual verification were run, and the stable branch/production remain untouched.
+
+
+## Customer Journey & Retention Planner
+
+- Founder-only planner for mapping customer discovery, pre-sale expectations, onboarding/delivery, customer support and complaints, feedback, retention and voluntary referrals.
+- Captures offer, customer segment, channel, experience promise and support boundaries; prepares a 30-day plan, pilot, responsibilities, response targets and KPIs.
+- Includes privacy-by-design and responsible marketing requirements: data minimisation, GDPR/legal-basis review, opt-out and no sensitive-trait profiling or unsolicited campaigns.
+- Produces a human-reviewed brief in the existing founder-gated Dr.Vas Business workspace. No CRM integration, customer database, automatic message or marketing execution.
+- Implemented in source on `founder-workbenches-development`; not yet runtime-tested or deployed to production.
+
+
+## Content & Campaign Planner
+
+- Added a founder-only editorial campaign planner inside Creator & Online Income Lab in the actual Dr.Vas application.
+- Captures brand/project, audience need, campaign goal, channels, publishing cadence/resources, offer/budget and rights/claims limits.
+- Generates a structured 30-day calendar brief with platform-native formats, hooks, scripts, CTAs, asset/owner fields, weekly goals, test hypotheses, budget stages and KPIs.
+- Requires human review, rights clearance, transparent claims and privacy/platform compliance. It does not publish, schedule, send messages, buy ads or promise reach/sales.
+- Routes the brief through the existing founder-gated Dr.Vas Studio workflow; no new database schema, public entitlement, payment, external integration or production configuration was introduced.
+- A Playwright regression test was added to verify the generated brief and Studio routing. Awaiting CI result.
+
+
+## Animated three-assistant introduction
+
+- Public landing-page presentation entry point, available before sign-in; a second entry point remains in the authenticated module dashboard.
+- Full-screen modal-style animated window with a dimmed backdrop, step progress, speaker avatar motion, active speech indicator and two visible module cards for the current speaker.
+- Dr.Vas introduces Free and Health; Dr.Jan introduces Studio and Business; Sarah introduces Academy and Commerce.
+- Uses browser-native speech synthesis in the selected supported language. Each speaker uses a distinct pitch and, where available, a different installed system voice. Exact voice quality and availability depend on the visitor's browser/device; this is not voice cloning or a hosted recorded voice service.
+- When the narration finishes, the modal closes and routes through the existing startDrVas() flow: signed-out visitors see sign-in/register; signed-in visitors return to module selection. Visitors can skip with Continue. If speech is unavailable, a manual Continue action remains available.
+- Regression coverage verifies all eight supported languages, all six module cards, module ownership, speaker sequence and return flow. Awaiting CI.
+- No auth rules, entitlements, database, secrets, Worker configuration or production deployment changed.
+
+
+## Cashflow report in Dr.Vas Books
+
+- Added a date-window report for 30/90/180/365 days to the existing private Business cashbook.
+- Summarizes recorded income, expenses, net cashflow and average monthly net; includes a month-by-month table.
+- Uses only the currently loaded rows in the selected currency. It does not forecast, convert currencies or estimate tax.
+- No database migration, schema change, auth/entitlement change or production configuration change.
+- Covered by a Playwright regression test for monthly aggregation and period filtering.

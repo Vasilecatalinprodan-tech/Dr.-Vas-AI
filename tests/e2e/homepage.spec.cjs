@@ -937,6 +937,10 @@ test("Bitcoin mining calculator estimates net result without starting mining", a
     document.querySelector("#cryptoElectricityRate").value = "0.25";
     document.querySelector("#cryptoPoolFee").value = "1";
     document.querySelector("#cryptoHardwareCost").value = "1000";
+    // Keep this legacy arithmetic case independent of the newly added downtime/tax assumptions.
+    document.querySelector("#cryptoDowntime").value = "0";
+    document.querySelector("#cryptoTaxReserve").value = "0";
+    document.querySelector("#cryptoMaintenanceMonthly").value = "0";
     calculateCryptoMiningEconomics();
   });
   await expect(page.locator("#cryptoGrossDaily")).toContainText("18.00");
@@ -944,7 +948,81 @@ test("Bitcoin mining calculator estimates net result without starting mining", a
   await expect(page.locator("#cryptoNetDaily")).toContainText("8.82");
   await expect(page.locator("#cryptoNetMonthly")).toContainText("264.60");
   await expect(page.locator("#cryptoPayback")).toContainText("113 zile");
-  await expect(page.locator("#cryptoCalcNotice")).toContainText("Nu este o promisiune de profit");
+  await expect(page.locator("#cryptoCalcNotice")).toContainText("nu predicții");
+});
+
+test("founder content campaign planner builds a 30-day brief for the private Studio", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    isDrvasAdmin = true;
+    document.querySelector("#founderCampaignBrand").value = "Dr.Vas Studio";
+    document.querySelector("#founderCampaignAudience").value = "Creatori români la început de drum";
+    document.querySelector("#founderCampaignGoal").value = "Educație și încredere";
+    document.querySelector("#founderCampaignChannels").value = "TikTok, YouTube Shorts";
+    document.querySelector("#founderCampaignCadence").value = "Un video scurt pe zi";
+    document.querySelector("#founderCampaignOffer").value = "Buget de test 50 GBP; numai materiale cu drepturi clare";
+    window.__DRVAS_CAMPAIGN_CAPTURE__ = null;
+    window.launchFounderWorkbenchPrompt = (moduleName, prompt, status) => {
+      window.__DRVAS_CAMPAIGN_CAPTURE__ = { moduleName, prompt, status };
+    };
+    buildFounderCampaignCalendarPrompt();
+  });
+  const brief = await page.evaluate(() => window.__DRVAS_CAMPAIGN_CAPTURE__);
+  expect(brief.moduleName).toBe("studio");
+  expect(brief.prompt).toContain("CALENDAR EDITORIAL 30 DE ZILE");
+  expect(brief.prompt).toContain("Dr.Vas Studio");
+  expect(brief.prompt).toContain("TikTok, YouTube Shorts");
+  expect(brief.prompt).toContain("Nu publica și nu programa automat.");
+  expect(brief.status).toContain("Dr.Vas Studio");
+});
+
+test("Business cashbook monthly cashflow report summarizes and filters saved transactions", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-cashflow-user", email: "admin@example.invalid" };
+    isDrvasAdmin = true;
+    selectModule("business", true);
+  });
+  await expect(page.locator("#businessWorkspace")).toBeVisible();
+  // Wait for the workspace's asynchronous cashbook load to finish before seeding test rows.
+  await expect(page.locator("#businessLedgerStatus")).toContainText("Registru încărcat");
+  await page.evaluate(() => {
+    const today = new Date();
+    const monthDate = offset => {
+      const date = new Date(today.getFullYear(), today.getMonth() + offset, Math.min(today.getDate(), 20));
+      return [date.getFullYear(), String(date.getMonth() + 1).padStart(2, "0"), String(date.getDate()).padStart(2, "0")].join("-");
+    };
+    businessLedgerState.currency = "GBP";
+    businessLedgerState.rows = [
+      { id:"cf1", transaction_date:monthDate(0), entry_type:"income", description:"Current month sales", category:"Sales", amount:1200, currency:"GBP", vat_rate:0, vat_included:true },
+      { id:"cf2", transaction_date:monthDate(0), entry_type:"expense", description:"Current month costs", category:"Costs", amount:300, currency:"GBP", vat_rate:0, vat_included:true },
+      { id:"cf3", transaction_date:monthDate(-1), entry_type:"income", description:"Previous month sales", category:"Sales", amount:900, currency:"GBP", vat_rate:0, vat_included:true },
+      { id:"cf4", transaction_date:monthDate(-1), entry_type:"expense", description:"Previous month costs", category:"Costs", amount:200, currency:"GBP", vat_rate:0, vat_included:true },
+      { id:"cf5", transaction_date:monthDate(-2), entry_type:"income", description:"Two months ago sales", category:"Sales", amount:500, currency:"GBP", vat_rate:0, vat_included:true }
+    ];
+    document.querySelector("#businessLedgerCurrency").value = "GBP";
+    document.querySelector("#businessCashflowRange").value = "90";
+    renderBusinessLedger();
+  });
+  await expect(page.locator("#businessCashflowIncome")).toContainText("2,600");
+  await expect(page.locator("#businessCashflowExpenses")).toContainText("500");
+  await expect(page.locator("#businessCashflowNet")).toContainText("2,100");
+  await expect(page.locator("#businessCashflowRows tbody tr")).toHaveCount(3);
+  await page.locator("#businessCashflowRange").selectOption("30");
+  await expect(page.locator("#businessCashflowIncome")).toContainText("1,200");
+  await expect(page.locator("#businessCashflowExpenses")).toContainText("300");
+  await expect(page.locator("#businessCashflowNet")).toContainText("900");
+  await expect(page.locator("#businessCashflowRows tbody tr")).toHaveCount(1);
+});
+test("Bitcoin mining calculator exposes its monthly maintenance assumption", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    document.querySelector("#adminPanel")?.classList.remove("hidden");
+    isDrvasAdmin = true;
+    calculateCryptoMiningEconomics();
+  });
+  await expect(page.locator("#cryptoMaintenanceMonthly")).toHaveValue("50");
+  await expect(page.locator("#cryptoMaintenanceDaily")).toContainText("1.67");
 });
 
 test("logout removes administrator workspaces and clears private module drafts", async ({ page }) => {
@@ -997,65 +1075,64 @@ test("logout removes administrator workspaces and clears private module drafts",
   expect(state.renderPreviewHidden).toBe(true);
 });
 
-test("Dr.Vas presentation covers all six modules in all eight supported languages and narrates in the selected language", async ({ page }) => {
+test("Dr.Vas presentation introduces all six modules through three animated speakers in all supported languages", async ({ page }) => {
   await openApp(page, "ro");
   await page.evaluate(() => {
     checkSession = async () => {};
-    showModuleSelection();
-    openDrvasPresentation();
+    window.__drvasSpoken = [];
+    window.__drvasStartCount = 0;
+    window.startDrVas = () => { window.__drvasStartCount++; };
+    const synth = { getVoices: () => [], cancel() {}, speak: utterance => { window.__drvasSpoken.push(utterance); } };
+    Object.defineProperty(window, "speechSynthesis", { configurable: true, value: synth });
+    window.SpeechSynthesisUtterance = function (text) { this.text = text; };
   });
-
+  await expect(page.locator("#heroPresentationOpenButton")).toBeVisible();
+  await page.locator("#heroPresentationOpenButton").click();
   await expect(page.locator("#drvasPresentation")).toBeVisible();
   await expect(page.locator("#presentationModuleGrid .presentation-module")).toHaveCount(6);
-  await expect(page.locator("#drvasPresentationDisclaimer")).toContainText("în dezvoltare");
-
-  const languages = [
-    ["ro", "ro-RO", "Deschide prezentarea", "Închide prezentarea"],
-    ["en", "en-GB", "Open presentation", "Close presentation"],
-    ["it", "it-IT", "Apri la presentazione", "Chiudi la presentazione"],
-    ["tr", "tr-TR", "Tanıtımı aç", "Tanıtımı kapat"],
-    ["de", "de-DE", "Präsentation öffnen", "Präsentation schließen"],
-    ["fr", "fr-FR", "Ouvrir la présentation", "Fermer la présentation"],
-    ["es", "es-ES", "Abrir presentación", "Cerrar presentación"],
-    ["ru", "ru-RU", "Открыть презентацию", "Закрыть презентацию"]
-  ];
-  const controlLabels = {
-    ro: ["Deschide prezentarea", "Închide prezentarea"],
-    en: ["Open presentation", "Close presentation"],
-    it: ["Apri la presentazione", "Chiudi la presentazione"],
-    tr: ["Tanıtımı aç", "Tanıtımı kapat"],
-    de: ["Präsentation öffnen", "Präsentation schließen"],
-    fr: ["Ouvrir la présentation", "Fermer la présentation"],
-    es: ["Abrir presentación", "Cerrar presentación"],
-    ru: ["Открыть презентацию", "Закрыть презентацию"]
-  };
-
+  await expect(page.locator("#presentationModuleGrid .presentation-module.is-active")).toHaveCount(2);
+  await expect(page.locator("#presentationSpeakerName")).toHaveText("Dr.Vas");
+  const languages = [["ro","ro-RO"],["en","en-GB"],["it","it-IT"],["tr","tr-TR"],["de","de-DE"],["fr","fr-FR"],["es","es-ES"],["ru","ru-RU"]];
+  const openLabels = {ro:"Deschide prezentarea",en:"Open presentation",it:"Apri la presentazione",tr:"Tanıtımı aç",de:"Präsentation öffnen",fr:"Ouvrir la présentation",es:"Abrir presentación",ru:"Открыть презентацию"};
   for (const [language, locale] of languages) {
-    await page.evaluate(code => chooseLanguage(code), language);
-    await expect(page.locator("#presentationModuleGrid .presentation-module")).toHaveCount(6);
-    await expect(page.locator("#presentationOpenButton")).toContainText(controlLabels[language][0]);
-    await expect(page.locator("#presentationCloseButton")).toHaveAttribute("aria-label", controlLabels[language][1]);
-    const title = await page.locator("#drvasPresentationTitle").textContent();
-    expect(title.trim().length).toBeGreaterThan(3);
-    const narration = await page.evaluate(() => {
-      let spoken = null;
-      const synth = {
-        getVoices: () => [],
-        addEventListener() {},
-        removeEventListener() {},
-        cancel() {},
-        resume() {},
-        speak: utterance => { spoken = { text: utterance.text, lang: utterance.lang }; }
-      };
-      Object.defineProperty(window, "speechSynthesis", { configurable: true, value: synth });
-      window.SpeechSynthesisUtterance = function (text) { this.text = text; };
-      speakDrvasPresentation();
-      return spoken;
-    });
-    expect(narration.text).toContain(title.trim());
-    expect(narration.lang).toBe(locale);
+    const first = await page.evaluate(code => {
+      stopDrvasPresentationSpeech(); currentLanguage = code; renderDrvasPresentation(); speakDrvasPresentation();
+      const utterance = window.__drvasSpoken[window.__drvasSpoken.length - 1];
+      return { text: utterance.text, lang: utterance.lang, speaker: document.querySelector("#presentationSpeakerName").textContent };
+    }, language);
+    expect(first.lang).toBe(locale);
+    expect(first.speaker).toBe("Dr.Vas");
+    expect(first.text).toContain("Dr.Vas Free");
+    expect(first.text).toContain("Dr.Vas Health");
+    await expect(page.locator("#presentationOpenButton")).toContainText(openLabels[language]);
   }
-
-  await page.evaluate(() => closeDrvasPresentation());
+  await page.evaluate(() => {
+    stopDrvasPresentationSpeech(); currentLanguage = "ro"; renderDrvasPresentation(); speakDrvasPresentation();
+    window.__drvasSpoken[window.__drvasSpoken.length - 1].onend();
+  });
+  await page.waitForTimeout(500);
+  const jan = await page.evaluate(() => ({
+    speaker: document.querySelector("#presentationSpeakerName").textContent,
+    modules: document.querySelector("#presentationSpeakerModules").textContent,
+    speech: window.__drvasSpoken[window.__drvasSpoken.length - 1].text
+  }));
+  expect(jan.speaker).toBe("Dr.Jan");
+  expect(jan.modules).toContain("Dr.Vas Studio");
+  expect(jan.modules).toContain("Dr.Vas Business");
+  expect(jan.speech).toContain("Dr.Vas Studio");
+  await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].onend());
+  await page.waitForTimeout(500);
+  const sarah = await page.evaluate(() => ({
+    speaker: document.querySelector("#presentationSpeakerName").textContent,
+    modules: document.querySelector("#presentationSpeakerModules").textContent,
+    speech: window.__drvasSpoken[window.__drvasSpoken.length - 1].text
+  }));
+  expect(sarah.speaker).toBe("Sarah");
+  expect(sarah.modules).toContain("Dr.Vas Academy");
+  expect(sarah.modules).toContain("Dr.Vas Commerce");
+  expect(sarah.speech).toContain("Dr.Vas Academy");
+  await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].onend());
+  await page.waitForTimeout(1450);
   await expect(page.locator("#drvasPresentation")).toBeHidden();
+  expect(await page.evaluate(() => window.__drvasStartCount)).toBe(1);
 });
