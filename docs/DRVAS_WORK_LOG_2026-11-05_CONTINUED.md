@@ -288,3 +288,17 @@ Prima rulare pentru prezentarea animată a avut 40/41 teste reușite. Testul nou
 ### Raport cashflow — corecție de validare
 
 La revizuirea codului raportului am corectat expresia regulată care validează cheia lunii YYYY-MM, înainte de rularea testului complet. Rapoartele rămân calculate numai din tranzacțiile înregistrate. CI trebuie să confirme implementarea actualizată.
+
+## 2026-11-05 — stabilizare, integrare și deploy confirmat
+
+- Ultimele teste înainte de merge: run #216 și #217, fiecare cu 42/42 teste Playwright trecute.
+- Preflight-ul read-only al workflow-ului de deploy a verificat 52 de condiții de securitate, acces, migrații și funcții existente; 52/52 au trecut.
+- PR #6 integrat prin squash în `drvas-integrated-platform`, commit `1c4fdd930969b4d474458c1ad19e46c9577ecc55`.
+- Deploy run #433 (`42048450847`) SUCCESS: npm ci, SBOM, validare Worker și scripturi browser, teste Playwright, Wrangler deploy și smoke test live.
+- Worker publicat: `dr--vas-ai`, version ID `5cc51d70-798b-4fbd-900f-3c74a418b6e4`.
+- Smoke test: pagina principală și șase module prezente; health online; Worker/assets/AI/database/Studio renderer configurate; cererea admin neautentificată respinsă HTTP 401.
+- SBOM CycloneDX încărcat, artefact ID `13425428163`.
+- Android build #322 (`42048450848`) SUCCESS; APK debug `DrVas-APK`, artifact ID `13425148697`, 6,097,829 bytes. Nu este încă release semnat Google Play și nu a fost testat pe dispozitiv fizic.
+- Nu s-a executat SQL nou; schimbările nu cer schemă nouă. Migrațiile existente au trecut verificările workflow-ului.
+- Checkpointul conversației și al deploy-ului este în `docs/DRVAS_SESSION_2026-11-05_CONTINUATION.md`; reprezintă un rezumat tehnic, nu transcrierea literală completă a chatului.
+- Browser workflow post-merge #218 este separat și trebuie verificat până la finalizare.
