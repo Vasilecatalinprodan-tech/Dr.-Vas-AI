@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - drvas-integrated-platform
+      - universal-chat-attachments
     paths:
       - 'www/**'
       - 'android/**'
