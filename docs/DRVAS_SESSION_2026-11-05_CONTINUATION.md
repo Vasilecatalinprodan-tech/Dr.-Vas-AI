@@ -963,3 +963,35 @@ Commituri succesive pentru cod:
 - `c069bf76418bafa346982531351d1b82de7b390e` — introducerea selecției distincte;
 - `1482bcd7f3b0787df3aea5c1512ee438ce7e36e0` — corectarea inițializării variabilelor profilului vocal după inspecția imediată.
 Important: această primă implementare este încă în curs de verificare și testare; nu se declară finalizată. Trebuie verificată încărcarea asincronă a vocilor browserului (unele browsere returnează inițial listă goală), fallback-ul pentru Dr.Vas/Dr.Jan și testele automate/manuale. Nu s-a făcut deploy și nu s-a modificat configurația Live.
+
+
+## 2026-11-05 — implementare extinsă selecție voci și teste E2E
+
+După prima corecție, auditul a identificat încă două cerințe tehnice:
+1. Unele browsere returnează inițial o listă goală din `speechSynthesis.getVoices()`, apoi emit `voiceschanged`. Selectarea imediată ar putea să nu găsească vocea feminină.
+2. Sarah trebuie să-și rezerve vocea feminină înainte ca Dr.Vas și Dr.Jan să aleagă vocile lor, pentru ca fallback-ul celor doi să nu consume singura voce feminină disponibilă.
+
+Actualizări suplimentare în `www/index.html`:
+- profilul vocal rezervă mai întâi o voce identificată feminin pentru Sarah;
+- Dr.Vas și Dr.Jan aleg voci masculine distincte când browserul le oferă; dacă nu sunt suficiente voci masculine distincte, folosesc doar voci nealocate și nu consumă vocea rezervată Sarah;
+- funcția așteaptă evenimentul `voiceschanged` până la 1,2 secunde dacă lista inițială este goală;
+- după așteptare verifică dacă prezentarea a fost oprită între timp, pentru a nu porni redare întârziată după închiderea ferestrei.
+Commituri cod:
+- `a7ac6c713a58f8e4c69d33bcd039e6343a8df99a` — încărcare asincronă a vocilor și rezervarea vocii feminine pentru Sarah.
+
+Actualizări în `tests/e2e/homepage.spec.cjs`:
+- mock-ul testului de prezentare oferă trei voci distincte: Microsoft Andrei, Microsoft David și Microsoft Alina;
+- testul verifică asocierea Dr.Vas → Andrei, Dr.Jan → David și Sarah → Alina;
+- apelurile asincrone ale funcției de prezentare sunt așteptate explicit.
+Commituri teste:
+- `1f2c849d80ced902540164198b45f020a1399910` — verificări pentru cele trei voci distincte;
+- `82ee14e31e023b35bbcd797157cccabc50a6d17e` — așteptarea inițializării vocilor în testele E2E.
+
+### CI / testare
+GitHub Actions a pornit workflow-ul browser regression pentru PR #7:
+- run ID: `42085813384`;
+- commit testat: `82ee14e31e023b35bbcd797157cccabc50a6d17e`;
+- la ultima verificare, workflow-ul era `queued`, fără rezultat final.
+Prin urmare, testele nu sunt încă declarate trecute. Trebuie verificat rezultatul workflow-ului înainte de a considera corecția vocală validată. Testul folosește voci mock; verificarea auditivă reală în browser pe dispozitivul utilizatorului rămâne necesară pentru a confirma timbrul și naturalețea vocii Sarah în limbile folosite.
+
+Nu s-a făcut deploy, merge sau modificare Live/production. PR #7 rămâne Draft.
