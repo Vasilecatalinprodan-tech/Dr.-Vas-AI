@@ -3136,7 +3136,11 @@ async function checkStudioRenderStatus(){
    studioRenderMessage("Randarea este în curs: "+(result.status||"în așteptare")+". Verificare automată în câteva secunde…");
    scheduleStudioRenderPolling(4500);
   }
- }catch(error){console.error("Dr.Vas Studio render status:",error);studioRenderMessage(error.message||"Nu am putut verifica randarea.",true);}
+ }catch(error){
+  console.error("Dr.Vas Studio render status:",error);
+  studioRenderMessage(error.message||"Nu am putut verifica randarea. Reîncercăm automat.",true);
+  if(currentStudioRenderJobId)scheduleStudioRenderPolling(7000);
+ }
 }
 
 function newStudioProject(){
@@ -3212,6 +3216,7 @@ async function openStudioProject(){
   el("studioDeliverable").value=data.project_type||b.deliverable||"series";
   ["studioIdea","studioPlatform","studioTone","studioAudience","studioDuration","studioAspect","studioNarration"].forEach((key,index)=>{const fields=["idea","platform","tone","audience","duration","aspect","narration"];if(b[fields[index]]!==undefined&&el(key))el(key).value=b[fields[index]];});if(el("studioSubtitles"))el("studioSubtitles").checked=b.subtitles!==false;
   setStudioProjectStatus("Proiect încărcat. Poți continua editarea și îl poți salva din nou.");
+  if(currentStudioRenderJobId&&!currentStudioRenderStoragePath){studioRenderPollAttempts=0;scheduleStudioRenderPolling(1200);}
  }catch(error){setStudioProjectStatus("Nu am putut deschide proiectul: "+error.message,true);}
 }
 async function deleteStudioProject(){
