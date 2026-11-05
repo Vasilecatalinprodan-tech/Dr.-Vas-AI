@@ -83,3 +83,31 @@ for (const scenario of [
     expect(calls[0].payload.brief.saved_from).toBe("drvas-" + scenario.module);
   });
 }
+
+
+test("last selected module is remembered across browser reloads per account", async ({ page }) => {
+  await openApp(page);
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-returning-user", email: "returning@example.invalid" };
+    rememberActiveModule("health");
+  });
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await page.waitForFunction(() => document.documentElement.lang === "ro" &&
+    !document.querySelector("#appMain")?.classList.contains("language-pending"));
+  const remembered = await page.evaluate(() => {
+    currentUser = { id: "e2e-returning-user", email: "returning@example.invalid" };
+    return getRememberedModule();
+  });
+  expect(remembered).toBe("health");
+  const otherAccount = await page.evaluate(() => {
+    currentUser = { id: "different-user" };
+    return getRememberedModule();
+  });
+  expect(otherAccount).toBeNull();
+  await page.evaluate(() => clearRememberedModule("e2e-returning-user"));
+  const afterLogout = await page.evaluate(() => {
+    currentUser = { id: "e2e-returning-user" };
+    return getRememberedModule();
+  });
+  expect(afterLogout).toBeNull();
+});
