@@ -847,3 +847,10 @@ Founder feedback:
 - Added a browser regression test and CI source assertions for the three assistant identities. Workflow execution is pending; do not call this change tested/deployed until CI completes.
 - Founder reports successful execution of `202611040001_module_projects.sql` for Academy, Commerce and Business. Independent read-only verification and two-account RLS tests remain outstanding.
 - No avatar assets changed; photorealistic portrait work awaits confirmation of fictional AI-generated adult faces versus real-person photos with consent. No paid voice generation was started. Existing installed APK remains untouched.
+
+### Voice routing validation result
+
+- Deployment workflow #462 (run `42115725365`) completed SUCCESS after the assistant-aware TTS change. JavaScript/static validation, the Playwright homepage/session suite including the new assistant-identity voice test, Worker deploy, and production smoke test all passed.
+- Cloudflare Workers Builds check for commit `43f0c2cf507a3ce951ecdea644cca74157cc351e` also completed SUCCESS; deployed Worker version `7ace1c79-c5d3-4a80-8ce3-2a1dfd897986`.
+- `main` and `drvas-integrated-platform` were fast-forward synchronized at `1190c06b986ae9e65d0efd85f1fbd1719831ed3c` before this status-only entry.
+- Dedicated Jan/Sarah voices remain unconfigured until voice selection and secret setup. The test proves identity routing, not actual audible differences or the physical Samsung APK result.
