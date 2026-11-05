@@ -135,3 +135,37 @@ Blocaj înainte de deploy:
 
 Păstrarea conversației:
 Acest checkpoint păstrează cererea explicită și rezultatele tehnice ale continuării. Este un rezumat tehnic fidel, nu o transcriere literală integrală a chatului. Istoricul original rămâne în ChatGPT; pentru copie integrală se folosește exportul de date ChatGPT.
+
+## Checkpoint post-merge și deploy — 2026-11-05
+
+Cererea fondatorului (textul exact din această etapă):
+> „vreau sa facem deploy la tot ce ai modificat si de asemenea sa folosim si sql daca trebuie...vreau noua versiune sa fie fezibila si functionala asta pana sa continuam....salveaza tot ce ai facut si ce faci inclusiv conversatia”
+
+Pașii realizați:
+1. S-a revizuit PR #6 și s-a confirmat că schimbările sunt în `www/index.html`, testele Playwright și documentație; nu există migrare SQL nouă în diff. Instrumentele Cashflow folosesc registrul Business existent, deci nu a fost necesar SQL suplimentar.
+2. S-a verificat preflight-ul de deploy copiat din workflow-ul de producție: toate cele 52 de aserțiuni de securitate, configurare și schemă au trecut pe head-ul PR.
+3. CI #216 și #217 au trecut cu 42/42 teste Playwright fiecare.
+4. PR #6 a fost integrat prin squash în ramura stabilă. Commit de integrare: `1c4fdd930969b4d474458c1ad19e46c9577ecc55`.
+5. GitHub Actions deploy run #433, ID `42048450847`, a terminat cu **SUCCESS**:
+   - `npm ci`, inventarul CycloneDX și verificările Worker/browser au trecut;
+   - testele browser din workflow-ul de deploy au trecut;
+   - `npx wrangler deploy` a publicat `dr--vas-ai`;
+   - versiune Worker: `5cc51d70-798b-4fbd-900f-3c74a418b6e4`;
+   - smoke test live a confirmat homepage și toate cele șase module;
+   - health endpoint: `status=online`, Worker ok, assets/AI/database/Studio renderer configurate;
+   - endpoint-ul admin fără autentificare a răspuns corect HTTP 401;
+   - SBOM CycloneDX a fost încărcat ca artefact `DrVas-SBOM`, ID `13425428163`.
+6. GitHub Actions Android run #322, ID `42048450848`, a terminat cu **SUCCESS**. Artefact `DrVas-APK`, ID `13425148697`, 6,097,829 bytes, SHA-256 `572bce7a8710b12ce85dcb28543dacd0ae20bc01ebb397855dc05fb8720cc840`. Acesta este APK debug; nu este semnat ca release pentru Google Play și nu a fost instalat/testat pe un dispozitiv fizic.
+7. Browser workflow post-merge #218, ID `42048450822`, a fost pornit pe commitul stabil; rezultatul final trebuie consemnat când se încheie.
+
+URL public confirmat de smoke test:
+`https://dr--vas-ai.vasilecatalinprodan.workers.dev/`
+
+Notă despre check-ul Cloudflare GitHub App:
+Check-ul separat `Workers Builds` pentru branch-ul PR a raportat failure, dar logul său detaliat nu era accesibil prin integrarea GitHub. Acest check nu a blocat deploy-ul: workflow-ul oficial `.github/workflows/deploy-worker.yml` a rulat independent pe ramura stabilă, a publicat Worker-ul și a trecut smoke test-ul de producție. Rezultatul efectiv de deploy este confirmat de run #433.
+
+Starea SQL:
+Nu s-a executat SQL nou pentru această lansare, deoarece nu au fost adăugate tabele/coloane/politici noi. Migrațiile existente au fost verificate de workflow-ul de deploy. Nu s-au schimbat RLS, secretele, allowlist-ul administratorului sau datele utilizatorilor.
+
+Păstrarea conversației:
+Acest fișier consemnează cererea exactă de deploy și rezumatul implementării, verificărilor, versiunii Worker și APK-ului. Este un checkpoint tehnic, nu o transcriere literală integrală a tuturor mesajelor ChatGPT. Istoricul original rămâne în conversația ChatGPT; exportul de date ChatGPT oferă copia integrală.
