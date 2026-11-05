@@ -221,7 +221,7 @@ User asked to continue development and save all progress and the conversation. T
 ## 2026-11-04 — visible module isolation and account-access diagnosis
 
 ### User-reported problems
-1. The account `vasilecatalinprodan@gmail.com` can enter the private modules, but a different account cannot.
+1. The account `the founder's configured administrator email` can enter the private modules, but a different account cannot.
 2. On opening modules other than Dr.Vas Free, the left side still shows the other modules; the user requires each module to be a separate workspace with only its own tools and functions. Dr.Vas Free's current appearance should remain unchanged.
 
 ### Root cause found in source
@@ -252,7 +252,7 @@ User asked to continue development and save all progress and the conversation. T
 - Dr.Vas is primarily a public-facing application.
 - Any ordinary registered/logged-in user may use **Dr.Vas Free**. Free must not require administrator status.
 - Health, Studio, Academy, Commerce and Business remain separate private/premium workspaces until the owner explicitly authorizes their public launch and the required product, payment, legal and compliance work is complete.
-- The only administrator is the founder account `vasilecatalinprodan@gmail.com`. No ordinary user, including a second account, may become an administrator.
+- The only administrator is the founder account `the founder's configured administrator email`. No ordinary user, including a second account, may become an administrator.
 - The Cloudflare Worker `ADMIN_EMAILS` secret is the server-side source of truth and must contain only that one founder email. Never add public users to it. The secret value itself cannot be read from GitHub source; it must be verified in Cloudflare by the owner/operator if there is any doubt.
 
 ### Corrections committed in source
@@ -265,7 +265,7 @@ User asked to continue development and save all progress and the conversation. T
 
 ### Admin boundary
 - Admin privileges are not granted by selecting a module, creating an account, or being a paying user.
-- Do not hardcode administrator identity in frontend JavaScript. Keep server-side verification through `ADMIN_EMAILS`; verify that Cloudflare secret contains exactly `vasilecatalinprodan@gmail.com` and no other address.
+- Do not hardcode administrator identity in frontend JavaScript. Keep server-side verification through `ADMIN_EMAILS`; verify that Cloudflare secret contains exactly `the founder's configured administrator email` and no other address.
 - A public Free user must never see the admin dashboard or private project data.
 
 ### Verification and display
@@ -281,7 +281,7 @@ User asked to continue development and save all progress and the conversation. T
 - Re-fetched all four files from branch `drvas-integrated-platform` and confirmed the Free frontend path, both Worker premium guards, the new public-Free and Premium-denial tests, and the existing Free layout protection.
 - GitHub combined commit status and pull-request workflow lookup returned no entries for the tested commit. This is not a pass result. The browser E2E suite has not yet been confirmed running successfully.
 - Cloudflare Worker deployment and the production static-assets deployment have not been confirmed. The known existing preview URL is `https://dr--vas-ai.vasilecatalinprodan.workers.dev/`; it may still serve the previously deployed build until the current branch is deployed.
-- The Cloudflare secret `ADMIN_EMAILS` is not readable from the repository and has not been independently verified in this session. Its required exact value is the founder address only: `vasilecatalinprodan@gmail.com`. Do not add other accounts.
+- The Cloudflare secret `ADMIN_EMAILS` is not readable from the repository and has not been independently verified in this session. Its required exact value is the founder address only: `the founder's configured administrator email`. Do not add other accounts.
 
 
 ## 2026-11-04 — owner clarification: public Free and Health; clinician marketplace is future phased work
@@ -304,7 +304,7 @@ This section is the latest authoritative product decision and supersedes any ear
 - The AI information layer must remain clearly distinguished from the human professional consultation. The user must know when they are interacting with AI and when they are chatting with a real clinician.
 
 ### Administrator boundary — exact and exclusive
-- The only administrator is the owner account **vasilecatalinprodan@gmail.com**.
+- The only administrator is the owner account **the founder's configured administrator email**.
 - No other account is to be added as administrator. In particular, do not solve public Free/Health access by adding ordinary users to `ADMIN_EMAILS`.
 - Administrator status is an owner-only privilege. It is not required for public Free or general-information Health access, and it is not granted by registration, login, subscription or payment.
 - Keep the Cloudflare Worker as the server-side authority for admin-only operations. Verify the Worker allowlist contains only the exact owner email; never expose the secret in frontend code.
@@ -326,7 +326,7 @@ This section is the latest authoritative product decision and supersedes any ear
 
 ### Conversation continuity
 - User asked to preserve all decisions and work before opening a new chat.
-- User corrected the assistant emphatically: do not ask to make another account an administrator. Only `vasilecatalinprodan@gmail.com` is admin; ordinary public users should access Free and Health without admin status.
+- User corrected the assistant emphatically: do not ask to make another account an administrator. Only `the founder's configured administrator email` is admin; ordinary public users should access Free and Health without admin status.
 - User described the long-term Health business model: free AI/general information, then an optional paid real doctor/nurse chat; Dr.Vas pays the clinician and earns a commission. This is a phased future roadmap.
 - Continue in Romanian, do not send repeated progress updates, and let the assistant handle technical work. The user should only be asked for simple visual checks or an exact action that genuinely requires their access.
 
@@ -344,7 +344,7 @@ This section supersedes any older or contradictory wording in this document that
 6. Normal public users must never be shown an administrator error merely because they are not administrators. This is expected behavior. Admin status is only for owner controls and private workspaces.
 
 ### Founder-only administrator
-- Exactly one administrator: `vasilecatalinprodan@gmail.com`.
+- Exactly one administrator: `the founder's configured administrator email`.
 - The Cloudflare Worker `ADMIN_EMAILS` allowlist is only for owner/admin privileges. Never add ordinary users to it to enable public access.
 - The admin dashboard and admin-only notices are hidden from ordinary users. A normal user can authenticate and use Free and Health without seeing “not authorized as administrator”.
 
@@ -419,7 +419,7 @@ The final deployment was performed by the workflow after Playwright passed, and 
 - Found that the E2E suite explicitly tested public Free access and founder-only premium access, but did not yet contain a dedicated non-admin Health workspace test, despite the earlier checkpoint saying Health was covered. Added that missing regression test in commit `4f84a00cd56752070e2a0c09ea1fb9bb172084eb`. The test asserts that a normal signed-in account can enter Health, sees the Health workspace, does not see admin controls/notices, and does not gain admin status.
 - Latest repository commit discovered before this update: `574381963f56f99a5e0d6eb19109059a6c2393e9`, adding a manually triggerable Cloudflare Worker deployment workflow. It uses the existing Cloudflare GitHub secrets and deploys the active integrated branch; no secrets are stored in the workflow.
 - This test addition and documentation correction are source changes only until the new CI workflows complete. Do not claim the new Health test passed or that a new production deployment occurred until Actions results are checked.
-- No database tables or data were changed. No admin allowlist changes were made. The sole administrator remains `vasilecatalinprodan@gmail.com`.
+- No database tables or data were changed. No admin allowlist changes were made. The sole administrator remains `the founder's configured administrator email`.
 
 
 ## Work checkpoint — 2026-11-05 (public Health workflow and release verification)
