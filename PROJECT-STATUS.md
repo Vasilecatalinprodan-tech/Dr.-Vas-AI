@@ -838,3 +838,12 @@ Founder feedback:
 - Do not apply three copies. Apply this exact migration once in the correct Dr.Vas Supabase project. Then verify the table, RLS and four policies, and test all three module values with two disposable user accounts.
 - No live Supabase connector or authorized database session is available in this development session. Therefore the SQL has been reviewed and documented, but has NOT been executed against the live database. Do not claim the Academy/Commerce/Business project persistence is fixed until the migration has been applied and verified in Supabase.
 - User-facing next action: Supabase Dashboard → correct Dr.Vas project → SQL Editor → New query → paste the full contents of `supabase/migrations/202611040001_module_projects.sql` → Run. Then run the read-only checks in `docs/SUPABASE_READONLY_VERIFICATION.sql` and complete the two-account isolation tests described in `docs/SUPABASE_LIVE_VERIFICATION_GUIDE.md`. Never paste secrets into chat.
+
+## 2026-11-05 — assistant voice routing and Supabase migration report
+
+- Implemented assistant-aware TTS routing in the Worker for `drvas`, `jan` and `aurora`; provider voice IDs remain server-side.
+- Added secret mapping: `ELEVENLABS_VOICE_ID`, `ELEVENLABS_JAN_VOICE_ID`, `ELEVENLABS_SARAH_VOICE_ID`. Existing Dr.Vas configuration remains compatible. New Jan/Sarah voice IDs are not configured yet; distinct voices require founder voice selection and Cloudflare secret setup.
+- Frontend sends the selected assistant identity to TTS; a device speech fallback remains available when a dedicated voice is not configured.
+- Added a browser regression test and CI source assertions for the three assistant identities. Workflow execution is pending; do not call this change tested/deployed until CI completes.
+- Founder reports successful execution of `202611040001_module_projects.sql` for Academy, Commerce and Business. Independent read-only verification and two-account RLS tests remain outstanding.
+- No avatar assets changed; photorealistic portrait work awaits confirmation of fictional AI-generated adult faces versus real-person photos with consent. No paid voice generation was started. Existing installed APK remains untouched.
