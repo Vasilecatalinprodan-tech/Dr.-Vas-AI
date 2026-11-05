@@ -680,3 +680,93 @@ Notă de fidelitate: textul de mai sus reproduce rândurile transmise; pentru un
 5. Abia apoi, aplicare controlată și teste cu fișiere sintetice. Analiza documentelor Health rămâne blocată până la confirmarea Paid Services/retention și UK GDPR/DPIA.
 
 Cererea utilizatorului în această etapă: „salveaza tot”. Această secțiune păstrează rezultatul SQL transmis și interpretarea pentru continuitate; nu este transcriere literală integrală a chatului. Istoricul complet rămâne în ChatGPT, iar exportul de date este metoda pentru o copie integrală.
+
+
+## Continuare — audit Worker vs privilegii/RLS Supabase (5 noiembrie 2026)
+
+A fost inspectat `worker/index.js` de pe ramura `universal-chat-attachments` (2.446 linii la citirea curentă), fără modificarea codului.
+
+### Accesul observat în cod
+
+1. **Autentificare:** Worker validează tokenul utilizatorului prin `/auth/v1/user`, folosind cheia API în header și tokenul utilizatorului ca Bearer.
+2. **Rate limits:** funcția `consumeRateLimit` apelează RPC-ul `/rest/v1/rpc/drvas_consume_rate_limit` cu `SUPABASE_KEY` ca Bearer. Tabelul `drvas_rate_limits` este deci accesat prin funcția server-side, nu printr-un request direct al utilizatorului.
+3. **Consimțăminte:** citirile și scrierile în `drvas_privacy_consents` folosesc `SUPABASE_KEY` ca Bearer. Acest lucru este compatibil cu faptul că rezultatul grants nu arată privilegii pentru rolul `authenticated` pe acest tabel; accesul trebuie să rămână server-side.
+4. **Mesaje chat:** helperul `supabaseRequest` folosește tokenul utilizatorului ca Bearer. Citirea și ștergerea din `chat_messages` sunt astfel supuse granturilor și politicilor RLS ale rolului `authenticated`; rezultatele raportate anterior arată SELECT/DELETE owner-only și INSERT owner-only.
+5. **Studio render jobs:** helperul `studioDb` folosește `studioToken` (tokenul utilizatorului), nu `SUPABASE_KEY`, pentru INSERT/SELECT/PATCH în `drvas_studio_render_jobs`. Rezultatul grants arată privilegii pentru `authenticated`, însă rezultatul anterior `pg_policies` nu a returnat politici pentru `drvas_studio_render_jobs`. Dacă nu există nicio politică aplicabilă, RLS activ va bloca aceste operații chiar dacă granturile există. Acesta este un posibil blocaj funcțional concret, care trebuie confirmat prin query țintit înainte de orice modificare.
+6. **Storage Studio:** upload-ul MP4 folosește tokenul utilizatorului. Politicile Storage raportate permit acces doar când primul folder al căii este UID-ul utilizatorului; codul salvează în calea `{user_id}/{render_id}.mp4`, compatibilă cu această condiție.
+7. **Atașamente chat:** Worker citește `drvas_chat_attachments` și `drvas_privacy_consents` cu `SUPABASE_KEY` ca Bearer. Verifică user_id, conversation_id și module, apoi verifică prefixul căii, MIME, dimensiunea declarată și dimensiunea/MIME reală prin HEAD pe signed URL. Pentru PDF/imagine folosește URI temporar, iar TXT/CSV sunt citite și validate UTF-8. Acest flux nu poate funcționa până când tabelul/migrarea și obiectele Storage există în Supabase.
+8. **Consimțământ fișiere:** acțiunea `file_processing_consent` scrie înregistrările de consimțământ prin `SUPABASE_KEY`; în Health scrie separat `file_processing` și `health_data_processing`.
+
+### Concluzii preliminare de securitate și funcționalitate
+
+- Privilegiile lipsă pentru `authenticated` pe `drvas_privacy_consents` și `drvas_rate_limits` par intenționate pentru acces server-side; nu recomandăm să acordăm utilizatorilor acces direct la aceste tabele.
+- Pentru `chat_messages`, codul folosește tokenul utilizatorului și politicile owner-only raportate sunt potrivite pentru citire/ștergere. În grants nu apare INSERT pentru `service_role`, dar codul chat nu folosește service role pentru scrierea mesajelor.
+- Pentru `drvas_studio_render_jobs`, există granturi authenticated, dar nu a fost returnată nicio politică RLS în lista primită anterior. În lipsa unei politici aplicabile, operațiile Studio făcute cu tokenul utilizatorului vor fi refuzate de RLS. Nu adăugăm o politică până nu verificăm schema, intenția admin-only și condițiile exacte de proprietate.
+- `drvas_business_transactions` are granturi authenticated, dar nu au fost returnate politici RLS în rezultatul transmis. Dacă aplicația citește/scrie direct cu tokenul utilizatorului, aceasta poate fi o problemă similară. Trebuie corelat cu codul frontend/Worker și confirmat.
+- `drvas_studio_projects` are granturi authenticated, dar nu au fost returnate politici RLS în rezultatul transmis. Necesită aceeași verificare.
+- `drvas_chat_attachments` nu exista la inventarul live anterior, iar Worker îl accesează doar prin cheia serverului în fluxul de analiză; migrarea propune granturi authenticated pentru select/insert/delete și politici owner-only. Compatibilitatea finală trebuie verificată după aplicarea controlată, nu presupusă acum.
+- Nu s-a găsit în această revizie motiv pentru a acorda granturi directe suplimentare utilizatorilor pe consimțăminte sau rate limits.
+- Nu s-au schimbat fișiere de aplicație, Worker, SQL, granturi, politici, secrete sau producția. Nicio migrare nu a fost aplicată.
+
+### Corecție de fidelitate a transcrierii grants
+
+În secțiunea anterioară a acestui jurnal, blocul reprodus pentru grants conține două erori de transcriere introduse la consemnare:
+- linia `public,drvas_studio_projects,service_role,TRUNCATE,NO` nu a fost prezentă în rezultatul original transmis;
+- linia pentru `drvas_studio_render_jobs` a fost formatată greșit ca `public,drvas_studio_render_jobs,TRUNCATE,NO`; în rezultatul original câmpurile erau `public,drvas_studio_render_jobs,service_role,TRUNCATE,NO`.
+Pentru orice decizie de securitate, rezultatul brut transmis în conversația ChatGPT este sursa de referință; corecția de mai sus clarifică aceste două rânduri.
+
+### Următoarea verificare read-only recomandată
+
+Rulăm un singur SELECT pentru politicile tabelelor pe care codul sau interfața le pot accesa, inclusiv tabelele cu RLS activ și fără politici returnate în primul rezultat:
+
+```sql
+SELECT
+    schemaname,
+    tablename,
+    policyname,
+    permissive,
+    roles,
+    cmd,
+    qual,
+    with_check
+FROM pg_policies
+WHERE schemaname = 'public'
+  AND tablename IN (
+    'chat_messages',
+    'drvas_business_transactions',
+    'drvas_privacy_consents',
+    'drvas_rate_limits',
+    'drvas_studio_projects',
+    'drvas_studio_render_jobs',
+    'drvas_chat_attachments'
+  )
+ORDER BY tablename, policyname;
+```
+
+Apoi verificăm separat semnătura și permisiunile RPC-ului de rate limit:
+
+```sql
+SELECT
+    n.nspname AS schema_name,
+    p.proname AS function_name,
+    pg_get_function_identity_arguments(p.oid) AS arguments,
+    p.prosecdef AS security_definer,
+    p.proconfig AS function_settings,
+    has_function_privilege('anon', p.oid, 'EXECUTE') AS anon_can_execute,
+    has_function_privilege('authenticated', p.oid, 'EXECUTE') AS authenticated_can_execute,
+    has_function_privilege('service_role', p.oid, 'EXECUTE') AS service_role_can_execute
+FROM pg_proc p
+JOIN pg_namespace n ON n.oid = p.pronamespace
+WHERE n.nspname = 'public'
+  AND p.proname = 'drvas_consume_rate_limit';
+```
+
+Ambele interogări sunt SELECT read-only; nu modifică baza de date. Nu trimite chei, parole sau date personale.
+
+### Stare păstrată
+
+- Branch: `universal-chat-attachments`; PR #7 rămâne Draft, deschis și nemerged.
+- Migrarea `202611050001_chat_attachments.sql` rămâne neaplicată.
+- Nu s-a făcut deploy sau modificare live.
+- `DRVAS_FILE_ANALYSIS_ENABLED` rămâne dezactivat.
+- Următorul pas este primirea rezultatelor celor două SELECT-uri, apoi revizia finală a politicilor/granturilor și a migrării, cu backup și rollback înainte de orice SQL de scriere.
