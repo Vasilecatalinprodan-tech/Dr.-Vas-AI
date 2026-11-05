@@ -237,6 +237,18 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 .studio-workspace .studio-form-grid input:focus,.studio-workspace .studio-form-grid select:focus,.studio-workspace .studio-form-grid textarea:focus,.studio-workspace .studio-project-controls input:focus,.studio-workspace .studio-project-controls select:focus{outline:none;border-color:#68d9d1;box-shadow:0 0 0 3px #68d9d128}
 .studio-workspace .studio-actions button,.studio-workspace .income-actions button,.studio-workspace .studio-project-controls button{min-height:42px;border-radius:11px;font-weight:800;letter-spacing:.01em;transition:transform .18s,filter .18s,box-shadow .18s}
 .studio-workspace .studio-actions button:hover,.studio-workspace .income-actions button:hover,.studio-workspace .studio-project-controls button:hover{transform:translateY(-1px);filter:brightness(1.08)}
+.studio-scene-timeline-wrap{grid-column:1/-1;margin-top:4px;padding:14px;border:1px solid #34586f;border-radius:14px;background:linear-gradient(145deg,#0b2132,#071725)}
+.studio-scene-timeline-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;color:#e6f6fa;font-size:12px}
+.studio-scene-timeline-heading span{color:#7fded6;font-size:11px;font-weight:800}
+.studio-scene-timeline{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:10px;min-height:72px}
+.studio-scene-card{min-width:0;padding:8px;border:1px solid #355a70;border-radius:12px;background:#102a3c;cursor:grab;transition:border-color .18s,transform .18s,opacity .18s}
+.studio-scene-card:active{cursor:grabbing}
+.studio-scene-card.is-dragging-over{border-color:#73e2d9;transform:translateY(-2px);box-shadow:0 0 0 2px #73e2d933}
+.studio-scene-thumb{display:grid;place-items:center;width:100%;height:78px;overflow:hidden;border-radius:8px;background:#071522;color:#78dcd5}
+.studio-scene-thumb img,.studio-scene-thumb video{width:100%;height:100%;object-fit:cover}
+.studio-scene-card strong{display:block;margin-top:8px;color:#edfaff;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.studio-scene-card small{display:block;margin-top:3px;color:#9bb7c7;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.studio-timeline-empty{grid-column:1/-1;margin:0;padding:16px;border:1px dashed #355a70;border-radius:10px;color:#8faaba;font-size:11px;text-align:center}
 .studio-workspace .studio-render-panel{background:linear-gradient(145deg,#102a3e,#091827);border-color:#4c7388}
 .studio-workspace .studio-render-panel h3{color:#f4ffff;font-size:18px;letter-spacing:-.02em}
 .studio-workspace .studio-render-panel video{border:1px solid #4a7185;box-shadow:0 16px 34px #0007}
@@ -974,7 +986,8 @@ body.presentation-open{overflow:hidden!important}
      <h3 id="studioRenderTitle">🎞 Studio Render — Export MP4 1080 × 1920</h3>
      <p>Încarcă până la 8 imagini pentru scenele clipului sau creează un teaser tipografic. Fișierele sunt păstrate privat în contul tău. Watermark-ul MADE BY VPC este adăugat de server pe fiecare cadru.</p>
      <div class="studio-form-grid">
-      <label class="studio-idea-label">Imagini sau video pentru scene (opțional)<input id="studioSceneImages" type="file" accept="image/jpeg,image/png,image/webp,video/mp4" multiple><small>JPG, PNG, WebP sau MP4 · maximum 8 materiale · imagini 8 MB fiecare · video 40 MB fiecare.</small></label>
+      <label class="studio-idea-label">Imagini sau video pentru scene (opțional)<input id="studioSceneImages" type="file" accept="image/jpeg,image/png,image/webp,video/mp4" multiple onchange="previewStudioSceneTimeline(this.files)"><small>JPG, PNG, WebP sau MP4 · maximum 8 materiale · imagini 8 MB fiecare · video 40 MB fiecare. Ordinea de aici stabilește ordinea scenelor în export.</small></label>
+      <div class="studio-scene-timeline-wrap"><div class="studio-scene-timeline-heading"><strong>Timeline de producție</strong><span id="studioSceneTimelineCount">0 scene</span></div><div id="studioSceneTimeline" class="studio-scene-timeline" aria-live="polite"><p class="studio-timeline-empty">Adaugă imagini sau clipuri MP4 pentru a construi timeline-ul. Poți trage scenele pentru a le reordona.</p></div></div>
       <label class="studio-idea-label">Voice-over / muzică (opțional)<input id="studioSceneAudio" type="file" accept="audio/mpeg,audio/wav,audio/mp4,audio/aac"></label>
       <label>Durata fiecărei scene<select id="studioSceneDuration"><option value="3">3 secunde</option><option value="4" selected>4 secunde</option><option value="5">5 secunde</option><option value="6">6 secunde</option></select></label>
       <label class="studio-idea-label">Texte pentru scene<textarea id="studioSceneCaptions" rows="3" maxlength="3000" placeholder="Un text pe fiecare linie, în ordinea scenelor. Aceste texte apar ca subtitrări pe video. Dacă nu ai imagini, Studio creează un teaser tipografic."></textarea></label>
@@ -3022,6 +3035,53 @@ let currentStudioRenderJobId=null;
 let currentStudioRenderStoragePath="";
 let studioRenderPollTimer=null;
 let studioRenderPollAttempts=0;
+let studioSceneOrder=[];
+let studioScenePreviewUrls=[];
+let studioSceneDraggingIndex=null;
+function clearStudioSceneTimeline(){
+ studioScenePreviewUrls.forEach(url=>URL.revokeObjectURL(url));
+ studioScenePreviewUrls=[];studioSceneOrder=[];studioSceneDraggingIndex=null;
+ const timeline=el("studioSceneTimeline");if(timeline)timeline.innerHTML='<p class="studio-timeline-empty">Adaugă imagini sau clipuri MP4 pentru a construi timeline-ul. Poți trage scenele pentru a le reordona.</p>';
+ const count=el("studioSceneTimelineCount");if(count)count.textContent="0 scene";
+}
+function previewStudioSceneTimeline(fileList){
+ clearStudioSceneTimeline();
+ const files=Array.from(fileList||[]).slice(0,8);
+ studioSceneOrder=files.map((_,index)=>index);
+ renderStudioSceneTimeline(files);
+}
+function renderStudioSceneTimeline(files){
+ const timeline=el("studioSceneTimeline");if(!timeline)return;
+ timeline.replaceChildren();
+ const count=el("studioSceneTimelineCount");if(count)count.textContent=files.length+" "+(files.length===1?"scenă":"scene");
+ if(!files.length){timeline.innerHTML='<p class="studio-timeline-empty">Adaugă imagini sau clipuri MP4 pentru a construi timeline-ul. Poți trage scenele pentru a le reordona.</p>';return;}
+ studioSceneOrder.forEach((fileIndex,position)=>{
+  const file=files[fileIndex];if(!file)return;
+  const card=document.createElement("article");card.className="studio-scene-card";card.draggable=true;card.dataset.position=String(position);
+  const thumb=document.createElement("div");thumb.className="studio-scene-thumb";
+  const url=URL.createObjectURL(file);studioScenePreviewUrls.push(url);
+  const media=document.createElement(file.type==="video/mp4"?"video":"img");media.src=url;
+  if(media.tagName==="VIDEO"){media.muted=true;media.playsInline=true;media.preload="metadata";}else media.alt="Previzualizare "+file.name;
+  thumb.appendChild(media);
+  const title=document.createElement("strong");title.textContent="Scena "+String(position+1).padStart(2,"0");
+  const detail=document.createElement("small");detail.textContent=file.name+" · "+(file.type==="video/mp4"?"MP4":"Imagine");
+  card.append(thumb,title,detail);
+  card.addEventListener("dragstart",event=>{studioSceneDraggingIndex=position;event.dataTransfer?.setData("text/plain",String(position));if(event.dataTransfer)event.dataTransfer.effectAllowed="move";});
+  card.addEventListener("dragover",event=>{event.preventDefault();card.classList.add("is-dragging-over");});
+  card.addEventListener("dragleave",()=>card.classList.remove("is-dragging-over"));
+  card.addEventListener("drop",event=>{
+   event.preventDefault();card.classList.remove("is-dragging-over");
+   const from=Number(event.dataTransfer?.getData("text/plain")??studioSceneDraggingIndex),to=position;
+   if(Number.isInteger(from)&&from>=0&&from<studioSceneOrder.length&&from!==to){
+    const next=studioSceneOrder.slice();const [moved]=next.splice(from,1);next.splice(to,0,moved);studioSceneOrder=next;
+    studioScenePreviewUrls.forEach(url=>URL.revokeObjectURL(url));studioScenePreviewUrls=[];
+    renderStudioSceneTimeline(files);
+   }
+   studioSceneDraggingIndex=null;
+  });
+  timeline.appendChild(card);
+ });
+}
 function stopStudioRenderPolling(){
  if(studioRenderPollTimer)window.clearTimeout(studioRenderPollTimer);
  studioRenderPollTimer=null;studioRenderPollAttempts=0;
@@ -3042,7 +3102,8 @@ async function renderStudioVideo(){
  stopStudioRenderPolling();
  const button=el("studioRenderCreateButton");if(button)button.disabled=true;
  try{
-  const files=Array.from(el("studioSceneImages")?.files||[]);
+  const selectedFiles=Array.from(el("studioSceneImages")?.files||[]);
+  const files=studioSceneOrder.length?studioSceneOrder.map(index=>selectedFiles[index]).filter(Boolean):selectedFiles;
   const audioFile=el("studioSceneAudio")?.files?.[0]||null;
   if(files.length>8)throw new Error("Poți încărca maximum 8 imagini pentru un clip.");
   if(audioFile){
@@ -3150,7 +3211,7 @@ function newStudioProject(){
  stopStudioRenderPolling();
  currentStudioProjectId=null;currentStudioProjectOutput="";currentStudioRenderJobId=null;currentStudioRenderStoragePath="";
  ["studioProjectTitle","studioIdea"].forEach(id=>{el(id).value="";});if(el("studioSubtitles"))el("studioSubtitles").checked=true;if(el("studioNarration"))el("studioNarration").value="founder_voice_pending";
- if(el("studioSceneImages"))el("studioSceneImages").value="";if(el("studioSceneAudio"))el("studioSceneAudio").value="";if(el("studioSceneCaptions"))el("studioSceneCaptions").value="";
+ if(el("studioSceneImages"))el("studioSceneImages").value="";clearStudioSceneTimeline();if(el("studioSceneAudio"))el("studioSceneAudio").value="";if(el("studioSceneCaptions"))el("studioSceneCaptions").value="";
  if(el("studioRenderPreview")){el("studioRenderPreview").pause();el("studioRenderPreview").removeAttribute("src");el("studioRenderPreview").hidden=true;}
  if(el("studioRenderDownload")){el("studioRenderDownload").removeAttribute("href");el("studioRenderDownload").hidden=true;}
  studioRenderMessage("Proiect nou. Creează un brief sau un teaser MP4.");
