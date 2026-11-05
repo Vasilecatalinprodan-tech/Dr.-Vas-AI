@@ -43,6 +43,7 @@ jobs:
         run: |
           grep -F 'android:allowBackup="false"' android/app/src/main/AndroidManifest.xml
           grep -F 'android.permission.INTERNET' android/app/src/main/AndroidManifest.xml
+          grep -F 'setMediaPlaybackRequiresUserGesture(false)' android/app/src/main/java/com/drvas/ai/MainActivity.java
 
       - name: Build APK
         working-directory: android
