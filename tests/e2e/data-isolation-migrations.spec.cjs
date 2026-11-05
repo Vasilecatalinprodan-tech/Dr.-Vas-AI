@@ -98,7 +98,7 @@ test("Health assistant keeps clinical boundaries and emergency escalation in its
   const worker = fs.readFileSync(path.join(__dirname, "../../worker/index.js"), "utf8");
   expect(worker).toContain("You are an AI assistant, not a doctor, nurse, pharmacist or emergency service.");
   expect(worker).toContain("Do not prescribe, recommend starting/stopping/changing a prescription");
-  expect(worker).toContain("call 999 (or 112)");
+  expect(worker).toContain("calling 999 (or 112)");
   expect(worker).toContain("NHS 111 or urgent GP assessment");
   expect(worker).toContain("Do not reassure someone that serious symptoms are harmless");
   expect(worker).toContain('liveModule === "health" && env.GEMINI_LIVE_HEALTH_ENABLED !== "true"');
