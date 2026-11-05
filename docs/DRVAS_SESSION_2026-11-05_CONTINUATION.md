@@ -914,3 +914,16 @@ Nu apare o problemă evidentă în corpul funcției: validarea parametrilor, num
 
 ### Stare
 Query-ul a fost read-only. Nu s-a schimbat funcția, proprietarul, granturile, tabelul, RLS, Worker-ul, secretele sau producția. PR #7 rămâne Draft și nemerged; nu s-a făcut deploy. Următorul pas este verificarea exactă în cod a construirii parametrului `p_user_id` în `consumeRateLimit` și apoi reluarea corecției TTS pentru cele trei personaje, în special Sarah cu voce feminină.
+
+
+## Corelare Worker → RPC rate-limit — verificare call sites
+
+Inspectat `worker/index.js` pe branch-ul `universal-chat-attachments`, fără modificări. Helperul `consumeRateLimit(env, userId, bucket, limit, windowSeconds)` trimite `p_user_id: userId` către RPC, folosind `SUPABASE_KEY` numai în Worker. Call sites verificate:
+- Studio render: `studioUser.id` după autentificarea/validarea sesiunii Studio;
+- Studio render status: `studioUser.id`;
+- endpoint voice TTS: `ttsUser.id`, obținut prin `verifySupabaseUser(env, body.access_token)` înaintea rate-limitului;
+- Live voice token: `liveUser.id`, după validarea utilizatorului Live;
+- AI chat: `user.id`, după verificarea autentificării requestului.
+În aceste call sites observate, UID-ul trimis RPC-ului provine din obiectul utilizatorului validat pe server, nu din `body.p_user_id`. Aceasta corespunde restricției EXECUTE doar pentru `service_role` și reduce riscul ca un client să aleagă arbitrar UID-ul folosit la contorizare. Helperul nu returnează cheia sau payloadul în răspuns; erorile logate includ status și corpul erorii trunchiat, nu credentialele. Nu s-au inspectat toate posibilele call sites din întregul repository, doar potrivirile din Worker.
+
+Concluzie actualizată: funcția SQL și modul observat de apelare din Worker sunt coerente. Nu recomandăm modificări SQL în acest moment. Menținerea secretului `SUPABASE_KEY` exclusiv în Cloudflare Worker este obligatorie. Nu s-a modificat codul, baza de date, permisiunile, secretele sau producția.
