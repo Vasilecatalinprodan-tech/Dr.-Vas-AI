@@ -1033,3 +1033,24 @@ Commit corecție test: `33d6c8315d232f41d0fc808a816724a28513d259`.
 Această schimbare repară sintaxa testului, dar NU înseamnă că testele E2E au trecut. Trebuie verificat următorul run GitHub Actions și corectate eventualele eșecuri funcționale. Vocile sunt mock în CI; verificarea auditivă reală pentru Sarah rămâne necesară.
 
 Nu s-a făcut merge, deploy, migrare SQL sau schimbare în producție. PR #7 rămâne Draft.
+
+
+## 2026-11-05 — rezultat browser E2E după corectarea callbackului asincron
+
+Run GitHub Actions `42087370401`, job `127455976044`, a executat efectiv suita Playwright pe Chromium:
+- instalarea Playwright `1.64.1`: succes;
+- instalarea Chromium: succes;
+- serverul static local: pornit;
+- toate cele 43 de teste: **43 passed (21.3s)**;
+- inclusiv testul `Dr.Vas presentation introduces all six modules through three animated speakers in all supported languages`, care a verificat vocile mock distincte (Dr.Vas → Microsoft Andrei, Dr.Jan → Microsoft David, Sarah → Microsoft Alina) și prezentarea în română, engleză, italiană, turcă, germană, franceză, spaniolă și rusă.
+
+Notă importantă: GitHub a raportat run-ul ca `cancelled`, deși logul jobului conține explicit rezultatul `43 passed` și pașii de testare au fost încheiați. Nu îl prezentăm ca workflow CI verde până la clarificarea statusului final. Este posibil ca o rulare nouă să fi anulat rularea anterioară prin mecanismul de concurrency; verificarea continuă.
+
+După commitul acestui jurnal, GitHub a pornit run-ul următor:
+- run ID `42087396053`, run number 272;
+- commit jurnal curent `d3504a592b9d73fc09f9e6cfafd399959dc2ba23`;
+- la ultima verificare: validarea JavaScript/migrării trecută, instalarea runnerului în curs, Chromium și E2E încă în așteptare.
+
+Interpretare: avem dovada că testele Playwright au rulat și toate 43 au trecut în run-ul anterior; avem încă de confirmat o rulare completă cu status final `success`. Testele de voce folosesc voci simulate; nu confirmă timbrul audio real. Verificarea auditivă pe browserul utilizatorului rămâne necesară, în special pentru Sarah.
+
+Nu s-a făcut merge, deploy, migrare SQL sau schimbare de producție. PR #7 rămâne Draft.
