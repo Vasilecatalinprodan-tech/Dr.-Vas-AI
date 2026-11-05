@@ -1573,3 +1573,12 @@ Aștept rezultatul rulărilor E2E cu noua politică de concurență; dacă apare
 - Prin urmare, merge-ul este confirmat, dar deploy-ul live și APK-ul final nu sunt încă declarate reușite până când Actions nu confirmă rezultatele.
 - Migrarea `202611050001_chat_attachments.sql` este inclusă în repo, dar NU a fost executată în proiectul Supabase. `DRVAS_FILE_ANALYSIS_ENABLED` rămâne dezactivat; analiza documentelor medicale nu trebuie activată până la revizuirea și aplicarea sigură a migrării, verificările de retenție/DPA și conformitate UK GDPR/DPIA.
 - Nicio valoare de secret Cloudflare/Supabase/Gemini nu a fost citită sau schimbată în această sesiune.
+
+
+## Confirmare deploy producție — 2026-11-05
+
+- Deploy Worker pentru commitul integrat `c194068c4e13bc3c69ccf2208d67ed13db45ec46` a încheiat cu SUCCESS.
+- Run GitHub Actions: `42097274639` — https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42097274639
+- Pașii confirmați reușiți: instalare dependențe, SBOM, validare Worker/JavaScript, instalare Chromium, testele Playwright homepage/session-restoration, deploy Worker, smoke test producție și verificarea tuturor celor șase carduri de module plus răspunsul 401 pentru endpoint-ul admin neautentificat.
+- Worker-ul de producție a fost publicat și verificat de propriul workflow. APK build încă rulează la ultima verificare; nu declarăm APK gata până la finalizarea upload-ului artefactului.
+- Migrarea Supabase pentru atașamente rămâne neexecutată și analiza fișierelor medicale rămâne dezactivată până la verificările de conformitate și configurare.
