@@ -450,7 +450,7 @@ The final deployment was performed by the workflow after Playwright passed, and 
 - Build a fresh APK from the latest frontend commit after tests pass. The previous APK predates the mobile Health test commit; the source code itself is unchanged by that test-only commit, but a fresh artifact is preferable for a clean checkpoint.
 - Do not claim physical-device testing, Google Play readiness, payment readiness, clinical approval, or completed legal review without separate evidence.
 - Privacy notice remains a working draft and explicitly needs operator contact details, retention/lawful-basis confirmation, processor/transfer review and specialist review before public commercial launch.
-- Confirm production configuration for optional providers individually. A successful general Worker health check does not prove Creatomate rendering, live voice, founder cryptographic keys, every Supabase migration, or third-party account integrations are configured.
+- Confirm production configuration for optional providers individually. The latest Worker health response reports `studio_renderer: configured` (the Creatomate secret is present), but a successful health check does not prove an authenticated end-to-end MP4 render, private storage write, preview or download. Live voice, founder cryptographic keys, every Supabase migration and third-party account integrations still require separate verification.
 - No Supabase schema/data changes were made in this work block. No production secret or administrator allowlist was changed.
 
 ### Final verification — 2026-11-05 00:18 UTC
