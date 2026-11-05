@@ -55,3 +55,9 @@ Next verify in the Supabase SQL Editor using the read-only checks in `docs/SUPAB
 - Academy, Commerce and Business each complete save → list → reopen using two disposable accounts, with no cross-account visibility.
 
 Do not rerun the migration merely because this checklist remains open; it is designed to be applied once and should only be reapplied if the read-only audit identifies a concrete missing object/policy. Never share service-role keys or passwords in chat.
+
+## Academy / Commerce / Business saved-project behavior
+
+- The shared project table supports all three modules.
+- When the user already has a saved project open, the frontend now writes each new AI reply back into that existing project together with its current brief. A new project is not created automatically for every chat; the user can still choose when to save a new draft.
+- The UI also supports listing, reopening, exporting and deleting each module project. Verify these actions in the live Supabase project after running the read-only checks, including a second disposable account to confirm owner isolation.
