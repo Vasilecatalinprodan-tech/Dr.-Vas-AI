@@ -995,3 +995,12 @@ GitHub Actions a pornit workflow-ul browser regression pentru PR #7:
 Prin urmare, testele nu sunt încă declarate trecute. Trebuie verificat rezultatul workflow-ului înainte de a considera corecția vocală validată. Testul folosește voci mock; verificarea auditivă reală în browser pe dispozitivul utilizatorului rămâne necesară pentru a confirma timbrul și naturalețea vocii Sarah în limbile folosite.
 
 Nu s-a făcut deploy, merge sau modificare Live/production. PR #7 rămâne Draft.
+
+
+### Rezultat CI verificat după implementare
+Workflow-ul pentru commitul `82ee14e31e023b35bbcd797157cccabc50a6d17e` a eșuat la pasul de instalare a runnerului, nu la validarea codului:
+- pasul `Validate Worker, inline browser JavaScript and attachment migration` a trecut cu succes; scriptul inline din `www/index.html` a fost parsat cu `vm.Script`, deci sintaxa JavaScript a fost validată;
+- pasul `npm install --no-save --package-lock=false @playwright/test` a eșuat cu `ETARGET No matching version found for playwright-core@1.65.0`;
+- instalarea Chromium și testele Playwright au fost sărite deoarece instalarea runnerului a eșuat.
+Același rezultat a apărut și pentru run-ul commitului jurnalului `11af407c584ffb0dffbc8f1d524185911995c173` (run ID `42085874839`). Prin urmare, nu există încă rezultat Playwright pentru noul test de voci. Nu modificăm arbitrar versiunea dependenței CI fără a verifica o versiune publicată și compatibilă.
+Stare curentă: codul JavaScript inline trece verificarea de sintaxă; testul automat de browser este blocat de instalarea dependenței; testul auditiv real rămâne de efectuat. Nicio lansare/deploy sau merge.
