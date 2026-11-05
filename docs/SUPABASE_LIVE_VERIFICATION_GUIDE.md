@@ -43,3 +43,15 @@ Until the live query outputs and two-account tests have been reviewed, record Su
 - Do not apply three copies. Apply this exact migration once in the correct Dr.Vas Supabase project. Then verify the table, RLS and four policies, and test all three module values with two disposable user accounts.
 - No live Supabase connector or authorized database session is available in this development session. Therefore the SQL has been reviewed and documented, but has NOT been executed against the live database. Do not claim the Academy/Commerce/Business project persistence is fixed until the migration has been applied and verified in Supabase.
 - User-facing next action: Supabase Dashboard → correct Dr.Vas project → SQL Editor → New query → paste the full contents of `supabase/migrations/202611040001_module_projects.sql` → Run. Then run the read-only checks in `docs/SUPABASE_READONLY_VERIFICATION.sql` and complete the two-account isolation tests described in `docs/SUPABASE_LIVE_VERIFICATION_GUIDE.md`. Never paste secrets into chat.
+
+## Founder-reported migration execution — 2026-11-05
+
+The founder has now confirmed that `202611040001_module_projects.sql` was executed successfully in the correct Supabase project. This is recorded as a user-reported successful execution, not as an independently observed database verification.
+
+Next verify in the Supabase SQL Editor using the read-only checks in `docs/SUPABASE_READONLY_VERIFICATION.sql`:
+- `public.drvas_module_projects` exists and has RLS enabled.
+- The four expected owner-scoped policies exist (SELECT, INSERT, UPDATE, DELETE).
+- Authenticated grants are present and anon/public grants are absent.
+- Academy, Commerce and Business each complete save → list → reopen using two disposable accounts, with no cross-account visibility.
+
+Do not rerun the migration merely because this checklist remains open; it is designed to be applied once and should only be reapplied if the read-only audit identifies a concrete missing object/policy. Never share service-role keys or passwords in chat.
