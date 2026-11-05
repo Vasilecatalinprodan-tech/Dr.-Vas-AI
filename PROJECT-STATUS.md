@@ -644,3 +644,9 @@ Outstanding verification: live Supabase status for `202611030001_rate_limits.sql
 - Test commit 0ce0b19916fc5968d747f98bb10ab78c8f562e3f: updated browser tests to mock an authenticated non-admin access check, and aligned voice assertions with the supported behavior of reusing one available language voice across the three presenter segments. The test also checks that a single installed Romanian voice still starts narration.
 - Deployment run #437 (42104681759) and APK run #328 (42104681938) were still running at the time of this note; deployment run #438 (42104694767) was queued for the latest test commit. Verify the latest run before claiming production deployment.
 - Next: verify run #438; if it passes, confirm Worker deployment and production smoke test. Then verify the new APK artifact and continue real-device audio testing only with the founder's approval. Do not ask the founder to reinstall the existing APK without explicit permission.
+
+
+### Follow-up CI checkpoint — 2026-11-05
+
+- The follow-up APK build workflow #328 (run ID 42104681938) completed successfully for frontend commit 56c73d5a6c9a2c134679d9de6b6b99d849948fc3. Artifact DrVas-APK ID 13450941858, 6,114,301 bytes, SHA-256 fe7e514ffe63e99749796049c19cb6e9bbf633f06f43deb218592ac9d4973439, expiry 2027-02-03. Build-only; no installation or physical-device audio validation.
+- The deployment attempt #437 was cancelled by GitHub Actions concurrency when the latest test commit was pushed. Latest deployment workflow #438 (run ID 42104694767, commit 0ce0b19916fc5968d747f98bb10ab78c8f562e3f) passed dependency installation, SBOM generation and JavaScript validation; browser runner install completed and Chromium installation was still in progress at this checkpoint. Browser E2E, Worker deployment and production smoke test have not yet run in this attempt.
