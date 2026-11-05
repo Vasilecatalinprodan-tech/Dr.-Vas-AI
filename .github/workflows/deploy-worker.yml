@@ -128,6 +128,8 @@ jobs:
             [worker.includes('body.attachment_ids') && worker.includes('drvas_chat_attachments'), 'Worker must validate attachment ownership and metadata'],
             [worker.includes('storage/v1/object/sign/drvas-media/'), 'Worker must use short-lived private storage URLs'],
             [worker.includes('type: item.mime_type === "application/pdf" ? "document" : "image"'), 'Worker must route PDFs and images as multimodal inputs'],
+            [worker.includes('method: "HEAD"') && worker.includes('headers.get("content-length")') && worker.includes('headers.get("content-type")'), 'Worker must verify real Storage object size and MIME before Gemini'],
+            [worker.includes('new TextDecoder("utf-8", { fatal: true })'), 'Worker must reject invalid UTF-8 attachment text'],
             [html.includes('id="chatFileInput"') && html.includes('function uploadPendingChatFiles'), 'Universal chat attachment UI and upload workflow are missing'],
             [html.includes('id="healthDataProcessingConsent"') && html.includes('id="fileProcessingConsent"'), 'File and Health data processing consent controls are missing']
           ];
