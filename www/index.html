@@ -1214,6 +1214,13 @@ body.presentation-open{overflow:hidden!important}
    <button type="button" id="privateProfileSaveButton" class="profile-button" onclick="savePrivateProfile()">Aplică opțiunea de confidențialitate</button>
    <div id="privateProfileMessage" role="status" aria-live="polite"></div>
   </details>
+  <details id="fileProcessingPrivacyPanel" class="private-profile-details">
+   <summary>Consimțământ pentru fișiere și documente</summary>
+   <p>Poți retrage oricând acordul pentru procesarea fișierelor. Retragerea oprește folosirea viitoare a funcției de analiză a fișierelor, inclusiv în Dr.Vas Health.</p>
+   <div id="fileProcessingConsentStatus" role="status" aria-live="polite">Se verifică starea acordului...</div>
+   <button type="button" id="revokeFileProcessingConsentButton" class="profile-button" onclick="revokeFileProcessingConsent()" disabled>Retrage acordul pentru fișiere</button>
+   <small>Retragerea nu șterge automat fișierele încărcate anterior. Pentru ștergerea lor, folosește ștergerea conversației sau a istoricului.</small>
+  </details>
   <button id="profileButton" class="profile-button" onclick="saveProfile()">Salvează profilul</button>
   <div id="profileMessage"></div>
  </div>
@@ -3784,6 +3791,7 @@ async function loadProfile(user){
     el("country").value = data.country || "";
     el("profileMessage").textContent = "";
     await loadPrivateProfile(user);
+    await loadFileProcessingConsent(user);
 
     if(data.display_name && data.country) await showChat(user,data.display_name);
     else showOnly("profileSection");
@@ -3853,6 +3861,53 @@ async function loadPrivateProfile(user){
     el("privateInvoicePreferences").value=p.invoice_preferences||"";
   }catch(error){
     el("privateProfileMessage").textContent="Datele private nu au putut fi încărcate: "+error.message;
+  }
+}
+
+async function loadFileProcessingConsent(user){
+  const status=el("fileProcessingConsentStatus");
+  const button=el("revokeFileProcessingConsentButton");
+  if(!user||!status||!button)return;
+  status.textContent="Se verifică starea acordului...";
+  button.disabled=true;
+  try{
+    const result=await privateProfileRequest("file_processing_consent_get");
+    const general=result.file_processing_granted===true;
+    const health=result.health_data_processing_granted===true;
+    if(general||health){
+      status.textContent=health
+        ?"Acord activ: procesare fișiere și date medicale sensibile."
+        :"Acord activ: procesare generală a fișierelor. Nu există acord activ pentru date medicale sensibile.";
+      button.disabled=false;
+    }else{
+      status.textContent="Nu există un acord activ pentru procesarea fișierelor.";
+      button.disabled=true;
+    }
+  }catch(error){
+    status.textContent="Nu am putut verifica starea acordului. Nu trimite fișiere până când verificarea nu este disponibilă.";
+    console.warn("File processing consent status unavailable:",error);
+  }
+}
+
+async function revokeFileProcessingConsent(){
+  if(!currentUser)return;
+  const button=el("revokeFileProcessingConsentButton");
+  const status=el("fileProcessingConsentStatus");
+  if(!window.confirm("Retragi acordul pentru procesarea tuturor fișierelor, inclusiv a datelor medicale din Dr.Vas Health? Fișierele încărcate anterior nu vor fi șterse automat."))return;
+  button.disabled=true;
+  setLocalizedText(button,"Se retrage acordul...");
+  try{
+    const result=await privateProfileRequest("file_processing_consent",{granted:false});
+    if(!result.ok||result.revoked!==true)throw new Error("Serverul nu a confirmat retragerea acordului.");
+    if(el("fileProcessingConsent"))el("fileProcessingConsent").checked=false;
+    if(el("healthDataProcessingConsent"))el("healthDataProcessingConsent").checked=false;
+    status.textContent="Acord retras. Procesarea viitoare a fișierelor este dezactivată, inclusiv pentru Dr.Vas Health. Fișierele încărcate anterior nu au fost șterse.";
+    button.disabled=true;
+  }catch(error){
+    status.textContent="Nu am putut retrage acordul: "+error.message;
+    button.disabled=false;
+  }finally{
+    setLocalizedText(button,"Retrage acordul pentru fișiere");
   }
 }
 
