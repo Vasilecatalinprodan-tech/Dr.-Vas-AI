@@ -774,3 +774,13 @@ Outstanding verification: live Supabase status for `202611030001_rate_limits.sql
 - PR #3 was not merged as a branch because of its 444-commit divergence. Its relevant code changes and six specification documents have been selectively ported and tested in current `main`; do not merge the stale branch wholesale.
 - Still outstanding: live Supabase migration/RLS/Storage verification; actual MP4 provider render/export test; successful real-account cross-user isolation tests; physical Samsung audio test; Android release signing and store readiness; billing/entitlements; account deletion implementation and legal/privacy/clinical review. Existing installed APK remains untouched.
 - Conversation continuity: GitHub now stores the merge/deploy record, code/test changes, feature specifications and this checkpoint. It does not store a verbatim copy of every chat message. The original chat remains in ChatGPT history.
+
+
+## Additional roadmap carry-forward — AI Evaluation & Training Workbench
+
+- Recorded the AI Evaluation & Training Workbench as a capability inside Dr.Vas Studio and Dr.Vas Business, not as a seventh public workspace.
+- Scope includes rubric-based AI response evaluation, human QA/calibration, prompt/model benchmarks, permissioned dataset annotation and managed business evaluation reports.
+- Training use is separate from evaluation permission; customer content must not be reused for training without documented rights, lawful basis and contractual authority.
+- High-impact Health, legal and finance evaluations require domain-qualified human review and appropriate professional/regulatory oversight.
+- This is a roadmap specification only. No customer pipeline, reviewer marketplace, service contract, billing or public offer is live. See `docs/AI_EVALUATION_TRAINING_WORKBENCH.md`.
+- PR #3 was closed as superseded, not merged wholesale. Its relevant code, specs and product decisions have been selectively ported to current main and validated by workflow #461.
