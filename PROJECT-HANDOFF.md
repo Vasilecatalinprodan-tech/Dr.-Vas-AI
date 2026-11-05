@@ -529,3 +529,13 @@ Founder feedback:
 - Do not apply three copies. Apply this exact migration once in the correct Dr.Vas Supabase project. Then verify the table, RLS and four policies, and test all three module values with two disposable user accounts.
 - No live Supabase connector or authorized database session is available in this development session. Therefore the SQL has been reviewed and documented, but has NOT been executed against the live database. Do not claim the Academy/Commerce/Business project persistence is fixed until the migration has been applied and verified in Supabase.
 - User-facing next action: Supabase Dashboard → correct Dr.Vas project → SQL Editor → New query → paste the full contents of `supabase/migrations/202611040001_module_projects.sql` → Run. Then run the read-only checks in `docs/SUPABASE_READONLY_VERIFICATION.sql` and complete the two-account isolation tests described in `docs/SUPABASE_LIVE_VERIFICATION_GUIDE.md`. Never paste secrets into chat.
+
+## Handoff — 2026-11-05 voice and Supabase update
+
+Latest voice code commits on `main`: Worker routing `d5e44d4c38d282e63a00c430734751c3e9ec7684`; frontend routing `72609bc1f5f35333b04f855af40ae95d6abf8c99`; CI assertions `3478039a2e337314baab2c054107b5eba115b84c`; E2E test `43f0c2cf507a3ce951ecdea644cca74157cc351e`.
+
+The Worker now maps the authenticated TTS request to one of three server-side secrets. Required names: `ELEVENLABS_VOICE_ID`, `ELEVENLABS_JAN_VOICE_ID`, `ELEVENLABS_SARAH_VOICE_ID`; keep `ELEVENLABS_API_KEY` private. Dr.Vas's existing ID remains the legacy mapping. Do not ask the founder to paste secrets in chat. Wait for voice selection and explicit approval of provider costs before enabling paid voice use. CI/deployment result must be checked before describing production as updated.
+
+Founder confirms the shared module-project migration was executed successfully. Still perform read-only verification of table/RLS/policies/grants and disposable two-account tests. This report does not itself inspect the live database.
+
+Portrait question remains open: fictional photorealistic adult portraits or real-person photos with consent. Existing installed APK must not be modified/reinstalled without explicit permission.
