@@ -676,3 +676,13 @@ Keep modules integrated, preserve existing auth, profile, chat/history, multilin
 - The frontend and Android source changes are present on the branch. This source inspection does not prove that GitHub Actions completed, that an APK artifact exists, or that audio plays on the founder's phone.
 - The current GitHub connector in this session does not expose a repository-wide Actions run listing/dispatch operation. Do not invent a build status; the run/artifact must be checked in GitHub Actions UI or with an available Actions API integration.
 - Next practical test after downloading the successful artifact: install/update the APK on the Android phone, sign in, enable voice output, ask for a short Romanian response, test replay and stop. If silent, record whether the UI shows voice unavailable and inspect Worker response status, ElevenLabs secrets/configuration, Android WebView audio focus/permissions, and device media volume. Do not paste secrets into chat.
+
+
+## OTA provider assessment — 2026-11-05
+
+- Reviewed current official live-update documentation for Capawesome and Capgo.
+- Dr.Vas uses Capacitor 8.6.0. Capawesome's documented Live Update plugin 8.x supports Capacitor 8.x; it supports staged rollouts and automatic rollback, and its Cloud setup supports background update checks and applying downloaded bundles on a subsequent app launch. Sources reviewed: https://capawesome.io/docs/sdks/capacitor/live-update/ and https://capawesome.io/docs/cloud/live-updates/setup/
+- Capgo also supports Capacitor live updates, version/native compatibility checks, rollback and staged channels. Its docs explicitly state OTA replaces only JavaScript/web assets; native plugin/configuration changes still need a new store-distributed binary. Sources reviewed: https://capgo.app/docs/live-updates/compatibility/ and https://capgo.app/docs/faq/
+- Recommendation for a low-friction first implementation: evaluate Capawesome Cloud first because its current plugin major aligns with Capacitor 8 and its documented cloud flow includes rollout and rollback. Compare current pricing, signing, data processing, retention and account requirements before selecting. Capgo remains a valid alternative, particularly if self-hosting becomes a priority.
+- No provider selected, no account created, no plugin installed and no OTA credentials added. This requires the founder's approval after reviewing provider cost/privacy terms.
+- Security design requirement: production OTA channel must be pinned to the matching native app version; CI must block incompatible bundles; test channel first, then staged production rollout; preserve built-in bundle rollback. Never deliver new native plugins or native code through OTA.
