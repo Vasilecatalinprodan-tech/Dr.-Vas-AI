@@ -1144,7 +1144,7 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
   const languages = [["ro","ro-RO"],["en","en-GB"],["it","it-IT"],["tr","tr-TR"],["de","de-DE"],["fr","fr-FR"],["es","es-ES"],["ru","ru-RU"]];
   const openLabels = {ro:"Deschide prezentarea",en:"Open presentation",it:"Apri la presentazione",tr:"Tanıtımı aç",de:"Präsentation öffnen",fr:"Ouvrir la présentation",es:"Abrir presentación",ru:"Открыть презентацию"};
   for (const [language, locale] of languages) {
-    const first = await page.evaluate(code => {
+    const first = await page.evaluate(async code => {
       stopDrvasPresentationSpeech(); currentLanguage = code; renderDrvasPresentation(); await speakDrvasPresentation();
       const utterance = window.__drvasSpoken[window.__drvasSpoken.length - 1];
       return { text: utterance.text, lang: utterance.lang, speaker: document.querySelector("#presentationSpeakerName").textContent, expandedNames: prepareDrvasPresentationSpeechText("Dr.Vas și Dr.Jan") };
