@@ -1336,3 +1336,16 @@ test("Dr.Vas Studio accepts MP4 scene footage alongside still images", async ({ 
   await expect(input).toHaveAttribute("multiple", "");
   await expect(page.locator("#studioRenderCreateButton")).toHaveText("Randează video MP4");
 });
+
+
+test("spoken chat text expands Dr.Vas and Dr.Jan names without changing written branding", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(() => ({
+    spoken: prepareSpeechText("Dr.Vas răspunde împreună cu Dr.Jan. Intră în Dr.Vas Studio."),
+    written: document.title,
+    logo: document.querySelector("header")?.innerText || ""
+  }));
+  expect(result.spoken).toBe("Doctor Vas răspunde împreună cu Doctor Jan. Intră în Doctor Vas Studio.");
+  expect(result.written).toContain("Dr.Vas AI");
+  expect(result.logo).toContain("Dr.Vas");
+});
