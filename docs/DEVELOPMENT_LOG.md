@@ -225,3 +225,10 @@ Founder feedback:
 - For Academy, Commerce and Business, new AI replies now persist into the currently opened saved project automatically.
 - This only updates an existing project ID; it does not create unsolicited new projects.
 - Added a CI static assertion for the persistence hook.
+
+### Latest validation — workflow #473
+
+- Workflow #473 / run `42130733280` completed SUCCESS.
+- Browser regression suite (including no-Web-Speech server TTS), JavaScript validation, Worker deployment, production smoke test and SBOM upload passed.
+- Cloudflare production Worker version: `f88f84eb-45b6-45b8-84f4-0d109c88864f`.
+- Remaining: provider voice secrets and physical device audio checks; live Supabase RLS/persistence verification.
