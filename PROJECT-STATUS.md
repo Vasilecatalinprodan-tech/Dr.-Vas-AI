@@ -792,3 +792,12 @@ Founder instruction: continue progressively across the full Dr.Vas ecosystem and
 5. Deliver Crypto/Mining and Online Income as safe research/simulation tools.
 6. Develop Academy, Commerce and Business workflows.
 7. Complete subscription/entitlement, privacy/compliance and store-release work.
+
+
+## Branch integration clarification — 2026-11-05
+
+- PR #6 (“Integrate founder workbenches and customer journey planner”) is confirmed **merged** into `drvas-integrated-platform` at merge commit `1c4fdd930969b4d474458c1ad19e46c9577ecc55`. Do not attempt to merge it again.
+- The merged PR recorded 42/42 Playwright tests passing on its head commit `7fd8467da50a3555bb1b3e13443ee20dd9d5aa0c`; this is a historical result, not proof that later continuation-branch commits pass.
+- Source inspection confirmed Creator & Online Income Lab, Book Workshop, Music Release Lab and Content & Campaign Planner markers in `www/index.html` on both `drvas-integrated-platform` and `universal-chat-attachments`.
+- GitHub comparison currently reports `universal-chat-attachments` and `drvas-integrated-platform` as divergent (continuation branch 146 commits ahead, 4 behind; merge base `ab0e2778306f77547f6ce87a174ba33bbff229df`). Review the four behind commits and file differences deliberately; do not merge blindly.
+- Current-branch APK run/artifact, audible TTS and successful production deployment remain unverified.
