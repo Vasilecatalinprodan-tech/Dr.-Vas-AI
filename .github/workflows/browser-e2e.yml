@@ -54,7 +54,17 @@ jobs:
           ]) {
             if (!migration.toLowerCase().includes(marker.toLowerCase())) throw new Error('Attachment migration missing: ' + marker);
           }
-          console.log(`Validated Worker, ${scripts.length} inline script(s), and private attachment migration.`);
+          const worker = fs.readFileSync('worker/index.js', 'utf8');
+          for (const marker of [
+            'file_processing_consent_get',
+            'file_processing_consent',
+            'health_data_processing',
+            'granted: body.granted',
+            'revoked: body.granted === false'
+          ]) {
+            if (!worker.includes(marker)) throw new Error('File consent Worker route missing: ' + marker);
+          }
+          console.log(`Validated Worker, ${scripts.length} inline script(s), private attachment migration, and consent withdrawal routes.`);
           NODE
 
       - name: Install browser test runner
