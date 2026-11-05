@@ -3235,7 +3235,7 @@ function renderBusinessCashflow(){
  const host=el("businessCashflowRows");if(!host)return;host.replaceChildren();
  if(!rows.length){const empty=document.createElement("p");empty.textContent="Nu există tranzacții în perioada selectată pentru "+currency+".";host.append(empty);return;}
  const monthsByKey=new Map();
- rows.forEach(row=>{const key=String(row.transaction_date||"").slice(0,7);if(!/^\\d{4}-\\d{2}$/.test(key))return;const item=monthsByKey.get(key)||{income:0,expenses:0};if(row.entry_type==="income")item.income+=Number(row.amount||0);else if(row.entry_type==="expense")item.expenses+=Number(row.amount||0);monthsByKey.set(key,item);});
+ rows.forEach(row=>{const key=String(row.transaction_date||"").slice(0,7);if(!/^\d{4}-\d{2}$/.test(key))return;const item=monthsByKey.get(key)||{income:0,expenses:0};if(row.entry_type==="income")item.income+=Number(row.amount||0);else if(row.entry_type==="expense")item.expenses+=Number(row.amount||0);monthsByKey.set(key,item);});
  const table=document.createElement("table");table.className="business-ledger-table";
  const head=document.createElement("thead"),header=document.createElement("tr");
  ["Lună","Încasări","Cheltuieli","Flux net"].forEach(label=>{const th=document.createElement("th");th.textContent=label;header.append(th);});head.append(header);table.append(head);

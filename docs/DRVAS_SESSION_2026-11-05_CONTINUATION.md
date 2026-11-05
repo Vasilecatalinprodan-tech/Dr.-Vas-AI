@@ -104,3 +104,6 @@ Cererea utilizatorului în această conversație: „sa continuam si sa salvam c
 Am continuat cu o funcție practică în Business: raport Cashflow în registrul Dr.Vas Books. Include perioade de 30, 90, 180 și 365 de zile, total încasări, cheltuieli, flux net, medie netă lunară și defalcare pe luni. Folosește doar tranzacțiile deja existente și moneda selectată. Nu este prognoză și nu face conversie sau calcule fiscale.
 
 A fost adăugat test Playwright pentru agregarea pe 90 de zile și filtrarea pe 30 de zile. Codul, testul și documentația sunt pregătite pentru salvare într-un singur commit. Nu se schimbă schema Supabase, permisiunile, secretele sau producția.
+
+
+Revizie suplimentară: înainte de confirmarea CI, am corectat expresia regulată de validare a lunilor în raportul cashflow. Urmează rularea automată completă pe noul commit.

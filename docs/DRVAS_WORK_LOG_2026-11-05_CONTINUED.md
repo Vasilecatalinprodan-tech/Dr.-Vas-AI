@@ -283,3 +283,8 @@ Prima rulare pentru prezentarea animată a avut 40/41 teste reușite. Testul nou
 - Datele sunt citite numai din rândurile deja încărcate din registrul utilizatorului; filtrarea pe perioadă se face local. Nu există prognoze, conversie valutară sau presupuneri fiscale.
 - Nu s-a adăugat tabel/migrare, nu s-a schimbat schema Supabase și nu s-a schimbat accesul. Raportul este parte a panoului Business deja existent.
 - Test Playwright nou acoperă agregarea și filtrarea 90 zile → 30 zile. Așteptăm CI pentru confirmare.
+
+
+### Raport cashflow — corecție de validare
+
+La revizuirea codului raportului am corectat expresia regulată care validează cheia lunii YYYY-MM, înainte de rularea testului complet. Rapoartele rămân calculate numai din tranzacțiile înregistrate. CI trebuie să confirme implementarea actualizată.
