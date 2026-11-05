@@ -86,3 +86,12 @@ A fost adăugat test Playwright pentru generarea brief-ului și rutarea în Stud
 ## Actualizare — corecția finală a testului Bitcoin și CI
 
 Run #193 a confirmat că valorile numerice ale calculatorului trec după neutralizarea explicită a mentenanței, downtime-ului și rezervei fiscale. Singura aserțiune rămasă era textul vechi al avertizării: interfața spune acum că pragurile sunt matematice, „nu predicții”. Testul a fost aliniat la textul actual și salvat în commitul `38604f93842b53d8206ba35a1ba7c8deef9d3334`. Run #196 a fost anulat de mecanismul de concurență în timp ce se adăugau commituri; trebuie verificată o nouă rulare pentru ultimul commit. Nu s-a făcut merge/deploy.
+
+
+## Checkpoint final — acoperire test calculator și progres conversație
+
+- Testul vechi al calculatorului a fost reparat pentru a seta explicit downtime=0, mentenanță lunară=0 și rezervă fiscală=0; avertizarea este verificată după formularea actuală „nu predicții”.
+- A fost adăugat un test separat pentru mentenanța implicită reală de £50/lună și afișarea de aproximativ £1.67/zi.
+- Ultimul commit al testelor: `e2d5893274366c70b834a1beeebd2149ac0af97e`. Run #193 a executat 39 teste și a lăsat o singură problemă, aserțiunea de text a avertizării, deja corectată ulterior. Runurile #196 și #199 au fost anulate de concurența workflow-ului în timp ce ramura primea commituri succesive. Nu avem încă un rezultat final CI pentru ultimul commit.
+- PR #6 rămâne nemerged; nu s-a făcut deploy. Noul Content & Campaign Planner este implementat în aplicație și are test Playwright dedicat, dar testul încă nu a fost confirmat printr-o rulare CI completă.
+- Ultima conversație este salvată aici ca rezumat tehnic cu deciziile, funcționalitățile și starea verificărilor. Nu este transcriere literală completă; pentru copia integrală a conversației se folosește exportul datelor ChatGPT.
