@@ -1366,6 +1366,16 @@ body.module-workspace-mode .studio-workspace.hidden{
       <label>Suport și limite<textarea id="founderCrmSupport" maxlength="1200" placeholder="Ore de suport, retururi, reclamații, echipă și resurse."></textarea></label>
       <button type="button" onclick="buildFounderCustomerJourneyPrompt()">Construiește planul relației cu clienții</button>
      </article>
+     <article class="founder-tool">
+      <h5>📅 Content & Campaign Planner · Calendar editorial</h5><p>Construiește campanii și calendare de conținut pe 30 de zile pentru canalele selectate. Nu publică și nu trimite automat.</p>
+      <label>Brand / produs / proiect<input id="founderCampaignBrand" maxlength="180" placeholder="Ex.: Dr.Vas Studio, magazin online, serviciu local"></label>
+      <label>Public și nevoie<textarea id="founderCampaignAudience" maxlength="1200" placeholder="Cui te adresezi și ce problemă reală are?"></textarea></label>
+      <label>Obiectivul campaniei<select id="founderCampaignGoal"><option>Creșterea notorietății</option><option>Educație și încredere</option><option>Trafic către site / profil</option><option>Lead-uri cu acordul persoanei</option><option>Vânzări și conversii</option><option>Lansare de produs / serviciu</option><option>Comunitate și retenție</option></select></label>
+      <label>Canale<textarea id="founderCampaignChannels" maxlength="500" placeholder="Ex.: TikTok, YouTube Shorts, Instagram, Facebook"></textarea></label>
+      <label>Frecvență și resurse<textarea id="founderCampaignCadence" maxlength="900" placeholder="Ex.: 1 video/zi, 3 postări/săptămână; telefon, cameră, editor"></textarea></label>
+      <label>Ofertă, buget și limite<textarea id="founderCampaignOffer" maxlength="1000" placeholder="Oferta, bugetul maxim, drepturi asupra imaginilor/muzicii și ce nu promitem."></textarea></label>
+      <button type="button" onclick="buildFounderCampaignCalendarPrompt()">Generează calendarul de campanie</button>
+     </article>
     </div>
     <p class="founder-safety-note">Niciun proiect nu este publicat automat și nicio plată, comandă, investiție sau tranzacție nu este executată automat. Veniturile sunt estimări, nu garanții. Respectăm drepturile de autor, licențele, regulile platformelor, protecția datelor, taxele și revizia umană pentru traduceri cu miză juridică sau medicală.</p>
     <p id="founderWorkbenchStatus" class="founder-tool-status" role="status" aria-live="polite">Instrumente private pentru administrator. Cărțile și piesele folosesc funcția de salvare privată Dr.Vas Studio.</p>
@@ -3723,6 +3733,13 @@ function buildFounderCustomerJourneyPrompt(){
  if(!offer||!audience||!outcome){founderWorkbenchMessage("Completează oferta, segmentul de clienți și experiența promisă.",true);return;}
  const prompt="DR.VAS CUSTOMER JOURNEY & RETENTION PLANNER\nOFERTĂ: "+offer+"\nSEGMENT: "+audience+"\nCANAL: "+channel+"\nEXPERIENȚĂ/OBIECTIV: "+outcome+"\nSUPORT/LIMITE: "+support+"\n\nConstruiește un plan practic pentru: (1) descoperire și informare corectă, fără promisiuni înșelătoare; (2) evaluarea potrivirii și așteptări clare înainte de cumpărare; (3) onboarding și livrare; (4) suport, reclamații și rezolvarea problemelor; (5) feedback și îmbunătățire; (6) retenție și recomandări voluntare. Pentru fiecare etapă definește nevoia clientului, acțiunea companiei, responsabilul, timpul de răspuns, mesaj-model neintruziv, indicatorul KPI și riscul. Include un calendar de 30 de zile, măsurători pentru conversie, satisfacție, retururi și retenție, plus un test pilot cu buget limitat. Respectă GDPR și regulile locale: colectează minimul de date, documentează temeiul legal/consimțământul unde este necesar, oferă dezabonare și nu trimite marketing nesolicitat. Nu inventa date despre clienți, nu segmenta după categorii sensibile și nu trimite mesaje automat. Marchează ipotezele și verificările juridice/fiscale care necesită specialist.";
  launchFounderWorkbenchPrompt("business",prompt,"Planul Customer Journey este pregătit în Dr.Vas Business. Revizuiește-l și apasă Trimite.");
+}
+
+function buildFounderCampaignCalendarPrompt(){
+ const brand=el("founderCampaignBrand")?.value.trim()||"",audience=el("founderCampaignAudience")?.value.trim()||"",goal=el("founderCampaignGoal")?.value||"",channels=el("founderCampaignChannels")?.value.trim()||"",cadence=el("founderCampaignCadence")?.value.trim()||"",offer=el("founderCampaignOffer")?.value.trim()||"Nespecificat";
+ if(!brand||!audience||!channels||!cadence){founderWorkbenchMessage("Completează brandul, publicul, canalele și frecvența/resursele.",true);return;}
+ const prompt="DR.VAS CONTENT & CAMPAIGN PLANNER — CALENDAR EDITORIAL 30 DE ZILE\nBRAND/PROIECT: "+brand+"\nPUBLIC/NEVOIE: "+audience+"\nOBIECTIV: "+goal+"\nCANALE: "+channels+"\nFRECVENȚĂ/RESURSE: "+cadence+"\nOFERTĂ/BUGET/LIMITE: "+offer+"\n\nConstruiește un plan editorial executabil pe 30 de zile. Începe cu poziționarea, mesajul central și 3-5 piloni de conținut. Creează un calendar tabelar cu ziua, canalul, formatul, subiectul, hook-ul original, structura/scenariul, CTA, materialele necesare, responsabilul și KPI. Adaptează nativ materialul pentru fiecare platformă; propune reutilizare fără duplicare mecanică. Include 4 săptămâni cu obiectiv săptămânal, test A/B cu ipoteză și criteriu de oprire, buget etapizat și un tablou de măsurare pentru reach, retenție, engagement relevant, clickuri, lead-uri cu consimțământ și conversii. Separă ipotezele de datele verificate. Nu inventa rezultate sau tendințe, nu promite viralitate/vânzări, nu folosi engagement fals, spam, profilare sensibilă ori mesaje nesolicitate. Verifică drepturile pentru muzică, imagini, persoane și materiale; respectă regulile platformelor, publicitatea transparentă și protecția datelor. Încheie cu checklist de producție, aprobare umană și revizuire săptămânală. Nu publica și nu programa automat.";
+ launchFounderWorkbenchPrompt("studio",prompt,"Calendarul editorial este pregătit în Dr.Vas Studio. Revizuiește materialele și salvează proiectul înainte de producție.");
 }
 
 function calculateCryptoMiningEconomics(){
