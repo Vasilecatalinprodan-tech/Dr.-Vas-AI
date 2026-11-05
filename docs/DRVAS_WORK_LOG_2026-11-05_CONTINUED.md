@@ -233,3 +233,11 @@ Fondatorul a confirmat că fiecare dezvoltare trebuie implementată în aplicaț
 - Inspection of the calculator source showed a separate new default assumption: monthly maintenance is £50 (about £1.67/day). The old baseline fixture had not neutralized this input either.
 - Updated the baseline test to set `cryptoMaintenanceMonthly=0` explicitly alongside zero downtime and zero tax reserve. This preserves the production calculator defaults and makes the legacy arithmetic assertion compare a clean baseline.
 - Saved in commit `74a99ecdbd7639c540a63a96b5856cd3378a9cd6`. A fresh CI result is still required. No merge/deploy has occurred.
+
+
+## 2026-11-05 — Content & Campaign Planner implementation
+
+- Added the **Content & Campaign Planner** directly to the founder-only Creator & Online Income Lab in `www/index.html`.
+- The form captures brand/project, audience, campaign objective, channels, cadence/resources and offer/budget/rights limits. The generated 30-day editorial brief includes content pillars, daily calendar, hooks, scripts, CTAs, asset requirements, ownership, platform adaptation, reuse strategy, weekly goals, A/B test hypotheses, staged budget and measurable KPIs.
+- Added a Playwright regression test verifying required inputs, generated brief content, safety boundary and routing to the existing founder-gated Studio workflow.
+- No automated publishing/scheduling, ad spend, customer messaging, database schema, secrets, entitlements or production changes. New code and test are saved on the development branch; CI is pending.
