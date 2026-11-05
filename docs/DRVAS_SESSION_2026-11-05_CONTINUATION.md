@@ -858,3 +858,59 @@ Utilizatorul a corectat cerința de prezentare vocală:
 - Următoarea etapă: inspectarea definiției/proprietarului RPC rate-limit și apoi auditul efectiv al mapării vocale din cod; orice modificare se face pe branch-ul de lucru, cu teste și commit documentat, fără schimbări live neautorizate.
 
 Cererea utilizatorului: „salveaza tot si continuam”. Acest checkpoint consemnează rezultatele SQL și cerința vocală pentru continuitate; nu este o transcriere literală integrală a chatului.
+
+
+## 2026-11-05 — definiția completă RPC rate-limit (SELECT read-only)
+
+Utilizatorul a transmis definiția completă a funcției `public.drvas_consume_rate_limit`:
+
+```sql
+CREATE OR REPLACE FUNCTION public.drvas_consume_rate_limit(p_user_id uuid, p_bucket text, p_limit integer, p_window_seconds integer)
+RETURNS TABLE(allowed boolean, remaining integer, reset_at timestamp with time zone)
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO 'pg_catalog', 'public'
+AS $function$
+DECLARE
+  v_window_start timestamptz;
+  v_count integer;
+BEGIN
+  IF p_user_id IS NULL OR p_bucket IS NULL OR p_limit IS NULL OR p_window_seconds IS NULL
+     OR p_bucket !~ '^[a-z0-9_:-]{1,80}$'
+     OR p_limit < 1 OR p_limit > 1000
+     OR p_window_seconds < 1 OR p_window_seconds > 86400 THEN
+    RAISE EXCEPTION 'Invalid rate-limit parameters';
+  END IF;
+  v_window_start := to_timestamp(floor(extract(epoch FROM clock_timestamp()) / p_window_seconds) * p_window_seconds);
+  INSERT INTO public.drvas_rate_limits AS current_limit
+    (user_id, bucket, window_start, request_count, updated_at)
+  VALUES (p_user_id, p_bucket, v_window_start, 1, clock_timestamp())
+  ON CONFLICT (user_id, bucket) DO UPDATE
+    SET window_start = EXCLUDED.window_start,
+        request_count = CASE WHEN current_limit.window_start = EXCLUDED.window_start
+          THEN current_limit.request_count + 1 ELSE 1 END,
+        updated_at = clock_timestamp()
+  RETURNING request_count INTO v_count;
+  RETURN QUERY SELECT (v_count <= p_limit), greatest(0, p_limit - v_count),
+    v_window_start + make_interval(secs => p_window_seconds);
+END;
+$function$;
+```
+
+Metadate verificate prin query: proprietar `postgres`; `SECURITY DEFINER=true`; `search_path=pg_catalog, public`; EXECUTE: `anon=false`, `authenticated=false`, `service_role=true`.
+
+### Evaluare tehnică
+- Parametrii sunt validați: niciunul NULL; `p_bucket` este limitat la 1–80 caractere și la alfabetul `[a-z0-9_:-]`; limita este 1–1000; fereastra este 1–86400 secunde.
+- Tabelul este referit calificat explicit ca `public.drvas_rate_limits`; funcțiile uzuale sunt în `pg_catalog`, iar `search_path` este fixat, ceea ce reduce riscul de obiecte shadowing în context SECURITY DEFINER.
+- `INSERT ... ON CONFLICT ... DO UPDATE` face incrementarea atomică pentru cheia `(user_id, bucket)` și resetează contorul când începe fereastra nouă.
+- Funcția întoarce `allowed` numai dacă numărul curent este în limita cerută și plafonează `remaining` la zero.
+- Permisiunea EXECUTE exclusiv pentru `service_role` este restrictivă și concordă cu Worker-ul care apelează RPC-ul cu cheia server-side. Cheia nu trebuie expusă browserului.
+- `p_user_id` este un parametru furnizat apelantului, nu derivat din `auth.uid()`; aceasta este acceptabilă numai cât timp EXECUTE rămâne exclusiv pentru `service_role` și Worker-ul validează identitatea utilizatorului înainte de apel. Orice endpoint Worker trebuie să folosească UID-ul rezultat din tokenul validat, nu un UID arbitrar din payload-ul clientului.
+- Funcția rulează ca proprietarul `postgres`, deci poate opera asupra tabelului în ciuda RLS; acest privilegiu ridicat este motivul pentru care restricția EXECUTE și validarea identității din Worker sunt critice.
+- Query-ul nu a returnat definiția constrângerii UNIQUE/PK pentru `(user_id, bucket)` și nici granturile/ownership-ul tabelului; presupunem doar că `ON CONFLICT (user_id, bucket)` are un index/constraint unic valid, deoarece funcția este deja creată. Nu modificăm nimic pe baza acestei presupuneri.
+
+### Concluzie
+Nu apare o problemă evidentă în corpul funcției: validarea parametrilor, numele calificate, `search_path` fix și UPSERT-ul atomic sunt bune practici. Riscul rămas de verificat este la granița Worker → RPC: confirmarea că `p_user_id` este întotdeauna UID-ul autentificat, că apelantul nu poate influența arbitrar `p_user_id`, și că secretul server-side nu ajunge în browser/loguri. Nicio modificare SQL nu este recomandată acum.
+
+### Stare
+Query-ul a fost read-only. Nu s-a schimbat funcția, proprietarul, granturile, tabelul, RLS, Worker-ul, secretele sau producția. PR #7 rămâne Draft și nemerged; nu s-a făcut deploy. Următorul pas este verificarea exactă în cod a construirii parametrului `p_user_id` în `consumeRateLimit` și apoi reluarea corecției TTS pentru cele trei personaje, în special Sarah cu voce feminină.
