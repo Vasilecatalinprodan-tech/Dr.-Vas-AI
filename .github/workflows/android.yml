@@ -39,6 +39,11 @@ jobs:
           test -f www/index.html
           npx cap sync android
 
+      - name: Check Android privacy defaults
+        run: |
+          grep -F 'android:allowBackup="false"' android/app/src/main/AndroidManifest.xml
+          grep -F 'android.permission.INTERNET' android/app/src/main/AndroidManifest.xml
+
       - name: Build APK
         working-directory: android
         run: |
