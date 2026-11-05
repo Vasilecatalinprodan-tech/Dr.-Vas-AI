@@ -352,8 +352,8 @@ export default {
         return json({ error: "Content-Type trebuie să fie application/json." }, 415);
       }
       const rawBody = await request.text();
-      if (new TextEncoder().encode(rawBody).byteLength > 64 * 1024) {
-        return json({ error: "Cererea depășește limita de 64 KB." }, 413);
+      if (new TextEncoder().encode(rawBody).byteLength > 512 * 1024) {
+        return json({ error: "Cererea depășește limita tehnică de 512 KB." }, 413);
       }
       let body;
       try {
@@ -1309,8 +1309,8 @@ export default {
         }
       }
 
-      // Crypto Admin: listă read-only a dispozitivelor aprobate. Nu pornește mining sau tranzacții.
-      if (body.action === "crypto_devices_list") {
+      // Crypto Admin: listare și aprobare/revocare dispozitive. Nu pornește mining sau tranzacții.
+      if (["crypto_devices_list", "crypto_device_update"].includes(body.action)) {
         const adminToken = body.access_token;
         if (typeof adminToken !== "string" || !adminToken.trim()) {
           return json({ error: "Sesiune lipsă." }, 401);
@@ -1318,8 +1318,9 @@ export default {
         if (!env.SUPABASE_URL || !env.SUPABASE_KEY) {
           return json({ error: "Autentificarea nu este configurată." }, 500);
         }
+        const supabaseBase = env.SUPABASE_URL.replace(/\\/+$/, "");
         const authResponse = await fetch(
-          `${env.SUPABASE_URL.replace(/\/+$/, "")}/auth/v1/user`,
+          `${supabaseBase}/auth/v1/user`,
           { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${adminToken}` } }
         );
         if (!authResponse.ok) return json({ error: "Sesiune invalidă." }, 401);
@@ -1329,13 +1330,61 @@ export default {
         if (!adminUser?.email || !allowedAdmins.includes(adminUser.email.trim().toLowerCase())) {
           return json({ error: "Acces interzis." }, 403);
         }
+
+        if (body.action === "crypto_device_update") {
+          const deviceId = typeof body.device_id === "string" ? body.device_id : "";
+          const nextStatus = body.status;
+          if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(deviceId)) {
+            return json({ error: "Identificator de dispozitiv invalid." }, 400);
+          }
+          if (!["authorized", "revoked"].includes(nextStatus)) {
+            return json({ error: "Stare Crypto nepermisă." }, 400);
+          }
+          const now = new Date().toISOString();
+          const allowedPreviousStates = nextStatus === "authorized" ? ["pending", "revoked"] : ["authorized"];
+          const updateParams = new URLSearchParams({
+            id: "eq." + deviceId,
+            status: "in.(" + allowedPreviousStates.join(",") + ")"
+          });
+          const patch = nextStatus === "authorized"
+            ? { status: "authorized", approved_by: adminUser.id, approved_at: now, revoked_at: null }
+            : { status: "revoked", revoked_at: now };
+          const updateResponse = await fetch(
+            `${supabaseBase}/rest/v1/drvas_crypto_devices?${updateParams.toString()}`,
+            {
+              method: "PATCH",
+              headers: {
+                apikey: env.SUPABASE_KEY,
+                Authorization: `Bearer ${env.SUPABASE_KEY}`,
+                "Content-Type": "application/json",
+                Prefer: "return=representation"
+              },
+              body: JSON.stringify(patch)
+            }
+          );
+          const updated = await updateResponse.json().catch(() => []);
+          if (!updateResponse.ok) {
+            return json({ error: "Nu am putut actualiza dispozitivul Crypto." }, 500);
+          }
+          if (!Array.isArray(updated) || !updated.length) {
+            return json({ error: "Dispozitivul nu a fost găsit." }, 404);
+          }
+          await writeAdminAuditLog(env, {
+            user_id: adminUser.id,
+            event_type: nextStatus === "authorized" ? "crypto_device_authorized" : "crypto_device_revoked",
+            module: "crypto",
+            status: 200
+          });
+          return json({ updated: true, device: updated[0] });
+        }
+
         const params = new URLSearchParams({
           select: "id,device_name,platform,status,created_at,approved_at,last_seen_at",
           order: "created_at.desc",
           limit: "100"
         });
         const devicesResponse = await fetch(
-          `${env.SUPABASE_URL.replace(/\/+$/, "")}/rest/v1/drvas_crypto_devices?${params.toString()}`,
+          `${supabaseBase}/rest/v1/drvas_crypto_devices?${params.toString()}`,
           { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${env.SUPABASE_KEY}` } }
         );
         if (!devicesResponse.ok) {
@@ -1518,8 +1567,8 @@ export default {
         return json({ error: "Te rog să scrii un mesaj." }, 400);
       }
 
-      if (message.length > 12000) {
-        return json({ error: "Mesajul depășește limita de 12.000 de caractere." }, 413);
+      if (message.length > 100000) {
+        return json({ error: "Mesajul depășește limita tehnică de 100.000 de caractere. Împarte documentul în secțiuni mai mici." }, 413);
       }
 
       const allowedModules = new Set([
@@ -1798,15 +1847,34 @@ export default {
             user_id: `eq.${user.id}`,
             conversation_id: `eq.${conversationId}`,
             order: "created_at.desc",
-            limit: "30"
+            limit: "100"
           });
 
           history = await supabaseRequest(
             "chat_messages",
             `?${params.toString()}`
           );
-          // Fetch the newest 30 messages, then restore chronological order for the model.
+          // Fetch recent messages and restore chronological order before budgeting context.
           history.reverse();
+
+          // Keep the newest conversation context within a bounded prompt budget.
+          const maxHistoryCharacters = 48000;
+          let usedCharacters = 0;
+          const boundedHistory = [];
+          for (let index = history.length - 1; index >= 0; index--) {
+            const item = history[index];
+            if (!["user", "assistant"].includes(item.role)) continue;
+            const content = typeof item.content === "string" ? item.content : "";
+            if (!content) continue;
+            if (usedCharacters + content.length > maxHistoryCharacters) {
+              const remaining = maxHistoryCharacters - usedCharacters;
+              if (remaining > 500) boundedHistory.unshift({ ...item, content: content.slice(-remaining) });
+              break;
+            }
+            boundedHistory.unshift(item);
+            usedCharacters += content.length;
+          }
+          history = boundedHistory;
         }
 
         return history;
@@ -2308,7 +2376,7 @@ Always follow these instructions.
 
       async function askModel(model) {
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 20000);
+        const timeout = setTimeout(() => controller.abort(), 60000);
 
         try {
           const response = await fetch(
