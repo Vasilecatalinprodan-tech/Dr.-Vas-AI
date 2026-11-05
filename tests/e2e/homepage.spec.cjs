@@ -1379,3 +1379,22 @@ test("stopping voice output cancels a founder voice request that is still loadin
   expect(await page.evaluate(() => window.__voicePlayCount)).toBe(0);
   expect(await page.evaluate(() => document.body.classList.contains("assistant-speaking"))).toBe(false);
 });
+
+
+test("Studio explains its eight-item limit for mixed image and MP4 scenes", async ({ page }) => {
+  await openApp(page, "ro");
+  const pixel = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=", "base64");
+  await page.locator("#studioSceneImages").setInputFiles(
+    Array.from({ length: 9 }, (_, index) => ({
+      name: `scene-${index + 1}.png`,
+      mimeType: "image/png",
+      buffer: pixel
+    }))
+  );
+  await page.evaluate(async () => {
+    currentUser = { id: "studio-limit-test" };
+    await renderStudioVideo();
+  });
+  await expect(page.locator("#studioRenderStatus")).toContainText("maximum 8 scene");
+  await expect(page.locator("#studioRenderStatus")).toContainText("clipuri MP4");
+});
