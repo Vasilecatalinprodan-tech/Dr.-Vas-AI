@@ -1294,3 +1294,63 @@ Fișier: `www/privacy-policy.html`.
 - Comparație față de baza PR: 86 commituri înainte, 0 în urmă.
 - Test final pentru HEAD: run `42090756317`, success, 45/45.
 - Utilizatorul a cerut salvarea integrală a discuției și a lucrărilor; acest jurnal este actualizat ca reper de continuitate pentru următoarea sesiune.
+
+
+## 2026-11-05 — sesiune Studio + prezentare animată + polish profesional
+
+### Cererea utilizatorului (înregistrată pentru continuitate)
+Utilizatorul a cerut să terminăm cât mai mult din Dr.Vas Studio în aceeași zi, să lucrăm în paralel la toate îmbunătățirile necesare, să facem prezentarea realmente animată (nu doar trei voci alese aleatoriu), să profesionalizăm aspectul tuturor modulelor și să facem butonul de prezentare roșu, cu margine neagră și text negru. A cerut explicit salvarea întregului proces și a discuției pentru continuare.
+
+### Dr.Vas Studio — flux media extins
+Fișier principal: `www/index.html`.
+- Input-ul de scene acceptă acum JPG, PNG, WebP și MP4.
+- Limită în interfață: maximum 8 materiale, imagini maximum 8 MB fiecare, clipuri MP4 maximum 40 MB fiecare.
+- Upload-ul păstrează fișierele în bucket-ul privat existent `drvas-media`, în calea proprie utilizatorului; pentru randare se folosesc URL-uri semnate temporare.
+- Worker-ul existent acceptă elemente de tip `video` și verifică sursele media semnate din bucket-ul privat; MP4-ul final rămâne salvat privat în contul utilizatorului.
+- Adăugat timeline vizual cu previzualizare de imagine/video, numerotarea scenelor și reordonare prin drag-and-drop. Ordinea timeline-ului este folosită la generarea scenariului MP4.
+- La schimbarea selecției, URL-urile locale de previzualizare sunt eliberate; proiect nou curăță timeline-ul și starea randării.
+- Randarea verifică automat starea la aproximativ 4,5 secunde, reîncearcă după erori temporare, se oprește la rezultat terminal sau după 30 de încercări și poate relua verificarea când proiectul salvat este redeschis.
+- Verificarea manuală rămâne disponibilă. Timerul se oprește la proiect nou sau la rezultat final, pentru a evita verificări duplicate.
+- Clarificată în interfață starea pilotului: randarea MP4 este pentru administrator și depinde de configurarea motorului; publicarea automată și abonamentele publice nu sunt declarate active.
+- Textul opțiunii pentru vocea fondatorului a fost schimbat din „după activarea clonei” în „în configurare”, ca să nu sugereze că o clonă vocală există deja.
+- Brief-ul pentru tipul „Serial / episod” include acum show bible, univers, personaje și motivații, arc de sezon, continuitate și un flux zilnic de două episoade distincte, fiecare cu hook, scene, dialog, durată și cliffhanger propriu.
+
+### Prezentare Dr.Vas — personaje animate, voci deterministe
+Fișier principal: `www/index.html`.
+- Înlocuit simbolul static cu ilustrații SVG animate pentru prezentatori.
+- Dr.Vas are design distinct; Dr.Jan are ochelari; Sarah are păr lung și cercei, astfel încât cei trei prezentatori să nu pară aceeași pictogramă recolorată.
+- Animațiile includ mișcare de repaus, orbită vizuală, clipire, mișcarea gurii când vocea vorbește, mișcarea personajului și tranziții între scene.
+- Fundalul scenei are mișcare subtilă; modulele asociate fiecărui prezentator se activează pe rând.
+- Dacă browserul nu oferă trei voci distincte care se potrivesc cu indicii explicite de gen/nume, sistemul nu mai folosește vocea implicită aleatorie. Prezintă o avertizare și rulează prezentarea vizuală animată fără audio.
+- Vocile disponibile sunt sortate determinist, cu prioritate pentru limba selectată și apoi pentru voci potrivite identificate explicit. Dr.Vas și Dr.Jan primesc două voci masculine distincte; Sarah primește voce feminină. Dacă nu sunt disponibile toate trei, nu se pretinde că audio este corect.
+- Dacă SpeechSynthesis nu există, prezentarea vizuală animată poate continua fără audio.
+- Animațiile respectă `prefers-reduced-motion`.
+- Butonul de prezentare (atât în hero, cât și în selecția modulelor) are fundal roșu, margine neagră de 2 px, text negru, colțuri rotunjite, efect hover/press și focus vizibil.
+- Nu a fost activată clonarea vocală a fondatorului; vocile de prezentare sunt încă furnizate de browser/Windows. Testul automat folosește voci mock și nu poate confirma cum sună efectiv laptopul utilizatorului.
+
+### Polish vizual comun și responsive
+- Îmbunătățite cardurile celor șase module: contrast, umbre, accent vizual, icon tile, hover, selected state și focus keyboard.
+- Statusul din antetul selecției modulelor are aspect de badge discret.
+- Studio are câmpuri cu focus vizibil, suprafețe/carduri cu contrast mai bun, butoane uniforme și secțiuni de producție mai clare.
+- Adăugate reguli mobile pentru prezentare: modal compact, avatar și text stivuite, grilă de module pe o coloană, controale audio full-width și timeline Studio în două coloane.
+
+### Teste automate — ultima verificare completă
+- Testele E2E acoperă: butonul roșu cu text și contur negre, avatarul SVG animat, orbitele, alegerea vocilor mock, tranziția Dr.Vas → Dr.Jan → Sarah, comportamentul fără voci potrivite (fără fallback aleatoriu, dar cu animație vizuală), acceptarea MP4 în Studio și generarea timeline-ului din fișiere selectate.
+- Rulare finală pentru HEAD `010c15a42ecd02ac57abb504c280475bcec85294`: run `42093680190`, status `completed`, conclusion `success`, `48 passed (24.9s)`.
+- Link: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42093680190
+
+### Dependențe externe și limite care trebuie rezolvate înainte de a declara Studio complet în producție
+- Worker-ul verifică explicit `ADMIN_EMAILS` și secretul `CREATOMATE_API_KEY`; fără cheia Creatomate, endpoint-ul MP4 returnează `setup_required` și nu pornește randarea. Nu am acces la valoarea secretelor Cloudflare și nu am pretins că sunt configurate.
+- Randarea rămâne pilot de administrator; trebuie confirmat că emailul administratorului este inclus în `ADMIN_EMAILS` și că secretul `CREATOMATE_API_KEY` este configurat în Cloudflare Worker. Niciun secret nu a fost cerut sau expus în chat.
+- Integrarea publicării automate Meta/TikTok rămâne în dezvoltare și necesită aplicații, permisiuni și aprobări externe.
+- Vocea clonată a fondatorului rămâne în configurare; utilizatorul poate încărca separat un fișier audio propriu pentru voice-over, dar nu există încă o clonă vocală activată.
+- Testele CI confirmă UI, logica de selecție și validarea statică; nu confirmă randarea MP4 reală la Creatomate, configurația secretelor Cloudflare, sunetul real pe laptop sau aprobările Meta/TikTok.
+
+### Siguranță operațională și Git
+- Branch: `universal-chat-attachments`.
+- HEAD la finalul implementării: `010c15a42ecd02ac57abb504c280475bcec85294`.
+- PR #7 rămâne open, Draft și nemerged, către `drvas-integrated-platform`.
+- Branch-ul este cu 102 commituri înainte și 0 în urmă față de baza PR, la verificarea acestei sesiuni.
+- Nu s-a făcut merge, deploy de producție, modificare în baza de date Supabase sau aplicare a migrării `202611050001_chat_attachments.sql`.
+- `DRVAS_FILE_ANALYSIS_ENABLED` rămâne dezactivat.
+- Jurnalul păstrează cererea utilizatorului, deciziile, modificările, verificările și blocajele pentru reluarea proiectului. Este un jurnal de continuitate al sesiunii, nu un export binar al interfeței ChatGPT.
