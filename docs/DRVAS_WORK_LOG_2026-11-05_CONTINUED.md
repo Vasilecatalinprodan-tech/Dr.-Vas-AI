@@ -248,3 +248,11 @@ Fondatorul a confirmat că fiecare dezvoltare trebuie implementată în aplicaț
 - Run #193 confirmed the numeric Bitcoin baseline now passes after explicitly setting downtime, maintenance and tax reserve to zero.
 - The remaining failure was only a stale notice substring: the UI now says thresholds are mathematical, "nu predicții". Updated the test to assert the current exact wording.
 - Saved in commit `38604f93842b53d8206ba35a1ba7c8deef9d3334`. The newer run #196 was cancelled by workflow concurrency while commits were still arriving; the latest test commit requires a fresh uncancelled CI run.
+
+
+## 2026-11-05 — Mining calculator regression coverage completed
+
+- The 39-test run #193 passed all calculator numeric assertions after neutralizing the newly introduced maintenance assumption; its sole remaining failure was the old warning-text expectation. The test assertion was aligned with the current Romanian notice wording.
+- Added a separate Playwright case that verifies the real default monthly maintenance assumption (£50/month) and its displayed daily equivalent (£1.67/day), so future changes to the calculator defaults are intentional and visible.
+- The test file now includes both a deterministic zero-cost baseline and a dedicated check for the £50/month default. The latest test commit is `e2d5893274366c70b834a1beeebd2149ac0af97e`.
+- CI has not yet returned a completed run for this latest commit; no merge or production deploy is claimed.
