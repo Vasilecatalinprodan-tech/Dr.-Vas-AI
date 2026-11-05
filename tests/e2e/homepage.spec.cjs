@@ -937,6 +937,9 @@ test("Bitcoin mining calculator estimates net result without starting mining", a
     document.querySelector("#cryptoElectricityRate").value = "0.25";
     document.querySelector("#cryptoPoolFee").value = "1";
     document.querySelector("#cryptoHardwareCost").value = "1000";
+    // Keep this legacy arithmetic case independent of the newly added downtime/tax assumptions.
+    document.querySelector("#cryptoDowntime").value = "0";
+    document.querySelector("#cryptoTaxReserve").value = "0";
     calculateCryptoMiningEconomics();
   });
   await expect(page.locator("#cryptoGrossDaily")).toContainText("18.00");
@@ -944,7 +947,7 @@ test("Bitcoin mining calculator estimates net result without starting mining", a
   await expect(page.locator("#cryptoNetDaily")).toContainText("8.82");
   await expect(page.locator("#cryptoNetMonthly")).toContainText("264.60");
   await expect(page.locator("#cryptoPayback")).toContainText("113 zile");
-  await expect(page.locator("#cryptoCalcNotice")).toContainText("Nu este o promisiune de profit");
+  await expect(page.locator("#cryptoCalcNotice")).toContainText("nu sunt predicții");
 });
 
 test("logout removes administrator workspaces and clears private module drafts", async ({ page }) => {
