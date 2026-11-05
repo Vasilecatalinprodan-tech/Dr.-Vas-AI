@@ -4604,8 +4604,16 @@ async function checkSession(){
 let pendingChatFiles = [];
 let pendingUploadedAttachments = [];
 
-function chatFileType(file){
- return new Set(["image/jpeg","image/png","image/webp","application/pdf","text/plain","text/csv"]).has(file.type);
+function chatFileMime(file){
+ const allowed=new Set(["image/jpeg","image/png","image/webp","application/pdf","text/plain","text/csv"]);
+ if(allowed.has(file.type))return file.type;
+ if(file.type&&file.type!=="application/octet-stream")return "";
+ const extension=(file.name.split(".").pop()||"").toLowerCase();
+ return ({jpg:"image/jpeg",jpeg:"image/jpeg",png:"image/png",webp:"image/webp",pdf:"application/pdf",txt:"text/plain",csv:"text/csv"})[extension]||"";
+}
+function normalizeChatFile(file){
+ const mime=chatFileMime(file);if(!mime)return null;
+ return file.type===mime?file:new File([file],file.name,{type:mime,lastModified:file.lastModified});
 }
 function chatFileSizeLabel(size){
  return size<1024*1024?(size/1024).toFixed(0)+" KB":(size/(1024*1024)).toFixed(1)+" MB";
@@ -4641,8 +4649,9 @@ function clearPendingChatFiles(){
 function handleChatFilesSelected(event){
  const chosen=Array.from(event.target.files||[]);
  if(pendingChatFiles.length+pendingUploadedAttachments.length+chosen.length>5){window.alert("Poți atașa maximum 5 fișiere la un mesaj.");event.target.value="";return;}
- for(const file of chosen){
-  if(!chatFileType(file)){window.alert("Format neacceptat: "+file.name+". Folosește JPG, PNG, WebP, PDF, TXT sau CSV.");continue;}
+ for(const originalFile of chosen){
+  const file=normalizeChatFile(originalFile);
+  if(!file){window.alert("Format neacceptat: "+originalFile.name+". Folosește JPG, PNG, WebP, PDF, TXT sau CSV.");continue;}
   if(file.size<1||file.size>15*1024*1024){window.alert("Fișierul "+file.name+" trebuie să aibă maximum 15 MB.");continue;}
   if(pendingChatFiles.some(item=>item.name===file.name&&item.size===file.size))continue;
   pendingChatFiles.push(file);
