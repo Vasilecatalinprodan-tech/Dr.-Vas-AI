@@ -67,3 +67,13 @@ Per owner instruction, no tests, syntax checks, browser checks or manual checks 
 - Includes privacy-by-design and responsible marketing requirements: data minimisation, GDPR/legal-basis review, opt-out and no sensitive-trait profiling or unsolicited campaigns.
 - Produces a human-reviewed brief in the existing founder-gated Dr.Vas Business workspace. No CRM integration, customer database, automatic message or marketing execution.
 - Implemented in source on `founder-workbenches-development`; not yet runtime-tested or deployed to production.
+
+
+## Content & Campaign Planner
+
+- Added a founder-only editorial campaign planner inside Creator & Online Income Lab in the actual Dr.Vas application.
+- Captures brand/project, audience need, campaign goal, channels, publishing cadence/resources, offer/budget and rights/claims limits.
+- Generates a structured 30-day calendar brief with platform-native formats, hooks, scripts, CTAs, asset/owner fields, weekly goals, test hypotheses, budget stages and KPIs.
+- Requires human review, rights clearance, transparent claims and privacy/platform compliance. It does not publish, schedule, send messages, buy ads or promise reach/sales.
+- Routes the brief through the existing founder-gated Dr.Vas Studio workflow; no new database schema, public entitlement, payment, external integration or production configuration was introduced.
+- A Playwright regression test was added to verify the generated brief and Studio routing. Awaiting CI result.
