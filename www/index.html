@@ -1207,6 +1207,10 @@ body.module-workspace-mode .studio-workspace.hidden{
       <label>Electricitate (£ / kWh)<input id="cryptoElectricityRate" type="number" min="0" step="0.001" value="0.25" oninput="calculateCryptoMiningEconomics()"></label>
       <label>Comision pool (%)<input id="cryptoPoolFee" type="number" min="0" max="100" step="0.01" value="1" oninput="calculateCryptoMiningEconomics()"></label>
       <label>Cost echipament (£)<input id="cryptoHardwareCost" type="number" min="0" step="0.01" value="1000" oninput="calculateCryptoMiningEconomics()"></label>
+      <label>Consum răcire (W)<input id="cryptoCoolingWatts" type="number" min="0" step="1" value="0" oninput="calculateCryptoMiningEconomics()"></label>
+      <label>Indisponibilitate (%)<input id="cryptoDowntime" type="number" min="0" max="100" step="0.1" value="5" oninput="calculateCryptoMiningEconomics()"></label>
+      <label>Mentenanță lunară (£)<input id="cryptoMaintenanceMonthly" type="number" min="0" step="0.01" value="50" oninput="calculateCryptoMiningEconomics()"></label>
+      <label>Rezervă fiscală estimată (%)<input id="cryptoTaxReserve" type="number" min="0" max="100" step="0.1" value="0" oninput="calculateCryptoMiningEconomics()"></label>
      </div>
      <div class="crypto-calculator-results" aria-live="polite">
       <div><small>Venit brut / zi</small><strong id="cryptoGrossDaily">£0.00</strong></div>
@@ -1215,6 +1219,8 @@ body.module-workspace-mode .studio-workspace.hidden{
       <div><small>Rezultat net / zi</small><strong id="cryptoNetDaily">£0.00</strong></div>
       <div><small>Rezultat net / 30 zile</small><strong id="cryptoNetMonthly">£0.00</strong></div>
       <div><small>Recuperare echipament</small><strong id="cryptoPayback">—</strong></div>
+      <div><small>Mentenanță / zi</small><strong id="cryptoMaintenanceDaily">£1.67</strong></div>
+      <div><small>Rezultat net / an</small><strong id="cryptoNetAnnual">£0.00</strong></div>
      </div>
      <p id="cryptoCalcNotice" class="admin-footnote" role="status">Calcul demonstrativ. Mining-ul și tranzacționarea rămân dezactivate.</p>
     </div>
@@ -3527,31 +3533,23 @@ function buildFounderEvaluationPrompt(){
 }
 
 function calculateCryptoMiningEconomics(){
-  const read=id=>Number(el(id)?.value||0);
-  const btc=read("cryptoBtcPerDay"),price=read("cryptoBtcPrice");
-  const watts=read("cryptoPowerWatts"),rate=read("cryptoElectricityRate");
-  const fee=read("cryptoPoolFee"),hardware=read("cryptoHardwareCost");
-  const ids=["cryptoBtcPerDay","cryptoBtcPrice","cryptoPowerWatts","cryptoElectricityRate","cryptoPoolFee","cryptoHardwareCost"];
-  const valid=ids.every(id=>Number.isFinite(read(id))&&read(id)>=0)&&fee<=100;
-  const notice=el("cryptoCalcNotice");
-  if(!valid){
-    if(notice)notice.textContent="Verifică valorile: toate trebuie să fie pozitive, iar comisionul pool între 0 și 100%.";
-    return;
-  }
-  const gross=btc*price;
-  const energy=(watts/1000)*24*rate;
-  const pool=gross*(fee/100);
-  const net=gross-energy-pool;
-  const money=value=>"£"+value.toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2});
-  el("cryptoGrossDaily").textContent=money(gross);
-  el("cryptoEnergyDaily").textContent=money(energy);
-  el("cryptoPoolDaily").textContent=money(pool);
-  el("cryptoNetDaily").textContent=money(net);
-  el("cryptoNetMonthly").textContent=money(net*30);
-  el("cryptoPayback").textContent=net>0?(hardware/net).toFixed(0)+" zile": "Nu se recuperează";
-  if(notice)notice.textContent=net>0
-    ?"Estimare pozitivă înainte de taxe, mentenanță, amortizare și variația dificultății/recompenselor. Nu este o promisiune de profit."
-    :"La aceste ipoteze, costul energiei și comisionul depășesc venitul estimat. Nu cumpăra echipament pe baza acestui calcul.";
+ const read=id=>Number(el(id)?.value||0);
+ const btc=read("cryptoBtcPerDay"),price=read("cryptoBtcPrice"),watts=read("cryptoPowerWatts"),cooling=read("cryptoCoolingWatts");
+ const rate=read("cryptoElectricityRate"),fee=read("cryptoPoolFee"),hardware=read("cryptoHardwareCost"),maintenance=read("cryptoMaintenanceMonthly");
+ const downtime=read("cryptoDowntime"),taxReserve=read("cryptoTaxReserve");
+ const ids=["cryptoBtcPerDay","cryptoBtcPrice","cryptoPowerWatts","cryptoCoolingWatts","cryptoElectricityRate","cryptoPoolFee","cryptoHardwareCost","cryptoMaintenanceMonthly","cryptoDowntime","cryptoTaxReserve"];
+ const valid=ids.every(id=>Number.isFinite(read(id))&&read(id)>=0)&&fee<=100&&downtime<=100&&taxReserve<=100;
+ const notice=el("cryptoCalcNotice");
+ if(!valid){if(notice)notice.textContent="Verifică valorile: numere pozitive; comision, indisponibilitate și rezervă fiscală între 0 și 100%.";return;}
+ const uptime=1-downtime/100,gross=btc*uptime*price,energy=((watts+cooling)/1000)*24*rate,pool=gross*(fee/100);
+ const operating=gross-energy-pool-(maintenance/30),reserve=Math.max(0,operating)*(taxReserve/100),net=operating-reserve;
+ const money=value=>"£"+value.toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2});
+ el("cryptoGrossDaily").textContent=money(gross);el("cryptoEnergyDaily").textContent=money(energy);el("cryptoPoolDaily").textContent=money(pool);
+ el("cryptoNetDaily").textContent=money(net);el("cryptoNetMonthly").textContent=money(net*30);
+ el("cryptoPayback").textContent=net>0?(hardware/net).toFixed(0)+" zile":"Nu se recuperează";
+ const maintenanceNode=el("cryptoMaintenanceDaily");if(maintenanceNode)maintenanceNode.textContent=money(maintenance/30);
+ const annualNode=el("cryptoNetAnnual");if(annualNode)annualNode.textContent=money(net*365);
+ if(notice)notice.textContent=net>0?"Scenariu orientativ după energie, răcire, indisponibilitate, mentenanță și rezervă fiscală introdusă manual. Nu include toate taxele, amortizarea, schimbarea dificultății sau volatilitatea BTC.":"În acest scenariu, costurile depășesc venitul estimat. Nu cumpăra echipament pe baza acestui calcul.";
 }
 
 async function loadCryptoDevices(){
