@@ -1488,3 +1488,23 @@ Utilizatorul a cerut să continuăm lucrul efectiv la Dr.Vas, nu doar să discut
 
 ### Istoric conversație
 Am înregistrat cererea și acțiunile din această sesiune ca rezumat tehnic. Nu este export literal al tuturor mesajelor UI; istoricul complet rămâne în conversația ChatGPT.
+
+
+## 2026-11-05 — CI stabilizat și testele vocale
+
+### Investigație
+- Am verificat job-ul Browser E2E pentru noul test de pronunție. Validarea statică a Worker-ului, scripturilor inline și migrației a trecut.
+- Am constatat că workflow-ul avea `concurrency.cancel-in-progress: true`. Pentru că fiecare commit nou pe același branch anula automat rularea precedentă, testele E2E puteau fi întrerupte înainte să ajungă la Playwright. Run #304 a fost anulat în urma commitului următor.
+- Am schimbat setarea în `cancel-in-progress: false`, astfel încât fiecare rulare pornită să poată termina și să avem rezultate reale, nu anulări cauzate de commituri rapide.
+- Commit workflow: `2906d18885385c430baed714d8f61e1ffc7185cc`.
+- Run #305 pentru testul de pronunție era în curs la ultima verificare; statusurile sunt în istoricul Actions. Noul commit de workflow declanșează o nouă rulare pentru a verifica configurația actualizată.
+
+### Stare cod salvat
+- Corecția de pronunție: commit `060eef7c2ba53bcc9106960ac1e299d2960fc578`.
+- Testul Playwright: commit `24ccb4b47b0946c8a56c844898317df9b9c76c0c`.
+- Workflow CI: commit `2906d18885385c430baed714d8f61e1ffc7185cc`.
+- Toate modificările sunt pe `universal-chat-attachments`; nu sunt încă publicate pe domeniul de producție.
+- Nu s-a făcut merge, deploy, modificare de bază de date sau activare a analizei medicale.
+
+### Următorul pas
+Aștept rezultatul rulărilor E2E cu noua politică de concurență; dacă apare o eroare, corectez cauza și salvez imediat. După stabilizarea testelor, continui cu separarea unui release sigur pentru Studio/UI de funcțiile de atașamente medicale care au încă prerequisite de conformitate.
