@@ -65,7 +65,15 @@ test("Private profiles and consent evidence cannot be accessed directly by brows
 
 test("Chat attachment metadata is owner-scoped, bounded and restricted to supported file types", async () => {
   const sql = migration("202611050001_chat_attachments.sql");
-  assertOwnerScopedTable(sql, "drvas_chat_attachments", "chat attachments");
+  expect(sql).toMatch(/alter table public\.drvas_chat_attachments enable row level security/i);
+  expect(sql).toMatch(/revoke all on table public\.drvas_chat_attachments from public, anon/i);
+  expect(sql).toMatch(/grant select, insert, delete on public\.drvas_chat_attachments to authenticated/i);
+  for (const operation of ["select", "insert", "delete"]) {
+    expect(sql).toMatch(new RegExp(
+      "create\\s+policy[\\s\\S]{0,180}?on public\\.drvas_chat_attachments\\s+for\\s+" + operation,
+      "i"
+    ));
+  }
   expect(sql).toMatch(/file_size between 1 and 15728640/i);
   expect(sql).toMatch(/storage_path like user_id::text \|\| '\\/%'/i);
   expect(sql).toMatch(/module in \('free','health','studio','academy','commerce','business'\)/i);
