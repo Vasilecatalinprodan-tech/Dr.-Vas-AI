@@ -1155,3 +1155,27 @@ Comportamentul dorit după această corecție:
 - commiturile numai în jurnal nu mai declanșează workflow-ul PR prin `synchronize` și nici workflow-ul push prin filtrul `paths`.
 
 Jurnal actualizat după commitul de workflow, fără modificarea codului aplicației. Nu s-a făcut merge, deploy sau modificare de bază de date. PR #7 rămâne Draft.
+
+
+## 2026-11-05 — CI final verde pe push și verificare jurnal fără declanșare
+
+Run-ul push `42088102043` pentru commitul workflow `dd8cb52d7717651476b2b1a83fb318bf4cde322b` s-a încheiat cu status final **success**:
+- validarea Worker-ului, scriptului inline și migrării: success;
+- instalarea Playwright: success;
+- instalarea Chromium: success;
+- serverul static local: success;
+- log Playwright: `Running 43 tests using 1 worker`;
+- rezultat final: `43 passed (22.9s)`.
+
+Acest run confirmă noua declanșare pe `push` pentru branch-ul de lucru. În plus, după commitul documentar `28515e3b31630e9855a33c46af552a6f175d89ae`, lista GitHub Actions nu a creat un run nou. Astfel, jurnalul poate fi actualizat fără să întrerupă testele; separarea triggerelor funcționează în verificarea observată.
+
+Status actual:
+- E2E: verde, 43/43.
+- CI final: success pe run `42088102043`.
+- PR #7: open, Draft, nemerged; head-ul include și commiturile ulterioare exclusiv documentare.
+- PR branch-ul este înaintea bazei cu 68 de commituri la ultima comparație; fără commituri în urmă.
+- Workflow deploy nu a fost lansat; nu există deploy nou.
+- Migrarea atașamentelor rămâne neaplicată în Supabase; analiza AI a fișierelor rămâne dezactivată.
+- Verificarea audio reală pentru vocile Dr.Vas, Dr.Jan și Sarah încă trebuie făcută pe browserul/dispozitivul utilizatorului.
+
+Nu s-au schimbat TTS Live, secretele, baza de date sau producția. Nu s-a făcut merge.
