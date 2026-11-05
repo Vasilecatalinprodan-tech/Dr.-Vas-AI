@@ -84,6 +84,50 @@ test("universal chat uploader accepts private images and documents and requires 
   await expect(page.locator("#fileProcessingConsentWrap")).toBeHidden();
 });
 
+test("chat attachment picker rejects unsupported files, more than five files and files above 15 MB", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-attachment-user" };
+    activeModule = "free";
+    document.querySelector("#chatSection").classList.remove("hidden");
+    window.__DRVAS_E2E_ALERTS__ = [];
+    window.alert = message => window.__DRVAS_E2E_ALERTS__.push(String(message));
+    renderPendingChatFiles();
+  });
+  const picker = page.locator("#chatFileInput");
+  await picker.setInputFiles(Array.from({ length: 6 }, (_, index) => ({
+    name: `file-${index + 1}.pdf`,
+    mimeType: "application/pdf",
+    buffer: Buffer.from("%PDF-1.4 test")
+  })));
+  expect(await page.evaluate(() => pendingChatFiles.length)).toBe(0);
+  expect(await page.evaluate(() => window.__DRVAS_E2E_ALERTS__.at(-1))).toContain("maximum 5");
+
+  await picker.setInputFiles({
+    name: "malware.exe",
+    mimeType: "application/x-msdownload",
+    buffer: Buffer.from("not a supported document")
+  });
+  expect(await page.evaluate(() => pendingChatFiles.length)).toBe(0);
+  expect(await page.evaluate(() => window.__DRVAS_E2E_ALERTS__.at(-1))).toContain("Format neacceptat");
+
+  await picker.setInputFiles({
+    name: "oversized.pdf",
+    mimeType: "application/pdf",
+    buffer: Buffer.alloc(15 * 1024 * 1024 + 1, 65)
+  });
+  expect(await page.evaluate(() => pendingChatFiles.length)).toBe(0);
+  expect(await page.evaluate(() => window.__DRVAS_E2E_ALERTS__.at(-1))).toContain("maximum 15 MB");
+
+  await picker.setInputFiles({
+    name: "valid.txt",
+    mimeType: "text/plain",
+    buffer: Buffer.from("Dr.Vas attachment boundary test")
+  });
+  expect(await page.evaluate(() => pendingChatFiles.map(file => file.name))).toEqual(["valid.txt"]);
+  await expect(page.locator("#pendingChatFiles")).toContainText("valid.txt");
+});
+
 test("first visit shows the Dr.Vas landing page, language selector and clear entry CTA", async ({ page }) => {
   await openApp(page);
   await expect(page.locator("#languageGate")).toBeVisible();
