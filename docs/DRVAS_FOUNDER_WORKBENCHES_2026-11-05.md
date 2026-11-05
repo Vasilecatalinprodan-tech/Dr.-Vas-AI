@@ -58,3 +58,12 @@ Per owner instruction, no tests, syntax checks, browser checks or manual checks 
 - All three tools are founder-only and prepare calculations or drafts for review. No public access, automatic publishing, sales, payments, orders, mining, trading or deployment.
 - Owner requested uninterrupted development and saving of the full progress. This feature record and the dated work log serve as repository continuity records; they do not replace the original ChatGPT transcript.
 - No tests or manual verification were run, and the stable branch/production remain untouched.
+
+
+## Customer Journey & Retention Planner
+
+- Founder-only planner for mapping customer discovery, pre-sale expectations, onboarding/delivery, customer support and complaints, feedback, retention and voluntary referrals.
+- Captures offer, customer segment, channel, experience promise and support boundaries; prepares a 30-day plan, pilot, responsibilities, response targets and KPIs.
+- Includes privacy-by-design and responsible marketing requirements: data minimisation, GDPR/legal-basis review, opt-out and no sensitive-trait profiling or unsolicited campaigns.
+- Produces a human-reviewed brief in the existing founder-gated Dr.Vas Business workspace. No CRM integration, customer database, automatic message or marketing execution.
+- Implemented in source on `founder-workbenches-development`; not yet runtime-tested or deployed to production.
