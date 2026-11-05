@@ -394,3 +394,33 @@ Maintain integrated navigation, multilingual experience, authentication, saved c
 - `package.json` currently declares Capacitor/CLI and Wrangler dependencies but no npm `scripts` or test-runner dependencies. The repository contains a large Playwright E2E spec at `tests/e2e/homepage.spec.cjs`, including browser speech-synthesis coverage, but a root Playwright config/package test command was not found in the inspected paths. Before claiming test coverage passes, establish the intended E2E runner/config and execute it in CI or Codespaces.
 - Attempted to check the public Worker `/health` endpoint through the available page retrieval path; it was not accessible through that path. This does not establish that the Worker is down. Verify directly in the browser or Cloudflare dashboard when doing deployment checks.
 - No new code change was made in this audit. Keep the replay fix commit `4d989ea23037fcfea718ac358c919ce166a4f7a4` as the latest functional change recorded in this checkpoint.
+
+
+## 14. Expanded destinations requested — 2026-11-05
+
+The founder wants all Dr.Vas directions developed progressively within the same integrated product, not as separate disconnected apps. Preserve the six established core modules (Free, Health, Studio, Academy, Commerce, Business) and plan the following specialist destinations/workspaces:
+
+- Crypto & Mining / Mining Intelligence / Mining Sensitivity Lab: crypto and mining education, research and scenario calculators. Initial scope is informational and simulation-only, with explicit risk/cost assumptions. No live trading, wallet custody/signing, automatic investing or real mining execution without separate approval and security/legal review.
+- Books / Book Workshop / Publishing Lab: ideation, research, outlines, writing, editing, formatting, translation and publishing preparation, with rights/originality and human-review checks.
+- Music / Music Production Lab / Music Release Lab: original lyrics/music concepts, production briefs, translation/adaptation and release preparation; respect copyright and voice/likeness consent.
+- Translation Studio: translation/localization, terminology management and review. High-stakes medical/legal translations require qualified human verification.
+- Online Income / Digital Product Studio / Digital Products Lab: legitimate digital products, courses, templates and business models with transparent costs and realistic assumptions; never promise guaranteed income.
+- AI Evaluation & Training: prompt/workflow testing, AI quality evaluation and training materials.
+- Business Automation, Business Operations Planner, Customer Journey & Retention Planner, Commerce Profit Lab: candidate specialist tools/workspaces to be grouped under the relevant core modules after product design.
+
+These names came from prior project discussions and the founder's latest request. Treat them as proposed expansion workspaces, not completed features or a decision to create a separate top-level module for each. Keep navigation simple; group related tools under Studio, Crypto, Commerce, Academy or Business where appropriate.
+
+## 15. Continuation priorities and guardrails — 2026-11-05
+
+1. Verify the latest Android Actions build, install its artifact and test audible speech, replay and stop on device. The replay fix is committed as `4d989ea23037fcfea718ac358c919ce166a4f7a4`, but actual audio remains unverified.
+2. Audit the current `universal-chat-attachments` branch; historical sections mentioning `drvas-integrated-platform` are older checkpoints, not an instruction to switch branches.
+3. Audit all core modules, authentication, saved history, profiles, languages, permissions, privacy and backend operations.
+4. Implement Studio as a complete creative workspace: video/social content, translations, books and music; persist drafts/projects, support revisions, exports and founder approval before publishing.
+5. Crypto & Mining starts as education/research and transparent scenario modelling. Do not connect wallets/exchanges, trade, custody assets, promise returns or initiate mining purchases without explicit separate approval and professional/security review.
+6. Online Income and Digital Products must show realistic assumptions, costs, risks and compliance; never market guaranteed earnings.
+7. Keep medical/legal translations subject to qualified human review. Dr.Vas Health remains educational unless qualified clinicians and applicable legal/regulatory controls are in place.
+8. Do not enable public social publishing until official platform permissions, account eligibility, testing and explicit approval are complete.
+9. Keep the designated administrator identity in the server-side allowlist only; do not reproduce the email address in public documentation or commit secrets.
+10. Preserve original ChatGPT conversation in chat history; GitHub session logs are continuity summaries, not verbatim transcript exports.
+
+The founder's designated administrator email was already stated in an earlier conversation and is recovered as project context; no need to ask the founder to repeat it. Never put the address or credentials in source code or public docs.
