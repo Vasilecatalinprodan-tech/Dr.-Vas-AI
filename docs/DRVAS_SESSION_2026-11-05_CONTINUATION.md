@@ -1530,3 +1530,24 @@ Aștept rezultatul rulărilor E2E cu noua politică de concurență; dacă apare
 - Am păstrat modificările exclusiv pe `universal-chat-attachments`.
 - Nu am făcut merge sau deploy. Nu am activat analiza fișierelor medicale și nu am aplicat migrarea Supabase.
 - Jurnalul consemnează implementările și starea reală a testelor; nu este export literal al conversației ChatGPT.
+
+
+## 2026-11-05 — continuare Studio și integrare cu restul platformei
+
+### Studio
+- Am corectat mesajele de validare și progres: limita este formulată acum corect pentru maximum 8 scene mixte (imagini și clipuri MP4), iar progresul spune „scena”, nu „imagine”, când se încarcă un video.
+- Am adăugat test Playwright pentru depășirea limitei cu 9 fișiere și verificarea mesajului clar.
+- Frontend commit: `ab413d4b4fd5e55913172c87613377a5923df46b`.
+- Test commit: `63b334727af05c03a9e2b56192dc557f129e3d3e`.
+
+### Verificarea platformei integrate
+- Suita browser acoperă acum 45 de scenarii în `tests/e2e/homepage.spec.cjs`, inclusiv Free, Health, Studio, Academy, Commerce, Business, permisiuni, istoric, proiecte, calculator, voce și prezentare.
+- Confirmat anterior: run #305 pentru transformarea pronunției a trecut cu succes.
+- Run #306 a trecut de validarea Worker/scripturilor/migrației și instalarea runner-ului; la ultima verificare descărca/instala Chromium. Nu declar încă succesul suitei.
+- Run #307 și #308 au fost anulate de mecanismul de concurență în timpul actualizării workflow-ului; commitul workflow a schimbat `cancel-in-progress` în `false`, iar rularea #306 este cea care verifică această configurație.
+- Run #309 aștepta pornirea pentru verificarea modificărilor Studio.
+
+### Publicare și protecții
+- PR #7 rămâne deschis, Draft, cu baza `drvas-integrated-platform` și head `universal-chat-attachments`.
+- Nu am făcut merge sau deploy. Funcțiile de atașamente medicale rămân nepublicate până la verificarea migrației, a bucket-ului, a retenției și a cerințelor UK GDPR.
+- Nu am executat SQL în Supabase și nu am modificat secrete.
