@@ -982,6 +982,11 @@ test("Business cashbook monthly cashflow report summarizes and filters saved tra
     currentUser = { id: "e2e-cashflow-user", email: "admin@example.invalid" };
     isDrvasAdmin = true;
     selectModule("business", true);
+  });
+  await expect(page.locator("#businessWorkspace")).toBeVisible();
+  // Wait for the workspace's asynchronous cashbook load to finish before seeding test rows.
+  await expect(page.locator("#businessLedgerStatus")).toContainText("Registru încărcat");
+  await page.evaluate(() => {
     const today = new Date();
     const monthDate = offset => {
       const date = new Date(today.getFullYear(), today.getMonth() + offset, Math.min(today.getDate(), 20));
@@ -999,7 +1004,6 @@ test("Business cashbook monthly cashflow report summarizes and filters saved tra
     document.querySelector("#businessCashflowRange").value = "90";
     renderBusinessLedger();
   });
-  await expect(page.locator("#businessWorkspace")).toBeVisible();
   await expect(page.locator("#businessCashflowIncome")).toContainText("2,600");
   await expect(page.locator("#businessCashflowExpenses")).toContainText("500");
   await expect(page.locator("#businessCashflowNet")).toContainText("2,100");
@@ -1010,7 +1014,6 @@ test("Business cashbook monthly cashflow report summarizes and filters saved tra
   await expect(page.locator("#businessCashflowNet")).toContainText("900");
   await expect(page.locator("#businessCashflowRows tbody tr")).toHaveCount(1);
 });
-
 test("Bitcoin mining calculator exposes its monthly maintenance assumption", async ({ page }) => {
   await openApp(page, "ro");
   await page.evaluate(() => {
