@@ -151,3 +151,12 @@
 - Added `docs/SUPABASE_LIVE_VERIFICATION_GUIDE.md` with safe instructions for running the read-only audit, reviewing grants/RLS/Storage, applying only missing migrations after backup/review, and testing isolation with two disposable accounts.
 - No Supabase connector or authorized live database session is available in this development environment. Therefore no live SQL was executed and no claim is made that migrations are applied or production RLS has been verified.
 - Supabase status remains: source/migration review completed; live database verification and two-account isolation test outstanding.
+
+
+## PR #2 documentation-only findings consolidated — 2026-11-05
+
+- Reviewed PR #2 and carried its additional account-deletion, CORS, privacy-notice and iOS-readiness findings into `docs/ACCOUNT_DELETION_AND_SECURITY_HARDENING.md`.
+- PR #2 was closed as superseded, not merged. Its branch was documentation-only and stale; current main contains the consolidated specification.
+- CORS allowlisting remains a release follow-up: verify real production, preview, local and Codespaces origins before changing policy; keep preflight and normal response decisions consistent and add `Vary: Origin`.
+- Account deletion is still not implemented. Public deletion request URL, reauthentication, retention decisions, partial-failure handling and disposable-account testing remain release gates.
+- iOS is not claimed ready. The previous audit found no Capacitor iOS dependency; recheck package configuration and build/sign/test on macOS before claiming iPhone support.
