@@ -951,6 +951,31 @@ test("Bitcoin mining calculator estimates net result without starting mining", a
   await expect(page.locator("#cryptoCalcNotice")).toContainText("nu sunt predicții");
 });
 
+test("founder content campaign planner builds a 30-day brief for the private Studio", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    isDrvasAdmin = true;
+    document.querySelector("#founderCampaignBrand").value = "Dr.Vas Studio";
+    document.querySelector("#founderCampaignAudience").value = "Creatori români la început de drum";
+    document.querySelector("#founderCampaignGoal").value = "Educație și încredere";
+    document.querySelector("#founderCampaignChannels").value = "TikTok, YouTube Shorts";
+    document.querySelector("#founderCampaignCadence").value = "Un video scurt pe zi";
+    document.querySelector("#founderCampaignOffer").value = "Buget de test 50 GBP; numai materiale cu drepturi clare";
+    window.__DRVAS_CAMPAIGN_CAPTURE__ = null;
+    window.launchFounderWorkbenchPrompt = (moduleName, prompt, status) => {
+      window.__DRVAS_CAMPAIGN_CAPTURE__ = { moduleName, prompt, status };
+    };
+    buildFounderCampaignCalendarPrompt();
+  });
+  const brief = await page.evaluate(() => window.__DRVAS_CAMPAIGN_CAPTURE__);
+  expect(brief.moduleName).toBe("studio");
+  expect(brief.prompt).toContain("CALENDAR EDITORIAL 30 DE ZILE");
+  expect(brief.prompt).toContain("Dr.Vas Studio");
+  expect(brief.prompt).toContain("TikTok, YouTube Shorts");
+  expect(brief.prompt).toContain("Nu publica și nu programa automat.");
+  expect(brief.status).toContain("Dr.Vas Studio");
+});
+
 test("logout removes administrator workspaces and clears private module drafts", async ({ page }) => {
   await openApp(page, "ro");
   await page.evaluate(() => {
