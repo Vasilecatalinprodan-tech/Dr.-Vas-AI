@@ -1560,3 +1560,16 @@ Aștept rezultatul rulărilor E2E cu noua politică de concurență; dacă apare
 - Commit corecție: `3a67acaac41e6250135f211d0fe9da7999b1d655`.
 - Testul automat adăugat pentru 9 fișiere acoperă exact acest defect și va verifica această corecție în rularea declanșată de commitul de mai sus.
 - Nu am publicat modificările pe Worker/site. Toate schimbările rămân pe branch-ul de lucru.
+
+
+## 2026-11-05 — integrare în branch-ul de producție și pornirea publicării
+
+- La solicitarea explicită a fondatorului, PR #7 a fost marcat Ready for review și integrat prin squash în `drvas-integrated-platform`.
+- Commit de integrare: `c194068c4e13bc3c69ccf2208d67ed13db45ec46`.
+- GitHub Actions a pornit pentru acest commit:
+  - Deploy Worker: run ID `42097274639`, URL https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42097274639
+  - Build Android APK: run ID `42097274671`, URL https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42097274671
+- La ultima verificare: dependențele, SBOM și validarea statică Worker/JavaScript au trecut; workflow-ul Deploy era la instalarea Chromium, înaintea testelor browser, deploy-ului Worker și smoke test-ului. Build-ul Android trecuse de pregătirea aplicației și verificările de privacy defaults, fiind în pasul Build APK.
+- Prin urmare, merge-ul este confirmat, dar deploy-ul live și APK-ul final nu sunt încă declarate reușite până când Actions nu confirmă rezultatele.
+- Migrarea `202611050001_chat_attachments.sql` este inclusă în repo, dar NU a fost executată în proiectul Supabase. `DRVAS_FILE_ANALYSIS_ENABLED` rămâne dezactivat; analiza documentelor medicale nu trebuie activată până la revizuirea și aplicarea sigură a migrării, verificările de retenție/DPA și conformitate UK GDPR/DPIA.
+- Nicio valoare de secret Cloudflare/Supabase/Gemini nu a fost citită sau schimbată în această sesiune.
