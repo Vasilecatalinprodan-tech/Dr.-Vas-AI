@@ -1115,3 +1115,24 @@ Noua rulare care verifică și această schimbare: `42087879142`, link https://g
 - Vocile reale nu au fost testate auditiv; mock-urile E2E nu certifică timbrul.
 - Atașamentele nu sunt încă activate pentru analiză AI; `DRVAS_FILE_ANALYSIS_ENABLED` rămâne fail-closed.
 - Nicio schimbare în producție, bază de date, secrete, configurare TTS Live sau acces PR.
+
+
+## 2026-11-05 — rafinare finală a declanșării CI pentru jurnal
+
+Verificarea run-ului `42087879142` a arătat că toate step-urile, inclusiv `Run homepage and session-restoration tests`, s-au încheiat cu success, însă jobul a primit concluzia `cancelled`. Cauza: pentru evenimentele `pull_request`, filtrul `paths` se raportează la fișierele schimbate în PR față de branch-ul de bază, nu doar la fișierele din ultimul commit. Cum PR #7 conține modificări de cod, un commit nou doar în jurnal putea declanșa din nou workflow-ul și anula execuția în curs.
+
+Corecție suplimentară aplicată în `.github/workflows/browser-e2e.yml`:
+- `pull_request` pentru branch-ul de bază `drvas-integrated-platform` rulează doar la `opened`, `reopened`, `ready_for_review`, nu la fiecare `synchronize`;
+- `push` urmărește branch-ul de lucru `universal-chat-attachments` și doar căile de cod/configurație relevante: `www/**`, `tests/e2e/**`, `worker/**`, `supabase/migrations/**`, workflow-ul browser E2E;
+- commiturile exclusiv documentare nu declanșează un push workflow, iar actualizările de cod de pe branch pornesc testele direct.
+
+Commit workflow: `dd8cb52d7717651476b2b1a83fb318bf4cde322b`.
+
+Rezultat de testare confirmat separat:
+- run `42087660734` pe commitul `c55708f17a14efb83f23c3941608b5c29eac1d7a` a avut status final `success`;
+- logul arată `Running 43 tests using 1 worker` și `43 passed (17.3s)`;
+- run `42087879142` a executat cu succes toți pașii până la capăt, dar concluzia jobului a fost anulată de un eveniment concurent; nu este numărat ca CI verde.
+
+Următorul run trebuie verificat după commitul `dd8cb52` pentru a confirma noul trigger pe push și status final success. Commiturile doar de jurnal nu ar trebui să mai anuleze această rulare.
+
+PR #7 rămâne Draft/open, nemerged. Nu s-a făcut deploy, nu s-a aplicat migrarea Supabase, nu s-au schimbat secretele sau TTS Live.
