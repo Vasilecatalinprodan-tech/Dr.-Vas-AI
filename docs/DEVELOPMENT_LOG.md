@@ -84,3 +84,17 @@
 - The Worker deployment step and post-deploy smoke-test step both completed successfully. This confirms the production Worker/site deployment and server-level checks. It does not equal a live browser session against the real Supabase account; browser regression used a mocked Supabase client.
 - Cloudflare's separate GitHub App build check for the PR had reported failure and its private build log remained inaccessible. Despite that separate check, the repository's own Wrangler production deploy workflow succeeded and its production smoke tests passed.
 - Current production Worker URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev
+
+
+## 2026-11-05 — Module persistence coverage expansion and conversation continuity
+
+- Continued the seven workstreams: Studio, Academy, Commerce, Business, Free chat/voice, Android, and live Supabase verification.
+- Verified deployment workflow #452 (run `42110866126`) completed successfully with 60/60 browser tests, Worker deployment, production smoke test and SBOM upload.
+- Added save/list/reopen round-trip tests for Academy, Commerce and Business projects. The tests check restoration of the original title and primary field and confirm the saved payload is associated with the authenticated test owner and correct module.
+- Fixed template-literal syntax in the new tests and updated CI to execute `tests/e2e/module-persistence.spec.cjs`; prior green runs did not include this new file.
+- Code commits: `44f2cabb4e773da62e6f20b034ffdbd63e525812` (test corrections) and `a872679caa837a6d63dcd826305ae9b7978ac8a4` (CI inclusion).
+- Workflow #454 (run `42111255035`) is the first run intended to execute the expanded browser suite. Its final result remains to be checked; do not mark the new tests as passing until then.
+- The tests use a mocked Supabase client and do not prove live production RLS, migration application, or cross-account isolation in the actual database.
+- Updated `PROJECT-STATUS.md`, `PROJECT-HANDOFF.md`, and `docs/MODULE_READINESS_AUDIT_2026-11-05.md` with this checkpoint.
+- Conversation retention: the original conversation remains in ChatGPT chat history. The repository stores technical decisions, code, tests and concise checkpoints; it does not contain a verbatim export of every message. No claim is made that the complete chat transcript has been copied to GitHub.
+- Existing installed Android APK remains untouched. Physical-device audio testing and live Supabase migration/RLS/storage verification remain outstanding.
