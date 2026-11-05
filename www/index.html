@@ -1284,6 +1284,36 @@ body.module-workspace-mode .studio-workspace.hidden{
       <label>Răspuns AI și dovezi<textarea id="founderEvalOutput" maxlength="7000" placeholder="Răspunsul modelului și surse/referințe. Nu include date personale sensibile."></textarea></label>
       <button type="button" onclick="buildFounderEvaluationPrompt()">Evaluează răspunsul AI</button>
      </article>
+     <article class="founder-tool">
+      <h5>📦 Digital Product Studio · Produse digitale</h5><p>Construiește ghiduri, șabloane, mini-cursuri și pachete descărcabile, cu ofertă și livrabile clare.</p>
+      <label>Tipul produsului<select id="founderDigitalType"><option>E-book / ghid practic</option><option>Șablon / checklist / workbook</option><option>Mini-curs video sau text</option><option>Pachet de resurse digitale</option><option>Abonament cu conținut</option></select></label>
+      <label>Titlul produsului<input id="founderDigitalTitle" maxlength="140" placeholder="Numele produsului"></label>
+      <label>Clientul-țintă<input id="founderDigitalCustomer" maxlength="220" placeholder="Cui îi este destinat?"></label>
+      <label>Problema rezolvată și rezultatul promis<textarea id="founderDigitalPromise" maxlength="3500" placeholder="Ce problemă reală rezolvă și ce rezultat realist oferă?"></textarea></label>
+      <label>Conținut și materiale incluse<textarea id="founderDigitalDeliverables" maxlength="3500" placeholder="Module, capitole, fișiere, exerciții, suport."></textarea></label>
+      <label>Preț ipotetic (£)<input id="founderDigitalPrice" type="number" min="0" max="100000" step="0.01" value="9.99"></label>
+      <button type="button" onclick="buildFounderDigitalProductPrompt()">Creează produsul digital</button>
+     </article>
+     <article class="founder-tool">
+      <h5>🛒 Publishing Lab · Pregătire publicare carte</h5><p>Pregătește metadatele editoriale și lista de verificare înainte de încărcarea manuală la o editură sau platformă.</p>
+      <label>Titlu și subtitlu<input id="founderPublishTitle" maxlength="220" placeholder="Titlu — subtitlu"></label>
+      <label>Autor / pseudonim<input id="founderPublishAuthor" maxlength="140" placeholder="Numele care va apărea pe copertă"></label>
+      <label>Limba și piața<select id="founderPublishMarket"><option>Română · România</option><option>Engleză · Regatul Unit</option><option>Engleză · internațional</option><option>Italiană · Italia</option><option>Turcă · Turcia</option><option>Mai multe piețe</option></select></label>
+      <label>Gen, categorie și cuvinte-cheie<textarea id="founderPublishKeywords" maxlength="1800" placeholder="Categorie, subcategorie și 5–10 cuvinte-cheie relevante."></textarea></label>
+      <label>Descriere editorială<textarea id="founderPublishDescription" maxlength="4000" placeholder="Rezumatul cărții, publicul și diferențiatorul."></textarea></label>
+      <label>Format și dimensiune<select id="founderPublishFormat"><option>E-book</option><option>Paperback</option><option>Hardcover</option><option>E-book + tipărit</option></select></label>
+      <label>Număr estimat de pagini<input id="founderPublishPages" type="number" min="1" max="3000" step="1" placeholder="Ex.: 220"></label>
+      <button type="button" onclick="buildFounderPublishingPrompt()">Pregătește pachetul editorial</button>
+     </article>
+     <article class="founder-tool">
+      <h5>🎧 Music Release Lab · Pregătire lansare piesă</h5><p>Organizează creditele, drepturile, metadatele și materialele necesare unei lansări muzicale.</p>
+      <label>Titlul piesei<input id="founderReleaseTitle" maxlength="140" placeholder="Titlul exact al piesei"></label>
+      <label>Artiști și colaboratori<input id="founderReleaseCredits" maxlength="500" placeholder="Interpret, compozitor, textier, producător"></label>
+      <label>Deținerea drepturilor<select id="founderReleaseRights"><option>Toate drepturile sunt ale mele / am documente</option><option>Există coautori sau colaboratori</option><option>Am licențe pentru materialele folosite</option><option>Încă trebuie clarificate drepturile</option></select></label>
+      <label>Limba și conținut explicit<select id="founderReleaseContent"><option>Română · fără conținut explicit</option><option>Română · conținut explicit</option><option>Engleză · fără conținut explicit</option><option>Engleză · conținut explicit</option><option>Altă limbă / de stabilit</option></select></label>
+      <label>Data-țintă și povestea lansării<textarea id="founderReleaseStory" maxlength="2200" placeholder="Data dorită, publicul, mesajul și planul de promovare."></textarea></label>
+      <button type="button" onclick="buildFounderMusicReleasePrompt()">Creează dosarul de lansare</button>
+     </article>
     </div>
     <p class="founder-safety-note">Niciun proiect nu este publicat automat și nicio plată, comandă, investiție sau tranzacție nu este executată automat. Veniturile sunt estimări, nu garanții. Respectăm drepturile de autor, licențele, regulile platformelor, protecția datelor, taxele și revizia umană pentru traduceri cu miză juridică sau medicală.</p>
     <p id="founderWorkbenchStatus" class="founder-tool-status" role="status" aria-live="polite">Instrumente private pentru administrator. Cărțile și piesele folosesc funcția de salvare privată Dr.Vas Studio.</p>
@@ -3577,6 +3607,25 @@ function buildFounderEvaluationPrompt(){
  if(!task||!output){founderWorkbenchMessage("Completează sarcina și răspunsul AI.",true);el("founderEvalOutput")?.focus();return;}
  const prompt="DR.VAS AI EVALUATION & TRAINING LAB\nSISTEM: "+system+"\nSARCINĂ: "+task+"\nCRITERII: "+criteria+"\nRĂSPUNS:\n"+output+"\n\nEvaluează cerința și criteriile, separă afirmațiile verificabile de opinii, apreciază acuratețea numai pe dovezile disponibile, identifică erori/contradicții/omisiuni/halucinații, evaluează claritatea/completitudinea/relevanța/siguranța, acordă scoruri doar cu justificare și nivel de încredere, oferă corecturi și benchmark-uri/cazuri-limită. Nu inventa surse sau scoruri; când nu există dovezi marchează «neverificabil». Nu pretinde corectitudine absolută. Nu folosi date personale/confidențiale pentru training fără drepturi și consimțământ. Orice set de training necesită proveniență, licență, revizie umană și separarea datelor de evaluare de cele de antrenare.";
  launchFounderWorkbenchPrompt("academy",prompt,"Evaluarea AI este pregătită. Revizuiește criteriile și apasă Trimite.");
+}
+
+function buildFounderDigitalProductPrompt(){
+ const type=el("founderDigitalType")?.value||"E-book / ghid practic",title=el("founderDigitalTitle")?.value.trim()||"Produs digital nou",customer=el("founderDigitalCustomer")?.value.trim()||"",promise=el("founderDigitalPromise")?.value.trim()||"",deliverables=el("founderDigitalDeliverables")?.value.trim()||"",price=Number(el("founderDigitalPrice")?.value||0);
+ if(!customer||!promise||!deliverables||!Number.isFinite(price)||price<0){founderWorkbenchMessage("Completează clientul, rezultatul, livrabilele și un preț valid.",true);return;}
+ const prompt="DR.VAS DIGITAL PRODUCT STUDIO — BRIEF DE PRODUS ORIGINAL\nTIP: "+type+"\nTITLU: "+title+"\nCLIENT-ȚINTĂ: "+customer+"\nPROBLEMĂ ȘI REZULTAT PROMIS: "+promise+"\nLIVRABILE: "+deliverables+"\nPREȚ IPOTETIC: £"+price.toFixed(2)+"\n\nConstruiește: validarea problemei și a cererii înainte de investiții; profilul clientului; propunerea de valoare și limitele promisiunii; structura completă pe module/capitole; conținutul efectiv și materialele auxiliare; standardul de calitate și verificare; pagina de vânzare, FAQ și mesajele de onboarding; ipoteze de preț, comisioane, costuri, marjă și prag de rentabilitate; checklist de accesibilitate, drepturi/licențe, protecția datelor, rambursări, taxe și reguli pentru consumatori. Separă faptele de ipoteze, nu inventa cerere sau rezultate și nu promite câștiguri garantate. Nu publica și nu încasa bani fără aprobarea fondatorului.";
+ launchFounderWorkbenchPrompt("studio",prompt,"Brief-ul produsului digital este pregătit. Revizuiește-l și apasă Trimite.",{type:"digital-product",title});
+}
+function buildFounderPublishingPrompt(){
+ const title=el("founderPublishTitle")?.value.trim()||"",author=el("founderPublishAuthor")?.value.trim()||"",market=el("founderPublishMarket")?.value||"Mai multe piețe",keywords=el("founderPublishKeywords")?.value.trim()||"",description=el("founderPublishDescription")?.value.trim()||"",format=el("founderPublishFormat")?.value||"E-book",pages=Number(el("founderPublishPages")?.value||0);
+ if(!title||!author||!description||!Number.isFinite(pages)||pages<0){founderWorkbenchMessage("Completează titlul, autorul, descrierea și numărul valid de pagini.",true);return;}
+ const prompt="DR.VAS PUBLISHING LAB — PACHET EDITORIAL\nTITLU: "+title+"\nAUTOR: "+author+"\nPIAȚĂ/LIMBĂ: "+market+"\nCATEGORII ȘI CUVINTE-CHEIE: "+(keywords||"Propune după conținutul manuscrisului") +"\nDESCRIERE FURNIZATĂ: "+description+"\nFORMAT: "+format+"\nPAGINI ESTIMATE: "+(pages||"De stabilit")+"\n\nPregătește un pachet editorial: descriere scurtă și lungă, biografie autor pe baza datelor furnizate (nu inventa), categorii și cuvinte-cheie motivate, public-țintă, text pentru coperta spate, checklist de manuscris și corectură, verificarea fonturilor/diacriticelor și a imaginilor, specificații de copertă de confirmat la platformă, alegerea formatului și a dimensiunii tiparului, estimarea cotorului numai după numărul final de pagini și hârtie, ISBN și drepturi de autor — explică când sunt necesare și cine le emite, declarații privind conținutul generat cu AI dacă platforma le cere, verificarea prețului/royalty doar pe baza tarifelor actuale oficiale. Nu inventa ISBN, aprobări, costuri sau acceptarea platformei. Nu încărca și nu publica automat.";
+ launchFounderWorkbenchPrompt("studio",prompt,"Pachetul editorial este pregătit în Dr.Vas Studio. Revizuiește-l și apasă Trimite.",{type:"publishing-pack",title});
+}
+function buildFounderMusicReleasePrompt(){
+ const title=el("founderReleaseTitle")?.value.trim()||"",credits=el("founderReleaseCredits")?.value.trim()||"",rights=el("founderReleaseRights")?.value||"Încă trebuie clarificate drepturile",content=el("founderReleaseContent")?.value||"Altă limbă / de stabilit",story=el("founderReleaseStory")?.value.trim()||"";
+ if(!title||!credits||!story){founderWorkbenchMessage("Completează titlul, creditele și planul de lansare.",true);return;}
+ const prompt="DR.VAS MUSIC RELEASE LAB — DOSAR DE LANSARE\nPIESĂ: "+title+"\nCREDITE: "+credits+"\nDREPTURI: "+rights+"\nLIMBĂ/CONȚINUT: "+content+"\nPLAN ȘI POVESTE: "+story+"\n\nCreează un dosar de lansare: metadate standardizate, ordinea și forma creditelor, checklist pentru acorduri scrise cu toți coautorii/interpreții/producătorii, confirmarea licențelor pentru beat-uri, samples, artwork și voce, verificarea titlului și a versiunilor clean/explicit, descriere editorială, pitch scurt, biografie bazată numai pe date furnizate, brief de copertă originală, plan de promovare organică și calendar. Marchează orice drept neclar drept BLOCAJ — NU DISTRIBUI. Explică faptul că platforma/distribuitorul stabilește formatele, cerințele și remunerațiile; nu inventa ISRC/UPC, nu garanta playlisturi sau venituri. Nu trimite și nu distribui automat.";
+ launchFounderWorkbenchPrompt("studio",prompt,"Dosarul de lansare muzicală este pregătit. Revizuiește-l și apasă Trimite.",{type:"music-release",title});
 }
 
 function calculateCryptoMiningEconomics(){
