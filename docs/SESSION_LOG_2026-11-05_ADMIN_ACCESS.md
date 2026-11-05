@@ -63,3 +63,10 @@ This file records the technical summary and decisions from this conversation; th
 
 - The follow-up APK build workflow #328 (run ID 42104681938) completed successfully for frontend commit 56c73d5a6c9a2c134679d9de6b6b99d849948fc3. Artifact DrVas-APK ID 13450941858, 6,114,301 bytes, SHA-256 fe7e514ffe63e99749796049c19cb6e9bbf633f06f43deb218592ac9d4973439, expiry 2027-02-03. Build-only; no installation or physical-device audio validation.
 - The deployment attempt #437 was cancelled by GitHub Actions concurrency when the latest test commit was pushed. Latest deployment workflow #438 (run ID 42104694767, commit 0ce0b19916fc5968d747f98bb10ab78c8f562e3f) passed dependency installation, SBOM generation and JavaScript validation; browser runner install completed and Chromium installation was still in progress at this checkpoint. Browser E2E, Worker deployment and production smoke test have not yet run in this attempt.
+
+
+### Latest regression-test refinement — 2026-11-05
+
+- Latest completed deployment validation attempt #438 (42104694767) reached browser tests: 50/51 passed. The only remaining failure was a stale animation-class assertion in the new single-voice presentation test; the narration itself started and the available Romanian voice was selected. Worker deployment was skipped because of this single test assertion.
+- Corrected the test to assert the actual scene-entry animation class (scene-enter) instead of an obsolete class name. Test commit: 32f7668c6a4f01c98bff63d66b6def158dbd15b0.
+- Latest deployment validation run #439 (42105174115) is now executing against that commit. JavaScript validation and dependency inventory completed; browser runner installation/Chromium setup was in progress at this checkpoint. Do not claim production deployment until this run passes the browser suite and the Worker smoke test.
