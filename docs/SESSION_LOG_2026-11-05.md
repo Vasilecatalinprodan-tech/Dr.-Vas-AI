@@ -105,3 +105,13 @@ Next action: verify latest Actions run/artifact for the current branch; then ins
 - Compared `universal-chat-attachments` (base) to `founder-workbenches-development` (head). GitHub reports divergent histories: feature branch 58 commits ahead, 147 behind, merge base `5bb13b80d5dcc3e1ce348cd1c39ec29af7a0fa17`. Do not merge blindly.
 - Added `docs/BRANCH_INTEGRATION_REVIEW_2026-11-05.md` documenting the feature inventory, branch divergence, test caveats and controlled integration plan.
 - No source code was merged or changed, and no production deployment occurred in this review.
+
+
+## Correction — PR #6 merge and current workbench parity — 2026-11-05
+
+A deeper GitHub check corrected the initial branch-discovery interpretation:
+- `get_pr_info` confirms PR #6 is **merged**, not open, into `drvas-integrated-platform`; merge commit `1c4fdd930969b4d474458c1ad19e46c9577ecc55`. Do not merge PR #6 again.
+- PR #6 recorded 42/42 Playwright tests passing on run #217 at head commit `7fd8467da50a3555bb1b3e13443ee20dd9d5aa0c`. This does not certify later commits or the current Android build.
+- Fetched `www/index.html` from both `drvas-integrated-platform` and `universal-chat-attachments`; both contain Creator & Online Income Lab, Book Workshop, Music Release Lab and Content & Campaign Planner markers.
+- Compared the continuation branch to the integrated branch: histories diverge; `universal-chat-attachments` is 146 commits ahead and 4 behind, merge base `ab0e2778306f77547f6ce87a174ba33bbff229df`. A deliberate four-commit/file-level reconciliation is needed; no merge was performed.
+- Updated the branch review document and project status to reflect this corrected finding. Current APK run/artifact, audible Android voice and production deploy remain unverified.
