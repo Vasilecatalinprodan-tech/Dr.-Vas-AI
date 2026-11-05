@@ -862,3 +862,9 @@ Founder feedback:
 - Added a Playwright regression test for server-side TTS without browser speech synthesis and CI assertions. Workflow #470 / run `42130438370` was pending at the time of this checkpoint.
 - Created `docs/CHAT-ARCHIVE-2026-11-05.md`, a project conversation checkpoint preserving the user's exact instructions in this session, actions, decisions and remaining work. It is not a verbatim export of the entire ChatGPT conversation history.
 - Distinct Jan/Sarah voice IDs, photorealistic portraits, physical Samsung tests and Supabase read-only verification remain incomplete.
+
+## 2026-11-05 — saved module project continuity
+
+- Improved Academy, Commerce and Business persistence: when the founder receives a new AI answer while an existing saved project is open, the latest answer is now written back into that project together with the current brief.
+- New drafts are not silently created; the user still explicitly saves a new project. Existing save/list/open/export/delete controls remain.
+- Added a CI assertion to guard this behavior. Workflow for the latest commit must be checked before claiming this change passed tests or deployed.
