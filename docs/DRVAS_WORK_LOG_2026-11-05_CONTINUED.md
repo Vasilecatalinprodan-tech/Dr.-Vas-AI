@@ -127,3 +127,19 @@ The current branch versions of `worker/index.js` and the following migrations we
 - The most recent successful Worker deploy/regression is run `42003477696`: deploy and production smoke test passed on the same commit.
 - Presenter continuity documentation was added afterward in commit `7dc4d02e100898ee44b90084b063e776ec4fef61`; this was documentation-only and did not change deployed application code.
 - The Android debug APK remains from successful build run `42003085088` (on commit `fce0dadc80d81c7237cecb5bd83a0f82a4940368`); it is not a signed Play release and has not been physically tested.
+
+
+## 2026-11-05 — Founder workbench development
+
+Owner asked to continue developing the integrated platform, include Crypto & Mining and income-generation tools (books, music and other lawful digital work), save all progress, and not run tests yet. Development is isolated on `founder-workbenches-development`, based on `5bb13b80d5dcc3e1ce348cd1c39ec29af7a0fa17`; it is not merged or deployed.
+
+Source changes in `www/index.html`:
+- Added the admin-dashboard-only Creator & Online Income Lab with Book Workshop, Music Lab, Online Income planner and AI Evaluation & Training Lab. Prompt actions require a signed-in user and server-confirmed admin state, then route through the existing founder-gated Studio, Business or Academy chat workspace.
+- Book and music briefs use the existing Studio project save/open/export path. Studio save now returns a boolean so the new workbench can report whether persistence was confirmed.
+- The income planner produces a structured, approval-led plan and complements the existing persistent Income Tracker; it does not publish, contact clients or spend money.
+- AI Evaluation prepares evidence-based reviews, confidence-qualified scoring and benchmark ideas; it does not autonomously train or deploy models.
+- Bitcoin calculator now includes cooling load, downtime, monthly maintenance and a manual tax-reserve assumption, with daily/monthly/annual estimates and payback. It remains a simulation using user-entered assumptions.
+
+No real mining, wallets, trades, withdrawals, automatic publishing, music rendering/distribution, marketplace posting or model training was enabled. No migration, Worker route, secret, payment, entitlement, RLS policy or production data was changed. New feature scope and boundaries are recorded in `docs/DRVAS_FOUNDER_WORKBENCHES_2026-11-05.md`.
+
+Per owner instruction, no tests, syntax checks, browser checks or manual tests were run; no deployment or merge was performed. Inspect the diff and run checks only after the owner authorizes testing.
