@@ -366,3 +366,58 @@ Clarificare importantă:
 
 Păstrarea conversației:
 Acest jurnal păstrează mesajele exacte de autorizare/confirmare și rezumatul fidel al pașilor până la momentul în care utilizatorul a ajuns în SQL Editor. Nu este transcriere literală completă a conversației ChatGPT. Istoricul original rămâne în ChatGPT; pentru o copie integrală se folosește exportul de date ChatGPT.
+
+
+## 2026-11-05 — rezultate Supabase read-only și checkpoint de continuare
+
+Cererea exactă a fondatorului:
+> „column_name,data_type,is_nullable,column_default
+> id,bigint,NO,null
+> user_id,uuid,NO,null
+> consent_type,text,NO,null
+> policy_version,text,NO,null
+> granted,boolean,NO,null
+> recorded_at,timestamp with time zone,NO,now() salveaza tot de pana acum si continuam”
+
+Rezultate transmise de utilizator din Supabase SQL Editor:
+1. Inventarul tabelelor din schemele `public` și `storage` a arătat tabelele publice:
+   `chat_messages`, `drvas_audit_logs`, `drvas_business_transactions`, `drvas_conversation_metadata`, `drvas_crypto_devices`, `drvas_founder_provenance`, `drvas_income_opportunities`, `drvas_privacy_consents`, `drvas_private_profiles`, `drvas_rate_limits`, `drvas_studio_projects`, `drvas_studio_render_jobs`, `profiles`, `user_memories`.
+   Nu apare `public.drvas_chat_attachments`.
+2. În schema Storage există `storage.buckets` și `storage.objects`, plus tabelele interne enumerate de utilizator.
+3. Constrângerile raportate pentru `public.drvas_privacy_consents`:
+   - PK `drvas_privacy_consents_pkey`;
+   - check `drvas_privacy_consents_policy_version_nonempty`: policy_version lungime 1–64;
+   - check `drvas_privacy_consents_type_check`: valorile permise sunt `terms_of_service`, `privacy_notice`, `marketing_email`, `marketing_sms`, `optional_profile_data`, `health_data_processing`;
+   - FK `user_id` către `auth.users(id)` cu ON DELETE CASCADE.
+   **Nu există încă valoarea `file_processing` în allow-list-ul de consimțăminte observat.** Tipul existent `health_data_processing` trebuie păstrat.
+4. Coloanele tabelului `drvas_privacy_consents`:
+   - `id bigint NOT NULL`, fără default raportat;
+   - `user_id uuid NOT NULL`;
+   - `consent_type text NOT NULL`;
+   - `policy_version text NOT NULL`;
+   - `granted boolean NOT NULL`;
+   - `recorded_at timestamp with time zone NOT NULL DEFAULT now()`.
+5. Bucketul `drvas-media` există și este privat (`public=false)); limita actuală raportată este 52,428,800 bytes (50 MiB). MIME allow-list actual: image/jpeg, image/png, image/webp, video/mp4, audio/mpeg, audio/wav, audio/mp4, audio/aac. PDF, TXT și CSV nu apar încă în lista transmisă.
+
+Eroare și clarificare:
+- Query-ul inițial a eșuat la citirea `supabase_migrations.schema_migrations` cu PostgreSQL 42P01: relation does not exist. Aceasta înseamnă că relația respectivă nu este disponibilă sub acel nume în proiectul inspectat; nu indică o modificare efectuată de query.
+- Utilizatorul a primit instrucțiunea să nu creeze manual tabela de migrări și să continue cu SELECT-uri read-only separate.
+- Din query-ul ulterior, utilizatorul a transmis rezultatul coloanelor tabelului consimțământ; rezultatele RLS/policies din primele două SELECT-uri nu au fost încă furnizate. Nu trebuie presupus că RLS sau politicile sunt active ori corecte până la verificare.
+
+Concluzie de compatibilitate preliminară:
+- Migrarea de atașamente din PR #7 nu a fost aplicată: tabelul `drvas_chat_attachments` lipsește, allow-list-ul consimțământului nu conține `file_processing`, iar allow-list-ul bucketului nu conține PDF/TXT/CSV.
+- Bucketul este deja privat, iar limita sa actuală este mai mare decât limita per-fișier propusă în aplicație; limita de bucket nu trebuie redusă fără analiza utilizărilor Studio existente.
+- Aceste rezultate sunt suficiente pentru a confirma că migrarea trebuie revizuită/aplicată controlat, dar nu sunt suficiente pentru execuție: lipsesc rezultatele RLS/policies, verificarea tuturor coloanelor/obiectelor și confirmarea backupului/rollbackului.
+- Nu s-a executat nicio comandă SQL de scriere, nicio migrare, nicio modificare Storage/RLS și niciun deploy. `DRVAS_FILE_ANALYSIS_ENABLED` rămâne dezactivat.
+- PR #7 rămâne draft, deschis și nemerged. Testele CI 43/43 confirmă doar browser/static pentru commitul indicat anterior, nu integrarea live Supabase Storage/Gemini.
+- Nu au fost cerute sau partajate chei, parole ori secrete.
+
+Următorii pași:
+1. Obținerea rezultatelor SELECT-urilor RLS/policies și completarea inspecției schemei.
+2. Revizuirea efectivă a migrației `202611050001_chat_attachments.sql` față de schema live, inclusiv politicile Storage existente și impactul asupra fișierelor Studio.
+3. Confirmarea backupului și a procedurii de rollback înainte de orice SQL de scriere.
+4. Aplicarea migrării numai după această verificare, apoi teste cu fișiere sintetice pentru upload, HEAD metadata, download, analiză și ștergere.
+5. Menținerea dezactivată a analizei documentelor Health până la confirmarea Paid Gemini, setărilor de retenție și cerințelor UK GDPR/DPIA.
+
+Păstrarea conversației:
+Acest checkpoint consemnează mesajul utilizatorului, rezultatele SQL efectiv transmise, eroarea întâlnită și pașii următori. Este un jurnal tehnic de continuitate, nu transcriere literală integrală a conversației ChatGPT; istoricul complet rămâne în ChatGPT, iar exportul de date ChatGPT este metoda pentru copia integrală.
