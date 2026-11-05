@@ -1070,3 +1070,48 @@ Limitare cunoscută: clasificarea după numele/URI este euristică, nu o proprie
 La ultima verificare, run-ul `42087396053` (run number 272) era încă `in_progress`: validarea codului și instalarea Playwright trecuseră, Chromium se instala, iar testele browserului nu aveau încă rezultat. Verificarea trebuie continuată până la statusul final.
 
 Nu s-a modificat codul, configurația TTS, baza de date, secretele, producția sau PR statusul. PR #7 rămâne Draft, nemerged și fără deploy.
+
+
+## 2026-11-05 — CI verde, eliminarea anulărilor provocate de jurnal și verificare deploy
+
+### Confirmare E2E completă
+GitHub Actions run `42087660734` (job `127457091942`) s-a încheiat cu status final `success`. Logul confirmă:
+- `Running 43 tests using 1 worker`
+- `43 passed (17.3s)`
+- validarea Worker-ului, JavaScript-ului inline și migrării de atașamente: success;
+- instalarea Playwright `1.64.1`: success;
+- instalarea Chromium: success;
+- pornirea serverului static: success;
+- testele homepage și session-restoration: success.
+
+Acesta este primul run verificat în această secvență cu status final complet `success`, nu doar un log de teste trecute într-un run anulat.
+
+### Cauza anulărilor și remediere
+Cauza anulărilor repetate: workflow-ul browser E2E rula la orice actualizare de Pull Request, inclusiv commituri care modificau doar jurnalul. Concurrency folosea `cancel-in-progress: true`, astfel commitul următor anula testarea anterioară.
+
+Am restrâns filtrele `paths` atât pentru `pull_request`, cât și pentru `push`, la fișiere care pot afecta codul sau validările:
+- `www/**`
+- `tests/e2e/**`
+- `worker/**`
+- `supabase/migrations/**`
+- `.github/workflows/browser-e2e.yml`
+
+Astfel, commiturile doar documentare nu mai declanșează și nu mai anulează testele. Concurrency `cancel-in-progress: true` rămâne utilă pentru a opri testele devenite depășite după schimbări reale de cod.
+
+Commit workflow: `cfc5445ff28fda5ebee1b55a4d22b1f483eebcc7`.
+
+Noua rulare care verifică și această schimbare: `42087879142`, link https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42087879142. La momentul notării: validarea și instalarea Playwright trecute, Chromium în curs; rezultatul final trebuie verificat.
+
+### Verificare suplimentară deploy și PR
+- PR #7 este încă open, Draft, nemerged; base `drvas-integrated-platform`, head `universal-chat-attachments`.
+- Workflow-ul `deploy-worker.yml` este configurat să ruleze la `workflow_dispatch` sau la push pe branch-ul `drvas-integrated-platform`; jobul de deploy face checkout explicit la `drvas-integrated-platform`. Un push obișnuit pe branch-ul PR `universal-chat-attachments` nu declanșează deploy.
+- Nu am lansat manual workflow-ul de deploy și nu am făcut merge.
+- Migration `202611050001_chat_attachments.sql` rămâne doar în branch; nu a fost aplicată în Supabase.
+- Privacy policy este marcată explicit ca versiune de lucru 1.1 și precizează că datele operatorului, temeiurile, retenția și contactul trebuie completate/verificate înainte de lansarea publică.
+
+### Stare și pași rămași
+- CI: un run complet verde confirmat, 43/43 teste.
+- Așteptăm confirmarea run-ului `42087879142` pentru noul filtru de paths.
+- Vocile reale nu au fost testate auditiv; mock-urile E2E nu certifică timbrul.
+- Atașamentele nu sunt încă activate pentru analiză AI; `DRVAS_FILE_ANALYSIS_ENABLED` rămâne fail-closed.
+- Nicio schimbare în producție, bază de date, secrete, configurare TTS Live sau acces PR.
