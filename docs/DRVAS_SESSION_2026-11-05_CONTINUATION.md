@@ -284,3 +284,20 @@ Conversația:
 - Testul a fost extins explicit pentru ambele nume: helperul trebuie să transforme „Dr.Vas și Dr.Jan” în „Doctor Vas și Doctor Jan”, în timp ce numele vizibil al prezentatorului rămâne „Dr.Vas”.
 - Commit test final: 4e822c62ce4c64bc4ea61eb95cdf1b5d9d77d85c (înlocuiește commitul de test anterior ca versiune curentă).
 - Workflow observat pe commitul de checkpoint anterior: run #239, ID 42057953961, pending la momentul verificării. Se verifică separat starea noului commit; nu se presupune că testele sunt verzi.
+
+
+## 2026-11-05 — verificare suplimentară a fișierelor reale înainte de Gemini
+
+În revizia fluxului de atașamente a fost identificat un risc: browserul scrie în tabel metadatele fișierului (inclusiv file_size și mime_type), iar bucketul privat este partajat și cu active Studio. Worker-ul verifica aceste metadate, dar nu confirma dimensiunea și MIME-ul obiectului binar efectiv din Storage înainte să îl transmită către Gemini.
+
+Corecție implementată pe branch-ul universal-chat-attachments:
+- Commit: d504bcfe9836ddff91fc21785e763de1bb7c02cc
+- Fișier: worker/index.js
+- După emiterea URL-ului semnat, Worker face HEAD pe obiectul privat și verifică Content-Length real, limita de 15 MiB, egalitatea cu dimensiunea înregistrată și Content-Type real față de MIME-ul permis.
+- Pentru TXT/CSV, Worker citește bytes, verifică din nou dimensiunea și decodifică strict UTF-8 înainte de a adăuga conținutul în prompt. Datele binare nu sunt trimise către Gemini dacă verificarea HEAD nu reușește.
+- Endpoint-ul HEAD pentru obiecte semnate este documentat în API-ul Supabase Storage: https://supabase.github.io/storage/ și https://supabase.com/docs/reference/self-hosting-storage/retrieve-an-object-via-a-presigned-url.
+
+Verificare și limite:
+- Diff-ul commitului a fost inspectat; verificarea CI pentru acest commit nu era încă disponibilă prin integrarea GitHub la momentul salvării.
+- Nu am aplicat migrarea SQL, nu am activat DRVAS_FILE_ANALYSIS_ENABLED, nu am făcut deploy și nu am schimbat secrete sau date de producție.
+- Înainte de activare trebuie confirmat prin test E2E cu fișiere sintetice că HEAD returnează Content-Length și Content-Type în mediul Supabase real; în caz contrar, fluxul refuză în mod sigur analiza, până la adaptarea verificării.
