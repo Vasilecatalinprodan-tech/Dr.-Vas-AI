@@ -1166,7 +1166,9 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
   expect(jan.speaker).toBe("Dr.Jan");
   expect(jan.modules).toContain("Dr.Vas Studio");
   expect(jan.modules).toContain("Dr.Vas Business");
-  expect(jan.speech).toContain("Dr.Vas Studio");
+  expect(jan.speech).toContain("Doctor Vas Studio");
+  expect(jan.speech).toContain("Doctor Vas Business");
+  expect(jan.speech).toContain("Doctor Jan");
   await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].onend());
   await page.waitForTimeout(500);
   const sarah = await page.evaluate(() => ({
@@ -1177,7 +1179,8 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
   expect(sarah.speaker).toBe("Sarah");
   expect(sarah.modules).toContain("Dr.Vas Academy");
   expect(sarah.modules).toContain("Dr.Vas Commerce");
-  expect(sarah.speech).toContain("Dr.Vas Academy");
+  expect(sarah.speech).toContain("Doctor Vas Academy");
+  expect(sarah.speech).toContain("Doctor Vas Commerce");
   await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].onend());
   await page.waitForTimeout(1450);
   await expect(page.locator("#drvasPresentation")).toBeHidden();
