@@ -2333,11 +2333,14 @@ function selectModule(moduleName,userInitiated=false){
         selectModule(moduleName,true);
         return;
       }
+      // Public accounts should see the product's access policy, not an administrator setup error.
+      // The Worker remains authoritative and continues to reject every unauthorized premium request.
+      const privateMessage=tr("Premium și momentan privat. Acest modul va fi disponibil public după lansarea abonamentelor.");
       const accessNotice=el("adminAccessNotice");
-      const diagnostic=accessNotice?.textContent||tr("Contul nu are acces de administrator confirmat de server.");
-      if(status){status.textContent=diagnostic;status.classList.remove("hidden");}
+      if(accessNotice){accessNotice.classList.add("hidden");accessNotice.textContent="";}
+      if(status){status.textContent=privateMessage;status.classList.remove("hidden");}
       const accessMessage=el("moduleAccessMessage");
-      if(accessMessage)accessMessage.textContent=diagnostic;
+      if(accessMessage)accessMessage.textContent=privateMessage;
     }).catch(error=>{
       const diagnostic=tr("Nu am putut verifica accesul administratorului: ")+(error?.message||"eroare de conexiune");
       if(status){status.textContent=diagnostic;status.classList.remove("hidden");}
