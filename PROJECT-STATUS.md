@@ -664,3 +664,15 @@ Keep modules integrated, preserve existing auth, profile, chat/history, multilin
 4. Resume full Dr.Vas functional audit across authentication, profile, module navigation, chat/history, multilingual behaviour, privacy/security, admin tools and Worker/DB actions.
 5. Continue Studio's end-to-end production workflow (saved projects, scripts, generation, media rendering/export, founder approval, then compliant social integrations); then complete Academy, Commerce and Business, billing and release readiness.
 6. Keep this file and `PROJECT-HANDOFF.md` current after each meaningful code change, decision, deployment or test. Never record API keys, passwords, tokens, or other secrets in GitHub docs.
+
+
+## Follow-up audit — 2026-11-05 (continuation session)
+
+- Re-fetched and verified the current branch files from GitHub:
+  - `.github/workflows/android.yml` includes `universal-chat-attachments` in push triggers and builds a debug APK using Node 22, Java 21, `npm ci`, `npx cap sync android`, and Gradle `assembleDebug`; it uploads artifact `DrVas-APK`.
+  - `www/index.html` contains the server-side `playFounderVoice()` request to `action: "voice_tts"`, reads the response as an audio Blob, creates an object URL and plays it with `Audio.play()`; `speakDrVas()` attempts this server voice before browser SpeechSynthesis.
+  - `MainActivity.java` contains the WebView media autoplay setting.
+  - `capacitor.config.json` still bundles `www` and has no live-update configuration.
+- The frontend and Android source changes are present on the branch. This source inspection does not prove that GitHub Actions completed, that an APK artifact exists, or that audio plays on the founder's phone.
+- The current GitHub connector in this session does not expose a repository-wide Actions run listing/dispatch operation. Do not invent a build status; the run/artifact must be checked in GitHub Actions UI or with an available Actions API integration.
+- Next practical test after downloading the successful artifact: install/update the APK on the Android phone, sign in, enable voice output, ask for a short Romanian response, test replay and stop. If silent, record whether the UI shows voice unavailable and inspect Worker response status, ElevenLabs secrets/configuration, Android WebView audio focus/permissions, and device media volume. Do not paste secrets into chat.
