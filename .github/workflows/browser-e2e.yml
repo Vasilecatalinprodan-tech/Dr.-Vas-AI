@@ -18,7 +18,7 @@ permissions:
 
 concurrency:
   group: drvas-browser-e2e-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   browser-e2e:
