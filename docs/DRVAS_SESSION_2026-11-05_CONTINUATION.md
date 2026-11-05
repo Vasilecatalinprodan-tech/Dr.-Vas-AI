@@ -1582,3 +1582,12 @@ Aștept rezultatul rulărilor E2E cu noua politică de concurență; dacă apare
 - Pașii confirmați reușiți: instalare dependențe, SBOM, validare Worker/JavaScript, instalare Chromium, testele Playwright homepage/session-restoration, deploy Worker, smoke test producție și verificarea tuturor celor șase carduri de module plus răspunsul 401 pentru endpoint-ul admin neautentificat.
 - Worker-ul de producție a fost publicat și verificat de propriul workflow. APK build încă rulează la ultima verificare; nu declarăm APK gata până la finalizarea upload-ului artefactului.
 - Migrarea Supabase pentru atașamente rămâne neexecutată și analiza fișierelor medicale rămâne dezactivată până la verificările de conformitate și configurare.
+
+
+## Confirmare APK Android — 2026-11-05
+
+- Workflow Build DrVas APK pentru commitul integrat a încheiat cu SUCCESS.
+- Run: `42097274671` — https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42097274671
+- Artefact încărcat cu succes: `DrVas-APK`, aproximativ 6.1 MB, ID artefact `13448301231`.
+- APK-ul este disponibil în secțiunea Artifacts a rulării GitHub Actions de mai sus. Build-ul este confirmat; instalarea și testarea manuală pe Samsung Galaxy S24 rămân verificări separate.
+- Checkpoint complet pentru chatul următor: PR #7 integrat, Worker publicat și smoke-tested, APK construit și artefact salvat; migrarea Supabase pentru atașamente nu a fost executată, iar analiza documentelor medicale rămâne dezactivată.
