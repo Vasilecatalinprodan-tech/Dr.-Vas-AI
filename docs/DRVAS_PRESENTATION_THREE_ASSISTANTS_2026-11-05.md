@@ -16,3 +16,7 @@ Implementare:
 Nu au fost schimbate autentificarea, drepturile, baza de date, secretele sau producția. Nu s-a făcut merge sau deploy. Testele CI pentru această versiune sunt încă în așteptare.
 
 Acesta este un checkpoint tehnic, nu transcrierea integrală a conversației ChatGPT. Conversația originală rămâne în istoricul ChatGPT.
+
+## CI finding and correction
+
+The first CI run for this feature executed 41 browser tests: 40 passed and the new presentation test failed because the modal was nested inside the module dashboard, which is hidden before sign-in. The modal was moved outside that hidden dashboard, and the regression test now clicks the public landing-page presentation button itself. A fresh CI run is required before this feature can be called verified. No merge or production deployment has been made.
