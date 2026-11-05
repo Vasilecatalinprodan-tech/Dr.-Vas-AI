@@ -325,3 +325,13 @@ Resume on `drvas-integrated-platform`. The latest recorded CI evidence was reche
 - Deploy run #436 (`42103421994`) and Android build run #327 (`42103421938`) were in progress when recorded. Verify their final outcomes before claiming release.
 - Installed APK remains untouched per founder request. New APK artifact is only a CI build, not installed.
 - Next: verify run #436 deployed, open presentation on desktop and Samsung browser, click Replay if needed, confirm sound. If still silent, capture audio status error and check OS TTS voices/volume. Also inspect latest Android artifact but do not ask founder to reinstall until they approve.
+
+
+## 2026-11-05 — Public module messaging and presentation voice regression fixes
+
+- Investigated failed deployment workflow #436 (42103421994): 44/51 browser tests passed; seven failures were caused by stale test assumptions and confusing public-facing admin-gate messaging. The Worker deployment and production smoke-test steps were correctly skipped because the browser suite failed.
+- The new Android workflow #327 (42103421938) succeeded and uploaded artifact DrVas-APK (ID 13450288621, SHA-256 7f01ea1e3bb132e0dec2b4391f21e049793ca65bbdbd15fc91775786df26cca4, expires 2027-02-03). This is a build artifact only; no physical-device test or installation has occurred.
+- Frontend commit 56c73d5a6c9a2c134679d9de6b6b99d849948fc3: public users who are not authorized for founder-only paid modules now receive a clear “Premium și momentan privat” message after the server-side access check, rather than an administrator configuration diagnostic. Server-side authorization remains unchanged and authoritative.
+- Test commit 0ce0b19916fc5968d747f98bb10ab78c8f562e3f: updated browser tests to mock an authenticated non-admin access check, and aligned voice assertions with the supported behavior of reusing one available language voice across the three presenter segments. The test also checks that a single installed Romanian voice still starts narration.
+- Deployment run #437 (42104681759) and APK run #328 (42104681938) were still running at the time of this note; deployment run #438 (42104694767) was queued for the latest test commit. Verify the latest run before claiming production deployment.
+- Next: verify run #438; if it passes, confirm Worker deployment and production smoke test. Then verify the new APK artifact and continue real-device audio testing only with the founder's approval. Do not ask the founder to reinstall the existing APK without explicit permission.
