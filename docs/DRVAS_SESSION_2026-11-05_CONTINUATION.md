@@ -317,3 +317,23 @@ Verificare și limite:
 - Urmează verificarea/rularea CI pe noul commit. Nu declarăm testele verzi până nu există un run complet reușit.
 - PR #7 rămâne draft, neintegrat. Nu s-a făcut merge, deploy, execuție de migrare SQL sau activare a `DRVAS_FILE_ANALYSIS_ENABLED`.
 - Istoricul complet al conversației rămâne în ChatGPT; acest jurnal tehnic păstrează deciziile și schimbările, nu transcrierea literală integrală.
+
+
+## 2026-11-05 — continuare autorizată și verificare pre-migrare
+
+Cererea exactă a fondatorului:
+> „ok hai sa continuam sa facem sa functioneze tot si aplica tot inclusiv migrari si tot si salveaza inclusiv conversatia asta”
+
+Instrucțiune: continuăm implementarea Dr.Vas end-to-end; fondatorul a autorizat explicit și aplicarea migrărilor. Această autorizare nu înlocuiește accesul tehnic efectiv la proiectul Supabase, backup-ul, verificarea schemei existente sau validarea de securitate.
+
+Verificare curentă:
+- CI run #247 / ID `42080801809` pentru commitul `c3389d31ec072db6cd3563ba9b6b80bd0a32b91c` este încă `in_progress`; validările statice au trecut, testele Playwright sunt în execuție. Nu se declară verde.
+- PR #7 rămâne deschis, Draft și nemerged.
+- Au fost citite și revizuite preliminar migrările pentru rate limits, module projects, Business cashbook, Studio render storage și universal chat attachments. Migrarea de atașamente modifică allow-list-ul bucketului privat `drvas-media`, păstrează bucketul privat și introduce tabel cu RLS și politici per utilizator.
+- Înainte de execuția reală trebuie verificat în schema live că tabelul `drvas_privacy_consents` și constrângerea `drvas_privacy_consents_type_check` există în forma presupusă, că bucketul `drvas-media` există și că politicile Storage actuale sunt compatibile. Trebuie făcut backup și verificat planul de rollback.
+- În această sesiune nu este disponibilă o conexiune/tool autorizat la proiectul Supabase pentru inspectarea schemei live sau rularea SQL. Prin urmare, NU au fost executate migrări și nu se pretinde că au fost aplicate.
+- Nu au fost schimbate setări Cloudflare, secrets, feature flags, Gemini billing sau producția. `DRVAS_FILE_ANALYSIS_ENABLED` rămâne dezactivat până la testele Storage reale și revizuirea legală/UK GDPR pentru date speciale de sănătate.
+
+Următoarele etape: așteptare rezultat CI #247; corectarea oricăror eșecuri; verificarea completă a istoricului de migrări și a schemei live prin conexiune Supabase; backup; aplicare controlată în staging/production doar după confirmarea proiectului și compatibilității; teste sintetice upload/download/delete și Worker; apoi verificare deploy/Android.
+
+Conversația: istoricul integral rămâne în conversațiile ChatGPT. Acest jurnal adaugă cererea exactă și rezumatul deciziilor tehnice pentru continuitate, dar nu poate arhiva literal toate mesajele. Pentru copie integrală se folosește exportul de date ChatGPT.
