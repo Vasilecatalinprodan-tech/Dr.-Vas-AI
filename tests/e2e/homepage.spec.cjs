@@ -212,6 +212,29 @@ test("public signed-in users can enter Dr.Vas Health without administrator privi
   expect(await page.evaluate(() => isDrvasAdmin)).toBeFalsy();
 });
 
+test("public non-admin can prepare a Health question from the mobile workspace", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-mobile-health-user", email: "mobile-user@example.invalid" };
+    isDrvasAdmin = false;
+    showModuleSelection();
+    selectModule("health", true);
+  });
+
+  await expect(page.locator("#healthWorkspace")).toBeVisible();
+  await expect(page.locator("#chatSection")).toBeVisible();
+  await expect(page.locator(".chat-module-rail")).toBeHidden();
+  await expect(page.locator("#healthWorkspace")).toContainText("nu stabilește diagnostice");
+  await expect(page.locator("#adminPanel")).toBeHidden();
+  await page.locator("#healthBrief").fill("Aș dori să înțeleg ce înseamnă termenul din rezultatul meu.");
+  await page.getByRole("button", { name: "Discută cu Dr.Vas Health" }).click();
+  await expect(page.locator("#question")).toHaveValue(/DR\.VAS HEALTH — SPRIJIN INFORMATIV/);
+  await expect(page.locator("#question")).toHaveValue(/nu formula diagnostic/);
+  await expect(page.locator("#chatSection")).toBeVisible();
+  expect(await page.evaluate(() => isDrvasAdmin)).toBeFalsy();
+});
+
 test("public signed-in users cannot open premium workspaces or gain administrator access", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await openApp(page, "ro");
