@@ -1886,7 +1886,7 @@ export default {
           select: "consent_type,granted,recorded_at",
           user_id: `eq.${user.id}`,
           consent_type: "in.(file_processing,health_data_processing)",
-          order: "recorded_at.desc",
+          order: "recorded_at.desc,id.desc",
           limit: "10"
         });
         const consentResponse = await fetch(
