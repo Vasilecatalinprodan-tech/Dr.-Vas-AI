@@ -187,6 +187,10 @@ The Studio now includes an MP4 render workflow with private scene-image/audio up
 - Confirmed the current E2E suite already covers landing/auth flow, module isolation, ordinary-user Free/Health access, premium denial, per-module project persistence, and mobile Free navigation.
 - Added an additional mobile Health regression test covering the Health disclaimer and the Health brief-to-chat-composer flow for a non-admin account. Test commit: `5de5bdffe6bdd9e1ffd8b6ee35755663d8b7f9cb`.
 - Prior source/test commit `4f84a00cd56752070e2a0c09ea1fb9bb172084eb`: browser regression run `41928245874` and Worker deploy/smoke run `41928245802` both succeeded.
-- The mobile Health test is newer than those green runs. Its fresh browser/deploy workflows must pass before the new test is marked verified.
+- The mobile Health test passed in browser run `41939928983` (38/38 tests). Worker deploy run `41940129821` reran the full suite, deployed the Worker, passed production smoke checks and uploaded the SBOM.
 - The previous APK artifact `DrVas-APK` from run `41923036581` is a debug build artifact only; it is not a signed Play release or proof of physical-device testing.
 - No database changes, production-secret changes, payment activation, clinical approval or Google Play publication were made in this checkpoint.
+
+- Added CI assertions for the public-first Worker authorization policy in commit `522a9f196ed8a3fdf14044560dbb76f82cea6f39`: all six modules remain recognized, only Studio/Academy/Commerce/Business are founder-gated, premium access uses the verified Supabase identity and server-side admin allowlist, and Health Live voice remains separately privacy-gated.
+- Final successful deploy workflow: `41940129821`; final browser regression: 38 passed. Latest source branch HEAD at the time of this README checkpoint: `522a9f196ed8a3fdf14044560dbb76f82cea6f39`.
+- Consolidated continuity record updated with exact results and outstanding launch blockers: `docs/DRVAS_CONSOLIDATED_SCOPE_AND_CONTINUITY_2026-11-04.md`.
