@@ -305,3 +305,13 @@ Important limitations and next QA:
 ## Recovery checkpoint — 2026-11-04
 
 Resume on `drvas-integrated-platform`. The latest recorded CI evidence was rechecked: Worker deployment + production smoke `41698929634` passed; browser E2E `41699194261` passed; Android APK build `41698929811` passed (artifact ID `13262293447`). APK compilation is not physical-device verification. Supabase migrations `202611030001_rate_limits.sql` and `202611030004_studio_projects.sql` still need live-state confirmation and application only if absent. The Crypto registry migration was reported applied by the founder but is not independently verified. Authenticated chat/history/admin/audit/private-profile/Studio tests and physical Android runtime remain outstanding. See the latest section of `docs/SESSION_LOG_2026-11-03.md` for the complete audit and ordered next-session checklist. No secrets belong in chat or repository files.
+
+
+## 2026-11-05 — Admin access and web verification handoff
+
+- Current deployed source: `drvas-integrated-platform`; frontend fix commit `69040886b27427a9cea87fffcab929d1cdfa3bbc`, included in deployment commit `c194068c4e13bc3c69ccf2208d67ed13db45ec46`.
+- Production deployment run #434 (`42097274639`) passed every step, including Playwright homepage/session tests and production smoke checks for homepage, all six module cards, health endpoint and unauthenticated admin rejection.
+- Module selection now rechecks `admin_status` after a click on a private module. If not authorized, the UI exposes the server reason rather than silently doing nothing. Server-side authorization remains strict.
+- Still unresolved until founder tests: the value/configuration of Cloudflare Worker secret `ADMIN_EMAILS` cannot be inspected through GitHub. If UI says `email_not_allowlisted`, update the secret to contain exactly the email of the authenticated Supabase account. If it says `allowlist_missing`, create/configure the secret. Do not send secret values, passwords or tokens in chat.
+- Web URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ . User will test on desktop and Samsung phone. Existing installed APK is to remain unchanged; no APK rebuild/reinstall requested.
+- Next: ask user to click Studio while signed in and report the exact diagnostic shown. Then resolve the Cloudflare allowlist if needed, recheck all four founder modules and verify a test prompt is accepted by Worker in each. Keep normal users restricted to Free/Health.
