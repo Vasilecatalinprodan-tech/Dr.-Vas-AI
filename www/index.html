@@ -1894,13 +1894,14 @@ function prepareDrvasPresentationSpeechText(value){
 function getDrvasPresentationVoiceProfile(voices,locale){
  const lang=(locale||"ro-RO").slice(0,2).toLowerCase();
  const local=voices.filter(v=>(v.lang||"").toLowerCase().startsWith(lang));
- const pool=local.length?local:voices;
+ const preferredPool=[...local,...voices.filter(v=>!local.includes(v))];
  const femaleHints=/\b(female|woman|zira|alina|jenny|aria|samantha|victoria|karen|moira|tessa|fiona|ava|serena|hazel|susan|sonia|heera|natasha|linda|sara|sarah|catherine|olivia|emma|amelia|libby|michelle|eva|laura|lucia|paulina|helena|ana|ioana)\b/i;
  const maleHints=/\b(male|man|andrei|david|mark|daniel|james| george|guy|ryan|thomas|alex|peter|jorge|juan|luca|paul|matthew|christopher|fred|aaron|liam|enrique|stefan|carlos)\b/i;
  const score=(voice,pattern)=>pattern.test((voice.name||"")+" "+(voice.voiceURI||""))?10:0;
  const byName=(a,b)=>String(a.name||a.voiceURI||"").localeCompare(String(b.name||b.voiceURI||""));
- const female=pool.filter(v=>score(v,femaleHints)>0).sort(byName);
- const male=pool.filter(v=>score(v,maleHints)>0).sort(byName);
+ const localeFirst=(a,b)=>(local.includes(a)?0:1)-(local.includes(b)?0:1)||byName(a,b);
+ const female=preferredPool.filter(v=>score(v,femaleHints)>0).sort(localeFirst);
+ const male=preferredPool.filter(v=>score(v,maleHints)>0).sort(localeFirst);
  const used=new Set();
  const take=list=>{
   const selected=list.find(v=>!used.has(v.voiceURI||v.name));
