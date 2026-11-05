@@ -4,7 +4,18 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - main
+      - drvas-integrated-platform
+    paths:
+      - 'www/**'
+      - 'android/**'
+      - 'capacitor.config.*'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/android.yml'
+
+concurrency:
+  group: drvas-android-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -25,9 +36,14 @@ jobs:
 
       - name: Prepare app
         run: |
-          mkdir -p www
-          cp index.html www/index.html
+          test -f www/index.html
           npx cap sync android
+
+      - name: Check Android privacy defaults
+        run: |
+          grep -F 'android:allowBackup="false"' android/app/src/main/AndroidManifest.xml
+          grep -F 'android.permission.INTERNET' android/app/src/main/AndroidManifest.xml
+          grep -F 'setMediaPlaybackRequiresUserGesture(false)' android/app/src/main/java/com/drvas/ai/MainActivity.java
 
       - name: Build APK
         working-directory: android

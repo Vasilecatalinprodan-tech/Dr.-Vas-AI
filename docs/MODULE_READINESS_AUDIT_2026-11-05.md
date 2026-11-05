@@ -1,0 +1,106 @@
+# Dr.Vas — module readiness audit
+Date: 2026-11-05
+Repository: `Vasilecatalinprodan-tech/Dr.-Vas-AI`
+Production branch: `drvas-integrated-platform`
+
+This is a source-level readiness audit. A UI panel or source route does not prove that its database migration, external provider, credentials, or real-device behavior is configured in production. Status below distinguishes implemented code from unverified runtime dependencies.
+
+## Shared platform
+- One integrated web application and Capacitor Android application.
+- Supabase authentication and account-scoped conversation persistence are present in the client.
+- Cloudflare Worker provides server-side AI, admin checks, rate limiting, voice and selected module/provider routes.
+- Admin access is checked server-side; Studio, Academy, Commerce and Business remain founder-only in the current pilot.
+- Signed-in workspace header masks the founder's personal name and email; Supabase identity is unchanged.
+- Production Worker deployment and browser smoke tests passed in workflow #443 (run 42106596346, commit d8fdf0fe1b41c56a5d6cb1d1b73d6a4914ba7eda).
+- Android APK build #331 (run 42105915803) passed with the WebView media-playback setting; artifact ID 13451857250. Not installed or tested on a physical device.
+
+## Six modules
+
+| Module | Implemented in source | Important boundary / unverified item |
+|---|---|---|
+| Dr.Vas Free | General AI chat, assistant/persona selection, conversation history, optional voice input/output. | Live voice and provider availability depend on server configuration and device/browser permissions. |
+| Dr.Vas Health | General health information workspace, health-specific system instructions, consent flow for health-file processing, file attachments and consultation-preparation prompts. | Not a diagnosis or clinical decision system. No verified doctor/clinic/hospital integration, clinical governance or medical-device approval. |
+| Dr.Vas Studio | Creative brief builder, project save/open/export, media asset timeline, MP4 render-job route and private media storage design. | MP4 provider requires CREATOMATE_API_KEY and configured storage/database migrations. Do not claim finished rendering unless a real render is completed and retrieved. |
+| Dr.Vas Academy | Course/lesson brief builder, saved module projects, Student Desk assessment/evaluation workspace. | No verified accredited course issuer, formal qualification or institutional learning-management integration. |
+| Dr.Vas Commerce | Product/opportunity analysis brief, manual budget/pricing assumptions, saved projects and commerce planning. | No verified live supplier/product feed, storefront, order fulfilment, checkout or payment/subscription integration. Profit is not guaranteed. |
+| Dr.Vas Business | Business-plan builder, break-even calculations, private cashbook/transaction UI and project persistence. | Not statutory accounting, tax filing, regulated financial or legal advice. Live database migration and accountant review remain separate checks. |
+
+## Founder-only tools and controls
+- Creator & Online Income workbench: book, original music, digital products, publishing/release preparation, evaluation and income planning.
+- Crypto calculator: manual-input profitability and sensitivity estimates only.
+- Crypto device registry: read-only listing route. No mining process, wallet custody, trading, withdrawal or visitor-device compute is enabled.
+- Founder/admin tools remain private; do not weaken server-side authorization to make a UI test pass.
+
+## Database and external dependencies to verify
+The repository contains additive Supabase migrations for Studio projects, Academy/Commerce/Business module projects, Business cashbook, Studio render jobs/private storage, chat attachments, privacy consents, rate limits and audit logs. This audit did not connect to the live Supabase project and therefore does not assert that every migration has been applied or that every RLS/storage policy is live.
+- Verify migration history and RLS/storage policies in the real Supabase project before public launch.
+- Verify Cloudflare Worker secrets and provider entitlements without exposing secret values in chat or source control.
+- Verify ElevenLabs voice settings, Gemini Live configuration and Creatomate render credentials separately.
+- Implement and test paid subscription entitlements and verified payment webhooks before enabling public paid access.
+- Complete privacy notices, DPIA where required, retention/deletion workflows, accessibility review, independent security testing and jurisdiction-specific legal/clinical reviews.
+- Perform real Samsung Android audio tests; CI build success does not establish audible playback on a physical phone.
+
+## Immediate next sequence
+1. Complete workflow #444 (identity-masking regression test) and confirm deployment/smoke test.
+2. Test the presentation and response voice on desktop Chrome and the existing Samsung phone; capture the exact on-screen error if audio is still silent.
+3. Run end-to-end save/open/export tests for Studio, Academy, Commerce and Business with the authorized founder account.
+4. Verify live Supabase migrations, RLS, storage and provider secrets through the project console/authorized connection; do not guess or expose credentials.
+5. Review the divergent `founder-workbenches-development` branch selectively. It is 58 commits ahead and 30 behind production; do not merge it wholesale.
+6. Finish payments, public entitlement rules and compliance before any paid module is released publicly.
+
+## Conversation continuity
+This file and the dated session logs preserve technical decisions and work summaries. They are not a verbatim export of the ChatGPT conversation; the original chat remains in ChatGPT history.
+
+
+### Verified final continuation — 2026-11-05
+
+- Latest workflow #444 (run 42106976648) completed successfully for commit 346b3e56c6cb5f01d100235517f2d3a2fd3b44df. All 53 browser E2E tests passed in 26.3 seconds; Cloudflare Worker deployment, production smoke test and SBOM upload all succeeded.
+- The 53-test suite includes the new founder identity masking test (header must show “Cont administrator” and must not show the founder's email or full name), single-voice presentation fallback, no-installed-voices default TTS fallback, module navigation and pilot brief builders, persistence, Studio render request/restore, Business cashbook/Student Desk, and Bitcoin calculator non-execution safeguards.
+- Production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ . The latest web test/deploy run is https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42106976648 .
+- Android artifact #331 remains the latest successful build containing the WebView audio setting: artifact ID 13451857250, 6,114,683 bytes, SHA-256 5ae417f366514b794d4133bd3ae2a5a3b828350a07f5a27a0aa53c14309696f6, expires 2027-02-03. It has not been installed on the user's existing phone app.
+- Added the source-level six-module readiness audit at docs/MODULE_READINESS_AUDIT_2026-11-05.md. It records implemented UI/code, runtime dependencies not yet verified, public/private boundaries and next work. It explicitly does not assert that all live Supabase migrations or provider secrets are configured.
+- The identity masking, speech resume and Android WebView audio fixes are in source; actual audible playback on desktop and the user's Samsung phone still needs manual verification.
+- Conversation continuity is preserved through the ChatGPT chat history and repository technical summaries. The GitHub records are not a verbatim transcript export.
+
+
+### 2026-11-05 — database isolation regression coverage
+- Added `tests/e2e/data-isolation-migrations.spec.cjs` and wired it into `.github/workflows/deploy-worker.yml`.
+- GitHub Actions run #447 (run ID `42108117982`), commit `4fc1f5d73fd19002d22672f9408e8e3331442731`: **56/56 tests passed** (the prior homepage suite had 53; three new static migration-policy tests are now included).
+- The run also completed Worker deployment, production smoke test and SBOM upload successfully.
+- The added checks guard owner-only RLS for Academy/Commerce/Business drafts, Business cashbook and Studio render jobs, plus private Studio media storage and numeric/currency/VAT constraints.
+- These are static checks of migration source, not proof that the migrations have been applied to live Supabase. Live RLS/storage verification remains outstanding.
+- Workflow: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42108117982
+
+
+### 2026-11-05 — Health, consent and universal attachment security audit
+- Extended `tests/e2e/data-isolation-migrations.spec.cjs` with four additional regression tests covering: private-profile and consent table service-role-only access; attachment metadata RLS and limits; explicit file-processing and separate Health-data consent; and Health assistant clinical boundaries/emergency escalation instructions.
+- The Worker code reviewed in this pass keeps Health as general information only, prohibits diagnosis/prescribing/medication changes, directs UK emergencies to 999/112 and urgent England concerns to NHS 111/urgent GP assessment. Health Live voice remains disabled unless `GEMINI_LIVE_HEALTH_ENABLED=true` is explicitly configured.
+- File analysis remains fail-closed unless `DRVAS_FILE_ANALYSIS_ENABLED=true`; Health attachments require both general file-processing consent and separate health-data consent. Attachment ownership, conversation/module binding, MIME, file size and storage path are checked server-side before processing.
+- Current production branch commits for this test expansion: `efdb7fe0f5672b88e1bd23a5e526d2064eaae838`, then corrected attachment CRUD assertion `e5d9a1dfd237c7a40e06af96b4ef3f426729bead`, then simplified storage-path assertion `e018d561662a4d0d4d779e8f780ef39fa9743c64`.
+- Latest CI run for the final commit: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42108746719 . At the time of this checkpoint it was queued/pending; do not claim the new four tests passed until that run completes successfully.
+- The tests inspect source/migration contents and do not prove live Supabase migrations or secrets are configured. Health regulatory readiness, clinical governance, DPIA/legal review and real-world data-flow verification remain release blockers.
+- Next module audit targets: Studio project save/open/render/export; Academy and Commerce saved workflows; Business cashbook and break-even calculations; Free chat persistence and voice; then Android device audio and live Supabase migration/RLS verification through an authorized console.
+- This GitHub checkpoint stores technical decisions and work summaries, not a verbatim ChatGPT transcript. The original conversation remains in ChatGPT history.
+
+
+### 2026-11-05 — Health and attachment regression suite verified
+- Corrected one test expectation to match the actual Health emergency instruction wording (`calling 999 (or 112)`); no production behavior needed changing.
+- Final commit: `108ad919c834c3bbc15f294da82c224184805b69`.
+- GitHub Actions run #450 (run ID `42109166078`) completed successfully: **60/60 tests passed in 25.6 seconds**; Worker deployment, production smoke test and SBOM upload also succeeded.
+- Run: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42109166078
+- The four added checks verify source-level boundaries for private profile/consent tables, attachment metadata access and limits, separate Health-data consent with fail-closed analysis, and Health assistant safety/emergency instructions.
+- Earlier run #449 had 59/60 passing; the only failure was an overly strict wording assertion in the test, corrected in #450. No app behavior change was needed for that correction.
+- Live Supabase migration state, RLS execution against real accounts, actual Health legal basis/DPIA, provider configuration and device audio remain unverified release gates.
+
+
+## Continuation checkpoint — 2026-11-05 (module persistence CI)
+
+- Verified workflow #452 (run 42110866126) completed successfully: 60/60 browser E2E tests passed; Worker deployment, production smoke test and SBOM upload succeeded.
+- Added Academy, Commerce and Business project round-trip browser tests to `tests/e2e/module-persistence.spec.cjs`. The tests exercise save → project list → reopen and check restored title/primary field plus user/module ownership.
+- Corrected the test file's template literal syntax and added this test file to the CI Playwright command in `.github/workflows/deploy-worker.yml`. Earlier workflow runs did not include this file, so their green status did not validate these new round-trip scenarios.
+- Commit for test-file correction: `44f2cabb4e773da62e6f20b034ffdbd63e525812`.
+- Commit adding the module persistence suite to CI: `a872679caa837a6d63dcd826305ae9b7978ac8a4`.
+- Workflow #454 (run 42111255035) is the first run expected to execute the expanded suite; its result must be checked before describing the new tests as passing.
+- The expanded tests are browser-level tests using a controlled Supabase stub. They do not prove the live Supabase migration has been applied or that production RLS works against two real accounts.
+- Conversation continuity: the original ChatGPT conversation remains in ChatGPT history. GitHub records this technical checkpoint, source changes, tests and decisions; it is not a verbatim transcript of every chat message. Do not claim the entire chat was copied into GitHub.
+- Continue the seven workstreams in order: Studio; Academy; Commerce; Business; Free conversation/voice; Android physical-device voice; live Supabase migration/RLS/storage verification. Keep the existing APK untouched unless the founder explicitly authorizes a replacement/install.

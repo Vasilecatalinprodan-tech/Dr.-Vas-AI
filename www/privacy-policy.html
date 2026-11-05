@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="index,follow">
+<title>Politica de confidențialitate · Dr.Vas AI</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#071522;color:#e7f1f5;font:16px/1.7 system-ui,-apple-system,Segoe UI,sans-serif}main{max-width:900px;margin:0 auto;padding:32px 20px 70px}a{color:#65ddd5}h1,h2{line-height:1.25;color:#fff}h1{font-size:2rem}h2{margin-top:32px;font-size:1.25rem}.notice{padding:14px 16px;border:1px solid #a77b36;border-radius:12px;background:#342813;color:#ffe6b2}.muted{color:#a9bdc8}li{margin:8px 0}.brand{font-weight:800;color:#65ddd5;letter-spacing:.04em}
+</style>
+</head>
+<body><main>
+<p class="brand">✚ DR.VAS AI</p>
+<h1>Politica de confidențialitate</h1>
+<p class="muted">Versiune de lucru 1.1 · 5 noiembrie 2026</p>
+<div class="notice"><strong>Important:</strong> Aceasta este versiunea inițială a informării pentru testare. Înainte de lansarea publică trebuie completate datele oficiale de contact ale operatorului, confirmate perioadele de păstrare și temeiurile juridice pentru fiecare prelucrare și verificată de un specialist în protecția datelor. Nu o considera încă o politică finală aprobată juridic.</div>
+<h2>1. Cine operează Dr.Vas</h2>
+<p>Dr.Vas AI este o platformă aflată în dezvoltare, inițiată de creatorul proiectului. Identitatea juridică completă și datele de contact ale operatorului vor fi publicate aici înainte de lansarea publică. Pentru moment, nu colectăm date de plată și nu oferim abonamente publice.</p>
+<h2>2. Ce date pot fi prelucrate</h2>
+<ul>
+<li><strong>Date de cont:</strong> adresa de e-mail folosită la autentificare și identificatorul contului gestionat de Supabase Auth.</li>
+<li><strong>Date de profil de bază:</strong> numele afișat și țara, dacă utilizatorul le completează.</li>
+<li><strong>Conversații:</strong> mesajele și răspunsurile din chat pot fi salvate în istoricul contului pentru a permite continuarea conversațiilor.</li>
+<li><strong>Memorie personală:</strong> informațiile sunt adăugate în memoria personală numai când utilizatorul cere explicit acest lucru, de exemplu printr-o comandă de memorare.</li>
+<li><strong>Date profesionale opționale:</strong> anumite câmpuri de profil pot fi oferite opțional. Salvarea lor necesită consimțământ separat și, când funcția este activă, sunt criptate în aplicația server.</li>
+<li><strong>Date tehnice și de utilizare:</strong> evenimente limitate de funcționare, precum autentificarea, selectarea unui modul și durata sau starea unor cereri. Jurnalele operaționale nu ar trebui să conțină conținutul conversațiilor, parole sau tokenuri.</li>
+<li><strong>Date de voce:</strong> dacă utilizatorul activează funcțiile vocale, browserul/dispozitivul și serviciul AI pot procesa datele audio necesare funcției respective.</li>
+</ul>
+<h2>3. Cum folosim datele</h2>
+<p>Datele sunt folosite pentru crearea și securizarea contului, furnizarea răspunsurilor AI, păstrarea istoricului solicitat de utilizator, funcțiile de profil și memorie, prevenirea abuzului, depanare și îmbunătățirea fiabilității serviciului. Nu vindem date personale și nu folosim conversațiile private pentru antrenarea unui model propriu Dr.Vas.</p>
+<h2>4. Furnizori și transferuri</h2>
+<p>Versiunea curentă folosește Supabase pentru autentificare și stocarea anumitor date, Cloudflare pentru găzduirea și rularea serviciului server și servicii Google Gemini pentru generarea răspunsurilor AI și funcțiile vocale compatibile. Mesajele trimise asistentului sunt transmise serviciului AI pentru a produce răspunsul. Acești furnizori pot prelucra date în afara Regatului Unit sau Spațiului Economic European; mecanismele de transfer și termenii aplicabili trebuie confirmați în documentația și contractele furnizorilor înainte de lansare.</p>
+<h2>5. Date despre sănătate</h2>
+<p>Dr.Vas Health este destinat informațiilor generale și pregătirii discuțiilor cu profesioniștii din sănătate; nu înlocuiește medicul și nu oferă un diagnostic profesional. Informațiile despre sănătate pot constitui date speciale în sensul legislației privind protecția datelor. Nu introduceți informații medicale identificabile decât dacă înțelegeți că mesajele pot fi procesate de furnizorii tehnici și AI descriși mai sus. Înainte de activarea publică a funcțiilor medicale vom stabili și documenta temeiurile și garanțiile suplimentare necesare.</p>
+<h2>5A. Fișiere, imagini și documente atașate</h2>
+<p>Atunci când funcția de atașare este activată, utilizatorul poate selecta până la cinci fișiere per mesaj, în formatele JPG, PNG, WebP, PDF, TXT sau CSV, cu maximum 15 MB per fișier și 20 MB cumulat pentru o analiză. Fișierele sunt stocate în bucket-ul privat Dr.Vas din Supabase, în spații separate după identificatorul contului, conversație și modul. Nu sunt publicate ca linkuri publice. Pentru analiză, Worker-ul Dr.Vas verifică proprietarul, conversația, modulul și acordul, apoi oferă serviciului Google Gemini o adresă temporară cu durată scurtă sau textul extras din fișier.</p>
+<p>Înainte de încărcare, utilizatorul trebuie să accepte explicit stocarea și transmiterea fișierelor către furnizorul AI. Pentru Dr.Vas Health se cere separat acordul explicit pentru prelucrarea datelor despre sănătate, care pot fi date din categorii speciale. Utilizatorul este încurajat să elimine numele, adresa, data nașterii, numărul NHS și alți identificatori care nu sunt necesari analizei. Nu încărcați documente ale altei persoane fără autoritate și temei legal pentru aceasta.</p>
+<p>După activarea funcției, utilizatorul va putea retrage oricând acordul pentru procesarea fișierelor din Profilul Dr.Vas, în secțiunea „Consimțământ pentru fișiere și documente”. Retragerea este înregistrată și dezactivează procesarea viitoare, inclusiv acordul separat pentru date medicale. Retragerea nu șterge automat fișierele încărcate anterior; acestea trebuie șterse separat din conversație sau prin ștergerea istoricului. Retragerea nu afectează legalitatea prelucrărilor efectuate înainte de retragere.</p>
+<p>Funcția de analiză a fișierelor rămâne dezactivată până la confirmarea configurației de procesare plătite și a garanțiilor contractuale și de protecție a datelor. Când este activată, fișierele pot fi analizate de Google Gemini. Conținutul documentelor nu trebuie tratat ca diagnostic medical sau ca decizie profesională. Google poate păstra temporar anumite date pentru siguranța serviciului, conform condițiilor aplicabile planului folosit.</p>
+<p>Fișierele pot fi deschise și șterse din lista conversației. Ștergerea unei conversații sau a întregului istoric trebuie să șteargă și fișierele asociate din spațiul privat. Termenele tehnice de backup și ștergere ale furnizorilor rămân supuse condițiilor acestora și trebuie documentate înainte de lansarea publică.</p>
+<h2>6. Consimțământ și opțiuni</h2>
+<p>Consimțământul pentru câmpurile profesionale opționale este separat de utilizarea de bază a contului și poate fi retras. Retragerea consimțământului nu afectează prelucrările efectuate anterior în mod legal. Funcțiile care nu sunt încă implementate nu trebuie considerate disponibile doar pentru că sunt descrise în planurile produsului.</p>
+<h2>7. Păstrare și ștergere</h2>
+<p>Datele contului și conținutul asociat sunt păstrate cât timp este necesar pentru furnizarea serviciului și până la ștergerea contului, sub rezerva obligațiilor legale și a copiilor de siguranță care se elimină conform ciclurilor lor. Perioadele exacte de păstrare și mecanismul complet de ștergere a contului trebuie confirmate și publicate înainte de lansarea publică. Nu promitem în această versiune că toate datele pot fi șterse instantaneu din backupuri.</p>
+<h2>8. Drepturile utilizatorului</h2>
+<p>În funcție de legea aplicabilă, utilizatorul poate avea dreptul de acces, rectificare, ștergere, restricționare, opoziție, portabilitate și retragere a consimțământului. Poate avea dreptul să depună o plângere la Information Commissioner's Office (ICO) în Regatul Unit sau la autoritatea competentă din țara sa. Vom publica o adresă de contact pentru solicitările privind datele înainte de lansare.</p>
+<h2>9. Securitate</h2>
+<p>Folosim conexiuni HTTPS, autentificare prin Supabase și controale server-side. Unele câmpuri profesionale opționale sunt proiectate să fie criptate AES-GCM în Worker înainte de stocare. Nicio metodă de transmitere sau stocare nu poate garanta securitate absolută. Nu trimiteți parole, coduri de autentificare, date complete de card sau secrete în conversații.</p>
+<h2>10. Copii, marketing și plăți</h2>
+<p>Dr.Vas nu este destinat copiilor sub 18 ani în această versiune de testare. Nu sunt active abonamentele publice, procesarea plăților sau mesajele de marketing. Dacă aceste funcții vor fi introduse, informarea și consimțămintele vor fi actualizate înainte de activare.</p>
+<h2>11. Modificări</h2>
+<p>Putem actualiza această informare când se schimbă funcțiile sau obligațiile legale. Vom afișa versiunea și data actualizării și, când este necesar, vom solicita din nou consimțământul.</p>
+<p class="muted">© 2026 Dr.Vas AI · Document de lucru, nu consultanță juridică.</p>
+<p><a href="/">Înapoi la Dr.Vas AI</a></p>
+</main></body></html>

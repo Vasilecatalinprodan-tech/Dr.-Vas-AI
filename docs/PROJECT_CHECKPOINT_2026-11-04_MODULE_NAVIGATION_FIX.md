@@ -1,0 +1,253 @@
+# Dr.Vas AI — checkpoint: login-first entry and module navigation
+
+Date: 2026-11-04
+Repository: Vasilecatalinprodan-tech/Dr.-Vas-AI
+Branch: drvas-integrated-platform
+Production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev
+
+## Corrected user report
+The user clarified that pressing “Vorbește cu Dr.Vas” went straight to the module chooser instead of first showing login, and clicking a module appeared to do nothing. The primary CTA should be placed near the top of the hero, above its descriptive paragraph.
+
+## Confirmed code causes
+- Both the header CTA and landing CTA directly called showModuleSelection(), bypassing the authentication gate.
+- selectModule() intentionally refuses to open private workspaces unless the Worker confirms the signed-in user through the server-side admin allowlist.
+- When that check had not completed yet, or the account was not authorized, the old message was written into the chat workspace, which was hidden. The user therefore received no visible explanation and the module appeared unresponsive.
+- The Cloudflare Worker serves ./www as its static assets directory. The legacy root index.html was a separate outdated prototype, creating two competing entry points. The root index.html now redirects to ./www/ so Codespaces/root previews and production use the same integrated app.
+
+## Changes committed to www/index.html
+- Added startDrVas() as the single entry point for the header and hero CTAs.
+- Visitors without a Supabase session are sent to login first. A sessionStorage intent flag returns them to the module chooser after successful authentication.
+- Existing signed-in users wait for the server-side administrator check before seeing the chooser.
+- Moved a prominent “Vorbește cu Dr.Vas” CTA into the hero above the description.
+- Replaced the obsolete root index.html prototype with a redirect to the canonical ./www/ application.
+- Removed the duplicate lower-page CTA.
+- Added a visible module-selection status message when server-side admin authorization is missing or denied. No client-side bypass was introduced; private module access still depends on Worker admin_status.
+
+## Regression tests
+The first corrective attempt did not pass: run 41852818965 reported 26/29 passing, with three failures. The failing evidence showed:
+- Generic CTA opened the authentication panel while leaving the module chooser visible behind it.
+- Two remaining assertions still expected the obsolete phrase "pilot privat".
+- The deployment workflow correctly skipped publishing because the browser suite failed.
+
+A second correction has now been committed:
+- `www/index.html` commit `e7f5b59240c3753b0daa360aef5c2c06cbc5a617`: authentication/profile screens now hide the module chooser completely; chooser is explicitly unhidden only when returning to module selection. This applies to generic CTA and visitor-selected module flows while preserving the pending module intent.
+- `tests/e2e/homepage.spec.cjs` commit `6c1e0ff1584357626762df053d9898e14998417c`: assertions now verify that the chooser is hidden during login and use the current Romanian administrator-denial message.
+- Server-side Worker administrator authorization has not been changed.
+
+The latest source and test commits should trigger a fresh browser regression and deployment workflow. Check the newest runs before claiming success or asking the user to retest production.
+
+## Next verification
+1. Check GitHub Actions run 41852818965 (browser regression) and 41852818983 (deployment). Confirm both are green; deployment must include Playwright and production smoke test.
+2. On the production URL, perform Ctrl+F5.
+3. Test while signed out: CTA -> login -> successful login -> module chooser.
+4. Test the founder/admin account: click all six module cards and verify each opens its workspace.
+5. If a module remains blocked, read the visible administrator message and verify the exact founder email in Cloudflare ADMIN_EMAILS. Do not weaken the server-side gate.
+
+
+## Second structural correction — 2026-11-04 15:27 UTC
+The next browser run (41857213735) failed 4/29 tests. Root cause was identified from DOM structure and Playwright logs: `#authSection` and `#profileSection` are siblings of `#moduleSelectionSection`, but both are children of `#moduleSelectionShell`. Hiding the entire shell therefore hid the login/profile forms too.
+
+Corrected:
+- Commit `79e3306da4c046406348f8495afc8045d593ddd7`: when entering auth/profile, keep `#moduleSelectionShell` visible but hide only `#moduleSelectionSection`; the login/profile cards can render, without exposing module cards.
+- Commit `148b9e6e283a912a1745a26f4f6db1a937f31a59`: updated browser assertions to verify the auth/profile card is visible while the module chooser itself is hidden.
+- Existing admin allowlist gate remains unchanged.
+
+Latest runs triggered from the above commits:
+- Browser regression on commit 79e3306: 41857687727
+- Worker deploy on commit 79e3306: 41857688082
+- APK build on commit 79e3306: 41857688289
+- The subsequent test-only commit 148b9e6 should trigger a new browser regression and deployment workflow. Check latest branch runs before declaring success.
+
+
+## 2026-11-04 15:42 UTC — Root cause confirmed and corrected
+
+- The previous diagnosis was wrong: `#authSection` and `#profileSection` are direct children of `#moduleSelectionSection`, not siblings outside it. The parent relationship was confirmed by parsing the HTML element stack.
+- This explains all four remaining E2E failures: hiding `#moduleSelectionSection` also hid the authentication/profile descendants.
+- Corrected `showOnly()` in `www/index.html`: during auth/profile flow, keep `#moduleSelectionSection` visible and add `auth-flow-mode`; the existing CSS rule hides dashboard children while allowing the auth/profile panels to remain visible. Normal non-auth flow removes `auth-flow-mode`.
+- Updated four Playwright assertions to verify the parent remains visible and carries `auth-flow-mode`.
+- Source fix commit: `577408509736a9eda80e80ae6b15bf3228304925`.
+- E2E assertion commit: `a0a896db2d05a6ebd2eac64fd5d9a5a71217644d`.
+- Latest CI runs for the source-fix commit were in progress at 15:42 UTC: browser regression `41860021975`, Worker deploy `41860022353`, APK build `41860022226`. Latest test-only commit runs `41860053522` and `41860053663` were pending. Recheck before claiming success.
+- Studio backend inspection: actual MP4 rendering is wired to Creatomate; Worker requires server-side Cloudflare secret `CREATOMATE_API_KEY`, checks the founder against `ADMIN_EMAILS`, and requires configured Supabase rate limiting/storage. The key's production presence has not yet been verified; do not claim Studio MP4 is live until the production `/health` check reports `studio_renderer: configured` and an authenticated end-to-end render succeeds.
+
+
+## 2026-11-04 — Second root cause found and corrected
+
+- The last CI logs showed the auth and profile panels still hidden (25/29 tests passed). The actual DOM was re-inspected around the closing tags: `#authSection` and `#profileSection` are direct children of `#moduleSelectionShell`, siblings of `#moduleSelectionSection`. The prior CSS selector targeted the wrong parent.
+- Corrected the CSS selector to `#moduleSelectionShell.auth-flow-mode > :not(#authSection):not(#profileSection)`, and moved the `auth-flow-mode` class to the shell. This keeps the auth/profile panels visible and hides only the module dashboard. `showModuleSelection()` removes the mode class again.
+- Updated the four browser assertions to check the shell class, not the dashboard class.
+- Source fix commit: `0e1e3ec83b5750c647c84e9c7b37a3c6ab15e645`.
+- Test correction commit: `5fdaa4834f8e2fd3553b897f969bd63af7ee09e0`.
+- Workflow runs triggered for source fix: browser regression `41862547116`, Worker deploy `41862547142`, APK build `41862547132`; they were queued at the time of this note. Recheck current run status and ensure the newest test commit is included before publishing.
+- Important: APK build from `5774085` succeeded, but it predates this final auth fix. Only use the APK artifact built from the passing latest commit.
+
+## Evening continuation — 2026-11-04 20:00 UTC
+
+### Verified workflow outcomes
+- Browser regression run 41862568965 on test commit 5fdaa4834f8e2fd3553b897f969bd63af7ee09e0: **25 passed, 4 failed**.
+- All four failures reported the authentication/profile panel as hidden. The failing cases were the main CTA, persisted-session profile error, visitor module selection, and landing CTA.
+- Deployment run 41862569443 stopped before deployment because it depends on the browser regression suite. No production deployment is claimed.
+- APK run 41862547132 succeeded on app commit 0e1e3ec83b5750c647c84e9c7b37a3c6ab15e645. This artifact predates the evening follow-up code/test commits and must not be treated as the newest APK.
+
+### Follow-up changes committed
+- App commit 297025e6cac20346fa8462ee900b5d759fbd72eb: goToModules() now explicitly removes auth-flow-mode from the shell when returning to the dashboard, preventing a stale auth-only state.
+- Test commit 22454fcbd14d359d8d6b55a55c95192d731bf443:
+  - openApp() now waits for language initialization before testing controls guarded by languageReady.
+  - Auth/profile tests now correctly expect the module dashboard (#moduleSelectionSection) to be hidden while the login/profile panel is shown. The shell remains visible; private module cards are not exposed during authentication.
+- No Worker authorization check or private-module security gate was weakened.
+
+### Verification still required
+Check the newest GitHub Actions runs after commits 297025e and 22454fc. Do not call the browser suite green, deploy production, or distribute the APK until the latest corresponding workflows pass. The APK needs a fresh build from the latest app code.
+
+### Latest verification queue — 2026-11-04 20:04 UTC
+- Browser regression: run 41902834918, pending, test commit 22454fc.
+- Deploy Worker: run 41902834996, pending, test commit 22454fc; deployment remains gated by browser tests.
+- App-code validation/deploy/APK workflows from app commit 297025e: runs 41902807336 (browser regression), 41902807158 (deploy), and 41902807392 (APK build) were in progress at the time of this checkpoint update.
+- No result from these runs is assumed. Recheck them before proceeding.
+
+## Late evening continuation — 2026-11-04 20:10 UTC
+
+### Root-cause correction for the remaining 4 browser failures
+The latest browser logs on commit 22454fc confirmed 25/29 passing, with all four failures showing the auth/profile panels hidden. Inspection found two competing session flows:
+- `initLanguage()` starts `checkSession()` asynchronously.
+- Supabase's `onAuthStateChange` also emits an asynchronous `INITIAL_SESSION` event. Treating that event as a sign-out could call `showLogin()` while the persisted-session profile is being rendered.
+- Separately, the initial `checkSession()` can finish after a visitor clicks the CTA; its no-session branch could call `showLogin()` and return the user to the landing page after the sign-in panel had opened.
+
+### Changes committed
+- App commit `2444db88821b790b36754d54c4316fd7e1cdb2ca`:
+  - Ignore Supabase `INITIAL_SESSION` in the auth-state listener; `checkSession()` is the single authority for initial session restoration.
+  - Preserve an explicit pending module-entry intent in `showLogin()`, so an in-flight no-session check cannot close the sign-in panel the visitor deliberately opened.
+  - Clear stale `auth-flow-mode` when restoring the public landing view.
+- Browser-test commit `4b8b806ea5b903520aca1ee9f6efb6ba93fd2bba`:
+  - E2E Supabase stub now emits an asynchronous `INITIAL_SESSION` callback, reproducing the production event race rather than omitting it.
+- No admin allowlist, Worker authorization, or private-module access gate was weakened.
+
+### Latest workflows at checkpoint time
+- Browser regression on app commit 2444db8: `41903785102` — in progress.
+- Worker deploy on app commit 2444db8: `41903785014` — in progress.
+- APK build on app commit 2444db8: `41903785052` — in progress.
+- Browser regression on test commit 4b8b806: `41903801697` — pending.
+- Worker deploy on test commit 4b8b806: `41903801702` — pending.
+- Previous latest run 41902834918 failed 25/29; deployment 41902834996 was correctly blocked. Do not call the production URL updated until a successful deploy and smoke test are confirmed.
+
+### User testing request
+The user wants to inspect the site while development continues. Production URL remains `https://dr--vas-ai.vasilecatalinprodan.workers.dev`, but until the new deployment passes, it may still show the previous deployed build. Explain this clearly if sharing the URL. Once deployment is green, ask the user to hard-refresh and report any visible error text/screenshots. Keep this checkpoint updated with actual final workflow outcomes and the latest APK artifact link.
+
+
+## Final continuation — 2026-11-04 20:15 UTC
+
+### Corrected diagnosis of the four authentication failures
+The browser run on commit 4b8b806 (run 41903801697) completed with 25 passed and 4 failed. All four failed because `#authSection` / `#profileSection` remained hidden:
+- primary header CTA to login;
+- persisted Supabase session with profile read failure;
+- visitor clicking a private module;
+- landing CTA to login.
+
+The earlier theory that Supabase INITIAL_SESSION timing was the remaining cause was not supported by these logs. The actual CSS defect was confirmed:
+- `.module-selection-shell{display:none!important}`
+- `.module-selection-shell.modules-open{display:block!important}`
+- `showOnly()` removed `modules-open` and added `auth-flow-mode`, but no CSS rule made the shell visible in `auth-flow-mode`.
+- Added `.module-selection-shell.auth-flow-mode{display:block!important}`. The existing child selector continues to hide the module dashboard while showing only auth/profile. No access-control checks were relaxed.
+
+Fix commit: `7263a954a0c06029812d64e0656e0cffe665b5ff`.
+Latest workflows triggered on this commit:
+- Browser regression `41904249945` — queued at checkpoint update.
+- Worker deploy `41904249874` — queued, remains dependent on passing browser tests.
+- APK build `41904249894` — queued.
+Do not report tests, deployment, production smoke test or latest APK as successful until these runs finish.
+
+### Restored founder requirements: Crypto, books and other capabilities
+The user explicitly asked to restore the 2026-11-03 requirements that had not been visible in the six-module navigation. A dedicated roadmap was committed:
+`docs/DRVAS_CRYPTO_CREATOR_INCOME_ROADMAP_2026-11-04.md`
+Commit: `49fe808741b38acab0dcf0d18b38e2b09296484d`.
+
+Key requirements:
+- Dr.Vas Crypto is founder/admin-only, hidden from ordinary users; not a seventh public module.
+- Bitcoin mining feasibility/profitability calculator first; device authorisation, power/energy limits, emergency stop and transparent costs. Mining stays OFF until explicit founder approval. No covert mining or use of visitor devices.
+- Connected-account monitoring is opt-in/read-only initially; market analysis and simulations precede any live trading. Any future trading requires separately authorised budget, loss cap and emergency stop. No automatic transfers or guaranteed-profit claims.
+- Studio books/e-books require persistent manuscript projects (outline, chapters, character/style bible, revisions, continuation across sessions, export), not just a dropdown option. Existing Studio UI already has a Book / novel / e-book deliverable and a capabilities description.
+- Independent Income Tracker for book, translation, music, video and digital-product opportunities; no applications, publishing, contracts or payments without user approval.
+- AI Evaluator & Training workbench for evaluation, annotation, benchmarks, red-team scenarios and reports, with human review and audit trail.
+- Keep six core modules and current Worker-side admin authorisation. New capabilities must use server-side secrets, per-user isolation, audit logs and rate limits.
+
+Next priorities: (1) green browser tests and deploy verification; (2) real Studio MP4 render check; (3) persistent Book Projects; (4) Crypto read-only dashboard and calculator with mining execution disabled; (5) expand income tracker and evaluator; (6) compliance/security review before activating mining, trading, publishing or public subscriptions.
+
+### User test coordination
+Production URL remains `https://dr--vas-ai.vasilecatalinprodan.workers.dev/`. It may still serve the previous deployed build until run `41904249874` succeeds. User is currently inspecting the page; ask them to report exact error text or screenshots. Do not claim live visibility into their laptop.
+
+
+## 20:20 UTC — deeper DOM nesting correction and Crypto calculator
+
+The first CSS visibility fix (commit 7263a954) was incomplete: a subsequent E2E run still showed 25/29 passing. The previous note describing auth/profile as direct children of `#moduleSelectionShell` was incorrect. Re-counting the actual HTML nesting showed that both auth/profile panels are direct children of `#moduleSelectionSection`, which itself is inside the shell.
+
+Corrected implementation:
+- Keep `.module-selection-shell.auth-flow-mode{display:block!important}` so the outer shell is visible.
+- Scope the hide rule to `#moduleSelectionShell.auth-flow-mode > #moduleSelectionSection > :not(#authSection):not(#profileSection)`, so the module dashboard contents are hidden while the auth/profile panels remain visible.
+- Updated four E2E expectations to assert the section remains visible while its module heading is hidden.
+- App commit: `2c44c91f79f7db957e301dff87ad8aaac59ded65`.
+- Test commit: `edce21f10ad46ad23b3f62a26dafc85f33a41d73`.
+- These newest tests have not yet been confirmed green. Earlier runs were cancelled by subsequent pushes; check a completed run on the latest test commit before deployment.
+
+Crypto implementation already present before this session:
+- Founder admin panel includes a read-only Crypto device registry.
+- Worker action `crypto_devices_list` validates the Supabase user and `ADMIN_EMAILS` server-side before reading the registry.
+- Migration `202611030003_crypto_device_registry.sql` stores public device verification keys and authorisation state; no client-role access.
+- `docs/CRYPTO_ADMIN_CONTROL_MODEL.md` explicitly states mining, wallet custody and live trading are not enabled.
+
+New safe feature added:
+- Added a founder-admin-only Bitcoin mining economics calculator to the Crypto panel.
+- Inputs: estimated BTC/day, BTC price in GBP, device watts, electricity price, pool fee and hardware cost.
+- Outputs: gross/day, electricity/day, pool fee/day, net/day, net/30 days and simple equipment payback estimate.
+- This is an offline estimate based on founder-entered values; it has no live market feed and does not start mining.
+- App commit: `0c7014600dbe3d512d250e66a81dc11e960254ea`.
+- Added E2E coverage for the calculator's example arithmetic in test commit `b50af6fe5ad8fd1aa99cd0475c4869499a7eeb73`.
+- The subsequent DOM nesting correction is newer than those commits; the final combined run must include the latest source and tests.
+
+Current deployment remains gated by browser E2E. The production URL may show the older deployed version.
+
+
+### Final CI snapshot — 2026-11-04 20:24 UTC
+- Latest E2E workflow for test commit `edce21f10ad46ad23b3f62a26dafc85f33a41d73`: run `41904571899`, status pending.
+- Matching Worker deploy workflow: run `41904571898`, status pending.
+- APK build for app commit `2c44c91f79f7db957e301dff87ad8aaac59ded65`: run `41904566661`, status pending.
+- Earlier run `41904249945` on commit `7263a954` still failed 25/29; its CSS selector targeted the wrong DOM level. Do not use its result as validation of the latest nested-selector correction.
+- The latest run has not yet completed. Production health endpoint could not be independently reached through the available web inspection, so deployment and smoke-test status remain unverified.
+
+
+## User desktop-browser report and verified release — 2026-11-04
+User reports: Dr.Vas works in the phone browser, but on the desktop browser clicking any module does not advance. This is now a priority reproduction issue; do not assume it is solved by the earlier auth CSS test.
+
+Verified release facts:
+- Browser regression run `41904571899` on test commit `edce21f10ad46ad23b3f62a26dafc85f33a41d73`: success.
+- Worker deployment run `41904571898`: success. Steps include JavaScript validation, browser regression tests, Worker deployment and production smoke test; all succeeded.
+- APK build run `41904566661` on app commit `2c44c91f79f7db957e301dff87ad8aaac59ded65`: success.
+- The APK run includes the latest app CSS/auth nesting correction and Bitcoin calculator. It predates only test-only commit `edce21f` and documentation commits.
+
+Desktop-specific diagnostic hypothesis, not yet confirmed:
+- The current `selectModule()` deliberately blocks module workspaces when the server-side `admin_status` result is not true. It displays an explanatory message in `#moduleSelectionStatus` and `#moduleAccessMessage`.
+- `showChat()` awaits `refreshAdminPanel()` before restoring pending module navigation. A different persisted Supabase account/session on desktop, a stale cached front-end, or an admin-status response difference could therefore explain phone/desktop divergence.
+- Do not weaken server-side admin checks or expose private modules. Ask user for the exact desktop behaviour/message (no response, login screen, or admin access warning), and test with hard refresh / private window. If it persists, capture the browser console/network error and inspect the desktop's current signed-in email and Worker `admin_status` result without asking the user to reveal credentials.
+- Production URL: `https://dr--vas-ai.vasilecatalinprodan.workers.dev/`.
+
+
+## 2026-11-04 20:37 UTC — HTML audit and admin diagnostic clarification
+
+- The user supplied an older www/index.html copy (1,599 lines). It is not the current branch file and must not overwrite it.
+- Canonical www/index.html on drvas-integrated-platform was 3,956 lines before this edit and already contains six dedicated module workspaces and supporting UI: Free chat/voice; Health information desk; Studio video renderer, creative deliverables, saved projects and Income Tracker; Academy course builder and saved projects; Commerce opportunity analysis and saved projects; Business plans, income/expense ledger, break-even calculator and Student Desk assessment feedback/projects. Founder-only Crypto tools remain in the admin panel, not a seventh public module.
+- Audit found that selectModule() replaced the detailed admin_status message from refreshAdminPanel() with a generic message. This obscured whether the actual reason was allowlist_missing, account_email_missing, or email_not_allowlisted.
+- Updated www/index.html so the module chooser displays the detailed server response when available. No access-control bypass or public access was introduced.
+- HTML commit: d34e726ac1386057c05443105d76cc7c254a8b1f.
+- GitHub Actions started for this commit: Worker deploy run 41908207559 and APK build run 41908207623; both were in progress at checkpoint time. Recheck outcomes before claiming deployment/build success.
+
+### Worker inspection findings — next step
+- worker/index.js action admin_status (around lines 516–542) verifies the Supabase access token at /auth/v1/user, then compares the authenticated email (trimmed/lowercased) with comma-separated env.ADMIN_EMAILS (also trimmed/lowercased).
+- It returns reason: allowlist_missing, account_email_missing, or email_not_allowlisted when the account is not recognised.
+- The main chat handler independently applies the same ADMIN_EMAILS gate to all six private pilot modules. Do not remove or weaken this check.
+- Cloudflare secret values are not readable through the GitHub repository. The precise reason exposed by the HTML after the deployment completes will determine whether to add/repair ADMIN_EMAILS or inspect the Supabase token/auth path.
+
+### Release verification for HTML diagnostics — 2026-11-04 20:38 UTC
+- Deploy workflow `41908207559` on HTML commit `d34e726ac1386057c05443105d76cc7c254a8b1f`: completed successfully. Steps verified: Worker/browser JavaScript validation, Playwright homepage and persisted-session browser tests, Worker deployment, and production smoke test — all successful.
+- APK workflow `41908207623` on the same app commit: completed successfully.
+- A static audit extracted all 85 inline onclick bindings (54 unique handlers) from the canonical HTML; every referenced handler has a corresponding function declaration (no missing onclick handlers).
+- User must hard-refresh production (Ctrl+Shift+R) and click one module to see the newly surfaced detailed server authorization reason. The reason is needed before changing Cloudflare secrets or Supabase auth. Do not ask the user to expose passwords or access tokens.
+- Production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ .

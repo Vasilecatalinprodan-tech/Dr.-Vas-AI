@@ -1,0 +1,89 @@
+name: Dr.Vas browser regression tests
+
+on:
+  pull_request:
+    branches: [drvas-integrated-platform]
+    types: [opened, reopened, ready_for_review]
+  push:
+    branches: [universal-chat-attachments]
+    paths:
+      - 'www/**'
+      - 'tests/e2e/**'
+      - 'worker/**'
+      - 'supabase/migrations/**'
+      - '.github/workflows/browser-e2e.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: drvas-browser-e2e-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  browser-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate Worker, inline browser JavaScript and attachment migration
+        run: |
+          node --check worker/index.js
+          node <<'NODE'
+          const fs = require('fs');
+          const vm = require('vm');
+          const html = fs.readFileSync('www/index.html', 'utf8');
+          const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)]
+            .map(match => match[1]).filter(script => script.trim());
+          if (!scripts.length) throw new Error('No inline browser script found');
+          scripts.forEach((script, index) => new vm.Script(script, { filename: `drvas-inline-${index}.js` }));
+          const migration = fs.readFileSync('supabase/migrations/202611050001_chat_attachments.sql', 'utf8');
+          for (const marker of [
+            'create table if not exists public.drvas_chat_attachments',
+            'enable row level security',
+            'auth.uid() = user_id',
+            "'health_data_processing'",
+            "'file_processing'"
+          ]) {
+            if (!migration.toLowerCase().includes(marker.toLowerCase())) throw new Error('Attachment migration missing: ' + marker);
+          }
+          const worker = fs.readFileSync('worker/index.js', 'utf8');
+          for (const marker of [
+            'file_processing_consent_get',
+            'file_processing_consent',
+            'health_data_processing',
+            'granted: body.granted',
+            'revoked: body.granted === false'
+          ]) {
+            if (!worker.includes(marker)) throw new Error('File consent Worker route missing: ' + marker);
+          }
+          console.log(`Validated Worker, ${scripts.length} inline script(s), private attachment migration, and consent withdrawal routes.`);
+          NODE
+
+      - name: Install browser test runner
+        run: npm install --no-save --package-lock=false --save-exact @playwright/test@1.64.1 playwright-core@1.64.1
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Start local static site
+        run: |
+          python3 -m http.server 4173 --directory www > /tmp/drvas-http.log 2>&1 &
+          for attempt in $(seq 1 20); do
+            if curl --silent --fail http://127.0.0.1:4173/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/drvas-http.log
+          exit 1
+
+      - name: Run homepage and session-restoration tests
+        run: npx playwright test tests/e2e/homepage.spec.cjs --reporter=line

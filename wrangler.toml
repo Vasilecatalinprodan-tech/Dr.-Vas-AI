@@ -1,6 +1,9 @@
-name = "drvas-ai"
+name = "dr--vas-ai"
 main = "worker/index.js"
 compatibility_date = "2026-10-31"
+
+[vars]
+SUPABASE_URL = "https://bqgshoqspcfbflgsnntn.supabase.co"
 
 [assets]
 directory = "./www"

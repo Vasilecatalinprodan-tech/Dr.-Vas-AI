@@ -2,6 +2,23 @@ name: Deploy Dr.Vas Worker
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+      - drvas-integrated-platform
+    paths:
+      - 'worker/**'
+      - 'www/**'
+      - 'wrangler.toml'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'supabase/migrations/**'
+      - 'tests/**'
+      - '.github/workflows/deploy-worker.yml'
+
+concurrency:
+  group: drvas-worker-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -13,7 +30,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
-          ref: drvas-integrated-platform
+          ref: ${{ github.ref }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -24,8 +41,195 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Generate CycloneDX dependency inventories
+        run: |
+          npm sbom --sbom-format cyclonedx > drvas-sbom.cdx.json
+          npm sbom --omit=dev --sbom-format cyclonedx > drvas-sbom-production.cdx.json
+
+      - name: Validate Worker and browser JavaScript
+        run: |
+          node --check worker/index.js
+          node <<'NODE'
+          const fs = require('fs');
+          const vm = require('vm');
+          const html = fs.readFileSync('www/index.html', 'utf8');
+          const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)]
+            .map(match => match[1])
+            .filter(script => script.trim());
+          if (!scripts.length) throw new Error('No inline browser script found');
+          scripts.forEach((script, index) => new vm.Script(script, { filename: `drvas-inline-${index}.js` }));
+          console.log(`Validated ${scripts.length} inline browser script(s).`);
+          const worker = fs.readFileSync('worker/index.js', 'utf8');
+          const migration = fs.readFileSync('supabase/migrations/202611030001_rate_limits.sql', 'utf8');
+          const moduleMigration = fs.readFileSync('supabase/migrations/202611040001_module_projects.sql', 'utf8');
+          const rateLimitRepair = fs.readFileSync('supabase/migrations/202611040002_repair_rate_limit_rpc.sql', 'utf8');
+          const businessCashbook = fs.readFileSync('supabase/migrations/202611040003_business_cashbook.sql', 'utf8');
+          const studioRenderMigration = fs.readFileSync('supabase/migrations/202611040004_studio_render_storage.sql', 'utf8');
+          const chatAttachmentMigration = fs.readFileSync('supabase/migrations/202611050001_chat_attachments.sql', 'utf8');
+          const checks = [
+            [!worker.includes('"Access-Control-Allow-Origin": "*"'), 'Wildcard CORS must not be enabled'],
+            [worker.includes('"free", "health", "studio", "academy", "commerce", "business"'), 'Worker must recognize all six product modules'],
+            [worker.includes('const privatePilotModules = new Set(["studio", "academy", "commerce", "business"]);'), 'Only the four future paid modules may remain founder-gated'],
+            [worker.includes('allowedAdminEmails.includes(user.email.trim().toLowerCase())') && worker.includes('if (privatePilotModules.has(moduleName) && !isAdminUser)'), 'Premium access must be based on the verified Supabase user and server-side admin allowlist'],
+            [worker.includes('liveModule === "health" && env.GEMINI_LIVE_HEALTH_ENABLED !== "true"'), 'Health Live voice must remain separately privacy-gated'],
+            [!worker.includes('const privatePilotModules = new Set(["free", "health"'), 'Free and Health must never be added to the private module gate'],
+            [worker.includes('64 * 1024'), 'Worker request body limit is missing'],
+            [worker.includes('"X-Content-Type-Options": "nosniff"'), 'API security headers are missing'],
+            [worker.includes('assetHeaders.set("X-Frame-Options", "DENY")'), 'Static asset frame protection is missing'],
+            [worker.includes('drvas_consume_rate_limit'), 'Atomic rate-limit RPC is not wired into the Worker'],
+            [!html.includes('"Content-Type":"text/plain;charset=UTF-8"'), 'AI chat must send JSON accepted by the Worker'],
+            [html.includes('headers:{"Content-Type":"application/json"}'), 'JSON content type must be used by the frontend'],
+            [worker.includes('Acordul explicit este necesar'), 'Private-profile consent is not enforced server-side'],
+            [worker.includes('body.action !== "private_profile_clear"'), 'Private-profile deletion must not depend on an encryption key'],
+            [migration.includes('SECURITY DEFINER'), 'Rate-limit RPC must be SECURITY DEFINER'],
+            [migration.includes('TO service_role'), 'Rate-limit RPC must be restricted to service_role'],
+            [migration.includes('ENABLE ROW LEVEL SECURITY'), 'Rate-limit storage must have RLS enabled'],
+            [migration.includes('REFERENCES auth.users(id) ON DELETE CASCADE'), 'Rate-limit counters must cascade on account deletion'],
+            [migration.includes('SET search_path = pg_catalog, public'), 'Rate-limit SECURITY DEFINER search path must be hardened'],
+            [rateLimitRepair.includes('ALTER FUNCTION public.drvas_consume_rate_limit(uuid, text, integer, integer)'), 'Rate-limit RPC repair migration must target the expected function signature'],
+            [rateLimitRepair.includes('SET search_path = pg_catalog, public'), 'Rate-limit RPC repair migration must harden the execution search path'],
+            [rateLimitRepair.includes('REVOKE ALL ON FUNCTION public.drvas_consume_rate_limit(uuid, text, integer, integer)') && rateLimitRepair.includes('FROM PUBLIC, anon, authenticated'), 'Rate-limit RPC repair must revoke public and user-role execution'],
+            [rateLimitRepair.includes('GRANT EXECUTE ON FUNCTION public.drvas_consume_rate_limit(uuid, text, integer, integer)') && rateLimitRepair.includes('TO service_role'), 'Rate-limit RPC repair must grant execution only to service_role'],
+            [moduleMigration.toLowerCase().includes('enable row level security'), 'Module project storage must enable RLS'],
+            [moduleMigration.toLowerCase().includes("module in ('academy','commerce','business')"), 'Module project storage must restrict allowed modules'],
+            [moduleMigration.toLowerCase().includes('auth.uid() = user_id'), 'Module project policies must enforce per-user ownership'],
+            [moduleMigration.toLowerCase().includes('revoke all on table public.drvas_module_projects from public, anon'), 'Module project table must deny public and anonymous access'],
+            [html.includes('function saveModuleProject(module)'), 'Module project save workflow is missing'],
+            [html.includes('function openModuleProject(module)'), 'Module project open workflow is missing'],
+            [businessCashbook.toLowerCase().includes('create table if not exists public.drvas_business_transactions'), 'Business cashbook migration must create its transaction table'],
+            [businessCashbook.toLowerCase().includes('enable row level security'), 'Business cashbook must enable row-level security'],
+            [businessCashbook.toLowerCase().includes('auth.uid() = user_id'), 'Business cashbook policies must enforce per-user ownership'],
+            [businessCashbook.toLowerCase().includes('to authenticated'), 'Business cashbook must restrict access to authenticated users'],
+            [businessCashbook.toLowerCase().includes('references auth.users(id) on delete cascade'), 'Business cashbook entries must cascade on account deletion'],
+            [html.includes('function saveBusinessTransaction()') && html.includes('function loadBusinessLedger()'), 'Business cashbook save/load functions are missing'],
+            [html.includes('function buildStudentAssessmentPrompt()'), 'Student Desk assessment feedback builder is missing'],
+            [html.includes('function saveStudentAssessmentProject()') && html.includes('function openStudentAssessmentProject()'), 'Student Desk private project save/open functions are missing'],
+            [html.includes('businessLedgerVat') && html.includes('businessLedgerIncome') && html.includes('businessLedgerExpenses'), 'Business cashbook summary is incomplete'],
+            [html.includes('function calculateBusinessBreakEven()') && html.includes('businessBreakEvenUnits'), 'Business break-even calculator is missing'],
+            [html.includes('"businessExpectedUnits"') && html.includes('"businessVariableCost"'), 'Business break-even assumptions must be saved with business plans'],
+            [studioRenderMigration.toLowerCase().includes('create table if not exists public.drvas_studio_render_jobs'), 'Studio render-job migration must create its table'],
+            [studioRenderMigration.toLowerCase().includes('enable row level security'), 'Studio render-job storage must enable RLS'],
+            [studioRenderMigration.toLowerCase().includes('auth.uid() = user_id'), 'Studio render-job policies must enforce per-user ownership'],
+            [studioRenderMigration.toLowerCase().includes("values (\n  'drvas-media',\n  'drvas-media',\n  false"), 'Studio media bucket must remain private'],
+            [studioRenderMigration.toLowerCase().includes("storage.foldername(name))[1] = auth.uid()::text"), 'Studio media storage policies must isolate each user folder'],
+            [worker.includes('body.action === "studio_render_create"') && worker.includes('body.action === "studio_render_status"'), 'Studio render create/status endpoints are missing'],
+            [worker.includes('CREATOMATE_API_KEY') && worker.includes('MADE BY VPC'), 'Studio renderer must use a server-side provider secret and mandatory watermark'],
+            [worker.includes('/storage/v1/object/drvas-media/'), 'Studio MP4 output must be copied into private Supabase storage'],
+            [worker.includes('mediaResponse.body.getReader()') && worker.includes('50 * 1024 * 1024'), 'Studio MP4 transfer must be streamed with a hard 50 MB cap'],
+            [html.includes('function renderStudioVideo()') && html.includes('function checkStudioRenderStatus()'), 'Studio MP4 render controls are missing'],
+            [html.includes('createSignedUrl') && html.includes('studioRenderPreview'), 'Studio private MP4 preview workflow is missing'],
+            [html.includes('isDrvasAdmin = false;') && html.includes('businessWorkspace'), 'Logout must reset administrator access and workspace state'],
+            [chatAttachmentMigration.includes('create table if not exists public.drvas_chat_attachments'), 'Chat attachment metadata migration is missing'],
+            [chatAttachmentMigration.toLowerCase().includes('enable row level security'), 'Chat attachment metadata must enable RLS'],
+            [chatAttachmentMigration.includes('auth.uid() = user_id'), 'Chat attachment metadata must enforce per-user ownership'],
+            [chatAttachmentMigration.includes("'health_data_processing'") && chatAttachmentMigration.includes("'file_processing'"), 'Attachment consent types must be recorded'],
+            [chatAttachmentMigration.includes("'application/pdf'") && chatAttachmentMigration.includes("'image/webp'"), 'Private storage bucket must accept PDFs and images'],
+            [worker.includes('body.action === "file_processing_consent"'), 'Worker must record explicit file-processing consent'],
+            [worker.includes('env.DRVAS_FILE_ANALYSIS_ENABLED !== "true"'), 'Multimodal file analysis must remain fail-closed until approved'],
+            [worker.includes('body.attachment_ids') && worker.includes('drvas_chat_attachments'), 'Worker must validate attachment ownership and metadata'],
+            [worker.includes('storage/v1/object/sign/drvas-media/'), 'Worker must use short-lived private storage URLs'],
+            [worker.includes('type: item.mime_type === "application/pdf" ? "document" : "image"'), 'Worker must route PDFs and images as multimodal inputs'],
+            [worker.includes('method: "HEAD"') && worker.includes('headers.get("content-length")') && worker.includes('headers.get("content-type")'), 'Worker must verify real Storage object size and MIME before Gemini'],
+            [worker.includes('new TextDecoder("utf-8", { fatal: true })'), 'Worker must reject invalid UTF-8 attachment text'],
+            [html.includes('id="chatFileInput"') && html.includes('function uploadPendingChatFiles'), 'Universal chat attachment UI and upload workflow are missing'],
+            [html.includes('id="healthDataProcessingConsent"') && html.includes('id="fileProcessingConsent"'), 'File and Health data processing consent controls are missing']
+          ];
+          for (const [ok, message] of checks) {
+            if (!ok) throw new Error(message);
+          }
+          console.log('Validated Dr.Vas security controls and rate-limit migration.');
+          NODE
+
+      - name: Install browser regression test runner
+        run: npm install --no-save --package-lock=false @playwright/test
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run homepage and persisted-session browser tests
+        run: |
+          python3 -m http.server 4173 --directory www > /tmp/drvas-http.log 2>&1 &
+          ready=false
+          for attempt in $(seq 1 20); do
+            if curl --silent --fail http://127.0.0.1:4173/ > /dev/null; then
+              ready=true
+              break
+            fi
+            sleep 1
+          done
+          if [ "$ready" != "true" ]; then
+            cat /tmp/drvas-http.log
+            echo "Local Dr.Vas homepage did not start."
+            exit 1
+          fi
+          npx playwright test tests/e2e/homepage.spec.cjs tests/e2e/data-isolation-migrations.spec.cjs tests/e2e/module-persistence.spec.cjs --reporter=line
+
       - name: Deploy Worker
         run: npx wrangler deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Smoke test production Worker
+        run: |
+          set -euo pipefail
+          response=""
+          for attempt in 1 2 3 4 5 6; do
+            if response="$(curl --fail --silent --show-error "$WORKER_HEALTH_URL/health")"; then
+              break
+            fi
+            echo "Health endpoint not ready (attempt $attempt/6); waiting 10 seconds."
+            sleep 10
+          done
+          if [ -z "$response" ]; then
+            echo "Worker health endpoint did not respond successfully."
+            exit 1
+          fi
+          homepage="$(curl --fail --silent --show-error "$WORKER_HEALTH_URL/")"
+          for marker in "Dr.Vas AI" 'data-module="free"' 'data-module="health"' 'data-module="studio"' 'data-module="academy"' 'data-module="commerce"' 'data-module="business"'; do
+            if ! grep -Fq "$marker" <<<"$homepage"; then
+              echo "Homepage is missing expected content: $marker"
+              exit 1
+            fi
+          done
+          echo "Homepage delivery and all six module cards verified."
+          auth_status="$(curl --silent --show-error --output /tmp/drvas-auth-check.json --write-out '%{http_code}' \
+            -H 'Content-Type: application/json' \
+            --data '{"action":"admin_status"}' "$WORKER_HEALTH_URL/")"
+          if [ "$auth_status" != "401" ]; then
+            echo "Unauthenticated admin-status request should return HTTP 401, got $auth_status."
+            cat /tmp/drvas-auth-check.json
+            exit 1
+          fi
+          echo "Unauthenticated admin-status request correctly rejected (HTTP 401)."
+          printf '%s' "$response" | node -e '
+            let raw = "";
+            process.stdin.setEncoding("utf8");
+            process.stdin.on("data", chunk => raw += chunk);
+            process.stdin.on("end", () => {
+              let data;
+              try { data = JSON.parse(raw); } catch { throw new Error("Health endpoint returned invalid JSON"); }
+              const checks = data.checks || {};
+              console.log(JSON.stringify(data, null, 2));
+              if (data.status !== "online" || checks.worker !== "ok") {
+                throw new Error("Worker health check failed");
+              }
+              for (const key of ["assets", "ai", "database"]) {
+                if (checks[key] !== "configured") {
+                  throw new Error("Worker configuration missing: " + key);
+                }
+              }
+            });
+          '
+        env:
+          WORKER_HEALTH_URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev
+
+      - name: Upload software bill of materials
+        if: always() && hashFiles('drvas-sbom.cdx.json') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: DrVas-SBOM
+          path: |
+            drvas-sbom.cdx.json
+            drvas-sbom-production.cdx.json
+          retention-days: 90
