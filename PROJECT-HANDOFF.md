@@ -315,3 +315,13 @@ Resume on `drvas-integrated-platform`. The latest recorded CI evidence was reche
 - Still unresolved until founder tests: the value/configuration of Cloudflare Worker secret `ADMIN_EMAILS` cannot be inspected through GitHub. If UI says `email_not_allowlisted`, update the secret to contain exactly the email of the authenticated Supabase account. If it says `allowlist_missing`, create/configure the secret. Do not send secret values, passwords or tokens in chat.
 - Web URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ . User will test on desktop and Samsung phone. Existing installed APK is to remain unchanged; no APK rebuild/reinstall requested.
 - Next: ask user to click Studio while signed in and report the exact diagnostic shown. Then resolve the Cloudflare allowlist if needed, recheck all four founder modules and verify a test prompt is accepted by Worker in each. Keep normal users restricted to Free/Health.
+
+
+## 2026-11-05 — Founder privacy and presentation voice handoff
+
+- Masked founder's personal display name and email in the signed-in workspace header. It now shows `Cont administrator` and country. This is presentation-only; account/profile data remain intact.
+- Fixed a clear cause of silent intro: previous presentation code required three distinct OS voices before speaking. The new logic accepts one available voice and reuses it for all three presenter segments; if no voices are enumerated, it still attempts the default browser speech engine. Browser errors are shown in the presentation status.
+- Source commit: `50dc6a7515fc2ec9d7db09047bc645fbaa6efa63`. Inline script syntax parse passed.
+- Deploy run #436 (`42103421994`) and Android build run #327 (`42103421938`) were in progress when recorded. Verify their final outcomes before claiming release.
+- Installed APK remains untouched per founder request. New APK artifact is only a CI build, not installed.
+- Next: verify run #436 deployed, open presentation on desktop and Samsung browser, click Replay if needed, confirm sound. If still silent, capture audio status error and check OS TTS voices/volume. Also inspect latest Android artifact but do not ask founder to reinstall until they approve.
