@@ -86,7 +86,7 @@ Regression coverage:
 - Updated the browser expectation that previously required restored sessions to return to the landing page; new expectation verifies the last selected Health module opens.
 - Added a per-account module preference test, including isolation from another account and clearing on logout.
 - Test commits: `79289080d95ddfa5b888a65b281220ee9f8010d8` and `af55b9eea346a74a1e2e799f934bad87dd65267d`.
-- The earlier run failed because the old test still asserted the now-obsolete landing-page behavior (37 passed, 1 obsolete expectation failed). That expectation was updated. The latest browser and deploy/regression workflows for `af55b9eea346a74a1e2e799f934bad87dd65267d` were still running when this log entry was written; do not claim their results until checked.
+- The earlier run failed because the old test still asserted the now-obsolete landing-page behavior (37 passed, 1 obsolete expectation failed). That expectation was updated. Final browser regression run `42003477722`: success, **39 tests passed**. Worker deploy/regression run `42003477696`: success; Worker deployed and production smoke test passed. Both runs used commit `af55b9eea346a74a1e2e799f934bad87dd65267d`.
 
 ## Follow-up — three realistic speaking presenters
 Owner's creative direction:
