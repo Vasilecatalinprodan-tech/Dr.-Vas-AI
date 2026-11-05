@@ -1,6 +1,7 @@
 # Dr.Vas AI — Project Status
 
 Last updated: 2026-11-05
+Current continuation branch: `universal-chat-attachments`
 Working branch: `universal-chat-attachments`
 
 ## Product direction
@@ -747,3 +748,47 @@ The current continuation branch for the voice and Android work is `universal-cha
 ## Administrator identity and privacy
 
 A designated founder administrator email was explicitly identified in an earlier project conversation. Use the already designated server-side administrator allowlist; do not expose the address in public source, screenshots, logs or documentation, and never store passwords or access tokens in project files. The exact email need not be repeated in this status document.
+
+
+## Parallel development programme — 2026-11-05
+
+Founder instruction: continue progressively across the full Dr.Vas ecosystem and preserve every meaningful decision, implementation, test and handoff. Workstreams may be designed in parallel, but source-code changes must be sequenced and tested to avoid destabilising the working app.
+
+### Repository integrity
+- The continuation branch for the latest voice replay fix and Android work is `universal-chat-attachments`.
+- Repository branch search returned: `drvas-account-deletion-hardening`, `drvas-integrated-platform`, `drvas-modules-long-input`, `fix/session-restore-preserves-homepage`, `founder-workbenches-development`, `hotfix/ui-startup-failsafe`, `main`, and `universal-chat-attachments`.
+- Do not assume these branches are merged or interchangeable. Do not merge, reset, force-push, or switch the active development branch without reviewing differences and obtaining founder approval.
+- The current Android workflow is configured on both `drvas-integrated-platform` and `universal-chat-attachments`. Its configuration is verified; the latest successful run/artifact is not yet verified.
+- `package.json` has no npm scripts or test-runner dependencies. The repository contains Playwright E2E specs, but the root runner/configuration has not been established. Do not report E2E tests as passing until configured and executed.
+
+### Parallel product workstreams
+1. **Platform foundation:** authentication, account/profile, history, session restore, language, responsive UI, API reliability, permissions, audit logs, privacy and Android packaging.
+2. **Voice & accessibility:** server TTS, browser fallback, replay/stop, Android audio, Gemini Live voice, microphone permission, interruption, transcripts and accessible controls. Voice output and microphone remain user-controlled; no silent activation.
+3. **Studio — media:** series bible, scripts, episode workflow, storyboards, production prompts, subtitles, editing/render pipeline and social formats. Founder approves all public releases.
+4. **Studio — translation:** multilingual translation/localisation, terminology glossaries, revisions and export. Medical/legal/high-stakes translations require qualified human review.
+5. **Studio — books:** concept, research, outline, manuscript, editing, cover/format preparation, metadata and publishing checklist. Verify rights, citations and publisher requirements.
+6. **Studio — music:** original lyrics, composition/production briefs, arrangements, multilingual adaptations and release preparation. Respect copyright, platform terms and voice/likeness consent.
+7. **Crypto & Mining:** educational research, market/risk literacy and transparent mining sensitivity calculators. Simulation only initially; no wallet custody/signing, exchange connection, live trades, automatic investing or earnings promises.
+8. **Online Income & Digital Products:** product validation, customer research, pricing, unit economics, delivery and compliance; show assumptions, fees, taxes and downside cases.
+9. **Academy:** structured courses, lessons, exercises, assessments and progress tracking.
+10. **Commerce:** product research, supplier/fulfilment analysis, margin calculator, returns/customer service and legal requirements.
+11. **Business:** business plans, operations, finance dashboards, process automation and customer journey/retention planning. Regulated accounting/legal work must be clearly bounded and reviewed by qualified professionals.
+12. **Health:** safe general education, source transparency and clinician-led future workflows. No diagnosis or replacement of clinicians; do not enable clinical data/voice features until privacy, security and regulatory requirements are reviewed.
+13. **Commercial/release layer:** subscription plans, server-side entitlements, billing, terms, privacy, retention/deletion, support and Google Play readiness. Keep premium access gated until billing and entitlements are verified.
+
+### Shared product architecture
+- Keep one Dr.Vas platform, one account, shared authentication/profile/language/history and a consistent permission model.
+- Keep the six established core modules as the main navigation. Add specialist labs/workbenches as sub-workspaces, not a separate top-level module for every idea, unless later product research supports that.
+- Each workspace should support saved projects, drafts, version history, clear status, export and explicit founder approval for external publishing or financial actions.
+- Keep secrets server-side; never commit API keys, access tokens, private administrator email, passwords or user data.
+- No public posting, purchases, wallet actions, financial execution or deployment that changes production behaviour without explicit approval and appropriate permissions.
+- Mark each capability as planned, implemented, tested, deployed or verified on-device; never treat those states as equivalent.
+
+### Next execution order
+1. Confirm latest APK workflow run and install/test the current APK; verify voice, replay and stop audibly.
+2. Resolve branch lineage and create a reliable test command/CI path without merging unrelated branches.
+3. Run a platform foundation audit and fix high-severity issues first.
+4. Deliver persistent Studio project/workbench foundations, then media, translation, books and music capabilities in stages.
+5. Deliver Crypto/Mining and Online Income as safe research/simulation tools.
+6. Develop Academy, Commerce and Business workflows.
+7. Complete subscription/entitlement, privacy/compliance and store-release work.
