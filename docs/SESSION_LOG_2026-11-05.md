@@ -115,3 +115,11 @@ A deeper GitHub check corrected the initial branch-discovery interpretation:
 - Fetched `www/index.html` from both `drvas-integrated-platform` and `universal-chat-attachments`; both contain Creator & Online Income Lab, Book Workshop, Music Release Lab and Content & Campaign Planner markers.
 - Compared the continuation branch to the integrated branch: histories diverge; `universal-chat-attachments` is 146 commits ahead and 4 behind, merge base `ab0e2778306f77547f6ce87a174ba33bbff229df`. A deliberate four-commit/file-level reconciliation is needed; no merge was performed.
 - Updated the branch review document and project status to reflect this corrected finding. Current APK run/artifact, audible Android voice and production deploy remain unverified.
+
+
+## Open PR review — security and Crypto work — 2026-11-05
+
+- Queried PR metadata for #2 and #3. PR #2 is open/unmerged and contains account deletion/security hardening documentation only; it does not implement account deletion.
+- PR #3 is an open draft on `drvas-modules-long-input`, unmerged. It contains long-form chat changes, Crypto specification and proposed administrator device authorize/re-authorize/revoke routes, plus advertising, privacy, entitlement and roadmap documents. Its own description says security/runtime/E2E checks remain outstanding and it is not deployed.
+- Compared current Worker source on `universal-chat-attachments` and `drvas-integrated-platform`: `crypto_devices_list` exists; no `crypto_device_authorize` or `crypto_device_revoke` action was found. These are pending capabilities, not available features.
+- Recorded both PRs and their review gates in `docs/BRANCH_INTEGRATION_REVIEW_2026-11-05.md`. No PR was merged, closed, rebased or deployed during this review.
