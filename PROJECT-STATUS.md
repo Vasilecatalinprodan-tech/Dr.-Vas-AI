@@ -854,3 +854,11 @@ Founder feedback:
 - Cloudflare Workers Builds check for commit `43f0c2cf507a3ce951ecdea644cca74157cc351e` also completed SUCCESS; deployed Worker version `7ace1c79-c5d3-4a80-8ce3-2a1dfd897986`.
 - `main` and `drvas-integrated-platform` were fast-forward synchronized at `1190c06b986ae9e65d0efd85f1fbd1719831ed3c` before this status-only entry.
 - Dedicated Jan/Sarah voices remain unconfigured until voice selection and secret setup. The test proves identity routing, not actual audible differences or the physical Samsung APK result.
+
+## 2026-11-05 — voice playback compatibility fix and chat archive
+
+- Fixed the frontend so authenticated server-side TTS is attempted even when browser `speechSynthesis` is absent. This prevents a browser capability check from blocking the ElevenLabs audio-element path.
+- Voice toggle/replay now allow the server-side path without requiring browser speech synthesis; browser synthesis is only a fallback.
+- Added a Playwright regression test for server-side TTS without browser speech synthesis and CI assertions. Workflow #470 / run `42130438370` was pending at the time of this checkpoint.
+- Created `docs/CHAT-ARCHIVE-2026-11-05.md`, a project conversation checkpoint preserving the user's exact instructions in this session, actions, decisions and remaining work. It is not a verbatim export of the entire ChatGPT conversation history.
+- Distinct Jan/Sarah voice IDs, photorealistic portraits, physical Samsung tests and Supabase read-only verification remain incomplete.
