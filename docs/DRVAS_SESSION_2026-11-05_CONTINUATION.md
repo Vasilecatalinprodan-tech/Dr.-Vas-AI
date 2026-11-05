@@ -1413,3 +1413,20 @@ Utilizatorul a primit în Supabase SQL Editor eroarea:
 - Nu s-a executat nicio comandă SQL, nu s-a modificat Supabase și nu s-a aplicat migrarea.
 - Nu s-a făcut deploy, merge sau schimbare de secrete.
 - Cererea utilizatorului de a continua, remedia confuzia, salva starea și primi o cale de vizualizare a fost consemnată.
+
+
+## 2026-11-05 — clarificare acces terminal și linkuri de vizualizare
+
+Utilizatorul a cerut explicit ca asistentul să execute comenzile Git și serverul static în terminal, apoi să ofere pagina și să salveze tot.
+
+Verificare efectivă a capabilităților disponibile în această conversație:
+- Conexiunea GitHub poate citi fișiere și branch-uri și poate crea commituri prin API.
+- Nu este expusă o acțiune de pornire/atașare la Codespaces, terminal remote sau execuție shell în Codespace-ul utilizatorului.
+- Prin urmare, comenzile `git switch`, `git pull` și `python3 -m http.server` NU au fost executate de asistent. Nu trebuie pretins contrariul.
+- Branch-ul `universal-chat-attachments` a fost verificat direct prin GitHub API; HEAD confirmat la această verificare: `e1164f1a600b91b8951bc799b90a4c187cb222cb`.
+- `www/index.html` există pe branch; blob SHA: `6d63fa9c5581758149f46b7d0aba6a5f7cde2eaf`.
+- Linkul GitHub către sursa paginii este: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/blob/universal-chat-attachments/www/index.html
+- URL-ul Worker existent este: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ . Acesta nu este confirmat ca preview al branch-ului curent și nu trebuie prezentat ca incluzând modificările nepublicate.
+- Nu a fost creat un preview nou, nu s-a publicat Pages și nu s-a făcut deploy/merge/SQL.
+
+Concluzie pentru continuare: pentru un preview real al branch-ului trebuie folosit Codespaces/port forwarding sau configurat un mediu de preview dedicat cu backend izolat. Nu se va afirma că pagina actualizată este live până când URL-ul de preview este creat și verificat efectiv.
