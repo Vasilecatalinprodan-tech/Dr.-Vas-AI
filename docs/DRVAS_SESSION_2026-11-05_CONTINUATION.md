@@ -74,3 +74,10 @@ La reluarea din chatul nou s-a verificat efectiv jobul GitHub Actions pentru PR 
 Run #190 (ID `42042064205`) a rulat toate cele 39 de teste: 38 au trecut, iar testul calculatorului Bitcoin a eșuat din cauza unei a doua ipoteze implicite ne-neutralizate. Sursa aplicației arată mentenanță implicită de £50/lună (aprox. £1.67/zi), motiv pentru care netul era £7.15, nu £8.82. Testul de bază setează acum explicit și `cryptoMaintenanceMonthly=0`, pe lângă downtime și rezervă fiscală zero. Corecția este salvată în commit `74a99ecdbd7639c540a63a96b5856cd3378a9cd6`. Este necesară o nouă rulare CI; PR #6 rămâne nemerged și nu s-a făcut deploy.
 
 Această conversație continuă checkpoint-ul anterior. Repository-ul păstrează rezumate tehnice și deciziile importante, nu transcrierea literală completă a chatului; istoricul original rămâne în ChatGPT. Pentru export textual integral se folosește exportul de date ChatGPT.
+
+
+## Actualizare — Content & Campaign Planner
+
+A fost implementat direct în `www/index.html` instrumentul privat **Content & Campaign Planner**, în Creator & Online Income Lab. Include formular pentru brand, public, obiectiv, canale, frecvență/resurse, ofertă/buget și limite de drepturi; generează un brief editorial pe 30 de zile cu piloni, calendar, hook-uri, scenarii, CTA, materiale, responsabilități, KPI, ipoteze A/B și buget etapizat. Brief-ul este trimis către fluxul existent Dr.Vas Studio, rezervat fondatorului. Nu publică și nu programează automat, nu trimite mesaje și nu cheltuie buget.
+
+A fost adăugat test Playwright pentru generarea brief-ului și rutarea în Studio. Așteptăm rezultatul CI. Implementarea și testul sunt salvate în commituri separate pe `founder-workbenches-development`. Această conversație este consemnată prin rezumat tehnic și decizii, nu prin transcriere literală completă; istoricul complet rămâne în ChatGPT.
