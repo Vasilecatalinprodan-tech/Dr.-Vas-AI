@@ -107,3 +107,31 @@ A fost adăugat test Playwright pentru agregarea pe 90 de zile și filtrarea pe 
 
 
 Revizie suplimentară: înainte de confirmarea CI, am corectat expresia regulată de validare a lunilor în raportul cashflow. Urmează rularea automată completă pe noul commit.
+
+## 2026-11-05 — cerere de stabilizare, SQL și deploy
+
+Cererea fondatorului în această continuare:
+> „vreau sa facem deploy la tot ce ai modificat si de asemenea sa folosim si sql daca trebuie...vreau noua versiune sa fie fezibila si functionala asta pana sa continuam....salveaza tot ce ai facut si ce faci inclusiv conversatia”
+
+Decizia de lucru:
+- Prioritatea se schimbă de la adăugarea de funcționalități la stabilizarea versiunii existente, verificarea integrării și pregătirea publicării.
+- Se face SQL numai dacă verificarea codului și a schemei demonstrează o nevoie concretă. Nu se execută migrații speculative.
+- Nu se modifică secretele, allowlist-ul administratorului, RLS sau datele de producție fără justificare și autorizare.
+- Merge/deploy doar după verificarea build-ului și a funcționării versiunii.
+
+Rezultatul verificării:
+- Ultimul commit înaintea acestui checkpoint: `edad2081f720d73c7a4a62906ae14ac0459827a2`.
+- GitHub Actions run #216, ID `42047594019`: **SUCCESS**; testele Playwright au raportat **42 passed (21.9s)**.
+- Testele acoperă fluxurile publice Free/Health, accesul premium restricționat, autentificarea și restaurarea sesiunii, modulele, Cashbook/VAT, Cashflow, instrumentele founder-only, calculatorul Crypto și prezentarea celor trei asistenți.
+- Verificarea Cloudflare Workers Builds pentru același commit, check-run ID `127315001701`, a raportat **FAILURE**. Logul detaliat al build-ului nu este expus prin conexiunea GitHub disponibilă; pagina Cloudflare de detalii cere acces autentificat. Prin urmare, build-ul/deploy-ul Cloudflare nu este confirmat.
+- PR #6 este deschis, nemerged, mergeable=true; head `edad2081f720d73c7a4a62906ae14ac0459827a2`, base `drvas-integrated-platform`.
+- Fișierele schimbate în PR sunt doar `www/index.html`, testul Playwright și documentația. Nu există fișier SQL/migrare în diff. Funcțiile Cashflow și workbench-urile folosesc structurile de persistență deja existente; nu s-a identificat o necesitate de SQL nou în această revizie.
+- Nu s-a făcut merge, deploy, modificare de schemă Supabase sau schimbare a datelor/configurației de producție.
+
+Blocaj înainte de deploy:
+1. Obținerea cauzei exacte pentru eșecul Cloudflare Workers Build și remedierea configurației/codului.
+2. Rularea din nou a verificărilor pe commitul corectat.
+3. După build Cloudflare verde, revizuire finală, merge PR #6 și confirmare deploy + smoke test pe URL-ul live.
+
+Păstrarea conversației:
+Acest checkpoint păstrează cererea explicită și rezultatele tehnice ale continuării. Este un rezumat tehnic fidel, nu o transcriere literală integrală a chatului. Istoricul original rămâne în ChatGPT; pentru copie integrală se folosește exportul de date ChatGPT.
