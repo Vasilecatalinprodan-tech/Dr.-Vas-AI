@@ -1228,3 +1228,69 @@ După commitul jurnalului `8dc7ee48646925aa61f6bae4de7524e612cf8c59`:
 - ultima verificare E2E relevantă rămâne run `42088700797`, status final success, 44/44 teste.
 
 Notă de numărare: comparația de 74 commituri înainte / 0 în urmă a fost măsurată înaintea commitului de jurnal `8dc7ee4`; acesta este un commit suplimentar exclusiv documentar. Nu reprezintă o modificare de cod și nu necesită rerularea testelor.
+
+
+## 2026-11-05 — retragerea consimțământului pentru fișiere: implementare și validare completă
+
+### Cererea utilizatorului și obiectiv
+Utilizatorul a confirmat continuarea proiectului și a cerut explicit ca la sfârșitul sesiunii să fie salvate toate lucrările și discuțiile. Etapa aleasă: controlul prin care titularul contului poate consulta și retrage acordul pentru procesarea fișierelor, inclusiv acordul separat pentru date medicale.
+
+### Implementare Worker
+Fișier: `worker/index.js`.
+- Nouă acțiune `file_processing_consent_get`: autentifică sesiunea Supabase și citește separat cel mai recent acord `file_processing` și `health_data_processing`; răspunsul este `no-store, private`.
+- Acțiunea existentă `file_processing_consent` acceptă acum atât acordarea explicită (`granted: true`) cât și retragerea (`granted: false`).
+- Retragerea este globală: înregistrează `granted=false` atât pentru procesarea generală a fișierelor, cât și pentru procesarea datelor medicale, indiferent de modulul curent.
+- Înregistrările istorice nu sunt suprascrise; retragerea este adăugată ca eveniment nou în `drvas_privacy_consents`.
+- Eșecurile la citire/scriere nu sunt raportate ca succes; serverul returnează erori explicite.
+- Verificarea de consimțământ înaintea analizei fișierelor folosește ordonare deterministă `recorded_at.desc,id.desc`, astfel încât decizia cea mai recentă să fie selectată și în caz de timestamp egal.
+- Migrarea `202611050001_chat_attachments.sql` include deja tipurile `file_processing` și `health_data_processing`; nu a fost nevoie de o nouă migrare pentru această etapă.
+
+Commituri relevante: `4ec49c075c90dc7867a579873cf7d39ffafd88d7` (rute citire/retragere), `be41901f24341fffabef2f91374276e97eb00030` (ordonare deterministă).
+
+### Interfață utilizator
+Fișier: `www/index.html`.
+- Adăugată în profil secțiunea „Consimțământ pentru fișiere și documente”.
+- Afișează dacă acordul general și/sau cel medical este activ.
+- Butonul „Retrage acordul pentru fișiere” cere confirmare și trimite retragerea la Worker.
+- După confirmarea serverului, ambele checkbox-uri de consimțământ din chat sunt debifate, iar butonul de retragere este dezactivat.
+- Mesajul explică faptul că retragerea blochează procesarea viitoare, dar nu șterge automat fișierele încărcate anterior; acestea trebuie șterse separat din conversație sau din istoricul conversațiilor.
+- Dacă starea acordului nu poate fi verificată, interfața avertizează utilizatorul să nu trimită fișiere până când verificarea nu este disponibilă.
+- Secțiunea este plasată în profilul contului, accesibil prin „Profilul meu” din interfața chat.
+
+Commituri relevante: `58b6229264313d5883c7b34ab7fc3e07d6aa74cd` (funcția și UI), `1a3dfae0f7be2c714122cfa9c5f03ecac0d6a755` (aliniere cu stilul panoului privat).
+
+### Testare E2E și stabilizarea testului
+Fișier: `tests/e2e/homepage.spec.cjs`.
+- Adăugat test pentru consultarea acordului activ și retragerea lui.
+- Testul verifică starea activă, confirmarea retragerii, dezactivarea butonului și debifarea ambelor checkbox-uri.
+- În primele rulări, testul a expirat la 30 de secunde deoarece ecranul de profil și panoul `details` nu erau deschise în contextul testului. Test setup a fost corectat să folosească `showOnly("profileSection")` și să deschidă `fileProcessingPrivacyPanel` înainte de interacțiune.
+- Rularea intermediară `42090021291` a avut 44 teste trecute și testul nou expirat; cauza de setup a fost corectată în commitul `511730778c27ea3acb34638e867df546314674e9`.
+- După corecție, run `42090513654`: `45 passed (22.6s)`.
+- După ultima corecție Worker privind ordonarea deterministă, run final `42090756317`: status `completed`, conclusion `success`, log `Running 45 tests using 1 worker`, `45 passed (19.6s)`.
+- Validarea Worker, scripturilor JavaScript inline, migrației private și rutelor de retragere a consimțământului a trecut în aceeași rulare.
+
+Run final: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42090756317
+
+### Politica de confidențialitate
+Fișier: `www/privacy-policy.html`.
+- Secțiunea 5A explică faptul că utilizatorul va putea retrage acordul din profil, inclusiv acordul pentru date medicale.
+- Clarifică faptul că retragerea nu șterge automat fișierele deja încărcate și nu afectează legalitatea prelucrărilor efectuate înainte de retragere.
+- Formularea păstrează condiția „după activarea funcției”; nu pretinde că încărcarea sau analiza sunt deja disponibile public.
+- Commit: `26cae1fd60f394d81369e9fb9c5b0c4f58eac5f3`.
+
+### Stare operațională și limite
+- `DRVAS_FILE_ANALYSIS_ENABLED` rămâne dezactivat; nu am pornit analiza documentelor.
+- Migrarea `202611050001_chat_attachments.sql` rămâne neaplicată în Supabase.
+- Nu au fost făcute modificări în baza de date activă, bucket, secrete sau configurația Cloudflare.
+- Nu a fost declanșat niciun deploy de producție.
+- Nu a fost făcut merge.
+- Retragerea consimțământului nu șterge automat fișierele anterioare; utilizatorul este informat și are separat mecanisme de ștergere a conversației/istoricului. Ștergerea automată imediată a datelor din copii de siguranță ale furnizorilor nu este promisă.
+
+### Stare GitHub la închiderea acestei etape
+- Repository: `Vasilecatalinprodan-tech/Dr.-Vas-AI`.
+- Branch: `universal-chat-attachments`.
+- HEAD verificat: `be41901f24341fffabef2f91374276e97eb00030`.
+- PR #7: open, Draft, nemerged; target `drvas-integrated-platform`.
+- Comparație față de baza PR: 86 commituri înainte, 0 în urmă.
+- Test final pentru HEAD: run `42090756317`, success, 45/45.
+- Utilizatorul a cerut salvarea integrală a discuției și a lucrărilor; acest jurnal este actualizat ca reper de continuitate pentru următoarea sesiune.
