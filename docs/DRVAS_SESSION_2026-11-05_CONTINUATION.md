@@ -1462,3 +1462,29 @@ Utilizatorul subliniază că dorește implementare efectivă în produs și publ
 Conexiunea GitHub disponibilă permite operații repository prin API, dar nu expune o sesiune shell/Codespaces pentru a executa `git switch`, `git pull` sau a porni serverul local. Nu se va pretinde că aceste comenzi au fost rulate.
 
 Această înregistrare păstrează cererea utilizatorului, cauza reală a paginii neschimbate, diferența de branch și motivul pentru care PR-ul complet nu a fost publicat încă. Este rezumat tehnic al conversației, nu export literal integral al chatului ChatGPT.
+
+
+## 2026-11-05 — implementare efectivă: pronunția numelor în chatul vocal
+
+### Cererea din conversație
+Utilizatorul a cerut să continuăm lucrul efectiv la Dr.Vas, nu doar să discutăm, și să salvăm tot ce se face și conversația. A insistat că pagina publică rămâne identică pentru că modificările nu sunt publicate.
+
+### Modificarea de cod efectuată acum
+- La verificarea efectivă a funcției `prepareSpeechText()` din `www/index.html`, am constatat că prezentarea animată avea deja expansiunea fonetică Doctor Vas / Doctor Jan, dar fluxul obișnuit de răspuns vocal din chat nu o avea.
+- Am corectat `prepareSpeechText()` astfel încât numai textul trimis către motorul vocal să transforme `Dr.Vas` în `Doctor Vas` și `Dr.Jan` în `Doctor Jan`, indiferent de capitalizare și cu spațiere opțională după punct.
+- Textul vizual, brandingul, titlul paginii și logo-urile rămân neschimbate.
+- Commit frontend: `060eef7c2ba53bcc9106960ac1e299d2960fc578`.
+- Am adăugat test Playwright care verifică textul vocal transformat și confirmă că titlul/logo-ul scris păstrează Dr.Vas.
+- Commit test: `24ccb4b47b0946c8a56c844898317df9b9c76c0c`.
+- Testul automat Browser E2E a fost pornit automat de push; run #305, ID `42095929331`, la ultima verificare era pending. Run #304, ID `42095921982`, pentru commitul frontend era in_progress. Rezultatul nu este încă declarat.
+- Link run #305: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42095929331
+- Link run #304: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42095921982
+
+### Starea publicării
+- Codul și testul sunt salvate pe branch-ul `universal-chat-attachments` și fac parte din PR #7.
+- Site-ul de producție rămâne pe branch-ul `drvas-integrated-platform`; modificarea vocală nu este încă publicată în producție.
+- Nu s-a făcut deploy/merge. Motivul rămâne că PR #7 conține și fluxul de atașamente medicale, a cărui migrare Supabase și cerințe de protecție a datelor nu sunt confirmate ca îndeplinite.
+- Utilizatorul a solicitat continuarea activă a implementării; se va lucra mai departe la fixuri verificabile, apoi se va separa release-ul sigur de funcțiile cu prerequisite încă neconfirmate.
+
+### Istoric conversație
+Am înregistrat cererea și acțiunile din această sesiune ca rezumat tehnic. Nu este export literal al tuturor mesajelor UI; istoricul complet rămâne în conversația ChatGPT.
