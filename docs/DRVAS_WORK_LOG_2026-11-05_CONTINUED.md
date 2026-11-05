@@ -256,3 +256,16 @@ Fondatorul a confirmat că fiecare dezvoltare trebuie implementată în aplicaț
 - Added a separate Playwright case that verifies the real default monthly maintenance assumption (£50/month) and its displayed daily equivalent (£1.67/day), so future changes to the calculator defaults are intentional and visible.
 - The test file now includes both a deterministic zero-cost baseline and a dedicated check for the £50/month default. The latest test commit is `e2d5893274366c70b834a1beeebd2149ac0af97e`.
 - CI has not yet returned a completed run for this latest commit; no merge or production deploy is claimed.
+
+
+## Prezentarea animată cu trei asistenți — 2026-11-05
+
+- Cererea fondatorului: „ce as mai vrea ca prezentarea sa fie facuta de cei 3 asistenti si ca fiecare sa prezinte cate 2 module si o vreau animata cand apesi pe prezentare sa apara ca o fereastra animata unde sa vb fiecare din noi dr.vas,dr.jan si sarah dupa ce termina prezentare sa se intoarca inapoi la loghin si module.........si salveaza tot si dupa continuam dezvoltarea”.
+- Butonul „Deschide prezentarea” este disponibil și pe pagina publică de început, înainte de autentificare; butonul din zona modulelor rămâne disponibil și pentru utilizatorii autentificați.
+- Prezentarea este o fereastră modală animată, cu întunecarea fundalului, progres în trei etape, avatar animat pentru vorbitor, indicator de vorbire și două module afișate pentru fiecare asistent.
+- Dr.Vas prezintă Dr.Vas Free și Dr.Vas Health; Dr.Jan prezintă Dr.Vas Studio și Dr.Vas Business; Sarah prezintă Dr.Vas Academy și Dr.Vas Commerce.
+- Narațiunea folosește Speech Synthesis din browser, în limba selectată, cu voci disponibile pe dispozitiv și variații de tonalitate pentru a diferenția cei trei asistenți. Vocea exactă depinde de browser/sistem; nu este clonare vocală și nu este un serviciu audio înregistrat.
+- La finalul celor trei intervenții, fereastra se închide și se reia fluxul normal: utilizatorul fără sesiune ajunge la conectare/înregistrare; utilizatorul deja conectat ajunge la alegerea modulelor. Butonul de continuare permite și omiterea prezentării.
+- Dacă browserul nu oferă Speech Synthesis sau redarea eșuează, prezentarea rămâne vizibilă și utilizatorul poate continua manual la conectare.
+- A fost actualizat testul Playwright pentru cele opt limbi acceptate, alocarea celor două module per asistent, trecerea Dr.Vas → Dr.Jan → Sarah și revenirea la fluxul de autentificare/module. Testul trebuie confirmat în CI după commit.
+- Nu s-a schimbat autentificarea, accesul public/privat, schema bazei de date, secretele, Worker-ul sau producția. Nu s-a făcut merge/deploy.
