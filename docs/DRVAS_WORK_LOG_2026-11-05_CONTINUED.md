@@ -217,3 +217,11 @@ Fondatorul a confirmat că fiecare dezvoltare trebuie implementată în aplicaț
 - GitHub Actions run #188 / ID `42041335612`: browser regression încă în progres la ultima verificare; fără rezultat final disponibil.
 - Niciun deploy de producție nu a fost efectuat pentru această integrare. Urmează verificarea rezultatelor CI și a diff-ului, apoi merge/deploy controlat numai după validare.
 - Pentru noua conversație, folosește `docs/DRVAS_SESSION_2026-11-05_CONTINUATION.md` ca punct de reluare și păstrează toate regulile de securitate și acces.
+
+
+## 2026-11-05 — Browser regression correction after PR #6 review
+
+- Inspected GitHub Actions run #188 (run ID `42041335612`) and downloaded the failed `browser-e2e` job log.
+- Result: 38 of 39 Playwright tests passed. The sole failure was the legacy Bitcoin calculator test: it expected gross daily revenue £18.00 but the calculator now correctly applies the default 5% downtime assumption first, yielding £17.10. This was a stale test fixture, not a Chromium installation problem or a broad application regression.
+- Updated `tests/e2e/homepage.spec.cjs` to explicitly set downtime and tax reserve to zero for the legacy baseline calculation and changed the notice assertion to the current calculator wording. The new calculator assumptions remain part of the application behavior; this change makes the old baseline test deterministic.
+- This correction is saved on `founder-workbenches-development`. A fresh CI run is required to confirm the fix; no merge or production deploy has been performed.
