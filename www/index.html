@@ -1228,7 +1228,7 @@ body.module-workspace-mode .studio-workspace.hidden{
    <section class="founder-workbench" aria-labelledby="founderProductionHeading">
     <div class="crypto-admin-heading">
      <div><h4 id="founderProductionHeading">✍️ Dr.Vas Creator & Online Income Lab</h4>
-      <p>Atelier privat pentru cărți, muzică originală, traduceri, produse digitale și planuri comerciale. Proiectele creative sunt salvate în Dr.Vas Studio înainte de trimiterea brief-ului către asistent.</p></div>
+      <p>Atelier privat pentru cărți, muzică originală, traduceri, produse digitale și planuri comerciale. Proiectele creative pot fi salvate în Dr.Vas Studio înainte de trimiterea brief-ului către asistent.</p></div>
      <span class="crypto-status">DOAR FONDATOR</span>
     </div>
     <div class="founder-workbench-grid">
@@ -1268,7 +1268,7 @@ body.module-workspace-mode .studio-workspace.hidden{
      </article>
     </div>
     <p class="founder-safety-note">Niciun proiect nu este publicat automat și nicio plată, comandă, investiție sau tranzacție nu este executată automat. Veniturile sunt estimări, nu garanții. Respectăm drepturile de autor, licențele, regulile platformelor, protecția datelor, taxele și revizia umană pentru traduceri cu miză juridică sau medicală.</p>
-    <p id="founderWorkbenchStatus" class="founder-tool-status" role="status" aria-live="polite">Instrumente private pentru administrator. Cărțile și piesele folosesc salvarea privată Dr.Vas Studio.</p>
+    <p id="founderWorkbenchStatus" class="founder-tool-status" role="status" aria-live="polite">Instrumente private pentru administrator. Cărțile și piesele folosesc funcția de salvare privată Dr.Vas Studio.</p>
    </section>
    <section class="crypto-admin-card" aria-labelledby="founderProvenanceHeading">
     <div class="crypto-admin-heading">
@@ -2692,9 +2692,11 @@ async function saveStudioProject(){
   el("studioProjectTitle").value=project.title;
   await loadStudioProjects(currentStudioProjectId);
   setStudioProjectStatus("Proiect salvat în contul tău. Îl poți redeschide de pe alt dispozitiv.");
+  return true;
  }catch(error){
   console.error("Dr.Vas Studio save:",error);
   setStudioProjectStatus(error.message.includes("drvas_studio_projects")?"Tabelul de proiecte nu este încă activ în Supabase. Aplică migrarea SQL din proiect.":"Nu am putut salva proiectul: "+error.message,true);
+  return false;
  }
 }
 async function openStudioProject(){
@@ -3499,13 +3501,15 @@ async function launchFounderWorkbenchPrompt(moduleId,prompt,notice,studioProject
  if(!currentUser||!isDrvasAdmin){founderWorkbenchMessage("Acces rezervat administratorului confirmat de server.",true);return;}
  if(!["studio","academy","business"].includes(moduleId)){founderWorkbenchMessage("Modul de lucru nepermis.",true);return;}
  selectModule(moduleId);
+ let studioSaved=null;
  if(studioProject){
   newStudioProject();el("studioDeliverable").value=studioProject.type;
   el("studioProjectTitle").value=studioProject.title.slice(0,120);el("studioIdea").value=prompt;
-  await saveStudioProject();
+  studioSaved=await saveStudioProject();
  }
  submitModuleBrief(prompt,notice);
- founderWorkbenchMessage("Brief pregătit în "+(moduleId==="studio"?"Dr.Vas Studio":moduleId==="academy"?"AI Evaluation & Training":"Dr.Vas Business")+". Revizuiește mesajul în chat și apasă Trimite.");
+ const workspaceName=moduleId==="studio"?"Dr.Vas Studio":moduleId==="academy"?"AI Evaluation & Training":"Dr.Vas Business";
+ founderWorkbenchMessage(studioProject?(studioSaved?"Proiectul a fost salvat în Dr.Vas Studio. Brief-ul este pregătit; revizuiește mesajul în chat și apasă Trimite.":"Brief-ul este pregătit, dar salvarea proiectului nu a fost confirmată. Verifică mesajul din Proiectele mele Studio."):"Brief pregătit în "+workspaceName+". Revizuiește mesajul în chat și apasă Trimite.",Boolean(studioProject&&!studioSaved));
 }
 function buildFounderBookPrompt(){
  const title=el("founderBookTitle")?.value.trim()||"Carte nouă",genre=el("founderBookGenre")?.value||"Roman",language=el("founderBookLanguage")?.value||"Română",concept=el("founderBookConcept")?.value.trim()||"",length=el("founderBookLength")?.value||"Stabilim după schiță";
@@ -4207,6 +4211,7 @@ el("password").addEventListener("keydown",e=>{
   if(e.key === "Enter") handleAuth();
 });
 
+calculateCryptoMiningEconomics();
 initLanguage();
 </script>
 
