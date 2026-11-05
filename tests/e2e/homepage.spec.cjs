@@ -87,15 +87,20 @@ test("successful login returns the visitor to the module chooser", async ({ page
   await expect(page.locator("#chatSection")).toBeHidden();
 });
 
-test("showChat keeps the landing page until the user chooses to enter the modules", async ({ page }) => {
+test("showChat resumes the last selected module instead of returning to the landing page", async ({ page }) => {
   await openApp(page, "ro");
   await page.evaluate(() => {
     if (typeof window.showChat !== "function") throw new Error("showChat() is not exposed for browser regression testing");
+    localStorage.setItem("drvas_active_module:e2e-session-user", "health");
+    window.refreshAdminPanel = async () => { isDrvasAdmin = false; };
+    window.loadConversationList = async () => [];
     window.showChat({ id: "e2e-session-user", email: "e2e@example.invalid" }, "E2E");
   });
-  await expect(page.locator("#heroSection")).toBeVisible();
-  await expect(page.locator("#moduleSelectionShell")).toBeHidden();
-  await expect(page.locator("#chatSection")).toBeHidden();
+  await expect(page.locator("#chatSection")).toBeVisible();
+  await expect(page.locator("#healthWorkspace")).toBeVisible();
+  await expect(page.locator("#heroSection")).toBeHidden();
+  await expect(page.locator("#moduleSelectionStatus")).toBeHidden();
+  expect(await page.evaluate(() => activeModule)).toBe("health");
 });
 
 test("persisted Supabase session keeps the profile screen isolated when profile loading fails", async ({ page }) => {
