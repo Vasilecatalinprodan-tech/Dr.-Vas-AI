@@ -41,3 +41,17 @@ Official technical references:
 - https://elevenlabs.io/docs/eleven-api/guides/cookbooks/speech-engine
 
 No external voice-cloning provider has been connected and no paid service has been enabled.
+
+## 2026-11-05 — founder feedback: distinct voices and photorealistic faces
+
+Founder feedback:
+- The three assistants must not all sound like the same voice. Dr.Vas should sound male and distinct; Dr.Jan should have a different male voice; Sarah must have a clearly female voice.
+- Current text-to-speech implementation explains the issue: only Dr.Vas calls the authenticated ElevenLabs `voice_tts` endpoint, which uses the single Worker secret `ELEVENLABS_VOICE_ID`. Dr.Jan and Sarah fall back to browser `speechSynthesis`, whose automatic mode picks the first voice matching the language. That can select the same device voice for all three.
+- Gemini Live has separate requested presets (Charon for Dr.Vas, Fenrir for Dr.Jan, Aoede for Sarah), but those are separate from the browser TTS path and must be tested on the actual device.
+- Planned correction: make the assistant identity explicit in the TTS request and map each identity to its own server-side provider voice ID; never expose provider IDs/API keys in the frontend. Preserve Dr.Vas's existing secret as a compatibility fallback, and add separate Worker secrets for Dr.Jan and Sarah only after the founder chooses/approves voices and provider usage. Until configured, show a clear voice-not-configured state rather than silently pretending the same voice is distinct.
+- Browser fallback should remember voice choice per assistant and language, and its automatic selection should prefer an appropriate voice profile (female for Sarah, male for Dr.Vas/Dr.Jan) when the device offers one; if unavailable, tell the user that distinct voice is not available on that device.
+- Add automated tests that prove each assistant requests the correct identity/voice mapping, plus physical tests on Samsung S24 and browser/Android APK.
+- Avatar feedback: replace the two illustrated SVG assistant portraits (Dr.Jan and Sarah) with photorealistic adult portrait assets. Keep Dr.Vas's existing founder portrait. The current CSS/SVG movement is only a simple visual animation, not realistic facial animation or lip-sync.
+- Before generating/replacing portrait assets, confirm whether the founder wants fictional photorealistic AI-generated adult faces or supplied real-person photographs. If using supplied photographs, obtain the image and permission from the person shown. Do not use a minor's photograph to create an adult identity.
+- Future talking-head/lip-sync animation is a separate scope from static photorealistic portrait replacement and requires a suitable licensed video/animation provider, source assets and approved usage costs.
+- No new voice provider secrets were created, no paid voice provider was activated, and no new portrait assets were generated in this checkpoint.
