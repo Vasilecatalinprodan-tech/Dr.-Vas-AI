@@ -417,3 +417,16 @@ Resume on `drvas-integrated-platform`. The latest recorded CI evidence was reche
 - The four added checks verify source-level boundaries for private profile/consent tables, attachment metadata access and limits, separate Health-data consent with fail-closed analysis, and Health assistant safety/emergency instructions.
 - Earlier run #449 had 59/60 passing; the only failure was an overly strict wording assertion in the test, corrected in #450. No app behavior change was needed for that correction.
 - Live Supabase migration state, RLS execution against real accounts, actual Health legal basis/DPIA, provider configuration and device audio remain unverified release gates.
+
+
+## Continuation checkpoint — 2026-11-05 (module persistence CI)
+
+- Verified workflow #452 (run 42110866126) completed successfully: 60/60 browser E2E tests passed; Worker deployment, production smoke test and SBOM upload succeeded.
+- Added Academy, Commerce and Business project round-trip browser tests to `tests/e2e/module-persistence.spec.cjs`. The tests exercise save → project list → reopen and check restored title/primary field plus user/module ownership.
+- Corrected the test file's template literal syntax and added this test file to the CI Playwright command in `.github/workflows/deploy-worker.yml`. Earlier workflow runs did not include this file, so their green status did not validate these new round-trip scenarios.
+- Commit for test-file correction: `44f2cabb4e773da62e6f20b034ffdbd63e525812`.
+- Commit adding the module persistence suite to CI: `a872679caa837a6d63dcd826305ae9b7978ac8a4`.
+- Workflow #454 (run 42111255035) is the first run expected to execute the expanded suite; its result must be checked before describing the new tests as passing.
+- The expanded tests are browser-level tests using a controlled Supabase stub. They do not prove the live Supabase migration has been applied or that production RLS works against two real accounts.
+- Conversation continuity: the original ChatGPT conversation remains in ChatGPT history. GitHub records this technical checkpoint, source changes, tests and decisions; it is not a verbatim transcript of every chat message. Do not claim the entire chat was copied into GitHub.
+- Continue the seven workstreams in order: Studio; Academy; Commerce; Business; Free conversation/voice; Android physical-device voice; live Supabase migration/RLS/storage verification. Keep the existing APK untouched unless the founder explicitly authorizes a replacement/install.
