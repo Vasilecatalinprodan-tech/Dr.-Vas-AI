@@ -95,3 +95,12 @@ Run #193 a confirmat că valorile numerice ale calculatorului trec după neutral
 - Ultimul commit al testelor: `e2d5893274366c70b834a1beeebd2149ac0af97e`. Run #193 a executat 39 teste și a lăsat o singură problemă, aserțiunea de text a avertizării, deja corectată ulterior. Runurile #196 și #199 au fost anulate de concurența workflow-ului în timp ce ramura primea commituri succesive. Nu avem încă un rezultat final CI pentru ultimul commit.
 - PR #6 rămâne nemerged; nu s-a făcut deploy. Noul Content & Campaign Planner este implementat în aplicație și are test Playwright dedicat, dar testul încă nu a fost confirmat printr-o rulare CI completă.
 - Ultima conversație este salvată aici ca rezumat tehnic cu deciziile, funcționalitățile și starea verificărilor. Nu este transcriere literală completă; pentru copia integrală a conversației se folosește exportul datelor ChatGPT.
+
+
+## Continuare — raport cashflow
+
+Cererea utilizatorului în această conversație: „sa continuam si sa salvam conversatia”.
+
+Am continuat cu o funcție practică în Business: raport Cashflow în registrul Dr.Vas Books. Include perioade de 30, 90, 180 și 365 de zile, total încasări, cheltuieli, flux net, medie netă lunară și defalcare pe luni. Folosește doar tranzacțiile deja existente și moneda selectată. Nu este prognoză și nu face conversie sau calcule fiscale.
+
+A fost adăugat test Playwright pentru agregarea pe 90 de zile și filtrarea pe 30 de zile. Codul, testul și documentația sunt pregătite pentru salvare într-un singur commit. Nu se schimbă schema Supabase, permisiunile, secretele sau producția.

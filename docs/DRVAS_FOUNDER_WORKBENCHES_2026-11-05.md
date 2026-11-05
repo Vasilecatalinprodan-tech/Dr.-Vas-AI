@@ -88,3 +88,12 @@ Per owner instruction, no tests, syntax checks, browser checks or manual checks 
 - When the narration finishes, the modal closes and routes through the existing startDrVas() flow: signed-out visitors see sign-in/register; signed-in visitors return to module selection. Visitors can skip with Continue. If speech is unavailable, a manual Continue action remains available.
 - Regression coverage verifies all eight supported languages, all six module cards, module ownership, speaker sequence and return flow. Awaiting CI.
 - No auth rules, entitlements, database, secrets, Worker configuration or production deployment changed.
+
+
+## Cashflow report in Dr.Vas Books
+
+- Added a date-window report for 30/90/180/365 days to the existing private Business cashbook.
+- Summarizes recorded income, expenses, net cashflow and average monthly net; includes a month-by-month table.
+- Uses only the currently loaded rows in the selected currency. It does not forecast, convert currencies or estimate tax.
+- No database migration, schema change, auth/entitlement change or production configuration change.
+- Covered by a Playwright regression test for monthly aggregation and period filtering.

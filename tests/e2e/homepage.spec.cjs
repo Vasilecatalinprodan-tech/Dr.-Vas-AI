@@ -976,6 +976,31 @@ test("founder content campaign planner builds a 30-day brief for the private Stu
   expect(brief.status).toContain("Dr.Vas Studio");
 });
 
+test("Business cashbook monthly cashflow report summarizes and filters saved transactions", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    businessLedgerState.currency = "GBP";
+    businessLedgerState.rows = [
+      { id:"cf1", transaction_date:"2026-11-05", entry_type:"income", description:"November sales", category:"Sales", amount:1200, currency:"GBP", vat_rate:0, vat_included:true },
+      { id:"cf2", transaction_date:"2026-11-03", entry_type:"expense", description:"November costs", category:"Costs", amount:300, currency:"GBP", vat_rate:0, vat_included:true },
+      { id:"cf3", transaction_date:"2026-10-20", entry_type:"income", description:"October sales", category:"Sales", amount:900, currency:"GBP", vat_rate:0, vat_included:true },
+      { id:"cf4", transaction_date:"2026-10-02", entry_type:"expense", description:"October costs", category:"Costs", amount:200, currency:"GBP", vat_rate:0, vat_included:true },
+      { id:"cf5", transaction_date:"2026-09-10", entry_type:"income", description:"September sales", category:"Sales", amount:500, currency:"GBP", vat_rate:0, vat_included:true }
+    ];
+    document.querySelector("#businessCashflowRange").value = "90";
+    renderBusinessLedger();
+  });
+  await expect(page.locator("#businessCashflowIncome")).toContainText("2,600");
+  await expect(page.locator("#businessCashflowExpenses")).toContainText("500");
+  await expect(page.locator("#businessCashflowNet")).toContainText("2,100");
+  await expect(page.locator("#businessCashflowRows tbody tr")).toHaveCount(3);
+  await page.locator("#businessCashflowRange").selectOption("30");
+  await expect(page.locator("#businessCashflowIncome")).toContainText("1,200");
+  await expect(page.locator("#businessCashflowExpenses")).toContainText("300");
+  await expect(page.locator("#businessCashflowNet")).toContainText("900");
+  await expect(page.locator("#businessCashflowRows tbody tr")).toHaveCount(1);
+});
+
 test("Bitcoin mining calculator exposes its monthly maintenance assumption", async ({ page }) => {
   await openApp(page, "ro");
   await page.evaluate(() => {

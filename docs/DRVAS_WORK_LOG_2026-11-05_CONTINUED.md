@@ -274,3 +274,12 @@ Fondatorul a confirmat că fiecare dezvoltare trebuie implementată în aplicaț
 ### Corecție după prima rulare CI — fereastra publică
 
 Prima rulare pentru prezentarea animată a avut 40/41 teste reușite. Testul nou a identificat că modalul era copilul panoului de module, ascuns pentru vizitatorii neautentificați. Am mutat modalul în afara acelui panou și am modificat regresia să apese efectiv butonul public din pagina inițială. Acum trebuie rerulat CI; nu declarăm încă testul verde. Nicio setare de producție nu a fost modificată.
+
+
+### Cashflow — raport lunar în Dr.Vas Books
+
+- Am extins registrul privat existent cu raport pe ultimele 30/90/180/365 zile, pentru moneda selectată.
+- Raportul calculează încasările, cheltuielile, fluxul net și media netă lunară, apoi grupează tranzacțiile pe luni.
+- Datele sunt citite numai din rândurile deja încărcate din registrul utilizatorului; filtrarea pe perioadă se face local. Nu există prognoze, conversie valutară sau presupuneri fiscale.
+- Nu s-a adăugat tabel/migrare, nu s-a schimbat schema Supabase și nu s-a schimbat accesul. Raportul este parte a panoului Business deja existent.
+- Test Playwright nou acoperă agregarea și filtrarea 90 zile → 30 zile. Așteptăm CI pentru confirmare.

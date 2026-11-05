@@ -510,6 +510,14 @@ button:not(:disabled):active{transform:translateY(1px) scale(.99)}
 .business-ledger-table{width:100%;border-collapse:collapse;min-width:720px}
 .business-ledger-table th,.business-ledger-table td{padding:9px 10px;border-bottom:1px solid rgba(148,180,205,.16);text-align:left;font-size:.88rem}
 .business-ledger-table th{color:#a9c5dc;font-weight:650}
+.business-cashflow-report{margin:18px 0;padding:16px;border:1px solid rgba(66,190,164,.24);border-radius:15px;background:rgba(8,35,48,.48)}
+.business-cashflow-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.business-cashflow-heading h4{margin:0 0 6px}
+.business-cashflow-heading p{margin:0;color:var(--muted,#aab8c8);font-size:.9rem;max-width:680px}
+.business-cashflow-heading label{min-width:190px}
+.business-cashflow-totals{margin-bottom:12px}
+.business-cashflow-month{font-weight:650}
+
 .business-ledger-table td button{padding:6px 9px}
 @media(max-width:640px){.business-tool-panel{padding:12px}.business-ledger-summary{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
@@ -1086,6 +1094,18 @@ body.presentation-open{overflow:hidden!important}
      <div><small>Sold net</small><strong id="businessLedgerNet">—</strong></div>
      <div><small>TVA netă estimată</small><strong id="businessLedgerVat">—</strong></div>
     </div>
+    <section class="business-cashflow-report" aria-labelledby="businessCashflowTitle">
+     <div class="business-cashflow-heading"><div><h4 id="businessCashflowTitle">📈 Cashflow — raport pe perioadă</h4><p>Rezumat calculat numai din încasările și cheltuielile salvate în registru, pentru moneda selectată. Nu este o prognoză.</p></div>
+      <label>Perioada<select id="businessCashflowRange" onchange="renderBusinessCashflow()"><option value="30">Ultimele 30 de zile</option><option value="90" selected>Ultimele 90 de zile</option><option value="180">Ultimele 6 luni</option><option value="365">Ultimele 12 luni</option></select></label>
+     </div>
+     <div class="business-ledger-summary business-cashflow-totals" aria-live="polite">
+      <div><small>Încasări în perioadă</small><strong id="businessCashflowIncome">—</strong></div>
+      <div><small>Cheltuieli în perioadă</small><strong id="businessCashflowExpenses">—</strong></div>
+      <div><small>Flux net</small><strong id="businessCashflowNet">—</strong></div>
+      <div><small>Medie netă / lună</small><strong id="businessCashflowAverage">—</strong></div>
+     </div>
+     <div id="businessCashflowRows" class="business-ledger-rows" aria-live="polite"><p>Adaugă tranzacții pentru a vedea evoluția lunară.</p></div>
+    </section>
     <div id="businessLedgerStatus" role="status" aria-live="polite">Conectează-te și aplică migrarea pentru a activa registrul privat.</div>
     <div id="businessLedgerRows" class="business-ledger-rows"></div>
    </section>
@@ -3200,6 +3220,33 @@ function businessVatAmount(row){
  if(!rate)return 0;
  return row.vat_included?amount*rate/(100+rate):amount*rate/100;
 }
+function renderBusinessCashflow(){
+ const currency=el("businessLedgerCurrency")?.value||businessLedgerState.currency||"GBP";
+ const days=Math.max(1,Number(el("businessCashflowRange")?.value)||90);
+ const today=new Date(),start=new Date(today);
+ start.setHours(0,0,0,0);start.setDate(start.getDate()-(days-1));
+ const dateKey=date=>[date.getFullYear(),String(date.getMonth()+1).padStart(2,"0"),String(date.getDate()).padStart(2,"0")].join("-");
+ const startKey=dateKey(start),todayKey=dateKey(today);
+ const rows=businessLedgerState.rows.filter(row=>row.currency===currency&&row.transaction_date>=startKey&&row.transaction_date<=todayKey);
+ const income=rows.filter(row=>row.entry_type==="income").reduce((sum,row)=>sum+Number(row.amount||0),0);
+ const expenses=rows.filter(row=>row.entry_type==="expense").reduce((sum,row)=>sum+Number(row.amount||0),0);
+ const net=income-expenses,months=Math.max(1,days/30.4375);
+ [["businessCashflowIncome",income],["businessCashflowExpenses",expenses],["businessCashflowNet",net],["businessCashflowAverage",net/months]].forEach(([id,value])=>{const node=el(id);if(node)node.textContent=businessMoney(value,currency);});
+ const host=el("businessCashflowRows");if(!host)return;host.replaceChildren();
+ if(!rows.length){const empty=document.createElement("p");empty.textContent="Nu există tranzacții în perioada selectată pentru "+currency+".";host.append(empty);return;}
+ const monthsByKey=new Map();
+ rows.forEach(row=>{const key=String(row.transaction_date||"").slice(0,7);if(!/^\\d{4}-\\d{2}$/.test(key))return;const item=monthsByKey.get(key)||{income:0,expenses:0};if(row.entry_type==="income")item.income+=Number(row.amount||0);else if(row.entry_type==="expense")item.expenses+=Number(row.amount||0);monthsByKey.set(key,item);});
+ const table=document.createElement("table");table.className="business-ledger-table";
+ const head=document.createElement("thead"),header=document.createElement("tr");
+ ["Lună","Încasări","Cheltuieli","Flux net"].forEach(label=>{const th=document.createElement("th");th.textContent=label;header.append(th);});head.append(header);table.append(head);
+ const body=document.createElement("tbody");
+ [...monthsByKey.entries()].sort((a,b)=>b[0].localeCompare(a[0])).forEach(([key,item])=>{
+  const [year,month]=key.split("-").map(Number),tr=document.createElement("tr"),label=document.createElement("td");
+  label.className="business-cashflow-month";label.textContent=new Date(year,month-1,1).toLocaleDateString(undefined,{month:"long",year:"numeric"});tr.append(label);
+  [item.income,item.expenses,item.income-item.expenses].forEach(value=>{const td=document.createElement("td");td.textContent=businessMoney(value,currency);tr.append(td);});body.append(tr);
+ });
+ table.append(body);host.append(table);
+}
 function renderBusinessLedger(){
  const currency=el("businessLedgerCurrency")?.value||"GBP";
  const rows=businessLedgerState.rows.filter(row=>row.currency===currency);
@@ -3208,6 +3255,7 @@ function renderBusinessLedger(){
  const outputVat=rows.filter(row=>row.entry_type==="income").reduce((sum,row)=>sum+businessVatAmount(row),0);
  const inputVat=rows.filter(row=>row.entry_type==="expense").reduce((sum,row)=>sum+businessVatAmount(row),0);
  [["businessLedgerIncome",income],["businessLedgerExpenses",expenses],["businessLedgerNet",income-expenses],["businessLedgerVat",outputVat-inputVat]].forEach(([id,value])=>{const node=el(id);if(node)node.textContent=businessMoney(value,currency);});
+ renderBusinessCashflow();
  const host=el("businessLedgerRows");if(!host)return;host.replaceChildren();
  if(!rows.length){const empty=document.createElement("p");empty.textContent="Nu există încă înregistrări pentru această monedă.";host.append(empty);return;}
  const table=document.createElement("table");table.className="business-ledger-table";
