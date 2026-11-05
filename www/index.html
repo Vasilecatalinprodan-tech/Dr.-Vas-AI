@@ -2568,6 +2568,8 @@ function prepareSpeechText(value){
   .replace(/__(.*?)__/g,"$1")
   .replace(/_(.*?)_/g,"$1")
   .replace(/[`~]/g,"")
+  .replace(/\bDr\.\s*Vas\b/gi,"Doctor Vas")
+  .replace(/\bDr\.\s*Jan\b/gi,"Doctor Jan")
   .replace(/^\s*[-*+]\s+/gm,"")
   .replace(/^\s*\d+[.)]\s+/gm,"")
   .replace(/[|<>]/g," ")
