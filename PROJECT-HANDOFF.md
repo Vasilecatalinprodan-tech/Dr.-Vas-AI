@@ -371,3 +371,17 @@ Maintain integrated navigation, multilingual experience, authentication, saved c
 - Recommendation for a low-friction first implementation: evaluate Capawesome Cloud first because its current plugin major aligns with Capacitor 8 and its documented cloud flow includes rollout and rollback. Compare current pricing, signing, data processing, retention and account requirements before selecting. Capgo remains a valid alternative, particularly if self-hosting becomes a priority.
 - No provider selected, no account created, no plugin installed and no OTA credentials added. This requires the founder's approval after reviewing provider cost/privacy terms.
 - Security design requirement: production OTA channel must be pinned to the matching native app version; CI must block incompatible bundles; test channel first, then staged production rollout; preserve built-in bundle rollback. Never deliver new native plugins or native code through OTA.
+
+
+## Continuation checkpoint — 2026-11-05 (voice replay and chat preservation)
+
+- Continue on `universal-chat-attachments` in the same integrated repository. Preserve all six modules and the web + Android product direction.
+- The founder explicitly requested that ongoing work and the conversation be preserved. The GitHub project log stores decisions, changes, tests and handoff details. The full ChatGPT conversation remains in ChatGPT history unless deleted; the repository session log is a durable continuity summary, not a verbatim export of every historical chat message.
+- Voice code audit found a replay race: the previous replay handler restored `voiceAutoRead` immediately after calling the asynchronous speech function. The server audio request could therefore complete after the flag was already false and be discarded.
+- Fixed the replay handler to await `speakDrVas(lastSpokenAnswer)` before restoring the prior toggle state. Stop-button enabled state now includes active server-generated founder audio as well as browser SpeechSynthesis.
+- Commit: `4d989ea23037fcfea718ac358c919ce166a4f7a4` (`www/index.html`). Verified by fetching the committed file and checking the new async replay/await logic and founder-audio stop condition.
+- Commit combined status currently reports no checks. Do not claim the Android build passed based on this. Check GitHub Actions and retrieve `DrVas-APK` only from a successful run.
+- Important: voice output is still opt-in by default (`voiceAutoRead=false`). The founder should enable the voice output button, sign in, ask a short question, and test auto-read, replay and stop on the newly built APK. Audible playback remains unverified.
+- If still silent: inspect Worker `voice_tts` response status/content type, required ElevenLabs Worker secrets, authenticated session, rate limit, and Android audio playback. Never ask for or record secret values in chat or Git.
+- OTA decision remains pending. No Capawesome/Capgo provider has been selected, installed or configured; wait for explicit founder approval after current pricing and privacy review.
+- Keep `PROJECT-STATUS.md`, this file and `docs/SESSION_LOG_2026-11-05.md` aligned after meaningful work.
