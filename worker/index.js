@@ -316,7 +316,8 @@ export default {
             assets: env.ASSETS ? "configured" : "not_configured",
             ai: env.GEMINI_API_KEY ? "configured" : "not_configured",
             database: env.SUPABASE_URL && env.SUPABASE_KEY ? "configured" : "not_configured",
-            studio_renderer: env.CREATOMATE_API_KEY ? "configured" : "not_configured"
+            studio_renderer: env.CREATOMATE_API_KEY ? "configured" : "not_configured",
+            file_analysis: env.DRVAS_FILE_ANALYSIS_ENABLED === "true" ? "enabled" : "disabled"
           }
         });
       }
@@ -1417,6 +1418,50 @@ export default {
         }), { status: 200, headers: { ...headers, "Cache-Control": "no-store, private" } });
       }
 
+      if (body.action === "file_processing_consent") {
+        const consentUser = await verifySupabaseUser(env, body.access_token);
+        if (!consentUser) return json({ error: "Sesiune invalidă. Conectează-te din nou." }, 401);
+        const consentModule = body.module;
+        const consentModules = new Set(["free", "health", "studio", "academy", "commerce", "business"]);
+        if (!consentModules.has(consentModule) || body.granted !== true) {
+          return json({ error: "Acordul pentru procesarea fișierelor nu este valid." }, 400);
+        }
+        const consentRecords = [{
+          user_id: consentUser.id,
+          consent_type: "file_processing",
+          policy_version: "chat-files-v1",
+          granted: true
+        }];
+        if (consentModule === "health") {
+          consentRecords.push({
+            user_id: consentUser.id,
+            consent_type: "health_data_processing",
+            policy_version: "health-files-v1",
+            granted: true
+          });
+        }
+        const consentResponse = await fetch(
+          env.SUPABASE_URL.replace(/\\/+$/, "") + "/rest/v1/drvas_privacy_consents",
+          {
+            method: "POST",
+            headers: {
+              apikey: env.SUPABASE_KEY,
+              Authorization: "Bearer " + env.SUPABASE_KEY,
+              "Content-Type": "application/json",
+              Prefer: "return=minimal"
+            },
+            body: JSON.stringify(consentRecords)
+          }
+        );
+        if (!consentResponse.ok) {
+          console.error("Dr.Vas file consent write failed:", consentResponse.status);
+          return json({ error: "Nu am putut salva acordul de procesare. Fișierele nu au fost încărcate." }, 503);
+        }
+        return new Response(JSON.stringify({ ok: true, recorded: true }), {
+          status: 200, headers: { ...headers, "Cache-Control": "no-store, private" }
+        });
+      }
+
       const message = body.message;
       const token = body.access_token;
       const conversationId = body.conversation_id || null;
@@ -1759,6 +1804,125 @@ export default {
         `UTILIZATOR: ${originalMessage}`
       ].filter(Boolean).join("\n\n");
 
+      const attachmentIds = body.attachment_ids === undefined ? [] : body.attachment_ids;
+      if (!Array.isArray(attachmentIds) || attachmentIds.length > 5 ||
+          attachmentIds.some(id => typeof id !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) ||
+          new Set(attachmentIds).size !== attachmentIds.length) {
+        return json({ error: "Lista fișierelor atașate este invalidă (maximum 5)." }, 400);
+      }
+
+      const modelInputParts = [{ type: "text", text: conversationInput }];
+      if (attachmentIds.length) {
+        if (env.DRVAS_FILE_ANALYSIS_ENABLED !== "true") {
+          return json({ error: "Analiza fișierelor este temporar dezactivată până la confirmarea setărilor de protecție a datelor." }, 503);
+        }
+
+        const attachmentParams = new URLSearchParams({
+          select: "id,user_id,conversation_id,module,original_name,mime_type,file_size,storage_path",
+          id: `in.(${attachmentIds.join(",")})`,
+          user_id: `eq.${user.id}`,
+          conversation_id: `eq.${conversationId}`,
+          module: `eq.${moduleName}`
+        });
+        const attachmentResponse = await fetch(
+          `${supabaseUrl}/rest/v1/drvas_chat_attachments?${attachmentParams.toString()}`,
+          { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${env.SUPABASE_KEY}` } }
+        );
+        if (!attachmentResponse.ok) return json({ error: "Nu am putut verifica fișierele atașate." }, 503);
+        const attachmentRows = await attachmentResponse.json();
+        if (!Array.isArray(attachmentRows) || attachmentRows.length !== attachmentIds.length) {
+          return json({ error: "Unul dintre fișiere nu aparține acestei conversații sau nu mai este disponibil." }, 403);
+        }
+
+        const consentParams = new URLSearchParams({
+          select: "consent_type,granted,recorded_at",
+          user_id: `eq.${user.id}`,
+          consent_type: "in.(file_processing,health_data_processing)",
+          order: "recorded_at.desc",
+          limit: "10"
+        });
+        const consentResponse = await fetch(
+          `${supabaseUrl}/rest/v1/drvas_privacy_consents?${consentParams.toString()}`,
+          { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${env.SUPABASE_KEY}` } }
+        );
+        if (!consentResponse.ok) return json({ error: "Nu am putut verifica acordul de procesare a fișierelor." }, 503);
+        const consentRows = await consentResponse.json();
+        const latestConsent = new Map();
+        for (const item of consentRows || []) {
+          if (!latestConsent.has(item.consent_type)) latestConsent.set(item.consent_type, item.granted === true);
+        }
+        if (latestConsent.get("file_processing") !== true ||
+            (moduleName === "health" && latestConsent.get("health_data_processing") !== true)) {
+          return json({ error: "Este necesar acordul explicit pentru procesarea fișierelor înainte de analiză." }, 403);
+        }
+
+        const supportedAttachmentTypes = new Set([
+          "image/jpeg", "image/png", "image/webp",
+          "application/pdf", "text/plain", "text/csv"
+        ]);
+        let totalAttachmentBytes = 0;
+        for (const item of attachmentRows) {
+          const expectedPrefix = `${user.id}/${conversationId}/${moduleName}/`;
+          if (!supportedAttachmentTypes.has(item.mime_type) ||
+              !Number.isSafeInteger(Number(item.file_size)) ||
+              Number(item.file_size) < 1 || Number(item.file_size) > 15 * 1024 * 1024 ||
+              typeof item.storage_path !== "string" ||
+              !item.storage_path.startsWith(expectedPrefix) ||
+              item.storage_path.includes("..")) {
+            return json({ error: "Un fișier are un tip, o dimensiune sau o cale neacceptată." }, 400);
+          }
+          totalAttachmentBytes += Number(item.file_size);
+        }
+        if (totalAttachmentBytes > 20 * 1024 * 1024) {
+          return json({ error: "Dimensiunea totală a fișierelor depășește 20 MB." }, 413);
+        }
+
+        for (const item of attachmentRows) {
+          const encodedPath = item.storage_path.split("/").map(encodeURIComponent).join("/");
+          const signedResponse = await fetch(
+            `${supabaseUrl}/storage/v1/object/sign/drvas-media/${encodedPath}`,
+            {
+              method: "POST",
+              headers: {
+                apikey: env.SUPABASE_KEY,
+                Authorization: `Bearer ${env.SUPABASE_KEY}`,
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ expiresIn: 300 })
+            }
+          );
+          if (!signedResponse.ok) {
+            return json({ error: "Nu am putut accesa în siguranță fișierul privat: " + item.original_name }, 503);
+          }
+          const signedData = await signedResponse.json();
+          const signedUrl = new URL(signedData.signedURL || signedData.signedUrl || "", supabaseUrl);
+          if (signedUrl.origin !== new URL(supabaseUrl).origin ||
+              !signedUrl.pathname.startsWith("/storage/v1/object/sign/drvas-media/")) {
+            return json({ error: "Adresa temporară a fișierului nu a trecut verificarea de securitate." }, 502);
+          }
+
+          if (item.mime_type === "text/plain" || item.mime_type === "text/csv") {
+            const textResponse = await fetch(signedUrl.toString());
+            if (!textResponse.ok) return json({ error: "Nu am putut citi fișierul text: " + item.original_name }, 502);
+            const extractedText = await textResponse.text();
+            if (new TextEncoder().encode(extractedText).byteLength > 300000) {
+              return json({ error: "Fișierul text este prea mare pentru analiză: " + item.original_name }, 413);
+            }
+            modelInputParts.push({
+              type: "text",
+              text: `CONȚINUT FIȘIER ${item.original_name} (${item.mime_type}):\n${extractedText}`
+            });
+          } else {
+            modelInputParts.push({
+              type: item.mime_type === "application/pdf" ? "document" : "image",
+              uri: signedUrl.toString(),
+              mime_type: item.mime_type
+            });
+          }
+        }
+      }
+      const modelInput = attachmentIds.length ? modelInputParts : conversationInput;
+
       // Instrucțiuni dedicate modulului Health; celelalte module păstrează comportamentul general.
       const moduleSpecificInstruction = moduleName === "health" ? `
 DR.VAS HEALTH — SPECIALIST MODE FOR GENERAL HEALTH INFORMATION:
@@ -2079,7 +2243,7 @@ Always follow these instructions.
               signal: controller.signal,
               body: JSON.stringify({
                 model,
-                input: conversationInput,
+                input: modelInput,
                 store: false,
                 system_instruction: systemInstruction
               })
