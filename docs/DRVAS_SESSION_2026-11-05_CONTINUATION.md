@@ -337,3 +337,11 @@ Verificare curentă:
 Următoarele etape: așteptare rezultat CI #247; corectarea oricăror eșecuri; verificarea completă a istoricului de migrări și a schemei live prin conexiune Supabase; backup; aplicare controlată în staging/production doar după confirmarea proiectului și compatibilității; teste sintetice upload/download/delete și Worker; apoi verificare deploy/Android.
 
 Conversația: istoricul integral rămâne în conversațiile ChatGPT. Acest jurnal adaugă cererea exactă și rezumatul deciziilor tehnice pentru continuitate, dar nu poate arhiva literal toate mesajele. Pentru copie integrală se folosește exportul de date ChatGPT.
+
+
+### Rezultat CI #247 — confirmat 2026-11-05
+- Run #247, ID `42080801809`, job `browser-e2e`: SUCCESS.
+- Toate cele 43 de teste Playwright au trecut, inclusiv testul de prezentare vocală cu numele extinse „Doctor Vas / Doctor Jan” și verificările de upload, consimțământ și cele șase module.
+- Validarea statică Worker/HTML/migrare a trecut de asemenea.
+- Acest rezultat confirmă testele browser și validările statice pentru commitul codului `c3389d31ec072db6cd3563ba9b6b80bd0a32b91c`; nu confirmă funcționarea cu Supabase Storage/Gemini live și nu înlocuiește testele de integrare.
+- După acest run au fost adăugate doar actualizări de documentație; nu s-au modificat codul aplicației sau migrările.
