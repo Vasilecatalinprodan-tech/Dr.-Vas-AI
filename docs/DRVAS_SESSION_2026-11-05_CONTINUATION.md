@@ -1015,3 +1015,21 @@ Corecție în `.github/workflows/browser-e2e.yml`:
 Commit: `de5f53466924e8a340960580039769dad112aee7`.
 Aceasta este o schimbare numai de dependențe pentru testare CI; nu schimbă runtime-ul aplicației, package.json sau lockfile și nu afectează producția.
 Starea workflow-ului pentru commitul nou trebuie verificată după declanșarea PR check. Până la un rezultat verde, testele E2E și testul auditiv nu sunt considerate finalizate. Fără merge/deploy.
+
+
+## 2026-11-05 — corecție test E2E asincron pentru prezentarea vocală
+
+Workflow-ul GitHub Actions run `42087118104` a confirmat:
+- validarea Worker-ului, scriptului inline și migrării a trecut;
+- instalarea Playwright `1.64.1` a trecut;
+- instalarea Chromium a trecut;
+- pornirea serverului static a trecut;
+- testele Playwright nu au pornit deoarece fișierul `tests/e2e/homepage.spec.cjs` conținea `await speakDrvasPresentation()` într-un callback `page.evaluate` declarat sincron. Parserul Playwright a raportat `Unexpected reserved word 'await'` la linia 1148 și apoi `No tests found`. Run-ul s-a încheiat cu status cancelled/failure în job, nu din cauza instalării dependențelor.
+
+Corecție aplicată în `tests/e2e/homepage.spec.cjs`: callbackul respectiv a fost declarat `async` (`page.evaluate(async code => { ... })`), păstrând așteptarea explicită a funcției de prezentare vocală.
+
+Commit corecție test: `33d6c8315d232f41d0fc808a816724a28513d259`.
+
+Această schimbare repară sintaxa testului, dar NU înseamnă că testele E2E au trecut. Trebuie verificat următorul run GitHub Actions și corectate eventualele eșecuri funcționale. Vocile sunt mock în CI; verificarea auditivă reală pentru Sarah rămâne necesară.
+
+Nu s-a făcut merge, deploy, migrare SQL sau schimbare în producție. PR #7 rămâne Draft.
