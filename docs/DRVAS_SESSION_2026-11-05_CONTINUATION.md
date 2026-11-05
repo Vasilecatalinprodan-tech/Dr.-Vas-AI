@@ -927,3 +927,39 @@ Inspectat `worker/index.js` pe branch-ul `universal-chat-attachments`, fără mo
 În aceste call sites observate, UID-ul trimis RPC-ului provine din obiectul utilizatorului validat pe server, nu din `body.p_user_id`. Aceasta corespunde restricției EXECUTE doar pentru `service_role` și reduce riscul ca un client să aleagă arbitrar UID-ul folosit la contorizare. Helperul nu returnează cheia sau payloadul în răspuns; erorile logate includ status și corpul erorii trunchiat, nu credentialele. Nu s-au inspectat toate posibilele call sites din întregul repository, doar potrivirile din Worker.
 
 Concluzie actualizată: funcția SQL și modul observat de apelare din Worker sunt coerente. Nu recomandăm modificări SQL în acest moment. Menținerea secretului `SUPABASE_KEY` exclusiv în Cloudflare Worker este obligatorie. Nu s-a modificat codul, baza de date, permisiunile, secretele sau producția.
+
+
+## 2026-11-05 — confirmare RLS completă și audit RPC rate-limit
+
+Utilizatorul a transmis rezultatul query-ului țintit din `pg_policies`. Confirmări:
+- `public.chat_messages`: SELECT și DELETE cu `auth.uid() = user_id`; INSERT cu `WITH CHECK auth.uid() = user_id`.
+- `public.drvas_business_transactions`: toate cele patru politici SELECT/INSERT/UPDATE/DELETE sunt prezente și limitează rândurile la `auth.uid() = user_id`.
+- `public.drvas_studio_projects`: toate cele patru politici sunt prezente și limitează rândurile la proprietarul autentificat.
+- `public.drvas_studio_render_jobs`: toate cele patru politici sunt prezente și limitează rândurile la proprietarul autentificat.
+- Query-ul nu a returnat politici pentru `drvas_privacy_consents`, `drvas_rate_limits` sau `drvas_chat_attachments`; pentru acestea nu se trage concluzia că ar trebui acces direct din browser. `drvas_rate_limits` este accesat prin RPC server-side SECURITY DEFINER, iar consimțămintele sunt accesate de Worker cu secret server-side. `drvas_chat_attachments` încă depinde de migrarea dedicată și de inventarul live confirmat.
+
+### RPC `drvas_consume_rate_limit` — definiție completă și permisiuni
+Query-ul read-only confirmă:
+- semnătură: `drvas_consume_rate_limit(uuid,text,integer,integer)`;
+- proprietar: `postgres`;
+- `SECURITY DEFINER=true`;
+- `search_path=pg_catalog, public`;
+- EXECUTE: anon=false, authenticated=false, service_role=true.
+Utilizatorul a furnizat definiția completă. Funcția validează parametrii, limitează bucket la regex `^[a-z0-9_:-]{1,80}$`, `p_limit` la 1–1000 și fereastra la 1–86400 secunde; calculează fereastra temporală și incrementează atomic `drvas_rate_limits` prin `INSERT ... ON CONFLICT (user_id,bucket) DO UPDATE`. Returnează allowed, remaining și reset_at.
+Auditul anterior al Worker-ului a identificat call sites în care UID-ul transmis provine din obiectul utilizatorului autentificat și validat pe server (Studio render/status, TTS, Live token, AI chat), nu dintr-un UID arbitrar trimis de client. Cheia server-side rămâne exclusiv în Worker.
+Concluzie: nu apare o problemă evidentă în implementarea observată; păstrăm restricția EXECUTE doar pentru service_role. Nicio modificare SQL sau de permisiuni.
+
+## 2026-11-05 — audit și primă corecție pentru vocile prezentării
+
+Inspectat `www/index.html` pe branch-ul `universal-chat-attachments`. Problema confirmată: vechiul cod alegea vocile browserului prin indexul personajului (`candidates[index % candidates.length]`), fără clasificare vocală și fără garanția că Sarah primește o voce feminină. Pitch-ul 1.16 nu garantează o voce feminină.
+Cerința utilizatorului: prezentarea să aibă trei voci distincte; Sarah să aibă o voce feminină clară, naturală, de adult. Nu se schimbă identitatea vocală a personajelor Live fără audit separat.
+
+Modificare inițială în `www/index.html`:
+- adăugat profil de selecție vocală pe baza numelui/URI al vocii și a limbii selectate;
+- Dr.Vas și Dr.Jan caută voci distincte cu indicii masculine;
+- Sarah caută exclusiv o voce care are indicii feminine; nu este aleasă intenționat o voce masculină doar pentru că este a treia din listă;
+- dacă browserul nu expune o voce identificabilă feminină, interfața afișează avertisment și recomandă instalarea/selectarea unei voci feminine în setările sistemului; nu pretinde că vocea este garantat feminină.
+Commituri succesive pentru cod:
+- `c069bf76418bafa346982531351d1b82de7b390e` — introducerea selecției distincte;
+- `1482bcd7f3b0787df3aea5c1512ee438ce7e36e0` — corectarea inițializării variabilelor profilului vocal după inspecția imediată.
+Important: această primă implementare este încă în curs de verificare și testare; nu se declară finalizată. Trebuie verificată încărcarea asincronă a vocilor browserului (unele browsere returnează inițial listă goală), fallback-ul pentru Dr.Vas/Dr.Jan și testele automate/manuale. Nu s-a făcut deploy și nu s-a modificat configurația Live.
