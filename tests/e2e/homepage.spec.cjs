@@ -1312,7 +1312,7 @@ test("presentation reuses one available language voice when fewer than three pre
   });
   await page.evaluate(async () => { currentLanguage = "ro"; await speakDrvasPresentation(); });
   await expect(page.locator("#presentationAudioStatus")).toContainText("Narațiune audio");
-  await expect(page.locator("#presentationPresenter")).toHaveClass(/is-animated/);
+  await expect(page.locator("#presentationPresenter")).toHaveClass(/scene-enter/);
   await expect(page.locator("#presentationSpeakerName")).toHaveText("Dr.Vas");
   expect(await page.evaluate(() => window.__drvasSpoken.length)).toBe(1);
   expect(await page.evaluate(() => window.__drvasSpoken[0].voice?.name)).toBe("Microsoft Andrei");
