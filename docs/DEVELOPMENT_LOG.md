@@ -174,3 +174,26 @@
 - The earlier Cloudflare Workers Builds check failures recorded above were superseded by a successful build for code commit `516d2a7c07c80c285d533f2afd163809024a95d1`.
 - Latest Cloudflare check: SUCCESS, build ID `fec26213-f7a7-4cf3-a9ce-4a07b16aa2e4`, deployed Worker version `5cd23e4b-e866-4b9d-af44-918f85e09de1`.
 - The repository's own Wrangler workflow #461 also completed SUCCESS. Both deployment paths are now green for the latest code commit.
+
+## 2026-11-05 — founder feedback: distinct voices and photorealistic faces
+
+Founder feedback:
+- The three assistants must not all sound like the same voice. Dr.Vas should sound male and distinct; Dr.Jan should have a different male voice; Sarah must have a clearly female voice.
+- Current text-to-speech implementation explains the issue: only Dr.Vas calls the authenticated ElevenLabs `voice_tts` endpoint, which uses the single Worker secret `ELEVENLABS_VOICE_ID`. Dr.Jan and Sarah fall back to browser `speechSynthesis`, whose automatic mode picks the first voice matching the language. That can select the same device voice for all three.
+- Gemini Live has separate requested presets (Charon for Dr.Vas, Fenrir for Dr.Jan, Aoede for Sarah), but those are separate from the browser TTS path and must be tested on the actual device.
+- Planned correction: make the assistant identity explicit in the TTS request and map each identity to its own server-side provider voice ID; never expose provider IDs/API keys in the frontend. Preserve Dr.Vas's existing secret as a compatibility fallback, and add separate Worker secrets for Dr.Jan and Sarah only after the founder chooses/approves voices and provider usage. Until configured, show a clear voice-not-configured state rather than silently pretending the same voice is distinct.
+- Browser fallback should remember voice choice per assistant and language, and its automatic selection should prefer an appropriate voice profile (female for Sarah, male for Dr.Vas/Dr.Jan) when the device offers one; if unavailable, tell the user that distinct voice is not available on that device.
+- Add automated tests that prove each assistant requests the correct identity/voice mapping, plus physical tests on Samsung S24 and browser/Android APK.
+- Avatar feedback: replace the two illustrated SVG assistant portraits (Dr.Jan and Sarah) with photorealistic adult portrait assets. Keep Dr.Vas's existing founder portrait. The current CSS/SVG movement is only a simple visual animation, not realistic facial animation or lip-sync.
+- Before generating/replacing portrait assets, confirm whether the founder wants fictional photorealistic AI-generated adult faces or supplied real-person photographs. If using supplied photographs, obtain the image and permission from the person shown. Do not use a minor's photograph to create an adult identity.
+- Future talking-head/lip-sync animation is a separate scope from static photorealistic portrait replacement and requires a suitable licensed video/animation provider, source assets and approved usage costs.
+- No new voice provider secrets were created, no paid voice provider was activated, and no new portrait assets were generated in this checkpoint.
+
+## 2026-11-05 — Academy, Commerce and Business migration request
+
+- Founder found the Academy UI message requesting migration `202611040001_module_projects.sql`.
+- Reviewed the exact migration. It creates one shared `public.drvas_module_projects` table for the `academy`, `commerce` and `business` module values; it is not three separate migrations.
+- The migration creates an owner/module/updated index, enables RLS, revokes public/anon privileges, grants authenticated CRUD, and adds per-user `auth.uid() = user_id` policies for select/insert/update/delete. It is wrapped in a transaction and uses `IF NOT EXISTS`/drop-and-recreate policies, so it is intended to be re-runnable.
+- Do not apply three copies. Apply this exact migration once in the correct Dr.Vas Supabase project. Then verify the table, RLS and four policies, and test all three module values with two disposable user accounts.
+- No live Supabase connector or authorized database session is available in this development session. Therefore the SQL has been reviewed and documented, but has NOT been executed against the live database. Do not claim the Academy/Commerce/Business project persistence is fixed until the migration has been applied and verified in Supabase.
+- User-facing next action: Supabase Dashboard → correct Dr.Vas project → SQL Editor → New query → paste the full contents of `supabase/migrations/202611040001_module_projects.sql` → Run. Then run the read-only checks in `docs/SUPABASE_READONLY_VERIFICATION.sql` and complete the two-account isolation tests described in `docs/SUPABASE_LIVE_VERIFICATION_GUIDE.md`. Never paste secrets into chat.
