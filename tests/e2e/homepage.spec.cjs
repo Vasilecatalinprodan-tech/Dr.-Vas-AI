@@ -1050,6 +1050,7 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
     openDrvasPresentation();
   });
   await expect(page.locator("#drvasPresentation")).toBeVisible();
+  await expect(page.locator("#presentationModuleGrid .presentation-module")).toHaveCount(6);
   await expect(page.locator("#presentationModuleGrid .presentation-module.is-active")).toHaveCount(2);
   await expect(page.locator("#presentationSpeakerName")).toHaveText("Dr.Vas");
   const languages = [["ro","ro-RO"],["en","en-GB"],["it","it-IT"],["tr","tr-TR"],["de","de-DE"],["fr","fr-FR"],["es","es-ES"],["ru","ru-RU"]];
@@ -1092,7 +1093,7 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
   expect(sarah.modules).toContain("Dr.Vas Commerce");
   expect(sarah.speech).toContain("Dr.Vas Academy");
   await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].onend());
-  await page.waitForTimeout(1050);
+  await page.waitForTimeout(1450);
   await expect(page.locator("#drvasPresentation")).toBeHidden();
   expect(await page.evaluate(() => window.__drvasStartCount)).toBe(1);
 });
