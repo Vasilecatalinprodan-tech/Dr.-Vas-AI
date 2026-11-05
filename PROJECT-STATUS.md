@@ -612,3 +612,55 @@ Founder requested autonomous work while away and added a third assistant named A
 The 2026-11-04 audit rechecked the saved CI evidence: Worker deployment/smoke run `41698929634` succeeded; browser E2E run `41699194261` succeeded; Android build run `41698929811` succeeded and uploaded artifact `DrVas-APK` (ID `13262293447`, SHA-256 `a2063e934e0d958f1280d6c416efaaffc47c41db8b2d581fd5146730032fb402`). These results verify automated tests, deployment workflow and APK compilation/upload, not authenticated end-to-end behaviour or physical-device runtime.
 
 Outstanding verification: live Supabase status for `202611030001_rate_limits.sql` and `202611030004_studio_projects.sql`; authenticated AI chat/history/admin/audit tests; Crypto registry readiness (previously reported applied by founder, not independently confirmed); physical Android install/runtime; Studio rendering, social integrations and billing remain unimplemented. See `docs/SESSION_LOG_2026-11-03.md` latest checkpoint for exact next steps.
+
+
+## Project checkpoint — 2026-11-05 (voice, Android updates and continuity)
+
+Working branch for the current voice-fix work: `universal-chat-attachments`.
+Repository: `Vasilecatalinprodan-tech/Dr.-Vas-AI`.
+
+### User-confirmed runtime status
+- Founder reports that the currently installed Android APK launches and works.
+- Founder reports that no assistant voice is audible in that installed APK.
+- Do not claim the new voice fix is already in the installed APK or that audio has been tested successfully.
+
+### Voice fix committed (not yet device-verified)
+- Existing Worker endpoint `action: "voice_tts"` in `worker/index.js` generates server-side MP3 audio through ElevenLabs and checks authenticated Supabase access, rate limits, and Worker secrets `ELEVENLABS_API_KEY` / `ELEVENLABS_VOICE_ID`.
+- Found a frontend guard in `www/index.html`: the speech function returned early when `window.speechSynthesis` was missing, before attempting server-generated founder voice. This can prevent the server TTS route from being used in Android WebView.
+- Changed `speakDrVas()` to try the server-generated Dr.Vas voice first and only use browser SpeechSynthesis as fallback. Replay and voice-toggle paths no longer reject Dr.Vas solely because browser SpeechSynthesis is unavailable.
+- Changed `android/app/src/main/java/com/drvas/ai/MainActivity.java` to allow WebView media playback without a user gesture.
+- Changed `.github/workflows/android.yml` so pushes on `universal-chat-attachments` can trigger the APK build workflow.
+- Commits, in order:
+  - `b47d5ec36d985ab3b8ec5730c43666afeba7084d` — Android-compatible voice/TTS frontend fix.
+  - `72df319d2c5e697c507dee97a228d2ceb41c0f05` — Android WebView media playback setting.
+  - `b480ec3eccfe56253b954900bc6afcd4040b250d` — allow APK workflow on this branch.
+- These changes are committed to GitHub. A successful APK build, installed build, and audible voice are NOT yet confirmed. Check GitHub Actions, download the artifact from the successful run, install it, and test a short Romanian answer, replay, auto-read, and fallback behaviour.
+- Preserve the existing pronunciation rule: expand “Dr.Vas” to “Doctor Vas” and “Dr.Jan” to “Doctor Jan” only in the TTS text; never change written branding or displayed names.
+
+### Android update strategy decision pending
+- Current `capacitor.config.json` sets `webDir: "www"`; `package.json` has Capacitor 8.6.0 and does not currently list an OTA/live-update plugin.
+- A normal Capacitor APK bundles the web assets. Updating the website or Cloudflare Worker does not by itself replace bundled HTML/CSS/JS in an already-installed APK.
+- Before wide feature development, design and test a safe update strategy:
+  1. Use signed/verified live updates only for compatible web-layer assets (HTML/CSS/JS) using a maintained Capacitor live-update plugin/service; support staged rollout, rollback, and compatibility checks.
+  2. Keep native Android changes (Java/Kotlin, plugins, permissions, native configuration) on the normal Android build and Google Play update path.
+  3. Do not implement self-modifying APKs or download native executable code outside Google Play. Review current Play policy and provider security/privacy/price before choosing a live-update provider.
+  4. Add a clear in-app version/update status and a fallback to the last known-good bundle.
+- No OTA provider has been selected or integrated yet. The current installed APK cannot receive the voice fix until a new compatible APK is built and installed (or a future verified OTA system is added).
+
+### Product direction to preserve
+One integrated Dr.Vas platform with web + Android, six modules:
+- Dr.Vas Free — general-purpose AI assistant, intended free.
+- Dr.Vas Health — general health information/education, not a replacement for clinicians; future clinical workflows require qualified clinicians and legal/regulatory compliance.
+- Dr.Vas Studio — premium creative production for TikTok, YouTube, Facebook and Instagram; user wants scripts based on their ideas and eventual professional video production.
+- Dr.Vas Academy — premium entrepreneurship education.
+- Dr.Vas Commerce — premium e-commerce/dropshipping education and tools.
+- Dr.Vas Business — premium business planning, analysis and management support.
+Keep modules integrated, preserve existing auth, profile, chat/history, multilingual UI and server-side access controls. Do not expose unfinished premium modules publicly or bypass authorization.
+
+### Ordered next steps
+1. Verify the GitHub Actions APK build triggered by the voice commits; inspect logs if it fails.
+2. Install the newly built APK on the founder's Android phone and verify voice; do not mark fixed until audible.
+3. Decide and implement a secure, signed OTA web-asset update mechanism plus store-based native updates; test staged rollout and rollback.
+4. Resume full Dr.Vas functional audit across authentication, profile, module navigation, chat/history, multilingual behaviour, privacy/security, admin tools and Worker/DB actions.
+5. Continue Studio's end-to-end production workflow (saved projects, scripts, generation, media rendering/export, founder approval, then compliant social integrations); then complete Academy, Commerce and Business, billing and release readiness.
+6. Keep this file and `PROJECT-HANDOFF.md` current after each meaningful code change, decision, deployment or test. Never record API keys, passwords, tokens, or other secrets in GitHub docs.
