@@ -305,3 +305,47 @@ Important limitations and next QA:
 ## Recovery checkpoint — 2026-11-04
 
 Resume on `drvas-integrated-platform`. The latest recorded CI evidence was rechecked: Worker deployment + production smoke `41698929634` passed; browser E2E `41699194261` passed; Android APK build `41698929811` passed (artifact ID `13262293447`). APK compilation is not physical-device verification. Supabase migrations `202611030001_rate_limits.sql` and `202611030004_studio_projects.sql` still need live-state confirmation and application only if absent. The Crypto registry migration was reported applied by the founder but is not independently verified. Authenticated chat/history/admin/audit/private-profile/Studio tests and physical Android runtime remain outstanding. See the latest section of `docs/SESSION_LOG_2026-11-03.md` for the complete audit and ordered next-session checklist. No secrets belong in chat or repository files.
+
+
+## 18. Continuity checkpoint — 2026-11-05 (Android voice and automatic updates)
+
+Current voice-fix branch: `universal-chat-attachments` in `Vasilecatalinprodan-tech/Dr.-Vas-AI`.
+
+### What the founder confirmed
+- The installed APK opens and works.
+- No voice is audible in the installed APK.
+- The APK on the phone predates the voice-related native and frontend changes below unless the founder installed a later artifact; do not assume it contains the fix.
+
+### Code changes already committed
+- `b47d5ec36d985ab3b8ec5730c43666afeba7084d`: in `www/index.html`, attempt server-generated Dr.Vas voice before requiring browser `speechSynthesis`; allow replay and voice toggle for server TTS on Android WebView.
+- `72df319d2c5e697c507dee97a228d2ceb41c0f05`: in `android/app/src/main/java/com/drvas/ai/MainActivity.java`, set WebView `mediaPlaybackRequiresUserGesture(false)`.
+- `b480ec3eccfe56253b954900bc6afcd4040b250d`: add `universal-chat-attachments` to the Android workflow push branches.
+- Existing Worker `worker/index.js` already has authenticated `voice_tts` endpoint calling ElevenLabs and requiring Worker secrets `ELEVENLABS_API_KEY` and `ELEVENLABS_VOICE_ID`. Do not expose those secrets or request them in chat.
+- Voice fix is committed, but APK build, installation and audible playback remain unverified. Check Actions, install the newly built artifact, and test automatic speech, replay and Romanian pronunciation.
+- Pronunciation is transformed only in TTS input: “Dr.Vas” → “Doctor Vas”, “Dr.Jan” → “Doctor Jan”. Preserve written product names and logos.
+
+### Answer to the founder's APK auto-update question
+- Current APK is a Capacitor app with bundled `www` assets (`capacitor.config.json` has `webDir: "www"`). `package.json` uses Capacitor 8.6.0 and has no OTA update plugin listed.
+- Website/Worker deployments do not automatically replace the local web bundle inside an already installed APK.
+- Plan a secure Capacitor live-update system for compatible web assets only (HTML/CSS/JS), using a maintained plugin/service with signed or integrity-verified bundles, compatibility checks, staged release and rollback.
+- Native code, native plugins, permissions and native configuration still require a new Android binary delivered through Google Play (or a controlled direct-install route before Play release). Never build a self-modifying APK or download native executable code outside Play.
+- No OTA provider has yet been chosen or integrated. Choose only after reviewing current documentation, security model, costs, privacy/data processing and Google Play policy. Add in-app version status and last-known-good rollback.
+
+### Whole-platform scope to preserve
+Build one integrated Dr.Vas platform with web and Android clients:
+1. Dr.Vas Free — free general AI assistant.
+2. Dr.Vas Health — free general health information/education; not a clinician or substitute for doctors. Future clinical workflows must involve qualified professionals and legal/regulatory review.
+3. Dr.Vas Studio — paid professional creative production for TikTok, YouTube, Facebook and Instagram, following founder-provided ideas/scripts.
+4. Dr.Vas Academy — paid entrepreneurship education.
+5. Dr.Vas Commerce — paid e-commerce/dropshipping education and tools.
+6. Dr.Vas Business — paid business planning, analysis and management support.
+Maintain integrated navigation, multilingual experience, authentication, saved conversations, user profile, server-side authorization and privacy/security controls. Keep unfinished premium features gated until ready.
+
+### Ordered continuation plan
+1. Check the APK workflow run for the voice commits and fix any build failure.
+2. Install the new APK on the founder's device; confirm audible Romanian speech, replay, automatic reading, and correct spoken-name pronunciation.
+3. Implement and test signed OTA updates for compatible web assets; use Play Store updates for native changes.
+4. Continue full cross-module audit: sign-up/login, session restore, language, navigation, chat, history, profile, privacy, admin, Worker and database actions.
+5. Finish Studio's full production lifecycle: create/save/reopen projects, concepts/scripts, media generation/rendering, MP4 export, founder approval, then official social integrations.
+6. Complete Academy, Commerce, Business, billing/subscriptions, compliance and release preparation.
+7. Update `PROJECT-STATUS.md` and this handoff after every meaningful change. Never commit secrets, API keys, tokens or passwords.
