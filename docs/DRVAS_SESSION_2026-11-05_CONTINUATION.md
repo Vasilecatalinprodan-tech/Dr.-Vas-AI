@@ -770,3 +770,33 @@ Ambele interogări sunt SELECT read-only; nu modifică baza de date. Nu trimite 
 - Nu s-a făcut deploy sau modificare live.
 - `DRVAS_FILE_ANALYSIS_ENABLED` rămâne dezactivat.
 - Următorul pas este primirea rezultatelor celor două SELECT-uri, apoi revizia finală a politicilor/granturilor și a migrării, cu backup și rollback înainte de orice SQL de scriere.
+
+
+## 2026-11-05 — corelare frontend + migrări istorice cu RLS live
+
+A fost inspectat și `www/index.html` (4.864 linii), plus două migrări existente. Nu s-a modificat codul sau baza de date.
+
+### Operații frontend identificate
+- `drvas_studio_projects`: browserul folosește Supabase client cu sesiunea utilizatorului pentru SELECT, INSERT, UPDATE și DELETE.
+- `drvas_business_transactions`: browserul folosește Supabase client cu sesiunea utilizatorului pentru SELECT, INSERT și DELETE.
+- `drvas_chat_attachments`: browserul folosește sesiunea utilizatorului pentru INSERT, SELECT și DELETE metadate; Storage upload/delete folosește aceeași sesiune.
+- Aceste operații necesită granturi authenticated și politici RLS owner-only aplicate în proiectul Supabase live.
+
+### Conținutul migrărilor din branch
+1. `supabase/migrations/202611040003_business_cashbook.sql` definește explicit patru politici owner-only pentru `drvas_business_transactions` (SELECT, INSERT, UPDATE, DELETE), activează RLS, acordă granturile CRUD rolului authenticated și revocă accesul anon/public.
+2. `supabase/migrations/202611030004_studio_projects.sql` definește explicit patru politici owner-only pentru `drvas_studio_projects` (SELECT, INSERT, UPDATE, DELETE), activează RLS, acordă granturile CRUD rolului authenticated și revocă accesul anon.
+3. Worker-ul folosește tokenul utilizatorului pentru `drvas_studio_render_jobs`; migrarea acestei tabele și politicile ei trebuie corelate separat cu rezultatul live.
+
+### Inconsecvență ce necesită verificare live
+- Rezultatul `pg_policies` transmis anterior a afișat politici doar pentru `chat_messages` și `storage.objects`, nu și pentru `drvas_business_transactions` sau `drvas_studio_projects`.
+- Totuși, migrările existente din branch definesc politici pentru ambele tabele, iar inventarul live arată RLS activ și grants authenticated.
+- Așadar, nu putem concluziona încă dacă politicile au fost aplicate, dacă rezultatul inițial a fost incomplet sau dacă schema live diferă de migrările branch-ului. Query-ul țintit de mai jos trebuie să clarifice situația.
+- Dacă politicile lipsesc efectiv, funcțiile Business Cashbook și Studio Projects accesate direct din browser pot fi refuzate de RLS, chiar dacă rolul authenticated are granturi.
+- Nu se adaugă/recreează politici automat: întâi confirmăm exact starea live și apoi comparăm cu migrarea/istoricul proiectului.
+
+### Stare
+- Nicio migrare aplicată; niciun SQL de scriere; nicio modificare live.
+- PR #7 rămâne Draft și nemerged; nu s-a făcut deploy.
+- `DRVAS_FILE_ANALYSIS_ENABLED` rămâne dezactivat.
+- Rezultatele și concluziile sunt salvate în acest jurnal prin commitul următor.
+
