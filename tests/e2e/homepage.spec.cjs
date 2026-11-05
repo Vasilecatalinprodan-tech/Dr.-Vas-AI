@@ -46,6 +46,9 @@ test("universal chat uploader accepts private images and documents and requires 
   await page.evaluate(() => {
     currentUser = { id: "e2e-attachment-user" };
     activeModule = "health";
+    // The uploader lives inside chatSection; make its real workspace visible
+    // so the test checks the pending-file UI rather than a hidden ancestor.
+    document.querySelector("#chatSection").classList.remove("hidden");
     renderPendingChatFiles();
   });
   const picker = page.locator("#chatFileInput");
