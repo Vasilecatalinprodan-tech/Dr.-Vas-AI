@@ -791,9 +791,14 @@ test("administrator can open the Academy, Commerce and Business pilot brief buil
   await expect(page.locator("#question")).toHaveValue(/DR.VAS ACADEMY/);
   await expect(page.locator("#question")).toHaveValue(/Bazele comerțului online/);
   await page.evaluate(() => goToModules());
+  await expect(page.locator("#moduleSelectionShell")).toBeVisible();
 
   await page.evaluate(() => selectModule("commerce", true));
+  await expect(page.locator("#activeModuleName")).toContainText("Commerce");
   await expect(page.locator("#commerceWorkspace")).toBeVisible();
+  // Clear the previous module's unsent brief so this assertion proves the
+  // Commerce builder itself replaced the field rather than retaining Academy text.
+  await page.locator("#question").fill("");
   await page.locator("#commerceProduct").fill("Organizatoare pentru casă");
   await page.locator("#commerceBudget").fill("100");
   await page.locator("#commerceBrief").fill("Fără stoc mare la început.");
@@ -801,9 +806,12 @@ test("administrator can open the Academy, Commerce and Business pilot brief buil
   await expect(page.locator("#question")).toHaveValue(/DR.VAS COMMERCE/);
   await expect(page.locator("#question")).toHaveValue(/BUGET MAXIM: 100/);
   await page.evaluate(() => goToModules());
+  await expect(page.locator("#moduleSelectionShell")).toBeVisible();
 
   await page.evaluate(() => selectModule("business", true));
+  await expect(page.locator("#activeModuleName")).toContainText("Business");
   await expect(page.locator("#businessWorkspace")).toBeVisible();
+  await page.locator("#question").fill("");
   await page.locator("#businessIdea").fill("Servicii de curățenie");
   await page.locator("#businessBudget").fill("500");
   await page.locator("#businessGoal").fill("Primii 10 clienți");
