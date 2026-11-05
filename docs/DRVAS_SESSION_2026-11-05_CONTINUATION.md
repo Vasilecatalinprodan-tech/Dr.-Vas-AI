@@ -542,3 +542,141 @@ Interpretare și puncte de verificat:
 Următorul pas planificat:
 - Utilizatorul rulează interogarea read-only pentru `information_schema.role_table_grants` asupra tabelelor relevante (interogarea este în secțiunea anterioară a jurnalului).
 - După primirea privilegiilor, se verifică accesul Worker-ului și al rolului authenticated, apoi se revizuiește migrarea și planul de backup/rollback. Nu se aplică migrarea fără revizie finală și confirmare explicită.
+
+
+## 2026-11-05 — rezultat privilegii SQL Supabase (read-only)
+
+Utilizatorul a transmis rezultatul complet al interogării `information_schema.role_table_grants` pentru tabelele publice și Storage relevante. Rezultatul exact:
+
+```text
+table_schema,table_name,grantee,privilege_type,is_grantable
+public,chat_messages,authenticated,DELETE,NO
+public,chat_messages,authenticated,INSERT,NO
+public,chat_messages,authenticated,SELECT,NO
+public,chat_messages,postgres,DELETE,YES
+public,chat_messages,postgres,INSERT,YES
+public,chat_messages,postgres,REFERENCES,YES
+public,chat_messages,postgres,SELECT,YES
+public,chat_messages,postgres,TRIGGER,YES
+public,chat_messages,postgres,TRUNCATE,YES
+public,chat_messages,postgres,UPDATE,YES
+public,chat_messages,service_role,REFERENCES,NO
+public,chat_messages,service_role,TRIGGER,NO
+public,chat_messages,service_role,TRUNCATE,NO
+public,drvas_business_transactions,authenticated,DELETE,NO
+public,drvas_business_transactions,authenticated,INSERT,NO
+public,drvas_business_transactions,authenticated,REFERENCES,NO
+public,drvas_business_transactions,authenticated,SELECT,NO
+public,drvas_business_transactions,authenticated,TRIGGER,NO
+public,drvas_business_transactions,authenticated,TRUNCATE,NO
+public,drvas_business_transactions,authenticated,UPDATE,NO
+public,drvas_business_transactions,postgres,DELETE,YES
+public,drvas_business_transactions,postgres,INSERT,YES
+public,drvas_business_transactions,postgres,REFERENCES,YES
+public,drvas_business_transactions,postgres,SELECT,YES
+public,drvas_business_transactions,postgres,TRIGGER,YES
+public,drvas_business_transactions,postgres,TRUNCATE,YES
+public,drvas_business_transactions,postgres,UPDATE,YES
+public,drvas_business_transactions,service_role,REFERENCES,NO
+public,drvas_business_transactions,service_role,TRIGGER,NO
+public,drvas_business_transactions,service_role,TRUNCATE,NO
+public,drvas_privacy_consents,postgres,DELETE,YES
+public,drvas_privacy_consents,postgres,INSERT,YES
+public,drvas_privacy_consents,postgres,REFERENCES,YES
+public,drvas_privacy_consents,postgres,SELECT,YES
+public,drvas_privacy_consents,postgres,TRIGGER,YES
+public,drvas_privacy_consents,postgres,TRUNCATE,YES
+public,drvas_privacy_consents,postgres,UPDATE,YES
+public,drvas_privacy_consents,service_role,DELETE,NO
+public,drvas_privacy_consents,service_role,INSERT,NO
+public,drvas_privacy_consents,service_role,REFERENCES,NO
+public,drvas_privacy_consents,service_role,SELECT,NO
+public,drvas_privacy_consents,service_role,TRIGGER,NO
+public,drvas_privacy_consents,service_role,TRUNCATE,NO
+public,drvas_privacy_consents,service_role,UPDATE,NO
+public,drvas_rate_limits,postgres,DELETE,YES
+public,drvas_rate_limits,postgres,INSERT,YES
+public,drvas_rate_limits,postgres,REFERENCES,YES
+public,drvas_rate_limits,postgres,SELECT,YES
+public,drvas_rate_limits,postgres,TRIGGER,YES
+public,drvas_rate_limits,postgres,TRUNCATE,YES
+public,drvas_rate_limits,postgres,UPDATE,YES
+public,drvas_rate_limits,service_role,DELETE,NO
+public,drvas_rate_limits,service_role,INSERT,NO
+public,drvas_rate_limits,service_role,REFERENCES,NO
+public,drvas_rate_limits,service_role,SELECT,NO
+public,drvas_rate_limits,service_role,TRIGGER,NO
+public,drvas_rate_limits,service_role,TRUNCATE,NO
+public,drvas_studio_projects,authenticated,DELETE,NO
+public,drvas_studio_projects,authenticated,INSERT,NO
+public,drvas_studio_projects,authenticated,SELECT,NO
+public,drvas_studio_projects,authenticated,UPDATE,NO
+public,drvas_studio_projects,postgres,DELETE,YES
+public,drvas_studio_projects,postgres,INSERT,YES
+public,drvas_studio_projects,postgres,REFERENCES,YES
+public,drvas_studio_projects,postgres,SELECT,YES
+public,drvas_studio_projects,postgres,TRIGGER,YES
+public,drvas_studio_projects,postgres,TRUNCATE,YES
+public,drvas_studio_projects,postgres,UPDATE,YES
+public,drvas_studio_projects,service_role,REFERENCES,NO
+public,drvas_studio_projects,service_role,TRIGGER,NO
+public,drvas_studio_projects,TRUNCATE,NO
+public,drvas_studio_render_jobs,authenticated,DELETE,NO
+public,drvas_studio_render_jobs,authenticated,INSERT,NO
+public,drvas_studio_render_jobs,authenticated,REFERENCES,NO
+public,drvas_studio_render_jobs,authenticated,SELECT,NO
+public,drvas_studio_render_jobs,authenticated,TRIGGER,NO
+public,drvas_studio_render_jobs,authenticated,TRUNCATE,NO
+public,drvas_studio_render_jobs,authenticated,UPDATE,NO
+public,drvas_studio_render_jobs,postgres,DELETE,YES
+public,drvas_studio_render_jobs,postgres,INSERT,YES
+public,drvas_studio_render_jobs,postgres,REFERENCES,YES
+public,drvas_studio_render_jobs,postgres,SELECT,YES
+public,drvas_studio_render_jobs,postgres,TRIGGER,YES
+public,drvas_studio_render_jobs,postgres,TRUNCATE,YES
+public,drvas_studio_render_jobs,postgres,UPDATE,YES
+public,drvas_studio_render_jobs,service_role,REFERENCES,NO
+public,drvas_studio_render_jobs,service_role,TRIGGER,NO
+public,drvas_studio_render_jobs,TRUNCATE,NO
+storage,objects,anon,DELETE,NO
+storage,objects,anon,INSERT,NO
+storage,objects,anon,SELECT,NO
+storage,objects,anon,UPDATE,NO
+storage,objects,authenticated,DELETE,NO
+storage,objects,authenticated,INSERT,NO
+storage,objects,authenticated,SELECT,NO
+storage,objects,authenticated,UPDATE,NO
+storage,objects,postgres,DELETE,YES
+storage,objects,postgres,INSERT,YES
+storage,objects,postgres,REFERENCES,YES
+```
+
+Notă de fidelitate: textul de mai sus reproduce rândurile transmise; pentru unele tabele lista returnată se oprește la privilegiile afișate, deci nu se presupune că rândurile neafișate există sau lipsesc din toate sursele.
+
+### Interpretare tehnică
+
+- `authenticated` are privilegii explicite SELECT/INSERT/DELETE pe `chat_messages`; condițiile RLS raportate anterior limitează operațiile la propriul `user_id`.
+- `authenticated` are toate privilegiile uzuale afișate pe `drvas_business_transactions` și SELECT/INSERT/UPDATE/DELETE pe `drvas_studio_projects`; RLS rămâne stratul care trebuie să restricționeze rândurile. Trebuie verificate politicile complete pentru aceste tabele înainte de a concluziona că accesul efectiv este sigur.
+- Pentru `drvas_privacy_consents` și `drvas_rate_limits`, în rezultatul transmis apar privilegii pentru `postgres` și `service_role`, dar nu pentru `authenticated`. Acest lucru este compatibil cu acces exclusiv prin Worker/server-side dacă Worker-ul folosește service role în mod securizat; nu trebuie acordate automat privilegii directe utilizatorilor.
+- Pentru `drvas_studio_render_jobs`, `authenticated` are numeroase privilegii explicite, inclusiv operații de modificare; verificarea politicilor RLS pentru acest tabel este esențială.
+- Pentru `storage.objects`, `anon` și `authenticated` au SELECT/INSERT/UPDATE/DELETE la nivel de privilegii, dar accesul real este filtrat de RLS și politicile owner-folder raportate anterior. Bucketul `drvas-media` rămâne privat. Privilegiile singure nu fac obiectele publice.
+- Rolul `service_role` are privilegii de tip REFERENCES/TRIGGER/TRUNCATE afișate pentru unele tabele, iar pentru consimțăminte și rate limits are și SELECT/INSERT/UPDATE/DELETE. Interpretarea trebuie făcută împreună cu rolul efectiv folosit de Worker și politicile RLS; nu se expun și nu se solicită secrete.
+
+### Stare și acțiuni
+
+- Interogarea a fost read-only; nu s-a executat SQL de scriere.
+- Nu s-au schimbat tabele, coloane, constrângeri, granturi, politici RLS, bucketuri, secrete sau date.
+- Migrarea `202611050001_chat_attachments.sql` rămâne neaplicată; `public.drvas_chat_attachments` nu fusese prezentă în inventarul anterior.
+- PR #7 rămâne Draft, deschis și nemerged; nu s-a făcut deploy.
+- `DRVAS_FILE_ANALYSIS_ENABLED` rămâne dezactivat. Nu este încă autorizată/validată procesarea documentelor medicale cu Gemini.
+- Rezultatele complete RLS/policies și RLS flags sunt consemnate în secțiunile anterioare. Acum jurnalul include și rezultatul privilegiilor SQL primit în această etapă.
+
+### Următoarea etapă recomandată
+
+1. Corelarea privilegiilor cu codul Worker: identificarea exactă a clientului/rolului folosit pentru fiecare tabel (în special consimțăminte, rate limits și attachments).
+2. Verificarea politicilor RLS complete pentru `drvas_business_transactions`, `drvas_studio_projects` și `drvas_studio_render_jobs`, plus verificarea faptului că `service_role` nu este expus în browser.
+3. Revizia finală a migrării de atașamente, inclusiv necesitatea și semantica consimțământului `file_processing`; păstrarea tipului existent `health_data_processing`.
+4. Confirmarea backupului și a rollbackului înainte de orice migrare de scriere.
+5. Abia apoi, aplicare controlată și teste cu fișiere sintetice. Analiza documentelor Health rămâne blocată până la confirmarea Paid Services/retention și UK GDPR/DPIA.
+
+Cererea utilizatorului în această etapă: „salveaza tot”. Această secțiune păstrează rezultatul SQL transmis și interpretarea pentru continuitate; nu este transcriere literală integrală a chatului. Istoricul complet rămâne în ChatGPT, iar exportul de date este metoda pentru o copie integrală.
