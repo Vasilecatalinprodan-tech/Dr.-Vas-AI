@@ -228,3 +228,16 @@ Următorul pas: rerulare CI completă pe commitul corectat. PR #7 rămâne draft
 Notă privind Gemini: documentația oficială precizează că Paid Services nu folosesc prompturile/fișierele pentru îmbunătățirea produselor, dar pot exista loguri limitate pentru monitorizarea abuzului; API-ul Interactions poate stoca implicit starea dacă nu se setează `store:false`, iar File API păstrează fișierele până la ștergere/expirare. Sursa: https://ai.google.dev/gemini-api/docs/zdr. Prin urmare, activarea rămâne blocată până la verificarea configurației efective și a retenției, nu doar a existenței unui cont cu billing.
 
 Această actualizare păstrează cererea și starea tehnică, nu transcrierea literală integrală a chatului. Istoricul integral rămâne în ChatGPT; exportul de date ChatGPT este metoda pentru o copie completă.
+
+
+## Diagnostică suplimentară — testul upload și workspace-ul ascuns
+
+Rerularea #231 (ID `42054673592`) a repetat eșecul, deși regula CSS pentru atributul `hidden` era prezentă în ramură. Inspecția testului a identificat a doua cauză: testul seta variabilele globale și apela `renderPendingChatFiles()`, dar nu deschidea containerul părinte `#chatSection`, care rămânea cu clasa `hidden`. Astfel, Playwright raporta lista ca invizibilă chiar dacă elementul și fișierele erau create.
+
+Corecție de test salvată:
+- Commit: `c3c56a793e4e03a74ae3eb5af8d4a2301216d97b`
+- Fișier: `tests/e2e/homepage.spec.cjs`
+- Fixture-ul deschide acum `#chatSection` înainte de verificarea UI-ului upload.
+- Regula CSS pentru `[hidden]` rămâne necesară pentru ascunderea corectă a listei când nu există fișiere.
+
+Run #231 a ajuns la toate cele 43 de teste, dar a păstrat un singur eșec la testul upload; celelalte 42 au trecut. Urmează o nouă rulare pe commitul de test corectat. Nu există încă rezultat verde pentru upload și nu se face merge/deploy.
