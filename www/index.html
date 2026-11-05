@@ -707,6 +707,7 @@ body.module-workspace-mode .studio-workspace.hidden{
 .modules-heading-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .presentation-open-button{background:#153c4b;color:#d8fffb;border:1px solid #39777b;padding:10px 14px;font-size:12px}
 .hero-presentation-button{display:inline-flex;align-items:center;gap:8px;margin:0 0 10px;padding:11px 16px;box-shadow:0 8px 24px #0004}
+body.presentation-open{overflow:hidden!important}
 .drvas-presentation{position:fixed;z-index:10000;left:50%;top:50%;transform:translate(-50%,-48%) scale(.97);width:min(940px,calc(100vw - 28px));max-height:calc(100dvh - 28px);overflow-y:auto;margin:0;padding:24px;background:linear-gradient(145deg,#102b40,#091827);border:1px solid #3a7184;border-radius:22px;box-shadow:0 0 0 100vmax rgba(1,7,15,.84),0 22px 70px #0009;opacity:0;transition:opacity .32s ease,transform .32s cubic-bezier(.2,.8,.2,1)}
 .drvas-presentation:not(.hidden){opacity:1;transform:translate(-50%,-50%) scale(1);animation:presentationWindowIn .42s cubic-bezier(.2,.8,.2,1) both}
 @keyframes presentationWindowIn{from{opacity:0;transform:translate(-50%,-46%) scale(.94)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
@@ -1737,7 +1738,7 @@ let drvasPresentationIndex=0;
 function renderDrvasPresentation(){
  const data=DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro;
  const set=(id,value)=>{const node=el(id);if(node)node.textContent=value};
- set("presentationOpenButton","▶ "+data.open);set("heroPresentationOpenButton","▶ "+data.open);set("drvasPresentationEyebrow",data.eyebrow);set("drvasPresentationTitle",data.title);set("drvasPresentationIntro",data.intro);set("drvasPresentationDisclaimer",data.disclaimer);set("presentationPlayButton","↻ "+(data.play||"Replay"));set("presentationStopButton","■ "+data.stop);
+ set("presentationOpenButton","▶ "+data.open);set("heroPresentationOpenButton","▶ "+data.open);set("presentationContinueButton",({ro:"Continuă la conectare →",en:"Continue to sign in →",it:"Continua per accedere →",tr:"Girişe devam et →",de:"Weiter zur Anmeldung →",fr:"Continuer vers la connexion →",es:"Continuar para iniciar sesión →",ru:"Перейти ко входу →"})[currentLanguage]||"Continue →");set("drvasPresentationEyebrow",data.eyebrow);set("drvasPresentationTitle",data.title);set("drvasPresentationIntro",data.intro);set("drvasPresentationDisclaimer",data.disclaimer);set("presentationPlayButton","↻ "+(data.play||"Replay"));set("presentationStopButton","■ "+data.stop);
  const close=el("presentationCloseButton");if(close){close.setAttribute("aria-label",data.close);let saved=attributeOrigins.get(close);if(!saved){saved={};attributeOrigins.set(close,saved)}saved["aria-label"]=data.close;}
  const names=["Dr.Vas Free","Dr.Vas Health","Dr.Vas Studio","Dr.Vas Academy","Dr.Vas Commerce","Dr.Vas Business"],icons=["✦","✚","🎬","🎓","🛒","📊"],grid=el("presentationModuleGrid");
  if(grid)grid.querySelectorAll(".presentation-module").forEach((card,i)=>{const p=card.querySelector("p"),h=card.querySelector("h3"),icon=card.querySelector("span");if(p)p.textContent=data.items[i]||"";if(h)h.textContent=names[i];if(icon)icon.textContent=icons[i]});
@@ -1808,7 +1809,7 @@ function speakDrvasPresentation(){
   utterance.onstart=()=>{
    if(run!==drvasPresentationRun)return;
    el("presentationPresenter")?.classList.add("is-speaking");
-   const status=el("presentationAudioStatus");if(status)status.textContent=speaker.name+" vorbește…";
+   const status=el("presentationAudioStatus");if(status)status.textContent=speaker.name+"…";
    const stop=el("presentationStopButton");if(stop)stop.disabled=false;
    const play=el("presentationPlayButton");if(play)play.disabled=true;
   };
