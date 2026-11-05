@@ -436,7 +436,7 @@ The final deployment was performed by the workflow after Playwright passed, and 
 - The Health workspace presents an explicit information-only boundary: no diagnosis, no treatment changes, and urgent symptoms require immediate medical help.
 - The Health brief builder composes the user's selected topic, goal and supplied details into the chat composer. The assistant prompt instructs the model to explain cautiously, distinguish facts from uncertainty, avoid diagnosis/treatment changes, suggest clinician questions and avoid inventing missing results.
 - Added a dedicated Playwright regression test for a normal non-admin user on a mobile viewport: enter Health, see the medical disclaimer, fill the Health brief, activate “Discută cu Dr.Vas Health”, and verify the prepared prompt reaches the chat composer without granting admin privileges.
-- The new test is committed as `5de5bdffe6bdd9e1ffd8b6ee35755663d8b7f9cb`. Its workflow outcome must be checked before describing it as passing.
+- The new test is committed as `5de5bdffe6bdd9e1ffd8b6ee35755663d8b7f9cb`. Browser run `41939928983` completed successfully: **38 tests passed** (including the new mobile Health flow). The deploy workflow for the same tested source, run `41940129821`, also completed successfully.
 
 ### Latest verified CI and production checkpoint before the new mobile test
 - Browser regression run `41928245874` completed successfully on source/test commit `4f84a00cd56752070e2a0c09ea1fb9bb172084eb`.
@@ -446,9 +446,19 @@ The final deployment was performed by the workflow after Playwright passed, and 
 - The mobile Health regression test above was added after those successful runs. Do not treat the older green run as proof that the new test passed; wait for the new workflow.
 
 ### Outstanding work and release blockers
-- Confirm the latest browser and deploy workflow results for commit `5de5bdffe6bdd9e1ffd8b6ee35755663d8b7f9cb`; deploy should be gated by the browser suite and must include the production smoke test.
+- Latest browser and deploy results are green: browser run `41939928983` passed all 38 tests; Worker deploy run `41940129821` passed the browser suite, deployed the Worker, completed the production smoke test and uploaded the SBOM.
 - Build a fresh APK from the latest frontend commit after tests pass. The previous APK predates the mobile Health test commit; the source code itself is unchanged by that test-only commit, but a fresh artifact is preferable for a clean checkpoint.
 - Do not claim physical-device testing, Google Play readiness, payment readiness, clinical approval, or completed legal review without separate evidence.
 - Privacy notice remains a working draft and explicitly needs operator contact details, retention/lawful-basis confirmation, processor/transfer review and specialist review before public commercial launch.
 - Confirm production configuration for optional providers individually. A successful general Worker health check does not prove Creatomate rendering, live voice, founder cryptographic keys, every Supabase migration, or third-party account integrations are configured.
 - No Supabase schema/data changes were made in this work block. No production secret or administrator allowlist was changed.
+
+### Final verification — 2026-11-05 00:18 UTC
+- Added public-first Worker authorization checks to `.github/workflows/deploy-worker.yml` in commit `522a9f196ed8a3fdf14044560dbb76f82cea6f39`. CI now fails if Free/Health are accidentally added to the founder-only chat gate, if any of the six module identifiers disappear, if premium access stops using the verified Supabase user plus `ADMIN_EMAILS`, or if Health Live voice loses its separate privacy flag.
+- The updated deploy workflow run `41940129821` completed with **success** on commit `522a9f196ed8a3fdf14044560dbb76f82cea6f39`.
+- Its validation step passed; all **38 Playwright tests passed**; Cloudflare Worker deployment passed; production smoke test passed; and CycloneDX SBOM artifact `DrVas-SBOM` uploaded successfully (artifact ID `13375033968`).
+- The production smoke test confirmed the homepage and all six module cards are served, unauthenticated `admin_status` is rejected with HTTP 401, and the Worker, assets, AI and database configuration checks report configured/online.
+- The 38-test browser run `41939928983` passed on the immediately preceding test commit `5de5bdffe6bdd9e1ffd8b6ee35755663d8b7f9cb`; the deploy workflow reran the same 38-test suite successfully after the CI authorization checks were added.
+- Latest branch HEAD at this checkpoint: `522a9f196ed8a3fdf14044560dbb76f82cea6f39`.
+- Android code was not changed in this block; the existing successful debug APK artifact remains from run `41923036581`. No new APK was built because the changes after that build were tests, documentation and CI assertions only.
+- No physical-device test, Google Play release, subscription/payment launch, Health Live voice activation, clinical approval, legal sign-off, or live application of unverified Supabase migrations is claimed.
