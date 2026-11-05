@@ -118,3 +118,24 @@ This file and the dated session logs preserve technical decisions and work summa
 - PR #3 (`drvas-modules-long-input`) remains unmerged. It is 26 commits ahead and 444 behind the new main, with overlapping changes in `worker/index.js` and `www/index.html`. Do not merge that stale branch wholesale. Review and selectively port the long-input/history and Crypto device approval/revocation changes only after reconciling current request-size limits, provider context limits, authorization, audit logging and adding targeted tests.
 - Conversation continuity: this repository records technical decisions, code changes, validation, merge/deploy details and a concise checkpoint. The original ChatGPT conversation remains in ChatGPT history; this file is not a verbatim transcript of every chat message.
 - Next work: inspect and selectively port any safe PR #3 changes; expand Studio render/export tests; validate Academy/Commerce/Business save/list/reopen tests; strengthen Free chat history and voice tests; verify Android audio on a physical device only with founder permission; verify live Supabase migrations, RLS and Storage against the actual project. Do not claim live DB migration or physical-device tests without evidence.
+
+
+## 2026-11-05 — Selective port of PR #3 features; 69 tests and production deploy
+
+- Reviewed draft PR #3 (`drvas-modules-long-input`) against current `main`. The branch is divergent (26 commits ahead, 444 behind); it was not merged wholesale.
+- Selectively ported its safe code changes into current `main`:
+  - Chat textarea and Worker message validation now allow up to 100,000 characters.
+  - JSON request body cap increased from 64 KB to 512 KB so large UTF-8 messages can reach the Worker within a separate hard limit.
+  - Conversation history fetch increased to 100 recent messages, with a 48,000-character history budget that keeps newest context and preserves the full saved history in Supabase.
+  - AI provider request timeout increased from 20 to 60 seconds.
+  - Crypto device administrator UI now offers explicit authorize/re-authorize/revoke controls with confirmation.
+  - Worker verifies the Supabase session and server-side administrator allowlist for every device update, validates UUID and permitted state transitions, uses conditional PostgREST updates, and writes an audit event after successful change. This does not start mining, move funds or trade.
+- Added CI assertions for the long-form limits, bounded history, timeout and Crypto authorization/audit safeguards.
+- Added browser tests for the 100,000-character input ceiling and Crypto admin request payload/normal-user UI guard.
+- The first CI attempts exposed a stale static assertion (the workflow still expected the previous 64 KB request cap). Updated the assertion to the new 512 KB limit and strengthened it with checks for the new safeguards. Corrected URL normalization in the new Crypto endpoint.
+- Latest workflow #461 (`42113012758`) completed SUCCESS: 69 Playwright tests passed, JavaScript/static security checks passed, Wrangler Worker deploy succeeded, production smoke test verified the homepage and all six modules plus unauthenticated admin rejection, and SBOM artifact `13455353868` uploaded.
+- Latest code commit at this checkpoint: `516d2a7c07c80c285d533f2afd163809024a95d1`; browser test commit: `3923f103ff24acd7bf3176b5b665e03918db07e1`; CI assertion commit: `a260d26d1937d21bdbf7bc4302ad40f7129b9a0c`.
+- Carried the six remaining PR #3 design/spec documents into current `main`: account deletion/security hardening, advertising, Crypto, Plus plan/entitlements, privacy launch checklist and product build roadmap. Each file is explicitly labelled as a historical engineering/product specification, not proof of live implementation.
+- PR #3 was not merged as a branch because of its 444-commit divergence. Its relevant code changes and six specification documents have been selectively ported and tested in current `main`; do not merge the stale branch wholesale.
+- Still outstanding: live Supabase migration/RLS/Storage verification; actual MP4 provider render/export test; successful real-account cross-user isolation tests; physical Samsung audio test; Android release signing and store readiness; billing/entitlements; account deletion implementation and legal/privacy/clinical review. Existing installed APK remains untouched.
+- Conversation continuity: GitHub now stores the merge/deploy record, code/test changes, feature specifications and this checkpoint. It does not store a verbatim copy of every chat message. The original chat remains in ChatGPT history.
