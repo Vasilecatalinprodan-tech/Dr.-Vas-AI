@@ -53,7 +53,11 @@ test("universal chat uploader accepts private images and documents and requires 
     { name: "blood-results.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4 E2E") },
     { name: "scan.png", mimeType: "image/png", buffer: Buffer.from("png-e2e") }
   ]);
-  await picker.evaluate(input => input.dispatchEvent(new Event("change", { bubbles: true })));
+  const selectedFiles = await picker.evaluate(input => Array.from(input.files || []).map(file => ({ name: file.name, type: file.type, size: file.size })));
+  expect(selectedFiles).toHaveLength(2);
+  await page.evaluate(() => handleChatFilesSelected({ target: document.querySelector("#chatFileInput") }));
+  const pendingFiles = await page.evaluate(() => pendingChatFiles.map(file => ({ name: file.name, type: file.type, size: file.size })));
+  expect(pendingFiles).toHaveLength(2);
   await expect(page.locator("#pendingChatFiles")).toBeVisible();
   await expect(page.locator("#pendingChatFiles")).toContainText("blood-results.pdf");
   await expect(page.locator("#pendingChatFiles")).toContainText("scan.png");
