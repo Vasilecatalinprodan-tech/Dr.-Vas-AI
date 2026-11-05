@@ -1318,7 +1318,7 @@ export default {
         if (!env.SUPABASE_URL || !env.SUPABASE_KEY) {
           return json({ error: "Autentificarea nu este configurată." }, 500);
         }
-        const supabaseBase = env.SUPABASE_URL.replace(/\\/+$/, "");
+        const supabaseBase = env.SUPABASE_URL.replace(/\/+$/, "");
         const authResponse = await fetch(
           `${supabaseBase}/auth/v1/user`,
           { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${adminToken}` } }
