@@ -1357,6 +1357,15 @@ body.module-workspace-mode .studio-workspace.hidden{
       <label>Persoane și instrumente disponibile<textarea id="founderOpsResources" maxlength="1200" placeholder="Roluri, aplicații, furnizori și limite."></textarea></label>
       <button type="button" onclick="buildFounderOperationsPrompt()">Proiectează fluxul de lucru</button>
      </article>
+     <article class="founder-tool">
+      <h5>🤝 Customer Journey & Retention Planner · Relația cu clienții</h5><p>Planifică parcursul clientului, onboarding-ul, suportul și retenția fără mesaje automate sau colectare de date personale.</p>
+      <label>Produsul / serviciul<input id="founderCrmOffer" maxlength="180" placeholder="Ex.: magazin online, curs digital, servicii locale"></label>
+      <label>Segmentul de clienți<textarea id="founderCrmAudience" maxlength="1200" placeholder="Nevoi, context și criterii non-sensibile ale publicului."></textarea></label>
+      <label>Canalul principal<select id="founderCrmChannel"><option>Magazin online / e-mail cu consimțământ</option><option>Social media / mesaje inițiate de client</option><option>Serviciu local / telefon cu acord</option><option>Platformă educațională</option><option>Mai multe canale · comparație</option></select></label>
+      <label>Experiența promisă și obiectivul<textarea id="founderCrmOutcome" maxlength="1600" placeholder="Ce primește clientul și ce ar însemna o experiență bună?"></textarea></label>
+      <label>Suport și limite<textarea id="founderCrmSupport" maxlength="1200" placeholder="Ore de suport, retururi, reclamații, echipă și resurse."></textarea></label>
+      <button type="button" onclick="buildFounderCustomerJourneyPrompt()">Construiește planul relației cu clienții</button>
+     </article>
     </div>
     <p class="founder-safety-note">Niciun proiect nu este publicat automat și nicio plată, comandă, investiție sau tranzacție nu este executată automat. Veniturile sunt estimări, nu garanții. Respectăm drepturile de autor, licențele, regulile platformelor, protecția datelor, taxele și revizia umană pentru traduceri cu miză juridică sau medicală.</p>
     <p id="founderWorkbenchStatus" class="founder-tool-status" role="status" aria-live="polite">Instrumente private pentru administrator. Cărțile și piesele folosesc funcția de salvare privată Dr.Vas Studio.</p>
@@ -3707,6 +3716,13 @@ function buildFounderOperationsPrompt(){
  if(!name||!outcome||!volume){founderWorkbenchMessage("Completează procesul, rezultatul și volumul.",true);return;}
  const prompt="DR.VAS BUSINESS OPERATIONS PLANNER\nPROCES: "+name+"\nREZULTAT: "+outcome+"\nVOLUM/FRECVENȚĂ: "+volume+"\nRESURSE: "+resources+"\n\nProiectează fluxul complet: declanșator și intrări; pași numerotați; roluri și responsabilități; aprobări umane și separarea atribuțiilor; excepții și escaladare; verificări de calitate; evidențe și protecția datelor; riscuri și măsuri de control; indicatori KPI cu formule; timp/cost per operațiune; checklist zilnic/săptămânal; plan pilot pe 2 săptămâni. Identifică ce poate fi automatizat în siguranță și ce trebuie să rămână cu aprobare umană. Nu presupune integrare cu aplicații, nu executa tranzacții și nu trimite mesaje/comenzi.";
  launchFounderWorkbenchPrompt("business",prompt,"Fluxul operațional este pregătit în Dr.Vas Business. Revizuiește-l și apasă Trimite.");
+}
+
+function buildFounderCustomerJourneyPrompt(){
+ const offer=el("founderCrmOffer")?.value.trim()||"",audience=el("founderCrmAudience")?.value.trim()||"",channel=el("founderCrmChannel")?.value||"",outcome=el("founderCrmOutcome")?.value.trim()||"",support=el("founderCrmSupport")?.value.trim()||"Nespecificat";
+ if(!offer||!audience||!outcome){founderWorkbenchMessage("Completează oferta, segmentul de clienți și experiența promisă.",true);return;}
+ const prompt="DR.VAS CUSTOMER JOURNEY & RETENTION PLANNER\nOFERTĂ: "+offer+"\nSEGMENT: "+audience+"\nCANAL: "+channel+"\nEXPERIENȚĂ/OBIECTIV: "+outcome+"\nSUPORT/LIMITE: "+support+"\n\nConstruiește un plan practic pentru: (1) descoperire și informare corectă, fără promisiuni înșelătoare; (2) evaluarea potrivirii și așteptări clare înainte de cumpărare; (3) onboarding și livrare; (4) suport, reclamații și rezolvarea problemelor; (5) feedback și îmbunătățire; (6) retenție și recomandări voluntare. Pentru fiecare etapă definește nevoia clientului, acțiunea companiei, responsabilul, timpul de răspuns, mesaj-model neintruziv, indicatorul KPI și riscul. Include un calendar de 30 de zile, măsurători pentru conversie, satisfacție, retururi și retenție, plus un test pilot cu buget limitat. Respectă GDPR și regulile locale: colectează minimul de date, documentează temeiul legal/consimțământul unde este necesar, oferă dezabonare și nu trimite marketing nesolicitat. Nu inventa date despre clienți, nu segmenta după categorii sensibile și nu trimite mesaje automat. Marchează ipotezele și verificările juridice/fiscale care necesită specialist.";
+ launchFounderWorkbenchPrompt("business",prompt,"Planul Customer Journey este pregătit în Dr.Vas Business. Revizuiește-l și apasă Trimite.");
 }
 
 function calculateCryptoMiningEconomics(){
