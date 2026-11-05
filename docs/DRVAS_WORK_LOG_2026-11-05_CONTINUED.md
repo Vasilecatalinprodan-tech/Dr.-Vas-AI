@@ -168,3 +168,16 @@ Continued the founder-led development on `founder-workbenches-development`; no p
 - Added calculator outputs for monthly energy consumption (kWh), annual electricity cost, and approximate heat dissipation (BTU/h), based on entered combined equipment and cooling wattage.
 - These estimates help identify electricity-cost and room-cooling constraints before any hardware purchase. They are not a safety certification, electrical installation assessment or permission to operate equipment.
 - Still no device execution, mining, wallet access, live quote feed or transaction capability. No tests or deployment performed.
+
+
+## 2026-11-05 — Publishing, digital products and music release workbenches
+
+Added three additional founder-only workbenches inside the existing Creator & Online Income Lab. They route approved briefs through the existing founder-gated Dr.Vas Studio save/open workflow; no separate public entitlement or new database table was introduced.
+
+- **Digital Product Studio:** captures product format, title, target customer, problem/outcome, deliverables and a hypothetical price. The generated brief asks for demand validation, product structure and content, sales-page copy, cost/margin assumptions, quality checks and rights/consumer/privacy/tax review. It distinguishes assumptions from verified demand and does not publish or collect payments.
+- **Publishing Lab:** prepares book metadata and an editorial readiness pack: descriptions, author bio based only on supplied facts, categories/keywords, cover/manuscript checklist, print-format considerations, ISBN/copyright questions and platform-specific checks. It explicitly avoids inventing ISBNs, platform fees, approvals or spine dimensions before final page/paper specifications; no automatic upload or publication.
+- **Music Release Lab:** prepares release metadata, credits, rights/licence checklist, clean/explicit status, artwork brief and promotion calendar. Unclear rights are a release blocker. It does not invent ISRC/UPC codes, guarantee royalties/playlist placement or distribute music.
+
+All three tools remain in the founder-only admin dashboard. Their output is a draft brief for human review, not a finished published product or external transaction. No migrations, Worker routes, secrets, payment systems, public access rules, RLS policies or production data were changed.
+
+Per the owner's standing instruction, no tests, syntax checks, browser checks or manual tests were run. No merge or deployment was performed. The development branch remains isolated from the stable branch and production.
