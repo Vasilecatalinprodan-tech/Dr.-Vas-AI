@@ -1524,3 +1524,35 @@ test("dedicated voice requests carry the selected Dr.Vas assistant identity", as
   expect(requests.map(request => request.assistant)).toEqual(["drvas", "jan", "aurora"]);
   expect(requests.every(request => request.action === "voice_tts" && request.access_token === "e2e-voice-token")).toBeTruthy();
 });
+
+test("server-side assistant TTS still works when browser speech synthesis is unavailable", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(async () => {
+    currentUser = { id: "e2e-voice-user" };
+    activeAssistant = "drvas";
+    voiceAutoRead = true;
+    window.__DRVAS_E2E_TTS_WITHOUT_BROWSER__ = [];
+    Object.defineProperty(window, "speechSynthesis", { configurable: true, value: undefined });
+    supabaseClient.auth.getSession = async () => ({
+      data: { session: { access_token: "e2e-voice-token" } },
+      error: null
+    });
+    window.fetch = async (_url, options) => {
+      window.__DRVAS_E2E_TTS_WITHOUT_BROWSER__.push(JSON.parse(options.body));
+      return new Response(new Blob(["audio"]), { status: 200, headers: { "Content-Type": "audio/mpeg" } });
+    };
+    window.URL.createObjectURL = () => "blob:e2e-voice-no-browser";
+    window.URL.revokeObjectURL = () => {};
+    window.Audio = class {
+      constructor(src) { this.src = src; this.onplay = null; this.onended = null; this.onerror = null; }
+      async play() { this.onplay?.(); this.onended?.(); }
+      pause() {}
+    };
+    await speakDrVas("Test vocal fără Web Speech API.");
+  });
+  const requests = await page.evaluate(() => window.__DRVAS_E2E_TTS_WITHOUT_BROWSER__);
+  expect(requests).toHaveLength(1);
+  expect(requests[0].action).toBe("voice_tts");
+  expect(requests[0].assistant).toBe("drvas");
+  await expect(page.locator("#voiceStatus")).not.toContainText("unsupported");
+});
