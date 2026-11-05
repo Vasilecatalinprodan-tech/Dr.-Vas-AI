@@ -301,3 +301,9 @@ Verificare și limite:
 - Diff-ul commitului a fost inspectat; verificarea CI pentru acest commit nu era încă disponibilă prin integrarea GitHub la momentul salvării.
 - Nu am aplicat migrarea SQL, nu am activat DRVAS_FILE_ANALYSIS_ENABLED, nu am făcut deploy și nu am schimbat secrete sau date de producție.
 - Înainte de activare trebuie confirmat prin test E2E cu fișiere sintetice că HEAD returnează Content-Length și Content-Type în mediul Supabase real; în caz contrar, fluxul refuză în mod sigur analiza, până la adaptarea verificării.
+
+
+### CI guard pentru verificarea obiectului — 2026-11-05
+- Fișierul `.github/workflows/deploy-worker.yml` verifică acum static că Worker-ul păstrează HEAD, Content-Length, Content-Type și decodificarea UTF-8 strictă pentru atașamente.
+- Commit: 6787cfffd8d046d8792b0f5df7a2c63666898303.
+- Acest guard previne eliminarea accidentală a validărilor de securitate într-o modificare ulterioară; nu înlocuiește testul E2E cu Storage real.
