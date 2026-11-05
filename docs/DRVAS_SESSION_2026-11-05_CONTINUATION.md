@@ -31,3 +31,34 @@ Ramura de dezvoltare este izolată și conține implementările și documentați
 ## Etapă nouă — Customer Journey & Retention Planner
 
 A fost adăugat în `www/index.html` un instrument nou, doar pentru fondator, în Creator & Online Income Lab. Pregătește parcursul clientului, onboarding, suport, reclamații, feedback, retenție și recomandări voluntare, cu roluri, KPI, calendar de 30 de zile și pilot. Include limite GDPR și marketing responsabil; nu trimite mesaje și nu se conectează la CRM. Codul și documentele au fost salvate prin commituri succesive pe ramura de dezvoltare. Această etapă nu a fost încă testată în browser și nu a fost publicată în producție.
+
+
+## Instrucțiuni pentru următoarea conversație — continuare fără reluarea de la zero
+
+Fondatorul a confirmat: „corect si sa continuam sa dezvoltam,diseara vreau sa am un dr.vas de 100 de ori mai bun ca ieri si cu aproape toate functiile dezvoltate....salveaza si continuam intr-un nou chat”. Obiectivul „de 100 de ori mai bun” este o țintă ambițioasă de calitate și completitudine, nu o promisiune numerică sau o garanție că toate funcțiile pot fi finalizate într-o singură zi.
+
+### Punct de reluare exact
+- Repository: `Vasilecatalinprodan-tech/Dr.-Vas-AI`
+- Ramură de dezvoltare: `founder-workbenches-development`
+- Ultimul commit al ramurii la momentul acestui checkpoint: `7c4baf40c45ed94ae90838e0201572639d9ed4f4`
+- Cerere de integrare deschisă: [PR #6](https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/6), către `drvas-integrated-platform`.
+- PR #6 are 23 commituri și 4 fișiere modificate; este deschis, nemerged. Verificarea GitHub a raportat mergeable=true, dar asta nu înlocuiește testele.
+- Rulare GitHub Actions: `42041335612`, „Dr.Vas browser regression tests” (run #188). La ultima citire jobul browser-e2e era încă în progres, la instalarea Chromium; testele Playwright încă nu aveau rezultat final.
+- Niciun merge și niciun deploy de producție nu au fost efectuate în această etapă.
+
+### Regula nouă de lucru confirmată de fondator
+1. Orice funcționalitate nouă trebuie implementată efectiv în aplicația Dr.Vas, nu doar descrisă în documente.
+2. Salvează fiecare etapă în GitHub prin commit și actualizează jurnalul/documentul de continuitate.
+3. După fiecare increment, verifică sursa și păstrează ramura/commitul exact.
+4. Pentru livrare, rulează testele relevante, remediază regresiile, apoi integrează și publică prin fluxul controlat. Nu pretinde că un feature este live înainte de deploy și smoke test.
+5. Nu modifica producția, secretele, baza de date, RLS, drepturile, plățile sau accesul admin fără verificare și autorizarea necesară.
+6. Nu lăsa modulele private/founder-only să devină publice; nu transforma plata într-un drept de administrator.
+7. Prioritizează o platformă stabilă, completă și funcțională: auth/session, conversații și istorice separate pe module, UX mobil/desktop, Free/Health, Studio, Academy, Commerce, Business, instrumentele founder-only, exporturi, persistență, securitate, monitorizare și Android build. Nu inventa funcții externe (CRM, publicare, voice cloning, MP4 render, plăți) dacă nu există integrare reală.
+
+### Primii pași în noul chat
+- Citește acest checkpoint și jurnalul de lucru.
+- Reîmprospătează ramura și verifică dacă PR #6 și run #188 au primit rezultate noi.
+- Inspectează diff-ul complet și rezultatele testelor înainte de merge/deploy.
+- Continuă apoi dezvoltarea pe ramura de lucru, cu commituri mici și documentate. Nu cere utilizatorului să repete deciziile deja salvate.
+
+Acest checkpoint este un rezumat tehnic de continuitate, nu transcrierea integrală a conversației ChatGPT.
