@@ -51,3 +51,47 @@ test("Studio render jobs and media storage remain private and owner-scoped", asy
     expect(sql, "Studio storage " + operation + " policy must scope the first folder to the signed-in user").toMatch(policy);
   }
 });
+
+
+test("Private profiles and consent evidence cannot be accessed directly by browser roles", async () => {
+  const sql = migration("202611030002_private_profile_and_privacy.sql");
+  expect(sql).toMatch(/drvas_private_profiles[\s\S]{0,1200}?enable row level security/i);
+  expect(sql).toMatch(/revoke all on public\.drvas_private_profiles from anon,\s*authenticated/i);
+  expect(sql).toMatch(/grant select,\s*insert,\s*update,\s*delete on public\.drvas_private_profiles to service_role/i);
+  expect(sql).toMatch(/revoke all on public\.drvas_privacy_consents from anon,\s*authenticated/i);
+  expect(sql).toMatch(/grant select,\s*insert,\s*update,\s*delete on public\.drvas_privacy_consents to service_role/i);
+  expect(sql).toMatch(/health_data_processing/i);
+});
+
+test("Chat attachment metadata is owner-scoped, bounded and restricted to supported file types", async () => {
+  const sql = migration("202611050001_chat_attachments.sql");
+  assertOwnerScopedTable(sql, "drvas_chat_attachments", "chat attachments");
+  expect(sql).toMatch(/file_size between 1 and 15728640/i);
+  expect(sql).toMatch(/storage_path like user_id::text \|\| '\\/%'/i);
+  expect(sql).toMatch(/module in \('free','health','studio','academy','commerce','business'\)/i);
+  expect(sql).toMatch(/'application\/pdf'[\s\S]*'text\/plain'[\s\S]*'text\/csv'/i);
+  expect(sql).toMatch(/set public = false/i);
+});
+
+test("Worker requires separate explicit consent for health attachments and fails closed", async () => {
+  const worker = fs.readFileSync(path.join(__dirname, "../../worker/index.js"), "utf8");
+  expect(worker).toContain('latestConsent.get("file_processing") !== true');
+  expect(worker).toContain('moduleName === "health" && latestConsent.get("health_data_processing") !== true');
+  expect(worker).toContain('return json({ error: "Este necesar acordul explicit pentru procesarea fișierelor înainte de analiză." }, 403)');
+  expect(worker).toContain('consent_type: "health_data_processing"');
+  expect(worker).toContain('granted: body.granted');
+  expect(worker).toContain('body.granted === false');
+  expect(worker).toContain('!item.storage_path.startsWith(expectedPrefix)');
+  expect(worker).toContain('item.storage_path.includes("..")');
+  expect(worker).toContain('DRVAS_FILE_ANALYSIS_ENABLED !== "true"');
+});
+
+test("Health assistant keeps clinical boundaries and emergency escalation in its server instructions", async () => {
+  const worker = fs.readFileSync(path.join(__dirname, "../../worker/index.js"), "utf8");
+  expect(worker).toContain("You are an AI assistant, not a doctor, nurse, pharmacist or emergency service.");
+  expect(worker).toContain("Do not prescribe, recommend starting/stopping/changing a prescription");
+  expect(worker).toContain("call 999 (or 112)");
+  expect(worker).toContain("NHS 111 or urgent GP assessment");
+  expect(worker).toContain("Do not reassure someone that serious symptoms are harmless");
+  expect(worker).toContain('liveModule === "health" && env.GEMINI_LIVE_HEALTH_ENABLED !== "true"');
+});
