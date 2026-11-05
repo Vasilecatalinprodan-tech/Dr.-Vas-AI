@@ -48,3 +48,13 @@ Per owner instruction, no tests, syntax checks, browser checks or manual checks 
 - Added **Music Release Lab** to organize credits, collaborator permissions, composition/recording/artwork licences, explicit-content status, metadata, cover brief and release/promotion checklist. Unclear rights are explicitly treated as a blocker before distribution.
 - Each action stages a human-reviewable brief through the existing founder-only Studio save/open route. Nothing is automatically uploaded, published, distributed, sold or paid for.
 - These features remain untested and undeployed by owner instruction; no database schema or production configuration was changed.
+
+
+## Commerce, mining sensitivity and business operations additions
+
+- **Commerce Profit Lab:** estimates unit contribution, margin, monthly break-even order count and monthly result using user-entered costs and percentage reserves. It is not a VAT/tax filing tool and does not forecast demand.
+- **Mining Sensitivity Lab:** calculates three manually parameterized daily scenarios from revenue/prodution and electricity tariff multipliers. No live market/network data, mining control, wallet or transaction capability.
+- **Business Operations Planner:** prepares an SOP/workflow draft with roles, approvals, exceptions, quality checks, KPIs, costs and pilot steps. No external integrations or automatic execution.
+- All three tools are founder-only and prepare calculations or drafts for review. No public access, automatic publishing, sales, payments, orders, mining, trading or deployment.
+- Owner requested uninterrupted development and saving of the full progress. This feature record and the dated work log serve as repository continuity records; they do not replace the original ChatGPT transcript.
+- No tests or manual verification were run, and the stable branch/production remain untouched.
