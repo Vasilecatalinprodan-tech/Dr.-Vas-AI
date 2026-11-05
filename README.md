@@ -196,3 +196,11 @@ The Studio now includes an MP4 render workflow with private scene-image/audio up
 - Consolidated continuity record updated with exact results and outstanding launch blockers: `docs/DRVAS_CONSOLIDATED_SCOPE_AND_CONTINUITY_2026-11-04.md`.
 - Android privacy hardening: `android:allowBackup="false"` is now enforced by an APK CI check; the app manifest reviewed requests INTERNET and microphone/audio settings only.
 - Fresh debug APK build and artifact upload succeeded in run `41940558834`; artifact `DrVas-APK` (ID `13375717907`, approximately 6.1 MB). It remains an internal debug artifact and has not been installed on a physical device.
+
+## Admin module access diagnostic and latest deployment — 2026-11-05
+
+- Founder-only module clicks now retry the server-side administrator check and show actionable diagnostics when the account is not allowlisted. Server-side module restrictions are unchanged.
+- Source commit: `69040886b27427a9cea87fffcab929d1cdfa3bbc`; deployed commit: `c194068c4e13bc3c69ccf2208d67ed13db45ec46`.
+- Production deployment run #434 (`42097274639`) succeeded, including Playwright browser regression tests and production smoke checks for the homepage and all six module cards.
+- Founder account authorization remains dependent on Cloudflare Worker secret `ADMIN_EMAILS`; its value was not inspected or modified. See the latest admin-access section in `PROJECT-STATUS.md` and `PROJECT-HANDOFF.md`.
+- Web app: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ . Existing installed APK is intentionally left unchanged pending the founder's request.
