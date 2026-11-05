@@ -1125,7 +1125,12 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
     window.__drvasSpoken = [];
     window.__drvasStartCount = 0;
     window.startDrVas = () => { window.__drvasStartCount++; };
-    const synth = { getVoices: () => [], cancel() {}, speak: utterance => { window.__drvasSpoken.push(utterance); } };
+    const presentationVoices = [
+      { name: "Microsoft Andrei", lang: "ro-RO", voiceURI: "andrei-ro" },
+      { name: "Microsoft David", lang: "ro-RO", voiceURI: "david-ro" },
+      { name: "Microsoft Alina", lang: "ro-RO", voiceURI: "alina-ro" }
+    ];
+    const synth = { getVoices: () => presentationVoices, cancel() {}, speak: utterance => { window.__drvasSpoken.push(utterance); } };
     Object.defineProperty(window, "speechSynthesis", { configurable: true, value: synth });
     window.SpeechSynthesisUtterance = function (text) { this.text = text; };
   });
@@ -1135,6 +1140,7 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
   await expect(page.locator("#presentationModuleGrid .presentation-module")).toHaveCount(6);
   await expect(page.locator("#presentationModuleGrid .presentation-module.is-active")).toHaveCount(2);
   await expect(page.locator("#presentationSpeakerName")).toHaveText("Dr.Vas");
+  await expect.poll(() => page.evaluate(() => window.__drvasSpoken[0]?.voice?.name || "")).toBe("Microsoft Andrei");
   const languages = [["ro","ro-RO"],["en","en-GB"],["it","it-IT"],["tr","tr-TR"],["de","de-DE"],["fr","fr-FR"],["es","es-ES"],["ru","ru-RU"]];
   const openLabels = {ro:"Deschide prezentarea",en:"Open presentation",it:"Apri la presentazione",tr:"Tanıtımı aç",de:"Präsentation öffnen",fr:"Ouvrir la présentation",es:"Abrir presentación",ru:"Открыть презентацию"};
   for (const [language, locale] of languages) {
@@ -1164,6 +1170,7 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
     speech: window.__drvasSpoken[window.__drvasSpoken.length - 1].text
   }));
   expect(jan.speaker).toBe("Dr.Jan");
+  expect(await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].voice?.name)).toBe("Microsoft David");
   expect(jan.modules).toContain("Dr.Vas Studio");
   expect(jan.modules).toContain("Dr.Vas Business");
   expect(jan.speech).toContain("Doctor Vas Studio");
@@ -1177,6 +1184,7 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
     speech: window.__drvasSpoken[window.__drvasSpoken.length - 1].text
   }));
   expect(sarah.speaker).toBe("Sarah");
+  expect(await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].voice?.name)).toBe("Microsoft Alina");
   expect(sarah.modules).toContain("Dr.Vas Academy");
   expect(sarah.modules).toContain("Dr.Vas Commerce");
   expect(sarah.speech).toContain("Doctor Vas Academy");
