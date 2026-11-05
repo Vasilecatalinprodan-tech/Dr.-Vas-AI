@@ -51,3 +51,12 @@ After the corrected workflow completed successfully, its log showed `53 passed`,
 - Workflow update commit: `4fc1f5d73fd19002d22672f9408e8e3331442731`.
 - The next CI run must pass before the three new migration assertions can be counted as tested.
 - The earlier 53 passing browser tests remain valid for the homepage suite, but must not be represented as including the new migration regression tests.
+
+
+### 2026-11-05 — database isolation regression coverage
+- Added `tests/e2e/data-isolation-migrations.spec.cjs` and wired it into `.github/workflows/deploy-worker.yml`.
+- GitHub Actions run #445 (run ID `42108117982`), commit `4fc1f5d73fd19002d22672f9408e8e3331442731`: **56/56 tests passed** (the prior homepage suite had 53; three new static migration-policy tests are now included).
+- The run also completed Worker deployment, production smoke test and SBOM upload successfully.
+- The added checks guard owner-only RLS for Academy/Commerce/Business drafts, Business cashbook and Studio render jobs, plus private Studio media storage and numeric/currency/VAT constraints.
+- These are static checks of migration source, not proof that the migrations have been applied to live Supabase. Live RLS/storage verification remains outstanding.
+- Workflow: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42108117982
