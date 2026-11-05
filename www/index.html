@@ -1992,9 +1992,14 @@ async function speakDrvasPresentation(){
   startVisualDrvasPresentation(run,0,data.unavailable);
   return;
  }
+ // Resume the speech engine synchronously while the user-initiated presentation
+ // click is still in its activation window (important on Chrome Android/WebView).
+ const synth=window.speechSynthesis;
+ try{synth.resume?.()}catch{}
  const locales={ro:"ro-RO",en:"en-GB",it:"it-IT",tr:"tr-TR",de:"de-DE",fr:"fr-FR",es:"es-ES",ru:"ru-RU"};
  const lang=locales[currentLanguage]||"ro-RO";
  const voices=await getDrvasPresentationVoices();
+ try{synth.resume?.()}catch{}
  if(run!==drvasPresentationRun)return;
  drvasPresentationQueue=lines.slice();drvasPresentationIndex=0;
  const voiceProfile=getDrvasPresentationVoiceProfile(voices,lang);
