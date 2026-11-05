@@ -784,3 +784,11 @@ Outstanding verification: live Supabase status for `202611030001_rate_limits.sql
 - High-impact Health, legal and finance evaluations require domain-qualified human review and appropriate professional/regulatory oversight.
 - This is a roadmap specification only. No customer pipeline, reviewer marketplace, service contract, billing or public offer is live. See `docs/AI_EVALUATION_TRAINING_WORKBENCH.md`.
 - PR #3 was closed as superseded, not merged wholesale. Its relevant code, specs and product decisions have been selectively ported to current main and validated by workflow #461.
+
+
+## Supabase live verification preparation — 2026-11-05
+
+- Expanded the read-only Supabase verification SQL to include Business transactions, Studio render jobs, chat attachments, the private Storage bucket/policies and rate-limit function privileges.
+- Added `docs/SUPABASE_LIVE_VERIFICATION_GUIDE.md` with safe instructions for running the read-only audit, reviewing grants/RLS/Storage, applying only missing migrations after backup/review, and testing isolation with two disposable accounts.
+- No Supabase connector or authorized live database session is available in this development environment. Therefore no live SQL was executed and no claim is made that migrations are applied or production RLS has been verified.
+- Supabase status remains: source/migration review completed; live database verification and two-account isolation test outstanding.
