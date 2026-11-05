@@ -49,13 +49,15 @@ test("universal chat uploader accepts private images and documents and requires 
     renderPendingChatFiles();
   });
   const picker = page.locator("#chatFileInput");
+  await picker.evaluate(input => input.addEventListener("change", () => {
+    window.__DRVAS_E2E_SELECTED_FILES__ = Array.from(input.files || []).map(file => ({ name: file.name, type: file.type, size: file.size }));
+  }, { capture: true, once: true }));
   await picker.setInputFiles([
     { name: "blood-results.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.4 E2E") },
     { name: "scan.png", mimeType: "image/png", buffer: Buffer.from("png-e2e") }
   ]);
-  const selectedFiles = await picker.evaluate(input => Array.from(input.files || []).map(file => ({ name: file.name, type: file.type, size: file.size })));
+  const selectedFiles = await page.evaluate(() => window.__DRVAS_E2E_SELECTED_FILES__ || []);
   expect(selectedFiles).toHaveLength(2);
-  await page.evaluate(() => handleChatFilesSelected({ target: document.querySelector("#chatFileInput") }));
   const pendingFiles = await page.evaluate(() => pendingChatFiles.map(file => ({ name: file.name, type: file.type, size: file.size })));
   expect(pendingFiles).toHaveLength(2);
   await expect(page.locator("#pendingChatFiles")).toBeVisible();
