@@ -225,3 +225,11 @@ Fondatorul a confirmat că fiecare dezvoltare trebuie implementată în aplicaț
 - Result: 38 of 39 Playwright tests passed. The sole failure was the legacy Bitcoin calculator test: it expected gross daily revenue £18.00 but the calculator now correctly applies the default 5% downtime assumption first, yielding £17.10. This was a stale test fixture, not a Chromium installation problem or a broad application regression.
 - Updated `tests/e2e/homepage.spec.cjs` to explicitly set downtime and tax reserve to zero for the legacy baseline calculation and changed the notice assertion to the current calculator wording. The new calculator assumptions remain part of the application behavior; this change makes the old baseline test deterministic.
 - This correction is saved on `founder-workbenches-development`. A fresh CI run is required to confirm the fix; no merge or production deploy has been performed.
+
+
+## 2026-11-05 — Second Bitcoin calculator regression diagnosis
+
+- The corrected browser run #190 completed its full 39-test suite: 38 passed and the same Bitcoin baseline test still failed. This time the reported net daily value was £7.15 instead of £8.82.
+- Inspection of the calculator source showed a separate new default assumption: monthly maintenance is £50 (about £1.67/day). The old baseline fixture had not neutralized this input either.
+- Updated the baseline test to set `cryptoMaintenanceMonthly=0` explicitly alongside zero downtime and zero tax reserve. This preserves the production calculator defaults and makes the legacy arithmetic assertion compare a clean baseline.
+- Saved in commit `74a99ecdbd7639c540a63a96b5856cd3378a9cd6`. A fresh CI result is still required. No merge/deploy has occurred.
