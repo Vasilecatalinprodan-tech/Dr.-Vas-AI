@@ -1306,7 +1306,7 @@ test("presentation reuses one available language voice when fewer than three pre
     const voices = [{ name: "Microsoft Andrei", lang: "ro-RO", voiceURI: "andrei-ro" }];
     Object.defineProperty(window, "speechSynthesis", {
       configurable: true,
-      value: { getVoices: () => voices, cancel() {}, speak: utterance => window.__drvasSpoken.push(utterance) }
+      value: { getVoices: () => voices, cancel() {}, resume() { window.__drvasResumeCalls = (window.__drvasResumeCalls || 0) + 1; }, speak: utterance => window.__drvasSpoken.push(utterance) }
     });
     window.SpeechSynthesisUtterance = function (text) { this.text = text; };
   });
@@ -1315,6 +1315,7 @@ test("presentation reuses one available language voice when fewer than three pre
   await expect(page.locator("#presentationPresenter")).toHaveClass(/scene-enter/);
   await expect(page.locator("#presentationSpeakerName")).toHaveText("Dr.Vas");
   expect(await page.evaluate(() => window.__drvasSpoken.length)).toBe(1);
+  expect(await page.evaluate(() => window.__drvasResumeCalls)).toBeGreaterThanOrEqual(1);
   expect(await page.evaluate(() => window.__drvasSpoken[0].voice?.name)).toBe("Microsoft Andrei");
 });
 
