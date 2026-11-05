@@ -67,3 +67,10 @@ Acest checkpoint este un rezumat tehnic de continuitate, nu transcrierea integra
 ## Actualizare — verificarea run #188 și corecția testului
 
 La reluarea din chatul nou s-a verificat efectiv jobul GitHub Actions pentru PR #6. Run #188 / ID `42041335612` s-a încheiat cu 38/39 teste Playwright reușite. Singurul eșec: testul vechi al calculatorului Bitcoin aștepta venit brut de £18.00 fără a seta noul input de indisponibilitate; aplicația aplica implicit 5% downtime și afișa corect £17.10. Testul a fost făcut determinist prin setarea explicită a downtime și rezervei fiscale la 0 pentru scenariul său legacy și prin actualizarea textului de avertizare verificat. Corecția și jurnalul au fost salvate în commituri succesive pe ramura de dezvoltare. Este necesară o nouă rulare CI pentru confirmare. PR #6 rămâne nemerged, iar producția nu a fost modificată.
+
+
+## Actualizare — run #190 și corecția completă a fixture-ului
+
+Run #190 (ID `42042064205`) a rulat toate cele 39 de teste: 38 au trecut, iar testul calculatorului Bitcoin a eșuat din cauza unei a doua ipoteze implicite ne-neutralizate. Sursa aplicației arată mentenanță implicită de £50/lună (aprox. £1.67/zi), motiv pentru care netul era £7.15, nu £8.82. Testul de bază setează acum explicit și `cryptoMaintenanceMonthly=0`, pe lângă downtime și rezervă fiscală zero. Corecția este salvată în commit `74a99ecdbd7639c540a63a96b5856cd3378a9cd6`. Este necesară o nouă rulare CI; PR #6 rămâne nemerged și nu s-a făcut deploy.
+
+Această conversație continuă checkpoint-ul anterior. Repository-ul păstrează rezumate tehnice și deciziile importante, nu transcrierea literală completă a chatului; istoricul original rămâne în ChatGPT. Pentru export textual integral se folosește exportul de date ChatGPT.
