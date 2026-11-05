@@ -1382,3 +1382,34 @@ Utilizatorul a cerut să continuăm dezvoltarea, să păstrăm toate modificări
 - La începutul acestei continuări, ultima versiune verificată a fost `30d0f36cbfbd94c5a737a638ad500d05da115c5e`; actualizarea jurnalului de mai jos va crea următorul commit.
 - Nu s-a făcut merge, deploy, schimbare de secret, aplicare de migrare sau modificare de date în Supabase.
 - Continuarea cerută de utilizator și pașii de previzualizare sunt consemnați aici pentru următoarea sesiune.
+
+
+## 2026-11-05 — corectarea confuziei SQL vs. terminal și solicitarea unei pagini vizibile
+
+### Problema raportată
+Utilizatorul a primit în Supabase SQL Editor eroarea:
+`ERROR: 42601: syntax error at or near "git" — LINE 1: git switch universal-chat-attachments`.
+
+### Diagnostic verificat
+- Eroarea apare deoarece comanda Git a fost introdusă în editorul SQL Supabase.
+- `git switch universal-chat-attachments` și `git pull origin universal-chat-attachments` sunt comenzi de terminal (Git), nu SQL.
+- Nu indică o defecțiune a aplicației Dr.Vas, a migrărilor sau a bazei de date.
+- Pentru această eroare nu trebuie rulat SQL, modificată schema sau șters vreun obiect din Supabase.
+
+### Starea fișierelor și a previzualizării
+- A fost reverificat `www/index.html` pe branch-ul `universal-chat-attachments`; fișierul există, iar blob SHA este `6d63fa9c5581758149f46b7d0aba6a5f7cde2eaf`.
+- Jurnalul existent a fost citit înainte de actualizare; blob SHA anterior: `b32e84a2d71954d1da56cd12ee037ad2596b355c`.
+- Nu există în instrumentele GitHub disponibile aici o acțiune directă pentru pornirea unui Codespace sau publicarea unui preview Pages. Nu se va inventa un URL de preview și nu se va activa/publica Pages fără verificarea setărilor și a izolării backendului.
+- Previzualizarea statică în Codespaces rămâne metoda sigură pentru a vedea versiunea branch-ului. Comenzile se execută în terminalul Codespaces, nu în Supabase:
+  ```bash
+  git switch universal-chat-attachments
+  git pull origin universal-chat-attachments
+  python3 -m http.server 4173 --directory www
+  ```
+  Apoi se deschide portul 4173 din fila Ports, cu vizibilitate Private.
+- Atenție: frontendul branch-ului folosește în continuare URL-urile Worker și Supabase existente. Până la izolarea backendului, preview-ul este pentru vizualizare; nu se testează acțiuni care scriu, șterg sau lansează randări.
+
+### Decizii de protecție
+- Nu s-a executat nicio comandă SQL, nu s-a modificat Supabase și nu s-a aplicat migrarea.
+- Nu s-a făcut deploy, merge sau schimbare de secrete.
+- Cererea utilizatorului de a continua, remedia confuzia, salva starea și primi o cale de vizualizare a fost consemnată.
