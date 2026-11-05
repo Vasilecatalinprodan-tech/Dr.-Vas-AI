@@ -760,6 +760,21 @@ body.presentation-open{overflow:hidden!important}
 @media(max-width:480px){.presentation-module-grid{grid-template-columns:1fr}.modules-heading-actions{align-items:flex-start;flex-direction:column}.presentation-presenter-copy strong{font-size:18px}.presentation-speaking-indicator{margin-left:auto}}
 @media(prefers-reduced-motion:reduce){.drvas-presentation,.drvas-presentation:not(.hidden),.presentation-progress-track span,.presentation-avatar,.presentation-module{animation:none!important;transition:none!important}}
 
+.chat-file-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:10px 12px;margin-top:8px;border:1px solid #29465b;border-radius:13px;background:#091827}
+.chat-file-button{display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid #477185;border-radius:10px;color:#d8f4f1;background:#123044;font-size:13px;font-weight:700;cursor:pointer}
+.chat-file-consent{display:flex;align-items:flex-start;gap:7px;flex:1 1 260px;color:#a9bfce;font-size:11px;line-height:1.45}
+.chat-file-consent input{flex:0 0 auto;width:16px;height:16px;margin:1px 0 0;accent-color:#62e5dc}
+.pending-chat-files,.conversation-attachments{display:flex;flex-wrap:wrap;gap:8px;padding:8px 0}
+.chat-file-chip,.conversation-file-link{display:inline-flex;align-items:center;gap:8px;max-width:100%;padding:8px 10px;border:1px solid #31566a;border-radius:10px;background:#0c2233;color:#d8e8ef;font-size:12px;overflow-wrap:anywhere}
+.chat-file-chip button{border:0;background:transparent;color:#ffb8b8;padding:0 3px;cursor:pointer;font-size:16px}
+.conversation-attachments{border-top:1px solid #29465b;margin-top:8px}
+.conversation-attachments:empty{display:none}
+.conversation-attachments-title{flex-basis:100%;color:#91b5c5;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.msg-attachment-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.msg-attachment{padding:5px 8px;border-radius:8px;background:#0b2636;border:1px solid #31566a;color:#bfe8e5;font-size:11px;overflow-wrap:anywhere}
+#chatFileInput{display:none}
+@media(max-width:560px){.chat-file-toolbar{align-items:flex-start}.chat-file-consent{flex-basis:100%}.chat-file-button{min-height:42px}}
+
 </style>
 </head>
 
@@ -1494,6 +1509,14 @@ body.presentation-open{overflow:hidden!important}
     <div id="saveMessage"></div>
     <div id="chat" role="log" aria-live="polite" aria-relevant="additions text" aria-label="Conversația cu Dr.Vas">
      <div class="msg bot">Bun venit la Dr.Vas AI! Cu ce te pot ajuta astăzi?</div>
+    </div>
+    <div id="conversationAttachments" class="conversation-attachments" aria-label="Fișierele acestei conversații"></div>
+    <div id="pendingChatFiles" class="pending-chat-files" hidden></div>
+    <div class="chat-file-toolbar">
+     <label class="chat-file-button" for="chatFileInput">📎 Atașează fișiere</label>
+     <input id="chatFileInput" type="file" accept="image/jpeg,image/png,image/webp,application/pdf,text/plain,text/csv,.jpg,.jpeg,.png,.webp,.pdf,.txt,.csv" multiple>
+     <label id="fileProcessingConsentWrap" class="chat-file-consent" hidden><input id="fileProcessingConsent" type="checkbox"> Sunt de acord ca fișierele selectate să fie stocate privat în Dr.Vas și transmise către Google Gemini pentru analiză. Pot elimina datele de identificare înainte de încărcare.</label>
+     <label id="healthDataProcessingConsentWrap" class="chat-file-consent" hidden><input id="healthDataProcessingConsent" type="checkbox"> Dr.Vas Health poate procesa date medicale sensibile. Înțeleg că răspunsul este informativ, nu un diagnostic, și consimt explicit la această prelucrare.</label>
     </div>
     <div class="input-area">
      <textarea id="question" aria-label="Mesaj pentru Dr.Vas" placeholder="Scrie mesajul tău aici..." rows="1" wrap="soft" maxlength="12000" autocomplete="off"></textarea>
@@ -4521,6 +4544,107 @@ async function checkSession(){
     if(message)message.textContent=tr("Nu am putut verifica sesiunea. Reîncearcă autentificarea. Detalii: ")+(error?.message||"eroare de rețea");
   }
 }
+
+
+let pendingChatFiles = [];
+let pendingUploadedAttachments = [];
+
+function chatFileType(file){
+ return new Set(["image/jpeg","image/png","image/webp","application/pdf","text/plain","text/csv"]).has(file.type);
+}
+function chatFileSizeLabel(size){
+ return size<1024*1024?(size/1024).toFixed(0)+" KB":(size/(1024*1024)).toFixed(1)+" MB";
+}
+function renderPendingChatFiles(){
+ const host=el("pendingChatFiles");if(!host)return;
+ host.replaceChildren();
+ const all=[...pendingChatFiles.map((file,index)=>({name:file.name,size:file.size,index,uploaded:false})),
+  ...pendingUploadedAttachments.map((file,index)=>({name:file.original_name,size:file.file_size,index,uploaded:true}))];
+ host.hidden=!all.length;
+ all.forEach(item=>{
+  const chip=document.createElement("span");chip.className="chat-file-chip";
+  const name=document.createElement("span");name.textContent=item.name+" · "+chatFileSizeLabel(item.size);
+  const remove=document.createElement("button");remove.type="button";remove.setAttribute("aria-label","Elimină "+item.name);remove.textContent="×";
+  remove.addEventListener("click",()=>{if(item.uploaded)removeUploadedChatAttachment(item.index);else{pendingChatFiles.splice(item.index,1);renderPendingChatFiles();}});
+  chip.append(name,remove);host.appendChild(chip);
+ });
+ const showConsent=all.length>0;
+ el("fileProcessingConsentWrap").hidden=!showConsent;
+ el("healthDataProcessingConsentWrap").hidden=!showConsent||activeModule!=="health";
+}
+async function removeUploadedChatAttachment(index){
+ const item=pendingUploadedAttachments[index];if(!item)return;
+ try{
+  await supabaseClient.storage.from("drvas-media").remove([item.storage_path]);
+  const {error}=await supabaseClient.from("drvas_chat_attachments").delete().eq("id",item.id).eq("user_id",currentUser.id);
+  if(error)throw error;
+  pendingUploadedAttachments.splice(index,1);renderPendingChatFiles();
+ }catch(error){window.alert("Nu am putut elimina fișierul: "+error.message);}
+}
+function clearPendingChatFiles(){
+ pendingChatFiles=[];pendingUploadedAttachments=[];
+ if(el("chatFileInput"))el("chatFileInput").value="";
+ if(el("fileProcessingConsent"))el("fileProcessingConsent").checked=false;
+ if(el("healthDataProcessingConsent"))el("healthDataProcessingConsent").checked=false;
+ renderPendingChatFiles();
+}
+function handleChatFilesSelected(event){
+ const chosen=Array.from(event.target.files||[]);
+ if(pendingChatFiles.length+pendingUploadedAttachments.length+chosen.length>5){window.alert("Poți atașa maximum 5 fișiere la un mesaj.");event.target.value="";return;}
+ for(const file of chosen){
+  if(!chatFileType(file)){window.alert("Format neacceptat: "+file.name+". Folosește JPG, PNG, WebP, PDF, TXT sau CSV.");continue;}
+  if(file.size<1||file.size>15*1024*1024){window.alert("Fișierul "+file.name+" trebuie să aibă maximum 15 MB.");continue;}
+  if(pendingChatFiles.some(item=>item.name===file.name&&item.size===file.size))continue;
+  pendingChatFiles.push(file);
+ }
+ event.target.value="";renderPendingChatFiles();
+}
+async function uploadPendingChatFiles(files,conversationId,moduleId,accessToken){
+ if(!files.length)return [];
+ const generalConsent=el("fileProcessingConsent")?.checked===true;
+ const healthConsent=moduleId==="health"&&el("healthDataProcessingConsent")?.checked===true;
+ if(!generalConsent||(moduleId==="health"&&!healthConsent)){
+  throw new Error(moduleId==="health"?"Pentru Dr.Vas Health confirmă ambele acorduri de procesare înainte de a trimite documente.":"Confirmă acordul de procesare a fișierelor înainte de a le trimite.");
+ }
+ const consentResponse=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"file_processing_consent",access_token:accessToken,module:moduleId,granted:true})});
+ const consentData=await consentResponse.json();
+ if(!consentResponse.ok||!consentData.ok)throw new Error(consentData.error||"Nu am putut înregistra acordul de procesare.");
+ const uploaded=[];
+ for(const file of files){
+  const safeName=file.name.normalize("NFKD").replace(/[^a-z0-9._-]+/gi,"-").replace(/^-+|-+$/g,"").slice(0,100)||"attachment";
+  const path=currentUser.id+"/"+conversationId+"/"+moduleId+"/"+crypto.randomUUID()+"-"+safeName;
+  const {error:uploadError}=await supabaseClient.storage.from("drvas-media").upload(path,file,{contentType:file.type,upsert:false});
+  if(uploadError)throw uploadError;
+  const record={user_id:currentUser.id,conversation_id:conversationId,module:moduleId,original_name:file.name.slice(0,255),mime_type:file.type,file_size:file.size,storage_path:path};
+  const {data,error:recordError}=await supabaseClient.from("drvas_chat_attachments").insert(record).select("id,original_name,mime_type,file_size,storage_path,created_at").single();
+  if(recordError){await supabaseClient.storage.from("drvas-media").remove([path]);throw recordError;}
+  uploaded.push(data);
+ }
+ return uploaded;
+}
+function appendMessageAttachments(messageElement,attachments){
+ if(!messageElement||!attachments?.length)return;
+ const list=document.createElement("div");list.className="msg-attachment-list";
+ attachments.forEach(file=>{const item=document.createElement("span");item.className="msg-attachment";item.textContent="📎 "+file.original_name;list.appendChild(item);});
+ messageElement.appendChild(list);
+}
+async function loadConversationAttachments(conversationId,moduleId=activeModule){
+ const host=el("conversationAttachments");if(!host)return;
+ host.replaceChildren();
+ if(!currentUser||!conversationId)return;
+ try{
+  const {data,error}=await supabaseClient.from("drvas_chat_attachments").select("id,original_name,mime_type,file_size,storage_path,created_at").eq("user_id",currentUser.id).eq("conversation_id",conversationId).eq("module",moduleId).order("created_at",{ascending:true}).limit(50);
+  if(error)throw error;
+  if(!data?.length)return;
+  const title=document.createElement("strong");title.className="conversation-attachments-title";title.textContent="Fișiere din această conversație";host.appendChild(title);
+  for(const file of data){
+   const {data:signed,error:signedError}=await supabaseClient.storage.from("drvas-media").createSignedUrl(file.storage_path,3600);
+   if(signedError)continue;
+   const link=document.createElement("a");link.className="conversation-file-link";link.href=signed.signedUrl;link.target="_blank";link.rel="noopener noreferrer";link.textContent="📎 "+file.original_name+" · "+chatFileSizeLabel(file.file_size);host.appendChild(link);
+  }
+ }catch(error){console.warn("Conversation attachments unavailable:",error);}
+}
+el("chatFileInput").addEventListener("change",handleChatFilesSelected);
 
 async function send(){
   const input = el("question");
