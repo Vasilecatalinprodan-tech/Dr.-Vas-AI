@@ -943,17 +943,27 @@ export default {
         }
       }
 
-      // Optional server-side founder voice TTS. Provider credentials and verified voice ID stay in Worker secrets.
+      // Assistant-specific TTS. All provider credentials and voice IDs stay in Worker secrets.
       if (body.action === "voice_tts") {
         const ttsText = typeof body.text === "string" ? body.text.trim() : "";
+        const ttsAssistant = typeof body.assistant === "string" ? body.assistant : "drvas";
+        const ttsVoiceSecrets = {
+          drvas: env.ELEVENLABS_VOICE_ID,
+          jan: env.ELEVENLABS_JAN_VOICE_ID,
+          aurora: env.ELEVENLABS_SARAH_VOICE_ID
+        };
+        if (!Object.prototype.hasOwnProperty.call(ttsVoiceSecrets, ttsAssistant)) {
+          return json({ error: "Identitate vocală invalidă." }, 400);
+        }
         if (!ttsText || ttsText.length > 5000) {
           return json({ error: "Textul pentru voce trebuie să aibă între 1 și 5000 de caractere." }, 400);
         }
-        if (!env.ELEVENLABS_API_KEY || !env.ELEVENLABS_VOICE_ID) {
-          return json({ error: "Clonarea vocală Dr.Vas nu este încă configurată." }, 503);
-        }
         const ttsUser = await verifySupabaseUser(env, body.access_token);
         if (!ttsUser) return json({ error: "Sesiune invalidă. Conectează-te din nou." }, 401);
+        const ttsVoiceId = ttsVoiceSecrets[ttsAssistant];
+        if (!env.ELEVENLABS_API_KEY || !ttsVoiceId) {
+          return json({ error: "Vocea dedicată pentru acest asistent nu este încă configurată." }, 503);
+        }
         const ttsLimit = await consumeRateLimit(env, ttsUser.id, "voice_tts", 12, 60);
         if (!ttsLimit.configured) {
           return json({ error: "Protecția de utilizare nu este disponibilă momentan." }, 503);
@@ -963,7 +973,7 @@ export default {
         const timeout = setTimeout(() => controller.abort(), 25000);
         try {
           const ttsResponse = await fetch(
-            "https://api.elevenlabs.io/v1/text-to-speech/" + encodeURIComponent(env.ELEVENLABS_VOICE_ID),
+            "https://api.elevenlabs.io/v1/text-to-speech/" + encodeURIComponent(ttsVoiceId),
             {
               method: "POST",
               headers: {
