@@ -212,3 +212,10 @@ Founder feedback:
 - Workflow #466 (`42115725365`) completed SUCCESS. The new Playwright test confirmed TTS requests include the correct `drvas`, `jan`, and `aurora` identity and the authenticated session token. JavaScript/static checks, deploy and production smoke checks passed.
 - Cloudflare Workers Builds check succeeded for commit `43f0c2cf507a3ce951ecdea644cca74157cc351e`, deployed version `7ace1c79-c5d3-4a80-8ce3-2a1dfd897986`.
 - This is routing verification only; provider voice IDs for Dr.Jan and Sarah, audible differentiation and physical-device tests remain outstanding.
+
+## 2026-11-05 — browser-independent server TTS
+
+- Fixed `speakDrVas()` so it attempts server-side TTS before checking browser speech synthesis support.
+- Adjusted voice enable/replay behavior to allow the authenticated server audio path on supported audio browsers without Web Speech synthesis.
+- Added Playwright coverage and CI assertions. Workflow #470 / run `42130438370` was pending at the time of documentation.
+- Saved a structured conversation checkpoint at `docs/CHAT-ARCHIVE-2026-11-05.md`; it is not a verbatim transcript export.
