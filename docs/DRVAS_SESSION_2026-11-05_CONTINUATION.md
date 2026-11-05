@@ -208,3 +208,23 @@ Rezultate CI pentru PR #7:
 
 Păstrarea conversației:
 Istoricul acestui chat este păstrat în istoricul conversațiilor ChatGPT. Acest checkpoint salvează mesajul exact al fondatorului și rezumatul tehnic, nu transcrierea literală integrală a tuturor mesajelor și răspunsurilor. Pentru o copie integrală, folosește exportul de date ChatGPT.
+
+
+## Continuare 2026-11-05 — corecția testului pentru upload
+
+Cererea exactă a fondatorului:
+> „salveaza tot inclusiv conversatia si continua cu dezvoltarea si da hai sa implementam toate schimbarile te rog”
+
+Verificarea run #521 / ID `42052157627` s-a încheiat cu **42 teste trecute și 1 eșuat**. Testul nou pentru upload a confirmat că fișierele sunt păstrate în `pendingChatFiles`, dar containerul `#pendingChatFiles` rămânea ascuns. Cauza a fost CSS: regula `.pending-chat-files{display:flex}` suprascria comportamentul nativ al atributului HTML `hidden`.
+
+Corecție salvată pe ramura `universal-chat-attachments`:
+- Commit: `0c1dde76d24e18d68811fa3676755363f7492421`
+- Fișier: `www/index.html`
+- Adăugată regula explicită `.pending-chat-files[hidden],.conversation-attachments[hidden]{display:none!important}`.
+- Nu s-au schimbat accesul, SQL, secretele, RLS sau producția.
+
+Următorul pas: rerulare CI completă pe commitul corectat. PR #7 rămâne draft, nemerged și nepublicat până la confirmarea testelor, revizuirea securității, aplicarea controlată a migrării Supabase și verificarea configurării Paid Gemini + cerințelor UK GDPR pentru documente medicale.
+
+Notă privind Gemini: documentația oficială precizează că Paid Services nu folosesc prompturile/fișierele pentru îmbunătățirea produselor, dar pot exista loguri limitate pentru monitorizarea abuzului; API-ul Interactions poate stoca implicit starea dacă nu se setează `store:false`, iar File API păstrează fișierele până la ștergere/expirare. Sursa: https://ai.google.dev/gemini-api/docs/zdr. Prin urmare, activarea rămâne blocată până la verificarea configurației efective și a retenției, nu doar a existenței unui cont cu billing.
+
+Această actualizare păstrează cererea și starea tehnică, nu transcrierea literală integrală a chatului. Istoricul integral rămâne în ChatGPT; exportul de date ChatGPT este metoda pentru o copie completă.
