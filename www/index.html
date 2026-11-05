@@ -4305,7 +4305,8 @@ async function deleteConversation(conversation){
  if(!currentUser||isSendingMessage)return;
  if(!window.confirm("Ștergi definitiv această conversație și toate mesajele ei? Acțiunea nu poate fi anulată."))return;
  try{
-  const {error}=await supabaseClient.from("chat_messages").delete().eq("user_id",currentUser.id).eq("conversation_id",conversation.id);if(error)throw error;
+  await deleteConversationFiles(conversation.id);
+   const {error}=await supabaseClient.from("chat_messages").delete().eq("user_id",currentUser.id).eq("conversation_id",conversation.id);if(error)throw error;
   const meta=await supabaseClient.from("drvas_conversation_metadata").delete().eq("user_id",currentUser.id).eq("conversation_id",conversation.id);if(meta.error)throw meta.error;
   if(currentConversationId===conversation.id){currentConversationId=makeId();rememberActiveConversation(currentConversationId);conversationSaved=false;pendingMessages=[];renderWelcome();updateSaveButton();}
   await loadConversationList();
@@ -4326,9 +4327,12 @@ async function deleteAllConversations(){
   const button = document.querySelector(".delete-history-button");
   button.disabled = true;
   setLocalizedText(button,"Se șterge...");
-  try{
+  try{await deleteAllConversationFiles();
+
     const {error} = await supabaseClient.from("chat_messages")
+
       .delete()
+
       .eq("user_id",currentUser.id);
     if(error) throw error;
     const metadataDelete=await supabaseClient.from("drvas_conversation_metadata").delete().eq("user_id",currentUser.id);
@@ -4580,14 +4584,9 @@ function renderPendingChatFiles(){
  el("fileProcessingConsentWrap").hidden=!showConsent;
  el("healthDataProcessingConsentWrap").hidden=!showConsent||activeModule!=="health";
 }
-async function removeUploadedChatAttachment(index){
- const item=pendingUploadedAttachments[index];if(!item)return;
- try{
-  await supabaseClient.storage.from("drvas-media").remove([item.storage_path]);
-  const {error}=await supabaseClient.from("drvas_chat_attachments").delete().eq("id",item.id).eq("user_id",currentUser.id);
-  if(error)throw error;
-  pendingUploadedAttachments.splice(index,1);renderPendingChatFiles();
- }catch(error){window.alert("Nu am putut elimina fișierul: "+error.message);}
+function removeUploadedChatAttachment(index){
+ pendingUploadedAttachments.splice(index,1);
+ renderPendingChatFiles();
 }
 function clearPendingChatFiles(){
  pendingChatFiles=[];pendingUploadedAttachments=[];
@@ -4662,9 +4661,49 @@ async function loadConversationAttachments(conversationId,moduleId=activeModule)
   for(const file of data){
    const {data:signed,error:signedError}=await supabaseClient.storage.from("drvas-media").createSignedUrl(file.storage_path,3600);
    if(signedError)continue;
-   const link=document.createElement("a");link.className="conversation-file-link";link.href=signed.signedUrl;link.target="_blank";link.rel="noopener noreferrer";link.textContent="📎 "+file.original_name+" · "+chatFileSizeLabel(file.file_size);host.appendChild(link);
+   const row=document.createElement("div");row.className="chat-file-chip";
+   const link=document.createElement("a");link.className="conversation-file-link";link.href=signed.signedUrl;link.target="_blank";link.rel="noopener noreferrer";link.textContent="📎 "+file.original_name+" · "+chatFileSizeLabel(file.file_size);
+   const reuse=document.createElement("button");reuse.type="button";reuse.textContent="Atașează din nou";reuse.addEventListener("click",()=>{if(pendingUploadedAttachments.length+pendingChatFiles.length>=5){window.alert("Poți atașa maximum 5 fișiere.");return;}if(!pendingUploadedAttachments.some(item=>item.id===file.id)){pendingUploadedAttachments.push(file);renderPendingChatFiles();}});
+   const remove=document.createElement("button");remove.type="button";remove.textContent="Șterge";remove.addEventListener("click",()=>deleteConversationAttachment(file));
+   row.append(link,reuse,remove);host.appendChild(row);
   }
  }catch(error){console.warn("Conversation attachments unavailable:",error);}
+}
+async function deleteConversationAttachment(file){
+ if(!currentUser||!file||!window.confirm("Ștergi definitiv fișierul "+file.original_name+"?"))return;
+ try{
+  const {error:storageError}=await supabaseClient.storage.from("drvas-media").remove([file.storage_path]);
+  if(storageError)throw storageError;
+  const {error}=await supabaseClient.from("drvas_chat_attachments").delete().eq("id",file.id).eq("user_id",currentUser.id);
+  if(error)throw error;
+  pendingUploadedAttachments=pendingUploadedAttachments.filter(item=>item.id!==file.id);
+  renderPendingChatFiles();await loadConversationAttachments(currentConversationId,activeModule);
+ }catch(error){window.alert("Nu am putut șterge fișierul: "+error.message);}
+}
+async function deleteConversationFiles(conversationId){
+ const {data,error}=await supabaseClient.from("drvas_chat_attachments").select("id,storage_path").eq("user_id",currentUser.id).eq("conversation_id",conversationId).limit(100);
+ if(error)throw error;
+ const files=data||[];
+ if(files.length){
+  const {error:storageError}=await supabaseClient.storage.from("drvas-media").remove(files.map(file=>file.storage_path));
+  if(storageError)throw storageError;
+  const {error:metadataError}=await supabaseClient.from("drvas_chat_attachments").delete().eq("user_id",currentUser.id).eq("conversation_id",conversationId);
+  if(metadataError)throw metadataError;
+ }
+}
+async function deleteAllConversationFiles(){
+ const {data,error}=await supabaseClient.from("drvas_chat_attachments").select("id,storage_path").eq("user_id",currentUser.id).limit(1000);
+ if(error)throw error;
+ const files=data||[];
+ for(let i=0;i<files.length;i+=100){
+  const batch=files.slice(i,i+100);
+  const {error:storageError}=await supabaseClient.storage.from("drvas-media").remove(batch.map(file=>file.storage_path));
+  if(storageError)throw storageError;
+ }
+ if(files.length){
+  const {error:metadataError}=await supabaseClient.from("drvas_chat_attachments").delete().eq("user_id",currentUser.id);
+  if(metadataError)throw metadataError;
+ }
 }
 el("chatFileInput").addEventListener("change",handleChatFilesSelected);
 
