@@ -948,7 +948,7 @@ test("Bitcoin mining calculator estimates net result without starting mining", a
   await expect(page.locator("#cryptoNetDaily")).toContainText("8.82");
   await expect(page.locator("#cryptoNetMonthly")).toContainText("264.60");
   await expect(page.locator("#cryptoPayback")).toContainText("113 zile");
-  await expect(page.locator("#cryptoCalcNotice")).toContainText("nu sunt predicții");
+  await expect(page.locator("#cryptoCalcNotice")).toContainText("nu predicții");
 });
 
 test("founder content campaign planner builds a 30-day brief for the private Studio", async ({ page }) => {
