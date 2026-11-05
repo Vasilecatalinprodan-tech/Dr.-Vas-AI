@@ -1961,26 +1961,11 @@ function prepareDrvasPresentationSpeechText(value){
 function getDrvasPresentationVoiceProfile(voices,locale){
  const lang=(locale||"ro-RO").slice(0,2).toLowerCase();
  const local=voices.filter(v=>(v.lang||"").toLowerCase().startsWith(lang));
- const preferredPool=[...local,...voices.filter(v=>!local.includes(v))];
- const femaleHints=/\b(female|woman|zira|alina|jenny|aria|samantha|victoria|karen|moira|tessa|fiona|ava|serena|hazel|susan|sonia|heera|natasha|linda|sara|sarah|catherine|olivia|emma|amelia|libby|michelle|eva|laura|lucia|paulina|helena|ana|ioana)\b/i;
- const maleHints=/\b(male|man|andrei|david|mark|daniel|james| george|guy|ryan|thomas|alex|peter|jorge|juan|luca|paul|matthew|christopher|fred|aaron|liam|enrique|stefan|carlos)\b/i;
- const score=(voice,pattern)=>pattern.test((voice.name||"")+" "+(voice.voiceURI||""))?10:0;
- const byName=(a,b)=>String(a.name||a.voiceURI||"").localeCompare(String(b.name||b.voiceURI||""));
- const localeFirst=(a,b)=>(local.includes(a)?0:1)-(local.includes(b)?0:1)||byName(a,b);
- const female=preferredPool.filter(v=>score(v,femaleHints)>0).sort(localeFirst);
- const male=preferredPool.filter(v=>score(v,maleHints)>0).sort(localeFirst);
- const used=new Set();
- const take=list=>{
-  const selected=list.find(v=>!used.has(v.voiceURI||v.name));
-  if(!selected)return null;
-  used.add(selected.voiceURI||selected.name);
-  return selected;
- };
- // Assign only explicitly matched voices, in a stable order. Never use a random browser default.
- const sarah=take(female);
- const drvas=take(male);
- const jan=take(male);
- return {drvas,jan,sarah,hasFemale:!!sarah,hasAllDistinct:!!(drvas&&jan&&sarah)};
+ // Do not require three installed voices: that previously silenced the entire intro
+ // on Windows/Android devices that expose only one voice for the selected language.
+ const pool=local.length?local:voices;
+ const voice=pool.find(v=>v.default)||pool[0]||null;
+ return {drvas:voice,jan:voice,sarah:voice,hasFemale:false,hasAllDistinct:true,hasFallback:!!voice};
 }
 function getDrvasPresentationVoices(){
  const synth=window.speechSynthesis;
@@ -2014,14 +1999,8 @@ async function speakDrvasPresentation(){
  drvasPresentationQueue=lines.slice();drvasPresentationIndex=0;
  const voiceProfile=getDrvasPresentationVoiceProfile(voices,lang);
  const voiceStatus=el("presentationAudioStatus");
- if(!voiceProfile.hasAllDistinct){
-  const missing=[!voiceProfile.drvas?"Dr.Vas (voce masculină)":"",!voiceProfile.jan?"Dr.Jan (a doua voce masculină distinctă)":"",!voiceProfile.sarah?"Sarah (voce feminină)":""].filter(Boolean).join(", ");
-  const reason="Audio este oprit pentru a nu folosi voci aleatorii. Instalează în Windows trei voci distincte pentru limba selectată: "+missing+".";
-  if(voiceStatus)voiceStatus.textContent=reason;
-  const stop=el("presentationStopButton");if(stop)stop.disabled=true;
-  const play=el("presentationPlayButton");if(play)play.disabled=false;
-  startVisualDrvasPresentation(run,0,reason);
-  return;
+ if(!voices.length&&voiceStatus){
+  voiceStatus.textContent="Încerc redarea cu vocea implicită a dispozitivului. Dacă nu se aude, apasă Reia prezentarea după ce verifici volumul și vocile text-to-speech.";
  }
  const speakNext=()=>{
   if(run!==drvasPresentationRun)return;
@@ -2034,6 +2013,8 @@ async function speakDrvasPresentation(){
   const utterance=new SpeechSynthesisUtterance(prepareDrvasPresentationSpeechText(drvasPresentationQueue[index]));
   const voiceForSpeaker=[voiceProfile.drvas,voiceProfile.jan,voiceProfile.sarah][index];
   if(voiceForSpeaker)utterance.voice=voiceForSpeaker;
+  // If the browser reports no installed voices, leave voice unset and let its
+  // default TTS engine attempt playback rather than aborting the presentation.
   utterance.lang=lang;utterance.rate=index===2?0.94:0.96;utterance.pitch=speaker.pitch;
   utterance.onstart=()=>{
    if(run!==drvasPresentationRun)return;
@@ -2048,10 +2029,11 @@ async function speakDrvasPresentation(){
    drvasPresentationIndex++;
    window.setTimeout(speakNext,420);
   };
-  utterance.onerror=()=>{
+  utterance.onerror=(event)=>{
    if(run!==drvasPresentationRun)return;
    el("presentationPresenter")?.classList.remove("is-speaking");
-   const status=el("presentationAudioStatus");if(status)status.textContent=data.unavailable;
+   const reason=event?.error||"voice playback unavailable";
+   const status=el("presentationAudioStatus");if(status)status.textContent=data.unavailable+" ("+reason+"). Apasă «Reia prezentarea» după ce verifici setările audio ale dispozitivului.";
    const stop=el("presentationStopButton");if(stop)stop.disabled=true;
    const play=el("presentationPlayButton");if(play)play.disabled=false;
    el("presentationContinueButton")?.classList.remove("hidden");
@@ -4546,9 +4528,10 @@ async function showChat(user,displayName){
   document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode");
   document.documentElement.classList.remove("chat-focus-document");
   // Session restoration returns to the presentation. A module opens only after the user chooses it.
+  // Privacy: never expose the founder's personal name or email in the signed-in workspace header.
+  // The identity remains unchanged in Supabase and the private profile settings.
   el("accountEmail").textContent =
-    (displayName || el("displayName").value.trim() || user.email || "") +
-    " · " + (el("country").value || tr("Cont personal"));
+    tr("Cont administrator") + " · " + (el("country").value || tr("Cont personal"));
 
   // Resolve the server-side administrator gate first. Dashboard metrics are
   // loaded independently by refreshAdminPanel and must not hold up navigation.
