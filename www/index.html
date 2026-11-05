@@ -1850,12 +1850,30 @@ function getDrvasPresentationVoiceProfile(voices,locale){
   if(fallback){used.add(fallback.voiceURI||fallback.name);return fallback;}
   return null;
  };
- const drvas=take(male,pool);
- const jan=take(male,pool);
+ // Reserve Sarah's feminine voice first so the male presenters cannot consume it.
  const sarah=take(female,[]);
+ const nonFemalePool=pool.filter(v=>!female.includes(v));
+ const drvas=take(male,nonFemalePool);
+ const jan=take(male,nonFemalePool);
  return {drvas,jan,sarah,hasFemale:!!sarah};
 }
-function speakDrvasPresentation(){
+function getDrvasPresentationVoices(){
+ const synth=window.speechSynthesis;
+ const initial=synth.getVoices?.()||[];
+ if(initial.length)return Promise.resolve(initial);
+ return new Promise(resolve=>{
+  let settled=false;
+  const finish=()=>{
+   if(settled)return;
+   settled=true;
+   synth.removeEventListener?.("voiceschanged",finish);
+   resolve(synth.getVoices?.()||[]);
+  };
+  synth.addEventListener?.("voiceschanged",finish,{once:true});
+  window.setTimeout(finish,1200);
+ });
+}
+async function speakDrvasPresentation(){
  const data=DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro;
  if(!("speechSynthesis" in window)||!("SpeechSynthesisUtterance" in window)){
   const status=el("presentationAudioStatus");if(status)status.textContent=data.unavailable;
@@ -1863,10 +1881,11 @@ function speakDrvasPresentation(){
  }
  stopDrvasPresentationSpeech();
  const run=drvasPresentationRun,lines=DRVAS_PRESENTER_LINES[currentLanguage]||DRVAS_PRESENTER_LINES.ro;
- drvasPresentationQueue=lines.slice();drvasPresentationIndex=0;
  const locales={ro:"ro-RO",en:"en-GB",it:"it-IT",tr:"tr-TR",de:"de-DE",fr:"fr-FR",es:"es-ES",ru:"ru-RU"};
  const lang=locales[currentLanguage]||"ro-RO";
- const voices=window.speechSynthesis.getVoices?.()||[];
+ const voices=await getDrvasPresentationVoices();
+ if(run!==drvasPresentationRun)return;
+ drvasPresentationQueue=lines.slice();drvasPresentationIndex=0;
  const voiceProfile=getDrvasPresentationVoiceProfile(voices,lang);
  const voiceStatus=el("presentationAudioStatus");
  if(!voiceProfile.hasFemale){
