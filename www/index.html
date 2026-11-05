@@ -2635,12 +2635,14 @@ async function playAssistantVoice(text){
  }
 }
 async function speakDrVas(text){
- if(!voiceAutoRead||!text||!window.speechSynthesis)return;
+ if(!voiceAutoRead||!text)return;
  const spokenText=prepareSpeechText(text);
  if(!spokenText)return;
  lastSpokenAnswer=text;
+ // Prefer the authenticated server-side voice provider even on browsers without Web Speech synthesis.
  const dedicatedVoicePlayed=await playAssistantVoice(spokenText);
  if(dedicatedVoicePlayed)return;
+ if(!window.speechSynthesis){refreshVoiceUi("voiceUnavailable");return;}
  const lang=speechLanguage();
  let voice=chooseSpeechVoice(lang);
  if(!voice){
@@ -2672,7 +2674,7 @@ async function speakDrVas(text){
  refreshVoiceUi("ready");
 }
 function replayLastAnswer(){
- if(!lastSpokenAnswer||!window.speechSynthesis)return;
+ if(!lastSpokenAnswer)return;
  const wasEnabled=voiceAutoRead;
  voiceAutoRead=true;
  speakDrVas(lastSpokenAnswer);
@@ -2687,7 +2689,7 @@ function stopVoiceOutput(){
  refreshVoiceUi("stopped");
 }
 function toggleVoiceOutput(){
- if(!window.speechSynthesis){
+ if(!window.speechSynthesis&&!currentUser){
   refreshVoiceUi("unsupported");
   return;
  }
