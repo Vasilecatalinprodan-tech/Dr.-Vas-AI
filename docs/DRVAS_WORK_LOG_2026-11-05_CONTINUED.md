@@ -68,3 +68,32 @@ This log records the durable decisions, technical findings, evidence and outstan
 - These are mocked persistence regression tests, not a substitute for real production Supabase sessions or a live database write/read test.
 
 - Test harness correction in commit `50fbe3e5557d5fde85c5930cbe5243596c45083e`: the Playwright fixture now overrides the initialized Supabase client's `from()` method rather than attempting to reassign the application's `const supabaseClient`. This was caught during source review before CI results; final pass/fail remains pending.
+
+
+## Follow-up — restore the last active module after browser restart (2026-11-05)
+Owner request: when a signed-in customer closes and reopens Dr.Vas, resume the last selected module and the conversation they were using, until they explicitly choose another module or sign out.
+
+Implementation committed:
+- Runtime change: commit `fce0dadc80d81c7237cecb5bd83a0f82a4940368`.
+- Added per-account local preference key `drvas_active_module:<user-id>` with validated module values.
+- Selecting an authorized module stores it for the current account. On a valid restored Supabase session, `showChat()` restores that module and the remembered conversation; if an ordinary user has a stale/private module selection, it safely falls back to Free.
+- A new visitor / explicit “enter modules” flow still sees the module chooser. Choosing a different module updates the remembered choice.
+- Explicit logout clears the remembered module for that account. Authentication persistence still follows the “Păstrează-mă conectat” checkbox (checked by default in the current UI).
+- Removed the extra session-resume confirmation prompt: a valid remembered session now resumes directly; users can switch accounts through explicit logout.
+- The chat already scrolls to the latest message after opening a saved conversation; that behavior is retained during module restoration.
+
+Regression coverage:
+- Updated the browser expectation that previously required restored sessions to return to the landing page; new expectation verifies the last selected Health module opens.
+- Added a per-account module preference test, including isolation from another account and clearing on logout.
+- Test commits: `79289080d95ddfa5b888a65b281220ee9f8010d8` and `af55b9eea346a74a1e2e799f934bad87dd65267d`.
+- The earlier run failed because the old test still asserted the now-obsolete landing-page behavior (37 passed, 1 obsolete expectation failed). That expectation was updated. The latest browser and deploy/regression workflows for `af55b9eea346a74a1e2e799f934bad87dd65267d` were still running when this log entry was written; do not claim their results until checked.
+
+## Follow-up — three realistic speaking presenters
+Owner's creative direction:
+- Dr.Vas presenter: use the owner's own portrait and own voice.
+- Sarah presenter: use Sarah's supplied portrait, creating an adult 23–24-year-old visual interpretation.
+- Dr.Jan presenter: create an original AI presenter portrait/avatar.
+- All three should be animated as realistic human presenters with natural speech/lip-sync, introducing the Dr.Vas story and presenting modules and the platform.
+
+Assets still required from owner: one clear portrait of the owner, one clear portrait of Sarah, and a clean 30–60 second voice recording of the owner speaking naturally for voice reference. No portrait or voice asset has been uploaded in this turn, and no avatar/video has been generated yet.
+Runway connection check: authenticated personal workspace is on the Free plan with 500 credits but currently exposes no video or speech models. The plans card was shown; Pro includes custom voice with lip-sync. No plan purchase or paid generation was made. Treat realistic talking-video production as pending until suitable video/speech capability and the required reference assets are available.
