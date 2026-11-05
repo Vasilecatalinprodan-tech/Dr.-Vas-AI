@@ -61,3 +61,12 @@ This file and the dated session logs preserve technical decisions and work summa
 - Added the source-level six-module readiness audit at docs/MODULE_READINESS_AUDIT_2026-11-05.md. It records implemented UI/code, runtime dependencies not yet verified, public/private boundaries and next work. It explicitly does not assert that all live Supabase migrations or provider secrets are configured.
 - The identity masking, speech resume and Android WebView audio fixes are in source; actual audible playback on desktop and the user's Samsung phone still needs manual verification.
 - Conversation continuity is preserved through the ChatGPT chat history and repository technical summaries. The GitHub records are not a verbatim transcript export.
+
+
+### 2026-11-05 — database isolation regression coverage
+- Added `tests/e2e/data-isolation-migrations.spec.cjs` and wired it into `.github/workflows/deploy-worker.yml`.
+- GitHub Actions run #445 (run ID `42108117982`), commit `4fc1f5d73fd19002d22672f9408e8e3331442731`: **56/56 tests passed** (the prior homepage suite had 53; three new static migration-policy tests are now included).
+- The run also completed Worker deployment, production smoke test and SBOM upload successfully.
+- The added checks guard owner-only RLS for Academy/Commerce/Business drafts, Business cashbook and Studio render jobs, plus private Studio media storage and numeric/currency/VAT constraints.
+- These are static checks of migration source, not proof that the migrations have been applied to live Supabase. Live RLS/storage verification remains outstanding.
+- Workflow: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42108117982
