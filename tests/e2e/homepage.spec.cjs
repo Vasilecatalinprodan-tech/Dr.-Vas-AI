@@ -103,6 +103,33 @@ test("showChat resumes the last selected module instead of returning to the land
   expect(await page.evaluate(() => activeModule)).toBe("health");
 });
 
+test("last selected module is remembered per account and cleared on logout", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-returning-user" };
+    rememberActiveModule("health");
+  });
+  await page.reload({ waitUntil: "domcontentloaded" });
+  await page.waitForFunction(() => document.documentElement.lang === "ro" &&
+    !document.querySelector("#appMain")?.classList.contains("language-pending"));
+  const remembered = await page.evaluate(() => {
+    currentUser = { id: "e2e-returning-user" };
+    return getRememberedModule();
+  });
+  expect(remembered).toBe("health");
+  const otherAccount = await page.evaluate(() => {
+    currentUser = { id: "different-user" };
+    return getRememberedModule();
+  });
+  expect(otherAccount).toBeNull();
+  await page.evaluate(() => clearRememberedModule("e2e-returning-user"));
+  const afterLogout = await page.evaluate(() => {
+    currentUser = { id: "e2e-returning-user" };
+    return getRememberedModule();
+  });
+  expect(afterLogout).toBeNull();
+});
+
 test("persisted Supabase session keeps the profile screen isolated when profile loading fails", async ({ page }) => {
   page.once("dialog", dialog => dialog.accept());
   await openApp(page, "ro", {
