@@ -13,7 +13,7 @@ This document consolidates decisions from the 3–4 November 2026 planning conve
 - A visible button or mockup is not proof that a feature works. Verify UI, client logic, Worker/API, database persistence, provider integration, and tests separately.
 - Never expose secrets in code, logs, screenshots, or chat. Never weaken server-side authorization to make a module appear accessible.
 
-## Six integrated user-facing modules (release remains gated)
+## Six integrated user-facing modules — public-first access
 1. **Dr.Vas Free** — general AI assistant, chat, conversation history, model/assistant selection where configured, and voice interaction.
 2. **Dr.Vas Health** — general health information and preparation support, not diagnosis or a replacement for clinicians. Professional/clinical deployment requires appropriate doctors, clinics/hospitals, validation, privacy, and legal/regulatory review.
 3. **Dr.Vas Studio** — user-directed creative and media production, including:
@@ -43,7 +43,8 @@ This document consolidates decisions from the 3–4 November 2026 planning conve
 - Production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/
 - Supabase authentication and existing chat/history tables must be preserved.
 - Access model: authenticated public users may use Dr.Vas Free and general-information Dr.Vas Health. Only Studio, Academy, Commerce and Business are founder-only until the owner authorizes their paid public launch. `ADMIN_EMAILS` is a Cloudflare Worker secret/allowlist for administrator privileges only; never add ordinary users or bypass server-side authorization. The admin dashboard and founder tools remain private.
-- Desktop and mobile navigation should remain usable: persistent left navigation on desktop and horizontal module navigation on mobile.
+- Entry flow: public welcome/language screen → sign-in or registration → module chooser. The chooser shows Free and Health as public/free; Studio, Academy, Commerce and Business remain clearly marked private/in preparation until commercial launch is explicitly approved.
+- Workspace navigation is isolated: after a module is opened, show only that module's workspace and tools, with a clear return-to-modules action. Do not expose a global rail of all modules inside a focused workspace. Keep conversation history separated by module and account; do not imply that switching modules shares private work.
 
 ## Verified work at the 2026-11-04 checkpoint
 - Canonical www/index.html is substantially richer than an older ~1,599-line copy previously pasted by the user; do not overwrite it with that older copy.
@@ -419,3 +420,35 @@ The final deployment was performed by the workflow after Playwright passed, and 
 - Latest repository commit discovered before this update: `574381963f56f99a5e0d6eb19109059a6c2393e9`, adding a manually triggerable Cloudflare Worker deployment workflow. It uses the existing Cloudflare GitHub secrets and deploys the active integrated branch; no secrets are stored in the workflow.
 - This test addition and documentation correction are source changes only until the new CI workflows complete. Do not claim the new Health test passed or that a new production deployment occurred until Actions results are checked.
 - No database tables or data were changed. No admin allowlist changes were made. The sole administrator remains `vasilecatalinprodan@gmail.com`.
+
+
+## Work checkpoint — 2026-11-05 (public Health workflow and release verification)
+
+### Product and access rules reaffirmed
+- The platform is public-first, not a whole-app private pilot. Visitors can reach the welcome page and choose a language; authentication is required before entering Free or Health.
+- Signed-in ordinary users can use Dr.Vas Free and general-information Dr.Vas Health without administrator status.
+- Studio, Academy, Commerce and Business remain founder-only until a separate paid entitlement system, privacy/legal review, provider readiness and explicit owner approval are complete. Payment must never grant administrator status.
+- The only administrator remains `vasilecatalinprodan@gmail.com`; do not expand `ADMIN_EMAILS` to include ordinary accounts.
+- Within a selected workspace, expose only that module's tools. Use the return-to-modules navigation; do not show a global module rail inside the focused workspace.
+
+### Health workflow
+- Health text chat is public to signed-in users; it is independent of the optional Live voice feature flag `GEMINI_LIVE_HEALTH_ENABLED`.
+- The Health workspace presents an explicit information-only boundary: no diagnosis, no treatment changes, and urgent symptoms require immediate medical help.
+- The Health brief builder composes the user's selected topic, goal and supplied details into the chat composer. The assistant prompt instructs the model to explain cautiously, distinguish facts from uncertainty, avoid diagnosis/treatment changes, suggest clinician questions and avoid inventing missing results.
+- Added a dedicated Playwright regression test for a normal non-admin user on a mobile viewport: enter Health, see the medical disclaimer, fill the Health brief, activate “Discută cu Dr.Vas Health”, and verify the prepared prompt reaches the chat composer without granting admin privileges.
+- The new test is committed as `5de5bdffe6bdd9e1ffd8b6ee35755663d8b7f9cb`. Its workflow outcome must be checked before describing it as passing.
+
+### Latest verified CI and production checkpoint before the new mobile test
+- Browser regression run `41928245874` completed successfully on source/test commit `4f84a00cd56752070e2a0c09ea1fb9bb172084eb`.
+- Worker deploy run `41928245802` completed successfully on the same source/test commit. Its steps included dependency installation, CycloneDX SBOM generation, JavaScript validation, Playwright browser tests, Cloudflare Worker deployment, production smoke test, and SBOM artifact upload.
+- The production smoke test checked the homepage and all six module cards, rejected unauthenticated `admin_status` with HTTP 401, and confirmed Worker/assets/AI/database configuration markers.
+- The latest successful Android build at the time was run `41923036581`, artifact `DrVas-APK`, approximately 6.1 MB. It is a debug APK build artifact, not a signed Google Play release and not proof of installation/device testing.
+- The mobile Health regression test above was added after those successful runs. Do not treat the older green run as proof that the new test passed; wait for the new workflow.
+
+### Outstanding work and release blockers
+- Confirm the latest browser and deploy workflow results for commit `5de5bdffe6bdd9e1ffd8b6ee35755663d8b7f9cb`; deploy should be gated by the browser suite and must include the production smoke test.
+- Build a fresh APK from the latest frontend commit after tests pass. The previous APK predates the mobile Health test commit; the source code itself is unchanged by that test-only commit, but a fresh artifact is preferable for a clean checkpoint.
+- Do not claim physical-device testing, Google Play readiness, payment readiness, clinical approval, or completed legal review without separate evidence.
+- Privacy notice remains a working draft and explicitly needs operator contact details, retention/lawful-basis confirmation, processor/transfer review and specialist review before public commercial launch.
+- Confirm production configuration for optional providers individually. A successful general Worker health check does not prove Creatomate rendering, live voice, founder cryptographic keys, every Supabase migration, or third-party account integrations are configured.
+- No Supabase schema/data changes were made in this work block. No production secret or administrator allowlist was changed.
