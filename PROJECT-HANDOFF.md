@@ -407,3 +407,13 @@ Resume on `drvas-integrated-platform`. The latest recorded CI evidence was reche
 - The tests inspect source/migration contents and do not prove live Supabase migrations or secrets are configured. Health regulatory readiness, clinical governance, DPIA/legal review and real-world data-flow verification remain release blockers.
 - Next module audit targets: Studio project save/open/render/export; Academy and Commerce saved workflows; Business cashbook and break-even calculations; Free chat persistence and voice; then Android device audio and live Supabase migration/RLS verification through an authorized console.
 - This GitHub checkpoint stores technical decisions and work summaries, not a verbatim ChatGPT transcript. The original conversation remains in ChatGPT history.
+
+
+### 2026-11-05 — Health and attachment regression suite verified
+- Corrected one test expectation to match the actual Health emergency instruction wording (`calling 999 (or 112)`); no production behavior needed changing.
+- Final commit: `108ad919c834c3bbc15f294da82c224184805b69`.
+- GitHub Actions run #450 (run ID `42109166078`) completed successfully: **60/60 tests passed in 25.6 seconds**; Worker deployment, production smoke test and SBOM upload also succeeded.
+- Run: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42109166078
+- The four added checks verify source-level boundaries for private profile/consent tables, attachment metadata access and limits, separate Health-data consent with fail-closed analysis, and Health assistant safety/emergency instructions.
+- Earlier run #449 had 59/60 passing; the only failure was an overly strict wording assertion in the test, corrected in #450. No app behavior change was needed for that correction.
+- Live Supabase migration state, RLS execution against real accounts, actual Health legal basis/DPIA, provider configuration and device audio remain unverified release gates.
