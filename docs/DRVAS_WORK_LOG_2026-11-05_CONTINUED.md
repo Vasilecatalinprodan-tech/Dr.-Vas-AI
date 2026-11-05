@@ -162,3 +162,9 @@ Continued the founder-led development on `founder-workbenches-development`; no p
 ### Integrity / scope
 - Corrected CSV export encoding so the downloaded file contains an actual UTF-8 BOM and CRLF rows, and formula-like cell values are prefixed to reduce spreadsheet formula injection risk.
 - No tests, syntax checks, browser checks or manual tests were run, per owner instruction. No deployment, database migration, production secret, payment, entitlement, or live mining capability was added.
+
+
+## 2026-11-05 — Mining energy and thermal planning
+- Added calculator outputs for monthly energy consumption (kWh), annual electricity cost, and approximate heat dissipation (BTU/h), based on entered combined equipment and cooling wattage.
+- These estimates help identify electricity-cost and room-cooling constraints before any hardware purchase. They are not a safety certification, electrical installation assessment or permission to operate equipment.
+- Still no device execution, mining, wallet access, live quote feed or transaction capability. No tests or deployment performed.
