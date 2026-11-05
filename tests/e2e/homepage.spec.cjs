@@ -1145,8 +1145,11 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
     }, language);
     expect(first.lang).toBe(locale);
     expect(first.speaker).toBe("Dr.Vas");
-    expect(first.text).toContain("Dr.Vas Free");
-    expect(first.text).toContain("Dr.Vas Health");
+    expect(first.text).toContain("Doctor Vas Free");
+    expect(first.text).toContain("Doctor Vas Health");
+    expect(first.text).not.toContain("Dr.Vas");
+    expect(first.text).not.toContain("Dr.Jan");
+    await expect(page.locator("#presentationSpeakerName")).toHaveText("Dr.Vas");
     await expect(page.locator("#presentationOpenButton")).toContainText(openLabels[language]);
   }
   await page.evaluate(() => {
