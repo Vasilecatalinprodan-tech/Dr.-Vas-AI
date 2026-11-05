@@ -1865,6 +1865,8 @@ function speakDrvasPresentation(){
  const run=drvasPresentationRun,lines=DRVAS_PRESENTER_LINES[currentLanguage]||DRVAS_PRESENTER_LINES.ro;
  drvasPresentationQueue=lines.slice();drvasPresentationIndex=0;
  const locales={ro:"ro-RO",en:"en-GB",it:"it-IT",tr:"tr-TR",de:"de-DE",fr:"fr-FR",es:"es-ES",ru:"ru-RU"};
+ const lang=locales[currentLanguage]||"ro-RO";
+ const voices=window.speechSynthesis.getVoices?.()||[];
  const voiceProfile=getDrvasPresentationVoiceProfile(voices,lang);
  const voiceStatus=el("presentationAudioStatus");
  if(!voiceProfile.hasFemale){
@@ -1879,7 +1881,6 @@ function speakDrvasPresentation(){
   const index=drvasPresentationIndex,key=["drvas","jan","sarah"][index],speaker=DRVAS_PRESENTERS[key];
   updateDrvasPresentationScene(index);
   const utterance=new SpeechSynthesisUtterance(prepareDrvasPresentationSpeechText(drvasPresentationQueue[index]));
-  const lang=locales[currentLanguage]||"ro-RO";
   const voiceForSpeaker=[voiceProfile.drvas,voiceProfile.jan,voiceProfile.sarah][index];
   if(voiceForSpeaker)utterance.voice=voiceForSpeaker;
   utterance.lang=lang;utterance.rate=index===2?0.94:0.96;utterance.pitch=speaker.pitch;
