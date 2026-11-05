@@ -686,3 +686,18 @@ Keep modules integrated, preserve existing auth, profile, chat/history, multilin
 - Recommendation for a low-friction first implementation: evaluate Capawesome Cloud first because its current plugin major aligns with Capacitor 8 and its documented cloud flow includes rollout and rollback. Compare current pricing, signing, data processing, retention and account requirements before selecting. Capgo remains a valid alternative, particularly if self-hosting becomes a priority.
 - No provider selected, no account created, no plugin installed and no OTA credentials added. This requires the founder's approval after reviewing provider cost/privacy terms.
 - Security design requirement: production OTA channel must be pinned to the matching native app version; CI must block incompatible bundles; test channel first, then staged production rollout; preserve built-in bundle rollback. Never deliver new native plugins or native code through OTA.
+
+
+## Continuation log — 2026-11-05 (replay fix and chat continuity)
+
+- Founder asked to continue work across the whole integrated Dr.Vas platform and preserve all progress, including the conversation.
+- Reconfirmed the working branch is `universal-chat-attachments`. The six-module scope and the rule to keep unfinished premium modules gated remain unchanged.
+- Re-inspected `www/index.html`, `worker/index.js`, `android/app/src/main/java/com/drvas/ai/MainActivity.java`, `.github/workflows/android.yml`, `package.json` and `capacitor.config.json`.
+- Found a concrete replay race in the voice UI: `replayLastAnswer()` restored `voiceAutoRead` immediately after starting the asynchronous TTS request, before the server audio response arrived. This could cause `playFounderVoice()` to discard the response without playing it.
+- Fixed `replayLastAnswer()` to await `speakDrVas()` before restoring the previous voice-toggle state. Updated the Stop button state so it also recognises active server-generated founder audio, not only browser SpeechSynthesis.
+- Code commit: `4d989ea23037fcfea718ac358c919ce166a4f7a4` — `Fix Dr.Vas replay timing and stop control`.
+- Re-fetched the updated file and confirmed both changes are present. GitHub combined commit status currently returns no status checks; this is not evidence of a successful APK build. The Android workflow should be checked for a run/artifact, and the resulting APK still needs installation and audible device testing.
+- Voice auto-read remains opt-in (`voiceAutoRead` defaults to false); the user must enable it with the voice button. Do not silently turn on microphone or audio features by default.
+- Chat preservation: the full conversation remains in ChatGPT chat history unless the user deletes it. This repository records durable project decisions and technical progress; a project session log is a continuity summary, not a verbatim export of the entire ChatGPT transcript.
+- OTA provider remains unselected. No paid account, plugin, or credentials may be created/added until the founder explicitly approves after reviewing current cost and privacy terms.
+- Next: check the APK workflow/artifact; have the founder install and test voice; investigate Worker TTS configuration and playback if still silent; continue full platform audits; keep both project docs and the session log updated after meaningful changes.
