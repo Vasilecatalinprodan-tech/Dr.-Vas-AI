@@ -3169,7 +3169,7 @@ async function renderStudioVideo(){
   const selectedFiles=Array.from(el("studioSceneImages")?.files||[]);
   const files=studioSceneOrder.length?studioSceneOrder.map(index=>selectedFiles[index]).filter(Boolean):selectedFiles;
   const audioFile=el("studioSceneAudio")?.files?.[0]||null;
-  if(files.length>8)throw new Error("Poți încărca maximum 8 imagini pentru un clip.");
+  if(files.length>8)throw new Error("Poți încărca maximum 8 scene (imagini sau clipuri MP4) pentru un video.");
   if(audioFile){
    const allowedAudio=["audio/mpeg","audio/wav","audio/mp4","audio/aac","audio/x-wav"];
    if(!allowedAudio.includes(audioFile.type))throw new Error("Folosește un fișier audio MP3, WAV, M4A sau AAC.");
@@ -3188,7 +3188,7 @@ async function renderStudioVideo(){
    for(let i=0;i<files.length;i++){
     const file=files[i],safeName=file.name.replace(/[^a-z0-9._-]+/gi,"-").slice(0,70)||"scene-image";
     const path=currentUser.id+"/studio-assets/"+makeId()+"-"+safeName;
-    studioRenderMessage("Încarc imaginea "+(i+1)+" din "+files.length+" în spațiul privat…");
+    studioRenderMessage("Încarc scena "+(i+1)+" din "+files.length+" în spațiul privat…");
     const {error:uploadError}=await supabaseClient.storage.from("drvas-media").upload(path,file,{contentType:file.type,upsert:false});
     if(uploadError)throw uploadError;
     const {data:signed,error:signedError}=await supabaseClient.storage.from("drvas-media").createSignedUrl(path,3600);
