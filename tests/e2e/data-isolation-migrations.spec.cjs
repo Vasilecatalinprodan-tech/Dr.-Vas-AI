@@ -27,21 +27,21 @@ function assertOwnerScopedTable(sql, table, label) {
 test("Academy, Commerce and Business project drafts enforce owner-only database access", async () => {
   const sql = migration("202611040001_module_projects.sql");
   assertOwnerScopedTable(sql, "drvas_module_projects", "module projects");
-  expect(sql).toMatch(/module\\s+in\\s*\\(\\s*'academy'\\s*,\\s*'commerce'\\s*,\\s*'business'\\s*\\)/i);
+  expect(sql).toMatch(/module\s+in\s*\(\s*'academy'\s*,\s*'commerce'\s*,\s*'business'\s*\)/i);
 });
 
 test("Business cashbook enforces owner-only access and validates money fields", async () => {
   const sql = migration("202611040003_business_cashbook.sql");
   assertOwnerScopedTable(sql, "drvas_business_transactions", "business cashbook");
-  expect(sql).toMatch(/amount\\s+numeric\\s*\\(\\s*14\\s*,\\s*2\\s*\\)\\s+not\\s+null\\s+check\\s*\\(\\s*amount\\s*>\\s*0\\s*\\)/i);
-  expect(sql).toMatch(/currency\\s+in\\s*\\(\\s*'GBP'\\s*,\\s*'EUR'\\s*,\\s*'RON'\\s*,\\s*'CHF'\\s*,\\s*'USD'\\s*\\)/i);
-  expect(sql).toMatch(/vat_rate\\s+numeric\\s*\\(\\s*5\\s*,\\s*2\\s*\\)\\s+not\\s+null\\s+default\\s+0\\s+check\\s*\\(\\s*vat_rate\\s+between\\s+0\\s+and\\s+100\\s*\\)/i);
+  expect(sql).toMatch(/amount\s+numeric\s*\(\s*14\s*,\s*2\s*\)\s+not\s+null\s+check\s*\(\s*amount\s*>\s*0\s*\)/i);
+  expect(sql).toMatch(/currency\s+in\s*\(\s*'GBP'\s*,\s*'EUR'\s*,\s*'RON'\s*,\s*'CHF'\s*,\s*'USD'\s*\)/i);
+  expect(sql).toMatch(/vat_rate\s+numeric\s*\(\s*5\s*,\s*2\s*\)\s+not\s+null\s+default\s+0\s+check\s*\(\s*vat_rate\s+between\s+0\s+and\s+100\s*\)/i);
 });
 
 test("Studio render jobs and media storage remain private and owner-scoped", async () => {
   const sql = migration("202611040004_studio_render_storage.sql");
   assertOwnerScopedTable(sql, "drvas_studio_render_jobs", "Studio render jobs");
-  expect(sql).toMatch(/values\\s*\\(\\s*'drvas-media'\\s*,\\s*'drvas-media'\\s*,\\s*false/i);
+  expect(sql).toMatch(/values\s*\(\s*'drvas-media'\s*,\s*'drvas-media'\s*,\s*false/i);
   for (const operation of ["select", "insert", "update", "delete"]) {
     const policy = new RegExp(
       "on\\s+storage\\.objects\\s+for\\s+" + operation +
