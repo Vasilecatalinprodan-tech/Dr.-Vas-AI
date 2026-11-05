@@ -461,4 +461,5 @@ The final deployment was performed by the workflow after Playwright passed, and 
 - The 38-test browser run `41939928983` passed on the immediately preceding test commit `5de5bdffe6bdd9e1ffd8b6ee35755663d8b7f9cb`; the deploy workflow reran the same 38-test suite successfully after the CI authorization checks were added.
 - Latest branch HEAD at this checkpoint: `522a9f196ed8a3fdf14044560dbb76f82cea6f39`.
 - Android code was not changed in this block; the existing successful debug APK artifact remains from run `41923036581`. No new APK was built because the changes after that build were tests, documentation and CI assertions only.
+- Production `/health` reported `studio_renderer: configured`, confirming the Creatomate secret is present; this does not prove a complete authenticated MP4 render, private storage write, preview or download. No end-to-end production render was performed in this block.
 - No physical-device test, Google Play release, subscription/payment launch, Health Live voice activation, clinical approval, legal sign-off, or live application of unverified Supabase migrations is claimed.
