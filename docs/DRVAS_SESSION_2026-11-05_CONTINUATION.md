@@ -421,3 +421,33 @@ Următorii pași:
 
 Păstrarea conversației:
 Acest checkpoint consemnează mesajul utilizatorului, rezultatele SQL efectiv transmise, eroarea întâlnită și pașii următori. Este un jurnal tehnic de continuitate, nu transcriere literală integrală a conversației ChatGPT; istoricul complet rămâne în ChatGPT, iar exportul de date ChatGPT este metoda pentru copia integrală.
+
+
+## 2026-11-05 — confirmare finală RLS din Supabase SQL Editor
+
+Utilizatorul a transmis rezultatul complet al verificării `pg_class.relrowsecurity` și `relforcerowsecurity` pentru tabelele relevante:
+
+| Schema | Tabel | RLS activ | RLS forțat |
+|---|---|---:|---:|
+| public | chat_messages | true | false |
+| public | drvas_business_transactions | true | false |
+| public | drvas_privacy_consents | true | false |
+| public | drvas_rate_limits | true | false |
+| public | drvas_studio_projects | true | false |
+| public | drvas_studio_render_jobs | true | false |
+| storage | objects | true | false |
+
+Interpretare:
+- RLS este activ pe toate cele șapte tabele verificate, inclusiv `storage.objects`, consimțăminte și rate limits.
+- `relforcerowsecurity=false` pentru toate: RLS nu este forțat pentru proprietarul tabelului. Acest lucru nu dezactivează RLS pentru rolurile obișnuite; politicile și privilegiile trebuie în continuare evaluate împreună.
+- Rezultatul completează verificarea anterioară: acum avem confirmarea flagurilor RLS, pe lângă inventarul politicilor deja transmis.
+- Politicile raportate anterior pentru `chat_messages`, tranzacții Business, proiecte/jobs Studio și obiectele Storage sunt descrise în secțiunea anterioară. Pentru `drvas_privacy_consents` și `drvas_rate_limits` nu au fost raportate politici în lista primită; trebuie verificat separat dacă au nevoie de politici pentru operațiile efectuate de aplicație/Worker. Nu deducem că lipsa lor din rezultatul anterior dovedește automat lipsa completă a politicilor.
+- Nu s-a executat nicio comandă SQL de scriere, nicio migrare și nicio schimbare de RLS/politici. Acesta a fost un SELECT read-only.
+- Migrarea `202611050001_chat_attachments.sql` rămâne neaplicată; tabelul `public.drvas_chat_attachments` încă lipsea la ultima inspecție.
+- PR #7 rămâne Draft, deschis și nemerged; nu s-a făcut deploy. `DRVAS_FILE_ANALYSIS_ENABLED` rămâne dezactivat.
+- Înainte de migrare sunt încă necesare revizia finală a politicilor/privilegiilor, backup și plan de rollback, apoi teste Storage reale cu fișiere sintetice. Analiza documentelor Health rămâne blocată până la verificările Gemini Paid Services/retention și UK GDPR/DPIA.
+
+Cererea fondatorului:
+> „salveaza tot sa nu pierden nimic din ce am facut”
+
+Acest jurnal păstrează rezultatul SQL exact ca valori și interpretarea tehnică pentru continuitate. Nu este o transcriere literală integrală a conversației ChatGPT; istoricul original rămâne în ChatGPT, iar exportul de date ChatGPT este metoda pentru o copie completă.
