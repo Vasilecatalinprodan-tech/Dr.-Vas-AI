@@ -2123,7 +2123,9 @@ function selectModule(moduleName,userInitiated=false){
   }
   const selectionStatus=el("moduleSelectionStatus");
   if(selectionStatus){selectionStatus.textContent="";selectionStatus.classList.add("hidden");}
+  if(activeModule!==moduleName)clearPendingChatFiles();
   activeModule=moduleName;
+  renderPendingChatFiles();
   if(currentUser)rememberActiveModule(moduleName);
   el("moduleSelectionSection")?.classList.remove("hidden","auth-flow-mode");
   document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode","history-open");
@@ -4352,6 +4354,7 @@ async function openConversation(conversationId){
   if(!currentUser || loadingConversation || isSendingMessage) return;
   loadingConversation = true;
   currentConversationId = conversationId;
+  clearPendingChatFiles();
   rememberActiveConversation(conversationId);
   logClientEvent("conversation_opened");
   conversationSaved = true;
@@ -4378,6 +4381,7 @@ async function openConversation(conversationId){
     if(!data || !data.length) renderWelcome();
     else [...data].reverse().forEach(message=>appendMessage(message.role,message.content));
 
+    await loadConversationAttachments(conversationId,activeModule);
     updateActiveConversation();
     scrollToLatestMessage(chat.lastElementChild);
   }catch(error){
@@ -4391,6 +4395,8 @@ async function openConversation(conversationId){
 function newConversation(){
   if(!currentUser || isSendingMessage) return;
   currentConversationId = makeId();
+  clearPendingChatFiles();
+  el("conversationAttachments")?.replaceChildren();
   rememberActiveConversation(currentConversationId);
   logClientEvent("conversation_created");
   conversationSaved = false;
@@ -4426,6 +4432,8 @@ async function saveMessage(role,content,conversationId=currentConversationId){
 function showLogin(){
   if(!languageReady)return;
   if(liveSocket||liveStream)stopLiveVoice();
+  clearPendingChatFiles();
+  el("conversationAttachments")?.replaceChildren();
   currentUser = null;
   isDrvasAdmin = false;
   activeModule = "free";
@@ -4653,6 +4661,8 @@ async function send(){
  const existingAttachments=[...pendingUploadedAttachments];
  if(!typedMessage&&!filesToUpload.length&&!existingAttachments.length)return;
  if(button.disabled||!currentUser||isSendingMessage)return;
+ const hasAttachments=filesToUpload.length>0||existingAttachments.length>0;
+ if(hasAttachments&&(!el("fileProcessingConsent")?.checked||(activeModule==="health"&&!el("healthDataProcessingConsent")?.checked))){window.alert(activeModule==="health"?"Bifează acordul general și acordul pentru date medicale înainte de trimitere.":"Bifează acordul pentru procesarea fișierelor înainte de trimitere.");return;}
  const message=typedMessage||(activeModule==="health"?"Te rog să explici și să analizezi documentele medicale atașate, fără a stabili un diagnostic.":"Te rog să analizezi fișierele atașate și să explici informațiile relevante.");
  if(!currentConversationId)currentConversationId=makeId();
  const conversationId=currentConversationId,moduleId=activeModule,language=currentLanguage;
