@@ -169,3 +169,42 @@ Nu s-a executat SQL nou pentru această lansare, deoarece nu au fost adăugate t
 
 Păstrarea conversației:
 Acest fișier consemnează cererea exactă de deploy și rezumatul implementării, verificărilor, versiunii Worker și APK-ului. Este un checkpoint tehnic, nu o transcriere literală integrală a tuturor mesajelor ChatGPT. Istoricul original rămâne în conversația ChatGPT; exportul de date ChatGPT oferă copia integrală.
+
+## 2026-11-05 — cerere upload universal și interpretare documente Health
+
+Mesajul exact al fondatorului:
+> „sa continuam si sa salvam tot inclusiv chatul cu tine si apropo in dr.vas health trebuie sa existe o optiune de upload unde oamenii sa pot pune o eventuala scrisoare medicala sau testele si ai sa le interpreteze si la toate sa existe asa ceva cu upload cum ai si tu sa poti pune o poza un document si etc”
+
+Decizie de produs:
+- Toate cele șase module trebuie să aibă un atașament în interfața conversației, cu picker comun, stocare privată și context separat după utilizator/conversație/modul.
+- Dr.Vas Health trebuie să poată primi scrisori medicale, analize, rezultate și imagini; să explice termenii, valorile, unitățile, intervalele de referință și posibilele întrebări de adresat clinicianului. Nu pune diagnostic, nu prescrie și nu înlocuiește clinicianul.
+- Prima listă tehnică de fișiere: JPG, PNG, WebP, PDF, TXT și CSV; maximum 5 fișiere per mesaj, 15 MB per fișier, 20 MB cumulat pentru o analiză. DOCX/XLSX/PPTX și alte formate nu sunt încă incluse; nu trebuie pretins suport pentru ele.
+- Utilizatorul trebuie să poată vedea fișierele conversației, să le reatașeze la un mesaj ulterior și să le șteargă. Ștergerea conversației/istoricului șterge și obiectele private asociate.
+
+Implementare pe branch-ul de lucru `universal-chat-attachments`:
+- Migrare nouă: `supabase/migrations/202611050001_chat_attachments.sql`.
+  - tabel `public.drvas_chat_attachments`;
+  - RLS, politici owner-only, module allow-list, constrângeri de MIME/dimensiune și cale de stocare;
+  - bucket `drvas-media` rămâne privat și acceptă PDF/TXT/CSV pe lângă imaginile/audio/video deja folosite;
+  - consimțământul `file_processing` adăugat la lista permisă; tipul `health_data_processing` exista deja.
+- `www/index.html`: picker universal, listă de fișiere selectate, acord de procesare, acord separat pentru date medicale Health, upload în bucket privat, listare/descărcare, reatașare, ștergere, trimiterea ID-urilor către Worker și localizarea controalelor în cele opt limbi.
+- `worker/index.js`: acțiune server-side pentru înregistrarea consimțământului; verifică ID-urile fișierelor, utilizatorul, conversația, modulul, MIME, dimensiunea și calea; creează URL-uri semnate scurte numai după validare; PDF-urile și imaginile sunt trimise ca input multimodal Gemini, TXT/CSV sunt citite cu limită și adăugate ca text.
+- `www/privacy-policy.html`: informare de lucru despre fișiere, furnizorul AI, consimțământ și date de sănătate.
+- `.github/workflows/browser-e2e.yml`: verificare de sintaxă Worker și JavaScript inline plus validări de bază pentru migrarea atașamentelor înainte de Playwright.
+- `tests/e2e/homepage.spec.cjs`: regresie pentru picker, fișiere imagine/PDF și afișarea acordului special Health.
+- Pull request #7: `https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/7`, draft, deschis, base `drvas-integrated-platform`. Nu este integrat și nu a fost publicat.
+
+Blocaje obligatorii înainte de activare:
+1. Migrarea SQL trebuie revizuită și aplicată în Supabase. Workflow-ul Cloudflare validează fișierul SQL, dar nu execută migrarea. Nu există o conexiune Supabase directă disponibilă în această sesiune pentru aplicare automată.
+2. Google documentează că, în Gemini Developer API Paid Services, prompturile și fișierele nu sunt folosite pentru îmbunătățirea produselor; pe Free Tier conținutul poate fi folosit în acest scop. Trebuie confirmat proiectul/API key plătit și revizuite DPA, retenția și condițiile aplicabile înainte de transmiterea documentelor medicale. Referințe oficiale: https://ai.google.dev/gemini-api/docs/zdr și https://ai.google.dev/gemini-api/docs/pricing.
+3. Pentru date medicale din Regatul Unit/UE trebuie confirmate temeiul juridic și condiția pentru categorii speciale, DPIA, acordurile cu persoanele împuternicite, retenția, procedura de ștergere și textul final al informării. Politica din repository rămâne document de lucru, nu aviz juridic.
+4. Worker-ul este fail-closed: `DRVAS_FILE_ANALYSIS_ENABLED` trebuie să rămână absent/false până când condițiile de mai sus sunt confirmate. Frontend-ul verifică `/health` înainte să încarce fișiere; Worker-ul respinge orice analiză dacă flag-ul nu este exact `true`.
+5. După migrare și configurare, testarea trebuie făcută întâi cu PDF-uri și imagini sintetice, fără date reale identificabile. Apoi verificăm încărcarea, analiza, istoricul, reatașarea și ștergerea în toate modulele.
+
+Rezultate CI pentru PR #7:
+- Ultimul run cunoscut la momentul checkpoint-ului: run ID `42050765482`, pe commitul `36e5b100c4454b59f7931f208a9d1a38ce9f9cff`, era în curs; un commit ulterior poate genera o nouă rulare. Nu se declară testele trecute până la concluzia finală.
+- Branch-ul de lucru include și commiturile `41e6f590` (Worker multimodal/consimțământ), `10ba25a5` (migrare), `f0658e49` (UI picker), `985c08e9` (trimiterea ID-urilor), `edc25b43` (persistență listă), `23fca059` (validarea URL semnat), `4353fb7f` (verificări deploy), `84f2dbe7` (verificare syntax PR), `87efc70d` (normalizare URL), `36e5b100` (localizare), `be2ba59d` (ștergere completă în batch), `1cddf50f` (nu ignoră fișiere la întrebări despre identitate).
+- Niciun commit din acest branch nu a fost publicat în producție; PR #7 rămâne draft și neintegrat.
+
+Păstrarea conversației:
+Istoricul acestui chat este păstrat în istoricul conversațiilor ChatGPT. Acest checkpoint salvează mesajul exact al fondatorului și rezumatul tehnic, nu transcrierea literală integrală a tuturor mesajelor și răspunsurilor. Pentru o copie integrală, folosește exportul de date ChatGPT.
