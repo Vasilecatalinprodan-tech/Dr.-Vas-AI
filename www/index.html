@@ -229,7 +229,20 @@ footer{text-align:center;color:#607b90;font-size:12px;padding:25px}
 .module-disclaimer{font-size:11px;color:#71899b;line-height:1.5;margin:12px 2px 0}
 .studio-workspace{margin:20px 0;padding:22px;border:1px solid #39736f;border-radius:19px;background:linear-gradient(145deg,#102d3b,#091b2b)}
 .studio-production-standard{margin:16px 0;padding:16px 18px;background:linear-gradient(135deg,#0b1c2b,#112d3d);border:1px solid #2b5867;border-radius:16px}.studio-production-brand{display:flex;align-items:center;gap:13px}.studio-brand-mark{display:inline-flex;align-items:center;justify-content:center;min-width:122px;padding:9px 12px;border:1px solid #73dcd2;border-radius:5px;color:#e7fffc;background:#071722;font-size:12px;font-weight:900;letter-spacing:1.6px;white-space:nowrap}.studio-production-brand strong,.studio-production-brand small{display:block}.studio-production-brand strong{color:#e8f7fa;font-size:13px}.studio-production-brand small{color:#93aebe;font-size:11px;margin-top:4px}.studio-production-controls{display:flex;align-items:end;gap:22px;flex-wrap:wrap;margin-top:14px}.studio-production-controls label{display:grid;gap:6px;color:#c4d9e2;font-size:12px}.studio-production-controls select{min-width:230px;padding:10px;background:#071827;border:1px solid #34536a;border-radius:9px;color:#e8f7fa}.studio-check-label{display:flex!important;align-items:center;gap:8px!important}.studio-check-label input{width:17px;height:17px;accent-color:#54d8cf}.studio-production-note{margin:12px 0 0;color:#91aebe;font-size:11px;line-height:1.55}@media(max-width:600px){.studio-production-standard{padding:13px}.studio-production-brand{align-items:flex-start;flex-direction:column}.studio-production-controls{align-items:stretch;gap:12px}.studio-production-controls select{min-width:0;width:100%}}
-.studio-workspace-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.studio-workspace{position:relative;isolation:isolate}
+.studio-workspace-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;padding-bottom:18px;border-bottom:1px solid #2d5065}
+.studio-workspace-head h2{letter-spacing:-.035em}
+.studio-workspace .studio-project-manager,.studio-workspace .studio-production-standard,.studio-workspace .income-tracker,.studio-workspace .studio-social{box-shadow:0 18px 42px #0004;border-radius:18px}
+.studio-workspace .studio-form-grid input,.studio-workspace .studio-form-grid select,.studio-workspace .studio-form-grid textarea,.studio-workspace .studio-project-controls input,.studio-workspace .studio-project-controls select{min-height:44px;border:1px solid #42647a;border-radius:11px;background:linear-gradient(180deg,#0c2435,#081a29);color:#f5fbff;transition:border-color .18s,box-shadow .18s}
+.studio-workspace .studio-form-grid input:focus,.studio-workspace .studio-form-grid select:focus,.studio-workspace .studio-form-grid textarea:focus,.studio-workspace .studio-project-controls input:focus,.studio-workspace .studio-project-controls select:focus{outline:none;border-color:#68d9d1;box-shadow:0 0 0 3px #68d9d128}
+.studio-workspace .studio-actions button,.studio-workspace .income-actions button,.studio-workspace .studio-project-controls button{min-height:42px;border-radius:11px;font-weight:800;letter-spacing:.01em;transition:transform .18s,filter .18s,box-shadow .18s}
+.studio-workspace .studio-actions button:hover,.studio-workspace .income-actions button:hover,.studio-workspace .studio-project-controls button:hover{transform:translateY(-1px);filter:brightness(1.08)}
+.studio-workspace .studio-render-panel{background:linear-gradient(145deg,#102a3e,#091827);border-color:#4c7388}
+.studio-workspace .studio-render-panel h3{color:#f4ffff;font-size:18px;letter-spacing:-.02em}
+.studio-workspace .studio-render-panel video{border:1px solid #4a7185;box-shadow:0 16px 34px #0007}
+.studio-workspace .studio-capabilities>div{border-radius:14px;border:1px solid #2c5066;background:linear-gradient(145deg,#102b40,#0a1c2b);padding:16px}
+.studio-workspace .studio-social-card{border-radius:14px;border:1px solid #31556c;background:linear-gradient(145deg,#112d42,#0a1b2a)}
+.studio-workspace .studio-disclaimer{border-left:3px solid #c49b5a;padding:10px 12px;background:#081827;border-radius:0 9px 9px 0}
 .studio-workspace-head h2{margin:8px 0;font-size:25px;color:#fff}
 .studio-workspace-head p{margin:0;color:#a9bfce;font-size:13px;line-height:1.6}
 .studio-beta-label{font-size:10px;letter-spacing:1px;color:#f0c879;border:1px solid #806b3c;border-radius:20px;padding:8px 11px}
@@ -713,7 +726,10 @@ body.module-workspace-mode .studio-workspace.hidden{
 
 /* Dr.Vas platform presentation */
 .modules-heading-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.presentation-open-button{background:#153c4b;color:#d8fffb;border:1px solid #39777b;padding:10px 14px;font-size:12px}
+.presentation-open-button,.hero-presentation-button{background:linear-gradient(135deg,#ff343b 0%,#e30d24 100%)!important;color:#090909!important;border:2px solid #050505!important;border-radius:12px;padding:11px 17px;font-size:12px;font-weight:950;letter-spacing:.045em;text-transform:uppercase;box-shadow:0 7px 0 #050505,0 13px 26px #0006;transition:transform .18s ease,box-shadow .18s ease,filter .18s ease}
+.presentation-open-button:hover,.hero-presentation-button:hover{filter:brightness(1.08);transform:translateY(-2px);box-shadow:0 9px 0 #050505,0 18px 30px #0007}
+.presentation-open-button:active,.hero-presentation-button:active{transform:translateY(3px);box-shadow:0 3px 0 #050505,0 7px 14px #0006}
+.presentation-open-button:focus-visible,.hero-presentation-button:focus-visible{outline:3px solid #fff;outline-offset:4px}
 .hero-presentation-button{display:inline-flex;align-items:center;gap:8px;margin:0 0 10px;padding:11px 16px;box-shadow:0 8px 24px #0004}
 body.presentation-open{overflow:hidden!important}
 .drvas-presentation{position:fixed;z-index:10000;left:50%;top:50%;transform:translate(-50%,-48%) scale(.97);width:min(940px,calc(100vw - 28px));max-height:calc(100dvh - 28px);overflow-y:auto;margin:0;padding:24px;background:linear-gradient(145deg,#102b40,#091827);border:1px solid #3a7184;border-radius:22px;box-shadow:0 0 0 100vmax rgba(1,7,15,.84),0 22px 70px #0009;opacity:0;transition:opacity .32s ease,transform .32s cubic-bezier(.2,.8,.2,1)}
@@ -728,7 +744,29 @@ body.presentation-open{overflow:hidden!important}
 .presentation-progress-track span{display:block;width:0;height:100%;border-radius:99px;background:linear-gradient(90deg,#54d8cf,#9ce8d8);transition:width .45s ease}
 .presentation-scene{display:flex;align-items:center;gap:20px;padding:18px;margin:12px 0 16px;border:1px solid #31596e;border-radius:18px;background:radial-gradient(ellipse at 18% 10%,#1a5261,#102b40 55%,#0b1d2e);min-height:150px}
 .presentation-presenter{display:flex;align-items:center;gap:14px;min-width:245px;position:relative}
-.presentation-avatar{width:94px;height:94px;flex:0 0 94px;display:grid;place-items:center;border-radius:50%;font-size:42px;font-weight:900;color:#efffff;border:2px solid #79e4d9;background:radial-gradient(circle at 35% 25%,#4baeb1,#16445a 72%);box-shadow:0 0 0 7px #54d8cf14,0 0 30px #54d8cf25;transition:transform .25s,box-shadow .25s}
+.presentation-avatar{width:116px;height:116px;flex:0 0 116px;position:relative;display:grid;place-items:center;overflow:visible;border-radius:50%;color:#efffff;border:2px solid #79e4d9;background:radial-gradient(circle at 35% 25%,#4baeb1,#16445a 72%);box-shadow:0 0 0 7px #54d8cf14,0 0 30px #54d8cf25;transition:transform .35s,box-shadow .35s}
+.presenter-character-art{position:relative;z-index:2;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 8px 10px #0005)}
+.character-orbit{position:absolute;inset:8px;border:1px solid #8cebe5aa;border-radius:50%;pointer-events:none}
+.character-orbit-one{animation:characterOrbit 9s linear infinite}
+.character-orbit-two{inset:-5px;border-style:dashed;opacity:.35;animation:characterOrbit 16s linear infinite reverse}
+@keyframes characterOrbit{to{transform:rotate(360deg)}}
+.character-status-light{position:absolute;z-index:3;right:5px;bottom:12px;width:13px;height:13px;border-radius:50%;background:#6df0c4;border:2px solid #092033;box-shadow:0 0 13px #6df0c4}
+.character-mouth{transform-origin:90px 108px}
+.character-blink{opacity:0;transform-origin:center;animation:characterBlink 5.2s infinite}
+@keyframes characterBlink{0%,46%,49%,100%{opacity:0}47%,48%{opacity:1}}
+.presentation-avatar-jan{border-color:#8ac9df;background:radial-gradient(circle at 35% 25%,#4c8fa9,#20364d 72%)}
+.presentation-avatar-jan .character-hair{fill:#4d3428}
+.presentation-avatar-jan .character-hair-detail{fill:#9a7258}
+.presentation-avatar-sarah{border-color:#e4b6e2;background:radial-gradient(circle at 35% 25%,#bd83bb,#4a345d 72%)}
+.presentation-avatar-sarah .character-hair{fill:#59314c}
+.presentation-avatar-sarah .character-hair-detail{fill:#bd7da6}
+.presentation-avatar-sarah .character-shoulders{fill:#d6b3d8}
+.presentation-presenter.is-speaking .presentation-avatar{animation:presentationAvatarTalk .42s ease-in-out infinite alternate}
+.presentation-presenter.is-speaking .character-mouth{animation:characterMouth .18s ease-in-out infinite alternate}
+.presentation-presenter.is-speaking .presenter-character-art{animation:characterTalk .42s ease-in-out infinite alternate}
+@keyframes characterMouth{from{transform:scaleY(.35)}to{transform:scaleY(1.45)}}
+@keyframes characterTalk{from{transform:translateY(0) rotate(-1deg)}to{transform:translateY(-3px) rotate(1deg)}}
+@media(prefers-reduced-motion:reduce){.character-orbit,.character-blink,.presentation-presenter.is-speaking .presentation-avatar,.presentation-presenter.is-speaking .character-mouth,.presentation-presenter.is-speaking .presenter-character-art{animation:none!important}}
 .presentation-avatar-jan{border-color:#8ac9df;background:radial-gradient(circle at 35% 25%,#4c8fa9,#20364d 72%);box-shadow:0 0 0 7px #74b8df14,0 0 30px #74b8df25}
 .presentation-avatar-sarah{border-color:#e4b6e2;background:radial-gradient(circle at 35% 25%,#bd83bb,#4a345d 72%);box-shadow:0 0 0 7px #d9a5db14,0 0 30px #d9a5db25}
 .presentation-presenter.is-speaking .presentation-avatar{animation:presentationAvatarTalk .42s ease-in-out infinite alternate}
@@ -832,7 +870,20 @@ body.presentation-open{overflow:hidden!important}
     <div class="presentation-progress" aria-label="Progresul prezentării"><span id="presentationStepLabel">1 / 3</span><div class="presentation-progress-track"><span id="presentationProgressBar"></span></div></div>
     <div class="presentation-scene" id="presentationScene">
      <div class="presentation-presenter" id="presentationPresenter">
-      <div class="presentation-avatar presentation-avatar-drvas" id="presentationAvatar" aria-hidden="true">✦</div>
+      <div class="presentation-avatar presentation-avatar-drvas" id="presentationAvatar" aria-hidden="true">
+       <span class="character-orbit character-orbit-one"></span><span class="character-orbit character-orbit-two"></span>
+       <svg class="presenter-character-art" viewBox="0 0 180 180" role="presentation" aria-hidden="true">
+        <defs><linearGradient id="presenterSkin" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe0c6"/><stop offset="1" stop-color="#c98d72"/></linearGradient><linearGradient id="presenterCoat" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8f4f5"/><stop offset="1" stop-color="#8db5c4"/></linearGradient></defs>
+        <path class="character-shoulders" d="M18 180c4-39 28-57 72-57s68 18 72 57" fill="url(#presenterCoat)"/><path d="M73 119h34v27H73z" fill="url(#presenterSkin)"/>
+        <ellipse cx="90" cy="79" rx="48" ry="55" fill="url(#presenterSkin)"/>
+        <path class="character-hair" d="M42 76C35 30 58 12 94 15c34 2 51 24 44 62-8-16-15-26-27-31-20 13-40 15-69 9z" fill="#26384b"/>
+        <path class="character-hair-detail" d="M47 59c12-28 29-36 53-36 15 0 28 7 36 20-22-9-46-4-62 7-9 6-18 9-27 9z" fill="#526d82"/>
+        <ellipse cx="70" cy="82" rx="5" ry="4" fill="#23384a"/><ellipse cx="110" cy="82" rx="5" ry="4" fill="#23384a"/>
+        <path class="character-blink" d="M63 82h14M103 82h14" fill="none" stroke="#23384a" stroke-width="4" stroke-linecap="round"/>
+        <path d="M84 94q6 5 12 0" fill="none" stroke="#a96f62" stroke-width="3" stroke-linecap="round"/><path class="character-mouth" d="M76 108q14 11 28 0" fill="none" stroke="#874d50" stroke-width="4" stroke-linecap="round"/>
+        <path d="M55 72q14-9 27-2M99 70q14-7 27 2" fill="none" stroke="#293d50" stroke-width="4" stroke-linecap="round"/><path d="M70 143l20 17 20-17" fill="none" stroke="#4c7d92" stroke-width="5"/>
+       </svg><span class="character-status-light"></span>
+      </div>
       <div class="presentation-presenter-copy"><strong id="presentationSpeakerName">Dr.Vas</strong><span id="presentationSpeakerRole">Asistentul principal</span><small id="presentationSpeakerModules">Dr.Vas Free · Dr.Vas Health</small></div>
       <span class="presentation-speaking-indicator" id="presentationSpeakingIndicator" aria-hidden="true"><i></i><i></i><i></i></span>
      </div>
@@ -923,7 +974,7 @@ body.presentation-open{overflow:hidden!important}
      <h3 id="studioRenderTitle">🎞 Studio Render — Export MP4 1080 × 1920</h3>
      <p>Încarcă până la 8 imagini pentru scenele clipului sau creează un teaser tipografic. Fișierele sunt păstrate privat în contul tău. Watermark-ul MADE BY VPC este adăugat de server pe fiecare cadru.</p>
      <div class="studio-form-grid">
-      <label class="studio-idea-label">Imagini pentru scene (opțional)<input id="studioSceneImages" type="file" accept="image/jpeg,image/png,image/webp" multiple></label>
+      <label class="studio-idea-label">Imagini sau video pentru scene (opțional)<input id="studioSceneImages" type="file" accept="image/jpeg,image/png,image/webp,video/mp4" multiple><small>JPG, PNG, WebP sau MP4 · maximum 8 materiale · imagini 8 MB fiecare · video 40 MB fiecare.</small></label>
       <label class="studio-idea-label">Voice-over / muzică (opțional)<input id="studioSceneAudio" type="file" accept="audio/mpeg,audio/wav,audio/mp4,audio/aac"></label>
       <label>Durata fiecărei scene<select id="studioSceneDuration"><option value="3">3 secunde</option><option value="4" selected>4 secunde</option><option value="5">5 secunde</option><option value="6">6 secunde</option></select></label>
       <label class="studio-idea-label">Texte pentru scene<textarea id="studioSceneCaptions" rows="3" maxlength="3000" placeholder="Un text pe fiecare linie, în ordinea scenelor. Aceste texte apar ca subtitrări pe video. Dacă nu ai imagini, Studio creează un teaser tipografic."></textarea></label>
@@ -1801,7 +1852,7 @@ function updateDrvasPresentationScene(index){
  const key=["drvas","jan","sarah"][index],speaker=DRVAS_PRESENTERS[key],data=DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro;
  const presenter=el("presentationPresenter"),avatar=el("presentationAvatar"),grid=el("presentationModuleGrid");
  if(presenter)presenter.classList.remove("is-speaking");
- if(avatar){avatar.className="presentation-avatar presentation-avatar-"+key;avatar.textContent=speaker.symbol;}
+ if(avatar){avatar.className="presentation-avatar presentation-avatar-"+key;avatar.dataset.presenter=key;}
  const set=(id,value)=>{const node=el(id);if(node)node.textContent=value};
  set("presentationSpeakerName",speaker.name);set("presentationSpeakerRole",speaker.role[currentLanguage]||speaker.role.ro);
  const moduleNames=["Dr.Vas Free","Dr.Vas Health","Dr.Vas Studio","Dr.Vas Academy","Dr.Vas Commerce","Dr.Vas Business"];
@@ -1847,22 +1898,21 @@ function getDrvasPresentationVoiceProfile(voices,locale){
  const femaleHints=/\b(female|woman|zira|alina|jenny|aria|samantha|victoria|karen|moira|tessa|fiona|ava|serena|hazel|susan|sonia|heera|natasha|linda|sara|sarah|catherine|olivia|emma|amelia|libby|michelle|eva|laura|lucia|paulina|helena|ana|ioana)\b/i;
  const maleHints=/\b(male|man|andrei|david|mark|daniel|james| george|guy|ryan|thomas|alex|peter|jorge|juan|luca|paul|matthew|christopher|fred|aaron|liam|enrique|stefan|carlos)\b/i;
  const score=(voice,pattern)=>pattern.test((voice.name||"")+" "+(voice.voiceURI||""))?10:0;
- const female=pool.filter(v=>score(v,femaleHints)>0).sort((a,b)=>score(b,femaleHints)-score(a,femaleHints));
- const male=pool.filter(v=>score(v,maleHints)>0).sort((a,b)=>score(b,maleHints)-score(a,maleHints));
+ const byName=(a,b)=>String(a.name||a.voiceURI||"").localeCompare(String(b.name||b.voiceURI||""));
+ const female=pool.filter(v=>score(v,femaleHints)>0).sort(byName);
+ const male=pool.filter(v=>score(v,maleHints)>0).sort(byName);
  const used=new Set();
- const take=(list,preferred)=>{
+ const take=list=>{
   const selected=list.find(v=>!used.has(v.voiceURI||v.name));
-  if(selected){used.add(selected.voiceURI||selected.name);return selected;}
-  const fallback=preferred.find(v=>!used.has(v.voiceURI||v.name));
-  if(fallback){used.add(fallback.voiceURI||fallback.name);return fallback;}
-  return null;
+  if(!selected)return null;
+  used.add(selected.voiceURI||selected.name);
+  return selected;
  };
- // Reserve Sarah's feminine voice first so the male presenters cannot consume it.
- const sarah=take(female,[]);
- const nonFemalePool=pool.filter(v=>!female.includes(v));
- const drvas=take(male,nonFemalePool);
- const jan=take(male,nonFemalePool);
- return {drvas,jan,sarah,hasFemale:!!sarah};
+ // Assign only explicitly matched voices, in a stable order. Never use a random browser default.
+ const sarah=take(female);
+ const drvas=take(male);
+ const jan=take(male);
+ return {drvas,jan,sarah,hasFemale:!!sarah,hasAllDistinct:!!(drvas&&jan&&sarah)};
 }
 function getDrvasPresentationVoices(){
  const synth=window.speechSynthesis;
@@ -1895,8 +1945,12 @@ async function speakDrvasPresentation(){
  drvasPresentationQueue=lines.slice();drvasPresentationIndex=0;
  const voiceProfile=getDrvasPresentationVoiceProfile(voices,lang);
  const voiceStatus=el("presentationAudioStatus");
- if(!voiceProfile.hasFemale){
-  if(voiceStatus)voiceStatus.textContent="Atenție: browserul nu a identificat o voce feminină disponibilă pentru Sarah. Selectează/instalează o voce feminină în setările sistemului pentru redare corectă.";
+ if(!voiceProfile.hasAllDistinct){
+  const missing=[!voiceProfile.drvas?"Dr.Vas (voce masculină)":"",!voiceProfile.jan?"Dr.Jan (a doua voce masculină distinctă)":"",!voiceProfile.sarah?"Sarah (voce feminină)":""].filter(Boolean).join(", ");
+  if(voiceStatus)voiceStatus.textContent="Prezentarea animată este disponibilă, dar audio este oprit pentru a nu folosi voci aleatorii. Instalează în Windows trei voci distincte pentru limba selectată: "+missing+".";
+  const stop=el("presentationStopButton");if(stop)stop.disabled=true;
+  const play=el("presentationPlayButton");if(play)play.disabled=false;
+  return;
  }
  const speakNext=()=>{
   if(run!==drvasPresentationRun)return;
@@ -2965,6 +3019,20 @@ let currentStudioProjectId=null;
 let currentStudioProjectOutput="";
 let currentStudioRenderJobId=null;
 let currentStudioRenderStoragePath="";
+let studioRenderPollTimer=null;
+let studioRenderPollAttempts=0;
+function stopStudioRenderPolling(){
+ if(studioRenderPollTimer)window.clearTimeout(studioRenderPollTimer);
+ studioRenderPollTimer=null;studioRenderPollAttempts=0;
+}
+function scheduleStudioRenderPolling(delay=4500){
+ if(studioRenderPollTimer)window.clearTimeout(studioRenderPollTimer);
+ if(studioRenderPollAttempts>=30){studioRenderMessage("Randarea durează mai mult decât estimarea. Poți verifica manual starea fără să pierzi proiectul.");return;}
+ studioRenderPollTimer=window.setTimeout(async()=>{
+  studioRenderPollTimer=null;studioRenderPollAttempts++;
+  await checkStudioRenderStatus();
+ },delay);
+}
 function studioRenderMessage(message,isError=false){
  const node=el("studioRenderStatus");if(node){node.textContent=message;node.style.color=isError?"#ff9d9d":"#9fe5ce";}
 }
@@ -2981,8 +3049,9 @@ async function renderStudioVideo(){
    if(audioFile.size>20*1024*1024)throw new Error("Fișierul audio trebuie să aibă maximum 20 MB.");
   }
   for(const file of files){
-   if(!["image/jpeg","image/png","image/webp"].includes(file.type))throw new Error("Folosește doar imagini JPG, PNG sau WebP.");
-   if(file.size>8*1024*1024)throw new Error("Fiecare imagine trebuie să aibă maximum 8 MB.");
+   if(!["image/jpeg","image/png","image/webp","video/mp4"].includes(file.type))throw new Error("Folosește doar imagini JPG, PNG, WebP sau video MP4.");
+   const isVideo=file.type==="video/mp4";
+   if(file.size>(isVideo?40:8)*1024*1024)throw new Error(isVideo?"Fiecare video MP4 trebuie să aibă maximum 40 MB.":"Fiecare imagine trebuie să aibă maximum 8 MB.");
   }
   const sceneSeconds=Math.max(3,Math.min(6,Number(el("studioSceneDuration")?.value)||4));
   const captions=(el("studioSceneCaptions")?.value||"").split(/\r?\n/).map(line=>line.trim());
@@ -2998,7 +3067,8 @@ async function renderStudioVideo(){
     const {data:signed,error:signedError}=await supabaseClient.storage.from("drvas-media").createSignedUrl(path,3600);
     if(signedError||!signed?.signedUrl)throw signedError||new Error("Nu am putut crea o adresă temporară pentru imagine.");
     const start=i*sceneSeconds;duration+=sceneSeconds;
-    elements.push({type:"image",name:"Scene-"+(i+1),track:1,time:start,duration:sceneSeconds,source:signed.signedUrl,fit:"cover",width:"100%",height:"100%"});
+    const isVideo=file.type==="video/mp4";
+    elements.push({type:isVideo?"video":"image",name:"Scene-"+(i+1),track:1,time:start,duration:sceneSeconds,source:signed.signedUrl,fit:"cover",width:"100%",height:"100%"});
     if(captions[i]){
      elements.push({type:"text",name:"Caption-"+(i+1),track:2,time:start,duration:sceneSeconds,x:"50%",y:"84%",width:"88%",height:"18%",x_anchor:"50%",y_anchor:"50%",x_alignment:"50%",y_alignment:"50%",text:captions[i].slice(0,300),font_family:"Montserrat",font_weight:700,font_size:"5 vmin",fill_color:"#ffffff",background_color:"rgba(0,0,0,0.58)",background_x_padding:"12%",background_y_padding:"14%"});
     }
@@ -3030,10 +3100,11 @@ async function renderStudioVideo(){
   })});
   const result=await response.json().catch(()=>({}));
   if(!response.ok)throw new Error(result.error||"Nu am putut porni randarea MP4.");
-  currentStudioRenderJobId=result.job_id;currentStudioRenderStoragePath="";
+  currentStudioRenderJobId=result.job_id;currentStudioRenderStoragePath="";studioRenderPollAttempts=0;
   if(el("studioRenderPreview")){el("studioRenderPreview").hidden=true;el("studioRenderPreview").removeAttribute("src");}
   if(el("studioRenderDownload")){el("studioRenderDownload").hidden=true;el("studioRenderDownload").removeAttribute("href");}
-  studioRenderMessage("Randarea a pornit. Stare: "+(result.status||"planned")+". Apasă «Verifică randarea» după câteva momente.");
+  studioRenderMessage("Randarea a pornit. Verificăm automat progresul și te anunțăm când MP4-ul este gata.");
+  scheduleStudioRenderPolling(4500);
   if(!el("studioIdea")?.value?.trim())el("studioIdea").value=files.length?"Randare video din "+files.length+" imagini încărcate în Dr.Vas Studio.":"Teaser tipografic creat în Dr.Vas Studio.";
   await saveStudioProject();
  }catch(error){
@@ -3042,7 +3113,7 @@ async function renderStudioVideo(){
  }finally{if(button)button.disabled=false;}
 }
 async function checkStudioRenderStatus(){
- if(!currentUser||!currentStudioRenderJobId){studioRenderMessage("Nu există o randare activă în acest proiect.",true);return;}
+ if(!currentUser||!currentStudioRenderJobId){stopStudioRenderPolling();studioRenderMessage("Nu există o randare activă în acest proiect.",true);return;}
  try{
   const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();if(sessionError)throw sessionError;
   const token=sessionData.session?.access_token;if(!token)throw new Error("Sesiunea a expirat. Conectează-te din nou.");
@@ -3055,17 +3126,21 @@ async function checkStudioRenderStatus(){
    if(error||!signed?.signedUrl)throw error||new Error("Nu am putut crea linkul privat pentru MP4.");
    const preview=el("studioRenderPreview");if(preview){preview.src=signed.signedUrl;preview.hidden=false;preview.load();}
    const download=el("studioRenderDownload");if(download){download.href=signed.signedUrl;download.hidden=false;}
+   stopStudioRenderPolling();
    studioRenderMessage("Video MP4 salvat în spațiul privat Dr.Vas. Linkul de vizualizare expiră după 60 de minute.");
    if(el("studioIdea")?.value?.trim())await saveStudioProject();
   }else if(result.status==="failed"){
+   stopStudioRenderPolling();
    studioRenderMessage(result.error||"Randarea a eșuat. Verifică materialele și creditele.",true);
   }else{
-   studioRenderMessage("Randarea este în curs: "+(result.status||"în așteptare")+". Verifică din nou în câteva momente.");
+   studioRenderMessage("Randarea este în curs: "+(result.status||"în așteptare")+". Verificare automată în câteva secunde…");
+   scheduleStudioRenderPolling(4500);
   }
  }catch(error){console.error("Dr.Vas Studio render status:",error);studioRenderMessage(error.message||"Nu am putut verifica randarea.",true);}
 }
 
 function newStudioProject(){
+ stopStudioRenderPolling();
  currentStudioProjectId=null;currentStudioProjectOutput="";currentStudioRenderJobId=null;currentStudioRenderStoragePath="";
  ["studioProjectTitle","studioIdea"].forEach(id=>{el(id).value="";});if(el("studioSubtitles"))el("studioSubtitles").checked=true;if(el("studioNarration"))el("studioNarration").value="founder_voice_pending";
  if(el("studioSceneImages"))el("studioSceneImages").value="";if(el("studioSceneAudio"))el("studioSceneAudio").value="";if(el("studioSceneCaptions"))el("studioSceneCaptions").value="";
