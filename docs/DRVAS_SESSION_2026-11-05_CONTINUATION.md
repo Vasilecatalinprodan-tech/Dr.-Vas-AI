@@ -253,3 +253,28 @@ Corecție salvată în:
 - Adăugată regula `.chat-file-consent[hidden]{display:none!important}`, păstrând și regula pentru lista de atașamente.
 
 Run #233 a avut 42/43 teste trecute; un singur eșec a fost această ascundere a consimțământului Health. Urmează rerulare pe commitul corectat. Nicio modificare de producție, Supabase sau secrete.
+
+
+## 2026-11-05 — pronunție vocală în prezentarea Dr.Vas
+
+Cererea exactă a fondatorului:
+> „la prezentare dr. se aude aiurea si as vrea sa inlocuiesti dr. cu doctor aici ma refer doar caand e vocal”
+
+Decizie și implementare:
+- În prezentarea audio, abrevierile Dr. din replicile rostite sunt expandate în Doctor înainte de crearea obiectului SpeechSynthesisUtterance.
+- Exemple rostite: „Doctor Vas”, „Doctor Jan”, „Doctor Vas Free”, „Doctor Vas Health”.
+- Numele afișate în UI, logo-ul, textele scrise, titlurile și identitatea personajelor rămân neschimbate: Dr.Vas, Dr.Jan.
+- Modificarea este limitată la narațiunea prezentării; nu schimbă răspunsurile normale ale chatului și nu rescrie conținutul vizibil.
+
+Commituri:
+- 6d330060da04197a6e7a8fc39a65258ed9a585f6 — www/index.html: helper prepareDrvasPresentationSpeechText() și folosirea lui numai pentru textul trimis către TTS în speakDrvasPresentation().
+- 3ed25a988200a592b054989009799890d5a214f0 — tests/e2e/homepage.spec.cjs: testul prezentării verifică pronunția „Doctor Vas” pentru Free/Health în toate cele opt limbi, absența formei abreviate în replica rostită și păstrarea numelui vizibil Dr.Vas.
+
+Verificare:
+- La momentul salvării acestui checkpoint, încă nu a fost observat un rezultat CI pentru commitul de test nou; testele nu sunt declarate trecute.
+- PR #7 rămâne draft și nemerged. Nicio modificare de producție, deploy, migrare Supabase sau secret.
+- Blocajele de activare a analizei fișierelor și documentelor medicale rămân cele descrise mai sus.
+
+Conversația:
+- Istoricul integral al acestei sesiuni rămâne în istoricul ChatGPT.
+- Acest jurnal păstrează cererea exactă, decizia, implementarea, testele și commiturile pentru continuitatea proiectului; nu este o transcriere literală completă a chatului.
