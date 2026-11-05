@@ -1054,3 +1054,19 @@ După commitul acestui jurnal, GitHub a pornit run-ul următor:
 Interpretare: avem dovada că testele Playwright au rulat și toate 43 au trecut în run-ul anterior; avem încă de confirmat o rulare completă cu status final `success`. Testele de voce folosesc voci simulate; nu confirmă timbrul audio real. Verificarea auditivă pe browserul utilizatorului rămâne necesară, în special pentru Sarah.
 
 Nu s-a făcut merge, deploy, migrare SQL sau schimbare de producție. PR #7 rămâne Draft.
+
+
+## 2026-11-05 — revizie suplimentară profiluri vocale prezentare
+
+Inspectată implementarea curentă din `www/index.html`, fără modificări de cod:
+- limba prezentării selectează pool-ul de voci locale pentru limba respectivă, cu fallback la lista browserului dacă nu există voci locale;
+- Sarah își rezervă prima voce care are indicii feminine în nume/voiceURI;
+- Dr.Vas și Dr.Jan caută voci marcate prin indicii masculine și evită vocea rezervată Sarah;
+- dacă browserul nu oferă o voce feminină identificabilă, interfața afișează avertisment și nu pretinde că Sarah are voce feminină garantată;
+- încărcarea asincronă a vocilor este așteptată până la evenimentul `voiceschanged` sau maximum 1,2 secunde.
+
+Limitare cunoscută: clasificarea după numele/URI este euristică, nu o proprietate standardizată a Web Speech API. Numele disponibile diferă între Windows, Chrome, Edge și Android; de aceea testele mock confirmă maparea logică, dar nu pot certifica timbrul real. Dacă pe calculatorul utilizatorului nu este selectată o voce feminină pentru Sarah, trebuie verificată lista de voci instalate în Windows și apoi testată audiția. Nu schimbăm arbitrar pitch-ul pentru a simula o voce feminină și nu modificăm Live TTS.
+
+La ultima verificare, run-ul `42087396053` (run number 272) era încă `in_progress`: validarea codului și instalarea Playwright trecuseră, Chromium se instala, iar testele browserului nu aveau încă rezultat. Verificarea trebuie continuată până la statusul final.
+
+Nu s-a modificat codul, configurația TTS, baza de date, secretele, producția sau PR statusul. PR #7 rămâne Draft, nemerged și fără deploy.
