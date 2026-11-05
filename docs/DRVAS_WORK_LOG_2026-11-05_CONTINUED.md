@@ -181,3 +181,18 @@ Added three additional founder-only workbenches inside the existing Creator & On
 All three tools remain in the founder-only admin dashboard. Their output is a draft brief for human review, not a finished published product or external transaction. No migrations, Worker routes, secrets, payment systems, public access rules, RLS policies or production data were changed.
 
 Per the owner's standing instruction, no tests, syntax checks, browser checks or manual tests were run. No merge or deployment was performed. The development branch remains isolated from the stable branch and production.
+
+
+## 2026-11-05 — Commerce profit, mining sensitivity and operations planning
+
+Added a further founder-only increment to the Creator & Online Income Lab:
+
+- **Commerce Profit Lab:** manual inputs for selling price, product cost, fulfilment/packaging, platform/payment percentage, advertising per order, returns/loss reserve, tax reserve, monthly order volume and fixed monthly costs. Calculates estimated contribution per order, contribution margin, monthly break-even order count and monthly result. Rejects invalid negative inputs and out-of-range percentages. It is a planning model, not a tax/VAT calculation or sales forecast.
+- **Mining Sensitivity Lab:** compares pessimistic/base/favourable daily net scenarios using owner-entered revenue/prodution multipliers and electricity tariff multipliers, while retaining base uptime, pool fee, cooling/equipment power and monthly maintenance assumptions. It does not fetch live BTC prices, network difficulty or mining yield and does not control equipment or wallets.
+- **Business Operations Planner:** converts a process description, target outcome, volume and available resources into a structured workflow brief with roles, approvals, exceptions, quality checks, data handling, KPIs, cost/time measures and a pilot checklist. It does not execute actions or connect to external apps.
+
+All new controls remain inside the existing founder-only admin Creator Lab. No schema, database migration, RLS policy, Worker endpoint, secret, payment entitlement, external account, production record or live deployment was changed.
+
+Owner instruction for this development period: continue without pausing for questions, save all work and preserve a record of the conversation/progress. This work log and the founder-workbench feature record are the durable project checkpoint. The ChatGPT conversation itself remains in chat history; this repository note is a project summary, not a verbatim transcript.
+
+No tests, syntax checks, browser checks or manual validation were run, per standing instruction to defer verification until the owner says to check. No merge or deployment was performed.
