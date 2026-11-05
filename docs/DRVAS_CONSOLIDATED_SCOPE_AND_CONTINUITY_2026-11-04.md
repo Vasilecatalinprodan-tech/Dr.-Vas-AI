@@ -470,3 +470,8 @@ The final deployment was performed by the workflow after Playwright passed, and 
 - Added an Android CI guard that checks `allowBackup="false"` and confirms the INTERNET permission remains present before building the APK.
 - Manifest change commit: `98629b4081fcd0aa2430c61907516fe80ccbc6ce`. Android CI guard commit: `7923bdf9db5cadf1b60fcde53e920ca0ba7c8651`.
 - Fresh APK workflow was triggered by the manifest change; record its final result and artifact only after the workflow completes. No physical-device installation test is implied.
+### Android build verification — 2026-11-05
+- Android privacy-default check passed in workflow run `41940558834`: `android:allowBackup="false"` and INTERNET permission were both confirmed before Gradle build.
+- Gradle debug APK build completed successfully and the `DrVas-APK` artifact uploaded successfully. Artifact ID: `13375717907`; size: 6,075,766 bytes (about 6.1 MB).
+- Workflow: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/41940558834
+- This is a debug APK artifact for internal testing, not a signed release/Google Play bundle. It has not been installed or tested on a physical Android device in this work block.
