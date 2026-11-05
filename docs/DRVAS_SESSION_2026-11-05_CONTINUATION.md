@@ -1136,3 +1136,22 @@ Rezultat de testare confirmat separat:
 Următorul run trebuie verificat după commitul `dd8cb52` pentru a confirma noul trigger pe push și status final success. Commiturile doar de jurnal nu ar trebui să mai anuleze această rulare.
 
 PR #7 rămâne Draft/open, nemerged. Nu s-a făcut deploy, nu s-a aplicat migrarea Supabase, nu s-au schimbat secretele sau TTS Live.
+
+
+## 2026-11-05 — confirmare după separarea triggerelor CI
+
+Rularea PR `42088012016` (job `127458336329`) s-a încheiat cu status final `success`:
+- toate etapele au trecut;
+- log: `Running 43 tests using 1 worker`;
+- rezultat: `43 passed (21.6s)`.
+
+Această rulare a verificat codul aplicației și workflow-ul cu filtrele de paths din commitul `cfc5445`, înainte de corecția finală a tipurilor de eveniment din commitul `dd8cb52`. Este o a doua confirmare completă E2E verde pentru cele 43 de teste.
+
+Rularea push `42088102043` pentru commitul `dd8cb52d7717651476b2b1a83fb318bf4cde322b` verifică noua separare a triggerelor; la ultima verificare, validarea, Playwright, Chromium și pornirea serverului local erau trecute, iar step-ul de teste E2E era încă în curs.
+
+Comportamentul dorit după această corecție:
+- deschiderea/re-deschiderea PR-ului sau marcarea lui ready declanșează verificarea;
+- commiturile noi pe branch-ul `universal-chat-attachments` declanșează verificarea numai când schimbă codul, testele, migrarea sau workflow-ul;
+- commiturile numai în jurnal nu mai declanșează workflow-ul PR prin `synchronize` și nici workflow-ul push prin filtrul `paths`.
+
+Jurnal actualizat după commitul de workflow, fără modificarea codului aplicației. Nu s-a făcut merge, deploy sau modificare de bază de date. PR #7 rămâne Draft.
