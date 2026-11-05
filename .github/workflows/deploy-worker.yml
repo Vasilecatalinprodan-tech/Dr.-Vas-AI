@@ -161,7 +161,7 @@ jobs:
             echo "Local Dr.Vas homepage did not start."
             exit 1
           fi
-          npx playwright test tests/e2e/homepage.spec.cjs tests/e2e/data-isolation-migrations.spec.cjs --reporter=line
+          npx playwright test tests/e2e/homepage.spec.cjs tests/e2e/data-isolation-migrations.spec.cjs tests/e2e/module-persistence.spec.cjs --reporter=line
 
       - name: Deploy Worker
         run: npx wrangler deploy
