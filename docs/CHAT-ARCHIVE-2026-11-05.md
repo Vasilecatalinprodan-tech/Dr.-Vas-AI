@@ -49,3 +49,10 @@ Production: https://dr--vas-ai.vasilecatalinprodan.workers.dev
 - Do not modify or reinstall the user's existing APK without explicit permission.
 - Keep Health informational and non-diagnostic unless future clinical governance, qualified clinicians and applicable approvals are in place.
 - Do not describe this checkpoint as a complete verbatim transcript. For the full original chat, use the ChatGPT conversation history/export controls.
+
+
+## Additional fixes after the initial archive entry
+
+- Fixed the speech playback gate so authenticated server-side TTS is attempted even if browser `speechSynthesis` is missing. Added an E2E test for that case and CI source assertions.
+- Improved Academy / Commerce / Business continuity: when an existing saved project is open, a new AI reply is automatically persisted into that project with the current brief. New projects are still created only after the user explicitly saves.
+- The latest CI workflow for these changes is #473 / run `42130733280`; it was still in progress when this archive update was written. Verify its final result before claiming the newest changes passed or deployed.
