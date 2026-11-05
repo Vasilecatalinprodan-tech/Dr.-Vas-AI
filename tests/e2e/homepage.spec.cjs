@@ -128,6 +128,58 @@ test("chat attachment picker rejects unsupported files, more than five files and
   await expect(page.locator("#pendingChatFiles")).toContainText("valid.txt");
 });
 
+test("users can review and withdraw file-processing consent from their profile", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-consent-user", email: "consent@example.invalid" };
+    document.querySelector("#profileSection").classList.remove("hidden");
+    window.__DRVAS_CONSENT_CALLS__ = [];
+    window.confirm = () => true;
+    supabaseClient.auth.getSession = async () => ({
+      data: { session: { access_token: "e2e-consent-token" } },
+      error: null
+    });
+    const originalFetch = window.fetch.bind(window);
+    window.fetch = async (url, options = {}) => {
+      if (String(url) === API_URL) {
+        const body = JSON.parse(options.body || "{}");
+        window.__DRVAS_CONSENT_CALLS__.push(body);
+        if (body.action === "file_processing_consent_get") {
+          return new Response(JSON.stringify({
+            ok: true,
+            file_processing_granted: true,
+            health_data_processing_granted: true
+          }), { status: 200, headers: { "Content-Type": "application/json" } });
+        }
+        if (body.action === "file_processing_consent" && body.granted === false) {
+          return new Response(JSON.stringify({ ok: true, recorded: true, granted: false, revoked: true }), {
+            status: 200,
+            headers: { "Content-Type": "application/json" }
+          });
+        }
+      }
+      return originalFetch(url, options);
+    };
+  });
+
+  await page.evaluate(() => loadFileProcessingConsent(currentUser));
+  await expect(page.locator("#fileProcessingConsentStatus")).toContainText("Acord activ");
+  await expect(page.locator("#revokeFileProcessingConsentButton")).toBeEnabled();
+
+  await page.locator("#revokeFileProcessingConsentButton").click();
+  await expect(page.locator("#fileProcessingConsentStatus")).toContainText("Acord retras");
+  await expect(page.locator("#revokeFileProcessingConsentButton")).toBeDisabled();
+  const state = await page.evaluate(() => ({
+    calls: window.__DRVAS_CONSENT_CALLS__,
+    generalCheckbox: document.querySelector("#fileProcessingConsent").checked,
+    healthCheckbox: document.querySelector("#healthDataProcessingConsent").checked
+  }));
+  expect(state.calls.map(call => call.action)).toEqual(["file_processing_consent_get", "file_processing_consent"]);
+  expect(state.calls[1].granted).toBe(false);
+  expect(state.generalCheckbox).toBe(false);
+  expect(state.healthCheckbox).toBe(false);
+});
+
 test("first visit shows the Dr.Vas landing page, language selector and clear entry CTA", async ({ page }) => {
   await openApp(page);
   await expect(page.locator("#languageGate")).toBeVisible();
