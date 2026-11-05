@@ -1,9 +1,11 @@
 # Dr.Vas AI — Project Checkpoint & Session Log
 
-Last verified: 2026-11-03  
+Last verified: 2026-11-05  
 Repository: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI  
 Working branch: `drvas-integrated-platform`  
-Latest commit returned by GitHub commit search during this inspection: `574381963f56f99a5e0d6eb19109059a6c2393e9` — "Add manual Cloudflare Worker deployment workflow".
+Current access model (supersedes older pilot notes below): public-first. Visitors see the welcome/language screen, then sign in or register. Signed-in ordinary users can use **Dr.Vas Free** and **Dr.Vas Health** for free. **Studio, Academy, Commerce and Business** remain founder-only until the owner explicitly authorizes their paid public launch. Only `vasilecatalinprodan@gmail.com` is an administrator; never add ordinary users to `ADMIN_EMAILS`. The four premium modules must not grant administrator privileges through payment.
+
+Latest verified product, access and workflow details are maintained in `docs/DRVAS_CONSOLIDATED_SCOPE_AND_CONTINUITY_2026-11-04.md`.
 
 ## Product direction
 
@@ -169,11 +171,22 @@ See `docs/BUSINESS_DESK_AND_STUDIO_MVP_PLAN_2026-11-04.md` for the new Dr.Vas Bo
 The Studio now includes an MP4 render workflow with private scene-image/audio uploads, captions, a server-injected `MADE BY VPC` watermark and private Supabase output storage. Setup and release requirements are documented in `docs/STUDIO_VOICE_VIDEO_ROADMAP_2026-11-04.md`. Production rendering still requires the Supabase migration `202611040004_studio_render_storage.sql` and a Cloudflare Worker secret named `CREATOMATE_API_KEY`; no real production render is claimed until both are configured and tested.
 
 
-## Private pilot access gate — 2026-11-04
+## Historical decision — private pilot access gate (superseded on 2026-11-04)
 
-- Founder direction: keep all six top-level modules private until the founder approves launch and required licensing/compliance gates are complete.
+- This was an interim decision and is **superseded** by the public-first access model stated at the top of this README and in the consolidated continuity document.
 - Updated the Worker text-chat authorization so every module (free, health, studio, academy, commerce, business) requires an authenticated account whose verified email is in the server-side ADMIN_EMAILS allowlist.
 - Updated the Worker Live Voice authorization with the same six-module administrator-only gate. This prevents bypassing the UI through direct API calls or voice-token requests.
 - Updated the frontend module selector to show the private-pilot restriction for every module when the signed-in user is not the configured administrator. The backend remains the security boundary; hiding/locking the UI alone is not relied upon.
 - Changes were committed to drvas-integrated-platform: Worker commit 639e0595e1ef03dbbc552856fcdfe99f38f8a0dc; frontend commit 350322a46f3e1a6e483f3d3678101619fda3bb79.
 - Pending verification: confirm GitHub Actions deployment and production behaviour for both the founder administrator and a separate non-admin test account. Do not assume the live Worker has updated until deployment succeeds.
+
+
+## Verification checkpoint — 2026-11-05
+
+- Confirmed the public-first access model in the current frontend and Worker: signed-in public users may use Free and Health; only Studio, Academy, Commerce and Business are server-side founder-gated.
+- Confirmed the current E2E suite already covers landing/auth flow, module isolation, ordinary-user Free/Health access, premium denial, per-module project persistence, and mobile Free navigation.
+- Added an additional mobile Health regression test covering the Health disclaimer and the Health brief-to-chat-composer flow for a non-admin account. Test commit: `5de5bdffe6bdd9e1ffd8b6ee35755663d8b7f9cb`.
+- Prior source/test commit `4f84a00cd56752070e2a0c09ea1fb9bb172084eb`: browser regression run `41928245874` and Worker deploy/smoke run `41928245802` both succeeded.
+- The mobile Health test is newer than those green runs. Its fresh browser/deploy workflows must pass before the new test is marked verified.
+- The previous APK artifact `DrVas-APK` from run `41923036581` is a debug build artifact only; it is not a signed Play release or proof of physical-device testing.
+- No database changes, production-secret changes, payment activation, clinical approval or Google Play publication were made in this checkpoint.
