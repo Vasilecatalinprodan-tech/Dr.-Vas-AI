@@ -26,3 +26,24 @@ The founder asked for the live Dr.Vas page to inspect on desktop and phone, aske
 
 ## Next action
 Founder opens the web URL on desktop and Samsung phone, signs in, clicks Studio, and reports the exact diagnostic shown above the module cards. If `email_not_allowlisted`, the Cloudflare `ADMIN_EMAILS` secret must contain exactly the email of the Supabase-authenticated account; if `allowlist_missing`, create/configure the secret. Never request the secret value or password in chat. Once the allowlist is corrected, test all four private modules and a sample chat request in each.
+
+
+## Founder privacy and silent presentation fix — 2026-11-05
+
+User reported that the administrator modules now open, requested masking their personal name on Dr.Vas startup/workspace, and said the animated presentation still has no sound.
+
+### Code changes
+- Updated `www/index.html` `showChat()`: workspace identity header now displays generic `Cont administrator` and country, not profile display name or email. Account/profile data in Supabase remain unchanged.
+- Found the presentation's strict voice selection gate: it aborted narration unless the browser reported three distinct voices (two male and one female). This was the direct code-level reason that devices with fewer matching voices could show the animated presentation but remain silent.
+- Reworked `getDrvasPresentationVoiceProfile()` to reuse one available voice for all three presenters. If the browser reports no voices, the presentation still attempts the browser's default speech engine rather than exiting before speech.
+- Improved utterance error status to show the browser's speech error string.
+- Parsed the inline JavaScript successfully after the change.
+
+### Build/deploy status
+- Commit: `50dc6a7515fc2ec9d7db09047bc645fbaa6efa63`.
+- Deployment workflow run #436 (ID `42103421994`) and Android build run #327 (ID `42103421938`) were still in progress at the time of this record. Verify final status and deployment smoke test before telling user the website update is live.
+- The already-installed Android APK was not changed or reinstalled. New CI APK build is not an instruction to reinstall.
+- Actual audio playback remains unverified until tested on a physical browser/device after deployment. Code-level cause was addressed, but do not promise sound until the real test succeeds.
+
+### Conversation preservation
+This file records the technical summary and decisions from this conversation; the original full chat remains in ChatGPT conversation history. It is not a verbatim export of the transcript.
