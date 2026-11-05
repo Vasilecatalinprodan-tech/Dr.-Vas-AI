@@ -34,3 +34,12 @@ Use two disposable test accounts (User A and User B). Verify that each can creat
 ## Release gate
 
 Until the live query outputs and two-account tests have been reviewed, record Supabase as **source-reviewed, live verification outstanding** — not complete.
+
+## 2026-11-05 — Academy, Commerce and Business migration request
+
+- Founder found the Academy UI message requesting migration `202611040001_module_projects.sql`.
+- Reviewed the exact migration. It creates one shared `public.drvas_module_projects` table for the `academy`, `commerce` and `business` module values; it is not three separate migrations.
+- The migration creates an owner/module/updated index, enables RLS, revokes public/anon privileges, grants authenticated CRUD, and adds per-user `auth.uid() = user_id` policies for select/insert/update/delete. It is wrapped in a transaction and uses `IF NOT EXISTS`/drop-and-recreate policies, so it is intended to be re-runnable.
+- Do not apply three copies. Apply this exact migration once in the correct Dr.Vas Supabase project. Then verify the table, RLS and four policies, and test all three module values with two disposable user accounts.
+- No live Supabase connector or authorized database session is available in this development session. Therefore the SQL has been reviewed and documented, but has NOT been executed against the live database. Do not claim the Academy/Commerce/Business project persistence is fixed until the migration has been applied and verified in Supabase.
+- User-facing next action: Supabase Dashboard → correct Dr.Vas project → SQL Editor → New query → paste the full contents of `supabase/migrations/202611040001_module_projects.sql` → Run. Then run the read-only checks in `docs/SUPABASE_READONLY_VERIFICATION.sql` and complete the two-account isolation tests described in `docs/SUPABASE_LIVE_VERIFICATION_GUIDE.md`. Never paste secrets into chat.
