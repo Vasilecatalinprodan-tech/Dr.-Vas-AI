@@ -203,3 +203,12 @@ Founder feedback:
 - Do not apply three copies. Apply this exact migration once in the correct Dr.Vas Supabase project. Then verify the table, RLS and four policies, and test all three module values with two disposable user accounts.
 - No live Supabase connector or authorized database session is available in this development session. Therefore the SQL has been reviewed and documented, but has NOT been executed against the live database. Do not claim the Academy/Commerce/Business project persistence is fixed until the migration has been applied and verified in Supabase.
 - User-facing next action: Supabase Dashboard → correct Dr.Vas project → SQL Editor → New query → paste the full contents of `supabase/migrations/202611040001_module_projects.sql` → Run. Then run the read-only checks in `docs/SUPABASE_READONLY_VERIFICATION.sql` and complete the two-account isolation tests described in `docs/SUPABASE_LIVE_VERIFICATION_GUIDE.md`. Never paste secrets into chat.
+
+
+## 2026-11-05 follow-up — user-reported migration and assistant voice routing
+
+- Founder reports that shared migration `202611040001_module_projects.sql` was successfully executed in Supabase. Treat this as user-reported completion of the SQL execution step only.
+- Added a focused read-only SQL check for the module-project table's RLS flag, four named owner policies, authenticated CRUD privileges and absence of anon CRUD privileges. Run it in Supabase; independent live verification and two-account cross-user isolation remain release gates.
+- Assistant-aware TTS is now deployed. The frontend identifies Dr.Vas, Dr.Jan or Sarah in each TTS request; the Worker validates the identity, checks the authenticated session and rate limit, then selects the corresponding server-side secret. Dr.Vas retains the existing `ELEVENLABS_VOICE_ID`; Jan and Sarah require `ELEVENLABS_JAN_VOICE_ID` and `ELEVENLABS_SARAH_VOICE_ID`.
+- Workflow #466 passed including the new assistant-identity browser test and production smoke test. This does not prove audible voice differentiation on a physical device; provider voice IDs and Samsung S24 tests remain pending.
+- No new paid voice usage was initiated and the installed APK was not changed.
