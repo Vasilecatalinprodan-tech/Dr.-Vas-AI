@@ -2658,8 +2658,6 @@ function selectModule(moduleName,userInitiated=false,suppressConversationRestore
   let moduleConversationToRestore=null;
   if(previousModule!==moduleName)clearPendingChatFiles();
   activeModule=moduleName;
-  document.body.classList.toggle("health-module-mode",moduleName==="health");
-  document.body.classList.toggle("shared-chat-sidebar-mode",!["free","health"].includes(moduleName));
   const sidebarBrand=el("freeSidebarBrand");
   const sidebarNames={free:"✦ Dr.Vas Free",health:"✚ Dr.Vas Health",studio:"🎬 Dr.Vas Studio",academy:"🎓 Dr.Vas Academy",commerce:"🛒 Dr.Vas Commerce",business:"📊 Dr.Vas Business"};
   if(sidebarBrand)sidebarBrand.textContent=sidebarNames[moduleName]||"✦ Dr.Vas";
@@ -2680,7 +2678,9 @@ function selectModule(moduleName,userInitiated=false,suppressConversationRestore
   if(currentUser)rememberActiveModule(moduleName);
   el("moduleSelectionSection")?.classList.remove("hidden","auth-flow-mode");
   document.body.classList.remove("module-workspace-mode","free-module-mode","health-module-mode","shared-chat-sidebar-mode","chat-focus-mode","history-open");
-  document.documentElement.classList.remove("chat-focus-document");
+  document.documentElement.classList.remove("chat-focus-document","drvas-free-shell");
+  document.body.classList.toggle("health-module-mode",moduleName==="health");
+  document.body.classList.toggle("shared-chat-sidebar-mode",!["free","health"].includes(moduleName));
   el("moduleSelectionShell")?.classList.add("modules-open");
   el("landingActions")?.classList.add("hidden");
   document.querySelectorAll(".module-card").forEach(card=>{
