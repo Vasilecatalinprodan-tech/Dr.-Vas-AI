@@ -97,3 +97,11 @@ This is a structured engineering checkpoint of the user's 2026-11-06 audit reque
 - Created PR #23 to explicitly remove the fallback's `hidden` attribute and set its display to grid on image error; on image load it restores the hidden attribute and removes the inline display override. Browser and Android PR checks are running.
 - Production health URL is `https://dr--vas-ai.vasilecatalinprodan.workers.dev/health`; direct check via the available web viewer was not accessible. Do not claim health smoke test passed.
 - PR #23 URL: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/23
+
+
+## Follow-up correction — presenter fallback PR #24 (2026-11-06 14:18 UTC)
+- PR #23 was closed as superseded after its first code attempt still failed the browser regression. Its changes and archive checkpoint were carried forward into PR #24.
+- PR #24: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/24
+- Branch: fix/presenter-fallback-display-2026-11-06; latest code commit at this note: e0aaa7f0e34ea132f2f7031d21874a91016e36c3.
+- The fallback implementation now uses explicit CSS display state instead of toggling the HTML hidden attribute: image error hides the broken image and displays the fallback; image load restores the image and hides the fallback.
+- PR #24 browser regression and Android checks have started. Merge is pending their results. The next main deploy workflow must run the expanded 88-test suite before its Worker deploy and production smoke-test steps can complete.
