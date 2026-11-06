@@ -1758,8 +1758,10 @@ test("Sarah and Dr.Jan portraits load from permanent local assets in selector, p
 
 test("assistant portrait fallback appears if a local image cannot load and recovers when restored", async ({ page }) => {
   await openApp(page, "ro");
+  await page.evaluate(() => document.querySelector("#chatSection").classList.remove("hidden"));
   const image = page.locator('[data-assistant="jan"] .assistant-avatar');
   const fallback = page.locator('[data-assistant="jan"] .assistant-avatar-fallback');
+  await expect(image).toBeVisible();
   await image.evaluate(node => { node.src = "/assets/presenters/missing-test-image.jpg"; });
   await expect(image).toBeHidden();
   await expect(fallback).toBeVisible();
@@ -1776,4 +1778,64 @@ test("presenter assets do not depend on temporary Runway signed URLs", async ({ 
   expect(source).not.toContain("_jwt=");
   expect(source).toContain('/assets/presenters/drjan.jpg');
   expect(source).toContain('/assets/presenters/Sarah23.jpg');
+});
+
+test("Crypto engine filters Proof-of-Work coins strictly above one dollar and by hardware", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(() => {
+    const engine = window.DrVasCryptoEngine;
+    const markets = [
+      { id: "bitcoin", current_price: 65000, market_cap: 1000, price_change_percentage_24h: 2 },
+      { id: "litecoin", current_price: 90, market_cap: 500, price_change_percentage_24h: -1 },
+      { id: "dogecoin", current_price: 0.2, market_cap: 300 },
+      { id: "ravencoin", current_price: 0.03, market_cap: 20 },
+      { id: "ethereum", current_price: 3000, market_cap: 900 },
+      { id: "monero", current_price: 150, market_cap: 100 }
+    ];
+    return {
+      all: engine.eligibleCoins(markets, "all", 1).map(coin => coin.symbol),
+      sha256: engine.eligibleCoins(markets, "asic-sha256", 1).map(coin => coin.symbol),
+      randomx: engine.eligibleCoins(markets, "cpu-randomx", 1).map(coin => coin.symbol)
+    };
+  });
+  expect(result.all).toEqual(["BTC", "XMR", "LTC"]);
+  expect(result.sha256).toEqual(["BTC"]);
+  expect(result.randomx).toEqual(["XMR"]);
+});
+
+test("Crypto profitability core subtracts pool fee, energy and maintenance", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(() => window.DrVasCryptoEngine.calculateNetDaily({
+    coinsPerDay: 0.01,
+    priceUsd: 100,
+    watts: 1000,
+    electricityUsdPerKwh: 0.1,
+    poolFeePercent: 1,
+    uptimePercent: 100,
+    maintenanceUsdPerDay: 0.5
+  }));
+  expect(result.grossUsd).toBeCloseTo(1, 8);
+  expect(result.poolFeeUsd).toBeCloseTo(0.01, 8);
+  expect(result.energyUsd).toBeCloseTo(2.4, 8);
+  expect(result.maintenanceUsd).toBeCloseTo(0.5, 8);
+  expect(result.netUsd).toBeCloseTo(-1.91, 8);
+});
+
+test("landing hero renders two animated DNA strands and emergency stop latches locally", async ({ page }) => {
+  await openApp(page, "ro");
+  await expect(page.locator("#heroSection .dna-helix-visual")).toBeVisible();
+  await expect(page.locator("#heroSection .dna-strand")).toHaveCount(2);
+  const state = await page.evaluate(() => {
+    document.querySelector("#cryptoEmergencyStopButton").click();
+    return {
+      pressed: document.querySelector("#cryptoEmergencyStopButton").getAttribute("aria-pressed"),
+      label: document.querySelector("#cryptoEmergencyStopButton").textContent.trim(),
+      scanDisabled: document.querySelector("#cryptoEngineScanButton").disabled,
+      status: document.querySelector("#cryptoEngineStatus").textContent
+    };
+  });
+  expect(state.pressed).toBe("true");
+  expect(state.label).toBe("STOP ACTIVAT");
+  expect(state.scanDisabled).toBe(true);
+  expect(state.status).toContain("OPRIRE LOCALĂ ARMATĂ");
 });

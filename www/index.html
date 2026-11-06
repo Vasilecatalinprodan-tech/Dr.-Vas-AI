@@ -143,7 +143,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .assistant-choice[aria-pressed="true"]{border-color:#58d8cf;background:linear-gradient(135deg,#174b51,#17384a);color:#fff;box-shadow:0 0 0 1px rgba(88,216,207,.15)}
 .assistant-choice small{display:block;font-size:10px;color:#9ab6c4;font-weight:500;margin-top:3px}
 .assistant-avatar{width:40px;height:40px;flex:0 0 40px;border-radius:50%;object-fit:cover;border:1px solid #5a9b9d;transition:transform .2s,filter .2s}
-.assistant-avatar-fallback{display:grid;place-items:center;width:40px;height:40px;flex:0 0 40px;border-radius:50%;background:#17354b;border:1px solid #5a9b9d;color:#9de8e1;font-size:20px}.assistant-avatar-fallback[hidden]{display:none!important}
+.assistant-avatar-fallback{display:none;place-items:center;width:40px;height:40px;flex:0 0 40px;border-radius:50%;background:#17354b;border:1px solid #5a9b9d;color:#9de8e1;font-size:20px}.assistant-avatar-fallback[hidden]{display:none!important}
 .assistant-avatar-symbol{display:block;width:68px;height:82px;flex:0 0 68px;border-radius:15px;overflow:hidden;background:#17354b;border:1px solid #5a9b9d;box-shadow:0 5px 16px #07152288;transform:translateZ(0)}
 .assistant-avatar-symbol svg{display:block;width:100%;height:100%;animation:avatarIdle 4.8s ease-in-out infinite;transform-origin:50% 80%}
 .assistant-aurora{background:#40304c;border-color:#c2a1bd}
@@ -868,6 +868,39 @@ body.presentation-open{overflow:hidden!important}
  .studio-scene-timeline{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:360px){.drvas-presentation{padding:12px}.presentation-avatar{width:82px;height:82px;flex-basis:82px}.presentation-presenter-copy strong{font-size:15px}}
+
+/* DR.VAS DOUBLE-HELIX IDENTITY */
+#heroSection{position:relative;overflow:hidden}
+#heroSection .hero-content{position:relative;z-index:2}
+.dna-helix-visual{position:absolute;z-index:1;right:5%;top:50%;width:clamp(130px,19vw,230px);height:clamp(230px,34vw,330px);transform:translateY(-50%);opacity:.82;pointer-events:none;filter:drop-shadow(0 0 18px #58d8cf55)}
+.dna-helix-visual svg{width:100%;height:100%;overflow:visible;perspective:700px}
+.dna-helix-core{transform-origin:90px 160px;transform-box:fill-box;animation:dnaHelixTurn 13s linear infinite}
+.dna-strand{fill:none;stroke-width:5;stroke-linecap:round;stroke-dasharray:9 7;animation:dnaStrandFlow 2.8s linear infinite}
+.dna-strand-a{stroke:#5ce4d8}
+.dna-strand-b{stroke:#8e9cff;animation-delay:-1.4s}
+.dna-rungs{fill:none;stroke:#d4fff5;stroke-width:2.3;stroke-linecap:round;opacity:.78;animation:dnaRungPulse 2.2s ease-in-out infinite alternate}
+@keyframes dnaHelixTurn{0%{transform:rotateY(0deg) rotateZ(-2deg)}50%{transform:rotateY(180deg) rotateZ(2deg)}100%{transform:rotateY(360deg) rotateZ(-2deg)}}
+@keyframes dnaStrandFlow{to{stroke-dashoffset:-64}}
+@keyframes dnaRungPulse{from{opacity:.28}to{opacity:.95}}
+@media(max-width:700px){.dna-helix-visual{right:2%;top:45%;width:112px;height:220px;opacity:.34}.hero-content{max-width:100%;padding-right:82px}}
+@media(prefers-reduced-motion:reduce){.dna-helix-core,.dna-strand,.dna-rungs{animation:none!important}}
+/* HIGH-VISIBILITY FOUNDER EMERGENCY CONTROL */
+.crypto-engine-panel{margin-top:18px;padding:16px;border:1px solid #4b6073;border-radius:14px;background:linear-gradient(145deg,#101f30,#091522)}
+.crypto-engine-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0}
+.crypto-engine-toolbar select{min-width:220px;flex:1;padding:11px;border:1px solid #3a596e;border-radius:9px;background:#071827;color:#fff}
+.crypto-engine-scan{padding:11px 16px;border:1px solid #57cfc6;border-radius:9px;background:#123e48;color:#eaffff;font-weight:800;cursor:pointer}
+.crypto-emergency-stop{min-height:48px;padding:10px 22px;border:4px solid #050505!important;border-radius:10px!important;background:#e00018!important;color:#fff!important;font-size:14px!important;font-weight:900!important;letter-spacing:.07em;box-shadow:0 0 0 2px #e0001855,0 6px 18px #0009;cursor:pointer}
+.crypto-emergency-stop:hover{background:#b90013!important;transform:translateY(-1px)}
+.crypto-emergency-stop[aria-pressed="true"]{background:#65000a!important;box-shadow:inset 0 0 0 2px #050505,0 0 0 3px #f33}
+.crypto-engine-status{margin:10px 0;padding:10px 12px;border:1px solid #345368;border-radius:9px;background:#071827;color:#a9c2d0;font-size:12px;line-height:1.5}
+.crypto-engine-table{width:100%;min-width:620px;border-collapse:collapse}
+.crypto-engine-table th,.crypto-engine-table td{padding:10px 9px;border-bottom:1px solid #284253;text-align:left;font-size:12px}
+.crypto-engine-table th{color:#83dcd5;font-size:10px;text-transform:uppercase;letter-spacing:.05em}
+.crypto-engine-table td{color:#d5e5ec}
+.crypto-price-positive{color:#80e0b2!important;font-weight:800}
+.crypto-engine-footnote{color:#9bb3c2;font-size:11px;line-height:1.6;margin:10px 0 0}
+@media(max-width:620px){.crypto-engine-toolbar>*{width:100%}.crypto-engine-toolbar select{min-width:0}.crypto-emergency-stop{width:100%}}
+
 </style>
 </head>
 
@@ -894,6 +927,17 @@ body.presentation-open{overflow:hidden!important}
 </section>
 <section id="heroSection" class="hero">
  <div class="hero-content">
+  <div class="dna-helix-visual" aria-hidden="true">
+   <svg viewBox="0 0 180 320" role="presentation" focusable="false">
+    <g class="dna-helix-core">
+     <path class="dna-strand dna-strand-a" d="M28 8 C152 42 28 78 152 112 S28 182 152 216 S28 286 152 312"/>
+     <path class="dna-strand dna-strand-b" d="M152 8 C28 42 152 78 28 112 S152 182 28 216 S152 286 28 312"/>
+     <g class="dna-rungs">
+      <path d="M43 25 L137 25 M67 57 L113 57 M43 89 L137 89 M67 121 L113 121 M43 153 L137 153 M67 185 L113 185 M43 217 L137 217 M67 249 L113 249 M43 281 L137 281"/>
+     </g>
+    </g>
+   </svg>
+  </div>
   <div class="tag">INTELLIGENCE WITHOUT LIMITS</div>
   <button type="button" class="presentation-open-button hero-presentation-button" id="heroPresentationOpenButton" onclick="openDrvasPresentation()">▶ Deschide prezentarea</button>
   <button type="button" class="landing-primary hero-entry-button" id="heroChatCta" onclick="startDrVas()">Vorbește cu Dr.Vas <span aria-hidden="true">→</span></button>
@@ -1440,6 +1484,23 @@ body.presentation-open{overflow:hidden!important}
       <span id="cryptoReportNotice" class="admin-footnote" role="status">Raportul include ipotezele, formulele și rezultatele afișate; nu execută mining.</span>
      </div>
     </div>
+    <section class="crypto-engine-panel" aria-labelledby="cryptoEngineHeading">
+     <h5 id="cryptoEngineHeading">⚙ Dr.Vas Mining Engine · PoW Discovery & Profitability Core</h5>
+     <p>Motorul identifică monede Proof-of-Work din catalogul compatibil, filtrează cotațiile strict peste 1 USD și potrivește algoritmul cu tipul echipamentului. Prețul peste 1 USD nu înseamnă automat profit: pentru clasarea reală sunt necesare hashrate-ul, dificultatea/recompensa rețelei, comisionul pool-ului și energia.</p>
+     <div class="crypto-engine-toolbar">
+      <select id="cryptoMiningHardware" aria-label="Tip echipament pentru minare"></select>
+      <button type="button" class="crypto-engine-scan" id="cryptoEngineScanButton" onclick="scanCryptoMiningCandidates()">Scanează monedele peste $1</button>
+      <button type="button" class="crypto-emergency-stop" id="cryptoEmergencyStopButton" aria-pressed="false" onclick="activateCryptoEmergencyStop()">STOP URGENȚĂ</button>
+     </div>
+     <div id="cryptoEngineStatus" class="crypto-engine-status" role="status" aria-live="polite">Motor de analiză pregătit. Mining-ul real rămâne oprit până la conectarea unui agent nativ verificat și autorizarea echipamentului.</div>
+     <div class="admin-table-wrap">
+      <table class="crypto-engine-table">
+       <thead><tr><th>Monedă</th><th>Algoritm</th><th>Preț USD</th><th>Schimbare 24h</th><th>Compatibilitate</th></tr></thead>
+       <tbody id="cryptoEngineCoinsBody"><tr><td colspan="5">Apasă „Scanează monedele peste $1” pentru cotații.</td></tr></tbody>
+      </table>
+     </div>
+     <p class="crypto-engine-footnote">Sursa de cotații: CoinGecko public markets API. Catalogul este limitat la monede PoW cunoscute și algoritmi declarați; nu pretinde că acoperă fiecare token sau fiecare pool. Motorul nu folosește CPU/GPU, nu rulează mining ascuns și nu trimite fonduri. Butonul roșu armează oprirea locală pentru comenzile viitoare; nu poate opri un miner extern până când agentul nativ securizat nu este conectat.</p>
+    </section>
    </section>
    <section class="founder-workbench" aria-labelledby="founderProductionHeading">
     <div class="crypto-admin-heading">
@@ -1623,8 +1684,8 @@ body.presentation-open{overflow:hidden!important}
     <div class="assistant-switcher" role="group" aria-label="Alege asistentul">
      <span class="assistant-switcher-label">Alege asistentul tău</span>
      <button type="button" class="assistant-choice" data-assistant="drvas" aria-pressed="true" onclick="selectAssistant('drvas')"><img class="assistant-avatar" src="drvas.jpeg" alt=""><span>Dr.Vas<small>Asistent principal</small></span></button>
-     <button type="button" class="assistant-choice" data-assistant="jan" aria-pressed="false" onclick="selectAssistant('jan')"><img class="assistant-avatar" src="/assets/presenters/drjan.jpg"  alt="Dr.Jan — portretul asistentului AI" loading="eager" decoding="async" onerror="this.hidden=true;this.nextElementSibling.hidden=false" onload="this.hidden=false;this.nextElementSibling.hidden=true"><span class="assistant-avatar-fallback" hidden aria-hidden="true">◈</span><span>Dr.Jan<small>Ghid strategic AI</small></span></button>
-     <button type="button" class="assistant-choice" data-assistant="aurora" aria-pressed="false" onclick="selectAssistant('aurora')"><img class="assistant-avatar" src="/assets/presenters/Sarah23.jpg"  alt="Sarah — portretul asistentei AI" loading="eager" decoding="async" onerror="this.hidden=true;this.nextElementSibling.hidden=false" onload="this.hidden=false;this.nextElementSibling.hidden=true"><span class="assistant-avatar-fallback" hidden aria-hidden="true">✧</span><span>Sarah<small>Învățare și creativitate</small></span></button>
+     <button type="button" class="assistant-choice" data-assistant="jan" aria-pressed="false" onclick="selectAssistant('jan')"><img class="assistant-avatar" src="/assets/presenters/drjan.jpg"  alt="Dr.Jan — portretul asistentului AI" loading="eager" decoding="async"><span class="assistant-avatar-fallback" hidden aria-hidden="true">◈</span><span>Dr.Jan<small>Ghid strategic AI</small></span></button>
+     <button type="button" class="assistant-choice" data-assistant="aurora" aria-pressed="false" onclick="selectAssistant('aurora')"><img class="assistant-avatar" src="/assets/presenters/Sarah23.jpg"  alt="Sarah — portretul asistentei AI" loading="eager" decoding="async"><span class="assistant-avatar-fallback" hidden aria-hidden="true">✧</span><span>Sarah<small>Învățare și creativitate</small></span></button>
      <button type="button" class="assistant-choice assistant-help-choice" onclick="startGuidedHelp()">Ghidează-mă pas cu pas</button>
      <p class="assistant-intro" id="assistantIntro">Asistentul principal Dr.Vas este pregătit să te ajute.</p>
     </div>
@@ -1671,6 +1732,7 @@ body.presentation-open{overflow:hidden!important}
 
 <footer>© 2026 Dr.Vas AI · Think • Ask • Discover · <a href="/privacy-policy.html" target="_blank" rel="noopener">Confidențialitate</a></footer>
 
+<script src="/crypto-engine.js"></script>
 <script>
 /* Fail open: a secondary script/dependency error must never leave the whole app hidden. */
 window.addEventListener("error",function(event){
@@ -5355,6 +5417,111 @@ el("password").addEventListener("keydown",e=>{
   if(e.key === "Enter") handleAuth();
 });
 
+
+function bindPresenterFallbacks() {
+  document.querySelectorAll(".assistant-choice .assistant-avatar").forEach(image => {
+    if (image.dataset.fallbackBound === "true") return;
+    const fallback = image.parentElement?.querySelector(".assistant-avatar-fallback");
+    if (!fallback) return;
+    image.dataset.fallbackBound = "true";
+    const isCurrentRequest = () => !image.currentSrc || image.currentSrc === image.src;
+    const showFallback = () => {
+      if (!isCurrentRequest()) return;
+      image.style.display = "none";
+      fallback.hidden = false;
+      fallback.style.display = "grid";
+    };
+    const hideFallback = () => {
+      if (image.naturalWidth <= 0 || !isCurrentRequest()) return;
+      image.style.display = "";
+      fallback.hidden = true;
+      fallback.style.display = "none";
+    };
+    image.addEventListener("error", showFallback);
+    image.addEventListener("load", hideFallback);
+    if (image.complete) {
+      if (image.naturalWidth > 0) hideFallback();
+      else showFallback();
+    }
+  });
+}
+
+let drVasCryptoStopLatched = false;
+function initCryptoMiningEngine() {
+  const select = document.getElementById("cryptoMiningHardware");
+  if (!select || !window.DrVasCryptoEngine) return;
+  select.innerHTML = window.DrVasCryptoEngine.hardware.map(item =>
+    '<option value="' + item.value + '">' + item.label + '</option>'
+  ).join("");
+}
+async function scanCryptoMiningCandidates() {
+  const status = document.getElementById("cryptoEngineStatus");
+  const body = document.getElementById("cryptoEngineCoinsBody");
+  const button = document.getElementById("cryptoEngineScanButton");
+  if (!status || !body || !window.DrVasCryptoEngine) return;
+  if (drVasCryptoStopLatched) {
+    status.textContent = "STOP URGENȚĂ este armat. Resetează controlul numai după verificarea echipamentului.";
+    return;
+  }
+  button.disabled = true;
+  button.textContent = "Se scanează…";
+  status.textContent = "Se citesc cotațiile publice și se aplică filtrul strict de preț > 1 USD…";
+  try {
+    const [markets, hardware] = await Promise.all([
+      window.DrVasCryptoEngine.fetchMarkets(),
+      Promise.resolve(document.getElementById("cryptoMiningHardware")?.value || "all")
+    ]);
+    const coins = window.DrVasCryptoEngine.eligibleCoins(markets, hardware, 1);
+    body.replaceChildren();
+    if (!coins.length) {
+      const row = body.insertRow();
+      const cell = row.insertCell();
+      cell.colSpan = 5;
+      cell.textContent = "Nicio monedă din catalog nu îndeplinește simultan filtrul > $1 și compatibilitatea selectată.";
+    } else {
+      for (const coin of coins) {
+        const row = body.insertRow();
+        const values = [
+          coin.name + " (" + coin.symbol + ")",
+          coin.algorithm,
+          "$" + coin.priceUsd.toLocaleString("en-US", { maximumFractionDigits: 6 }),
+          coin.change24h === null ? "—" : (coin.change24h >= 0 ? "+" : "") + coin.change24h.toFixed(2) + "%",
+          "Compatibilitate algoritm · " + coin.hardware.join(", ")
+        ];
+        values.forEach((value, index) => {
+          const cell = row.insertCell();
+          cell.textContent = value;
+          if (index === 2) cell.className = "crypto-price-positive";
+        });
+      }
+    }
+    status.textContent = "Scanare finalizată: " + coins.length + " monede PoW din catalog peste $1 pentru profilul selectat. Aceasta este o listă de candidați, nu o recomandare de minare sau profit.";
+  } catch (error) {
+    status.textContent = "Scanarea nu a reușit: " + (error?.message || "eroare necunoscută") + ". Verifică accesul la sursa de cotații și încearcă din nou.";
+    const row = body.insertRow();
+    const cell = row.insertCell();
+    cell.colSpan = 5;
+    cell.textContent = "Cotațiile nu sunt disponibile momentan.";
+  } finally {
+    button.disabled = drVasCryptoStopLatched;
+    button.textContent = "Scanează monedele peste $1";
+  }
+}
+function activateCryptoEmergencyStop() {
+  drVasCryptoStopLatched = true;
+  const button = document.getElementById("cryptoEmergencyStopButton");
+  const scan = document.getElementById("cryptoEngineScanButton");
+  const status = document.getElementById("cryptoEngineStatus");
+  if (button) {
+    button.setAttribute("aria-pressed", "true");
+    button.textContent = "STOP ACTIVAT";
+  }
+  if (scan) scan.disabled = true;
+  if (status) status.textContent = "OPRIRE LOCALĂ ARMATĂ. Motorul de analiză nu mai acceptă comenzi noi în această sesiune. Niciun miner extern nu este conectat în această versiune.";
+}
+
+bindPresenterFallbacks();
+initCryptoMiningEngine();
 calculateCryptoMiningEconomics();
 initLanguage();
 </script>
