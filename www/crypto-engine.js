@@ -65,11 +65,22 @@
   async function fetchMarkets(fetchImpl = root.fetch) {
     if (typeof fetchImpl !== "function") throw new Error("Browserul nu poate accesa sursa de cotații.");
     const url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1&sparkline=false";
-    const response = await fetchImpl(url, { headers: { accept: "application/json" }, cache: "no-store" });
-    if (!response.ok) throw new Error("Sursa de cotații a răspuns cu HTTP " + response.status + ".");
-    const data = await response.json();
-    if (!Array.isArray(data)) throw new Error("Format invalid primit de la sursa de cotații.");
-    return data;
+    const controller = typeof AbortController === "function" ? new AbortController() : null;
+    const timeout = controller && typeof root.setTimeout === "function"
+      ? root.setTimeout(() => controller.abort(), 12000) : null;
+    try {
+      const response = await fetchImpl(url, {
+        headers: { accept: "application/json" },
+        cache: "no-store",
+        ...(controller ? { signal: controller.signal } : {})
+      });
+      if (!response.ok) throw new Error("Sursa de cotații a răspuns cu HTTP " + response.status + ".");
+      const data = await response.json();
+      if (!Array.isArray(data)) throw new Error("Format invalid primit de la sursa de cotații.");
+      return data;
+    } finally {
+      if (timeout !== null) root.clearTimeout(timeout);
+    }
   }
 
   root.DrVasCryptoEngine = Object.freeze({
