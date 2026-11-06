@@ -2532,3 +2532,21 @@ test("module capabilities open dedicated feature pages instead of one crowded wo
   await expect(page.locator('#businessWorkspace [data-feature-page="cashbook"] #businessLedgerRows')).toBeVisible();
   await expect(page.locator('#businessWorkspace [data-feature-page="plan"]')).toBeHidden();
 });
+
+
+test("Health information desk opens as its own feature page while the shared chat remains available", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-health-feature-page", email: "health@example.invalid" };
+    isDrvasAdmin = false;
+    showModuleSelection();
+    selectModule("health", true);
+  });
+  await expect(page.locator("#healthWorkspace .drvas-feature-navigation")).toBeVisible();
+  await expect(page.locator('#healthWorkspace [data-feature-page="health-brief"]')).toBeVisible();
+  await expect(page.locator("#healthWorkspace #healthBrief")).toBeVisible();
+  await expect(page.locator("#chatSection .history-panel")).toBeVisible();
+  await expect(page.locator("#freeChatView .input-area .chat-file-button")).toBeVisible();
+  await expect(page.locator("#healthDataProcessingConsentWrap")).toBeHidden();
+});
