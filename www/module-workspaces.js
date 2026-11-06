@@ -88,10 +88,11 @@
  function business(root){
   const planForm=direct(root,":scope > .studio-form-grid"),planActions=direct(root,":scope > .studio-actions"),planProjects=Array.from(root.children).find(n=>n.matches(".module-project-manager"));
   const sectionFor=id=>byId(id)?.closest("section")||null;
-  const cashbook=sectionFor("businessCashbookTitle"),breakEven=sectionFor("businessBreakEvenTitle"),student=sectionFor("businessAssessmentTitle");
+  const cashbook=sectionFor("businessCashbookTitle"),cashflow=sectionFor("businessCashflowTitle"),breakEven=sectionFor("businessBreakEvenTitle"),student=sectionFor("businessAssessmentTitle");
   simple(root,[
    {id:"plan",label:"Plan de afaceri",title:"Plan de afaceri",description:"Construiește și salvează strategia, bugetul și pașii de implementare.",nodes:[planForm,planActions,planProjects]},
    {id:"cashbook",label:"Contabilitate / registru",title:"Registru de încasări și cheltuieli",description:"Organizează tranzacțiile și exportă datele pentru verificarea contabilă.",nodes:[cashbook]},
+   {id:"cashflow",label:"Raport Cashflow",title:"Raport de flux de numerar",description:"Analizează încasările, cheltuielile și soldul net pe perioada selectată.",nodes:[cashflow]},
    {id:"break-even",label:"Prag de rentabilitate",title:"Calculator Business",description:"Calculează volumul minim și scenarii pe baza ipotezelor introduse.",nodes:[breakEven]},
    {id:"student",label:"Student Desk",title:"Evaluare și îndrumare academică",description:"Feedback pe rubrică și structură, cu respectarea integrității academice.",nodes:[student]}
   ]);
