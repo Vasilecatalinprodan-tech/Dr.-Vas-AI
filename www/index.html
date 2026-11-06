@@ -5798,6 +5798,34 @@ async function freeNavLoadScheduled(){
  }
 }
 
+
+async function freeNavLoadPlugins(){
+ const page=freeNavPage("Plugins","Starea integrărilor tehnice care susțin Dr.Vas. Acestea sunt servicii interne; catalogul de pluginuri externe și conectarea conturilor terțe nu sunt încă activate.");
+ const grid=document.createElement("div");grid.className="free-nav-grid";page.appendChild(grid);
+ const loading=document.createElement("div");loading.className="free-nav-status";loading.textContent="Verific integrările Dr.Vas…";grid.appendChild(loading);
+ try{
+  const response=await fetch(API_URL+"/health",{cache:"no-store"});
+  const health=await response.json();
+  if(!response.ok||!health.checks)throw new Error(health.error||"Starea integrărilor nu este disponibilă.");
+  const items=[
+   ["Dr.Vas Worker","API-ul aplicației și procesele securizate",health.checks.worker==="ok"],
+   ["Supabase","Autentificare, conversații și stocare privată",health.checks.database==="configured"],
+   ["Gemini AI","Motorul de răspunsuri AI",health.checks.ai==="configured"],
+   ["Studio Renderer","Serviciul de randare video",health.checks.studio_renderer==="configured"],
+   ["Analiza fișierelor","Procesarea fișierelor atașate",health.checks.file_analysis==="enabled"]
+  ];
+  grid.replaceChildren();
+  items.forEach(([name,description,active])=>{
+   const card=document.createElement("article");card.className="free-nav-card";
+   const h=document.createElement("h3");h.textContent=name;card.appendChild(h);
+   const p=document.createElement("p");p.textContent=description;card.appendChild(p);
+   const state=document.createElement("p");state.textContent=active?"Disponibil / configurat":"Dezactivat sau neconfigurat";state.className="free-nav-muted";card.appendChild(state);grid.appendChild(card);
+  });
+  const external=document.createElement("div");external.className="free-nav-status";external.textContent="Pluginuri externe: nu există încă un catalog de instalare sau conexiuni OAuth în Dr.Vas. Nu afișăm conturi conectate fictiv.";page.appendChild(external);
+  const updated=document.createElement("p");updated.className="free-nav-muted";updated.textContent="Ultima verificare: "+new Date(health.timestamp||Date.now()).toLocaleString();page.appendChild(updated);
+ }catch(error){grid.replaceChildren();const failed=document.createElement("div");failed.className="free-nav-status";failed.textContent="Nu am putut verifica integrările: "+error.message;grid.appendChild(failed);}
+}
+
 function openFreeNavView(view="chat",render=true){
  if(activeModule!=="free")return;
  const allowed=["chat","images","scheduled","library","plugins","explore","projects","recents"];
@@ -5814,11 +5842,7 @@ function openFreeNavView(view="chat",render=true){
  if(view==="projects"){freeNavLoadProjects();return;}
  if(view==="recents"){freeNavLoadRecents();return;}
  if(view==="scheduled"){freeNavLoadScheduled();return;}
- if(view==="plugins"){
-  const page=freeNavPage("Plugins","Conectează instrumente externe numai după verificarea furnizorului și acordarea permisiunilor.");
-  const status=document.createElement("div");status.className="free-nav-status";status.textContent="În acest moment nu există pluginuri externe conectate sau un catalog de conectare activ în Dr.Vas. Nu vom afișa integrări inventate ca fiind instalate.";page.appendChild(status);
-  freeNavCard(page,"Serviciile interne Dr.Vas","Autentificarea și fișierele private folosesc Supabase; cererile AI sunt procesate de Worker. Acestea sunt componente interne, nu pluginuri conectate de utilizator.",null,null);return;
- }
+ if(view==="plugins"){freeNavLoadPlugins();return;}
  if(view==="explore"){
   const page=freeNavPage("Explore","Descoperă modulele și funcțiile Dr.Vas disponibile în contul tău.");
   const grid=document.createElement("div");grid.className="free-nav-grid";page.appendChild(grid);
