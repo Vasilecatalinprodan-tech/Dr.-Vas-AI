@@ -1852,6 +1852,7 @@ test("Commerce unit economics calculates per-order margin, price floor and budge
 
   const result = await page.evaluate(() => {
     const values = {
+      commerceProduct: "Organizatoare pentru casă",
       commercePrice: "30",
       commerceBudget: "100",
       commerceCurrency: "GBP",
