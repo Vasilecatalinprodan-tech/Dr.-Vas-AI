@@ -255,3 +255,13 @@ Founder feedback:
 
 - Workflow #476 / run `42182127089` completed SUCCESS. The new Commerce deletion regression test passed, together with the complete browser regression suite, JavaScript validation, Worker deployment, production smoke test and SBOM upload.
 - `main` was fast-forward synchronized with `drvas-integrated-platform` after the successful workflow. Documentation was updated to record the result.
+
+
+## 2026-11-06 — repository-wide branch integration audit
+
+- User instruction: continue development across all branches; save all work and chat; no-cost constraint remains active.
+- Inventoried all eight branches. Snapshot, divergence and feature integration findings saved in `docs/BRANCH_INTEGRATION_AUDIT_2026-11-06.md`.
+- Verified active integrated code already includes long-form 100,000-character chat input, founder workbench/cashbook/cashflow, private chat attachment migration and Worker handling, session/module continuity, and startup fail-open handling.
+- Account deletion remains documented but unimplemented; no destructive account deletion route was enabled.
+- Preserved all divergent legacy branches; no force-push, rebase, deletion or wholesale merge was performed.
+- Added E2E test for Academy Markdown export content and download metadata. Workflow #478 / run `42187371574` was still running when this note was written.
