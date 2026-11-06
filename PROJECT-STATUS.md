@@ -913,3 +913,11 @@ Founder feedback:
 - Added Commerce and Business E2E tests for owner-scoped update and Markdown export. Commit: `7c8e6b89d97fd8b2e22d9b6577fc484e3d96fb15`. CI is pending; do not treat tests as passing yet.
 - Workflow #478 / run `42187371574` was in progress at last inspection, at Chromium installation. Await browser tests, deploy and smoke-test conclusion.
 - Zero-new-cost constraint remains active. No paid provider calls, new subscriptions, rendering, voice credits, production secrets, live SQL changes or APK replacement were initiated.
+
+
+### Additional module persistence coverage — 2026-11-06
+
+- Extended the shared Academy/Commerce/Business E2E coverage: Commerce and Business existing-project updates and Markdown exports are now covered; Academy and Business owner-scoped deletion/selection-state clearing are also covered (Commerce deletion was already covered).
+- Test commits: `7c8e6b89d97fd8b2e22d9b6577fc484e3d96fb15` and `a60ac62ed5ce7b620d44c0cae46a76403a37f9ee`.
+- These are test-only changes on `drvas-integrated-platform`. No application runtime code was changed in this follow-up.
+- CI for the new commits has not yet returned a completed status. Workflow #478 / run `42187371574` remained at Chromium installation on the last inspection; its browser test, deploy and production smoke-test steps were still pending. Do not claim a passing result or advance `main` until a completed successful workflow is confirmed.
