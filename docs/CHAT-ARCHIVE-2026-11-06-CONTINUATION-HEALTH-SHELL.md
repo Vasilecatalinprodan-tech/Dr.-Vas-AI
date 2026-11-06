@@ -168,3 +168,10 @@ Additional commits:
 - The workflow requires the diagnostic JSON to contain `rate_limit_setup_ok: true`; otherwise it stops before Cloudflare Worker deployment.
 - Browser CI statically verifies the migration step, the Health diagnostic step, the required credential names and their order before Worker deployment.
 - This does not claim that the production RPC has already been repaired. It makes the next authorized production release apply pending migrations and verify the RPC/security grants before deployment.
+
+## Run #508 and final test refinements
+- Run #508 completed with 84 passed / 3 failed. The mobile viewport/composer regression passed. Remaining failures were the project lifecycle test trying to edit shared fields while the Saved Projects page was active, plus Dr.Jan portrait alt and top Back visibility.
+- Updated the project lifecycle test to switch back to the correct Course Builder/Product Research page before editing a draft, then return to Saved Projects before reopening it.
+- Added explicit final New Chat navigation after the welcome view is rendered, explicit top Back visibility on the module activation animation frame, and explicit Dr.Jan alt text after the speaker scene changes.
+- The next browser workflow run initially failed its static migration-order check because the Health diagnostic was implemented inside the migration step rather than as a separate step. Corrected the marker to the actual diagnostic command text; no application code change was needed for that static check.
+- Latest source commit at this checkpoint: `f4bf4d7a`; browser CI run #515 failed only the static marker check. The corrected workflow is committed after it and requires a fresh run.
