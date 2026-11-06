@@ -2633,4 +2633,7 @@ test("all six module chats share the same sidebar destinations and attachment co
     await page.locator('[data-free-nav="chat"]').click();
     await expect(page.locator("#freeChatView")).toBeVisible();
   }
+  await page.locator("#globalBackToModules").click();
+  await expect(page.locator("#globalBackToModules")).toBeHidden();
+  await expect(page.locator("#moduleSelectionShell")).toBeVisible();
 });
