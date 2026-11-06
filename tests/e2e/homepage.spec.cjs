@@ -2514,6 +2514,12 @@ test("module capabilities open dedicated feature pages instead of one crowded wo
   await expect(page.locator('#studioWorkspace [data-feature-page="book"]')).toBeVisible();
   await expect(page.locator('#studioWorkspace [data-feature-page="book"] h3')).toHaveText("Cărți și eBookuri");
   await expect(page.locator("#studioDeliverable")).toHaveValue("book");
+  await page.locator("#studioIdea").fill("Book-only draft");
+  await page.locator('#studioWorkspace [data-feature="series"]').click();
+  await expect(page.locator("#studioIdea")).not.toHaveValue("Book-only draft");
+  await page.locator("#studioIdea").fill("Series-only draft");
+  await page.locator('#studioWorkspace [data-feature="book"]').click();
+  await expect(page.locator("#studioIdea")).toHaveValue("Book-only draft");
   await page.locator('#studioWorkspace [data-feature="video"]').click();
   await expect(page.locator('#studioWorkspace [data-feature-page="video"] #studioRenderCreateButton')).toBeVisible();
   await page.locator('#studioWorkspace [data-feature="projects"]').click();
@@ -2525,6 +2531,12 @@ test("module capabilities open dedicated feature pages instead of one crowded wo
   await expect(page.locator('#academyWorkspace [data-feature-page="lessons"]')).toBeVisible();
   await expect(page.locator("#academyWorkspace #academySubject")).toBeVisible();
   await expect.poll(() => page.evaluate(() => window.DrVasAcademyFeature)).toBe("lessons");
+  await page.locator("#academySubject").fill("Lesson-only course");
+  await page.locator('#academyWorkspace [data-feature="exercises"]').click();
+  await expect(page.locator("#academySubject")).not.toHaveValue("Lesson-only course");
+  await page.locator("#academySubject").fill("Quiz-only course");
+  await page.locator('#academyWorkspace [data-feature="lessons"]').click();
+  await expect(page.locator("#academySubject")).toHaveValue("Lesson-only course");
   await page.locator("#academySubject").fill("E2E course");
   await page.evaluate(() => buildAcademyPrompt());
   await expect(page.locator("#question")).toHaveValue(/FOCUS: scrie lecțiile în detaliu/);
@@ -2541,6 +2553,12 @@ test("module capabilities open dedicated feature pages instead of one crowded wo
   await page.locator('#commerceWorkspace [data-feature="suppliers"]').click();
   await expect(page.locator('#commerceWorkspace [data-feature-page="suppliers"] #commerceProduct')).toBeVisible();
   await expect.poll(() => page.evaluate(() => window.DrVasCommerceFeature)).toBe("suppliers");
+  await page.locator("#commerceProduct").fill("Supplier-only product");
+  await page.locator('#commerceWorkspace [data-feature="launch"]').click();
+  await expect(page.locator("#commerceProduct")).not.toHaveValue("Supplier-only product");
+  await page.locator("#commerceProduct").fill("Launch-only product");
+  await page.locator('#commerceWorkspace [data-feature="suppliers"]').click();
+  await expect(page.locator("#commerceProduct")).toHaveValue("Supplier-only product");
   await page.locator("#commerceProduct").fill("E2E product");
   await page.evaluate(() => buildCommercePrompt());
   await expect(page.locator("#question")).toHaveValue(/FOCUS: construiește o comparație de furnizori/);
