@@ -151,3 +151,21 @@ Per owner instruction, no tests, syntax checks, browser checks or manual checks 
 4. Audit every hidden action against Worker-side admin verification, owner scope, audit logs and safe failure.
 5. When the owner authorises validation, run the complete regression/security pipeline before attempting PR #9 integration or deployment.
 6. Keep this archive as a structured record of relevant chat instructions and project work; it is not a literal export of the entire ChatGPT interface/transcript.
+
+
+## 2026-11-06 — integrare în main și deploy de producție confirmat
+
+- PR #10 (`integration/drvas-2026-11-06`) a fost integrat cu squash merge; merge commit: `7871ecc80799ae22e54833c611b08c73100052e6`.
+- PR #9, vechea ramură divergentă, a fost închis fără merge și fără rescrierea istoricului.
+- Workflow GitHub Actions #496 / run `42200966967`, pe `main` și commitul exact de mai sus, s-a încheiat SUCCESS:
+  - npm dependencies și SBOM generation;
+  - validare JavaScript Worker și toate scripturile browser;
+  - toate cele 85 de teste Playwright/E2E au trecut;
+  - deploy Worker a trecut;
+  - production smoke test a trecut;
+  - SBOM a fost încărcat (artifact ID `13494865860`).
+- Smoke test-ul a confirmat Worker online la `https://dr--vas-ai.vasilecatalinprodan.workers.dev`, pagina principală și toate cele șase carduri publice; cererea neautentificată `admin_status` a fost respinsă corect cu HTTP 401.
+- Wrangler a raportat versiunea Worker `a87f7c06-3210-4a8c-bdbc-ff0c7d5e2ed2`. Cloudflare Workers Builds check pentru ramura intermediară non-main a raportat failure; acesta nu a fost considerat deploy de producție. Deploy-ul confirmat este cel din workflow-ul de pe `main`, care a trecut smoke test-ul.
+- Workflow Android #336 / run `42199232414` a trecut build-ul APK. APK-ul nu a fost instalat sau verificat fizic în această etapă; redarea vocală pe Samsung rămâne test de dispozitiv.
+- Arhiva conversației a fost completată în `docs/CHAT-ARCHIVE-2026-11-06.md`, iar handoff/status/development log au primit același checkpoint. Este o arhivă structurată de continuitate, nu un export integral al UI ChatGPT.
+- Limitele de siguranță rămân: fără mining real, wallet-uri/tranzacții, Health document analysis în producție, schimbări Supabase/RLS, abonamente sau servicii plătite fără aprobările și controalele necesare.
