@@ -2,8 +2,18 @@ name: Build DrVas APK
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'www/**'
+      - 'android/**'
+      - 'capacitor.config.*'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/android.yml'
   push:
     branches:
+      - main
       - drvas-integrated-platform
     paths:
       - 'www/**'
