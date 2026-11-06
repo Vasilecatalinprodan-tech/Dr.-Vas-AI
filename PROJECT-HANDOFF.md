@@ -992,3 +992,16 @@ Date: 2026-11-06
 - Dr.Vas continues to use existing `www/drvas.jpeg`; no duplicate copy was created.
 - To complete safely, retrieve/export the two generated image binaries through an available Runway asset download/export route (or upload the two outputs as files), visually review them, convert/optimise to WebP, add them at the referenced paths, then run full CI, PR checks, merge and post-merge production smoke test. Do not request payment or top-up.
 - This checkpoint and the user's instruction to resume, merge/deploy and archive the chat are recorded here. This is a structured continuity archive, not a verbatim export of the entire ChatGPT UI.
+
+
+## 2026-11-06 — reluare, recuperare imagini și blocaj la import
+- La cererea repetată a utilizatorului („continue de unde ai ramas si dai si deploy si merge si salveaza tot inclusiv chatul”), am reluat exact task-urile Runway deja existente, fără să generez altele și fără să consum alte credite.
+- Ambele task-uri au finalizat cu succes și au returnat URL-uri de preview:
+  - Dr.Jan: `d3842309-f86b-4f5e-991f-0698b3573c08`.
+  - Sarah adult age progression: `122ba613-ef40-4b59-99e7-7903cca5b905`.
+- Încercarea de a importa direct URL-urile în GitHub Actions a eșuat: primul download a returnat HTTP 401. Linkurile de artefact Runway sunt protejate/temporare și nu au putut fi folosite ca sursă stabilă pentru repository. Nu s-a creat niciun fișier imagine în repo.
+- Workflow temporar `.github/workflows/import-presenter-assets.yml` a fost șters imediat după eșec în commit `b2aa6c64141c7553848fca2b10f7b4e2735511dd`; nu a rămas un import automat sau URL semnat expus în branch.
+- Frontend-ul rămâne WIP în ramura `feature/presenter-faces-2026-11-06`: selectorul și scena de prezentare indică spre `www/assets/presenters/jan.jpg` și `sarah.jpg`, cu fallback la inițiale dacă fișierele lipsesc. Fotografia Dr.Vas existentă `www/drvas.jpeg` rămâne sursa sa.
+- Fișierele `jan.jpg` și `sarah.jpg` NU există încă în repository; de aceea nu s-au rulat verificările finale, nu s-a deschis PR, nu s-a făcut merge și nu s-a făcut deploy. Este intenționat: nu publicăm o versiune care ar afișa fallback în locul portretelor promise.
+- Nu s-au consumat credite suplimentare după cele 8 credite incluse raportate anterior; nu s-a cumpărat nimic.
+- Următorul pas tehnic necesar: obținerea fișierelor binare originale ale celor două imagini printr-un export/descărcare autorizată din Runway (sau prin furnizarea lor ca atașamente de către utilizator). După ce fișierele sunt disponibile local, optimizare și commit, testare E2E, PR, verificări complete, merge și deploy pe main.
