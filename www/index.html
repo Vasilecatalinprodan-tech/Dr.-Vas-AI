@@ -1025,6 +1025,11 @@ body.free-module-mode .conversation-legacy-label{color:#e3bb8d!important;font-si
 
 body.free-module-mode #chatSection>.chat-view-nav .chat-history-toggle{display:inline-flex!important}
 
+@media(max-width:760px){
+ body.free-module-mode #chatSection .chat-main #freeChatView .input-area{position:fixed!important;left:10px!important;right:10px!important;bottom:calc(42px + env(safe-area-inset-bottom,0px))!important;margin:0!important;z-index:100!important;box-sizing:border-box!important}
+ body.free-module-mode main,body.free-module-mode #appMain,body.free-module-mode #chatSection,body.free-module-mode #chatSection .chat-main,body.free-module-mode #freeChatView{transform:none!important}
+ body.free-module-mode #freeChatView>#chat{padding-bottom:170px!important}
+}
 </style>
 <link rel="stylesheet" href="/module-workspaces.css">
 </head>
@@ -2188,7 +2193,7 @@ function updateDrvasPresentationScene(index){
  const key=["drvas","jan","sarah"][index],speaker=DRVAS_PRESENTERS[key],data=DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro;
  const presenter=el("presentationPresenter"),avatar=el("presentationAvatar"),grid=el("presentationModuleGrid");
  if(presenter){presenter.classList.remove("is-speaking","is-animated","scene-enter");void presenter.offsetWidth;presenter.classList.add("scene-enter");}
- if(avatar){avatar.className="presentation-avatar presentation-avatar-"+key;avatar.dataset.presenter=key;setDrvasPresenterPortrait(key,avatar);}
+ if(avatar){avatar.className="presentation-avatar presentation-avatar-"+key;avatar.dataset.presenter=key;setDrvasPresenterPortrait(key,avatar);const photo=avatar.querySelector(".presentation-photo");if(photo)photo.alt=({drvas:"Dr.Vas — fotografia fondatorului",jan:"Dr.Jan — personaj AI fictiv",sarah:"Sarah — portret profesional adult"})[key]||"Portretul asistentului";}
  const set=(id,value)=>{const node=el(id);if(node)node.textContent=value};
  set("presentationSpeakerName",speaker.name);set("presentationSpeakerRole",speaker.role[currentLanguage]||speaker.role.ro);
  const moduleNames=["Dr.Vas Free","Dr.Vas Health","Dr.Vas Studio","Dr.Vas Academy","Dr.Vas Commerce","Dr.Vas Business"];
@@ -2746,6 +2751,8 @@ function selectModule(moduleName,userInitiated=false,suppressConversationRestore
     }
     openFreeNavView("chat",false);
     requestAnimationFrame(()=>{
+      const back=el("globalBackToModules");
+      if(back){back.hidden=false;back.style.display="inline-flex";}
       if(moduleName==="free"||moduleName==="health")el("question")?.focus({preventScroll:true});
       else{const chat=el("chat");if(chat)chat.scrollTop=chat.scrollHeight;}
     });
@@ -5407,6 +5414,7 @@ function newConversation(){
   setLocalizedText(el("saveMessage"),"Conversația nouă se salvează automat în contul tău.");
   updateSaveButton();
   renderWelcome();
+  openFreeNavView("chat",false);
   el("question").focus();
 }
 
