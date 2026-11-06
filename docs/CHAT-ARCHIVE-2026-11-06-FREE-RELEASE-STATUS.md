@@ -66,3 +66,13 @@ Source review: all are additive and transaction-wrapped; they create/extend owne
 ## Resume instruction
 
 Resume from PR #38 and this checkpoint. Do not ask the founder to repeat any Free requirements. Finish the release gates, merge and deploy autonomously once authorized actions and tests are complete. Then ask the founder to describe the next module.
+
+
+## Additional hardening and verification updates — 6 November 2026
+
+- Updated the read-only Supabase verification script docs/SUPABASE_READONLY_VERIFICATION.sql to include all four Free release tables, the three conversation-context columns, notification INSERT privileges, and owner-policy checks. Corrected the owner-policy count to accept either USING or WITH CHECK as appropriate.
+- Updated Explore so it distinguishes modules the current account can open from modules whose access is restricted. It no longer offers a misleading Open module button for a module the account cannot access.
+- Updated Images to state clearly that saved-image upload/preview/open is available but AI image generation inside Dr.Vas is not yet connected. No paid image-generation provider was enabled.
+- Added Playwright coverage for Explore access states and the Images capability disclosure. Workflow run 42289446602 was pending at checkpoint time on commit c0b748d8bf6e06dc0c11a1c003857ab602e2c9ac; wait for it to complete and inspect the test result before release.
+- The previous code run 42287129054 passed 81/81 Playwright tests on code commit 5d21479d3ab67270394b5f024afde3914125442e. Later changes above require their own green run.
+- PR #38 remains open. No Supabase migrations have been applied. Do not merge/deploy until live database verification and all release gates are complete.
