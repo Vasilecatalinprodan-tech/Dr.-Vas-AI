@@ -27,6 +27,7 @@
    (item.shared||[]).forEach(node=>{if(node)target.content.appendChild(node);});
    (item.nodes||[]).forEach(node=>{if(node)target.content.appendChild(node);});
    if(item.deliverable&&byId(item.deliverable[0]))byId(item.deliverable[0]).value=item.deliverable[1];
+   if(item.mode)window[item.mode[0]]=item.mode[1];
    root.dataset.activeFeature=id;
   }
   open(items[0].id);
@@ -64,15 +65,22 @@
  }
  function academy(root){
   const form=direct(root,":scope > .studio-form-grid"),actions=direct(root,":scope > .studio-actions"),projects=direct(root,":scope > .module-project-manager");
+  const shared=[form,actions];
   simple(root,[
-   {id:"course",label:"Lucrează la curs",title:"Constructor de cursuri",description:"Definește publicul, obiectivele, lecțiile, exercițiile și evaluarea.",nodes:[form,actions]},
+   {id:"course",label:"Construiește cursul",title:"Constructor de cursuri",description:"Definește obiectivele, publicul, structura și rezultatele cursului.",shared,mode:["DrVasAcademyFeature","course"]},
+   {id:"lessons",label:"Scrie lecțiile",title:"Atelier de lecții",description:"Construiește lecții complete, cu explicații, exemple, recapitulare și materiale.",shared,mode:["DrVasAcademyFeature","lessons"]},
+   {id:"exercises",label:"Exerciții și quiz",title:"Atelier de exerciții și evaluare",description:"Creează exerciții, teste, bareme și răspunsuri explicate.",shared,mode:["DrVasAcademyFeature","exercises"]},
+   {id:"learning-plan",label:"Plan de învățare",title:"Traseu de învățare",description:"Organizează un parcurs pe săptămâni, cu obiective și verificări de progres.",shared,mode:["DrVasAcademyFeature","learning-plan"]},
    {id:"courses",label:"Cursurile mele",title:"Proiectele mele Academy",description:"Gestionează cursurile salvate privat.",nodes:[projects]}
   ]);
  }
  function commerce(root){
   const form=direct(root,":scope > .studio-form-grid"),calculator=direct(root,":scope > .crypto-calculator"),actions=direct(root,":scope > .studio-actions"),projects=direct(root,":scope > .module-project-manager");
+  const shared=[form,actions];
   simple(root,[
-   {id:"research",label:"Cercetează produsul",title:"Cercetare de produs și piață",description:"Analizează produsul, clientul, piața, modelul de vânzare și riscurile.",nodes:[form,actions]},
+   {id:"research",label:"Cercetează produsul",title:"Cercetare de produs și piață",description:"Analizează produsul, clientul, piața, modelul de vânzare și riscurile.",shared,mode:["DrVasCommerceFeature","research"]},
+   {id:"suppliers",label:"Compară furnizorii",title:"Verificarea furnizorilor",description:"Compară furnizori, mostre, costuri totale, termene, retururi și riscuri înainte de orice plată.",shared,mode:["DrVasCommerceFeature","suppliers"]},
+   {id:"launch",label:"Plan de lansare magazin",title:"Lansare și operațiuni magazin",description:"Pregătește oferta, listările, livrarea, retururile, suportul clienților și lansarea etapizată.",shared,mode:["DrVasCommerceFeature","launch"]},
    {id:"pricing",label:"Calculează prețul și marja",title:"Calculator de preț și profitabilitate",description:"Separă costurile, comisioanele, marja și pragul de rentabilitate.",nodes:[calculator]},
    {id:"projects",label:"Analizele mele",title:"Proiecte Commerce salvate",description:"Gestionează analizele private.",nodes:[projects]}
   ]);
