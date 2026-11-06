@@ -969,3 +969,14 @@ Resume with safe PR #9 conflict resolution and fresh CI evidence, exact npm audi
 - IMPORTANT remaining hosting task: Jan and Sarah currently load from signed Runway CloudFront URLs, which expire on 2026-11-08 (Jan 05:40:30 UTC; Sarah 09:58:37 UTC). Browser tests confirmed they currently load, but they are not yet permanent repository assets. Export/download the two generated JPGs from Runway and attach them to the project so they can be committed under `www/assets/presenters/` and deployed before expiry. Do not describe the current URLs as permanent hosting.
 - No paid credits were purchased, no paid provider was enabled, no secrets or database migrations were changed. Runway workspace showed 492 included plan credits and 0 purchased credits.
 - Main HEAD at this checkpoint: `5e40205ee6eb4b2ba13bfe49ece8729e750d5507`.
+
+
+## Assistant selector and Live avatar rollout — 2026-11-06
+- User asked that the new faces also appear in the page's assistant selector and Live voice stage, not only in the three-person module presentation.
+- PR #18 merged: `62b7ad83083e4845f51ffeb7dff3ba89068e963c`. Jan and Sarah assistant-choice cards now use the generated portrait images; the existing Live stage clones the selected assistant avatar, so the same photos appear in Live.
+- E2E regression checks now verify that Dr.Jan and Sarah are image avatars in the selector, that Live uses image avatars for all three assistants, and that Jan/Sarah images load successfully (`naturalWidth > 0`).
+- Main workflow #42220612094 completed SUCCESS on `62b7ad83083e4845f51ffeb7dff3ba89068e963c`: 85/85 Playwright tests passed; Cloudflare deploy succeeded; production smoke tests succeeded; SBOM uploaded (artifact ID `13502863789`).
+- Current deployed Worker version: `8b3d0bb0-46df-4cc8-85ba-27ea9d15e29c`.
+- Production URL remains https://dr--vas-ai.vasilecatalinprodan.workers.dev/.
+- Portrait caveat remains: Jan/Sarah images are currently served from signed Runway URLs and expire 2026-11-08 (Jan 05:40:30 UTC; Sarah 09:58:37 UTC). They are loading in CI and currently deployed, but still need to be exported as image files and committed to `www/assets/presenters/` for permanent hosting before expiry. SVG fallback remains in the presentation. No paid credits were bought.
+- Main HEAD at this checkpoint: `62b7ad83083e4845f51ffeb7dff3ba89068e963c`.
