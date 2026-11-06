@@ -5697,40 +5697,6 @@ function freeNavCard(host,title,description,actionLabel,handler){
  host.appendChild(card);return card;
 }
 
-function freeNavOpenFilePicker(accept=""){
- const input=el("chatFileInput");if(!input)return;
- const previousAccept=input.accept;
- const restore=()=>{input.accept=previousAccept;input.removeEventListener("change",restore);input.removeEventListener("cancel",restore);};
- input.accept=accept;
- input.addEventListener("change",restore,{once:true});
- input.addEventListener("cancel",restore,{once:true});
- openFreeNavView("chat");
- input.click();
-}
-
-async function freeNavLoadAttachments(imagesOnly=false){
- const page=freeNavPage(imagesOnly?"Images":"Library",imagesOnly?"Imaginile atașate conversațiilor Dr.Vas Free. Poți adăuga o imagine la chat și o vei regăsi aici.":"Fișierele atașate conversațiilor tale. Poți adăuga un fișier la chat și îl vei regăsi aici.");
- freeNavCard(page,imagesOnly?"Adaugă o imagine":"Adaugă un fișier",imagesOnly?"Alege o imagine de pe dispozitiv. Aceasta va fi atașată conversației curente după ce revii la chat.":"Alege un fișier de pe dispozitiv. Acesta va fi atașat conversației curente după ce revii la chat.",imagesOnly?"Alege imagine":"Alege fișier",()=>freeNavOpenFilePicker(imagesOnly?"image/*":""));
- const grid=document.createElement("div");grid.className="free-nav-grid";page.appendChild(grid);
- const loading=document.createElement("div");loading.className="free-nav-status";loading.textContent="Încarc fișierele…";grid.appendChild(loading);
- try{
-  let query=supabaseClient.from("drvas_chat_attachments").select("id,conversation_id,module,original_name,mime_type,file_size,storage_path,created_at").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(200);
-  if(imagesOnly)query=query.like("mime_type","image/%").eq("module","free");
-  const {data,error}=await query;if(error)throw error;
-  grid.replaceChildren();
-  if(!data?.length){const empty=document.createElement("div");empty.className="free-nav-status";empty.textContent=imagesOnly?"Nu ai încă imagini atașate conversațiilor Dr.Vas Free.":"Nu ai încă fișiere atașate conversațiilor.";grid.appendChild(empty);return;}
-  for(const file of data){
-   const card=document.createElement("article");card.className="free-nav-card";
-   const {data:signed,error:signedError}=await supabaseClient.storage.from("drvas-media").createSignedUrl(file.storage_path,3600);
-   if(imagesOnly&&String(file.mime_type||"").startsWith("image/")&&!signedError&&signed?.signedUrl){const img=document.createElement("img");img.className="free-nav-file-image";img.src=signed.signedUrl;img.alt=file.original_name;card.appendChild(img);}
-   const h=document.createElement("h3");h.textContent=file.original_name;card.appendChild(h);
-   const p=document.createElement("p");p.textContent=(file.module||"modul neclasificat")+" · "+chatFileSizeLabel(file.file_size)+" · "+new Date(file.created_at).toLocaleString();card.appendChild(p);
-   if(!signedError&&signed?.signedUrl){const link=document.createElement("a");link.href=signed.signedUrl;link.target="_blank";link.rel="noopener noreferrer";link.textContent="Deschide fișierul";card.appendChild(link);}
-   grid.appendChild(card);
-  }
- }catch(error){grid.replaceChildren();const failed=document.createElement("div");failed.className="free-nav-status";failed.textContent="Nu am putut încărca fișierele: "+error.message;grid.appendChild(failed);}
-}
-
 async function freeNavLoadLibrary(imagesOnly=false){
  const page=freeNavPage(imagesOnly?"Images":"Library",imagesOnly?"Colecția ta privată de imagini, independentă de conversațiile în care le-ai încărcat.":"Fișierele salvate în biblioteca ta privată, independente de istoricul conversațiilor.");
  const uploadCard=document.createElement("article");uploadCard.className="free-nav-card";
