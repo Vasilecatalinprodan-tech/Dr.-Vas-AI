@@ -623,3 +623,12 @@ Keep the zero-new-cost rule. Do not buy provider usage, create subscriptions, st
 - Commits: `3b3b2b9c0f9448c24e4bcb3b68c244b16b78cc82`, `022705e4f0fdf819fc3e126e359d2e293b5b573d`.
 - New CI result pending. Create a PR for this patch, wait for browser tests and Worker smoke checks, then merge/deploy only after success.
 - This correction addresses manual replay logic but does not prove the user's custom voice clone is configured or solve all Android audio playback cases.
+
+
+## Latest CI checkpoint — 2026-11-06 voice replay PR
+
+- PR #9: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/9 — open, currently GitHub reports `mergeable=false`; do not merge until resolved.
+- Run #483 failed only at the static validation step because the workflow still asserted the old exact `speakDrVas(text)` signature. The updated function supports `forcePlayback=false`; workflow invariant was updated accordingly.
+- Run #484 / `42194604319` uses head `a3954ea69723315db526b3cdeea32c0995aec46b`. At last check JavaScript/static validation passed; Chromium installation was still in progress. Browser tests, deploy and smoke test remain pending.
+- No deployment from PR #9 yet. PR #8's validated Worker deployment remains the latest confirmed production deployment.
+- Next: inspect run #484 to completion, fix any Playwright issue, then resolve PR #9 mergeability before merge/deploy.
