@@ -2560,7 +2560,7 @@ function selectAssistant(assistantId){
  if(voiceAutoRead)refreshVoiceUi("ready");
  try{if(currentUser)localStorage.setItem("drvas_assistant_"+currentUser.id,assistantId)}catch{}
 }
-function selectModule(moduleName,userInitiated=false){
+function selectModule(moduleName,userInitiated=false,suppressConversationRestore=false){
   const modules={
     free:{icon:"✦",name:"Dr.Vas Free — Asistent general",description:"Modulul general este selectat. Poți începe conversația."},
     health:{icon:"✚",name:"Dr.Vas Health — Informații generale",description:"Informații despre sănătate, explicații și pregătirea consultațiilor. Nu înlocuiește medicul."},
@@ -2619,10 +2619,12 @@ function selectModule(moduleName,userInitiated=false){
   const selectionStatus=el("moduleSelectionStatus");
   if(selectionStatus){selectionStatus.textContent="";selectionStatus.classList.add("hidden");}
   const previousModule=activeModule;
+  let moduleConversationToRestore=null;
   if(previousModule!==moduleName)clearPendingChatFiles();
   activeModule=moduleName;
   if(currentUser&&previousModule!==moduleName){
     const rememberedForModule=getRememberedConversation(moduleName);
+    moduleConversationToRestore=rememberedForModule;
     currentConversationId=rememberedForModule||makeId();
     currentConversationIsLegacy=false;
     conversationSaved=Boolean(rememberedForModule);
@@ -2692,6 +2694,10 @@ function selectModule(moduleName,userInitiated=false){
       openFreeNavView("chat",false);
     }
     requestAnimationFrame(()=>{if(moduleName==="free")el("question")?.focus({preventScroll:true});const chat=el("chat");if(chat)chat.scrollTop=chat.scrollHeight;});
+    if(previousModule!==moduleName&&!suppressConversationRestore){
+      if(moduleConversationToRestore)openConversation(moduleConversationToRestore,moduleName).catch(error=>console.warn("Could not restore module conversation:",error));
+      else loadConversationList().catch(error=>console.warn("Could not refresh module history:",error));
+    }
   }
 }
 
@@ -5042,7 +5048,7 @@ async function showChat(user,displayName){
   }catch{}
   if(pendingModule&&["free","health","studio","academy","commerce","business"].includes(pendingModule)){
     showModuleSelection();
-    selectModule(pendingModule,true);
+    selectModule(pendingModule,true,true);
     if(isDrvasAdmin||pendingModule==="free"||pendingModule==="health")scrollPageToChat();
   }else if(pendingEntry==="modules"){
     showModuleSelection();
@@ -5051,7 +5057,7 @@ async function showChat(user,displayName){
     const rememberedModule=getRememberedModule();
     const resumableModule=rememberedModule&&((rememberedModule==="free"||rememberedModule==="health")||isDrvasAdmin)?rememberedModule:"free";
     showModuleSelection();
-    selectModule(resumableModule,true);
+    selectModule(resumableModule,true,true);
     if(resumableModule==="free"||resumableModule==="health"||isDrvasAdmin)scrollPageToChat();
   }
 
