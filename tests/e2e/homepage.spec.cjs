@@ -1115,7 +1115,11 @@ test("Academy, Commerce and Business projects are saved, reopened and deleted pe
     console.log("[module-project] saved", item.id);
     await expect(page.locator("#" + item.id + "ProjectList option")).toHaveCount(2);
 
+    if (item.id === "academy") await page.locator('#academyWorkspace [data-feature="course"]').click();
+    if (item.id === "commerce") await page.locator('#commerceWorkspace [data-feature="research"]').click();
     await page.locator("#" + item.primary).fill("Valoare modificată");
+    if (item.id === "academy") await page.locator('#academyWorkspace [data-feature="courses"]').click();
+    if (item.id === "commerce") await page.locator('#commerceWorkspace [data-feature="projects"]').click();
     await page.evaluate(id => openModuleProject(id), item.id);
     await expect(page.locator("#" + item.primary)).toHaveValue(item.value);
 
