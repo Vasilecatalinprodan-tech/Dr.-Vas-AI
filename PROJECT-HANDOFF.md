@@ -642,3 +642,11 @@ Keep the zero-new-cost rule. Do not buy provider usage, create subscriptions, st
 - Three moderate npm advisories were reported by `npm ci`; inspect `npm audit` details before deciding on any updates.
 - Android build workflow #336 passed for the replay code, but physical-device playback remains unverified.
 - Read `docs/CHAT-ARCHIVE-2026-11-06-AVATARS-VOICE.md` for the full continuation summary, exact CI outcomes, user instructions and open work.
+
+
+## New continuation checkpoint — 2026-11-06 09:29 UTC
+- User requested continued Dr.Vas development and saving all conversation/project progress before opening a new chat.
+- Latest GitHub check: PR #9 remains open, `mergeable=false`, `mergeable_state=dirty`; head `5ec82e990468b8336d298f097c6bb645bb860656`.
+- Branch compare: `drvas-integrated-platform` is 36 commits ahead and 1 behind `main`, diverged from merge base `69c57c5eb1c8a3b1d4612ec572831a3ec072ee67`.
+- Do not merge or rewrite history yet. Preserve every commit; resolve conflicts safely on a separate candidate branch, then run CI and production smoke tests against that exact candidate.
+- No new deploy/device audio verification/dependency fixes/avatar generation occurred in this checkpoint. The conversation archive is a structured summary, not a verbatim UI transcript.
