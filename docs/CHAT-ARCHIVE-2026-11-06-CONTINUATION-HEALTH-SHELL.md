@@ -42,3 +42,26 @@ Continue the integrated Dr.Vas platform across all six modules, interface, bug f
 6. Verify Health and Free chat parity on desktop and mobile, including attachment controls, consent visibility, history isolation, navigation and sign-out.
 7. Establish an authenticated, auditable Supabase migration release path; run read-only verification first, then apply pending migrations and verify RLS/storage/function state.
 8. Merge only after checks pass; deploy Worker/web; verify production health and all six module entry points; build APK and attach artifact.
+
+## Follow-up implementation — dedicated feature workspaces
+- Added `www/module-workspaces.js` and `www/module-workspaces.css`, loaded by the main application.
+- The router moves existing controls into separate feature-page containers rather than cloning controls or creating duplicate DOM IDs. Existing event handlers and private project workflows remain attached to the original controls.
+- Studio now has separate destinations for Video & Reels, Series/Scripts, Books/eBooks, Music/Lyrics, Translation, Projects, Income Tracking and Social Media. The book/translation/music/script pages set the relevant existing deliverable type before the user prepares the brief. The Video page contains the render panel and production brief.
+- Academy separates Course Builder from saved courses.
+- Commerce separates Product Research, Pricing/Unit Economics and Saved Analyses.
+- Business separates Business Plan, Cashbook, Break-even Calculator and Student Desk.
+- Health separates its information brief workspace; the chat itself remains in the shared Free-style chat shell.
+- Added a Playwright regression covering feature-page navigation and visibility across Studio, Academy, Commerce and Business.
+
+Additional commits:
+- `31d44415a48b4c0fafd0296d34ab58fbe776f9d5` — feature workspace router
+- `13ffac254097cd6c2a4b25d411a2e4c2fed47369` — feature workspace styling
+- `90fe3625361e937556c9fb463acb5e154e515e15` — robust DOM selection
+- `35f56175a506c211b23a43542026742ec4f74689` — load the feature workspace assets
+- `d37d0c225ab06d7aba9c1d5d10d6ba12e1448f83` — ensure inactive feature content remains inside its own page
+- `988a10f490ab74af40ea75dbf0278d293e8979b5` — feature-page browser regression test
+
+## Verification status
+- Source changes are committed to the feature branch.
+- Automated browser execution for the latest feature-page changes is not yet confirmed. The earlier run associated with the Health-only test commit was cancelled while subsequent commits were being pushed; do not treat the latest feature-page test as passed until a current run completes.
+- No merge, production deployment, Supabase migration application or APK build is claimed in this checkpoint.
