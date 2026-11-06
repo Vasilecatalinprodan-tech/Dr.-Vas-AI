@@ -668,3 +668,10 @@ Keep the zero-new-cost rule. Do not buy provider usage, create subscriptions, st
 - The commit-status endpoint had not yet reported checks at the time of this note; the new test is pending CI and must not be described as passing.
 - PR #9 remains open and GitHub still reports `mergeable=false`. No merge, force-push, branch reset, production deployment or Android APK replacement was performed.
 - Continue resolving the `main` / integration deployment-workflow overlap without dropping the updated force-playback invariant or existing validation/deploy/smoke-test steps.
+
+
+## 2026-11-06 — Cloudflare retry initiated, result pending
+- Reviewed Cloudflare's public status information after the prior Wrangler HTTP 503. The public status dashboard currently lists Workers operational; this does not by itself prove that the account-specific Workers API request will succeed.
+- Requested GitHub Actions to rerun only the failed jobs from workflow #485 / run `42194776169`. GitHub accepted the rerun request, but the workflow-jobs endpoint had not yet exposed the new attempt's jobs at the time of this checkpoint.
+- The original run's 81 Playwright tests remain green; its original Cloudflare deployment failed with `503 no healthy upstream` and its production smoke test was skipped. The retry is not yet verified; do not claim deployment until a completed successful deploy and smoke test are visible.
+- No dependency versions were changed. The prior `npm ci` summary mentioned three moderate vulnerabilities, but the exact advisory JSON and dependency paths remain unverified. Public package-version pages showing no direct advisories do not rule out transitive advisories.
