@@ -986,6 +986,18 @@ body.free-module-mode #chatSection .chat-main #freeChatView>#chat{height:auto!im
 body.free-module-mode #chatSection .chat-main #freeChatView .input-area{flex:0 0 auto;position:relative!important;bottom:auto!important}
 body.free-module-mode #chatSection .chat-main #freeChatView{min-height:0!important;max-height:none!important}
 
+
+body.free-module-mode .free-scheduled-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:14px;background:#10283a;border:1px solid #31566b;border-radius:13px}
+body.free-module-mode .free-scheduled-form label{display:grid;gap:5px;color:#b6ccd7;font-size:11px}
+body.free-module-mode .free-scheduled-form input,body.free-module-mode .free-scheduled-form textarea{width:100%;min-width:0;padding:9px;background:#071827;color:#f4fbff;border:1px solid #34576a;border-radius:8px}
+body.free-module-mode .free-scheduled-form textarea{min-height:68px;resize:vertical}
+body.free-module-mode .free-scheduled-form .wide{grid-column:1/-1}
+body.free-module-mode .free-scheduled-form button{justify-self:start;padding:9px 13px}
+body.free-module-mode .free-scheduled-task{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+body.free-module-mode .free-scheduled-task-actions{display:flex;gap:6px;flex-wrap:wrap}
+body.free-module-mode .free-scheduled-task-actions button{padding:6px 8px}
+@media(max-width:600px){body.free-module-mode .free-scheduled-form{grid-template-columns:1fr}body.free-module-mode .free-scheduled-form .wide{grid-column:auto}body.free-module-mode .free-scheduled-task{flex-direction:column}}
+
 </style>
 </head>
 
@@ -5724,6 +5736,68 @@ async function freeNavLoadRecents(){
   items.forEach((conversation,index)=>freeNavCard(grid,conversation.title||("Conversația "+(index+1)),new Date(conversation.date).toLocaleString()+" · "+(conversation.module?"Dr.Vas Free":"Istoric vechi, modul neclasificat"),conversation.module?"Redeschide conversația":"Deschide pentru citire",()=>openConversation(conversation.id,conversation.module||null)));
  }catch(error){const failed=document.createElement("div");failed.className="free-nav-status";failed.textContent="Nu am putut încărca conversațiile: "+error.message;grid.appendChild(failed);}
 }
+
+function localDateTimeInputValue(date){
+ const local=new Date(date.getTime()-date.getTimezoneOffset()*60000);
+ return local.toISOString().slice(0,16);
+}
+async function freeNavLoadScheduled(){
+ const page=freeNavPage("Scheduled","Creează mementouri private în Dr.Vas. Acestea apar ca notificări în aplicație; nu se trimit prin e-mail sau push.");
+ const info=document.createElement("div");info.className="free-nav-status";info.textContent="Mementourile sunt verificate la fiecare 5 minute. Când ajung la termen, apar în Notificările tale din Dr.Vas.";page.appendChild(info);
+ const form=document.createElement("form");form.className="free-scheduled-form";page.appendChild(form);
+ const titleLabel=document.createElement("label");titleLabel.textContent="Titlu memento";
+ const titleInput=document.createElement("input");titleInput.type="text";titleInput.maxLength=160;titleInput.required=true;titleInput.placeholder="De exemplu: Sună contabilul";titleLabel.appendChild(titleInput);form.appendChild(titleLabel);
+ const timeLabel=document.createElement("label");timeLabel.textContent="Data și ora";
+ const timeInput=document.createElement("input");timeInput.type="datetime-local";timeInput.required=true;timeInput.min=localDateTimeInputValue(new Date(Date.now()+60000));timeInput.value=localDateTimeInputValue(new Date(Date.now()+3600000));timeLabel.appendChild(timeInput);form.appendChild(timeLabel);
+ const detailsLabel=document.createElement("label");detailsLabel.className="wide";detailsLabel.textContent="Detalii (opțional)";
+ const detailsInput=document.createElement("textarea");detailsInput.maxLength=2000;detailsInput.placeholder="Ce trebuie să îți amintească Dr.Vas?";detailsLabel.appendChild(detailsInput);form.appendChild(detailsLabel);
+ const submit=document.createElement("button");submit.type="submit";submit.textContent="＋ Programează mementoul";form.appendChild(submit);
+ const formStatus=document.createElement("div");formStatus.className="free-nav-muted wide";form.appendChild(formStatus);
+ form.addEventListener("submit",async event=>{
+  event.preventDefault();if(!currentUser)return;
+  const title=titleInput.value.trim(),localDate=new Date(timeInput.value);
+  if(!title||!timeInput.value||!Number.isFinite(localDate.getTime())||localDate.getTime()<=Date.now()){formStatus.textContent="Alege un titlu și o oră viitoare.";return;}
+  submit.disabled=true;formStatus.textContent="Salvez mementoul…";
+  try{
+   const runAt=localDate.toISOString(),timezone=Intl.DateTimeFormat().resolvedOptions().timeZone||"UTC";
+   const {error}=await supabaseClient.from("drvas_scheduled_tasks").insert({user_id:currentUser.id,title,details:detailsInput.value.trim(),timezone,run_at:runAt,next_run_at:runAt,status:"active"});
+   if(error)throw error;
+   await freeNavLoadScheduled();
+  }catch(error){formStatus.textContent="Nu am putut salva mementoul: "+error.message+". Verifică migrarea 202611060002_scheduled_reminders.sql.";submit.disabled=false;}
+ });
+ const sectionTitle=document.createElement("h3");sectionTitle.textContent="Mementouri programate";sectionTitle.style.margin="20px 0 8px";page.appendChild(sectionTitle);
+ const taskGrid=document.createElement("div");taskGrid.className="free-nav-grid";page.appendChild(taskGrid);
+ const noticeTitle=document.createElement("h3");noticeTitle.textContent="Notificări";noticeTitle.style.margin="22px 0 8px";page.appendChild(noticeTitle);
+ const noticeGrid=document.createElement("div");noticeGrid.className="free-nav-grid";page.appendChild(noticeGrid);
+ try{
+  const [taskResult,noticeResult]=await Promise.all([
+   supabaseClient.from("drvas_scheduled_tasks").select("id,title,details,timezone,run_at,status,created_at").eq("user_id",currentUser.id).order("run_at",{ascending:false}).limit(100),
+   supabaseClient.from("drvas_notifications").select("id,title,body,created_at,read_at").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(50)
+  ]);
+  if(taskResult.error)throw taskResult.error;if(noticeResult.error)throw noticeResult.error;
+  const tasks=taskResult.data||[],notices=noticeResult.data||[];
+  if(!tasks.length){const empty=document.createElement("div");empty.className="free-nav-status";empty.textContent="Nu ai mementouri programate.";taskGrid.appendChild(empty);}
+  tasks.forEach(task=>{
+   const card=document.createElement("article");card.className="free-nav-card free-scheduled-task";
+   const content=document.createElement("div");const h=document.createElement("h3");h.textContent=task.title;content.appendChild(h);
+   const p=document.createElement("p");p.textContent=new Date(task.run_at).toLocaleString(currentLanguage||"ro")+" · "+(task.status==="active"?"Programat":task.status==="completed"?"Finalizat":"Anulat");content.appendChild(p);
+   if(task.details){const d=document.createElement("p");d.textContent=task.details;content.appendChild(d);}card.appendChild(content);
+   const actions=document.createElement("div");actions.className="free-scheduled-task-actions";
+   if(task.status==="active"){const done=document.createElement("button");done.type="button";done.textContent="Marchează finalizat";done.addEventListener("click",async()=>{done.disabled=true;const {error}=await supabaseClient.from("drvas_scheduled_tasks").update({status:"completed",updated_at:new Date().toISOString()}).eq("id",task.id).eq("user_id",currentUser.id);if(error){window.alert("Nu am putut finaliza mementoul: "+error.message);done.disabled=false;}else freeNavLoadScheduled();});actions.appendChild(done);}
+   const remove=document.createElement("button");remove.type="button";remove.textContent="Șterge";remove.addEventListener("click",async()=>{if(!window.confirm("Ștergi acest memento?"))return;remove.disabled=true;const {error}=await supabaseClient.from("drvas_scheduled_tasks").delete().eq("id",task.id).eq("user_id",currentUser.id);if(error){window.alert("Nu am putut șterge mementoul: "+error.message);remove.disabled=false;}else freeNavLoadScheduled();});actions.appendChild(remove);card.appendChild(actions);taskGrid.appendChild(card);
+  });
+  if(!notices.length){const empty=document.createElement("div");empty.className="free-nav-status";empty.textContent="Nu ai notificări încă.";noticeGrid.appendChild(empty);}
+  notices.forEach(notice=>{
+   const card=document.createElement("article");card.className="free-nav-card";const h=document.createElement("h3");h.textContent=notice.title;card.appendChild(h);
+   const p=document.createElement("p");p.textContent=notice.body+" · "+new Date(notice.created_at).toLocaleString(currentLanguage||"ro");card.appendChild(p);
+   if(!notice.read_at){const read=document.createElement("button");read.type="button";read.textContent="Marchează citită";read.addEventListener("click",async()=>{read.disabled=true;const {error}=await supabaseClient.from("drvas_notifications").update({read_at:new Date().toISOString()}).eq("id",notice.id).eq("user_id",currentUser.id);if(error){window.alert("Nu am putut actualiza notificarea: "+error.message);read.disabled=false;}else freeNavLoadScheduled();});card.appendChild(read);}
+   noticeGrid.appendChild(card);
+  });
+ }catch(error){
+  const failed=document.createElement("div");failed.className="free-nav-status";failed.textContent="Nu am putut încărca programările și notificările: "+error.message+". Aplică migrarea 202611060002_scheduled_reminders.sql în Supabase.";taskGrid.replaceChildren(failed);
+ }
+}
+
 function openFreeNavView(view="chat",render=true){
  if(activeModule!=="free")return;
  const allowed=["chat","images","scheduled","library","plugins","explore","projects","recents"];
@@ -5739,10 +5813,7 @@ function openFreeNavView(view="chat",render=true){
  if(view==="library"){freeNavLoadAttachments(false);return;}
  if(view==="projects"){freeNavLoadProjects();return;}
  if(view==="recents"){freeNavLoadRecents();return;}
- if(view==="scheduled"){
-  const page=freeNavPage("Scheduled","Sarcinile programate și mementourile tale.");
-  const status=document.createElement("div");status.className="free-nav-status";status.textContent="Programarea automată nu este încă activată în Dr.Vas. Nu există sarcini programate active și nu vom afișa mementouri fictive. Această secțiune va deveni disponibilă după conectarea unui serviciu real de programare.";page.appendChild(status);return;
- }
+ if(view==="scheduled"){freeNavLoadScheduled();return;}
  if(view==="plugins"){
   const page=freeNavPage("Plugins","Conectează instrumente externe numai după verificarea furnizorului și acordarea permisiunilor.");
   const status=document.createElement("div");status.className="free-nav-status";status.textContent="În acest moment nu există pluginuri externe conectate sau un catalog de conectare activ în Dr.Vas. Nu vom afișa integrări inventate ca fiind instalate.";page.appendChild(status);
