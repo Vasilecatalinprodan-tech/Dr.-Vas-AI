@@ -2467,14 +2467,17 @@ function setChatNavigationDisabled(disabled){
     .forEach(button=>{button.disabled=disabled;});
 }
 
-function rememberActiveConversation(conversationId){
+function conversationStorageKey(userId,moduleId=activeModule){return ACTIVE_CONVERSATION_PREFIX+userId+":"+moduleId;}
+function rememberActiveConversation(conversationId,moduleId=activeModule){
   if(!currentUser || !conversationId) return;
-  try{localStorage.setItem(ACTIVE_CONVERSATION_PREFIX+currentUser.id,conversationId)}catch(error){console.warn("Active conversation storage unavailable:",error)}
+  try{
+   localStorage.setItem(conversationStorageKey(currentUser.id,moduleId),conversationId);
+   if(moduleId==="free")localStorage.setItem(ACTIVE_CONVERSATION_PREFIX+currentUser.id,conversationId);
+  }catch(error){console.warn("Active conversation storage unavailable:",error)}
 }
-
-function getRememberedConversation(){
+function getRememberedConversation(moduleId=activeModule){
   if(!currentUser) return null;
-  try{return localStorage.getItem(ACTIVE_CONVERSATION_PREFIX+currentUser.id)}catch{return null}
+  try{return localStorage.getItem(conversationStorageKey(currentUser.id,moduleId))||(moduleId==="free"?localStorage.getItem(ACTIVE_CONVERSATION_PREFIX+currentUser.id):null)}catch{return null}
 }
 
 function scrollPageToChat(){
@@ -2491,16 +2494,17 @@ function scrollPageToChat(){
 }
 
 let chatScrollFrame = 0;
-function scrollToLatestMessage(target){
+function scrollToLatestMessage(target,force=false){
   const chat=el("chat");
   if(!chat)return;
+  const nearBottom=chat.scrollHeight-chat.scrollTop-chat.clientHeight<120;
+  if(!force&&!nearBottom)return;
   cancelAnimationFrame(chatScrollFrame);
   chatScrollFrame=requestAnimationFrame(()=>{
     if(!chat.isConnected)return;
     chat.scrollTop=chat.scrollHeight;
     chatScrollFrame=requestAnimationFrame(()=>{
       if(!chat.isConnected)return;
-      // Re-check after message text/layout has settled; never move the outer page.
       chat.scrollTop=chat.scrollHeight;
     });
   });
@@ -5089,6 +5093,7 @@ async function showChat(user,displayName){
 }
 function renderWelcome(){
   el("chat").innerHTML = "";
+  el("chat").dataset.hasRenderedMessages="";
   const welcome = document.createElement("div");
   welcome.className = "msg bot";
   const assistant=ASSISTANTS[activeAssistant]||ASSISTANTS.drvas;
@@ -5098,6 +5103,14 @@ function renderWelcome(){
 }
 
 let showArchivedConversations = false;
+let currentConversationIsLegacy = false;
+let freeNavCurrentView = "chat";
+async function ensureConversationMetadata(conversationId,moduleId=activeModule,title=""){
+ if(!currentUser||!conversationId)return;
+ const payload={user_id:currentUser.id,conversation_id:conversationId,module:moduleId,conversation_kind:moduleId==="free"?"general":"module_assistant",title:String(title||"").replace(/\\s+/g," ").trim().slice(0,120),updated_at:new Date().toISOString()};
+ const {error}=await supabaseClient.from("drvas_conversation_metadata").upsert(payload,{onConflict:"user_id,conversation_id"});
+ if(error)throw error;
+}
 async function getConversationIds(){
  if(!currentUser)return [];
  const {data,error}=await supabaseClient.from("chat_messages").select("conversation_id,created_at,role,content").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(500);
@@ -5109,9 +5122,13 @@ async function getConversationIds(){
  }
  const conversations=Array.from(seen.values());
  if(conversations.length){
-  const {data:meta,error:metaError}=await supabaseClient.from("drvas_conversation_metadata").select("conversation_id,title,archived_at").eq("user_id",currentUser.id).in("conversation_id",conversations.map(x=>x.id));
-  if(metaError){console.warn("Conversation metadata unavailable; apply migration 202611030006_conversation_management.sql:",metaError.message);}
-  else {const byId=new Map((meta||[]).map(x=>[x.conversation_id,x]));conversations.forEach(item=>{const saved=byId.get(item.id);if(saved){item.archived_at=saved.archived_at;if(saved.title)item.title=saved.title;}});}
+  let metadata=await supabaseClient.from("drvas_conversation_metadata").select("conversation_id,title,archived_at,module,conversation_kind,feature_key,updated_at").eq("user_id",currentUser.id).in("conversation_id",conversations.map(x=>x.id));
+  if(metadata.error){
+   console.warn("Conversation context migration unavailable; loading legacy metadata:",metadata.error.message);
+   metadata=await supabaseClient.from("drvas_conversation_metadata").select("conversation_id,title,archived_at").eq("user_id",currentUser.id).in("conversation_id",conversations.map(x=>x.id));
+  }
+  if(metadata.error){console.warn("Conversation metadata unavailable:",metadata.error.message);}
+  else {const byId=new Map((metadata.data||[]).map(x=>[x.conversation_id,x]));conversations.forEach(item=>{const saved=byId.get(item.id);if(saved){item.archived_at=saved.archived_at;if(saved.title)item.title=saved.title;item.module=saved.module||null;item.conversation_kind=saved.conversation_kind||null;item.feature_key=saved.feature_key||null;}});}
 
  }
  return conversations;
@@ -5120,7 +5137,7 @@ async function loadConversationList(){
  const list=el("conversationList");list.innerHTML="";
  const filter=el("historyFilterButton");if(filter)setLocalizedText(filter,showArchivedConversations?"Vezi conversațiile active":"Vezi conversațiile arhivate");
  try{
-  const all=await getConversationIds(),items=all.filter(x=>showArchivedConversations?Boolean(x.archived_at):!x.archived_at);
+  const all=await getConversationIds(),scoped=all.filter(x=>x.module===activeModule||(!x.module&&activeModule==="free")),items=scoped.filter(x=>showArchivedConversations?Boolean(x.archived_at):!x.archived_at);
   if(!items.length){const empty=document.createElement("p");setLocalizedText(empty,showArchivedConversations?"Nu ai conversații arhivate.":"Nu ai încă discuții salvate.");empty.style.cssText="font-size:12px;color:#7fa4b5;line-height:1.5";list.appendChild(empty);return all;}
   items.forEach((conversation,index)=>{
    const row=document.createElement("div");row.className="conversation-row";
@@ -5128,7 +5145,9 @@ async function loadConversationList(){
    const title=document.createElement("span"),readable=String(conversation.title||"").replace(/\s+/g," ").trim();
    title.textContent=readable?(readable.length>52?readable.slice(0,49)+"…":readable):tr("Conversația ")+(index+1);title.title=readable||title.textContent;
    const date=document.createElement("small");date.textContent=new Date(conversation.date).toLocaleString(currentLanguage||"ro",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
-   button.append(title,date);button.addEventListener("click",()=>openConversation(conversation.id));
+   button.append(title,date);
+   if(!conversation.module){const legacy=document.createElement("small");legacy.className="conversation-legacy-label";legacy.textContent="Istoric vechi · modul neclasificat";button.appendChild(legacy);}
+   button.addEventListener("click",()=>openConversation(conversation.id,conversation.module||null));
    const actions=document.createElement("div");actions.className="conversation-actions";
    const addAction=(label,handler)=>{const b=document.createElement("button");b.type="button";b.textContent=label;b.addEventListener("click",event=>{event.stopPropagation();handler();});actions.appendChild(b);};
    addAction("Redenumește",()=>renameConversation(conversation));
@@ -5209,16 +5228,21 @@ async function deleteAllConversations(){
   }
 }
 
-async function openConversation(conversationId){
+async function openConversation(conversationId,conversationModule=activeModule){
   if(!currentUser || loadingConversation || isSendingMessage) return;
+  if(conversationModule&&conversationModule!==activeModule)return;
   loadingConversation = true;
   currentConversationId = conversationId;
+  currentConversationIsLegacy=!conversationModule;
+  if(activeModule==="free")openFreeNavView("chat",false);
+  if(el("question"))el("question").disabled=currentConversationIsLegacy;
+  if(el("sendButton"))el("sendButton").disabled=currentConversationIsLegacy;
   clearPendingChatFiles();
   rememberActiveConversation(conversationId);
   logClientEvent("conversation_opened");
   conversationSaved = true;
   pendingMessages = [];
-  setLocalizedText(el("saveMessage"),"Această conversație și mesajele noi se salvează automat în contul tău.");
+  setLocalizedText(el("saveMessage"),currentConversationIsLegacy?"Această conversație veche nu are modul identificat. O poți citi, dar pentru a continua fără amestecarea modulelor creează un chat nou.":"Această conversație și mesajele noi se salvează automat în contul tău.");
   updateSaveButton();
 
   const chat = el("chat");
@@ -5254,6 +5278,11 @@ async function openConversation(conversationId){
 function newConversation(){
   if(!currentUser || isSendingMessage) return;
   currentConversationId = makeId();
+  currentConversationIsLegacy=false;
+  if(activeModule==="free")openFreeNavView("chat",false);
+  if(el("question"))el("question").disabled=false;
+  if(el("sendButton"))el("sendButton").disabled=false;
+  ensureConversationMetadata(currentConversationId,activeModule,"").then(()=>loadConversationList()).catch(error=>console.warn("Conversation context metadata will be saved with the first message:",error));
   clearPendingChatFiles();
   el("conversationAttachments")?.replaceChildren();
   rememberActiveConversation(currentConversationId);
@@ -5271,7 +5300,8 @@ function appendMessage(role,content){
   message.className = "msg " + (role === "user" ? "user" : "bot");
   message.textContent = content;
   el("chat").appendChild(message);
-  scrollToLatestMessage(message);
+  scrollToLatestMessage(message,role==="user"||!el("chat").dataset.hasRenderedMessages);
+  el("chat").dataset.hasRenderedMessages="true";
   return message;
 }
 
@@ -5569,9 +5599,115 @@ async function deleteAllConversationFiles(){
 }
 el("chatFileInput").addEventListener("change",handleChatFilesSelected);
 
+
+function freeNavSetActive(view){
+ document.querySelectorAll("[data-free-nav]").forEach(button=>{
+  const selected=button.dataset.freeNav===view;
+  button.classList.toggle("active",selected);
+  if(selected)button.setAttribute("aria-current","page");else button.removeAttribute("aria-current");
+ });
+}
+function freeNavPage(title,description){
+ const host=el("freeNavWorkspace");if(!host)return null;
+ host.replaceChildren();
+ const page=document.createElement("section");page.className="free-nav-page";
+ const heading=document.createElement("h2");heading.textContent=title;page.appendChild(heading);
+ if(description){const p=document.createElement("p");p.textContent=description;page.appendChild(p);}
+ host.appendChild(page);return page;
+}
+function freeNavCard(host,title,description,actionLabel,handler){
+ const card=document.createElement("article");card.className="free-nav-card";
+ const h=document.createElement("h3");h.textContent=title;card.appendChild(h);
+ const p=document.createElement("p");p.textContent=description;card.appendChild(p);
+ if(actionLabel&&handler){const button=document.createElement("button");button.type="button";button.textContent=actionLabel;button.addEventListener("click",handler);card.appendChild(button);}
+ host.appendChild(card);return card;
+}
+async function freeNavLoadAttachments(imagesOnly=false){
+ const page=freeNavPage(imagesOnly?"Images":"Library",imagesOnly?"Imaginile atașate conversațiilor Dr.Vas Free.":"Fișierele atașate conversațiilor tale. Fișierele sunt private și pot fi deschise din contul tău.");
+ const grid=document.createElement("div");grid.className="free-nav-grid";page.appendChild(grid);
+ const loading=document.createElement("div");loading.className="free-nav-status";loading.textContent="Încarc fișierele…";grid.appendChild(loading);
+ try{
+  let query=supabaseClient.from("drvas_chat_attachments").select("id,conversation_id,module,original_name,mime_type,file_size,storage_path,created_at").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(200);
+  if(imagesOnly)query=query.like("mime_type","image/%").eq("module","free");
+  const {data,error}=await query;if(error)throw error;
+  grid.replaceChildren();
+  if(!data?.length){const empty=document.createElement("div");empty.className="free-nav-status";empty.textContent=imagesOnly?"Nu ai încă imagini atașate conversațiilor Dr.Vas Free.":"Nu ai încă fișiere atașate conversațiilor.";grid.appendChild(empty);return;}
+  for(const file of data){
+   const card=document.createElement("article");card.className="free-nav-card";
+   const {data:signed,error:signedError}=await supabaseClient.storage.from("drvas-media").createSignedUrl(file.storage_path,3600);
+   if(imagesOnly&&String(file.mime_type||"").startsWith("image/")&&!signedError&&signed?.signedUrl){const img=document.createElement("img");img.className="free-nav-file-image";img.src=signed.signedUrl;img.alt=file.original_name;card.appendChild(img);}
+   const h=document.createElement("h3");h.textContent=file.original_name;card.appendChild(h);
+   const p=document.createElement("p");p.textContent=(file.module||"modul neclasificat")+" · "+chatFileSizeLabel(file.file_size)+" · "+new Date(file.created_at).toLocaleString();card.appendChild(p);
+   if(!signedError&&signed?.signedUrl){const link=document.createElement("a");link.href=signed.signedUrl;link.target="_blank";link.rel="noopener noreferrer";link.textContent="Deschide fișierul";card.appendChild(link);}
+   grid.appendChild(card);
+  }
+ }catch(error){grid.replaceChildren();const failed=document.createElement("div");failed.className="free-nav-status";failed.textContent="Nu am putut încărca fișierele: "+error.message;grid.appendChild(failed);}
+}
+async function freeNavLoadProjects(){
+ const page=freeNavPage("Projects","Proiectele tale salvate în Dr.Vas, separate de conversațiile obișnuite.");
+ const grid=document.createElement("div");grid.className="free-nav-grid";page.appendChild(grid);
+ const loading=document.createElement("div");loading.className="free-nav-status";loading.textContent="Încarc proiectele salvate…";grid.appendChild(loading);
+ try{
+  const requests=[supabaseClient.from("drvas_studio_projects").select("id,title,project_type,updated_at").eq("user_id",currentUser.id).order("updated_at",{ascending:false}).limit(100)];
+  if(isDrvasAdmin)requests.push(supabaseClient.from("drvas_module_projects").select("id,module,title,project_type,updated_at").eq("user_id",currentUser.id).order("updated_at",{ascending:false}).limit(200));
+  const results=await Promise.all(requests);for(const result of results)if(result.error)throw result.error;
+  const projects=[...(results[0].data||[]).map(x=>({...x,module:"studio"})),...(results[1]?.data||[])].sort((a,b)=>new Date(b.updated_at)-new Date(a.updated_at));
+  grid.replaceChildren();
+  if(!projects.length){const empty=document.createElement("div");empty.className="free-nav-status";empty.textContent="Nu ai încă proiecte salvate. Creează și salvează un proiect într-unul dintre modulele disponibile.";grid.appendChild(empty);return;}
+  for(const project of projects){
+   const label=project.module==="studio"?"Studio":project.module[0].toUpperCase()+project.module.slice(1);
+   freeNavCard(grid,project.title||"Proiect fără titlu",label+" · "+(project.project_type||"proiect")+" · actualizat "+new Date(project.updated_at).toLocaleDateString(),"Deschide proiectul",async()=>{
+    if(project.module==="studio"){selectModule("studio",true);await loadStudioProjects(project.id);if(el("studioSavedProjects"))el("studioSavedProjects").value=project.id;await openStudioProject();}
+    else{selectModule(project.module,true);await loadModuleProjectList(project.module,project.id);if(el(project.module+"ProjectList"))el(project.module+"ProjectList").value=project.id;await openModuleProject(project.module);}
+   });
+  }
+ }catch(error){grid.replaceChildren();const failed=document.createElement("div");failed.className="free-nav-status";failed.textContent="Nu am putut încărca proiectele: "+error.message;grid.appendChild(failed);}
+}
+async function freeNavLoadRecents(){
+ const page=freeNavPage("Recents","Conversațiile recente din Dr.Vas Free. Alege una pentru a redeschide exact acel fir.");
+ const grid=document.createElement("div");grid.className="free-nav-grid";page.appendChild(grid);
+ try{
+  const all=await getConversationIds(),items=all.filter(x=>x.module==="free"||!x.module);
+  if(!items.length){const empty=document.createElement("div");empty.className="free-nav-status";empty.textContent="Nu ai încă conversații recente.";grid.appendChild(empty);return;}
+  items.forEach((conversation,index)=>freeNavCard(grid,conversation.title||("Conversația "+(index+1)),new Date(conversation.date).toLocaleString()+" · "+(conversation.module?"Dr.Vas Free":"Istoric vechi, modul neclasificat"),conversation.module?"Redeschide conversația":"Deschide pentru citire",()=>openConversation(conversation.id,conversation.module||null)));
+ }catch(error){const failed=document.createElement("div");failed.className="free-nav-status";failed.textContent="Nu am putut încărca conversațiile: "+error.message;grid.appendChild(failed);}
+}
+function openFreeNavView(view="chat",render=true){
+ if(activeModule!=="free")return;
+ const allowed=["chat","images","scheduled","library","plugins","explore","projects","recents"];
+ if(!allowed.includes(view))return;
+ freeNavCurrentView=view;freeNavSetActive(view);
+ const chatView=el("freeChatView"),workspace=el("freeNavWorkspace");
+ if(chatView)chatView.hidden=view!=="chat";
+ if(workspace)workspace.hidden=view==="chat";
+ document.body.classList.remove("history-open");
+ if(view==="chat"){if(render){el("question")?.focus({preventScroll:true});scrollToLatestMessage(null,true);}return;}
+ if(!render)return;
+ if(view==="images"){freeNavLoadAttachments(true);return;}
+ if(view==="library"){freeNavLoadAttachments(false);return;}
+ if(view==="projects"){freeNavLoadProjects();return;}
+ if(view==="recents"){freeNavLoadRecents();return;}
+ if(view==="scheduled"){
+  const page=freeNavPage("Scheduled","Sarcinile programate și mementourile tale.");
+  const status=document.createElement("div");status.className="free-nav-status";status.textContent="Programarea automată nu este încă activată în Dr.Vas. Nu există sarcini programate active și nu vom afișa mementouri fictive. Această secțiune va deveni disponibilă după conectarea unui serviciu real de programare.";page.appendChild(status);return;
+ }
+ if(view==="plugins"){
+  const page=freeNavPage("Plugins","Conectează instrumente externe numai după verificarea furnizorului și acordarea permisiunilor.");
+  const status=document.createElement("div");status.className="free-nav-status";status.textContent="În acest moment nu există pluginuri externe conectate sau un catalog de conectare activ în Dr.Vas. Nu vom afișa integrări inventate ca fiind instalate.";page.appendChild(status);
+  freeNavCard(page,"Serviciile interne Dr.Vas","Autentificarea și fișierele private folosesc Supabase; cererile AI sunt procesate de Worker. Acestea sunt componente interne, nu pluginuri conectate de utilizator.",null,null);return;
+ }
+ if(view==="explore"){
+  const page=freeNavPage("Explore","Descoperă modulele și funcțiile Dr.Vas disponibile în contul tău.");
+  const grid=document.createElement("div");grid.className="free-nav-grid";page.appendChild(grid);
+  const modules=[["free","✦ Dr.Vas Free","Asistent AI general, conversații și fișiere."],["health","✚ Dr.Vas Health","Informații generale despre sănătate și pregătirea consultațiilor."],["studio","🎬 Dr.Vas Studio","Instrumente creative și proiecte salvate."],["academy","🎓 Dr.Vas Academy","Educație și proiecte de învățare."],["commerce","🛒 Dr.Vas Commerce","Analiză de comerț și proiecte."],["business","📊 Dr.Vas Business","Planificare și instrumente de afaceri."]];
+  modules.forEach(([id,title,description])=>freeNavCard(grid,title,description,"Deschide modulul",()=>selectModule(id,true)));
+ }
+}
+
 async function send(){
  const input=el("question"),button=el("sendButton");
  const typedMessage=input.value.trim();
+ if(currentConversationIsLegacy){window.alert("Acest chat vechi nu are modul identificat. Apasă New chat pentru a continua într-o conversație separată.");return;}
  const filesToUpload=[...pendingChatFiles];
  const existingAttachments=[...pendingUploadedAttachments];
  if(!typedMessage&&!filesToUpload.length&&!existingAttachments.length)return;
@@ -5591,6 +5727,7 @@ async function send(){
   const accessToken=sessionData.session?.access_token;
   if(!accessToken)throw new Error("Sesiunea a expirat. Conectează-te din nou.");
   await saveMessage("user",message,conversationId);
+  try{await ensureConversationMetadata(conversationId,moduleId,message.slice(0,120));}catch(metadataError){console.warn("Conversation context metadata save failed:",metadataError);}
   conversationSaved=true;pendingMessages=[];setLocalizedText(el("saveMessage"),"Mesajul tău este salvat automat în cont.");updateSaveButton();
 
   if(filesToUpload.length){
