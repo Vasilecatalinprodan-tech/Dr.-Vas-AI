@@ -2246,3 +2246,78 @@ test("global logout stays available while moving through all six module workspac
     expect(await page.evaluate(() => activeModule)).toBe(moduleName);
   }
 });
+
+
+test("Dr.Vas Free uses a viewport chat shell with the requested sidebar and attachment control", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-free-shell-user", email: "free@example.invalid" };
+    isDrvasAdmin = false;
+    showModuleSelection();
+    selectModule("free", true);
+  });
+  await expect(page.locator("#chatSection .history-panel")).toBeVisible();
+  const labels = await page.locator("[data-free-nav]").allTextContents();
+  expect(labels.map(value => value.trim())).toEqual(["＋New chat","▧Images","◷Scheduled","▤Library","⌘Plugins","✧Explore","▣Projects"]);
+  await expect(page.locator(".free-recents-heading")).toContainText("Recents");
+  await expect(page.locator("#freeChatView .input-area .chat-file-button")).toBeVisible();
+  await expect(page.locator("#sendButton")).toContainText("Trimite");
+  const layout = await page.evaluate(() => ({
+    bodyOverflow: getComputedStyle(document.body).overflowY,
+    mainHeight: document.querySelector("main").getBoundingClientRect().height,
+    viewportHeight: innerHeight,
+    chatOverflow: getComputedStyle(document.querySelector("#freeChatView>#chat")).overflowY,
+    composerBottom: document.querySelector("#freeChatView .input-area").getBoundingClientRect().bottom,
+    chatBottom: document.querySelector("#freeChatView>#chat").getBoundingClientRect().bottom
+  }));
+  expect(layout.bodyOverflow).toBe("hidden");
+  expect(layout.mainHeight).toBeLessThanOrEqual(layout.viewportHeight);
+  expect(layout.chatOverflow).toBe("auto");
+  expect(layout.composerBottom).toBeGreaterThan(layout.chatBottom);
+});
+
+test("Dr.Vas Free sidebar destinations open their own truthful views", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-free-nav-user", email: "free@example.invalid" };
+    isDrvasAdmin = true;
+    showModuleSelection();
+    selectModule("free", true);
+    freeNavLoadAttachments = async imagesOnly => {
+      const host = freeNavPage(imagesOnly ? "Images" : "Library", "Test view");
+      const status = document.createElement("div"); status.className = "free-nav-status"; status.textContent = "Test data"; host.appendChild(status);
+    };
+    freeNavLoadProjects = async () => { const host=freeNavPage("Projects","Test projects"); host.append("Saved projects"); };
+    freeNavLoadRecents = async () => { const host=freeNavPage("Recents","Test recents"); host.append("Recent conversations"); };
+  });
+  for (const [key, heading] of [["images","Images"],["scheduled","Scheduled"],["library","Library"],["plugins","Plugins"],["explore","Explore"],["projects","Projects"],["recents","Recents"]]) {
+    await page.locator('[data-free-nav="' + key + '"]').click();
+    await expect(page.locator("#freeNavWorkspace")).toBeVisible();
+    await expect(page.locator("#freeNavWorkspace h2")).toHaveText(heading);
+  }
+  await page.locator('[data-free-nav="scheduled"]').click();
+  await expect(page.locator("#freeNavWorkspace")).toContainText("nu este încă activată");
+  await page.locator('[data-free-nav="plugins"]').click();
+  await expect(page.locator("#freeNavWorkspace")).toContainText("nu există pluginuri externe conectate");
+});
+
+test("Free and Health remember separate conversation IDs for the same user", async ({ page }) => {
+  await openApp(page, "ro");
+  const ids = await page.evaluate(() => {
+    currentUser = { id: "e2e-context-user", email: "context@example.invalid" };
+    isDrvasAdmin = false;
+    ensureConversationMetadata = async () => {};
+    activeModule = "free";
+    currentConversationId = "free-thread-1";
+    rememberActiveConversation(currentConversationId, "free");
+    selectModule("health", true);
+    const healthId = currentConversationId;
+    selectModule("free", true);
+    return { healthId, restoredFreeId: currentConversationId, freeStored: getRememberedConversation("free"), healthStored: getRememberedConversation("health") };
+  });
+  expect(ids.healthId).not.toBe("free-thread-1");
+  expect(ids.restoredFreeId).toBe("free-thread-1");
+  expect(ids.freeStored).toBe("free-thread-1");
+  expect(ids.healthStored).toBe(ids.healthId);
+});
