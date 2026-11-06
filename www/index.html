@@ -998,6 +998,16 @@ body.free-module-mode .free-scheduled-task-actions{display:flex;gap:6px;flex-wra
 body.free-module-mode .free-scheduled-task-actions button{padding:6px 8px}
 @media(max-width:600px){body.free-module-mode .free-scheduled-form{grid-template-columns:1fr}body.free-module-mode .free-scheduled-form .wide{grid-column:auto}body.free-module-mode .free-scheduled-task{flex-direction:column}}
 
+
+/* Keep Free navigation focused on the requested ChatGPT-style destinations. */
+body.free-module-mode .history-panel .delete-history-button,body.free-module-mode .history-panel .history-filter-button{display:none!important}
+body.free-module-mode .conversation-row{grid-template-columns:minmax(0,1fr) auto;gap:3px;margin:4px 0}
+body.free-module-mode .conversation-actions{display:flex!important;flex-direction:row;align-items:center;gap:2px;opacity:0;transition:opacity .15s ease}
+body.free-module-mode .conversation-row:hover .conversation-actions,body.free-module-mode .conversation-row:focus-within .conversation-actions{opacity:1}
+body.free-module-mode .conversation-actions button{width:25px;height:28px;padding:3px;font-size:10px}
+body.free-module-mode .conversation-legacy-label{color:#e3bb8d!important;font-size:9px}
+@media(max-width:760px){body.free-module-mode .conversation-actions{opacity:1}}
+
 </style>
 </head>
 
