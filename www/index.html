@@ -977,6 +977,7 @@ body.free-module-mode .conversation-item.active{border-color:#54d8cf;background:
  body.free-module-mode #chatSection{height:100%!important;min-height:0!important;overflow:hidden!important}
  body.free-module-mode #chatSection>.chat-layout{height:100%!important;min-height:0!important}
  body.free-module-mode #chatSection .chat-main{height:100%!important;min-height:0!important;max-height:none!important}
+ body.free-module-mode #chatSection .chat-main #freeChatView{flex:1 1 0!important;height:0!important;min-height:0!important;max-height:none!important}
  body.free-module-mode #freeChatView .voice-toolbar{max-height:48px!important;overflow-y:auto!important}
  body.free-module-mode #freeChatView .input-area{margin-bottom:0!important}
  body.free-module-mode #freeChatView>#chat{padding:8px 4px 12px}
@@ -5333,7 +5334,7 @@ async function openConversation(conversationId,conversationModule=activeModule){
   loadingConversation = true;
   currentConversationId = conversationId;
   currentConversationIsLegacy=!conversationModule;
-  if(activeModule==="free")openFreeNavView("chat",false);
+  if(["free","health","studio","academy","commerce","business"].includes(activeModule))openFreeNavView("chat",false);
   if(el("question"))el("question").disabled=currentConversationIsLegacy;
   if(el("sendButton"))el("sendButton").disabled=currentConversationIsLegacy;
   clearPendingChatFiles();
