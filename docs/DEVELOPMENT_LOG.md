@@ -304,3 +304,14 @@ Founder feedback:
 - Added Playwright regression test for a mocked authenticated Dr.Vas TTS response and audio playback with auto-read off.
 - Commits: `3b3b2b9c0f9448c24e4bcb3b68c244b16b78cc82` and `022705e4f0fdf819fc3e126e359d2e293b5b573d`.
 - Awaiting CI; do not treat the new regression test as passed until the workflow reports success.
+
+
+## 2026-11-06 — continuation after 09:31 UTC
+
+- Re-read `PROJECT-HANDOFF.md`, `PROJECT-STATUS.md` and `docs/CHAT-ARCHIVE-2026-11-06-AVATARS-VOICE.md` on the active development branch before making changes.
+- Fresh PR #9 inspection: open, not merged, GitHub reports `mergeable=false`; current PR head is `03cda30bdcd3bdaaae2aead65433a163dee8f5fd`. The branch compare is now 39 commits ahead / 1 behind `main`, merge base `69c57c5eb1c8a3b1d4612ec572831a3ec072ee67`. Earlier 36-ahead / 1-behind values are superseded.
+- Confirmed PR #9 contains the manual replay implementation and a regression test. Workflow #485 on an earlier candidate ran 81/81 Playwright tests successfully, including assistant TTS routing and server TTS without browser speech synthesis. It failed only at Wrangler deploy: Cloudflare API returned HTTP 503 `no healthy upstream`; production smoke test was skipped.
+- Compared the deployment workflow on `main` and `drvas-integrated-platform`. The important overlapping change is the stale TTS invariant on `main` versus the explicit `forcePlayback` signature and replay assertion on the integration branch. Do not force-merge or replace the workflow wholesale; preserve the integration branch's updated invariant and all deployment checks when resolving the merge.
+- Android workflow #336 previously generated a debug APK, but no real Samsung device playback test has been completed. Build success is not device-audio verification.
+- `npm ci` reported three moderate advisories in the prior CI. The exact npm audit JSON/advisory paths have not yet been retrieved, so no dependency was upgraded and no vulnerability is claimed fixed. Public package-version checks show no direct vulnerabilities for the inspected Wrangler 4.158.0 / Capacitor 8.6.0 versions; this does not clear transitive dependencies.
+- No production deploy, APK replacement, paid provider use, subscription, image/video generation, voice cloning, secret modification or live Supabase change was performed in this continuation.
