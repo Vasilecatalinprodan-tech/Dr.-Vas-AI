@@ -397,3 +397,62 @@ for (const scenario of [
     expect(exported.status).toContain("pregătit");
   });
 }
+
+
+for (const scenario of [
+  { module: "academy", primary: "academySubject", title: "academyProjectTitle" },
+  { module: "business", primary: "businessIdea", title: "businessProjectTitle" }
+]) {
+  test(`${scenario.module} deletion clears only the selected owner-scoped project`, async ({ page }) => {
+    await openApp(page);
+    await page.evaluate(async ({ module, title }) => {
+      const operations = [];
+      window.__DRVAS_GENERIC_DELETE__ = operations;
+      const id = "e2e-delete-" + module;
+      moduleProjectState[module] = id;
+      moduleProjectOutputs[module] = "Output temporar";
+      document.getElementById(title).value = "Proiect de șters";
+      const select = document.getElementById(module + "ProjectList");
+      select.add(new Option("Proiect test", id));
+      select.value = id;
+      window.confirm = () => true;
+
+      supabaseClient.from = table => {
+        const query = { operation: null, filters: [] };
+        query.select = function () { return this; };
+        query.delete = function () { this.operation = "delete"; return this; };
+        query.eq = function (key, value) { this.filters.push([key, value]); return this; };
+        query.order = function () { return this; };
+        query.limit = async function () { return { data: [], error: null }; };
+        query.then = function (resolve, reject) {
+          operations.push({ table, operation: this.operation, filters: this.filters });
+          return Promise.resolve({ error: null }).then(resolve, reject);
+        };
+        return query;
+      };
+
+      await deleteModuleProject(module);
+    }, scenario);
+
+    const result = await page.evaluate(({ module, title }) => ({
+      operations: window.__DRVAS_GENERIC_DELETE__,
+      activeId: moduleProjectState[module],
+      latestOutput: moduleProjectOutputs[module],
+      title: document.getElementById(title).value,
+      selectedProject: document.getElementById(module + "ProjectList").value
+    }), scenario);
+
+    expect(result.operations).toHaveLength(1);
+    expect(result.operations[0].table).toBe("drvas_module_projects");
+    expect(result.operations[0].operation).toBe("delete");
+    expect(result.operations[0].filters).toEqual([
+      ["id", "e2e-delete-" + scenario.module],
+      ["user_id", "e2e-module-owner"],
+      ["module", scenario.module]
+    ]);
+    expect(result.activeId).toBeNull();
+    expect(result.latestOutput).toBe("");
+    expect(result.title).toBe("");
+    expect(result.selectedProject).toBe("");
+  });
+}
