@@ -525,7 +525,7 @@ for (const [moduleId, workspaceId] of [
       ({free:"Dr.Vas Free",health:"Dr.Vas Health",studio:"Dr.Vas Studio",academy:"Dr.Vas Academy",commerce:"Dr.Vas Commerce",business:"Dr.Vas Business"})[moduleId]
     );
     if (workspaceId) await expect(page.locator(`#${workspaceId}`)).toBeVisible();
-    await expect(page.locator(".chat-back-button")).toBeVisible();
+    await expect(page.locator("#globalBackToModules")).toBeVisible();
     await expect(page.locator("#globalLogoutTop")).toBeVisible();
   await expect(page.locator("#globalLogoutBottom")).toBeVisible();
     expect(await page.evaluate(() => document.body.classList.contains("module-workspace-mode"))).toBe(true);
@@ -679,13 +679,13 @@ test("mobile Free chat offers its sidebar drawer and logout", async ({ page }) =
 
   await expect(page.locator("#chatSection")).toBeVisible();
   await expect(page.locator("#question")).toBeVisible();
-  await expect(page.locator(".chat-back-button")).toBeVisible();
+  await expect(page.locator("#globalBackToModules")).toBeVisible();
   await expect(page.locator("#globalLogoutTop")).toBeVisible();
   await expect(page.locator("#globalLogoutBottom")).toBeVisible();
   await expect(page.locator(".chat-history-toggle")).toBeVisible();
   await expect(page.locator(".assistant-switcher")).toBeHidden();
   await expect(page.locator(".chat-module-rail")).toBeHidden();
-  await page.locator(".chat-back-button").click();
+  await page.locator("#globalBackToModules").click();
   await expect(page.locator("#chatSection")).toBeHidden();
   await expect(page.locator("#moduleSelectionShell")).toBeVisible();
 });
