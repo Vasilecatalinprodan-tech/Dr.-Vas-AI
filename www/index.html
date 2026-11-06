@@ -3691,7 +3691,8 @@ function calculateCommerceUnitEconomics(){
  if(status)status.textContent=contribution>0
   ?"Scenariu pozitiv înainte de impozit și costuri fixe. Comenzile pentru recuperarea bugetului sunt o estimare, nu o garanție."
   :"Atenție: contribuția pe comandă este zero sau negativă. Nu crește bugetul de reclame și nu comanda stoc pe baza acestui scenariu.";
- return {currency,price,landed,feeTotal,variableTotal,contribution,margin,priceFloor,breakEvenOrders:breakEven,monthlyContribution:monthly};
+ const round2=value=>Math.round((value+Number.EPSILON)*100)/100;
+ return {currency,price:round2(price),landed:round2(landed),feeTotal:round2(feeTotal),variableTotal:round2(variableTotal),contribution:round2(contribution),margin:Math.round(margin*10)/10,priceFloor:round2(priceFloor),breakEvenOrders:breakEven,monthlyContribution:round2(monthly)};
 }
 function buildCommercePrompt(){
  const v=id=>el(id)?.value?.trim()||"";
