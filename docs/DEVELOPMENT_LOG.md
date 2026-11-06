@@ -315,3 +315,11 @@ Founder feedback:
 - Android workflow #336 previously generated a debug APK, but no real Samsung device playback test has been completed. Build success is not device-audio verification.
 - `npm ci` reported three moderate advisories in the prior CI. The exact npm audit JSON/advisory paths have not yet been retrieved, so no dependency was upgraded and no vulnerability is claimed fixed. Public package-version checks show no direct vulnerabilities for the inspected Wrangler 4.158.0 / Capacitor 8.6.0 versions; this does not clear transitive dependencies.
 - No production deploy, APK replacement, paid provider use, subscription, image/video generation, voice cloning, secret modification or live Supabase change was performed in this continuation.
+
+
+## 2026-11-06 — voice race regression added
+- Added `tests/e2e/module-persistence.spec.cjs` coverage for a pending assistant TTS response completing after the user switches from Dr.Vas to Dr.Jan. The expected behavior is to discard the stale audio rather than play it under the wrong assistant identity.
+- Test commit: `a4dc6185fdfc54924c900d31cd73c3a9d318f0ab`. This commit is now the head of `drvas-integrated-platform` and PR #9.
+- The commit-status endpoint had not yet reported checks at the time of this note; the new test is pending CI and must not be described as passing.
+- PR #9 remains open and GitHub still reports `mergeable=false`. No merge, force-push, branch reset, production deployment or Android APK replacement was performed.
+- Continue resolving the `main` / integration deployment-workflow overlap without dropping the updated force-playback invariant or existing validation/deploy/smoke-test steps.
