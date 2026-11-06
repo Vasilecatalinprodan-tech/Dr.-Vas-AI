@@ -102,3 +102,10 @@ Fondatorul a clarificat că dorește dezvoltarea autonomă a platformei, cu merg
 - Finalizarea cerințelor de confidențialitate, conformitate medicală, plăți/entitlements și protecție a datelor înainte de activarea funcțiilor cu risc sau cu plată.
 
 Această arhivă păstrează mesajele noi ale utilizatorului și un rezumat tehnic al lucrului executat. Istoricul complet al interfeței ChatGPT rămâne în conversația originală; fișierul din GitHub este un jurnal de continuitate, nu un export binar al conversației.
+
+
+### Actualizare PR #23 / PR #24 — 2026-11-06 14:18 UTC
+- PR #23 a fost închis ca superseded, deoarece prima încercare de remediere nu a trecut testul E2E de fallback.
+- A fost creat PR #24, branch fix/presenter-fallback-display-2026-11-06, cu o abordare mai robustă: starea de afișare a imaginii și fallback-ului este controlată direct prin CSS display, nu prin atributul hidden.
+- Commitul codului pentru PR #24: e0aaa7f0e34ea132f2f7031d21874a91016e36c3. Actualizările de audit și arhivă au fost adăugate ulterior pe aceeași ramură.
+- PR #24: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/24. Verificările browser și Android au fost pornite; merge-ul și redeploy-ul main sunt în așteptarea rezultatelor.
