@@ -84,3 +84,20 @@ The current branch is a discovery/profitability core, not a live mining engine. 
 
 ### Continuitatea conversației
 Acest fișier păstrează mesajul fondatorului și deciziile tehnice relevante ca jurnal de continuitate, nu ca export integral al interfeței ChatGPT. Conversația originală rămâne în istoricul ChatGPT.
+
+
+---
+
+## Verified merge and production deployment — 2026-11-06 14:54 UTC
+
+- PR #26 merged to main: `91671d5287509f5fb1421630cbbb92398e58c90f`.
+- PR #26 browser E2E passed 66/66 on its final tested code head.
+- Main browser E2E passed 66/66: run #42237810062.
+- Production deploy workflow #42237810171 passed 91/91 tests and successfully deployed the Worker.
+- Production Worker version: `b489c7ed-14ef-402c-88b8-f8e791c8845e`.
+- Production smoke test verified `/health`, homepage delivery, all six module cards and unauthenticated admin rejection.
+- SBOM artifact uploaded: ID `13513256382`.
+- PR #25 closed as superseded by PR #26.
+- Android APK workflow is manual-only; APK remains deferred.
+- The currently deployed Crypto engine is still discovery/profitability only; it does not execute mining or claim coins have been extracted.
+- Next active workstream: complete and verify the six modules, then design the signed native mining agent and its power/thermal/security controls.

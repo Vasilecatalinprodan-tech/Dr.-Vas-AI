@@ -85,3 +85,37 @@ A general audit of Dr.Vas Free, Health, Studio, Academy & Commerce, Business & M
 
 ## Conversation preservation
 This is a structured engineering checkpoint of the user's 2026-11-06 audit request and work performed. It is not a verbatim export of the complete ChatGPT UI transcript. The conversation remains in ChatGPT history; repository commits and this document preserve the technical state and key decisions.
+
+
+---
+
+## Execution checkpoint — Crypto discovery, DNA interface and production deploy (2026-11-06 14:54 UTC)
+
+- PR #26 merged to `main` by squash merge: `91671d5287509f5fb1421630cbbb92398e58c90f`.
+- PR: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/26
+- Presenter fallback recovery was integrated with guarded image lifecycle listeners. The regression test now explicitly opens the chat workspace before testing the portrait fallback; the previous test was running against a hidden parent and produced a false failure.
+- Browser E2E on the final PR head passed: 66/66 in run #42237561426 (commit `a10d9c28134baf68c00312854ed34a14b683d062`).
+- Main browser E2E passed: 66/66 in run #42237810062 (commit `91671d5287509f5fb1421630cbbb92398e58c90f`).
+- Main deploy workflow #42237810171 passed: 91/91 browser/data-isolation tests, Wrangler production deploy, production health smoke test, homepage marker checks for all six public modules, unauthenticated admin endpoint check, and SBOM upload.
+- Production Worker version ID: `b489c7ed-14ef-402c-88b8-f8e791c8845e`.
+- Production deploy run: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42237810171
+- Main browser run: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42237810062
+- SBOM artifact: `DrVas-SBOM`, artifact ID `13513256382`, 28,581 bytes.
+- PR #25 (separate presenter fallback attempt) was closed as superseded; PR #26 carries the tested fallback implementation.
+- Android workflow is now manual-dispatch only. No APK work was started as part of this stage.
+
+### Feature boundary after deploy
+The Crypto feature currently deployed is the PoW discovery/profitability core: supported-coin catalog, market price lookup, strict > USD 1 filter, hardware/algorithm compatibility, and net-daily estimate. It is not yet a live native mining agent and has not extracted coins. The red/black emergency button currently latches local discovery commands only; it cannot stop an external miner until a signed native agent and authenticated stop channel are implemented. The catalogue is a supported set, not a claim to cover every token or every PoW network.
+
+### Remaining platform completion work
+- Continue functional completion and runtime validation of Free, Health, Studio, Academy, Commerce and Business.
+- Verify live Supabase migrations/RLS/storage and provider secrets using authorized read-only checks first.
+- Studio MP4 rendering still depends on valid Creatomate configuration and private storage.
+- Health professional/clinic workflows require clinical governance, privacy and jurisdictional review; the module remains informational and does not diagnose or replace clinicians.
+- Academy/Commerce paid access requires tested entitlements, payment provider configuration, refund/tax terms and consumer-law review.
+- Business tools remain planning/bookkeeping support, not statutory accounting or tax filing.
+- Build the native Crypto agent only after device ownership, hardware, power/thermal limits, cryptographic enrolment, signed miner adapters, pool telemetry and verified global stop are designed and tested.
+- APK and Google Play remain deferred per the founder's instruction.
+
+### Conversation preservation
+The latest founder message is recorded verbatim in `docs/CHAT-ARCHIVE-2026-11-06-MINING-DNA-MODULES.md`. The archive is a technical continuity record, not a verbatim export of the entire ChatGPT UI transcript. The original conversation remains in ChatGPT history.
