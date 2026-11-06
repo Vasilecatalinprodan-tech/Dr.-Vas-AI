@@ -8,7 +8,32 @@
  function makeNav(root,items){
   const nav=document.createElement("nav");nav.className="drvas-feature-navigation";nav.setAttribute("aria-label","Funcții și spații de lucru");
   const pages=document.createElement("div");pages.className="drvas-feature-pages";
-  const pageMap=new Map();
+  const pageMap=new Map(),savedSharedState=new Map();
+  function readSharedState(item){
+   const state={};
+   (item.shared||[]).forEach(node=>{
+    if(!node)return;
+    const controls=[...(node.matches?.("input,select,textarea")?[node]:[]),...node.querySelectorAll("input,select,textarea")];
+    controls.forEach(control=>{
+     if(!control.id||control.type==="file")return;
+     state[control.id]=control.type==="checkbox"||control.type==="radio"?{checked:control.checked}:{value:control.value};
+    });
+   });
+   return state;
+  }
+  function applySharedState(item,state){
+   if(!state)return;
+   (item.shared||[]).forEach(node=>{
+    if(!node)return;
+    const controls=[...(node.matches?.("input,select,textarea")?[node]:[]),...node.querySelectorAll("input,select,textarea")];
+    controls.forEach(control=>{
+     const saved=control.id?state[control.id]:null;if(!saved)return;
+     if(Object.prototype.hasOwnProperty.call(saved,"checked"))control.checked=saved.checked;
+     else if(Object.prototype.hasOwnProperty.call(saved,"value"))control.value=saved.value;
+    });
+   });
+  }
+  const initialSharedState=items.length?readSharedState(items[0]):{};
   items.forEach(item=>{
    const button=document.createElement("button");button.type="button";button.dataset.feature=item.id;button.textContent=item.label;button.setAttribute("aria-pressed","false");
    const page=document.createElement("section");page.className="drvas-feature-page";page.dataset.featurePage=item.id;page.hidden=true;
@@ -22,10 +47,13 @@
   root.append(nav,pages);
   function open(id){
    const target=pageMap.get(id);if(!target)return;
+   const previousId=root.dataset.activeFeature;
+   if(previousId&&previousId!==id){const previous=pageMap.get(previousId);if(previous?.item.shared?.length)savedSharedState.set(previousId,readSharedState(previous.item));}
    for(const [key,entry] of pageMap){entry.page.hidden=key!==id;entry.button.classList.toggle("active",key===id);entry.button.setAttribute("aria-pressed",String(key===id));}
    const item=target.item;
    (item.shared||[]).forEach(node=>{if(node)target.content.appendChild(node);});
    (item.nodes||[]).forEach(node=>{if(node)target.content.appendChild(node);});
+   if(item.shared?.length)applySharedState(item,savedSharedState.get(id)||initialSharedState);
    if(item.deliverable&&byId(item.deliverable[0]))byId(item.deliverable[0]).value=item.deliverable[1];
    if(item.mode)window[item.mode[0]]=item.mode[1];
    root.dataset.activeFeature=id;
@@ -43,7 +71,7 @@
   const projects=Array.from(root.children).find(n=>n.matches(".studio-project-manager:not(.studio-render-panel)"));
   const income=direct(root,".income-tracker"),capabilities=direct(root,".studio-capabilities"),social=direct(root,".studio-social");
   const items=[
-   {id:"video",label:"Lucrează la videoclip",title:"Video & Reels",description:"Pregătește scenariul și producția video. Randarea MP4 rămâne disponibilă numai când serviciul este configurat și verificat.",nodes:[production,render,brief,actions],deliverable:["studioDeliverable","short"]},
+   {id:"video",label:"Lucrează la videoclip",title:"Video & Reels",description:"Pregătește scenariul și producția video. Randarea MP4 rămâne disponibilă numai când serviciul este configurat și verificat.",nodes:[production,render],shared:[brief,actions],deliverable:["studioDeliverable","short"]},
    {id:"series",label:"Scrie serial / scenariu",title:"Seriale și scenarii",description:"Lucrează separat la episoade, personaje, dialog și continuitatea poveștii.",shared:[brief,actions],deliverable:["studioDeliverable","series"]},
    {id:"book",label:"Scrie o carte",title:"Cărți și eBookuri",description:"Spațiu dedicat pentru concept, structură, capitole și manuscris.",shared:[brief,actions],deliverable:["studioDeliverable","book"]},
    {id:"music",label:"Creează muzică / versuri",title:"Muzică și versuri originale",description:"Pregătește compoziții, structuri, versuri și materiale originale.",shared:[brief,actions],deliverable:["studioDeliverable","music"]},
