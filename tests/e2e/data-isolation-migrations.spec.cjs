@@ -117,3 +117,21 @@ test("Conversation context migration classifies only new threads and preserves u
   expect(sql).not.toMatch(/update public\.drvas_conversation_metadata\s+set\s+module/i);
   expect(sql).not.toMatch(/drop policy|disable row level security|delete from public\.drvas_conversation_metadata/i);
 });
+
+
+test("Scheduled reminders and notifications are private, bounded and delivered once by the Worker cron", async () => {
+  const sql = migration("202611060002_scheduled_reminders.sql");
+  expect(sql).toMatch(/create table if not exists public\.drvas_scheduled_tasks/i);
+  expect(sql).toMatch(/create table if not exists public\.drvas_notifications/i);
+  for (const table of ["drvas_scheduled_tasks", "drvas_notifications"]) {
+    expect(sql).toMatch(new RegExp("alter table public\\." + table + " enable row level security", "i"));
+    expect(sql).toMatch(new RegExp("auth\\.uid\\(\\) = user_id", "i"));
+  }
+  expect(sql).toMatch(/unique references public\.drvas_scheduled_tasks/i);
+  expect(sql).toMatch(/revoke insert on public\.drvas_notifications from authenticated/i);
+  const worker = fs.readFileSync(path.join(__dirname, "../../worker/index.js"), "utf8");
+  expect(worker).toContain("async scheduled(controller, env, ctx)");
+  expect(worker).toContain("processDrVasScheduledReminders(env)");
+  expect(worker).toContain("resolution=ignore-duplicates,return=minimal");
+  expect(worker).toContain("drvas_notifications");
+});
