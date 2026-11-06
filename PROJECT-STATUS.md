@@ -942,3 +942,15 @@ Founder feedback:
 - Added Playwright regression coverage in `tests/e2e/module-persistence.spec.cjs` for replay with auto-read disabled, authenticated TTS request routing, and actual audio play invocation.
 - Code commit: `3b3b2b9c0f9448c24e4bcb3b68c244b16b78cc82`. Test commit: `022705e4f0fdf819fc3e126e359d2e293b5b573d`.
 - CI for these latest commits is not yet confirmed. Do not claim the new replay test passes until a PR workflow completes successfully.
+
+
+## Verified checkpoint — 2026-11-06 (run #485)
+
+- Current development branch head at time of CI: `6675813be3873b5ba782c4e59d09f89f06427417`.
+- All 81 Playwright browser tests passed, including the explicit manual Dr.Vas replay regression test.
+- Worker/browser JavaScript static validation passed; CycloneDX SBOM files were generated and uploaded as GitHub Actions artifact `DrVas-SBOM` (artifact id `13491552109`).
+- Cloudflare deploy failed at Wrangler's account service lookup with HTTP 503 `no healthy upstream`; production smoke test was skipped. Latest production deployment is therefore still the previously confirmed deployment from workflow #478 / PR #8. Do not describe run #485 as deployed.
+- CI dependency installation reported 3 moderate npm vulnerabilities. No dependency remediation has been applied yet.
+- Android build workflow #336 succeeded for the voice replay code commit, but actual playback on the user's Android device remains unverified.
+- PR #9 remains open and must not be merged while GitHub reports dirty/conflicted branch state. Resolve safely, validate, then merge.
+- Conversation checkpoint and next steps are recorded in `docs/CHAT-ARCHIVE-2026-11-06-AVATARS-VOICE.md`.
