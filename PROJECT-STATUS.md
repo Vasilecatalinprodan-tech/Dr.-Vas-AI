@@ -894,3 +894,12 @@ Founder feedback:
 
 - Workflow #476 / run `42182127089` completed SUCCESS. The Academy update and Commerce deletion regression tests both passed as part of the browser suite; JavaScript validation, Worker deployment, production smoke test and SBOM upload also passed.
 - `main` and `drvas-integrated-platform` were fast-forward synchronized after the successful test run.
+
+
+## 2026-11-06 — repository-wide branch audit
+
+- Founder instructed: continue development across all branches and save all work/chat, with the no-cost constraint unchanged.
+- Inventoried all 8 branches and recorded their heads, divergence and integration findings in `docs/BRANCH_INTEGRATION_AUDIT_2026-11-06.md`.
+- Confirmed that the active integrated line already contains key work from the long-input, founder-workbench, attachment, session-restore and startup-failsafe branches. Account deletion remains a specification, not an implemented destructive feature.
+- No legacy branch was deleted, force-pushed, rebased or wholesale merged. Their divergent histories make automatic merging unsafe.
+- Added an E2E test for Academy Markdown export, checking the exported brief, latest AI output, download name and status. Workflow #478 is running; do not claim the new test has passed until CI finishes.
