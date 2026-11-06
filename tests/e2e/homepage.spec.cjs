@@ -2527,7 +2527,7 @@ test("module capabilities open dedicated feature pages instead of one crowded wo
   await expect.poll(() => page.evaluate(() => window.DrVasAcademyFeature)).toBe("lessons");
   await page.locator("#academySubject").fill("E2E course");
   await page.evaluate(() => buildAcademyPrompt());
-  await expect(page.locator("#question")).toContainText("FOCUS: scrie lecțiile în detaliu");
+  await expect(page.locator("#question")).toHaveValue(/FOCUS: scrie lecțiile în detaliu/);
   await page.locator('#academyWorkspace [data-feature="exercises"]').click();
   await expect.poll(() => page.evaluate(() => window.DrVasAcademyFeature)).toBe("exercises");
   await page.locator('#academyWorkspace [data-feature="learning-plan"]').click();
@@ -2543,7 +2543,7 @@ test("module capabilities open dedicated feature pages instead of one crowded wo
   await expect.poll(() => page.evaluate(() => window.DrVasCommerceFeature)).toBe("suppliers");
   await page.locator("#commerceProduct").fill("E2E product");
   await page.evaluate(() => buildCommercePrompt());
-  await expect(page.locator("#question")).toContainText("FOCUS: construiește o comparație de furnizori");
+  await expect(page.locator("#question")).toHaveValue(/FOCUS: construiește o comparație de furnizori/);
   await page.locator('#commerceWorkspace [data-feature="launch"]').click();
   await expect.poll(() => page.evaluate(() => window.DrVasCommerceFeature)).toBe("launch");
   await page.locator('#commerceWorkspace [data-feature="pricing"]').click();
