@@ -632,3 +632,13 @@ Keep the zero-new-cost rule. Do not buy provider usage, create subscriptions, st
 - Run #484 / `42194604319` uses head `a3954ea69723315db526b3cdeea32c0995aec46b`. At last check JavaScript/static validation passed; Chromium installation was still in progress. Browser tests, deploy and smoke test remain pending.
 - No deployment from PR #9 yet. PR #8's validated Worker deployment remains the latest confirmed production deployment.
 - Next: inspect run #484 to completion, fix any Playwright issue, then resolve PR #9 mergeability before merge/deploy.
+
+
+## 2026-11-06 continuation checkpoint
+
+- Continue on `drvas-integrated-platform`; do not force-push, reset, or delete branches to resolve PR #9.
+- PR #9 contains the manual voice replay fix, its Playwright regression test, and the corrected static CI invariant. It remains open and GitHub reports a dirty/diverged state relative to `main`.
+- Latest checked workflow #485 (run id `42194776169`) passed static validation and all 81 Playwright tests, generated and uploaded SBOM, but failed Cloudflare deployment with Wrangler API HTTP 503 `no healthy upstream`. Production smoke test was skipped. Do not claim a new production deploy.
+- Three moderate npm advisories were reported by `npm ci`; inspect `npm audit` details before deciding on any updates.
+- Android build workflow #336 passed for the replay code, but physical-device playback remains unverified.
+- Read `docs/CHAT-ARCHIVE-2026-11-06-AVATARS-VOICE.md` for the full continuation summary, exact CI outcomes, user instructions and open work.
