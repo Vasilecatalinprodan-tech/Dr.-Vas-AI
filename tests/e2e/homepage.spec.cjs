@@ -1955,3 +1955,183 @@ test("opening a saved Commerce project restores calculator inputs and recalculat
   await expect(page.locator("#commerceBreakEvenOrders")).toContainText("12");
   await expect(page.locator("#commerceProjectStatus")).toContainText("Proiect încărcat");
 });
+
+
+test("Studio translation requires a target language and prepares a rights-aware translation brief", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(() => {
+    currentUser = { id: "e2e-studio-translation", email: "admin@example.invalid" };
+    isDrvasAdmin = true;
+    selectModule("studio", true);
+    document.getElementById("studioDeliverable").value = "translation";
+    document.getElementById("studioIdea").value = "Good morning. This is the original text.";
+    document.getElementById("studioSourceLanguage").value = "en";
+    document.getElementById("studioTargetLanguage").value = "";
+    buildStudioPrompt();
+    const blocked = document.getElementById("question").value;
+    document.getElementById("studioTargetLanguage").value = "ro";
+    document.getElementById("studioRights").value = "client_authorized";
+    document.getElementById("studioMonetization").value = "freelance";
+    document.getElementById("studioMarket").value = "Regatul Unit";
+    buildStudioPrompt();
+    const prompt = document.getElementById("question").value;
+    const project = studioProjectData();
+    return {
+      blocked,
+      prompt,
+      brief: project.brief,
+      targetOptions: Array.from(document.getElementById("studioTargetLanguage").options).map(option => option.value)
+    };
+  });
+  expect(result.blocked).toBe("");
+  expect(result.prompt).toContain("LIMBA SURSA: en");
+  expect(result.prompt).toContain("LIMBA ȚINTĂ: ro");
+  expect(result.prompt).toContain("Tradu integral");
+  expect(result.prompt).toContain("DREPTURI ȘI AUTORIZARE: Material de client cu permisiune");
+  expect(result.prompt).toContain("OBIECTIV DE VENIT: Serviciu pentru client / freelance");
+  expect(result.prompt).toContain("Regatul Unit");
+  expect(result.brief.source_language).toBe("en");
+  expect(result.brief.target_language).toBe("ro");
+  expect(result.brief.rights_status).toBe("client_authorized");
+  expect(result.brief.monetization_route).toBe("freelance");
+});
+
+test("Studio imports a small subtitle or text file locally and rejects oversized files", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(async () => {
+    const input = document.getElementById("studioSourceFile");
+    const valid = new File(["1\n00:00:00,000 --> 00:00:01,000\nHello world"], "captions.srt", { type: "application/x-subrip" });
+    await loadStudioSourceFile(valid);
+    const accepted = document.getElementById("studioIdea").value;
+    const oversized = new File(["x".repeat(2 * 1024 * 1024 + 1)], "large.txt", { type: "text/plain" });
+    await loadStudioSourceFile(oversized);
+    return {
+      accepted,
+      status: document.getElementById("studioProjectStatus").textContent,
+      fileInputAccept: input.accept
+    };
+  });
+  expect(result.accepted).toContain("MATERIAL ÎNCĂRCAT LOCAL: captions.srt");
+  expect(result.accepted).toContain("Hello world");
+  expect(result.status).toContain("depășește limita de 2 MB");
+  expect(result.fileInputAccept).toContain(".srt");
+});
+
+test("Studio monetization planner includes platform fees, rights, VAT and owner approval boundaries", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(() => {
+    currentUser = { id: "e2e-studio-monetization", email: "admin@example.invalid" };
+    isDrvasAdmin = true;
+    selectModule("studio", true);
+    document.getElementById("studioProjectTitle").value = "Roman original";
+    document.getElementById("studioDeliverable").value = "book";
+    document.getElementById("studioIdea").value = "Roman original despre secrete de familie.";
+    document.getElementById("studioRights").value = "original_owned";
+    document.getElementById("studioMonetization").value = "ebook";
+    document.getElementById("studioMarket").value = "Regatul Unit";
+    buildStudioMonetizationPrompt();
+    return {
+      prompt: document.getElementById("question").value,
+      brief: studioProjectData().brief
+    };
+  });
+  expect(result.prompt).toContain("PLAN DE MONETIZARE ȘI PUBLICARE");
+  expect(result.prompt).toContain("drepturilor de autor");
+  expect(result.prompt).toContain("comisioane");
+  expect(result.prompt).toContain("TVA/taxelor");
+  expect(result.prompt).toContain("nu iniția plăți sau publicări");
+  expect(result.brief.monetization_route).toBe("ebook");
+  expect(result.brief.rights_status).toBe("original_owned");
+});
+
+test("Studio saved projects restore language, rights and monetization metadata", async ({ page }) => {
+  await openApp(page, "ro");
+  const restored = await page.evaluate(async () => {
+    currentUser = { id: "e2e-studio-restore", email: "admin@example.invalid" };
+    isDrvasAdmin = true;
+    selectModule("studio", true);
+    const id = "e2e-studio-saved";
+    const brief = {
+      idea: "Roman tradus în engleză.",
+      deliverable: "translation",
+      platform: "YouTube",
+      tone: "cinematic realist",
+      audience: "public general",
+      duration: "3-5 minute",
+      aspect: "orizontal 16:9",
+      source_language: "ro",
+      target_language: "en",
+      rights_status: "original_owned",
+      monetization_route: "ebook",
+      target_market: "UE",
+      narration: "none",
+      subtitles: true,
+      latest_output: "Traducere de test"
+    };
+    const select = document.getElementById("studioSavedProjects");
+    select.add(new Option("Proiect Studio", id));
+    select.value = id;
+    supabaseClient.from = () => {
+      const query = {};
+      query.select = function () { return this; };
+      query.eq = function () { return this; };
+      query.single = async function () {
+        return { data: { id, title: "Proiect Studio", project_type: "translation", brief }, error: null };
+      };
+      return query;
+    };
+    await openStudioProject();
+    return {
+      source: document.getElementById("studioSourceLanguage").value,
+      target: document.getElementById("studioTargetLanguage").value,
+      rights: document.getElementById("studioRights").value,
+      monetization: document.getElementById("studioMonetization").value,
+      market: document.getElementById("studioMarket").value,
+      idea: document.getElementById("studioIdea").value
+    };
+  });
+  expect(restored).toEqual({
+    source: "ro",
+    target: "en",
+    rights: "original_owned",
+    monetization: "ebook",
+    market: "UE",
+    idea: "Roman tradus în engleză."
+  });
+});
+
+
+test("Studio builds distinct original briefs for series, songs, lyrics and books", async ({ page }) => {
+  await openApp(page, "ro");
+  const results = await page.evaluate(() => {
+    currentUser = { id: "e2e-studio-creative", email: "admin@example.invalid" };
+    isDrvasAdmin = true;
+    selectModule("studio", true);
+    const cases = [
+      { kind: "series", marker: "două episoade distincte pe zi" },
+      { kind: "music", marker: "compoziție muzicală originală" },
+      { kind: "lyrics", marker: "versuri sau poezie originale" },
+      { kind: "book", marker: "Construiește o carte originală" }
+    ];
+    return cases.map(({ kind, marker }) => {
+      document.getElementById("studioDeliverable").value = kind;
+      document.getElementById("studioIdea").value = "Concept original de test pentru " + kind;
+      document.getElementById("studioRights").value = "needs_clearance";
+      buildStudioPrompt();
+      return {
+        kind,
+        prompt: document.getElementById("question").value,
+        marker,
+        rights: document.getElementById("studioRights").value
+      };
+    });
+  });
+  for (const item of results) {
+    expect(item.prompt).toContain(item.marker);
+    expect(item.prompt).toContain("DREPTURI ȘI AUTORIZARE:");
+    expect(item.prompt).toContain("dacă statutul este «de verificat», nu recomanda publicarea");
+    expect(item.rights).toBe("needs_clearance");
+  }
+  expect(results.find(item => item.kind === "music").prompt).toContain("Nu imita o melodie sau un artist existent");
+  expect(results.find(item => item.kind === "book").prompt).toContain("un prim capitol complet");
+});

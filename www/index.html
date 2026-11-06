@@ -1129,13 +1129,20 @@ body.presentation-open{overflow:hidden!important}
        <option value="vertical 9:16">Vertical 9:16</option><option value="orizontal 16:9">Orizontal 16:9</option><option value="pătrat 1:1">Pătrat 1:1</option><option value="adaptabil multi-platformă">Adaptabil pentru mai multe platforme</option>
       </select>
      </label>
-     <label class="studio-idea-label">Ideea ta
-      <textarea id="studioIdea" rows="4" maxlength="5000" placeholder="Descrie ideea, personajele, produsul sau mesajul. Păstrează aici detaliile importante."></textarea>
+     <label>Limba sursă (traduceri)<select id="studioSourceLanguage"><option value="auto">Detectare automată</option><option value="ro">Română</option><option value="en">Engleză</option><option value="it">Italiană</option><option value="tr">Turcă</option><option value="fr">Franceză</option><option value="de">Germană</option><option value="es">Spaniolă</option><option value="pt">Portugheză</option><option value="nl">Olandeză</option><option value="pl">Poloneză</option><option value="uk">Ucraineană</option><option value="ru">Rusă</option><option value="ar">Arabă</option><option value="zh">Chineză</option><option value="ja">Japoneză</option></select></label>
+     <label>Limba țintă (traduceri)<select id="studioTargetLanguage"><option value="">Alege limba țintă</option><option value="ro">Română</option><option value="en">Engleză</option><option value="it">Italiană</option><option value="tr">Turcă</option><option value="fr">Franceză</option><option value="de">Germană</option><option value="es">Spaniolă</option><option value="pt">Portugheză</option><option value="nl">Olandeză</option><option value="pl">Poloneză</option><option value="uk">Ucraineană</option><option value="ru">Rusă</option><option value="ar">Arabă</option><option value="zh">Chineză</option><option value="ja">Japoneză</option></select></label>
+     <label>Utilizare și drepturi<select id="studioRights"><option value="original_owned">Conținut original creat de mine</option><option value="client_authorized">Material de client cu permisiune</option><option value="licensed">Material licențiat</option><option value="public_domain">Domeniu public verificat</option><option value="needs_clearance">Drepturi de verificat înainte de publicare</option></select></label>
+     <label>Obiectiv de venit<select id="studioMonetization"><option value="freelance">Serviciu pentru client / freelance</option><option value="ebook">Carte sau e-book</option><option value="music">Licențiere / distribuție muzicală</option><option value="video">Monetizare video / social media</option><option value="digital_product">Produs digital / șabloane</option><option value="licensing">Licențiere către edituri / producători</option><option value="research">Cercetare oportunități, fără publicare încă</option></select></label>
+     <label>Țara / piața vizată<input id="studioMarket" type="text" maxlength="100" value="Regatul Unit" placeholder="Ex.: Regatul Unit, UE, SUA"></label>
+     <label class="studio-idea-label">Material sursă (TXT, MD, SRT, VTT — maximum 2 MB)<input id="studioSourceFile" type="file" accept=".txt,.md,.srt,.vtt,text/plain,text/markdown,application/x-subrip,text/vtt" onchange="loadStudioSourceFile(this.files?.[0])"><small>Fișierul este citit local și introdus în brief. Pentru documente scanate sau DOCX, folosește atașamentul conversației.</small></label>
+     <label class="studio-idea-label">Ideea ta / textul de tradus
+      <textarea id="studioIdea" rows="4" maxlength="5000" placeholder="Descrie ideea, personajele, produsul sau mesajul. Pentru traduceri, lipește textul sau încarcă un fișier TXT/MD/SRT/VTT."></textarea>
      </label>
     </div>
     <div class="studio-actions">
      <button type="button" onclick="buildStudioPrompt()">Pregătește proiectul în Studio</button>
-     <span>Vei putea modifica cererea înainte să o trimiți către Dr.Vas.</span>
+     <button type="button" onclick="buildStudioMonetizationPrompt()">Planifică monetizarea</button>
+     <span>Studio pregătește livrabilele creative și un plan separat de drepturi, costuri, prețuri și venituri. Publicarea și plățile rămân sub controlul tău.</span>
     </div>
     <section class="studio-project-manager" aria-label="Proiectele mele Dr.Vas Studio">
      <h3>📁 Proiectele mele</h3>
@@ -3418,7 +3425,7 @@ async function checkStudioRenderStatus(){
 function newStudioProject(){
  stopStudioRenderPolling();
  currentStudioProjectId=null;currentStudioProjectOutput="";currentStudioRenderJobId=null;currentStudioRenderStoragePath="";
- ["studioProjectTitle","studioIdea"].forEach(id=>{el(id).value="";});if(el("studioSubtitles"))el("studioSubtitles").checked=true;if(el("studioNarration"))el("studioNarration").value="founder_voice_pending";
+ ["studioProjectTitle","studioIdea","studioMarket"].forEach(id=>{if(el(id))el(id).value=id==="studioMarket"?"Regatul Unit":"";});if(el("studioSourceLanguage"))el("studioSourceLanguage").value="auto";if(el("studioTargetLanguage"))el("studioTargetLanguage").value="";if(el("studioRights"))el("studioRights").value="original_owned";if(el("studioMonetization"))el("studioMonetization").value="freelance";if(el("studioSourceFile"))el("studioSourceFile").value="";if(el("studioSubtitles"))el("studioSubtitles").checked=true;if(el("studioNarration"))el("studioNarration").value="founder_voice_pending";
  if(el("studioSceneImages"))el("studioSceneImages").value="";clearStudioSceneTimeline();if(el("studioSceneAudio"))el("studioSceneAudio").value="";if(el("studioSceneCaptions"))el("studioSceneCaptions").value="";
  if(el("studioRenderPreview")){el("studioRenderPreview").pause();el("studioRenderPreview").removeAttribute("src");el("studioRenderPreview").hidden=true;}
  if(el("studioRenderDownload")){el("studioRenderDownload").removeAttribute("href");el("studioRenderDownload").hidden=true;}
@@ -3433,7 +3440,7 @@ function studioProjectData(){
  const deliverable=value("studioDeliverable");
  const labels={series:"Serial / episod",short:"Clip scurt",youtube:"Video YouTube",ad:"Reclamă",storyboard:"Storyboard",book:"Carte / e-book",translation:"Traducere",music:"Compoziție muzicală",lyrics:"Versuri / poezie",article:"Articol / blog"};
  const title=value("studioProjectTitle").trim()||((labels[deliverable]||"Proiect")+" — "+(idea.slice(0,48)||"Proiect nou"));
- return {title,project_type:deliverable,brief:{idea,deliverable,platform:value("studioPlatform"),tone:value("studioTone"),audience:value("studioAudience"),duration:value("studioDuration"),aspect:value("studioAspect"),narration:value("studioNarration")||"founder_voice_pending",subtitles:el("studioSubtitles")?.checked!==false,branding:"MADE BY VPC",latest_output:currentStudioProjectOutput.slice(0,50000),render_job_id:currentStudioRenderJobId,render_storage_path:currentStudioRenderStoragePath,updated_from:"drvas-studio"}};
+ return {title,project_type:deliverable,brief:{idea,deliverable,platform:value("studioPlatform"),tone:value("studioTone"),audience:value("studioAudience"),duration:value("studioDuration"),aspect:value("studioAspect"),source_language:value("studioSourceLanguage")||"auto",target_language:value("studioTargetLanguage"),rights_status:value("studioRights")||"original_owned",monetization_route:value("studioMonetization")||"freelance",target_market:value("studioMarket")||"Regatul Unit",narration:value("studioNarration")||"founder_voice_pending",subtitles:el("studioSubtitles")?.checked!==false,branding:"MADE BY VPC",latest_output:currentStudioProjectOutput.slice(0,50000),render_job_id:currentStudioRenderJobId,render_storage_path:currentStudioRenderStoragePath,updated_from:"drvas-studio"}};
 }
 function setStudioProjectStatus(message,isError=false){
  const status=el("studioProjectStatus");if(!status)return;
@@ -3487,7 +3494,7 @@ async function openStudioProject(){
   }else{if(el("studioRenderPreview")){el("studioRenderPreview").removeAttribute("src");el("studioRenderPreview").hidden=true;}if(el("studioRenderDownload"))el("studioRenderDownload").hidden=true;}
   studioRenderMessage(currentStudioRenderStoragePath?"MP4-ul salvat în spațiul privat Dr.Vas.":"Proiect încărcat. Poți crea sau continua randarea.");
   el("studioDeliverable").value=data.project_type||b.deliverable||"series";
-  ["studioIdea","studioPlatform","studioTone","studioAudience","studioDuration","studioAspect","studioNarration"].forEach((key,index)=>{const fields=["idea","platform","tone","audience","duration","aspect","narration"];if(b[fields[index]]!==undefined&&el(key))el(key).value=b[fields[index]];});if(el("studioSubtitles"))el("studioSubtitles").checked=b.subtitles!==false;
+  ["studioIdea","studioPlatform","studioTone","studioAudience","studioDuration","studioAspect","studioNarration","studioSourceLanguage","studioTargetLanguage","studioRights","studioMonetization","studioMarket"].forEach((key,index)=>{const fields=["idea","platform","tone","audience","duration","aspect","narration","source_language","target_language","rights_status","monetization_route","target_market"];if(b[fields[index]]!==undefined&&el(key))el(key).value=b[fields[index]];});if(el("studioSubtitles"))el("studioSubtitles").checked=b.subtitles!==false;
   setStudioProjectStatus("Proiect încărcat. Poți continua editarea și îl poți salva din nou.");
   if(currentStudioRenderJobId&&!currentStudioRenderStoragePath){studioRenderPollAttempts=0;scheduleStudioRenderPolling(1200);}
  }catch(error){setStudioProjectStatus("Nu am putut deschide proiectul: "+error.message,true);}
@@ -3507,7 +3514,7 @@ async function deleteStudioProject(){
 }
 function exportStudioProject(){
  const project=studioProjectData();
- const body="# "+project.title+"\n\n"+"Tip: "+project.project_type+"\n"+"Platformă: "+project.brief.platform+"\n"+"Stil: "+project.brief.tone+"\n"+"Public: "+project.brief.audience+"\n\n## Idee și material\n\n"+project.brief.idea+"\n\n## Ultimul rezultat Dr.Vas\n\n"+(project.brief.latest_output||"Nu există încă un răspuns salvat.")+"\n";
+ const body="# "+project.title+"\n\n"+"Tip: "+project.project_type+"\n"+"Platformă: "+project.brief.platform+"\n"+"Stil: "+project.brief.tone+"\n"+"Public: "+project.brief.audience+"\n"+"Limba sursă: "+project.brief.source_language+"\n"+"Limba țintă: "+project.brief.target_language+"\n"+"Drepturi: "+project.brief.rights_status+"\n"+"Obiectiv venit: "+project.brief.monetization_route+"\n"+"Piață: "+project.brief.target_market+"\n\n## Idee și material\n\n"+project.brief.idea+"\n\n## Ultimul rezultat Dr.Vas\n\n"+(project.brief.latest_output||"Nu există încă un răspuns salvat.")+"\n";
  const blob=new Blob([body],{type:"text/markdown;charset=utf-8"});
  const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=(project.title.replace(/[^a-z0-9ăâîșț_-]+/gi,"-").slice(0,70)||"drvas-proiect")+".md";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
  setStudioProjectStatus("Fișierul proiectului a fost pregătit pentru export.");
@@ -3596,6 +3603,39 @@ async function deleteIncomeOpportunity(id){
  catch(error){incomeMessage("Nu am putut șterge: "+error.message,true);}
 }
 
+async function loadStudioSourceFile(file){
+ if(!file)return;
+ const allowed=/\.(txt|md|srt|vtt)$/i.test(file.name);
+ if(!allowed||!/^text\//i.test(file.type)&&!/(\.srt|\.vtt)$/i.test(file.name)){
+  setStudioProjectStatus("Format neacceptat. Folosește TXT, MD, SRT sau VTT.",true);
+  el("studioSourceFile").value="";
+  return;
+ }
+ if(file.size>2*1024*1024){
+  setStudioProjectStatus("Fișierul depășește limita de 2 MB.",true);
+  el("studioSourceFile").value="";
+  return;
+ }
+ try{
+  const text=await file.text();
+  if(!text.trim())throw new Error("Fișierul este gol.");
+  const marker="\n\n--- MATERIAL ÎNCĂRCAT LOCAL: "+file.name+" ---\n";
+  const current=el("studioIdea").value||"";
+  const combined=current+marker+text;
+  if(combined.length>5000){
+   setStudioProjectStatus("Materialul depășește limita câmpului Studio de 5.000 de caractere. Împarte textul în capitole sau segmente.",true);
+   return;
+  }
+  el("studioIdea").value=combined;
+  setStudioProjectStatus("Materialul "+file.name+" a fost citit local și adăugat în brief. Salvează proiectul pentru a-l păstra.");
+ }catch(error){setStudioProjectStatus("Nu am putut citi fișierul: "+error.message,true);}
+}
+function buildStudioMonetizationPrompt(){
+ const project=studioProjectData();
+ if(!project.brief.idea){el("studioIdea").focus();setStudioProjectStatus("Adaugă ideea sau materialul înainte de planul de monetizare.",true);return;}
+ const prompt="DR.VAS STUDIO — PLAN DE MONETIZARE ȘI PUBLICARE\nPROIECT: "+project.title+"\nTIP: "+project.project_type+"\nOBIECTIV: "+project.brief.monetization_route+"\nPIAȚĂ: "+project.brief.target_market+"\nLIMBI: "+project.brief.source_language+" → "+(project.brief.target_language||"neprecizată")+"\nDREPTURI: "+project.brief.rights_status+"\nMATERIAL: "+project.brief.idea+"\n\nConstruiește un plan legal și realist: (1) verificarea drepturilor de autor, licențelor, consimțământului și provenienței materialelor; (2) 3 canale potrivite de monetizare, cu cerințe de eligibilitate ce trebuie verificate pe paginile oficiale; (3) pachetul de livrabile și specificațiile fiecărei platforme; (4) preț de test, costuri de producție, comisioane, marjă și prag de rentabilitate ca scenarii, nu ca promisiuni; (5) descriere comercială, mostre/portofoliu și ofertă; (6) pași de publicare și promovare; (7) evidența veniturilor, cheltuielilor, facturilor, TVA/taxelor și regulilor de consumator aplicabile pieței; (8) riscuri de copyright, retragere, retur și chargeback. Nu inventa tarife sau reguli actuale. Cere verificarea surselor oficiale înainte de publicare, nu accesa conturi și nu iniția plăți sau publicări fără aprobarea fondatorului.";
+ submitModuleBrief(prompt,"Planul de monetizare este pregătit. Verifică ipotezele și apasă Trimite.");
+}
 function buildStudioPrompt(){
   const idea=el("studioIdea").value.trim();
   if(!idea){el("studioIdea").focus();el("moduleAccessMessage").textContent="Scrie mai întâi ideea proiectului.";return;}
@@ -3612,19 +3652,25 @@ function buildStudioPrompt(){
    article:"Scrie un articol, material de blog sau text comercial original, documentat și adaptat publicului. Include titlu, structură, introducere, secțiuni, concluzie și, unde este cazul, îndemn la acțiune. Marchează afirmațiile care necesită verificarea surselor."
   };
   const kind=el("studioDeliverable").value;
+  const sourceLanguage=el("studioSourceLanguage")?.value||"auto";
+  const targetLanguage=el("studioTargetLanguage")?.value||"";
+  if(kind==="translation"&&!targetLanguage){el("studioTargetLanguage")?.focus();el("moduleAccessMessage").textContent="Alege limba țintă pentru traducere.";return;}
+  const rightsStatus=el("studioRights")?.selectedOptions[0]?.textContent||"Conținut original creat de mine";
+  const monetizationRoute=el("studioMonetization")?.selectedOptions[0]?.textContent||"Serviciu pentru client / freelance";
+  const targetMarket=el("studioMarket")?.value?.trim()||"Regatul Unit";
   const isVideo=["series","short","youtube","ad","storyboard"].includes(kind);
   const contextLines=isVideo
     ? "\nPLATFORMĂ: "+el("studioPlatform").value+"\nDURATĂ: "+el("studioDuration").value+"\nFORMAT VIZUAL: "+el("studioAspect").value+"\nVOICE-OVER: "+(el("studioNarration")?.selectedOptions[0]?.textContent||"Narator AI standard")+"\nSUBTITRĂRI: "+(el("studioSubtitles")?.checked?"DA — sincronizate, lizibile, în zona sigură":"NU")+
       "\nBRANDING OBLIGATORIU: MADE BY VPC — watermark discret, permanent pe fiecare cadru, cu contrast bun, poziționat în zona sigură și fără a acoperi chipuri, subtitrări sau interfața platformei."+
       "\nSPECIFICAȚII SOCIAL: pentru TikTok/Reels/Shorts livrează master vertical 9:16 la 1080×1920, hook vizual/verbal în primele 1–2 secunde, montaj dinamic, subtitrări sincronizate și mix audio clar."
     : kind==="translation"
-      ? "\nLIMBI: detectează limba-sursă și limba-țintă din brief; dacă una lipsește, întreabă înainte de traducere."
+      ? "\nLIMBI: sursă = "+(sourceLanguage==="auto"?"detectare automată":sourceLanguage)+"; țintă = "+targetLanguage+". Tradu integral în limba țintă, păstrează terminologia, numele, numerele, formatarea și marcajele temporale SRT/VTT; nu rezuma și nu elimina segmente. Adaugă glosar și notează expresiile fără echivalent direct."
       : kind==="book"
         ? "\nLUNGIME: propune o structură realistă și livrează etapizat, începând cu planul și primul capitol."
         : kind==="music"||kind==="lyrics"
           ? "\nMUZICĂ: oferă structură, tempo orientativ, tonalitate/acorduri unde sunt utile și indicații de interpretare."
           : "\nFORMAT: alege structura profesională potrivită tipului de material.";
-  const prompt="PROIECT DR.VAS STUDIO — BRIEF CREATIV\nTIPUL LUCRĂRII: "+(deliverables[kind]||"Creează materialul original solicitat.")+"\nSTIL: "+el("studioTone").value+"\nPUBLIC-ȚINTĂ: "+el("studioAudience").value+contextLines+"\nCERINȚA ȘI MATERIALELE CLIENTULUI (păstrează intenția și detaliile):\n"+idea+"\n\nCERINȚE DE LIVRARE:\n1. Livrează un rezultat concret, bine structurat, nu doar recomandări generale.\n2. Respectă limba, tonul, publicul și formatul cerute; nu inventa informații sau surse.\n3. Separă materialul final de observațiile editoriale și recomandările de îmbunătățire.\n4. Pentru lucrări lungi, propune etape și păstrează consecvența între capitole/versiuni.\n5. Folosește numai conținut original; nu copia opere protejate și nu reproduce stilul distinctiv al unui creator în viață.\n6. Semnalează când este necesară verificarea umană, autorizarea unui traducător sau consultarea unui specialist.\n7. Precizează clar ce este text/concept și ce fișier media a fost efectiv generat. Nu pretinde că ai produs un fișier audio, o carte publicată ori o traducere autorizată dacă nu s-a întâmplat.";
+  const prompt="PROIECT DR.VAS STUDIO — BRIEF CREATIV\nTIPUL LUCRĂRII: "+(deliverables[kind]||"Creează materialul original solicitat.")+"\nSTIL: "+el("studioTone").value+"\nPUBLIC-ȚINTĂ: "+el("studioAudience").value+"\nLIMBA SURSA: "+sourceLanguage+"\nLIMBA ȚINTĂ: "+(targetLanguage||"conform briefului") +"\nDREPTURI ȘI AUTORIZARE: "+rightsStatus+"\nOBIECTIV DE VENIT: "+monetizationRoute+"\nPIAȚĂ VIZATĂ: "+targetMarket+contextLines+"\nCERINȚA ȘI MATERIALELE CLIENTULUI (păstrează intenția și detaliile):\n"+idea+"\n\nCERINȚE DE LIVRARE:\n1. Livrează un rezultat concret, bine structurat, nu doar recomandări generale.\n2. Respectă limba, tonul, publicul și formatul cerute; nu inventa informații sau surse.\n3. Separă materialul final de observațiile editoriale și recomandările de îmbunătățire.\n4. Pentru lucrări lungi, propune etape și păstrează consecvența între capitole/versiuni.\n5. Folosește numai conținut original; nu copia opere protejate și nu reproduce stilul distinctiv al unui creator în viață.\n6. Înainte de comercializare, verifică drepturile asupra textelor, imaginilor, vocilor, mostrelor, beat-urilor, fonturilor și materialelor clientului; dacă statutul este «de verificat», nu recomanda publicarea până la clarificare.\n7. Pentru monetizare, oferă modelul de venit potrivit, livrabilele, publicul, prețul orientativ ca ipoteză, comisioanele platformei care trebuie verificate la zi, costurile de producție, marja, riscurile de retur/chargeback, condițiile de licențiere și pașii de publicare. Nu inventa tarife curente, nu promite venit și nu iniția plăți sau publicări.\n8. Semnalează când este necesară verificarea umană, autorizarea unui traducător sau consultarea unui specialist.\n9. Precizează clar ce este text/concept și ce fișier media a fost efectiv generat. Nu pretinde că ai produs un fișier audio, o carte publicată ori o traducere autorizată dacă nu s-a întâmplat.";
   submitModuleBrief(prompt,"Brieful creativ este pregătit. Verifică-l în conversație și apasă Trimite.");
 }
 
