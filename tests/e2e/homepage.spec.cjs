@@ -1796,7 +1796,7 @@ test("Crypto engine filters Proof-of-Work coins strictly above one dollar and by
       randomx: engine.eligibleCoins(markets, "cpu-randomx", 1).map(coin => coin.symbol)
     };
   });
-  expect(result.all).toEqual(["BTC", "LTC", "XMR"]);
+  expect(result.all).toEqual(["BTC", "XMR", "LTC"]);
   expect(result.sha256).toEqual(["BTC"]);
   expect(result.randomx).toEqual(["XMR"]);
 });
