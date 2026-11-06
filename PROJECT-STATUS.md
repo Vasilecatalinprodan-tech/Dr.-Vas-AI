@@ -954,3 +954,10 @@ Founder feedback:
 - Android build workflow #336 succeeded for the voice replay code commit, but actual playback on the user's Android device remains unverified.
 - PR #9 remains open and must not be merged while GitHub reports dirty/conflicted branch state. Resolve safely, validate, then merge.
 - Conversation checkpoint and next steps are recorded in `docs/CHAT-ARCHIVE-2026-11-06-AVATARS-VOICE.md`.
+
+
+## 2026-11-06 09:29 UTC — latest branch/PR verification
+- PR #9 is still open and GitHub reports `mergeable=false`, `mergeable_state=dirty`; head `5ec82e990468b8336d298f097c6bb645bb860656`.
+- `main...drvas-integrated-platform` is diverged: 36 commits ahead, 1 behind; merge base `69c57c5eb1c8a3b1d4612ec572831a3ec072ee67`.
+- No merge or history rewrite was performed. Latest confirmed production deployment remains workflow #478; workflow #485's Cloudflare deploy failed with HTTP 503.
+- Current PR head includes archive/status/handoff updates but has not yet had a fresh full CI run. Revalidate the exact head before integration.
