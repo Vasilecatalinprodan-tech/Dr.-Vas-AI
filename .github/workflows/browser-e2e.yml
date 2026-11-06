@@ -2,10 +2,10 @@ name: Dr.Vas browser regression tests
 
 on:
   pull_request:
-    branches: [drvas-integrated-platform]
+    branches: [drvas-integrated-platform, main]
     types: [opened, reopened, ready_for_review]
   push:
-    branches: [universal-chat-attachments]
+    branches: [universal-chat-attachments, feature/presenter-assets-animation-2026-11-06]
     paths:
       - 'www/**'
       - 'tests/e2e/**'
