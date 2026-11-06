@@ -148,3 +148,14 @@ test("Private Library migration enforces owner-only access and a user-owned stor
   expect(sql).toMatch(/grant select, insert, delete on table public\.drvas_library_items to authenticated/i);
   expect(sql).toMatch(/revoke all on table public\.drvas_library_items from public, anon/i);
 });
+
+
+test("Standalone Projects migration enforces owner-scoped CRUD and module context", async () => {
+  const sql = migration("202611060004_projects.sql");
+  expect(sql).toMatch(/create table if not exists public\.drvas_projects/i);
+  expect(sql).toMatch(/alter table public\.drvas_projects enable row level security/i);
+  expect(sql).toMatch(/auth\.uid\(\) = user_id/i);
+  expect(sql).toMatch(/module in \('free','health','studio','academy','commerce','business'\)/i);
+  expect(sql).toMatch(/grant select, insert, update, delete on table public\.drvas_projects to authenticated/i);
+  expect(sql).toMatch(/notes text not null default ''/i);
+});
