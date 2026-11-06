@@ -304,3 +304,96 @@ test("exporting a saved Academy project includes its brief and latest Dr.Vas out
   expect(exported.download).toMatch(/Curs-practic-de-antreprenoriat\.md$/);
   expect(exported.status).toContain("pregătit");
 });
+
+
+for (const scenario of [
+  { module: "commerce", primary: "commerceProduct", title: "commerceProjectTitle", value: "Produs cu actualizare", output: "Analiza de piață actualizată" },
+  { module: "business", primary: "businessIdea", title: "businessProjectTitle", value: "Afacere cu actualizare", output: "Plan operațional actualizat" }
+]) {
+  test(`${scenario.module} updates its existing project with owner and module filters`, async ({ page }) => {
+    await openApp(page);
+    await page.evaluate(async ({ module, primary, title, value, output }) => {
+      const operations = [];
+      window.__DRVAS_GENERIC_UPDATE__ = operations;
+      const id = "e2e-existing-" + module;
+      moduleProjectState[module] = id;
+      moduleProjectOutputs[module] = output;
+      document.getElementById(primary).value = value;
+      document.getElementById(title).value = value + " — proiect";
+
+      supabaseClient.from = table => {
+        const query = { operation: null, payload: null, filters: [] };
+        query.select = function () { return this; };
+        query.update = function (payload) { this.operation = "update"; this.payload = payload; return this; };
+        query.eq = function (key, filterValue) { this.filters.push([key, filterValue]); return this; };
+        query.order = function () { return this; };
+        query.single = async function () {
+          operations.push({ table, operation: this.operation, payload: this.payload, filters: this.filters });
+          return { data: { id }, error: null };
+        };
+        query.limit = async function () {
+          return { data: [{ id, title: value + " — proiect", updated_at: new Date().toISOString() }], error: null };
+        };
+        return query;
+      };
+
+      await saveModuleProject(module);
+    }, scenario);
+
+    const operations = await page.evaluate(() => window.__DRVAS_GENERIC_UPDATE__);
+    expect(operations).toHaveLength(1);
+    expect(operations[0].table).toBe("drvas_module_projects");
+    expect(operations[0].operation).toBe("update");
+    expect(operations[0].payload.user_id).toBe("e2e-module-owner");
+    expect(operations[0].payload.module).toBe(scenario.module);
+    expect(operations[0].payload.title).toBe(scenario.value + " — proiect");
+    expect(operations[0].payload.brief.latest_output).toBe(scenario.output);
+    expect(operations[0].filters).toEqual([
+      ["id", "e2e-existing-" + scenario.module],
+      ["user_id", "e2e-module-owner"],
+      ["module", scenario.module]
+    ]);
+  });
+}
+
+for (const scenario of [
+  { module: "commerce", primary: "commerceProduct", title: "commerceProjectTitle", value: "Analiză produs online", output: "Marjă estimată și plan de lansare." },
+  { module: "business", primary: "businessIdea", title: "businessProjectTitle", value: "Plan companie locală", output: "Etape, costuri și obiective trimestriale." }
+]) {
+  test(`${scenario.module} project export includes the module brief and latest AI output`, async ({ page }) => {
+    await openApp(page);
+    const exported = await page.evaluate(async ({ module, primary, title, value, output }) => {
+      document.getElementById(primary).value = value;
+      document.getElementById(title).value = value + " — document";
+      moduleProjectOutputs[module] = output;
+      window.__DRVAS_EXPORTED_FILE__ = null;
+      Object.defineProperty(URL, "createObjectURL", {
+        configurable: true,
+        value: blob => {
+          window.__DRVAS_EXPORTED_FILE__ = { blob, href: "blob:e2e-" + module };
+          return "blob:e2e-" + module;
+        }
+      });
+      Object.defineProperty(URL, "revokeObjectURL", { configurable: true, value: () => {} });
+      HTMLAnchorElement.prototype.click = function () {
+        window.__DRVAS_EXPORT_CLICK__ = { href: this.href, download: this.download };
+      };
+      exportModuleProject(module);
+      const file = window.__DRVAS_EXPORTED_FILE__;
+      return {
+        text: await file.blob.text(),
+        href: window.__DRVAS_EXPORT_CLICK__?.href,
+        download: window.__DRVAS_EXPORT_CLICK__?.download,
+        status: document.getElementById(module + "ProjectStatus").textContent
+      };
+    }, scenario);
+
+    expect(exported.text).toContain("# " + scenario.value + " — document");
+    expect(exported.text).toContain("Modul: " + scenario.module);
+    expect(exported.text).toContain(scenario.value);
+    expect(exported.text).toContain(scenario.output);
+    expect(exported.href).toBe("blob:e2e-" + scenario.module);
+    expect(exported.download).toMatch(/\.md$/);
+    expect(exported.status).toContain("pregătit");
+  });
+}
