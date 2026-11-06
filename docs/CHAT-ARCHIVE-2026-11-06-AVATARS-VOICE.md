@@ -142,3 +142,36 @@ User: “continua cu tot ce poti face....salveaza tot”
 - PR #9 is open: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/9. GitHub currently reports `mergeable=false`; do not merge until CI succeeds and mergeability/conflicts are resolved.
 - No new runtime deploy has occurred from PR #9. Previous production deployment from PR #8 remains the current verified deploy.
 - Continue saving every subsequent chat request and verified commit/test outcome in this archive and handoff.
+
+
+## Conversation archive — continuation, 2026-11-06
+
+User's latest instruction: “dezvolta tot ce poti face...salveaza tot inclusiv conversatia” (develop everything possible and save everything, including this conversation).
+
+### Verified run #485 / GitHub Actions
+- Workflow: Deploy Dr.Vas Worker, run #485, run id `42194776169`.
+- Branch: `drvas-integrated-platform`.
+- Commit under test: `6675813be3873b5ba782c4e59d09f89f06427417`.
+- JavaScript / Worker static validation: passed.
+- Dependency install and CycloneDX SBOM generation: passed.
+- Chromium install: passed.
+- Playwright browser suite: **81 passed** (including `manual replay keeps dedicated assistant audio enabled when auto-read was previously off`).
+- SBOM artifact uploaded successfully: [DrVas-SBOM artifact](https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42194776169/artifacts/13491552109).
+- Cloudflare deploy step failed before production smoke test. Exact failure: Wrangler 4.158.0 received malformed API response, `503 Service Unavailable`, `no healthy upstream`, on `GET /accounts/***/workers/services/dr--vas-ai`; Cloudflare Ray ID `a5630fc99f80102a-MSP`. The smoke test was skipped. Therefore this run did **not** deploy or verify production.
+- `npm ci` reported 3 moderate severity vulnerabilities. No `npm audit fix`, dependency upgrades or lockfile changes were performed; review advisories individually before remediation.
+- Android build workflow #336 for commit `3b3b2b9c0f9448c24e4bcb3b68c244b16b78cc82` had completed successfully earlier. This proves APK build artifact generation only, not real-device audio playback.
+
+### Conversation transcript summary
+1. User asked to continue and save everything. Assistant inspected GitHub Actions run #485.
+2. Assistant reported 81/81 automated browser tests passing and clarified the first Cloudflare deployment attempt had failed with a 503.
+3. Assistant retried the failed deployment job. The retry again passed static validation, dependency setup, SBOM creation and all 81 browser tests, but Cloudflare API again returned 503 `no healthy upstream`; production smoke test was skipped.
+4. Assistant inspected the full deployment logs and confirmed the failure originated at the Wrangler Cloudflare API request, not in the application's tests.
+5. User explicitly asked to develop all possible work and save the entire conversation. This archive records that request and the verified results.
+
+### Current blockers / next actions
+1. Retry Cloudflare deploy only after checking Cloudflare API/service health; then require a successful production smoke test before claiming deployment.
+2. Resolve PR #9's dirty/diverged branch state without force-pushing, resetting or discarding work. PR: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/9.
+3. Inspect the three moderate npm advisories and determine whether they affect production dependencies; make minimal compatible updates only with regression coverage.
+4. Confirm the latest APK artifact and perform actual Android device testing for manual replay and TTS playback.
+5. Do not claim voice cloning, generated presenter portraits, a published Play Store release, clinical validation, or configured production TTS secrets until separately completed and verified.
+6. Continue maintaining this archive, `PROJECT-STATUS.md` and `PROJECT-HANDOFF.md` at each meaningful checkpoint. The archive is a durable summary/transcript of the conversation, not a verbatim export of every UI message.
