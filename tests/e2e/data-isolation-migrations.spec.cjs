@@ -145,7 +145,7 @@ test("Private Library migration enforces owner-only access and a user-owned stor
   expect(sql).toMatch(/storage_path like user_id::text \|\| '\/library\/%'/i);
   expect(sql).toMatch(/alter table public\.drvas_library_items enable row level security/i);
   expect(sql).toMatch(/auth\.uid\(\) = user_id/i);
-  expect(sql).toMatch(/grant select, insert, delete on table public\.drvas_library_items to authenticated/i);
+  expect(sql).toMatch(/grant\\s+select\\s*,\\s*insert\\s*,\\s*delete\\s+on\\s+(?:table\\s+)?public\\.drvas_library_items\\s+to\\s+authenticated/i);
   expect(sql).toMatch(/revoke all on table public\.drvas_library_items from public, anon/i);
 });
 
@@ -156,6 +156,6 @@ test("Standalone Projects migration enforces owner-scoped CRUD and module contex
   expect(sql).toMatch(/alter table public\.drvas_projects enable row level security/i);
   expect(sql).toMatch(/auth\.uid\(\) = user_id/i);
   expect(sql).toMatch(/module in \('free','health','studio','academy','commerce','business'\)/i);
-  expect(sql).toMatch(/grant select, insert, update, delete on table public\.drvas_projects to authenticated/i);
+  expect(sql).toMatch(/grant\\s+select\\s*,\\s*insert\\s*,\\s*update\\s*,\\s*delete\\s+on\\s+(?:table\\s+)?public\\.drvas_projects\\s+to\\s+authenticated/i);
   expect(sql).toMatch(/notes text not null default ''/i);
 });
