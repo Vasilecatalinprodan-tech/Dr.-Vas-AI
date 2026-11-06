@@ -1906,3 +1906,51 @@ test("Commerce unit economics calculates per-order margin, price floor and budge
   expect(lossScenario.breakEven).toBeNull();
   expect(lossScenario.status).toContain("contribuția pe comandă este zero sau negativă");
 });
+
+
+test("opening a saved Commerce project restores calculator inputs and recalculates its margin", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(async () => {
+    currentUser = { id: "e2e-commerce-owner", email: "admin@example.invalid" };
+    isDrvasAdmin = true;
+    selectModule("commerce", true);
+    const id = "e2e-saved-commerce";
+    const brief = {
+      commerceProduct: "Organizatoare pentru casă",
+      commerceMarket: "Regatul Unit",
+      commerceBudget: "100",
+      commerceModel: "Dropshipping",
+      commerceChannel: "Shopify",
+      commercePrice: "30",
+      commerceBrief: "Test proiect salvat",
+      commerceCurrency: "GBP",
+      commerceUnitCost: "10",
+      commerceShippingCost: "3",
+      commercePackagingCost: "1",
+      commercePlatformFee: "10",
+      commercePaymentFee: "2.9",
+      commerceMarketingCost: "2",
+      commerceReturnsReserve: "5",
+      commerceMonthlyOrders: "20",
+      latest_output: "Scenariu salvat"
+    };
+    const select = document.getElementById("commerceProjectList");
+    select.add(new Option("Proiect salvat", id));
+    select.value = id;
+    supabaseClient.from = () => {
+      const query = {};
+      query.select = function () { return this; };
+      query.eq = function () { return this; };
+      query.single = async function () {
+        return { data: { id, module: "commerce", title: "Proiect salvat", brief }, error: null };
+      };
+      return query;
+    };
+    await openModuleProject("commerce");
+  });
+  await expect(page.locator("#commercePrice")).toHaveValue("30");
+  await expect(page.locator("#commerceUnitCost")).toHaveValue("10");
+  await expect(page.locator("#commerceContribution")).toContainText("8.63");
+  await expect(page.locator("#commerceBreakEvenOrders")).toContainText("12");
+  await expect(page.locator("#commerceProjectStatus")).toContainText("Proiect încărcat");
+});
