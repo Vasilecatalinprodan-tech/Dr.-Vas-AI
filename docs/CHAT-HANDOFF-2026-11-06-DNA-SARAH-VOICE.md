@@ -3,6 +3,7 @@
 **Repository:** `Vasilecatalinprodan-tech/Dr.-Vas-AI`  
 **Feature branch:** `feature/landing-dna-sarah-voice-2026-11-06`  
 **Base checkpoint:** logout branch head `7b3341e8a596dca3ca1e2ee04504863e549c6fa9`
+**Latest feature branch implementation commit:** `0f4bfc7f5db386804a2063b7fc7921da79b4494a`
 
 ## Founder requirements
 - Landing page: make the DNA motif more realistic, with one rotating double helix on the left and one on the right, extending from the top to the bottom of the first/home page. Preserve the existing 13-second rotation and flowing strand/rung animation.
@@ -18,6 +19,7 @@
 
 ## Validation / integration
 - Commit containing the implementation: `f0d9e76c85d876896db20f6394ffa9f146ea52d4`.
+- Follow-up polish: `0f4bfc7f5db386804a2063b7fc7921da79b4494a` gives each helix unique SVG gradient IDs and keeps the Sarah voice-unavailable notice visible at the end of the presentation.
 - E2E test update: `90f1e6cd822beb6692f14d8d618d70f3c847de72`.
 - Run browser E2E, inspect the desktop/mobile visual result, and verify the voice profile on a device that exposes a female Romanian voice. Do not claim a dedicated Sarah voice is live until the Worker secret is configured by the owner and real audio is checked.
 - This branch is based on the still-open global logout PR #30; merge that PR first after its own green CI, then retarget/rebase this feature branch to main and open a separate PR.
