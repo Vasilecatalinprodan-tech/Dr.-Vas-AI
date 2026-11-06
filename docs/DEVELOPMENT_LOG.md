@@ -651,3 +651,12 @@ Resume with safe PR #9 conflict resolution and fresh CI evidence, exact npm audi
 - PR #36 (Sarah cross-language feminine voice fallback) passed browser E2E workflow run `42279655390` and was squash-merged as `bbb97c26636c2c8b867c02f12b97f51cc219fe0b`. Actual audio playback on the founder's device remains unverified. Main post-merge deployment workflow must be checked before claiming a new production release.
 - This archive captures the current user request verbatim and the engineering decisions in structured form; it is not a complete raw export of the ChatGPT interface.
 - Founder explicitly asked to save all work and resume later. Resume from the UX redesign spec; do not ask the founder to repeat these requirements.
+
+
+
+### Final verification update — 6 November 2026
+- Sarah PR #36 workflow `42279655390` completed SUCCESS; Playwright browser suite: **76 passed**. Relevant Sarah regression test ran successfully.
+- PR #36 is merged into `main` at `bbb97c26636c2c8b867c02f12b97f51cc219fe0b`.
+- Main-branch workflows triggered by this merge were still in progress at checkpoint time: browser regression, Cloudflare deploy and Android APK build. Do not claim post-merge deployment or APK artifact success until these runs finish.
+- Documentation checkpoint is submitted as PR #37: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/37 (docs-only, open; no application code or database migration in this PR).
+- Resume from PR #37 / branch `feature/chat-sidebar-module-workspaces-2026-11-06` and implement the UX redesign in the order described in `docs/UX-REDESIGN-CHAT-AND-MODULE-WORKSPACES-2026-11-06.md`.
