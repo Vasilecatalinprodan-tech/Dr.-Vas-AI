@@ -2259,7 +2259,7 @@ test("Dr.Vas Free uses a viewport chat shell with the requested sidebar and atta
   });
   await expect(page.locator("#chatSection .history-panel")).toBeVisible();
   const labels = await page.locator("[data-free-nav]").allTextContents();
-  expect(labels.map(value => value.trim())).toEqual(["＋New chat","▧Images","◷Scheduled","▤Library","⌘Plugins","✧Explore","▣Projects"]);
+  expect(labels.map(value => value.trim())).toEqual(["＋New chat","▧Images","◷Scheduled","▤Library","⌘Plugins","✧Explore","▣Projects","View all"]);
   await expect(page.locator(".free-recents-heading")).toContainText("Recents");
   await expect(page.locator("#freeChatView .input-area .chat-file-button")).toBeVisible();
   await expect(page.locator("#sendButton")).toContainText("Trimite");
