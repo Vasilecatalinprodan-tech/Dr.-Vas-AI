@@ -263,3 +263,44 @@ test("deleting a saved Commerce project removes only the selected owner-scoped r
   expect(result.title).toBe("");
   expect(result.selectedProject).toBe("");
 });
+
+
+test("exporting a saved Academy project includes its brief and latest Dr.Vas output", async ({ page }) => {
+  await openApp(page);
+  const exported = await page.evaluate(async () => {
+    document.getElementById("academySubject").value = "Antreprenoriat pentru începători";
+    document.getElementById("academyLevel").value = "Începător";
+    document.getElementById("academyProjectTitle").value = "Curs practic de antreprenoriat";
+    moduleProjectOutputs.academy = "Planul cursului cu 5 module și exerciții.";
+
+    window.__DRVAS_EXPORTED_FILE__ = null;
+    Object.defineProperty(URL, "createObjectURL", {
+      configurable: true,
+      value: blob => {
+        window.__DRVAS_EXPORTED_FILE__ = { blob, href: "blob:e2e-project-export" };
+        return "blob:e2e-project-export";
+      }
+    });
+    Object.defineProperty(URL, "revokeObjectURL", { configurable: true, value: () => {} });
+    HTMLAnchorElement.prototype.click = function () {
+      window.__DRVAS_EXPORT_CLICK__ = { href: this.href, download: this.download };
+    };
+
+    exportModuleProject("academy");
+    const file = window.__DRVAS_EXPORTED_FILE__;
+    return {
+      text: await file.blob.text(),
+      href: window.__DRVAS_EXPORT_CLICK__?.href,
+      download: window.__DRVAS_EXPORT_CLICK__?.download,
+      status: document.getElementById("academyProjectStatus").textContent
+    };
+  });
+
+  expect(exported.text).toContain("# Curs practic de antreprenoriat");
+  expect(exported.text).toContain("Modul: academy");
+  expect(exported.text).toContain("Antreprenoriat pentru începători");
+  expect(exported.text).toContain("Planul cursului cu 5 module și exerciții.");
+  expect(exported.href).toBe("blob:e2e-project-export");
+  expect(exported.download).toMatch(/Curs-practic-de-antreprenoriat\.md$/);
+  expect(exported.status).toContain("pregătit");
+});
