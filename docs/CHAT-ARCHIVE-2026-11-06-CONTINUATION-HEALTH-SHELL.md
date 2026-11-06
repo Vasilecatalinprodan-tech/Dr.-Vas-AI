@@ -99,3 +99,12 @@ Additional commits:
 - The latest confirmed static validation passed for `www/module-workspaces.js`.
 - Browser run #457 (`42292634912`) was still installing Chromium when checked; no Playwright result is claimed yet for the all-six sidebar extension.
 - Production DB migrations, live Health rate-limit verification, merge, Worker/web deploy, smoke test and APK remain outstanding.
+
+## Latest integration and CI handoff
+- Shared left sidebar is now present in all six chats (Free, Health, Studio, Academy, Commerce, Business), with the same destinations and attachment button beside Send.
+- Premium module chat layout has a dedicated shared-sidebar CSS mode so the module feature page and chat remain separate.
+- Added regression coverage across all six module chats and updated the module isolation test to expect the sidebar in every active chat.
+- Browser CI now runs `node --check www/module-workspaces.js` and installs Playwright's headless Chromium shell rather than the full browser package.
+- Commits: `9131a909`, `e078d94a`, `20dfb306`, `d8a7040b`.
+- PR #39 latest head: `d8a7040b64874bb6f62de0279c30c18a300ff935`; browser run #464 / ID `42293006432` is queued. Await its final test result.
+- User-facing rule preserved: do not claim a merge, migration, production deploy, APK build or passing browser suite without the corresponding evidence.
