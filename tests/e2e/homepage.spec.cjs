@@ -2000,7 +2000,7 @@ test("Studio imports a small subtitle or text file locally and rejects oversized
   await openApp(page, "ro");
   const result = await page.evaluate(async () => {
     const input = document.getElementById("studioSourceFile");
-    const valid = new File(["1\\n00:00:00,000 --> 00:00:01,000\\nHello world"], "captions.srt", { type: "application/x-subrip" });
+    const valid = new File(["1\n00:00:00,000 --> 00:00:01,000\nHello world"], "captions.srt", { type: "application/x-subrip" });
     await loadStudioSourceFile(valid);
     const accepted = document.getElementById("studioIdea").value;
     const oversized = new File(["x".repeat(2 * 1024 * 1024 + 1)], "large.txt", { type: "text/plain" });
@@ -2098,4 +2098,40 @@ test("Studio saved projects restore language, rights and monetization metadata",
     market: "UE",
     idea: "Roman tradus în engleză."
   });
+});
+
+
+test("Studio builds distinct original briefs for series, songs, lyrics and books", async ({ page }) => {
+  await openApp(page, "ro");
+  const results = await page.evaluate(() => {
+    currentUser = { id: "e2e-studio-creative", email: "admin@example.invalid" };
+    isDrvasAdmin = true;
+    selectModule("studio", true);
+    const cases = [
+      { kind: "series", marker: "două episoade distincte pe zi" },
+      { kind: "music", marker: "compoziție muzicală originală" },
+      { kind: "lyrics", marker: "versuri sau poezie originale" },
+      { kind: "book", marker: "Construiește o carte originală" }
+    ];
+    return cases.map(({ kind, marker }) => {
+      document.getElementById("studioDeliverable").value = kind;
+      document.getElementById("studioIdea").value = "Concept original de test pentru " + kind;
+      document.getElementById("studioRights").value = "needs_clearance";
+      buildStudioPrompt();
+      return {
+        kind,
+        prompt: document.getElementById("question").value,
+        marker,
+        rights: document.getElementById("studioRights").value
+      };
+    });
+  });
+  for (const item of results) {
+    expect(item.prompt).toContain(item.marker);
+    expect(item.prompt).toContain("DREPTURI ȘI AUTORIZARE:");
+    expect(item.prompt).toContain("dacă statutul este «de verificat», nu recomanda publicarea");
+    expect(item.rights).toBe("needs_clearance");
+  }
+  expect(results.find(item => item.kind === "music").prompt).toContain("Nu imita o melodie sau un artist existent");
+  expect(results.find(item => item.kind === "book").prompt).toContain("primul capitol complet");
 });
