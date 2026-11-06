@@ -1129,13 +1129,20 @@ body.presentation-open{overflow:hidden!important}
        <option value="vertical 9:16">Vertical 9:16</option><option value="orizontal 16:9">Orizontal 16:9</option><option value="pătrat 1:1">Pătrat 1:1</option><option value="adaptabil multi-platformă">Adaptabil pentru mai multe platforme</option>
       </select>
      </label>
-     <label class="studio-idea-label">Ideea ta
-      <textarea id="studioIdea" rows="4" maxlength="5000" placeholder="Descrie ideea, personajele, produsul sau mesajul. Păstrează aici detaliile importante."></textarea>
+     <label>Limba sursă (traduceri)<select id="studioSourceLanguage"><option value="auto">Detectare automată</option><option value="ro">Română</option><option value="en">Engleză</option><option value="it">Italiană</option><option value="tr">Turcă</option><option value="fr">Franceză</option><option value="de">Germană</option><option value="es">Spaniolă</option><option value="pt">Portugheză</option><option value="nl">Olandeză</option><option value="pl">Poloneză</option><option value="uk">Ucraineană</option><option value="ru">Rusă</option><option value="ar">Arabă</option><option value="zh">Chineză</option><option value="ja">Japoneză</option></select></label>
+     <label>Limba țintă (traduceri)<select id="studioTargetLanguage"><option value="">Alege limba țintă</option><option value="ro">Română</option><option value="en">Engleză</option><option value="it">Italiană</option><option value="tr">Turcă</option><option value="fr">Franceză</option><option value="de">Germană</option><option value="es">Spaniolă</option><option value="pt">Portugheză</option><option value="nl">Olandeză</option><option value="pl">Poloneză</option><option value="uk">Ucraineană</option><option value="ru">Rusă</option><option value="ar">Arabă</option><option value="zh">Chineză</option><option value="ja">Japoneză</option></select></label>
+     <label>Utilizare și drepturi<select id="studioRights"><option value="original_owned">Conținut original creat de mine</option><option value="client_authorized">Material de client cu permisiune</option><option value="licensed">Material licențiat</option><option value="public_domain">Domeniu public verificat</option><option value="needs_clearance">Drepturi de verificat înainte de publicare</option></select></label>
+     <label>Obiectiv de venit<select id="studioMonetization"><option value="freelance">Serviciu pentru client / freelance</option><option value="ebook">Carte sau e-book</option><option value="music">Licențiere / distribuție muzicală</option><option value="video">Monetizare video / social media</option><option value="digital_product">Produs digital / șabloane</option><option value="licensing">Licențiere către edituri / producători</option><option value="research">Cercetare oportunități, fără publicare încă</option></select></label>
+     <label>Țara / piața vizată<input id="studioMarket" type="text" maxlength="100" value="Regatul Unit" placeholder="Ex.: Regatul Unit, UE, SUA"></label>
+     <label class="studio-idea-label">Material sursă (TXT, MD, SRT, VTT — maximum 2 MB)<input id="studioSourceFile" type="file" accept=".txt,.md,.srt,.vtt,text/plain,text/markdown,application/x-subrip,text/vtt" onchange="loadStudioSourceFile(this.files?.[0])"><small>Fișierul este citit local și introdus în brief. Pentru documente scanate sau DOCX, folosește atașamentul conversației.</small></label>
+     <label class="studio-idea-label">Ideea ta / textul de tradus
+      <textarea id="studioIdea" rows="4" maxlength="5000" placeholder="Descrie ideea, personajele, produsul sau mesajul. Pentru traduceri, lipește textul sau încarcă un fișier TXT/MD/SRT/VTT."></textarea>
      </label>
     </div>
     <div class="studio-actions">
      <button type="button" onclick="buildStudioPrompt()">Pregătește proiectul în Studio</button>
-     <span>Vei putea modifica cererea înainte să o trimiți către Dr.Vas.</span>
+     <button type="button" onclick="buildStudioMonetizationPrompt()">Planifică monetizarea</button>
+     <span>Studio pregătește livrabilele creative și un plan separat de drepturi, costuri, prețuri și venituri. Publicarea și plățile rămân sub controlul tău.</span>
     </div>
     <section class="studio-project-manager" aria-label="Proiectele mele Dr.Vas Studio">
      <h3>📁 Proiectele mele</h3>
