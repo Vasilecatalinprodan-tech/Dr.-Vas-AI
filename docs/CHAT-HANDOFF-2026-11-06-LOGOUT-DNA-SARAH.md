@@ -66,3 +66,9 @@ Work in vertical slices that improve shared foundations and all affected modules
 - The deployment workflow currently repeats Playwright browser installation and tests also run in the dedicated browser workflow. Investigate the long Chromium installation step and improve pipeline reliability without weakening the rule that production deployment follows green regression tests.
 - Public Worker health endpoint: `https://dr--vas-ai.vasilecatalinprodan.workers.dev/health`.
 - The founder requests automatic deployment after every successfully tested merge; preserve that as the default workflow.
+
+
+## Founder message — 6 Nov 2026 (saved verbatim)
+> tiam mai spus fa deploy la tot ce faci nou si merge si salveaza toata conversatia inclusiv chatul si sa continuam sa dezvoltam toate modulele deodata si sa il facem cat mai functional....salveaza tot inclusiv chatul
+
+Interpretation: deploy every successful new merge; continue integrated development across all six modules in parallel; prioritize real working workflows, not decorative UI or claims unsupported by tests; keep the complete conversation in ChatGPT history and preserve durable project decisions in this repository. Do not claim a full verbatim ChatGPT export is stored in GitHub: this handoff file preserves the founder's exact instructions and implementation checkpoints.
