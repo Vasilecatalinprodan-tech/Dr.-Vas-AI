@@ -167,3 +167,48 @@ for (const scenario of [
     expect(restored.calls[0].payload.module).toBe(scenario.module);
   });
 }
+
+
+test("saving an already-open Academy project updates the same owner-scoped row and preserves the latest AI output", async ({ page }) => {
+  await openApp(page);
+  await page.evaluate(async () => {
+    const operations = [];
+    window.__DRVAS_UPDATE_OPERATIONS__ = operations;
+    moduleProjectState.academy = "e2e-existing-academy";
+    moduleProjectOutputs.academy = "Ultimul răspuns Dr.Vas";
+    document.getElementById("academySubject").value = "Curs actualizat";
+    document.getElementById("academyProjectTitle").value = "Plan de curs actualizat";
+
+    supabaseClient.from = table => {
+      const query = { operation: null, payload: null, filters: [] };
+      query.select = function () { return this; };
+      query.update = function (payload) { this.operation = "update"; this.payload = payload; return this; };
+      query.eq = function (key, value) { this.filters.push([key, value]); return this; };
+      query.order = function () { return this; };
+      query.single = async function () {
+        operations.push({ table, operation: this.operation, payload: this.payload, filters: this.filters });
+        return { data: { id: "e2e-existing-academy" }, error: null };
+      };
+      query.limit = async function () {
+        return { data: [{ id: "e2e-existing-academy", title: "Plan de curs actualizat", updated_at: new Date().toISOString() }], error: null };
+      };
+      return query;
+    };
+
+    await saveModuleProject("academy");
+  });
+
+  const operations = await page.evaluate(() => window.__DRVAS_UPDATE_OPERATIONS__);
+  expect(operations).toHaveLength(1);
+  expect(operations[0].table).toBe("drvas_module_projects");
+  expect(operations[0].operation).toBe("update");
+  expect(operations[0].payload.user_id).toBe("e2e-module-owner");
+  expect(operations[0].payload.module).toBe("academy");
+  expect(operations[0].payload.title).toBe("Plan de curs actualizat");
+  expect(operations[0].payload.brief.latest_output).toBe("Ultimul răspuns Dr.Vas");
+  expect(operations[0].filters).toEqual([
+    ["id", "e2e-existing-academy"],
+    ["user_id", "e2e-module-owner"],
+    ["module", "academy"]
+  ]);
+});
