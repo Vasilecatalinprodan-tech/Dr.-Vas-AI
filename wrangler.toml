@@ -9,3 +9,6 @@ SUPABASE_URL = "https://bqgshoqspcfbflgsnntn.supabase.co"
 directory = "./www"
 binding = "ASSETS"
 run_worker_first = true
+
+[triggers]
+crons = ["*/5 * * * *"]
