@@ -65,3 +65,17 @@ Additional commits:
 - Source changes are committed to the feature branch.
 - Automated browser execution for the latest feature-page changes is not yet confirmed. The earlier run associated with the Health-only test commit was cancelled while subsequent commits were being pushed; do not treat the latest feature-page test as passed until a current run completes.
 - No merge, production deployment, Supabase migration application or APK build is claimed in this checkpoint.
+
+## Regression findings and repairs
+- Browser run `42291820799` (run #449) executed 84 tests: 72 passed, 12 failed. This run was on the earlier snapshot before the latest feature-page router and follow-up corrections.
+- The repeated Health failures shared one cause: the Free shell CSS hid the entire module selection shell, which also contains the Health workspace. Added a Health-specific body class so the Free-style chat shell can be reused without hiding Health's own workspace.
+- Added an explicit hidden-state CSS rule for `#freeChatView[hidden]`; this prevents the Free chat view's flex display from overriding navigation view switching.
+- Updated the isolation test so Health is expected to show the shared left sidebar; other module workspaces retain their isolated history policy.
+- Updated the old back-button expectation to the requested “Înapoi la module”.
+- Added mobile viewport constraints for the chat shell, transcript and composer.
+- Added `node --check www/module-workspaces.js` to both browser regression and deploy workflows. The current PR #39 run has already passed the static validation step, including the new external JS file.
+
+## Current validation
+- PR #39: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/39
+- Latest browser run: `42292634912` (run #457), in progress at Chromium installation when this checkpoint was written.
+- No latest browser result is claimed until the full Playwright step completes.
