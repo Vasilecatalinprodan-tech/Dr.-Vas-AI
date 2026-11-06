@@ -1,7 +1,7 @@
 # Dr.Vas platform audit — 2026-11-06
 
 ## Scope requested by founder
-A general audit of Dr.Vas Free, Health, Studio, Academy & Commerce, Business & Management, Android APK, security/infrastructure, and release readiness (website, APK, Google Play). The founder requires separate confirmation before each merge, APK build/release action and production deployment; never infer approval for one action from approval for another.
+A general audit of Dr.Vas Free, Health, Studio, Academy & Commerce, Business & Management, Android APK, security/infrastructure, and release readiness (website, APK, Google Play). On 2026-11-06 the founder explicitly granted standing authorization to continue development, merge suitable fixes, trigger APK builds and deploy the platform without routine approval prompts. Pause only for genuine safety/legal risk, payment, personal credentials, or actions that require the founder's direct account access.
 
 ## Repository baseline
 - Repository: `Vasilecatalinprodan-tech/Dr.-Vas-AI`
@@ -9,7 +9,7 @@ A general audit of Dr.Vas Free, Health, Studio, Academy & Commerce, Business & M
 - Main HEAD at audit start: `74740f9412e5c04aaaf60a078a5d4c10042d32f1`
 - Previous presenter-assets integration is present in main.
 - The long-lived `drvas-integrated-platform` branch is divergent from main (107 commits ahead, 34 behind at comparison time). Do not merge that branch wholesale; inspect and selectively port changes because it has substantial divergence and overlapping historical changes.
-- Latest main commit has no workflow run or combined status returned by the available GitHub Actions connector queries. This means CI/deploy status is unverified, not passing or failing.
+- At the latest audit update, main commit `db811d21ea67ec0ef0ed56404eccd013a3cc2017` has a successful Cloudflare Workers production build check; the main-branch Android debug APK workflow succeeded and uploaded artifact `DrVas-APK` (artifact ID `13510761136`, SHA-256 `cb500fb0f953a8d4449ecaad2679ae70af51929199855d8b3432a4642eff093c`). Main browser E2E failed 1 of 88 tests, and the `Deploy Dr.Vas Worker` workflow stopped before its deploy step because the browser suite failed. Production health endpoint smoke test has not run.
 
 ## Findings by area
 
@@ -69,19 +69,31 @@ A general audit of Dr.Vas Free, Health, Studio, Academy & Commerce, Business & M
 - Initial PR head commit: `4d88ef2879628773751d8eebfb6f2bd2e4ba387e`; subsequent commits add regression fixes and CI trigger coverage.
 - Initial browser run on the first PR commit: static Worker/HTML/migration validation passed; Playwright reported 61 passed and 2 failed. Failures exposed a stale accessibility-label assertion and a real portrait fallback recovery issue.
 - Follow-up changes on the PR branch: presenter portrait images now restore visibility and hide fallback on successful reload; E2E assertions match the current descriptive alt text; browser workflow runs on PR `synchronize`; Android workflow now runs for relevant PRs targeting main.
-- Latest observed PR head at this checkpoint: `348d687c52b77ff88062f01231ecf2cd97d976f5`. GitHub reports the PR open and mergeable=true, but its new browser and Android workflows are still in progress. No successful result has yet been established.
+- PR #22 was merged to `main` on 2026-11-06 at `db811d21ea67ec0ef0ed56404eccd013a3cc2017`. Its main-branch browser E2E reported 87 passed / 1 failed; the sole remaining failure is presenter fallback visibility after the Dr.Jan image is deliberately broken. Its Android debug build passed and uploaded the artifact noted above. Cloudflare's automatic production build check succeeded with version ID `921a778b-231d-45ec-a1b9-9daad4fa632e`.
 - A Cloudflare preview build for an earlier PR commit failed. That is a preview build, not evidence that production deployment succeeded or failed. Production deployment remains unverified.
 - No live Supabase data/schema, production secrets, Cloudflare production configuration or paid services were intentionally changed.
 
 ## Next work sequence
-1. Wait for PR #22 browser and Android checks; review logs/artifacts, confirm mergeability, then request the founder's separate merge confirmation.
-2. After the founder separately authorises the APK build/release step, confirm the main-branch Android workflow produces an artifact; inspect build logs and artifact metadata. A PR debug build is not a release APK.
-3. After separate deploy confirmation, run the full main-branch browser/security suite and verify the main-branch Worker deploy plus production smoke test.
+1. PR #23 (`fix/presenter-fallback-ci-2026-11-06`) contains a stronger image-error/recovery handler; run the browser regression and Android workflows, fix any further failures, then merge when checks and diff are sound.
+2. The main Android debug build already passed; inspect and retain its artifact. Continue to a signed release APK only when signing credentials are available through the founder's secure account access. Debug APK compilation is not device runtime QA or a Play release.
+3. Re-run main browser/security tests and the Worker deployment workflow after the presenter fallback fix; verify deploy and production `/health` smoke test before calling production deployment complete.
 4. Perform a focused runtime pass for Free/Health/Studio/Academy/Commerce/Business, with explicit consent and test accounts.
-5. Verify live Supabase migrations/RLS/storage policies using read-only checks first; do not apply unverified write migrations automatically.
-6. Test Android APK installation and voice on a physical device; then prepare a signed release build and Play Console compliance package.
+5. Verify live Supabase migrations/RLS/storage policies using read-only checks first; apply write migrations only after checking the exact migration plan and backups.
+6. Test APK installation and voice on a physical device; then prepare a signed release build and Play Console compliance package.
 7. Implement payment/entitlement only after merchant/legal/tax/refund/privacy requirements and webhook test plan are complete.
-8. Keep all work in feature branches, add regression tests, and use PRs. The founder has authorised merge/deploy, but failed or unavailable checks must not be represented as successful.
+8. Keep all work in feature branches, add regression tests, merge and deploy autonomously under the founder's standing authorization. Never describe failed or unavailable checks as successful.
 
 ## Conversation preservation
 This is a structured engineering checkpoint of the user's 2026-11-06 audit request and work performed. It is not a verbatim export of the complete ChatGPT UI transcript. The conversation remains in ChatGPT history; repository commits and this document preserve the technical state and key decisions.
+
+
+## Execution update — 2026-11-06 14:16 UTC
+- Founder clarified that development, merge, APK build and deployment are pre-authorized; do not ask for routine approvals again.
+- PR #22 successfully merged to main: `db811d21ea67ec0ef0ed56404eccd013a3cc2017`.
+- Cloudflare Workers Build check for production service `dr--vas-ai` succeeded; version ID `921a778b-231d-45ec-a1b9-9daad4fa632e`. This proves Cloudflare built/deployed a production version, but the application health smoke test remains unverified.
+- Main Android debug build run #342 succeeded. Artifact `DrVas-APK`, ID `13510761136`, SHA-256 `cb500fb0f953a8d4449ecaad2679ae70af51929199855d8b3432a4642eff093c`.
+- Main browser regression run #329 failed: 87 passed, 1 failed. The failure is specifically the Dr.Jan portrait fallback span remaining hidden after the test changes the image src to a missing asset.
+- Main deploy workflow run #502 failed before the Worker deploy and production smoke-test steps because its browser regression stage failed. The SBOM artifact was still uploaded.
+- Created PR #23 to explicitly remove the fallback's `hidden` attribute and set its display to grid on image error; on image load it restores the hidden attribute and removes the inline display override. Browser and Android PR checks are running.
+- Production health URL is `https://dr--vas-ai.vasilecatalinprodan.workers.dev/health`; direct check via the available web viewer was not accessible. Do not claim health smoke test passed.
+- PR #23 URL: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/23
