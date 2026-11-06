@@ -2571,6 +2571,7 @@ test("all six module chats share the same sidebar destinations and attachment co
     await expect(page.locator("#globalLogoutBottom")).toBeVisible();
     await page.locator('[data-free-nav="scheduled"]').click();
     await expect(page.locator("#freeNavWorkspace h2")).toHaveText("Scheduled");
+    await expect(page.locator("#freeChatView")).toBeHidden();
     await page.locator('[data-free-nav="chat"]').click();
     await expect(page.locator("#freeChatView")).toBeVisible();
   }
