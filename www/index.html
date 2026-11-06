@@ -3895,7 +3895,14 @@ function buildAcademyPrompt(){
  const v=id=>el(id)?.value?.trim()||"";
  if(!v("academySubject")){el("academySubject").focus();return;}
  const prompt="DR.VAS ACADEMY — PROIECTARE CURS\nSUBIECT: "+v("academySubject")+"\nNIVEL: "+v("academyLevel")+"\nPUBLIC: "+v("academyAudience")+"\nFORMAT: "+v("academyFormat")+"\nLIMBA: "+v("academyLanguage")+"\nREZULTAT: "+v("academyOutcome")+"\nCERINȚE: "+v("academyBrief")+"\n\nLivrează un curs original și practic: obiective măsurabile, structură pe module și lecții, explicații, exemple, exerciții, teme, quiz cu răspunsuri explicate, proiect final, rubrică de evaluare și resurse recomandate. Separă faptele verificate de ipoteze. Nu inventa acreditări, certificări sau garanții de angajare/venit. Pentru fiscalitate, legislație sau domenii reglementate, indică verificarea cu un profesionist local.";
- submitModuleBrief(prompt,"Brieful Academy este pregătit. Verifică-l și apasă Trimite.");
+ const focus=window.DrVasAcademyFeature||"course";
+ const focusInstructions={
+  course:"FOCUS: proiectează arhitectura completă a cursului, modulele, obiectivele măsurabile și evaluarea finală.",
+  lessons:"FOCUS: scrie lecțiile în detaliu, fiecare cu obiective, explicații pas cu pas, exemple, recapitulare, materiale și teme.",
+  exercises:"FOCUS: creează un set progresiv de exerciții și quiz-uri, cu răspunsuri corecte explicate, barem și criterii de evaluare.",
+  "learning-plan":"FOCUS: creează un plan de învățare săptămânal, cu durată, obiective, activități, verificări de progres și recuperare pentru întârzieri."
+ }[focus];
+ submitModuleBrief(prompt+"\\n\\n"+focusInstructions,"Brieful Academy este pregătit. Verifică-l și apasă Trimite.");
 }
 function calculateCommerceUnitEconomics(){
  const v=id=>Number(el(id)?.value);
@@ -3949,7 +3956,13 @@ function buildCommercePrompt(){
   ?JSON.stringify(economics)
   :"Calculatorul local nu are încă suficiente date pentru un rezultat.";
  const prompt="DR.VAS COMMERCE — ANALIZĂ OPORTUNITATE\nPRODUS/NIȘĂ: "+v("commerceProduct")+"\nPIAȚĂ: "+v("commerceMarket")+"\nBUGET MAXIM: "+budget+"\nMODEL: "+v("commerceModel")+"\nCANAL: "+v("commerceChannel")+"\nPREȚ ȚINTĂ: "+(price||"neprecizat")+"\nCOST PRODUS: "+v("commerceUnitCost")+"\nTRANSPORT: "+v("commerceShippingCost")+"\nAMBALARE: "+v("commercePackagingCost")+"\nCOMISION PLATFORMĂ: "+v("commercePlatformFee")+"%\nCOMISION PLATĂ: "+v("commercePaymentFee")+"%\nMARKETING / COMANDĂ: "+v("commerceMarketingCost")+"\nREZERVĂ RETURURI: "+v("commerceReturnsReserve")+"%\nREZULTAT CALCULATOR: "+economicsSummary+"\nBRIEF: "+v("commerceBrief")+"\n\nAnalizează fără promisiuni de profit: cerere și concurență (marchează ce necesită cercetare actuală), profilul clientului, verificarea furnizorilor, mostre, termene și retururi, siguranța produsului, proprietate intelectuală, obligații UK/UE relevante, cost complet pe unitate, taxe/VAT și comisioane, cost de achiziție client, marjă, prag de rentabilitate și scenarii pesimist/bază/optimist. Verifică independent aritmetica locală și explică diferența dintre contribuția pe comandă, profitul contabil și fluxul de numerar. Respectă strict bugetul; nu presupune că toate fondurile pot fi cheltuite pe stoc sau reclame. Încheie cu o listă de verificări înainte de orice plată și recomandă să nu comandăm până nu verificăm furnizorul și o mostră.";
- submitModuleBrief(prompt,"Analiza Commerce este pregătită. Verifică ipotezele și apasă Trimite.");
+ const focus=window.DrVasCommerceFeature||"research";
+ const focusInstructions={
+  research:"FOCUS: verifică cererea, concurența, profilul clientului și riscurile pieței; marchează ce necesită cercetare actuală.",
+  suppliers:"FOCUS: construiește o comparație de furnizori cu verificarea firmei, mostre, cost complet, MOQ, termene, retururi, trasabilitate și semnale de fraudă. Nu recomanda plata înainte de verificarea independentă.",
+  launch:"FOCUS: pregătește planul de lansare al magazinului: listări, fotografii și texte, politici, livrare, retururi, suport clienți, buget de test și calendar de 30 de zile."
+ }[focus];
+ submitModuleBrief(prompt+"\\n\\n"+focusInstructions,"Analiza Commerce este pregătită. Verifică ipotezele și apasă Trimite.");
 }
 const businessLedgerState={rows:[],currency:"GBP"};
 const studentAssessmentState={id:null};
