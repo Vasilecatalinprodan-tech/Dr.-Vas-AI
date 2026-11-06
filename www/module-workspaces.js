@@ -3,7 +3,7 @@
 (function(){
  "use strict";
  const built=new WeakSet();
- const direct=(root,selector)=>Array.from(root.children).find(node=>node.matches(selector))||null;
+ const direct=(root,selector)=>{const normalized=selector.replace(/^:scope\\s*>\\s*/,"");return Array.from(root.children).find(node=>node.matches(normalized))||null;};
  const byId=id=>document.getElementById(id);
  function makeNav(root,items){
   const nav=document.createElement("nav");nav.className="drvas-feature-navigation";nav.setAttribute("aria-label","Funcții și spații de lucru");
@@ -78,7 +78,7 @@
   ]);
  }
  function business(root){
-  const planForm=direct(root,":scope > .studio-form-grid"),planActions=direct(root,":scope > .studio-actions"),planProjects=Array.from(root.children).find(n=>n.matches(":scope > .module-project-manager"));
+  const planForm=direct(root,":scope > .studio-form-grid"),planActions=direct(root,":scope > .studio-actions"),planProjects=Array.from(root.children).find(n=>n.matches(".module-project-manager"));
   const sectionFor=id=>byId(id)?.closest("section")||null;
   const cashbook=sectionFor("businessCashbookTitle"),breakEven=sectionFor("businessBreakEvenTitle"),student=sectionFor("businessAssessmentTitle");
   simple(root,[
