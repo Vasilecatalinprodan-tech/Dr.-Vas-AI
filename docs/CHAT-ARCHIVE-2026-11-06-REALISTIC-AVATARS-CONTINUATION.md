@@ -71,3 +71,14 @@ Important hosting limitation:
 4. Route presentation narration to the correct distinct voice per presenter using server-side secrets only; preserve clear fallback messaging when a voice is not configured.
 5. Run JS/security/static checks and the full Playwright suite, inspect image loading in a real browser, then create PR, merge and deploy automatically. Verify the production page and Worker after deploy.
 6. Update `PROJECT-STATUS.md`, `PROJECT-HANDOFF.md`, `docs/DEVELOPMENT_LOG.md` and the chat archive with verified commit/run/Worker version details.
+
+
+## CI and merge checkpoint — 2026-11-06 12:42 UTC
+- PR #11 merged the initial archive to main: `3e44463ca464e3495a12d5bcc18cb3045a66945d`.
+- PR #12 was closed without merge because its branch was based on the pre-archive main commit and became behind after PR #11.
+- PR #13 merged the presenter image code and updated archive: `59652cf96f3390e60934e8712df99debb6741ec0`.
+- Main workflow #42219563939 ran JS validation successfully but the E2E suite reported 84/85 passing. One existing presentation test expected the old SVG art to remain visible; the new photo loader correctly hid the SVG after the image loaded. Deploy and production smoke test were skipped because the E2E gate failed.
+- The failed assertion was `#presentationAvatar .presenter-character-art` expected visible. The job's error context showed that element had `is-hidden`, which is the intended state after a portrait loads.
+- Updated the E2E test on branch `fix/presenter-photo-e2e-2026-11-06` to assert that the photorealistic portrait is visible and has the correct alt text for Dr.Vas, Dr.Jan and Sarah. This change is awaiting PR/CI validation.
+- Earlier import attempt workflow #42218528767 failed while downloading the signed Runway image URL with HTTP 401; it did not commit binary assets. The main E2E run subsequently observed the portrait image element load and hide the SVG fallback, so browser-level image loading has been observed in CI, but permanent repository hosting remains outstanding.
+- No production deploy has occurred for commit `59652cf96f3390e60934e8712df99debb6741ec0` because the E2E gate failed. Do not claim that commit is live until a later workflow passes.
