@@ -353,3 +353,20 @@ Founder feedback:
 3. Retrieve exact `npm audit --json` output and map all three moderate findings to dependency paths before selecting minimal compatible fixes.
 4. Test TTS playback on the actual Samsung Android APK/device, including automatic playback, manual replay, switching assistants during pending TTS, mute/stop, and error fallback.
 5. Verify Cloudflare deploy and production smoke test on the exact candidate commit before declaring release readiness.
+
+
+## 2026-11-06 — explicit continuation and save-everything instruction
+
+### User message (verbatim)
+> Continuăm de la acest checkpoint, fără să pierdem lucrările anterioare și fără cheltuieli neaprobate. salveaza tot inclusiv chatul
+
+### Preservation / continuity record
+- The user explicitly confirms that development must continue from the existing checkpoint, preserving all prior work and avoiding unapproved expenditure.
+- This message and its instruction are recorded in this project handoff/status/archive/development log update.
+- Rechecked PR #9 before writing this checkpoint: it remains open and GitHub reports `mergeable=false`; observed head at the time of this check: `aa40ca00783ef9d5e953a847da61e232cd0694a8`.
+- No application source code, dependencies, secrets, database state, Cloudflare deployment, Android APK or paid service was changed or purchased in this archival step.
+- Continue from the existing recorded engineering queue. Preserve all working functionality, security controls, test gates, existing branch history and the zero-unapproved-cost rule.
+- Chat preservation means recording the user's instruction and the material decisions, work, test evidence and unresolved items in version-controlled project archives. It does not claim to export the entire ChatGPT interface transcript byte-for-byte.
+
+### Next checkpoint
+Resume with safe PR #9 conflict resolution and fresh CI evidence, exact npm audit triage, Cloudflare deployment/smoke verification, and Android voice playback validation. Do not merge, deploy, alter production secrets, or incur paid usage until the relevant checks/permissions are satisfied.
