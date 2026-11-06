@@ -127,3 +127,12 @@ Additional commits:
 - Added Playwright assertions for the task-specific Academy and Commerce prompts and Business Cashflow page.
 - Commits: `88325b42` (router selector), `fdf4d4e7` (all-module New chat and mobile sizing), `fda629db` (test alignment), `76387020` (Business Cashflow page), `4a4acc55` (cashflow test), `0a27f887` (textarea prompt assertions).
 - Earlier run #472 (`42293377108`) completed with 78 passed and 9 failed; its failures were traced to the items above and the updated requirements. The latest integrated browser run #488 (`42294172064`) is now in progress against the current feature-page implementation. Do not mark the suite passed until it completes.
+
+## Independent drafts inside dedicated feature pages
+- Added per-feature draft-state isolation for shared form controls. When moving between Studio, Academy or Commerce pages, the selected page saves its own field values and restores them when reopened; file inputs are intentionally not restored for security/browser reasons.
+- Studio Video, Series, Books, Music and Translation now share the same control nodes without sharing draft content between pages.
+- Academy Course, Lessons, Exercises and Learning Plan each keep their own subject/brief values.
+- Commerce Research, Supplier Comparison and Store Launch each keep their own product/brief values.
+- Added Playwright checks proving that changing a feature does not overwrite another feature's draft.
+- Commit: `1dbd75a2` (draft isolation) and `6065e1cf` (draft-isolation regression).
+- Latest browser run #494 / ID `42294568843` is testing this snapshot.
