@@ -324,7 +324,8 @@ test("desktop module opens one isolated full-width workspace without the global 
   await expect(page.locator(".chat-module-rail")).toBeHidden();
   await expect(page.locator("#question")).toBeVisible();
   await expect(page.locator(".chat-back-button")).toContainText("Înapoi la module");
-  await expect(page.locator(".chat-logout-button")).toBeVisible();
+  await expect(page.locator("#globalLogoutTop")).toBeVisible();
+  await expect(page.locator("#globalLogoutBottom")).toBeVisible();
   await expect(page.locator(".chat-module-rail")).toBeHidden();
   expect(await page.evaluate(() => document.body.classList.contains("module-workspace-mode"))).toBe(true);
   const layout = await page.locator("main").evaluate(node => getComputedStyle(node).gridTemplateColumns);
@@ -2134,4 +2135,35 @@ test("Studio builds distinct original briefs for series, songs, lyrics and books
   }
   expect(results.find(item => item.kind === "music").prompt).toContain("Nu imita o melodie sau un artist existent");
   expect(results.find(item => item.kind === "book").prompt).toContain("un prim capitol complet");
+});
+
+
+test("authenticated users can always sign out from the global top header and true bottom edge", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openApp(page, "ro");
+  await expect(page.locator("#globalLogoutTop")).toBeHidden();
+  await expect(page.locator("#globalLogoutBottom")).toBeHidden();
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-global-logout-user", email: "user@example.invalid" };
+    syncGlobalLogoutControls();
+  });
+  await expect(page.locator("#globalLogoutTop")).toBeVisible();
+  await expect(page.locator("#globalLogoutBottom")).toBeVisible();
+  const positions = await page.evaluate(() => ({
+    top: document.querySelector("#globalLogoutTop").getBoundingClientRect().top,
+    bottom: document.querySelector("#globalLogoutBottom").getBoundingClientRect().bottom,
+    footerPosition: getComputedStyle(document.querySelector("footer")).position
+  }));
+  expect(positions.top).toBeLessThan(100);
+  expect(positions.bottom).toBeGreaterThan(700);
+  await page.evaluate(() => {
+    document.body.classList.add("chat-focus-mode");
+    document.documentElement.classList.add("chat-focus-document");
+  });
+  await expect(page.locator("#globalLogoutTop")).toBeVisible();
+  await expect(page.locator("#globalLogoutBottom")).toBeVisible();
+  await expect.poll(() => page.locator("footer").evaluate(node => getComputedStyle(node).position)).toBe("fixed");
+  await page.evaluate(() => { currentUser = null; syncGlobalLogoutControls(); });
+  await expect(page.locator("#globalLogoutTop")).toBeHidden();
+  await expect(page.locator("#globalLogoutBottom")).toBeHidden();
 });
