@@ -145,3 +145,13 @@ Additional commits:
 - Updated the legacy grid expectation to two columns: shared sidebar plus one chat column.
 - Commits: `b043f4a6` (global Back sync and all-module New chat), `c9d5b1e7` (mobile flex), `a8f8b6b1` (Studio/Business feature page test navigation), `d4b7f0c2` (global Back test updates), `ac2896ab` (top Back navigation regression).
 - Latest browser run #502 / ID `42295378855` is running the full Playwright suite on the integrated candidate. No pass is claimed until completion.
+
+## Current fixes following run #502
+- Run #502 completed with 83 passed / 4 failed. The remaining failures were: saved-project workflow timeout, Dr.Jan portrait alt text, global Back visibility, and mobile composer overflow.
+- Corrected the presenter scene to set the portrait alt text after changing the selected speaker.
+- Global Back is now explicitly shown on the next animation frame after module activation and hidden again on module selection/logout.
+- New chat explicitly restores the chat view after rendering the welcome state for all six modules.
+- The mobile composer rule now overrides the later shared input-area positioning rule and removes transformed containing blocks; it is fixed above the footer.
+- Updated Studio and Business tests to navigate to their dedicated Projects/Video/Cashbook/Break-even/Student Desk/Cashflow pages. The project lifecycle test timeout was increased to 60 seconds with per-module diagnostics to identify any remaining slow step.
+- Commit: `b0fb3a56` (diagnostic project test); preceding code fixes are on the same PR branch.
+- Latest browser run #508 / ID `42296186730` is validating the current candidate.
