@@ -913,6 +913,72 @@ body.chat-focus-mode footer{display:flex!important;position:fixed!important;left
 body.chat-focus-mode footer .global-logout-button{margin:0}
 body.chat-focus-mode main{padding-bottom:64px!important}
 @media(max-width:520px){.header-actions{gap:5px}.global-logout-button{padding:8px 9px!important;font-size:10px!important}.status{display:none}}
+
+/* Dr.Vas Free viewport shell: fixed application frame, transcript-only scrolling */
+html.drvas-free-shell,html.drvas-free-shell body{height:100%;min-height:0;overflow:hidden}
+body.free-module-mode{height:100dvh;min-height:0;overflow:hidden}
+body.free-module-mode header{min-height:75px}
+body.free-module-mode footer{display:none!important}
+body.free-module-mode main{display:block!important;width:100%!important;max-width:none!important;height:calc(100dvh - 75px)!important;min-height:0!important;margin:0!important;padding:10px 12px!important;overflow:hidden!important}
+body.free-module-mode #appMain{height:calc(100dvh - 75px)!important;min-height:0!important;overflow:hidden!important}
+body.free-module-mode #chatSection{display:flex!important;flex-direction:column;width:100%;height:100%;min-height:0;max-width:none;margin:0;overflow:hidden}
+body.free-module-mode #chatSection>.chat-view-nav{flex:0 0 auto;margin:0 0 9px;padding:8px 12px}
+body.free-module-mode #chatSection>.chat-layout{display:grid!important;grid-template-columns:248px minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr)!important;gap:12px;width:100%;height:auto;flex:1 1 auto;min-height:0;overflow:hidden;margin:0}
+body.free-module-mode #chatSection .history-panel{display:flex!important;flex-direction:column;gap:8px;min-width:0;min-height:0;max-height:none;overflow:hidden;padding:12px;background:#091827;border:1px solid #203d54;border-radius:15px}
+body.free-module-mode .free-sidebar-brand{padding:3px 7px 8px;color:#e7f5f8;font-size:14px;font-weight:900}
+body.free-module-mode .free-primary-nav{display:grid;gap:4px;flex:0 0 auto}
+body.free-module-mode .free-primary-nav button{display:flex;align-items:center;gap:10px;width:100%;min-height:38px;padding:8px 10px;text-align:left;background:transparent;border:1px solid transparent;border-radius:9px;color:#c6d7e1;font-size:12px;font-weight:650}
+body.free-module-mode .free-primary-nav button:hover,body.free-module-mode .free-primary-nav button.active{background:#173849;border-color:#315b6d;color:#fff}
+body.free-module-mode .free-primary-nav button .free-nav-icon{display:inline-grid;place-items:center;width:20px;color:#83e3dc;font-size:15px}
+body.free-module-mode .free-recents-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 3px 0;color:#9bb5c4;font-size:11px;font-weight:800}
+body.free-module-mode .free-recents-heading button{padding:3px 6px;background:transparent;color:#81cfc9;border:0;font-size:10px}
+body.free-module-mode #conversationList{flex:1 1 auto;min-height:50px;max-height:none;overflow-y:auto;overscroll-behavior:contain;margin:0;padding-right:3px}
+body.free-module-mode .history-panel h3,body.free-module-mode .history-panel>.new-chat-button{display:none!important}
+body.free-module-mode .history-panel .delete-history-button,body.free-module-mode .history-panel .history-filter-button{flex:0 0 auto;padding:7px 8px;font-size:10px}
+body.free-module-mode .chat-main{display:flex!important;flex-direction:column;min-width:0;min-height:0;width:100%;height:100%!important;max-height:none!important;overflow:hidden!important;padding:12px!important;background:#0c1e2e;border:1px solid #25465b;border-radius:16px}
+body.free-module-mode #freeChatView{display:flex;flex:1 1 auto;flex-direction:column;min-width:0;min-height:0;height:100%;overflow:hidden}
+body.free-module-mode #freeChatView .chat-toolbar,body.free-module-mode #freeChatView .assistant-switcher,body.free-module-mode #freeChatView #saveMessage{display:none!important}
+body.free-module-mode #freeChatView>#chat{display:block;flex:1 1 auto;min-height:0;max-height:none!important;height:auto;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-gutter:stable;padding:10px 12px 18px}
+body.free-module-mode #freeChatView .conversation-attachments,body.free-module-mode #freeChatView .pending-chat-files,body.free-module-mode #freeChatView .chat-file-toolbar{flex:0 0 auto;max-height:22vh;overflow:auto}
+body.free-module-mode #freeChatView .chat-file-toolbar{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;background:transparent}
+body.free-module-mode #freeChatView .chat-file-button{display:none}
+body.free-module-mode #freeChatView .input-area{display:flex;flex:0 0 auto;align-items:flex-end;gap:8px;position:relative;bottom:auto;margin:8px 0 0;padding:10px;background:#10283a;border:1px solid #31566b;border-radius:16px;z-index:3}
+body.free-module-mode #freeChatView .input-area textarea{flex:1;min-width:0;min-height:44px;max-height:180px;resize:vertical;background:transparent;border:0;outline:none;color:#fff;padding:9px 8px}
+body.free-module-mode #freeChatView .input-area .chat-file-button{display:inline-flex;flex:0 0 42px;align-items:center;justify-content:center;width:42px;height:42px;padding:0;border-radius:12px;background:#183c50;color:#d8f7f2;border:1px solid #3b6878;font-size:18px;cursor:pointer}
+body.free-module-mode #freeChatView .input-area #sendButton{flex:0 0 auto;min-height:42px;padding:10px 16px}
+body.free-module-mode #freeChatView .voice-toolbar{flex:0 0 auto;max-height:70px;overflow:auto;margin-top:7px;padding:4px 0}
+body.free-module-mode #freeChatView>.voice-privacy,body.free-module-mode #freeChatView>.note{display:none!important}
+body.free-module-mode #freeNavWorkspace{display:block;flex:1 1 auto;min-height:0;overflow-y:auto;padding:8px 10px}
+body.free-module-mode #freeNavWorkspace[hidden]{display:none!important}
+body.free-module-mode .free-nav-page{max-width:1050px;margin:0 auto}
+body.free-module-mode .free-nav-page h2{margin:4px 0 8px;color:#eaf7f8;font-size:22px}
+body.free-module-mode .free-nav-page>p{color:#9fb9c8;line-height:1.55;font-size:13px}
+body.free-module-mode .free-nav-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:18px}
+body.free-module-mode .free-nav-card{padding:15px;background:#10283a;border:1px solid #2c4e62;border-radius:13px;min-width:0}
+body.free-module-mode .free-nav-card h3{margin:0 0 6px;font-size:14px;color:#dff6f4}
+body.free-module-mode .free-nav-card p{margin:0 0 12px;color:#9fb9c8;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+body.free-module-mode .free-nav-card button,body.free-module-mode .free-nav-card a{display:inline-flex;align-items:center;gap:6px;padding:8px 10px;border-radius:9px;background:#1b4659;color:#e4fbf7;border:1px solid #3b6878;text-decoration:none;font-size:11px}
+body.free-module-mode .free-nav-status{padding:14px;background:#10283a;border:1px solid #2c4e62;border-radius:12px;color:#b4cbd6;line-height:1.6;font-size:13px}
+body.free-module-mode .free-nav-file-image{display:block;width:100%;max-height:210px;object-fit:contain;margin-bottom:10px;border-radius:8px;background:#07111f}
+body.free-module-mode .conversation-row{margin-bottom:5px}
+body.free-module-mode .conversation-item{min-height:48px}
+body.free-module-mode .conversation-actions{display:none}
+body.free-module-mode .conversation-item.active{border-color:#54d8cf;background:#173c4c}
+@media(max-width:760px){
+ body.free-module-mode main{height:calc(100dvh - 65px)!important;padding:6px!important}
+ body.free-module-mode #appMain{height:calc(100dvh - 65px)!important}
+ body.free-module-mode header{min-height:65px}
+ body.free-module-mode #chatSection>.chat-layout{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr)!important;gap:0}
+ body.free-module-mode #chatSection .history-panel{display:none!important;position:fixed;z-index:50;left:8px;top:72px;bottom:8px;width:min(86vw,310px);max-height:none;box-shadow:0 18px 55px #0009}
+ body.free-module-mode.history-open #chatSection .history-panel{display:flex!important}
+ body.free-module-mode #chatSection .chat-main{padding:8px!important}
+ body.free-module-mode #freeChatView>#chat{padding:8px 4px 12px}
+ body.free-module-mode #freeChatView .input-area{gap:5px;padding:7px}
+ body.free-module-mode #freeChatView .input-area #sendButton{padding:9px 11px;font-size:11px}
+ body.free-module-mode #freeChatView .input-area .chat-file-button{width:38px;flex-basis:38px;height:40px}
+ body.free-module-mode .chat-history-toggle{display:inline-flex!important}
+}
+
 </style>
 </head>
 
@@ -1717,15 +1783,26 @@ body.chat-focus-mode main{padding-bottom:64px!important}
   </section>
 
   <div class="chat-layout">
-   <aside class="history-panel">
-    <h3>🧠 Istoricul conversațiilor salvate</h3>
-    <button class="new-chat-button" onclick="newConversation()">＋ Conversație nouă</button>
+   <aside class="history-panel" aria-label="Navigare Dr.Vas Free">
+    <div class="free-sidebar-brand">✦ Dr.Vas Free</div>
+    <nav class="free-primary-nav" aria-label="Navigare principală">
+     <button type="button" class="new-chat-button active" data-free-nav="chat" onclick="newConversation()"><span class="free-nav-icon">＋</span>New chat</button>
+     <button type="button" data-free-nav="images" onclick="openFreeNavView('images')"><span class="free-nav-icon">▧</span>Images</button>
+     <button type="button" data-free-nav="scheduled" onclick="openFreeNavView('scheduled')"><span class="free-nav-icon">◷</span>Scheduled</button>
+     <button type="button" data-free-nav="library" onclick="openFreeNavView('library')"><span class="free-nav-icon">▤</span>Library</button>
+     <button type="button" data-free-nav="plugins" onclick="openFreeNavView('plugins')"><span class="free-nav-icon">⌘</span>Plugins</button>
+     <button type="button" data-free-nav="explore" onclick="openFreeNavView('explore')"><span class="free-nav-icon">✧</span>Explore</button>
+     <button type="button" data-free-nav="projects" onclick="openFreeNavView('projects')"><span class="free-nav-icon">▣</span>Projects</button>
+    </nav>
+    <div class="free-recents-heading"><span>Recents</span><button type="button" onclick="openFreeNavView('recents')">View all</button></div>
     <button class="delete-history-button" onclick="deleteAllConversations()">Șterge tot istoricul</button>
     <button type="button" id="historyFilterButton" class="history-filter-button" onclick="toggleArchivedConversations()">Vezi conversațiile arhivate</button>
-    <div id="conversationList"></div>
+    <div id="conversationList" aria-label="Conversații recente"></div>
    </aside>
 
    <div class="chat-main">
+    <section id="freeNavWorkspace" hidden aria-live="polite"></section>
+    <div id="freeChatView">
     <div class="chat-toolbar">
      <div class="chat-module-label" id="chatModuleLabel">✦ Discuți cu Dr.Vas Free</div>
      <span id="autoSaveStatus" class="auto-save-indicator" role="status">● Salvare automată activă</span>
@@ -1752,6 +1829,7 @@ body.chat-focus-mode main{padding-bottom:64px!important}
     </div>
     <div class="input-area">
      <textarea id="question" aria-label="Mesaj pentru Dr.Vas" placeholder="Scrie mesajul tău aici..." rows="1" wrap="soft" maxlength="100000" autocomplete="off"></textarea>
+     <label class="chat-file-button" for="chatFileInput" title="Atașează fișiere" aria-label="Atașează fișiere">📎</label>
      <button id="sendButton" onclick="send()">Trimite ➤</button>
     </div>
     <div class="voice-toolbar" aria-label="Controale vocale Dr.Vas">
@@ -1773,6 +1851,7 @@ body.chat-focus-mode main{padding-bottom:64px!important}
     </section>
     <p class="voice-privacy">Microfonul se activează numai după apăsare. În modul Live, sunetul este transmis către Gemini pentru răspuns în timp real și poate consuma utilizare API; în modul dictare, recunoașterea poate fi procesată de browser. Dr.Vas nu păstrează înregistrări audio; transcrierile text se salvează în istoricul conversației.</p>
     <div class="note">Răspunsurile AI pot conține erori. Verifică informațiile importante.</div>
+    </div>
    </div>
   </div>
   <div class="chat-account-footer" aria-label="Acțiuni cont"><button type="button" onclick="editProfile()">Profilul meu</button></div>
