@@ -521,7 +521,8 @@ for (const [moduleId, workspaceId] of [
     );
     if (workspaceId) await expect(page.locator(`#${workspaceId}`)).toBeVisible();
     await expect(page.locator(".chat-back-button")).toBeVisible();
-    await expect(page.locator(".chat-logout-button")).toBeVisible();
+    await expect(page.locator("#globalLogoutTop")).toBeVisible();
+  await expect(page.locator("#globalLogoutBottom")).toBeVisible();
     expect(await page.evaluate(() => document.body.classList.contains("module-workspace-mode"))).toBe(true);
     if (moduleId === "free") expect(await page.evaluate(() => document.body.classList.contains("free-module-mode"))).toBe(true);
   });
@@ -674,7 +675,8 @@ test("mobile Free chat stays simple and offers only module navigation and logout
   await expect(page.locator("#chatSection")).toBeVisible();
   await expect(page.locator("#question")).toBeVisible();
   await expect(page.locator(".chat-back-button")).toBeVisible();
-  await expect(page.locator(".chat-logout-button")).toBeVisible();
+  await expect(page.locator("#globalLogoutTop")).toBeVisible();
+  await expect(page.locator("#globalLogoutBottom")).toBeVisible();
   await expect(page.locator(".chat-history-toggle")).toBeHidden();
   await expect(page.locator(".assistant-switcher")).toBeHidden();
   await expect(page.locator(".chat-module-rail")).toBeHidden();
