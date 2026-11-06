@@ -1222,10 +1222,10 @@ body.presentation-open{overflow:hidden!important}
    <div class="studio-form-grid">
     <label>Produs / nișă<input id="commerceProduct" maxlength="180" placeholder="Ex.: Accesorii organizare casă"></label>
     <label>Piață<select id="commerceMarket"><option>Regatul Unit</option><option>Uniunea Europeană</option><option>România</option><option>Elveția</option><option>Internațional</option></select></label>
-    <label>Buget inițial<input id="commerceBudget" type="number" min="0" max="1000000" step="1" value="100"></label>
+    <label>Buget inițial<input id="commerceBudget" type="number" min="0" max="1000000" step="1" value="100" oninput="calculateCommerceUnitEconomics()"></label>
     <label>Model<select id="commerceModel"><option>Dropshipping</option><option>Stoc propriu mic</option><option>Print-on-demand</option><option>Produs digital</option><option>Compară modelele</option></select></label>
     <label>Canal de vânzare<select id="commerceChannel"><option>Shopify</option><option>eBay</option><option>Etsy</option><option>Amazon</option><option>TikTok Shop</option><option>Mai multe canale</option><option>Nu știu încă</option></select></label>
-    <label>Țintă de preț<input id="commercePrice" type="number" min="0" step="0.01" placeholder="Preț de vânzare dorit"></label>
+    <label>Țintă de preț<input id="commercePrice" type="number" min="0" step="0.01" placeholder="Preț de vânzare dorit" oninput="calculateCommerceUnitEconomics()"></label>
     <label class="studio-idea-label">Cerințe<textarea id="commerceBrief" rows="4" maxlength="5000" placeholder="Descrie produsul, clientul, furnizorii cunoscuți sau restricțiile."></textarea></label>
    </div>
    <section class="crypto-calculator" aria-labelledby="commerceEconomicsTitle">
