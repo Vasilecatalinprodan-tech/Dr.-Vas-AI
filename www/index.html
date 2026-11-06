@@ -1228,6 +1228,32 @@ body.presentation-open{overflow:hidden!important}
     <label>Țintă de preț<input id="commercePrice" type="number" min="0" step="0.01" placeholder="Preț de vânzare dorit"></label>
     <label class="studio-idea-label">Cerințe<textarea id="commerceBrief" rows="4" maxlength="5000" placeholder="Descrie produsul, clientul, furnizorii cunoscuți sau restricțiile."></textarea></label>
    </div>
+   <section class="crypto-calculator" aria-labelledby="commerceEconomicsTitle">
+    <h5 id="commerceEconomicsTitle">📈 Calculator Commerce · Marjă reală pe comandă</h5>
+    <p>Introdu costurile pe unitate și comisioanele canalului. Calculatorul separă costul produsului, livrarea, comisioanele, marketingul și rezerva pentru retururi; nu include automat TVA sau taxe locale.</p>
+    <div class="crypto-calculator-grid">
+     <label>Monedă<select id="commerceCurrency" onchange="calculateCommerceUnitEconomics()"><option value="GBP">GBP £</option><option value="EUR">EUR €</option><option value="RON">RON</option><option value="CHF">CHF</option><option value="USD">USD $</option></select></label>
+     <label>Cost produs / unitate<input id="commerceUnitCost" type="number" min="0" step="0.01" value="10" oninput="calculateCommerceUnitEconomics()"></label>
+     <label>Transport / unitate<input id="commerceShippingCost" type="number" min="0" step="0.01" value="3" oninput="calculateCommerceUnitEconomics()"></label>
+     <label>Ambalare / unitate<input id="commercePackagingCost" type="number" min="0" step="0.01" value="1" oninput="calculateCommerceUnitEconomics()"></label>
+     <label>Comision platformă (%)<input id="commercePlatformFee" type="number" min="0" max="100" step="0.1" value="10" oninput="calculateCommerceUnitEconomics()"></label>
+     <label>Comision plată (%)<input id="commercePaymentFee" type="number" min="0" max="100" step="0.1" value="2.9" oninput="calculateCommerceUnitEconomics()"></label>
+     <label>Marketing / comandă<input id="commerceMarketingCost" type="number" min="0" step="0.01" value="2" oninput="calculateCommerceUnitEconomics()"></label>
+     <label>Rezervă retururi (%)<input id="commerceReturnsReserve" type="number" min="0" max="100" step="0.1" value="5" oninput="calculateCommerceUnitEconomics()"></label>
+     <label>Comenzi estimate / lună<input id="commerceMonthlyOrders" type="number" min="0" step="1" value="20" oninput="calculateCommerceUnitEconomics()"></label>
+    </div>
+    <div class="crypto-calculator-results" aria-live="polite">
+     <div><small>Cost produs + livrare</small><strong id="commerceLandedCost">—</strong></div>
+     <div><small>Comisioane + rezervă</small><strong id="commerceFeeTotal">—</strong></div>
+     <div><small>Cost variabil total</small><strong id="commerceVariableTotal">—</strong></div>
+     <div><small>Contribuție netă / comandă</small><strong id="commerceContribution">—</strong></div>
+     <div><small>Marjă / comandă</small><strong id="commerceMargin">—</strong></div>
+     <div><small>Preț minim fără pierdere</small><strong id="commercePriceFloor">—</strong></div>
+     <div><small>Comenzi pentru recuperarea bugetului</small><strong id="commerceBreakEvenOrders">—</strong></div>
+     <div><small>Contribuție lunară estimată</small><strong id="commerceMonthlyContribution">—</strong></div>
+    </div>
+    <p id="commerceEconomicsStatus" class="admin-footnote" role="status" aria-live="polite">Estimare de management, nu ofertă de profit. Verifică separat taxele, TVA, retururile și comisioanele actuale ale platformei.</p>
+   </section>
    <div class="studio-actions"><button type="button" onclick="buildCommercePrompt()">Analizează oportunitatea</button><span>Primești o analiză cu riscuri, costuri și marje orientative, nu promisiuni de profit.</span></div>
    <section class="studio-project-manager module-project-manager"><h3>📁 Analizele mele Commerce</h3><label>Titlu<input id="commerceProjectTitle" maxlength="160" placeholder="Titlul analizei"></label><div class="studio-project-controls"><button type="button" onclick="saveModuleProject('commerce')">Salvează analiza</button><select id="commerceProjectList" aria-label="Analize salvate"><option value="">Alege o analiză salvată</option></select><button type="button" onclick="openModuleProject('commerce')">Deschide</button><button type="button" onclick="exportModuleProject('commerce')">Exportă</button><button type="button" onclick="deleteModuleProject('commerce')">Șterge</button></div><p id="commerceProjectStatus" role="status" aria-live="polite">Analizele salvate rămân private în contul tău.</p></section>
   </section>
@@ -3630,11 +3656,52 @@ function buildAcademyPrompt(){
  const prompt="DR.VAS ACADEMY — PROIECTARE CURS\nSUBIECT: "+v("academySubject")+"\nNIVEL: "+v("academyLevel")+"\nPUBLIC: "+v("academyAudience")+"\nFORMAT: "+v("academyFormat")+"\nLIMBA: "+v("academyLanguage")+"\nREZULTAT: "+v("academyOutcome")+"\nCERINȚE: "+v("academyBrief")+"\n\nLivrează un curs original și practic: obiective măsurabile, structură pe module și lecții, explicații, exemple, exerciții, teme, quiz cu răspunsuri explicate, proiect final, rubrică de evaluare și resurse recomandate. Separă faptele verificate de ipoteze. Nu inventa acreditări, certificări sau garanții de angajare/venit. Pentru fiscalitate, legislație sau domenii reglementate, indică verificarea cu un profesionist local.";
  submitModuleBrief(prompt,"Brieful Academy este pregătit. Verifică-l și apasă Trimite.");
 }
+function calculateCommerceUnitEconomics(){
+ const v=id=>Number(el(id)?.value);
+ const ids=["commercePrice","commerceUnitCost","commerceShippingCost","commercePackagingCost","commercePlatformFee","commercePaymentFee","commerceMarketingCost","commerceReturnsReserve","commerceMonthlyOrders","commerceBudget"];
+ const values=ids.map(id=>v(id));
+ const [price,product,shipping,packaging,platformFee,paymentFee,marketing,returnsReserve,monthlyOrders,budget]=values;
+ const currency=el("commerceCurrency")?.value||"GBP";
+ const outputs=["commerceLandedCost","commerceFeeTotal","commerceVariableTotal","commerceContribution","commerceMargin","commercePriceFloor","commerceBreakEvenOrders","commerceMonthlyContribution"];
+ const status=el("commerceEconomicsStatus");
+ const invalid=values.some(value=>!Number.isFinite(value)||value<0)||price<=0||platformFee>100||paymentFee>100||returnsReserve>100||platformFee+paymentFee+returnsReserve>=100;
+ if(invalid){
+  outputs.forEach(id=>{if(el(id))el(id).textContent="—";});
+  if(status)status.textContent="Completează un preț de vânzare mai mare decât zero. Costurile și procentele trebuie să fie valide și nenegative.";
+  return null;
+ }
+ const landed=product+shipping+packaging;
+ const feeTotal=price*(platformFee+paymentFee+returnsReserve)/100;
+ const variableTotal=landed+feeTotal+marketing;
+ const contribution=price-variableTotal;
+ const margin=contribution/price*100;
+ const priceFloor=(landed+marketing)/(1-(platformFee+paymentFee+returnsReserve)/100);
+ const breakEven=contribution>0?Math.ceil(budget/contribution):null;
+ const monthly=contribution*monthlyOrders;
+ const money=value=>businessMoney(value,currency);
+ const set=(id,value)=>{if(el(id))el(id).textContent=value;};
+ set("commerceLandedCost",money(landed));
+ set("commerceFeeTotal",money(feeTotal));
+ set("commerceVariableTotal",money(variableTotal));
+ set("commerceContribution",money(contribution));
+ set("commerceMargin",margin.toFixed(1)+"%");
+ set("commercePriceFloor",money(priceFloor));
+ set("commerceBreakEvenOrders",breakEven===null?"Nu se recuperează la acest preț":breakEven.toLocaleString()+" comenzi");
+ set("commerceMonthlyContribution",money(monthly));
+ if(status)status.textContent=contribution>0
+  ?"Scenariu pozitiv înainte de impozit și costuri fixe. Comenzile pentru recuperarea bugetului sunt o estimare, nu o garanție."
+  :"Atenție: contribuția pe comandă este zero sau negativă. Nu crește bugetul de reclame și nu comanda stoc pe baza acestui scenariu.";
+ return {currency,price,landed,feeTotal,variableTotal,contribution,margin,priceFloor,breakEvenOrders:breakEven,monthlyContribution:monthly};
+}
 function buildCommercePrompt(){
  const v=id=>el(id)?.value?.trim()||"";
  const budget=Math.max(0,Number(v("commerceBudget"))||0),price=Math.max(0,Number(v("commercePrice"))||0);
  if(!v("commerceProduct")){el("commerceProduct").focus();return;}
- const prompt="DR.VAS COMMERCE — ANALIZĂ OPORTUNITATE\nPRODUS/NIȘĂ: "+v("commerceProduct")+"\nPIAȚĂ: "+v("commerceMarket")+"\nBUGET MAXIM: "+budget+"\nMODEL: "+v("commerceModel")+"\nCANAL: "+v("commerceChannel")+"\nPREȚ ȚINTĂ: "+(price||"neprecizat")+"\nBRIEF: "+v("commerceBrief")+"\n\nAnalizează fără promisiuni de profit: cerere și concurență (marchează ce necesită cercetare actuală), profilul clientului, verificarea furnizorilor, mostre, termene și retururi, siguranța produsului, proprietate intelectuală, obligații UK/UE relevante, cost complet pe unitate, taxe/VAT și comisioane, cost de achiziție client, marjă, prag de rentabilitate și scenarii pesimist/bază/optimist. Respectă strict bugetul; nu presupune că toate fondurile pot fi cheltuite pe stoc sau reclame. Încheie cu o listă de verificări înainte de orice plată și recomandă să nu comandăm până nu verificăm furnizorul și o mostră.";
+ const economics=calculateCommerceUnitEconomics();
+ const economicsSummary=economics
+  ?JSON.stringify(economics)
+  :"Calculatorul local nu are încă suficiente date pentru un rezultat.";
+ const prompt="DR.VAS COMMERCE — ANALIZĂ OPORTUNITATE\nPRODUS/NIȘĂ: "+v("commerceProduct")+"\nPIAȚĂ: "+v("commerceMarket")+"\nBUGET MAXIM: "+budget+"\nMODEL: "+v("commerceModel")+"\nCANAL: "+v("commerceChannel")+"\nPREȚ ȚINTĂ: "+(price||"neprecizat")+"\nCOST PRODUS: "+v("commerceUnitCost")+"\nTRANSPORT: "+v("commerceShippingCost")+"\nAMBALARE: "+v("commercePackagingCost")+"\nCOMISION PLATFORMĂ: "+v("commercePlatformFee")+"%\nCOMISION PLATĂ: "+v("commercePaymentFee")+"%\nMARKETING / COMANDĂ: "+v("commerceMarketingCost")+"\nREZERVĂ RETURURI: "+v("commerceReturnsReserve")+"%\nREZULTAT CALCULATOR: "+economicsSummary+"\nBRIEF: "+v("commerceBrief")+"\n\nAnalizează fără promisiuni de profit: cerere și concurență (marchează ce necesită cercetare actuală), profilul clientului, verificarea furnizorilor, mostre, termene și retururi, siguranța produsului, proprietate intelectuală, obligații UK/UE relevante, cost complet pe unitate, taxe/VAT și comisioane, cost de achiziție client, marjă, prag de rentabilitate și scenarii pesimist/bază/optimist. Verifică independent aritmetica locală și explică diferența dintre contribuția pe comandă, profitul contabil și fluxul de numerar. Respectă strict bugetul; nu presupune că toate fondurile pot fi cheltuite pe stoc sau reclame. Încheie cu o listă de verificări înainte de orice plată și recomandă să nu comandăm până nu verificăm furnizorul și o mostră.";
  submitModuleBrief(prompt,"Analiza Commerce este pregătită. Verifică ipotezele și apasă Trimite.");
 }
 const businessLedgerState={rows:[],currency:"GBP"};
@@ -3821,7 +3888,7 @@ const moduleProjectState={academy:null,commerce:null,business:null};
 const moduleProjectOutputs={academy:"",commerce:"",business:""};
 const MODULE_PROJECT_FIELDS={
  academy:["academySubject","academyLevel","academyAudience","academyFormat","academyLanguage","academyOutcome","academyBrief"],
- commerce:["commerceProduct","commerceMarket","commerceBudget","commerceModel","commerceChannel","commercePrice","commerceBrief"],
+ commerce:["commerceProduct","commerceMarket","commerceBudget","commerceModel","commerceChannel","commercePrice","commerceBrief","commerceCurrency","commerceUnitCost","commerceShippingCost","commercePackagingCost","commercePlatformFee","commercePaymentFee","commerceMarketingCost","commerceReturnsReserve","commerceMonthlyOrders"],
  business:["businessIdea","businessCountry","businessBudget","businessStage","businessGoal","businessHorizon","businessBrief","businessFixedCosts","businessUnitPrice","businessVariableCost","businessExpectedUnits"]
 };
 const MODULE_PROJECT_PRIMARY={academy:"academySubject",commerce:"commerceProduct",business:"businessIdea"};
@@ -5522,6 +5589,7 @@ function activateCryptoEmergencyStop() {
 
 bindPresenterFallbacks();
 initCryptoMiningEngine();
+calculateCommerceUnitEconomics();
 calculateCryptoMiningEconomics();
 initLanguage();
 </script>
