@@ -16,6 +16,10 @@ WITH expected_objects(schema_name, object_name, object_kind) AS (
     ('public', 'drvas_business_transactions', 'table'),
     ('public', 'drvas_studio_render_jobs', 'table'),
     ('public', 'drvas_chat_attachments', 'table'),
+    ('public', 'drvas_scheduled_tasks', 'table'),
+    ('public', 'drvas_notifications', 'table'),
+    ('public', 'drvas_library_items', 'table'),
+    ('public', 'drvas_projects', 'table'),
     ('storage', 'objects', 'table'),
     ('public', 'drvas_consume_rate_limit(uuid,text,integer,integer)', 'function')
 )
@@ -78,7 +82,8 @@ WHERE table_schema = 'public'
     'drvas_audit_logs', 'drvas_rate_limits', 'drvas_private_profiles',
     'drvas_privacy_consents', 'drvas_crypto_devices', 'drvas_studio_projects', 'drvas_module_projects',
     'drvas_income_opportunities', 'drvas_founder_provenance',
-    'drvas_conversation_metadata'
+    'drvas_conversation_metadata', 'drvas_scheduled_tasks', 'drvas_notifications',
+    'drvas_library_items', 'drvas_projects'
   )
 ORDER BY table_name, grantee, privilege_type;
 
@@ -111,3 +116,69 @@ WHERE table_schema = 'public'
     'drvas_rate_limits','drvas_audit_logs','drvas_founder_provenance'
   )
 ORDER BY table_name, grantee, privilege_type;
+
+
+-- New Free release tables: owner policies, RLS, and client privileges.
+-- Expected: RLS enabled; authenticated CRUD only where intentionally granted;
+-- authenticated cannot INSERT notifications; anon has no access.
+WITH expected(table_name, expected_policy_count) AS (
+  VALUES
+    ('drvas_scheduled_tasks', 1),
+    ('drvas_notifications', 1),
+    ('drvas_library_items', 3),
+    ('drvas_projects', 1)
+)
+SELECT
+  e.table_name,
+  c.relrowsecurity AS rls_enabled,
+  (SELECT count(*) FROM pg_policies p
+    WHERE p.schemaname = 'public'
+      AND p.tablename = e.table_name
+      AND coalesce(p.qual, '') ILIKE '%auth.uid()%user_id%'
+      AND coalesce(p.with_check, '') ILIKE '%auth.uid()%user_id%') AS owner_policy_count,
+  e.expected_policy_count,
+  has_table_privilege('authenticated', format('public.%I', e.table_name), 'SELECT') AS authenticated_can_select,
+  has_table_privilege('authenticated', format('public.%I', e.table_name), 'INSERT') AS authenticated_can_insert,
+  has_table_privilege('authenticated', format('public.%I', e.table_name), 'UPDATE') AS authenticated_can_update,
+  has_table_privilege('authenticated', format('public.%I', e.table_name), 'DELETE') AS authenticated_can_delete,
+  has_table_privilege('anon', format('public.%I', e.table_name), 'SELECT') AS anon_can_select,
+  has_table_privilege('anon', format('public.%I', e.table_name), 'INSERT') AS anon_can_insert
+FROM expected e
+LEFT JOIN pg_class c ON c.oid = to_regclass(format('public.%I', e.table_name))
+ORDER BY e.table_name;
+
+-- The new conversation context columns must exist. NULL values are intentionally
+-- retained for legacy conversations; this query does not expose message content.
+SELECT
+  column_name,
+  data_type,
+  is_nullable
+FROM information_schema.columns
+WHERE table_schema = 'public'
+  AND table_name = 'drvas_conversation_metadata'
+  AND column_name IN ('module', 'conversation_kind', 'feature_key')
+ORDER BY column_name;
+
+-- The scheduled notification table must not permit browser-side inserts.
+SELECT
+  has_table_privilege('authenticated', 'public.drvas_notifications', 'INSERT') AS authenticated_can_insert_notifications,
+  has_table_privilege('service_role', 'public.drvas_notifications', 'INSERT') AS service_role_can_insert_notifications;
+
+-- Library metadata must be tied to the owner's private folder.
+SELECT
+  conname,
+  pg_get_constraintdef(oid) AS constraint_definition
+FROM pg_constraint
+WHERE conrelid = to_regclass('public.drvas_library_items')
+  AND conname = 'drvas_library_items_storage_path_owner';
+
+-- Standalone Free projects are independent of chat messages and remain owner-scoped.
+SELECT
+  c.relrowsecurity AS rls_enabled,
+  (SELECT count(*) FROM pg_policies p
+    WHERE p.schemaname = 'public'
+      AND p.tablename = 'drvas_projects'
+      AND coalesce(p.qual, '') ILIKE '%auth.uid()%user_id%'
+      AND coalesce(p.with_check, '') ILIKE '%auth.uid()%user_id%') AS owner_policy_count
+FROM pg_class c
+WHERE c.oid = to_regclass('public.drvas_projects');
