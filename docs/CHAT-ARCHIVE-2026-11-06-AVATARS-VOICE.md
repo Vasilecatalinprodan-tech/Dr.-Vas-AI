@@ -129,3 +129,16 @@ Latest runtime correction:
 - Code commit `3b3b2b9c0f9448c24e4bcb3b68c244b16b78cc82`; test commit `022705e4f0fdf819fc3e126e359d2e293b5b573d`.
 - CI for this new fix/test has not yet been verified. No claim that the fix has passed browser tests or been deployed.
 - This is not proof that the user's 4.57-second voice sample is cloned or that Android audio is fully fixed. Continue with device playback testing and verify provider configuration without exposing secrets.
+
+
+## Latest continuation — 2026-11-06 CI investigation
+User: “continua cu tot ce poti face....salveaza tot”
+
+- PR #8 is confirmed merged and deployed as recorded above.
+- Voice replay code fix and Playwright regression test were pushed on `drvas-integrated-platform`.
+- First run #483 / run id `42194385324` failed at the static Worker/browser invariant step, before browser tests or deployment. Exact failure: old invariant expected `async function speakDrVas(text)` and the old early-return string. The implementation intentionally added `forcePlayback=false`, so the static check was stale.
+- Corrected `.github/workflows/deploy-worker.yml` to assert the new explicit replay signature and guard condition.
+- New run #484 / run id `42194604319`, head `a3954ea69723315db526b3cdeea32c0995aec46b`, is in progress. At checkpoint, JavaScript/static validation passed; Chromium installation was still in progress. Browser regression tests, deploy and production smoke test have not yet been confirmed.
+- PR #9 is open: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/9. GitHub currently reports `mergeable=false`; do not merge until CI succeeds and mergeability/conflicts are resolved.
+- No new runtime deploy has occurred from PR #9. Previous production deployment from PR #8 remains the current verified deploy.
+- Continue saving every subsequent chat request and verified commit/test outcome in this archive and handoff.
