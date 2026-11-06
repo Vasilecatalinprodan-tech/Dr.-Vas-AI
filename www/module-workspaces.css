@@ -1,0 +1,12 @@
+.drvas-feature-navigation{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 16px;padding:10px;background:#091827;border:1px solid #29465b;border-radius:13px}
+.drvas-feature-navigation button{min-height:40px;padding:9px 13px;border:1px solid #31566b;border-radius:10px;background:#10283a;color:#c9dce5;font-size:12px;font-weight:750;cursor:pointer}
+.drvas-feature-navigation button:hover,.drvas-feature-navigation button.active{background:#174455;border-color:#55cfc5;color:#f2fffd}
+.drvas-feature-pages{min-width:0}
+.drvas-feature-page{min-width:0;padding:16px;background:linear-gradient(145deg,#0d2235,#091827);border:1px solid #294a61;border-radius:16px;box-shadow:0 12px 28px #0002}
+.drvas-feature-page[hidden]{display:none!important}
+.drvas-feature-page-heading{margin:0 0 14px;padding-bottom:12px;border-bottom:1px solid #29465b}
+.drvas-feature-page-heading h3{margin:0 0 5px;color:#e8f8f8;font-size:18px}
+.drvas-feature-page-heading p{margin:0;color:#9fb9c8;font-size:12px;line-height:1.55}
+.drvas-feature-page-content{min-width:0}
+.drvas-feature-page-content>.studio-form-grid:first-child{margin-top:0}
+@media(max-width:650px){.drvas-feature-navigation{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.drvas-feature-navigation button{width:100%;min-height:44px;padding:8px;font-size:11px}.drvas-feature-page{padding:12px}}
