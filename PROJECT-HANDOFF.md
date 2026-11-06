@@ -583,3 +583,11 @@ PR #7 is now confirmed merged at `c194068c4e13bc3c69ccf2208d67ed13db45ec46`. Uni
 Latest code/test change: `7c8e6b89d97fd8b2e22d9b6577fc484e3d96fb15` adds Commerce and Business Playwright coverage for owner-scoped existing-project updates and Markdown exports. CI is pending. Workflow #478 / run `42187371574` was still installing Chromium at the last check; do not claim success until the browser suite, deploy and production smoke test finish.
 
 Keep the zero-new-cost rule. Do not buy provider usage, create subscriptions, start paid renders, change production secrets/flags, or replace the installed APK. Preserve chat continuity through `docs/CHAT-ARCHIVE-2026-11-06.md`; it is a structured project record, not a verbatim transcript export.
+
+
+### Additional module persistence coverage — 2026-11-06
+
+- Extended the shared Academy/Commerce/Business E2E coverage: Commerce and Business existing-project updates and Markdown exports are now covered; Academy and Business owner-scoped deletion/selection-state clearing are also covered (Commerce deletion was already covered).
+- Test commits: `7c8e6b89d97fd8b2e22d9b6577fc484e3d96fb15` and `a60ac62ed5ce7b620d44c0cae46a76403a37f9ee`.
+- These are test-only changes on `drvas-integrated-platform`. No application runtime code was changed in this follow-up.
+- CI for the new commits has not yet returned a completed status. Workflow #478 / run `42187371574` remained at Chromium installation on the last inspection; its browser test, deploy and production smoke-test steps were still pending. Do not claim a passing result or advance `main` until a completed successful workflow is confirmed.
