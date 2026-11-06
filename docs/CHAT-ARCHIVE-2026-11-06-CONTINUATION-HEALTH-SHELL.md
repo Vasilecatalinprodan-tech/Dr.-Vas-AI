@@ -200,3 +200,12 @@ Additional commits:
 - Run #526 still failed only the global Back visibility assertion. The DOM showed the button but the CSS kept it hidden; previous synchronization points were not sufficient.
 - Added a final unconditional visibility update at the end of the authorized `selectModule` function, after the module activation logic, using an inline `!important` display value. Module chooser/logout still explicitly hides the button.
 - Latest run #531 (`42298051238`) is validating this final correction; static JS, migration/Health diagnostic ordering and Android APK checks passed before browser installation.
+
+## Merge checkpoint — 6 November 2026
+- PR #39 merged into `main` with merge commit `365f73cd68ec1de4c76148994c9e5f0e8da7e0e2`.
+- PR #38 was closed as superseded.
+- Final PR browser run #531 passed all 87 Playwright tests. Static checks also passed for Worker/browser JavaScript, the Supabase migration + Health rate-limit diagnostic gate, and the Android APK build workflow.
+- Verbatim user messages are preserved in `docs/CHAT-TRANSCRIPT-2026-11-06-DRVAS-ALL-MODULES.md`.
+- Production Supabase migrations, the Health diagnostic against the live database, Cloudflare Worker deploy and APK artifact from this merge are not yet confirmed. The deploy workflow requires repository Actions secrets `SUPABASE_ACCESS_TOKEN` and `SUPABASE_DB_PASSWORD`; it fails closed before Worker deployment if either is missing. The Android workflow is configured to build `DrVas-APK` on the main push.
+- Merge commit: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/commit/365f73cd68ec1de4c76148994c9e5f0e8da7e0e2
+- Final PR test run: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42298051238
