@@ -36,6 +36,11 @@ The user explicitly requires development to continue with **zero new costs** and
 - Added a Playwright regression test to `tests/e2e/module-persistence.spec.cjs` verifying an already-open Academy project is updated rather than inserted as a duplicate, the latest AI answer is preserved, and the update is constrained by owner and module.
 - This new test is pending CI execution until the next workflow completes.
 
+## Validation update
+
+- Workflow #475 / run `42181944554` completed SUCCESS on commit `83b4f6027c2fe8b9407ac6eec3f8ece477e51848`. JavaScript validation, the full browser regression suite (including the new owner-scoped Academy update test), Worker deployment, production smoke test and SBOM upload passed.
+- After that successful run, added a second no-cost regression test verifying Commerce project deletion is scoped by project ID, user ID and module, and clears the local selected-project state. This second test is pending the next CI run.
+
 ## Outstanding work — no-cost first
 
 1. Expand browser regression coverage for update/list/open/delete/export paths in Academy, Commerce and Business.
