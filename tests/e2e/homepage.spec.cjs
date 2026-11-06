@@ -1886,8 +1886,8 @@ test("Commerce unit economics calculates per-order margin, price floor and budge
   expect(result.calculation.feeTotal).toBeCloseTo(5.37, 8);
   expect(result.calculation.variableTotal).toBeCloseTo(21.37, 8);
   expect(result.calculation.contribution).toBeCloseTo(8.63, 8);
-  expect(result.calculation.margin).toBeCloseTo(28.7666667, 5);
-  expect(result.calculation.priceFloor).toBeCloseTo(19.4884287, 5);
+  expect(result.calculation.margin).toBe(28.8);
+  expect(result.calculation.priceFloor).toBe(19.49);
   expect(result.calculation.breakEvenOrders).toBe(12);
   expect(result.calculation.monthlyContribution).toBeCloseTo(172.6, 8);
   expect(result.outputs.commerceBreakEvenOrders).toContain("12");
