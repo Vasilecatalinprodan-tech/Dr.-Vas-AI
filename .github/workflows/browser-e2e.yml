@@ -5,7 +5,7 @@ on:
     branches: [drvas-integrated-platform, main]
     types: [opened, reopened, ready_for_review]
   push:
-    branches: [universal-chat-attachments, feature/presenter-assets-animation-2026-11-06]
+    branches: [main, universal-chat-attachments, feature/presenter-assets-animation-2026-11-06]
     paths:
       - 'www/**'
       - 'tests/e2e/**'
