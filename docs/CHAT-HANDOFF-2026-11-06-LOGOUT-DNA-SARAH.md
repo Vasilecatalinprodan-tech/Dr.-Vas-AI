@@ -95,3 +95,11 @@ Interpretation: deploy every successful new merge; continue integrated developme
 - Old stalled deployment run #42250521998 was cancelled and replaced by the successful deployment run above.
 - Automatic APK build run #42252598874 was started by the PR #35 merge on main commit `f7bf2a08beea241337b64faa6ae28c0b4e7a2859`. At the latest check it had completed npm install, Capacitor sync and Android privacy checks, and was still executing Gradle `assembleDebug`; no new APK artifact was confirmed yet.
 - Next: verify APK run #42252598874, confirm the uploaded artifact and record its artifact ID/size. Do not claim the new APK is available until the artifact upload step succeeds.
+
+
+## Android artifact verified — 6 Nov 2026
+- Automatic APK workflow #42252598874 completed successfully on main commit `f7bf2a08beea241337b64faa6ae28c0b4e7a2859`.
+- Capacitor sync, Android privacy defaults, Gradle `assembleDebug`, and artifact upload all passed.
+- Uploaded artifact: `DrVas-APK`, artifact ID `13520143900`, size `6,347,290` bytes, not expired.
+- Download from the GitHub Actions run: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42252598874
+- This is a debug APK artifact, not a Google Play release. The artifact was uploaded and verified as present; real-device installation/audio verification is still required before describing the updated APK as device-tested.
