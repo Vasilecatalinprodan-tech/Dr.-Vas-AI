@@ -3,7 +3,7 @@
 (function(){
  "use strict";
  const built=new WeakSet();
- const direct=(root,selector)=>{const normalized=selector.replace(/^:scope\\s*>\\s*/,"");return Array.from(root.children).find(node=>node.matches(normalized))||null;};
+ const direct=(root,selector)=>{const normalized=selector.replace(/^:scope\s*>\s*/,"");return Array.from(root.children).find(node=>node.matches(normalized))||null;};
  const byId=id=>document.getElementById(id);
  function makeNav(root,items){
   const nav=document.createElement("nav");nav.className="drvas-feature-navigation";nav.setAttribute("aria-label","Funcții și spații de lucru");
