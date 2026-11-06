@@ -1570,7 +1570,7 @@ test("public dashboard exposes exactly six customer modules while internal workb
 
   const internalWorkbenchState = await page.locator("#adminPanel").evaluate(panel => ({
     cryptoInsideAdmin: Boolean(panel.querySelector("#cryptoAdminHeading")),
-    creatorLabInsideAdmin: Array.from(panel.querySelectorAll("h5")).some(node => node.textContent.includes("Creator & Online Income Lab")),
+    creatorLabInsideAdmin: Array.from(panel.querySelectorAll("h4, h5")).some(node => node.textContent.includes("Creator & Online Income Lab")),
     evaluationLabInsideAdmin: Array.from(panel.querySelectorAll("h5")).some(node => node.textContent.includes("AI Evaluation & Training Lab")),
     digitalProductStudioInsideAdmin: Array.from(panel.querySelectorAll("h5")).some(node => node.textContent.includes("Digital Product Studio")),
     founderProvenanceInsideAdmin: Boolean(panel.querySelector("#founderProvenanceHeading")),
@@ -1657,7 +1657,7 @@ test("hidden founder workbench reports a private-save failure instead of claimin
     };
     const notices = [];
     founderWorkbenchMessage = (message, isError = false) => notices.push({ message, isError });
-    await launchFounderWorkbenchPrompt("academy", "DR.VAS AI EVALUATION & TRAINING LAB\\nEvaluation brief", "Ready");
+    await launchFounderWorkbenchPrompt("academy", "DR.VAS AI EVALUATION & TRAINING LAB\nEvaluation brief", "Ready");
     return { calls, notices };
   });
   expect(result.calls).toContainEqual({ saveAttempt: "academy" });
