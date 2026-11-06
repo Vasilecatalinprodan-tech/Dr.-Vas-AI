@@ -956,3 +956,16 @@ Resume with safe PR #9 conflict resolution and fresh CI evidence, exact npm audi
 - Workflow Android #336 / run `42199232414` a trecut build-ul APK. APK-ul nu a fost instalat sau verificat fizic în această etapă; redarea vocală pe Samsung rămâne test de dispozitiv.
 - Arhiva conversației a fost completată în `docs/CHAT-ARCHIVE-2026-11-06.md`, iar handoff/status/development log au primit același checkpoint. Este o arhivă structurată de continuitate, nu un export integral al UI ChatGPT.
 - Limitele de siguranță rămân: fără mining real, wallet-uri/tranzacții, Health document analysis în producție, schimbări Supabase/RLS, abonamente sau servicii plătite fără aprobările și controalele necesare.
+
+
+## Final portrait verification and deployment — 2026-11-06
+- User instruction: continue without asking again for merge/deploy; preserve all progress and this conversation.
+- PR #16 merged successfully as `5e40205ee6eb4b2ba13bfe49ece8729e750d5507`. It adds E2E assertions that each presenter image has `naturalWidth > 0`.
+- Main workflow #42220225599 completed SUCCESS on `5e40205ee6eb4b2ba13bfe49ece8729e750d5507`: 85/85 Playwright E2E tests passed; all three presenter portraits loaded in the browser test (naturalWidth > 0); Cloudflare Worker deploy succeeded; production smoke checks succeeded; SBOM artifact uploaded (ID `13503385878`).
+- Production Worker URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/
+- Deployed Cloudflare Worker version: `017f8171-7cd8-4998-961f-384d335bd604`.
+- Smoke test verified homepage delivery, all six public module cards, health endpoint, and unauthenticated admin-status rejected with HTTP 401.
+- The three presentation portraits are now used in the presentation scene: Dr.Vas uses the existing founder photo `www/drvas.jpeg`; Jan uses the generated fictional photorealistic male portrait; Sarah uses the generated adult professional portrait based on the supplied reference. SVG art remains as a fallback.
+- IMPORTANT remaining hosting task: Jan and Sarah currently load from signed Runway CloudFront URLs, which expire on 2026-11-08 (Jan 05:40:30 UTC; Sarah 09:58:37 UTC). Browser tests confirmed they currently load, but they are not yet permanent repository assets. Export/download the two generated JPGs from Runway and attach them to the project so they can be committed under `www/assets/presenters/` and deployed before expiry. Do not describe the current URLs as permanent hosting.
+- No paid credits were purchased, no paid provider was enabled, no secrets or database migrations were changed. Runway workspace showed 492 included plan credits and 0 purchased credits.
+- Main HEAD at this checkpoint: `5e40205ee6eb4b2ba13bfe49ece8729e750d5507`.
