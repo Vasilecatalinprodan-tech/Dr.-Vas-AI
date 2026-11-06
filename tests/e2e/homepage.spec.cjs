@@ -2388,3 +2388,30 @@ test("Dr.Vas Free mobile sidebar opens as a drawer and remains usable", async ({
   await expect(page.locator("#freeNavWorkspace h2")).toHaveText("Scheduled");
   await expect(page.locator("#chatSection .history-panel")).toBeHidden();
 });
+
+
+test("Explore reflects account access and Images states that AI generation is not yet connected", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-free-explore-access", email: "free@example.invalid" };
+    isDrvasAdmin = false;
+    showModuleSelection();
+    selectModule("free", true);
+  });
+
+  await page.locator('[data-free-nav="explore"]').click();
+  await expect(page.locator("#freeNavWorkspace h2")).toHaveText("Explore");
+  const cards = page.locator("#freeNavWorkspace .free-nav-card");
+  await expect(cards).toHaveCount(6);
+  await expect(cards.filter({ hasText: "Dr.Vas Free" }).getByRole("button", { name: "Deschide modulul" })).toBeVisible();
+  await expect(cards.filter({ hasText: "Dr.Vas Health" }).getByRole("button", { name: "Deschide modulul" })).toBeVisible();
+  for (const moduleName of ["Dr.Vas Studio", "Dr.Vas Academy", "Dr.Vas Commerce", "Dr.Vas Business"]) {
+    const card = cards.filter({ hasText: moduleName });
+    await expect(card).toContainText("Acces restricționat pentru acest cont.");
+    await expect(card.getByRole("button")).toHaveCount(0);
+  }
+
+  await page.locator('[data-free-nav="images"]').click();
+  await expect(page.locator("#freeNavWorkspace")).toContainText("Generarea AI de imagini în Dr.Vas nu este încă activată.");
+  await expect(page.locator("#freeNavWorkspace button", { hasText: "Alege imagine" })).toBeVisible();
+});
