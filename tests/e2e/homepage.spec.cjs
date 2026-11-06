@@ -762,8 +762,8 @@ test("live voice room shows the selected assistant avatar and speaking animation
     const result = [];
     for (const [id, expectedName, expectedType] of [
       ["drvas", "Dr.Vas", "img"],
-      ["jan", "Dr.Jan", "svg"],
-      ["aurora", "Sarah", "svg"]
+      ["jan", "Dr.Jan", "img"],
+      ["aurora", "Sarah", "img"]
     ]) {
       selectAssistant(id);
       updateLiveVoiceStage("speaking", expectedName + " vorbește…");
@@ -784,7 +784,12 @@ test("live voice room shows the selected assistant avatar and speaking animation
     expect(states[i].name).toBe(["Dr.Vas", "Dr.Jan", "Sarah"][i]);
     expect(states[i].visible).toBe(true);
     expect(states[i].speaking).toBe(true);
-    expect(states[i].avatarType).toBe(["img", "svg", "svg"][i]);
+    expect(states[i].avatarType).toBe(["img", "img", "img"][i]);
+  }
+  for (const [id, alt] of [["jan", "Dr.Jan — personaj AI fictiv"], ["aurora", "Sarah — portret profesional adult"]]) {
+    const portrait = page.locator('.assistant-choice[data-assistant="' + id + '"] img.assistant-avatar');
+    await expect(portrait).toHaveAttribute("alt", alt);
+    await expect.poll(() => portrait.evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
   }
   await expect(page.locator("#liveVoiceStage")).toBeHidden();
 });
