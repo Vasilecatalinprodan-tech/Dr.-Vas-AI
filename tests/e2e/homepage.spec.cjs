@@ -2287,6 +2287,8 @@ test("Dr.Vas Free sidebar destinations open their own truthful views", async ({ 
     window.__freeNavScheduledSource = freeNavLoadScheduled.toString();
     window.__freeNavPluginsSource = freeNavLoadPlugins.toString();
     window.__freeNavLibrarySource = freeNavLoadLibrary.toString();
+    window.__freeNavProjectsSource = freeNavLoadProjects.toString();
+    window.__freeNavProjectOpenSource = freeNavOpenProject.toString();
     freeNavLoadLibrary = async imagesOnly => { const host=freeNavPage(imagesOnly ? "Images" : "Library","Private file library"); host.append("Saved files"); };
     freeNavLoadScheduled = async () => { const host=freeNavPage("Scheduled","In-app reminders"); host.append("Scheduled reminders"); };
     freeNavLoadPlugins = async () => { const host=freeNavPage("Plugins","Integration status"); host.append("Integration status"); };
@@ -2302,6 +2304,14 @@ test("Dr.Vas Free sidebar destinations open their own truthful views", async ({ 
   expect(librarySource).toContain("drvas_library_items");
   expect(librarySource).toContain(".upload(");
   expect(librarySource).toContain("createSignedUrl");
+  const projectsSource = await page.evaluate(() => window.__freeNavProjectsSource);
+  const projectOpenSource = await page.evaluate(() => window.__freeNavProjectOpenSource);
+  expect(projectsSource).toContain("drvas_projects");
+  expect(projectsSource).toContain(".insert(");
+  expect(projectsSource).toContain(".update(");
+  expect(projectsSource).toContain(".delete(");
+  expect(projectOpenSource).toContain("drvas_projects");
+  expect(projectOpenSource).toContain("notes");
   await page.locator('[data-free-nav="scheduled"]').click();
   await expect(page.locator("#freeNavWorkspace")).toContainText("Scheduled reminders");
   const scheduledSource = await page.evaluate(() => window.__freeNavScheduledSource);
