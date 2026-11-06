@@ -865,6 +865,8 @@ body.presentation-open{overflow:hidden!important}
 @media(max-width:360px){.drvas-presentation{padding:12px}.presentation-avatar{width:82px;height:82px;flex-basis:82px}.presentation-presenter-copy strong{font-size:15px}}
 
 /* Photorealistic presenter portraits — image assets are committed alongside this change. */
+.assistant-choice.portrait-unavailable::before{content:attr(data-fallback);display:grid;place-items:center;width:40px;height:40px;flex:0 0 40px;border-radius:50%;background:#203e4b;border:1px solid #78c8c4;color:#eaffff;font-size:12px;font-weight:800}
+
 .assistant-avatar-photo{display:block;width:40px;height:40px;flex:0 0 40px;object-fit:cover;object-position:center 28%;border-radius:50%;border:1px solid #5a9b9d;background:#17354b}
 .assistant-jan.assistant-avatar-photo{border-color:#78c8c4}.assistant-aurora.assistant-avatar-photo{border-color:#c2a1bd}
 body.assistant-speaking .assistant-choice[aria-pressed="true"] .assistant-avatar-photo{animation:avatarTalk .22s ease-in-out infinite alternate}
@@ -1616,8 +1618,8 @@ body.assistant-speaking .assistant-choice[aria-pressed="true"] .assistant-avatar
     <div class="assistant-switcher" role="group" aria-label="Alege asistentul">
      <span class="assistant-switcher-label">Alege asistentul tău</span>
      <button type="button" class="assistant-choice" data-assistant="drvas" aria-pressed="true" onclick="selectAssistant('drvas')"><img class="assistant-avatar" src="drvas.jpeg" alt=""><span>Dr.Vas<small>Asistent principal</small></span></button>
-     <button type="button" class="assistant-choice" data-assistant="jan" aria-pressed="false" onclick="selectAssistant('jan')"><img class="assistant-avatar assistant-avatar-photo assistant-jan" src="assets/presenters/jan.webp" alt="" loading="lazy" decoding="async"><span>Dr.Jan<small>Ghid strategic AI</small></span></button>
-     <button type="button" class="assistant-choice" data-assistant="aurora" aria-pressed="false" onclick="selectAssistant('aurora')"><img class="assistant-avatar assistant-avatar-photo assistant-aurora" src="assets/presenters/sarah.webp" alt="" loading="lazy" decoding="async"><span>Sarah<small>Ghid pentru învățare și idei</small></span></button>
+     <button type="button" class="assistant-choice" data-assistant="jan" data-fallback="DJ" aria-pressed="false" onclick="selectAssistant('jan')"><img class="assistant-avatar assistant-avatar-photo assistant-jan" src="assets/presenters/jan.webp" alt="" loading="lazy" decoding="async"><span>Dr.Jan<small>Ghid strategic AI</small></span></button>
+     <button type="button" class="assistant-choice" data-assistant="aurora" data-fallback="SA" aria-pressed="false" onclick="selectAssistant('aurora')"><img class="assistant-avatar assistant-avatar-photo assistant-aurora" src="assets/presenters/sarah.webp" alt="" loading="lazy" decoding="async"><span>Sarah<small>Ghid pentru învățare și idei</small></span></button>
      <button type="button" class="assistant-choice assistant-help-choice" onclick="startGuidedHelp()">Ghidează-mă pas cu pas</button>
      <p class="assistant-intro" id="assistantIntro">Asistentul principal Dr.Vas este pregătit să te ajute.</p>
     </div>
@@ -1920,7 +1922,7 @@ function updateDrvasPresentationScene(index){
  const key=["drvas","jan","sarah"][index],speaker=DRVAS_PRESENTERS[key],data=DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro;
  const presenter=el("presentationPresenter"),avatar=el("presentationAvatar"),grid=el("presentationModuleGrid");
  if(presenter){presenter.classList.remove("is-speaking","is-animated","scene-enter");void presenter.offsetWidth;presenter.classList.add("scene-enter");}
- if(avatar){avatar.className="presentation-avatar presentation-avatar-"+key;avatar.dataset.presenter=key;avatar.dataset.initials=({drvas:"DV",jan:"DJ",sarah:"SA"})[key]||"";const portrait=el("presentationPortrait");if(portrait){portrait.src=({drvas:"drvas.jpeg",jan:"assets/presenters/jan.webp",sarah:"assets/presenters/sarah.webp"})[key];portrait.alt="";}}
+ if(avatar){avatar.className="presentation-avatar presentation-avatar-"+key;avatar.dataset.presenter=key;avatar.dataset.initials=({drvas:"DV",jan:"DJ",sarah:"SA"})[key]||"";const portrait=el("presentationPortrait");if(portrait){avatar.classList.remove("portrait-unavailable");portrait.onerror=()=>avatar.classList.add("portrait-unavailable");portrait.onload=()=>avatar.classList.remove("portrait-unavailable");portrait.src=({drvas:"drvas.jpeg",jan:"assets/presenters/jan.webp",sarah:"assets/presenters/sarah.webp"})[key];portrait.alt="";}}
  const set=(id,value)=>{const node=el(id);if(node)node.textContent=value};
  set("presentationSpeakerName",speaker.name);set("presentationSpeakerRole",speaker.role[currentLanguage]||speaker.role.ro);
  const moduleNames=["Dr.Vas Free","Dr.Vas Health","Dr.Vas Studio","Dr.Vas Academy","Dr.Vas Commerce","Dr.Vas Business"];
@@ -1930,6 +1932,8 @@ function updateDrvasPresentationScene(index){
  const progress=el("presentationProgressBar");if(progress)progress.style.width=((index+1)/3*100)+"%";
  if(grid)grid.querySelectorAll(".presentation-module").forEach((card,i)=>card.classList.toggle("is-active",speaker.modules.includes(i)));
 }
+document.addEventListener("error",event=>{const img=event.target;if(!(img instanceof HTMLImageElement))return;if(img.classList.contains("assistant-avatar-photo")){img.hidden=true;img.closest(".assistant-choice")?.classList.add("portrait-unavailable");}if(img.id==="presentationPortrait")el("presentationAvatar")?.classList.add("portrait-unavailable");},true);
+document.addEventListener("load",event=>{const img=event.target;if(!(img instanceof HTMLImageElement))return;if(img.classList.contains("assistant-avatar-photo")){img.hidden=false;img.closest(".assistant-choice")?.classList.remove("portrait-unavailable");}if(img.id==="presentationPortrait")el("presentationAvatar")?.classList.remove("portrait-unavailable");},true);
 function openDrvasPresentation(){
  stopDrvasPresentationSpeech();renderDrvasPresentation();
  const modal=el("drvasPresentation");if(modal)modal.classList.remove("hidden");
