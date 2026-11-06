@@ -42,8 +42,8 @@ Two successful image tasks were found in the Runway recent-assets gallery:
 Important hosting limitation:
 - Runway returned signed CloudFront asset URLs with expiration timestamps of 2026-11-08 09:58:37 UTC (Sarah) and 2026-11-08 05:40:30 UTC (Jan).
 - The GitHub/Files toolset available in this session does not expose a supported way to download these Runway image bytes into the repository. The attempted container download failed because outbound DNS/network access is unavailable; web open also could not access the signed CloudFront URLs.
-- Therefore these URLs must NOT be hardcoded as permanent production image paths: they expire. The generated assets exist in Runway but have not been committed to `www/` or integrated into the live page.
-- Do not claim the new portraits are deployed or permanently hosted until the actual image bytes have been added to repository/static hosting and verified in a browser.
+- The current feature branch now references these signed URLs in the presentation for immediate visual preview, with the existing SVG art retained as an image-load fallback. This is a temporary preview only: the URLs expire on 2026-11-08 and are not a durable hosting solution.
+- The generated image bytes have not yet been committed to `www/`; no permanent static image hosting is in place. Do not describe these as permanently hosted.
 - Do not replace Sarah with an unrelated generated face or use a minor's original photograph as an adult identity.
 
 ## Current repository and presentation findings
@@ -59,13 +59,15 @@ Important hosting limitation:
 - Recovered and verified both completed Runway image tasks and their prompts.
 - Verified the existing founder portrait path and current main branch HEAD.
 - Created a dedicated continuation branch from the verified main commit.
-- No source code, static image assets, secrets, production configuration or database migrations have been changed in this checkpoint.
-- No merge or deployment is claimed by this archive.
+- Updated `www/index.html` on the feature branch: presentation scene now loads Dr.Vas from `drvas.jpeg`, Jan from the generated photorealistic portrait, and Sarah from the adult portrait. The original SVG art remains as a fallback if a remote image fails.
+- Static JavaScript syntax validation passed for the updated page (1 inline script, no syntax errors).
+- The image URLs are temporary signed Runway URLs. The new page code has not yet been merged or deployed, and the image bytes are not permanently hosted in the repository.
+- No secrets, production configuration or database migrations were changed.
 
 ## Next safe engineering steps
-1. Obtain the actual generated image bytes through a supported Runway export/download route, or another user-authorised permanent asset upload route. Do not use expiring signed URLs as permanent site assets.
+1. Obtain the actual generated image bytes through a supported Runway export/download route, or another user-authorised permanent asset upload route. Replace the temporary signed URLs before 2026-11-08; do not treat them as permanent site assets.
 2. Add Jan and Sarah image files under `www/assets/`, optimise them, and reference them from the presentation and assistant switcher; retain Dr.Vas's existing `www/drvas.jpeg`.
-3. Add resilient image loading/fallbacks, alt text, mobile sizing, and reduced-motion-aware presenter animation.
+3. Preserve the new image-load fallback, alt text, mobile sizing, and reduced-motion-aware presenter animation.
 4. Route presentation narration to the correct distinct voice per presenter using server-side secrets only; preserve clear fallback messaging when a voice is not configured.
 5. Run JS/security/static checks and the full Playwright suite, inspect image loading in a real browser, then create PR, merge and deploy automatically. Verify the production page and Worker after deploy.
 6. Update `PROJECT-STATUS.md`, `PROJECT-HANDOFF.md`, `docs/DEVELOPMENT_LOG.md` and the chat archive with verified commit/run/Worker version details.
