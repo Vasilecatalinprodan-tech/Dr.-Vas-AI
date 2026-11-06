@@ -1358,7 +1358,7 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
   await expect(page.locator("#presentationAvatar .presentation-photo")).toHaveAttribute("alt", "Sarah — portret profesional adult");
   await expect.poll(() => page.locator("#presentationAvatar .presentation-photo").evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
   expect(await page.locator("#presentationAvatar .character-hair-long").evaluate(node => getComputedStyle(node).display)).toBe("block");
-  expect(await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].voice?.name)).toBe("Microsoft Andrei");
+  expect(await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].voice?.name)).toBe("Microsoft Alina");
   expect(sarah.modules).toContain("Dr.Vas Academy");
   expect(sarah.modules).toContain("Dr.Vas Commerce");
   expect(sarah.speech).toContain("Doctor Vas Academy");
