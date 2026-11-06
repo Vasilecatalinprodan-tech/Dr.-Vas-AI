@@ -2216,3 +2216,20 @@ test("authenticated users can always sign out from the global top header and tru
   await expect(page.locator("#globalLogoutTop")).toBeHidden();
   await expect(page.locator("#globalLogoutBottom")).toBeHidden();
 });
+
+
+test("global logout stays available while moving through all six module workspaces", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-six-module-logout-user", email: "owner@example.invalid" };
+    isDrvasAdmin = true;
+    syncGlobalLogoutControls();
+  });
+
+  for (const moduleName of ["free", "health", "studio", "academy", "commerce", "business"]) {
+    await page.evaluate(module => selectModule(module), moduleName);
+    await expect(page.locator("#globalLogoutTop"), moduleName + " top logout").toBeVisible();
+    await expect(page.locator("#globalLogoutBottom"), moduleName + " bottom logout").toBeVisible();
+    expect(await page.evaluate(() => activeModule)).toBe(moduleName);
+  }
+});
