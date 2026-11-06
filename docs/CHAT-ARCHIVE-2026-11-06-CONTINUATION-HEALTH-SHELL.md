@@ -79,3 +79,9 @@ Additional commits:
 - PR #39: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/39
 - Latest browser run: `42292634912` (run #457), in progress at Chromium installation when this checkpoint was written.
 - No latest browser result is claimed until the full Playwright step completes.
+
+## Additional Health visibility correction
+- A second, more specific legacy CSS rule also hid `.module-selection-shell` when both `module-workspace-mode` and `free-module-mode` were active. The first Health fix did not override that selector.
+- Corrected the higher-specificity rule to exclude `.health-module-mode` as well. This is necessary because the Health workspace is inside the module selection shell.
+- Commit: `7a1d740d51dec6820446d4d793dc312fe63b1d05`.
+- The browser run #457 started before this last CSS correction; its result must not be used to certify this exact head. A fresh run on the latest PR #39 head is required.
