@@ -2133,5 +2133,5 @@ test("Studio builds distinct original briefs for series, songs, lyrics and books
     expect(item.rights).toBe("needs_clearance");
   }
   expect(results.find(item => item.kind === "music").prompt).toContain("Nu imita o melodie sau un artist existent");
-  expect(results.find(item => item.kind === "book").prompt).toContain("primul capitol complet");
+  expect(results.find(item => item.kind === "book").prompt).toContain("un prim capitol complet");
 });
