@@ -2284,6 +2284,7 @@ test("Dr.Vas Free sidebar destinations open their own truthful views", async ({ 
     isDrvasAdmin = true;
     showModuleSelection();
     selectModule("free", true);
+    freeNavLoadScheduled = async () => { const host=freeNavPage("Scheduled","In-app reminders"); host.append("Scheduled reminders"); };
     freeNavLoadAttachments = async imagesOnly => {
       const host = freeNavPage(imagesOnly ? "Images" : "Library", "Test view");
       const status = document.createElement("div"); status.className = "free-nav-status"; status.textContent = "Test data"; host.appendChild(status);
@@ -2297,7 +2298,10 @@ test("Dr.Vas Free sidebar destinations open their own truthful views", async ({ 
     await expect(page.locator("#freeNavWorkspace h2")).toHaveText(heading);
   }
   await page.locator('[data-free-nav="scheduled"]').click();
-  await expect(page.locator("#freeNavWorkspace")).toContainText("nu este încă activată");
+  await expect(page.locator("#freeNavWorkspace")).toContainText("Scheduled reminders");
+  const scheduledSource = await page.evaluate(() => freeNavLoadScheduled.toString());
+  expect(scheduledSource).toContain("drvas_scheduled_tasks");
+  expect(scheduledSource).toContain("drvas_notifications");
   await page.locator('[data-free-nav="plugins"]').click();
   await expect(page.locator("#freeNavWorkspace")).toContainText("nu există pluginuri externe conectate");
 });
