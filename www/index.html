@@ -771,6 +771,7 @@ body.presentation-open{overflow:hidden!important}
 @keyframes presentationSceneEnter{from{opacity:0;transform:translateY(13px) scale(.965);filter:blur(4px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
 .presentation-presenter{display:flex;align-items:center;gap:14px;min-width:245px;position:relative}
 .presentation-avatar{width:116px;height:116px;flex:0 0 116px;position:relative;display:grid;place-items:center;overflow:visible;border-radius:50%;color:#efffff;border:2px solid #79e4d9;background:radial-gradient(circle at 35% 25%,#4baeb1,#16445a 72%);box-shadow:0 0 0 7px #54d8cf14,0 0 30px #54d8cf25;transition:transform .35s,box-shadow .35s}
+.presentation-photo{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;background:#102b40}.presentation-avatar .presenter-character-art.is-hidden{display:none!important}
 .presenter-character-art{position:relative;z-index:2;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 8px 10px #0005)}
 .character-orbit{position:absolute;inset:8px;border:1px solid #8cebe5aa;border-radius:50%;pointer-events:none}
 .character-orbit-one{animation:characterOrbit 9s linear infinite}
@@ -1852,6 +1853,31 @@ const DRVAS_PRESENTERS={
  jan:{name:"Dr.Jan",symbol:"◈",role:{ro:"Ghidul tău strategic",en:"Your strategic guide",it:"La tua guida strategica",tr:"Stratejik rehberin",de:"Dein strategischer Begleiter",fr:"Votre guide stratégique",es:"Tu guía estratégico",ru:"Ваш стратегический помощник"},modules:[2,5],pitch:1},
  sarah:{name:"Sarah",symbol:"✧",role:{ro:"Ghid pentru învățare și idei",en:"Your guide to learning and ideas",it:"Guida per imparare e sviluppare idee",tr:"Öğrenme ve fikir rehberin",de:"Begleiterin für Lernen und Ideen",fr:"Guide pour apprendre et créer",es:"Guía para aprender y crear",ru:"Помощница в обучении и идеях"},modules:[3,4],pitch:1.16}
 };
+const DRVAS_PRESENTER_PORTRAITS={
+ drvas:"drvas.jpeg",
+ jan:"https://dnznrvs05pmza.cloudfront.net/gemini/gemini-3.1-flash-lite-image/images/d3842309-f86b-4f5e-991f-0698b3573c08/069e0e85-01ec-45bd-a1d2-c300fd1ee75d/A_single_standalone_photorealistic_head_and_shoulders_portra.jpg?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiMTlkN2Q2Y2U4Yzg1MjM4MiIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5NDExNjQzMH0.eTIoOeeFTJoq-vgxlIOBJ8UBjDlF2ypeBEgtdscrwq0",
+ sarah:"https://dnznrvs05pmza.cloudfront.net/gemini/gemini-3.1-flash-lite-image/images/122ba613-ef40-4b59-99e7-7903cca5b905/bbce3dfd-1bc2-427a-bbff-1545d1261b0a/Edit_the_supplied_reference_photograph_into_a_single_standal.jpg?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiZWM1MDFhY2Q1ODE4M2ZmNSIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5NDEzMTkxN30.5B5nEjXcHcuFP81vsxplLZjTysT-z2EJHyd-IBDEZ-Y"
+};
+function setDrvasPresenterPortrait(key,avatar){
+ if(!avatar)return;
+ const art=avatar.querySelector(".presenter-character-art");
+ let photo=avatar.querySelector(".presentation-photo");
+ if(!photo){
+  photo=document.createElement("img");
+  photo.className="presentation-photo";
+  photo.alt="";
+  photo.decoding="async";
+  photo.loading="eager";
+  avatar.insertBefore(photo,art||avatar.firstChild);
+ }
+ const labels={drvas:"Dr.Vas — fotografia fondatorului",jan:"Dr.Jan — personaj AI fictiv",sarah:"Sarah — portret profesional adult"};
+ photo.alt=labels[key]||"Portretul asistentului";
+ photo.onload=()=>{photo.style.display="block";if(art)art.classList.add("is-hidden")};
+ photo.onerror=()=>{photo.style.display="none";if(art)art.classList.remove("is-hidden")};
+ const source=DRVAS_PRESENTER_PORTRAITS[key];
+ if(source&&photo.getAttribute("src")!==source){if(art)art.classList.remove("is-hidden");photo.src=source}
+ else if(photo.complete&&photo.naturalWidth>0&&art)art.classList.add("is-hidden");
+}
 const DRVAS_PRESENTER_LINES={
  ro:[
   "Bun venit! Eu sunt Dr.Vas. Începem cu Dr.Vas Free, asistentul general pentru întrebări, explicații, idei și ajutor de zi cu zi. Al doilea este Dr.Vas Health, care oferă informații generale despre sănătate și te ajută să te pregătești pentru consultații. Nu înlocuiește medicul.",
@@ -1922,7 +1948,7 @@ function updateDrvasPresentationScene(index){
  const key=["drvas","jan","sarah"][index],speaker=DRVAS_PRESENTERS[key],data=DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro;
  const presenter=el("presentationPresenter"),avatar=el("presentationAvatar"),grid=el("presentationModuleGrid");
  if(presenter){presenter.classList.remove("is-speaking","is-animated","scene-enter");void presenter.offsetWidth;presenter.classList.add("scene-enter");}
- if(avatar){avatar.className="presentation-avatar presentation-avatar-"+key;avatar.dataset.presenter=key;}
+ if(avatar){avatar.className="presentation-avatar presentation-avatar-"+key;avatar.dataset.presenter=key;setDrvasPresenterPortrait(key,avatar);}
  const set=(id,value)=>{const node=el(id);if(node)node.textContent=value};
  set("presentationSpeakerName",speaker.name);set("presentationSpeakerRole",speaker.role[currentLanguage]||speaker.role.ro);
  const moduleNames=["Dr.Vas Free","Dr.Vas Health","Dr.Vas Studio","Dr.Vas Academy","Dr.Vas Commerce","Dr.Vas Business"];
