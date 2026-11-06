@@ -346,7 +346,8 @@ test("each premium module shows only its own tools and keeps the other module wo
     await page.evaluate(name => selectModule(name, true), moduleName);
     await expect(page.locator("#moduleSelectionSection > .modules-grid")).toBeHidden();
     await expect(page.locator(".chat-module-rail")).toBeHidden();
-    await expect(page.locator("#chatSection .history-panel")).toBeHidden();
+    if (moduleName === "health") await expect(page.locator("#chatSection .history-panel")).toBeVisible();
+    else await expect(page.locator("#chatSection .history-panel")).toBeHidden();
     await expect(page.locator("#globalLogoutTop")).toBeVisible();
     await expect(page.locator("#globalLogoutBottom")).toBeVisible();
     for (const otherModule of modules) {
