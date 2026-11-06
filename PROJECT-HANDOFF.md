@@ -858,3 +858,57 @@ Resume with safe PR #9 conflict resolution and fresh CI evidence, exact npm audi
 4. Verify the post-merge main workflow deploy and production smoke test, then confirm the deployed source commit/version.
 5. Continue the six public workspaces and every hidden founder workbench with individual lifecycle, owner isolation, exports and tests; do not treat UI presence as production completion.
 6. Preserve all conversation decisions and future work in the dated chat archive. This archive is a structured project record, not a verbatim export of the entire ChatGPT UI transcript.
+
+
+## 2026-11-06 — six-workspace and Bitcoin/income workbench continuation
+
+### User instruction (verbatim)
+> continua dezvoltarea la toate 6 modulele plus alea de minare bitcoyn si de facut bani si salveaza tot inclusiv chatul
+
+### Source changes
+1. `www/index.html` — commit `b13f85a7d617df399dafe39e1b7b5cdfac1e7406`
+   - Added a founder/admin-only **Exportă raportul scenariului (JSON)** action to the Bitcoin profitability calculator.
+   - The exported JSON contains a timestamp, currency, all manually entered mining assumptions (BTC/day, BTC price, miner/cooling power, electricity tariff, pool fee, hardware cost, maintenance, downtime, tax reserve and bear/base/bull sensitivity inputs), displayed daily/monthly/annual results, break-even price, maximum electricity tariff, energy use/cost, estimated heat load, sensitivity outputs, methodology and limitations.
+   - Export refuses access when the current UI is not administrator-confirmed and rejects missing/non-numeric/negative inputs.
+   - This is a downloadable audit/report file only. It does not persist data to a server, fetch live BTC/network data, start mining, use device compute, connect wallets/exchanges, transfer funds or trade.
+2. `worker/index.js` — commit `499ada6a7cc727aa49988122b3ae7866e5f60c9a`
+   - Added a dedicated **Dr.Vas Free** module policy instead of relying only on the shared base prompt.
+   - Free is explicitly general-purpose: practical assistance, writing, translation, learning, calculations, research-aware handling of current information, privacy, safe technical guidance, professional boundaries and no unapproved purchases/publications/financial actions.
+   - The existing dedicated Health, Studio, Academy, Commerce and Business module policies remain intact.
+   - Existing server-side private pilot gate for Studio/Academy/Commerce/Business remains unchanged. No public entitlement was widened.
+
+### Six public workspace scope retained
+- Dr.Vas Free — general-purpose assistant.
+- Dr.Vas Health — general health education and navigation; not a clinician or emergency service.
+- Dr.Vas Studio — books, translation, original music, screenwriting, video and digital content.
+- Dr.Vas Academy — practical learning paths, lessons, exercises and evaluation.
+- Dr.Vas Commerce — ethical e-commerce, supplier due diligence, unit economics and fulfilment.
+- Dr.Vas Business — business planning, cashflow, operations, management and bookkeeping support within professional boundaries.
+
+### Private founder tools retained and expanded
+- Crypto & Bitcoin profitability/sensitivity calculator and admin device registry.
+- Creator & Online Income Lab, Book Workshop, Music Lab, Online Income planner and persistent Income Tracker.
+- Digital Product Studio, Publishing Lab, Music Release Lab, AI Evaluation & Training Lab.
+- Commerce Profit Lab, Mining Sensitivity Lab, Business Operations Planner, Customer Journey & Retention Planner, Content & Campaign Planner.
+- The new Bitcoin JSON report makes assumptions and calculation outputs portable for founder review.
+
+### Bitcoin and income safety boundary
+- Bitcoin features remain simulation/reporting and admin-only. No actual mining, background compute, visitor-device compute, wallet custody, private keys/seed phrases, exchange connection, trading, withdrawal or transfer was enabled.
+- Mining profitability depends on current network difficulty, reward, BTC price, pool terms, hardware, power, cooling, downtime, taxes and fees. Existing calculator values are manual assumptions, not live data or predictions.
+- Income workbenches prepare original books/music/digital products/services, channel plans, cost/margin/break-even scenarios and a private opportunity tracker. No income is guaranteed; no content is automatically published, no customer contacted, no ad spend, purchase or payment is executed.
+- Preserve IP/licensing checks, human review, consumer rights, privacy and tax/accounting professional boundaries.
+
+### Persistence and release state
+- Income Tracker already stores opportunities under the authenticated owner and supports filtering/search, per-currency totals and safe CSV export (loaded maximum 200 rows).
+- Academy/Commerce/Business projects use `drvas_module_projects` with owner-scoped RLS; Studio projects use the Studio project store. Free/Health retain their conversation/history persistence.
+- No database migration, RLS change, production secret, Worker deployment, PR merge, Android APK build or production data change was made in this step.
+- Per the previously saved owner preference to continue feature development before running tests, no tests, syntax checks, browser checks or deployment were run in this step. CI is not claimed as passing.
+- No paid provider credits, renders, external services or new spend were initiated.
+
+### Next development steps
+1. Continue feature work for Free/Health conversation utility and privacy; Studio project lifecycle and production handoff; Academy curriculum/progress; Commerce supplier/economics workflow; Business cashflow and reporting.
+2. Extend founder income tools with project-level cost/revenue assumptions and clear separation of estimates from actual receipts.
+3. Extend Bitcoin scenario history/export only after a safe owner-scoped storage design is reviewed; keep actual mining execution disabled.
+4. Audit every hidden action against Worker-side admin verification, owner scope, audit logs and safe failure.
+5. When the owner authorises validation, run the complete regression/security pipeline before attempting PR #9 integration or deployment.
+6. Keep this archive as a structured record of relevant chat instructions and project work; it is not a literal export of the entire ChatGPT interface/transcript.
