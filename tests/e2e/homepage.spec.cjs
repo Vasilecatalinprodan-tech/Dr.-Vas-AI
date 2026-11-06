@@ -2284,6 +2284,7 @@ test("Dr.Vas Free sidebar destinations open their own truthful views", async ({ 
     isDrvasAdmin = true;
     showModuleSelection();
     selectModule("free", true);
+    window.__freeNavScheduledSource = freeNavLoadScheduled.toString();
     freeNavLoadScheduled = async () => { const host=freeNavPage("Scheduled","In-app reminders"); host.append("Scheduled reminders"); };
     freeNavLoadAttachments = async imagesOnly => {
       const host = freeNavPage(imagesOnly ? "Images" : "Library", "Test view");
@@ -2299,7 +2300,7 @@ test("Dr.Vas Free sidebar destinations open their own truthful views", async ({ 
   }
   await page.locator('[data-free-nav="scheduled"]').click();
   await expect(page.locator("#freeNavWorkspace")).toContainText("Scheduled reminders");
-  const scheduledSource = await page.evaluate(() => freeNavLoadScheduled.toString());
+  const scheduledSource = await page.evaluate(() => window.__freeNavScheduledSource);
   expect(scheduledSource).toContain("drvas_scheduled_tasks");
   expect(scheduledSource).toContain("drvas_notifications");
   await page.locator('[data-free-nav="plugins"]').click();
