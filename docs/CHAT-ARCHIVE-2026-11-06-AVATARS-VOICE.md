@@ -96,3 +96,18 @@ Assistant confirmed authority to work directly in GitHub, create merges and depl
 3. Verify `main` and `drvas-integrated-platform` are synchronized and confirm the production Worker version/health.
 4. Continue with the next runtime improvement: presentation avatars/voice routing, then Android voice playback and the ten module workstreams. The Sarah portrait and founder-voice source are in the Library; actual image editing and voice cloning have not yet been performed.
 5. Keep all changes and this chat archived in dated project files. This is a structured project archive, not a verbatim transcript of all ChatGPT messages.
+
+
+
+## Continuation — user authorized merge/deploy; PR #8 completed
+User: “ok continua si vreu sa dai inclusiv merge si deply ....deci sa continuam cu tot ce poti face.....salveaza tot inclusiv chatul”
+User then reiterated: “continua cu tot ce poti face....salveaza tot”
+
+Verified actions:
+- Workflow #478 / run `42187371574` finished SUCCESS. All steps passed, including Playwright browser tests, Worker deploy, production smoke test and SBOM upload.
+- PR #8 was marked ready and squash-merged into `main`.
+- Merge SHA: `3f74057ffde7fb9690721fcb67e15d2d30291bd6`.
+- Worker deploy was completed from the validated integrated-branch source in workflow #478. The PR content delta was docs plus E2E persistence tests; no runtime code was changed in this PR.
+- Production smoke test verified health endpoint, six module markers and rejection of unauthenticated admin-status call with HTTP 401.
+- `main` vs `drvas-integrated-platform` compare now reports one-commit divergence because the merge used squash. Preserve both branches; do not force reset. Continue work on integrated branch.
+- No Android APK release, Play Store submission, actual avatar edit, founder voice cloning, or live Health database/privacy enablement was performed.
