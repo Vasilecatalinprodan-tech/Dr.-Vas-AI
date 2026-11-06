@@ -2111,7 +2111,10 @@ function getDrvasPresentationVoiceProfile(voices,locale){
  // never silently inherit a masculine/default voice.
  const pool=local.length?local:voices;
  const voice=pool.find(v=>v.default)||pool[0]||null;
- const femaleVoices=pool.filter(isFemaleSpeechVoice);
+ const localFemaleVoices=local.filter(isFemaleSpeechVoice);
+ // Prefer a female voice in the selected language, but do not silence Sarah
+ // when the device only has a female voice in another installed language.
+ const femaleVoices=localFemaleVoices.length?localFemaleVoices:voices.filter(isFemaleSpeechVoice);
  const sarah=femaleVoices.find(v=>v.default)||femaleVoices[0]||null;
  return {drvas:voice,jan:voice,sarah,hasFemale:!!sarah,hasAllDistinct:!!(voice&&sarah&&voice.voiceURI!==sarah.voiceURI),hasFallback:!!voice};
 }
@@ -2176,7 +2179,9 @@ async function speakDrvasPresentation(){
   }
   if(voiceForSpeaker)utterance.voice=voiceForSpeaker;
   // Sarah is skipped rather than played with a masculine default if no female voice exists.
-  utterance.lang=lang;utterance.rate=index===2?0.94:0.96;utterance.pitch=speaker.pitch;
+  // If Sarah has to use a cross-language feminine fallback, use that voice's
+  // own locale so the browser does not reject or mis-route the selected voice.
+  utterance.lang=(key==="sarah"&&voiceForSpeaker?.lang)||lang;utterance.rate=index===2?0.94:0.96;utterance.pitch=speaker.pitch;
   utterance.onstart=()=>{
    if(run!==drvasPresentationRun)return;
    el("presentationPresenter")?.classList.add("is-speaking");
@@ -2739,7 +2744,10 @@ function chooseSpeechVoice(lang){
  const matching=voices.filter(v=>v.lang&&v.lang.toLowerCase().startsWith(language));
  const selected=el("speechVoiceSelect")?.value;
  if(activeAssistant==="aurora"){
-  const femaleVoices=(matching.length?matching:voices).filter(isFemaleSpeechVoice);
+  const localFemaleVoices=matching.filter(isFemaleSpeechVoice);
+  // Prefer a voice matching the selected language; otherwise use another
+  // installed feminine voice rather than silently muting Sarah.
+  const femaleVoices=localFemaleVoices.length?localFemaleVoices:voices.filter(isFemaleSpeechVoice);
   if(selected){const chosen=femaleVoices.find(v=>v.voiceURI===selected);if(chosen)return chosen;}
   return femaleVoices.find(v=>v.default)||femaleVoices[0]||null;
  }
