@@ -57,3 +57,23 @@ The user explicitly requires development to continue with **zero new costs** and
 ## Chat preservation note
 
 This file preserves the current session's instruction, decisions, technical checks, code changes and remaining tasks. It does not contain a verbatim transcript of all ChatGPT messages. The original conversation remains available in ChatGPT history; use ChatGPT's conversation export controls if a complete transcript file is required.
+
+
+## User instruction — repository-wide branch continuation
+
+> „continua dezvoltarea pe toate ramurile....salveaza tot inclusiv chatul”
+
+The user reiterated that development should continue across all repository branches and all work/chat should be preserved. The no-cost requirement from the immediately preceding instruction remains in force.
+
+## Repository-wide branch audit — 2026-11-06
+
+- Inventoried 8 branches: `main`, `drvas-integrated-platform`, `drvas-account-deletion-hardening`, `drvas-modules-long-input`, `fix/session-restore-preserves-homepage`, `founder-workbenches-development`, `hotfix/ui-startup-failsafe`, and `universal-chat-attachments`.
+- Saved the detailed branch inventory and safe integration plan in `docs/BRANCH_INTEGRATION_AUDIT_2026-11-06.md`.
+- Verified that active integrated code already contains the key long-input, founder workbench/cashbook/cashflow, private attachment, session continuity and startup-failsafe features.
+- The account-deletion branch remains a specification only; account deletion is not implemented.
+- Legacy branches were preserved intact because their histories are divergent. No destructive merge, rebase, force-push or branch deletion was performed.
+- Added an Academy Markdown export regression test that verifies the brief, latest AI output, download name and user-visible status. Workflow #478 / run `42187371574` was pending at archive time.
+
+## Cost restriction carried forward
+
+No paid services, new subscriptions, usage-based render jobs, voice credits, or APK replacement are authorized. Continue with repository changes, local/browser tests, security review and documentation only.
