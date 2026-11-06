@@ -932,14 +932,16 @@ test("Studio creates a branded MP4 render request and restores a private complet
     selectModule("studio", true);
   });
   await expect(page.locator("#studioWorkspace")).toBeVisible();
-  await expect(page.locator("#studioRenderTitle")).toBeVisible();
+  await page.locator('#studioWorkspace [data-feature="projects"]').click();
   await expect(page.locator("#studioProjectStatus")).toContainText("Studio este pregătit");
+  await page.locator("#studioProjectTitle").fill("Dr.Vas — primul teaser");
+  await page.locator('#studioWorkspace [data-feature="video"]').click();
+  await expect(page.locator("#studioRenderTitle")).toBeVisible();
   await page.locator("#studioSceneAudio").setInputFiles({
     name: "voice.mp3",
     mimeType: "audio/mpeg",
     buffer: Buffer.from("e2e-audio")
   });
-  await page.locator("#studioProjectTitle").fill("Dr.Vas — primul teaser");
   await page.evaluate(async () => { await renderStudioVideo(); });
   await expect(page.locator("#studioRenderStatus")).toContainText("Randarea a pornit");
   expect(createPayload.action).toBe("studio_render_create");
@@ -967,7 +969,6 @@ test("Business workspace exposes the cashbook and Student Desk with working VAT 
   await expect(page.locator("#businessWorkspace")).toBeVisible();
   await page.locator('#businessWorkspace [data-feature="cashbook"]').click();
   await expect(page.locator("#businessCashbookTitle")).toBeVisible();
-  await expect(page.locator("#businessAssessmentTitle")).toBeVisible();
 
   const accounting = await page.evaluate(() => {
     businessLedgerState.rows = [
@@ -989,6 +990,7 @@ test("Business workspace exposes the cashbook and Student Desk with working VAT 
   expect(accounting.vat).toContain("10");
   expect(accounting.rows).toBe(2);
 
+  await page.locator('#businessWorkspace [data-feature="break-even"]').click();
   await page.locator("#businessFixedCosts").fill("1000");
   await page.locator("#businessUnitPrice").fill("50");
   await page.locator("#businessVariableCost").fill("25");
@@ -998,6 +1000,8 @@ test("Business workspace exposes the cashbook and Student Desk with working VAT 
   await expect(page.locator("#businessContributionMargin")).toContainText("50.0%");
   await expect(page.locator("#businessExpectedProfit")).toContainText("250");
 
+  await page.locator('#businessWorkspace [data-feature="student"]').click();
+  await expect(page.locator("#businessAssessmentTitle")).toBeVisible();
   await page.locator("#studentAssessmentSubject").fill("Business Management");
   await page.locator("#studentAssessmentBrief").fill("Evaluate a business strategy using evidence.");
   await page.locator("#studentAssessmentDraft").fill("My draft explains the strategy and its limitations.");
@@ -1094,8 +1098,10 @@ test("Academy, Commerce and Business projects are saved, reopened and deleted pe
   ];
   for (const item of modules) {
     await page.evaluate(id => selectModule(id, true), item.id);
-    await page.locator("#" + item.id + "ProjectTitle").fill(item.title);
     await page.locator("#" + item.primary).fill(item.value);
+    if (item.id === "academy") await page.locator('#academyWorkspace [data-feature="courses"]').click();
+    if (item.id === "commerce") await page.locator('#commerceWorkspace [data-feature="projects"]').click();
+    await page.locator("#" + item.id + "ProjectTitle").fill(item.title);
     await expect(page.locator("#" + item.primary)).toHaveValue(item.value);
     await page.evaluate(({ id, primary, value }) => {
       const field = document.getElementById(primary);
@@ -1114,7 +1120,8 @@ test("Academy, Commerce and Business projects are saved, reopened and deleted pe
     await expect(page.locator("#" + item.id + "ProjectList option")).toHaveCount(1);
   }
 
-  // The Business workspace is already active after the project loop; avoid re-entering it while its project list refresh is still resolving.
+  // The Business workspace is already active after the project loop; open its separate Student Desk page before editing the assessment.
+  await page.locator('#businessWorkspace [data-feature="student"]').click();
   await page.locator("#studentAssessmentSubject").fill("Business Management");
   await page.locator("#studentAssessmentBrief").fill("Assess a business strategy using evidence.");
   await page.locator("#studentAssessmentRubric").fill("Analysis 40%, evidence 30%, structure 30%.");
@@ -1195,8 +1202,10 @@ test("Business cashbook monthly cashflow report summarizes and filters saved tra
     selectModule("business", true);
   });
   await expect(page.locator("#businessWorkspace")).toBeVisible();
+  await page.locator('#businessWorkspace [data-feature="cashbook"]').click();
   // Wait for the workspace's asynchronous cashbook load to finish before seeding test rows.
   await expect(page.locator("#businessLedgerStatus")).toContainText("Registru încărcat");
+  await page.locator('#businessWorkspace [data-feature="cashflow"]').click();
   await page.evaluate(() => {
     const today = new Date();
     const monthDate = offset => {
