@@ -1556,3 +1556,32 @@ test("server-side assistant TTS still works when browser speech synthesis is una
   expect(requests[0].assistant).toBe("drvas");
   await expect(page.locator("#voiceStatus")).not.toContainText("unsupported");
 });
+
+
+test("public dashboard exposes exactly six customer modules while internal workbenches stay inside the hidden admin centre", async ({ page }) => {
+  await openApp(page, "ro");
+
+  const publicModuleIds = await page.locator("#moduleSelectionSection .module-card").evaluateAll(cards =>
+    cards.map(card => card.getAttribute("data-module"))
+  );
+  expect(publicModuleIds).toEqual(["free", "health", "studio", "academy", "commerce", "business"]);
+  await expect(page.locator('#moduleSelectionSection [data-module="crypto"]')).toHaveCount(0);
+  await expect(page.locator("#adminPanel")).toBeHidden();
+
+  const internalWorkbenchState = await page.locator("#adminPanel").evaluate(panel => ({
+    cryptoInsideAdmin: Boolean(panel.querySelector("#cryptoAdminHeading")),
+    creatorLabInsideAdmin: Array.from(panel.querySelectorAll("h5")).some(node => node.textContent.includes("Creator & Online Income Lab")),
+    evaluationLabInsideAdmin: Array.from(panel.querySelectorAll("h5")).some(node => node.textContent.includes("AI Evaluation & Training Lab")),
+    digitalProductStudioInsideAdmin: Array.from(panel.querySelectorAll("h5")).some(node => node.textContent.includes("Digital Product Studio")),
+    founderProvenanceInsideAdmin: Boolean(panel.querySelector("#founderProvenanceHeading")),
+    workbenchCount: panel.querySelectorAll(".founder-tool").length
+  }));
+  expect(internalWorkbenchState).toMatchObject({
+    cryptoInsideAdmin: true,
+    creatorLabInsideAdmin: true,
+    evaluationLabInsideAdmin: true,
+    digitalProductStudioInsideAdmin: true,
+    founderProvenanceInsideAdmin: true
+  });
+  expect(internalWorkbenchState.workbenchCount).toBeGreaterThanOrEqual(10);
+});
