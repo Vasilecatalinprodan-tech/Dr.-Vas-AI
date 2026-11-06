@@ -96,3 +96,11 @@ The founder asked to continue the full Dr.Vas development and preserve all work 
 - No paid services, secrets, Supabase SQL, feature flags, production APK or installed device app were changed.
 
 This archive preserves the instruction, decisions and technical actions from this continuation; it is not a verbatim export of the ChatGPT transcript. The original conversation remains in ChatGPT history.
+
+
+### Additional module persistence coverage — 2026-11-06
+
+- Extended the shared Academy/Commerce/Business E2E coverage: Commerce and Business existing-project updates and Markdown exports are now covered; Academy and Business owner-scoped deletion/selection-state clearing are also covered (Commerce deletion was already covered).
+- Test commits: `7c8e6b89d97fd8b2e22d9b6577fc484e3d96fb15` and `a60ac62ed5ce7b620d44c0cae46a76403a37f9ee`.
+- These are test-only changes on `drvas-integrated-platform`. No application runtime code was changed in this follow-up.
+- CI for the new commits has not yet returned a completed status. Workflow #478 / run `42187371574` remained at Chromium installation on the last inspection; its browser test, deploy and production smoke-test steps were still pending. Do not claim a passing result or advance `main` until a completed successful workflow is confirmed.
