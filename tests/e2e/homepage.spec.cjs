@@ -2286,6 +2286,8 @@ test("Dr.Vas Free sidebar destinations open their own truthful views", async ({ 
     selectModule("free", true);
     window.__freeNavScheduledSource = freeNavLoadScheduled.toString();
     window.__freeNavPluginsSource = freeNavLoadPlugins.toString();
+    window.__freeNavLibrarySource = freeNavLoadLibrary.toString();
+    freeNavLoadLibrary = async imagesOnly => { const host=freeNavPage(imagesOnly ? "Images" : "Library","Private file library"); host.append("Saved files"); };
     freeNavLoadScheduled = async () => { const host=freeNavPage("Scheduled","In-app reminders"); host.append("Scheduled reminders"); };
     freeNavLoadPlugins = async () => { const host=freeNavPage("Plugins","Integration status"); host.append("Integration status"); };
     freeNavLoadAttachments = async imagesOnly => {
@@ -2300,6 +2302,10 @@ test("Dr.Vas Free sidebar destinations open their own truthful views", async ({ 
     await expect(page.locator("#freeNavWorkspace")).toBeVisible();
     await expect(page.locator("#freeNavWorkspace h2")).toHaveText(heading);
   }
+  const librarySource = await page.evaluate(() => window.__freeNavLibrarySource);
+  expect(librarySource).toContain("drvas_library_items");
+  expect(librarySource).toContain(".upload(");
+  expect(librarySource).toContain("createSignedUrl");
   await page.locator('[data-free-nav="scheduled"]').click();
   await expect(page.locator("#freeNavWorkspace")).toContainText("Scheduled reminders");
   const scheduledSource = await page.evaluate(() => window.__freeNavScheduledSource);
