@@ -347,6 +347,8 @@ test("each premium module shows only its own tools and keeps the other module wo
     await expect(page.locator("#moduleSelectionSection > .modules-grid")).toBeHidden();
     await expect(page.locator(".chat-module-rail")).toBeHidden();
     await expect(page.locator("#chatSection .history-panel")).toBeHidden();
+    await expect(page.locator("#globalLogoutTop")).toBeVisible();
+    await expect(page.locator("#globalLogoutBottom")).toBeVisible();
     for (const otherModule of modules) {
       const workspace = page.locator("#" + otherModule + "Workspace");
       if (otherModule === moduleName) await expect(workspace).toBeVisible();
@@ -368,6 +370,8 @@ test("public signed-in users can enter Dr.Vas Free without administrator privile
   });
   await expect(page.locator("#chatSection")).toBeVisible();
   await expect(page.locator("#question")).toBeVisible();
+  await expect(page.locator("#globalLogoutTop")).toBeVisible();
+  await expect(page.locator("#globalLogoutBottom")).toBeVisible();
   await expect(page.locator("#moduleSelectionStatus")).toBeHidden();
   await expect(page.locator("#adminPanel")).toBeHidden();
   expect(await page.locator("body").evaluate(node => node.classList.contains("free-module-mode"))).toBeTruthy();
