@@ -137,3 +137,14 @@ test("Scheduled reminders and notifications are private, bounded and delivered o
   expect(worker).toContain("resolution=ignore-duplicates,return=minimal");
   expect(worker).toContain("drvas_notifications");
 });
+
+
+test("Private Library migration enforces owner-only access and a user-owned storage path", async () => {
+  const sql = migration("202611060003_library_items.sql");
+  expect(sql).toMatch(/create table if not exists public\.drvas_library_items/i);
+  expect(sql).toMatch(/storage_path like user_id::text \|\| '\/library\/%'/i);
+  expect(sql).toMatch(/alter table public\.drvas_library_items enable row level security/i);
+  expect(sql).toMatch(/auth\.uid\(\) = user_id/i);
+  expect(sql).toMatch(/grant select, insert, delete on table public\.drvas_library_items to authenticated/i);
+  expect(sql).toMatch(/revoke all on table public\.drvas_library_items from public, anon/i);
+});
