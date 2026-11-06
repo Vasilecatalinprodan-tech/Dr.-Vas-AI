@@ -195,3 +195,8 @@ Additional commits:
 ## Verbatim chat preservation
 - The user's three messages from this continuation were saved verbatim in `docs/CHAT-TRANSCRIPT-2026-11-06-DRVAS-ALL-MODULES.md`.
 - The transcript records the UI requirements, the permanent merge/deploy/migration instruction, and the request to continue all modules and preserve the chat.
+
+## Run #526 and stronger global Back visibility
+- Run #526 still failed only the global Back visibility assertion. The DOM showed the button but the CSS kept it hidden; previous synchronization points were not sufficient.
+- Added a final unconditional visibility update at the end of the authorized `selectModule` function, after the module activation logic, using an inline `!important` display value. Module chooser/logout still explicitly hides the button.
+- Latest run #531 (`42298051238`) is validating this final correction; static JS, migration/Health diagnostic ordering and Android APK checks passed before browser installation.
