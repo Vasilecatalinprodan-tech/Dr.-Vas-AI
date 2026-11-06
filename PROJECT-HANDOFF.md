@@ -572,3 +572,14 @@ The founder requested development across every branch and preservation of all wo
 The active integration line already includes the main functional work from the long-input, founder-workbench, universal attachment, session-restore and UI-startup-failsafe branches. The account-deletion branch contributes a security specification only; account deletion is not implemented and must remain release-gated. No legacy branch was force-updated or merged wholesale.
 
 A further Academy Markdown export regression test was added. Workflow #478 / run `42187371574` is in progress at checkpoint time. Wait for its result before claiming the export test passed or advancing `main`.
+
+
+## Handoff — 2026-11-06 latest continuation
+
+Continue on `drvas-integrated-platform`; keep `main` synchronized only after CI passes. All eight repository branches were inventoried and preserved. See `docs/BRANCH_INTEGRATION_AUDIT_2026-11-06.md`; do not merge divergent legacy branches wholesale.
+
+PR #7 is now confirmed merged at `c194068c4e13bc3c69ccf2208d67ed13db45ec46`. Universal private attachments are integrated, but do not enable Health document analysis until the Supabase migration and private Storage/RLS policies are verified live, Gemini Paid Services/DPA/retention are reviewed, and UK GDPR special-category lawful basis, explicit consent and DPIA are complete. No such live migration or feature-flag change was performed here.
+
+Latest code/test change: `7c8e6b89d97fd8b2e22d9b6577fc484e3d96fb15` adds Commerce and Business Playwright coverage for owner-scoped existing-project updates and Markdown exports. CI is pending. Workflow #478 / run `42187371574` was still installing Chromium at the last check; do not claim success until the browser suite, deploy and production smoke test finish.
+
+Keep the zero-new-cost rule. Do not buy provider usage, create subscriptions, start paid renders, change production secrets/flags, or replace the installed APK. Preserve chat continuity through `docs/CHAT-ARCHIVE-2026-11-06.md`; it is a structured project record, not a verbatim transcript export.
