@@ -191,3 +191,7 @@ Additional commits:
 - Run #523 still had one failure: the top Back control was not being shown in the global navigation test, even though the module shell and other controls were active.
 - Added a final synchronization in the shared module selector wrapper: after the original module selection and feature-page initialization, it checks that the selected workspace/chat is actually visible and then shows the global Back control. Unauthorized modules do not show it; returning to the module chooser still hides it.
 - Latest browser run #526 (`42297705166`) is validating this wrapper-level correction. Static JS, migration/Health diagnostic ordering and Android APK workflow checks passed before browser installation.
+
+## Verbatim chat preservation
+- The user's three messages from this continuation were saved verbatim in `docs/CHAT-TRANSCRIPT-2026-11-06-DRVAS-ALL-MODULES.md`.
+- The transcript records the UI requirements, the permanent merge/deploy/migration instruction, and the request to continue all modules and preserve the chat.
