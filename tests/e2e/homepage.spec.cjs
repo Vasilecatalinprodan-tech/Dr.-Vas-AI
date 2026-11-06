@@ -346,8 +346,7 @@ test("each premium module shows only its own tools and keeps the other module wo
     await page.evaluate(name => selectModule(name, true), moduleName);
     await expect(page.locator("#moduleSelectionSection > .modules-grid")).toBeHidden();
     await expect(page.locator(".chat-module-rail")).toBeHidden();
-    if (moduleName === "health") await expect(page.locator("#chatSection .history-panel")).toBeVisible();
-    else await expect(page.locator("#chatSection .history-panel")).toBeHidden();
+    await expect(page.locator("#chatSection .history-panel")).toBeVisible();
     await expect(page.locator("#globalLogoutTop")).toBeVisible();
     await expect(page.locator("#globalLogoutBottom")).toBeVisible();
     for (const otherModule of modules) {
@@ -2549,4 +2548,30 @@ test("Health information desk opens as its own feature page while the shared cha
   await expect(page.locator("#chatSection .history-panel")).toBeVisible();
   await expect(page.locator("#freeChatView .input-area .chat-file-button")).toBeVisible();
   await expect(page.locator("#healthDataProcessingConsentWrap")).toBeHidden();
+});
+
+
+test("all six module chats share the same sidebar destinations and attachment composer", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-all-chat-shells", email: "owner@example.invalid" };
+    isDrvasAdmin = true;
+    showModuleSelection();
+  });
+  const expected = ["＋New chat","▧Images","◷Scheduled","▤Library","⌘Plugins","✧Explore","▣Projects","View all"];
+  for (const moduleName of ["free","health","studio","academy","commerce","business"]) {
+    await page.evaluate(name => selectModule(name, true), moduleName);
+    await expect(page.locator("#chatSection .history-panel"), moduleName + " sidebar").toBeVisible();
+    const labels = await page.locator("[data-free-nav]").allTextContents();
+    expect(labels.map(value => value.trim()), moduleName + " navigation").toEqual(expected);
+    await expect(page.locator("#freeChatView .input-area .chat-file-button"), moduleName + " attachment").toBeVisible();
+    await expect(page.locator("#sendButton"), moduleName + " send").toContainText("Trimite");
+    await expect(page.locator("#globalLogoutTop")).toBeVisible();
+    await expect(page.locator("#globalLogoutBottom")).toBeVisible();
+    await page.locator('[data-free-nav="scheduled"]').click();
+    await expect(page.locator("#freeNavWorkspace h2")).toHaveText("Scheduled");
+    await page.locator('[data-free-nav="chat"]').click();
+    await expect(page.locator("#freeChatView")).toBeVisible();
+  }
 });
