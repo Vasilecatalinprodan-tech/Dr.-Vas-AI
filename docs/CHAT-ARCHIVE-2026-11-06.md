@@ -385,3 +385,19 @@ Resume with safe PR #9 conflict resolution and fresh CI evidence, exact npm audi
 - Workflow Android #336 / run `42199232414` a trecut build-ul APK. APK-ul nu a fost instalat sau verificat fizic în această etapă; redarea vocală pe Samsung rămâne test de dispozitiv.
 - Arhiva conversației a fost completată în `docs/CHAT-ARCHIVE-2026-11-06.md`, iar handoff/status/development log au primit același checkpoint. Este o arhivă structurată de continuitate, nu un export integral al UI ChatGPT.
 - Limitele de siguranță rămân: fără mining real, wallet-uri/tranzacții, Health document analysis în producție, schimbări Supabase/RLS, abonamente sau servicii plătite fără aprobările și controalele necesare.
+
+
+
+## 2026-11-06 — saved checkpoint: unified chat history and dedicated module workspaces
+
+- Founder reported that Dr.Vas Free does not show previous conversations, that chat messages are being appended to an existing thread when that is not desired, and that module features are crowded together instead of opening separate workspaces.
+- Exact requirements and verified root causes are recorded in `docs/UX-REDESIGN-CHAT-AND-MODULE-WORKSPACES-2026-11-06.md`.
+- Verified current code: history UI exists (`#conversationList`, `getConversationIds`, `loadConversationList`, `openConversation`, rename/archive/delete), but CSS hides the left history panel in Free and module-workspace modes.
+- Verified isolation defect: only one global `currentConversationId` is used; changing modules does not reliably create a new conversation ID. The history query groups all user messages without module context. Current metadata migration `202611030006_conversation_management.sql` stores title/archive only and has no module/kind/feature key.
+- Product direction: global **Vorbește cu Dr.Vas** is an independent general chat; each module has a dashboard; every feature opens its own dedicated page/form with a clear back button; chat histories are reusable sidebars across modules, tagged and filtered by context.
+- Business catalogue includes separate Accounting/Cashbook, Self Assessment preparation, Invoices & Expenses, Cashflow & Profitability, Business Plan, Tax/Compliance Checklist, Reports/Exports and Business Assistant workspaces.
+- Data safety: preserve all existing messages and attachments; legacy conversations remain unclassified until safe classification is possible; no destructive backfill, no cross-user data access, and no guessing module context.
+- New docs-only working branch: `feature/chat-sidebar-module-workspaces-2026-11-06`, based on `main` after Sarah PR #36 merge. The UI refactor and Supabase migration have not yet been implemented or applied.
+- PR #36 (Sarah cross-language feminine voice fallback) passed browser E2E workflow run `42279655390` and was squash-merged as `bbb97c26636c2c8b867c02f12b97f51cc219fe0b`. Actual audio playback on the founder's device remains unverified. Main post-merge deployment workflow must be checked before claiming a new production release.
+- This archive captures the current user request verbatim and the engineering decisions in structured form; it is not a complete raw export of the ChatGPT interface.
+- Founder explicitly asked to save all work and resume later. Resume from the UX redesign spec; do not ask the founder to repeat these requirements.
