@@ -249,3 +249,9 @@ Founder feedback:
 
 - Workflow #475 / run `42181944554` completed SUCCESS, including the new Academy existing-project update regression test, browser suite, Worker deployment and production smoke test.
 - Added a Commerce project deletion regression test verifying the delete request is scoped by `id`, `user_id` and `module`, and that local project state is cleared after deletion. Awaiting the next CI run.
+
+
+### Validation result — Commerce project deletion and branch sync
+
+- Workflow #476 / run `42182127089` completed SUCCESS. The new Commerce deletion regression test passed, together with the complete browser regression suite, JavaScript validation, Worker deployment, production smoke test and SBOM upload.
+- `main` was fast-forward synchronized with `drvas-integrated-platform` after the successful workflow. Documentation was updated to record the result.
