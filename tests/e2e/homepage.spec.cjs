@@ -1678,3 +1678,82 @@ test("hidden founder workbench reports a private-save failure instead of claimin
   expect(result.notices.at(-1)).toMatchObject({ isError: true });
   expect(result.notices.at(-1).message).toContain("salvarea nu a fost confirmată");
 });
+
+
+test("Sarah and Dr.Jan portraits load from permanent local assets in selector, presentation and Live", async ({ page }) => {
+  await openApp(page, "ro");
+  const expected = [
+    ['[data-assistant="drvas"] .assistant-avatar', "drvas.jpeg"],
+    ['[data-assistant="jan"] .assistant-avatar', "/assets/presenters/dr-jan.jpg"],
+    ['[data-assistant="aurora"] .assistant-avatar', "/assets/presenters/sarah.jpg"]
+  ];
+  for (const [selector, source] of expected) {
+    const image = page.locator(selector);
+    await expect(image).toHaveAttribute("src", source);
+    await expect.poll(() => image.evaluate(node => node.naturalWidth)).toBeGreaterThan(0);
+  }
+
+  const presentation = await page.evaluate(async () => {
+    const results = [];
+    for (const [index, key] of [[0, "drvas"], [1, "jan"], [2, "sarah"]]) {
+      updateDrvasPresentationScene(index);
+      const presenter = document.querySelector("#presentationPresenter");
+      presenter.classList.add("is-speaking");
+      const image = document.querySelector("#presentationAvatar .presentation-photo");
+      await image.decode();
+      results.push({
+        key,
+        src: image.getAttribute("src"),
+        width: image.naturalWidth,
+        animation: getComputedStyle(image).animationName
+      });
+    }
+    return results;
+  });
+  expect(presentation.map(item => item.key)).toEqual(["drvas", "jan", "sarah"]);
+  expect(presentation[1].src).toBe("/assets/presenters/dr-jan.jpg");
+  expect(presentation[2].src).toBe("/assets/presenters/sarah.jpg");
+  for (const item of presentation) {
+    expect(item.width).toBeGreaterThan(0);
+    expect(item.animation).toContain("presenterPhotoTalk");
+  }
+
+  const live = await page.evaluate(async () => {
+    const results = [];
+    for (const assistant of ["jan", "aurora"]) {
+      selectAssistant(assistant);
+      updateLiveVoiceStage("speaking", "Test audio activ");
+      const image = document.querySelector("#liveStageAvatar img");
+      await image.decode();
+      results.push({ assistant, src: image.getAttribute("src"), width: image.naturalWidth });
+    }
+    updateLiveVoiceStage("closed");
+    return results;
+  });
+  expect(live).toEqual([
+    { assistant: "jan", src: "/assets/presenters/dr-jan.jpg", width: 400 },
+    { assistant: "aurora", src: "/assets/presenters/sarah.jpg", width: 400 }
+  ]);
+});
+
+test("assistant portrait fallback appears if a local image cannot load and recovers when restored", async ({ page }) => {
+  await openApp(page, "ro");
+  const image = page.locator('[data-assistant="jan"] .assistant-avatar');
+  const fallback = page.locator('[data-assistant="jan"] .assistant-avatar-fallback');
+  await image.evaluate(node => { node.src = "/assets/presenters/missing-test-image.jpg"; });
+  await expect(image).toBeHidden();
+  await expect(fallback).toBeVisible();
+  await image.evaluate(node => { node.src = "/assets/presenters/dr-jan.jpg"; });
+  await expect.poll(() => image.evaluate(node => node.naturalWidth)).toBeGreaterThan(0);
+  await expect(image).toBeVisible();
+  await expect(fallback).toBeHidden();
+});
+
+test("presenter assets do not depend on temporary Runway signed URLs", async ({ page }) => {
+  await openApp(page, "ro");
+  const source = await page.locator("script").evaluateAll(nodes => nodes.map(node => node.textContent || "").join("\\n"));
+  expect(source).not.toContain("dnznrvs05pmza.cloudfront.net");
+  expect(source).not.toContain("_jwt=");
+  expect(source).toContain('/assets/presenters/dr-jan.jpg');
+  expect(source).toContain('/assets/presenters/sarah.jpg');
+});

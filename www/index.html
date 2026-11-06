@@ -142,7 +142,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .assistant-choice{display:flex;align-items:center;gap:10px;min-width:155px;padding:10px 13px;border:1px solid #34566b;border-radius:14px;background:#10283b;color:#d7e9f0;font-size:12px;font-weight:700;text-align:left;transition:border-color .2s,background .2s}
 .assistant-choice[aria-pressed="true"]{border-color:#58d8cf;background:linear-gradient(135deg,#174b51,#17384a);color:#fff;box-shadow:0 0 0 1px rgba(88,216,207,.15)}
 .assistant-choice small{display:block;font-size:10px;color:#9ab6c4;font-weight:500;margin-top:3px}
-.assistant-avatar{width:40px;height:40px;flex:0 0 40px;border-radius:50%;object-fit:cover;border:1px solid #5a9b9d}
+.assistant-avatar{width:40px;height:40px;flex:0 0 40px;border-radius:50%;object-fit:cover;border:1px solid #5a9b9d;transition:transform .2s,filter .2s}\n.assistant-avatar-fallback{display:grid;place-items:center;width:40px;height:40px;flex:0 0 40px;border-radius:50%;background:#17354b;border:1px solid #5a9b9d;color:#9de8e1;font-size:20px}.assistant-avatar-fallback[hidden]{display:none!important}
 .assistant-avatar-symbol{display:block;width:68px;height:82px;flex:0 0 68px;border-radius:15px;overflow:hidden;background:#17354b;border:1px solid #5a9b9d;box-shadow:0 5px 16px #07152288;transform:translateZ(0)}
 .assistant-avatar-symbol svg{display:block;width:100%;height:100%;animation:avatarIdle 4.8s ease-in-out infinite;transform-origin:50% 80%}
 .assistant-aurora{background:#40304c;border-color:#c2a1bd}
@@ -168,7 +168,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
 @keyframes liveWave{from{height:5px;transform:scaleY(.7)}to{height:20px;transform:scaleY(1)}}
 @keyframes liveAvatarTalk{from{transform:scale(1)}to{transform:scale(1.045)}}
 body.assistant-speaking .assistant-choice[aria-pressed="true"] .assistant-avatar{animation:liveAvatarTalk .38s ease-in-out infinite alternate;box-shadow:0 0 0 4px #54d8cf30}
-.live-voice-stage.is-speaking .live-stage-avatar img{animation:liveAvatarTalk .38s ease-in-out infinite alternate}
+.live-voice-stage.is-speaking .live-stage-avatar img{animation:presenterPhotoTalk .38s ease-in-out infinite alternate;filter:brightness(1.06) saturate(1.04)}\n.presentation-presenter.is-speaking .presentation-photo{animation:presenterPhotoTalk .42s ease-in-out infinite alternate;filter:brightness(1.05) saturate(1.04)}\nbody.assistant-speaking .assistant-choice[aria-pressed="true"] .assistant-avatar{filter:brightness(1.07) saturate(1.06)}\n@keyframes presenterPhotoTalk{from{transform:translateY(0) scale(1)}to{transform:translateY(-1px) scale(1.018)}}
 .live-voice-stage.is-speaking .live-stage-avatar .assistant-avatar-symbol svg{animation:avatarTalk .22s ease-in-out infinite alternate}
 .live-voice-stage.is-speaking .live-stage-avatar .assistant-avatar-symbol svg path[d^="M52 76"],.live-voice-stage.is-speaking .live-stage-avatar .assistant-avatar-symbol svg path[d^="M51 79"]{animation:avatarMouth .18s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}
 
@@ -1619,8 +1619,8 @@ body.presentation-open{overflow:hidden!important}
     <div class="assistant-switcher" role="group" aria-label="Alege asistentul">
      <span class="assistant-switcher-label">Alege asistentul tău</span>
      <button type="button" class="assistant-choice" data-assistant="drvas" aria-pressed="true" onclick="selectAssistant('drvas')"><img class="assistant-avatar" src="drvas.jpeg" alt=""><span>Dr.Vas<small>Asistent principal</small></span></button>
-     <button type="button" class="assistant-choice" data-assistant="jan" aria-pressed="false" onclick="selectAssistant('jan')"><img class="assistant-avatar" src="https://dnznrvs05pmza.cloudfront.net/gemini/gemini-3.1-flash-lite-image/images/d3842309-f86b-4f5e-991f-0698b3573c08/069e0e85-01ec-45bd-a1d2-c300fd1ee75d/A_single_standalone_photorealistic_head_and_shoulders_portra.jpg?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiMTlkN2Q2Y2U4Yzg1MjM4MiIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5NDExNjQzMH0.eTIoOeeFTJoq-vgxlIOBJ8UBjDlF2ypeBEgtdscrwq0" alt="Dr.Jan — personaj AI fictiv"><span>Dr.Jan<small>Ghid strategic AI</small></span></button>
-     <button type="button" class="assistant-choice" data-assistant="aurora" aria-pressed="false" onclick="selectAssistant('aurora')"><img class="assistant-avatar" src="https://dnznrvs05pmza.cloudfront.net/gemini/gemini-3.1-flash-lite-image/images/122ba613-ef40-4b59-99e7-7903cca5b905/bbce3dfd-1bc2-427a-bbff-1545d1261b0a/Edit_the_supplied_reference_photograph_into_a_single_standal.jpg?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiZWM1MDFhY2Q1ODE4M2ZmNSIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5NDEzMTkxN30.5B5nEjXcHcuFP81vsxplLZjTysT-z2EJHyd-IBDEZ-Y" alt="Sarah — portret profesional adult"><span>Sarah<small>Învățare și creativitate</small></span></button>
+     <button type="button" class="assistant-choice" data-assistant="jan" aria-pressed="false" onclick="selectAssistant('jan')"><img class="assistant-avatar" src="/assets/presenters/dr-jan.jpg"  alt="Dr.Jan — portretul asistentului AI" loading="eager" decoding="async" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="assistant-avatar-fallback" hidden aria-hidden="true">◈</span><span>Dr.Jan<small>Ghid strategic AI</small></span></button>
+     <button type="button" class="assistant-choice" data-assistant="aurora" aria-pressed="false" onclick="selectAssistant('aurora')"><img class="assistant-avatar" src="/assets/presenters/sarah.jpg"  alt="Sarah — portretul asistentei AI" loading="eager" decoding="async" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="assistant-avatar-fallback" hidden aria-hidden="true">✧</span><span>Sarah<small>Învățare și creativitate</small></span></button>
      <button type="button" class="assistant-choice assistant-help-choice" onclick="startGuidedHelp()">Ghidează-mă pas cu pas</button>
      <p class="assistant-intro" id="assistantIntro">Asistentul principal Dr.Vas este pregătit să te ajute.</p>
     </div>
@@ -1855,8 +1855,8 @@ const DRVAS_PRESENTERS={
 };
 const DRVAS_PRESENTER_PORTRAITS={
  drvas:"drvas.jpeg",
- jan:"https://dnznrvs05pmza.cloudfront.net/gemini/gemini-3.1-flash-lite-image/images/d3842309-f86b-4f5e-991f-0698b3573c08/069e0e85-01ec-45bd-a1d2-c300fd1ee75d/A_single_standalone_photorealistic_head_and_shoulders_portra.jpg?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiMTlkN2Q2Y2U4Yzg1MjM4MiIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5NDExNjQzMH0.eTIoOeeFTJoq-vgxlIOBJ8UBjDlF2ypeBEgtdscrwq0",
- sarah:"https://dnznrvs05pmza.cloudfront.net/gemini/gemini-3.1-flash-lite-image/images/122ba613-ef40-4b59-99e7-7903cca5b905/bbce3dfd-1bc2-427a-bbff-1545d1261b0a/Edit_the_supplied_reference_photograph_into_a_single_standal.jpg?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiZWM1MDFhY2Q1ODE4M2ZmNSIsImJ1Y2tldCI6InJ1bndheS10YXNrLWFydGlmYWN0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5NDEzMTkxN30.5B5nEjXcHcuFP81vsxplLZjTysT-z2EJHyd-IBDEZ-Y"
+ jan:"/assets/presenters/dr-jan.jpg",
+ sarah:"/assets/presenters/sarah.jpg"
 };
 function setDrvasPresenterPortrait(key,avatar){
  if(!avatar)return;
@@ -2299,7 +2299,21 @@ const ASSISTANTS = {
  jan:{name:"Dr.Jan",icon:"◈",intro:"Ghid strategic: explică pașii, organizează sarcinile și te ajută să rezolvi probleme.",welcome:"Salut! Sunt Dr.Jan. Îți voi explica lucrurile clar, pas cu pas, și verificăm împreună fiecare etapă."},
  aurora:{name:"Sarah",icon:"✧",intro:"Asistentă dedicată fiicei fondatorului pentru învățare, creativitate și organizarea ideilor, cu explicații clare și încurajatoare.",welcome:"Bun venit! Sunt Sarah. Hai să explorăm ideile tale și să le transformăm în pași simpli și realizabili."}
 };
-function startGuidedHelp(){
+function bindAssistantPortraitFallbacks(){
+ document.querySelectorAll(".assistant-choice .assistant-avatar").forEach(image=>{
+  const fallback=image.parentElement?.querySelector(".assistant-avatar-fallback");
+  image.addEventListener("error",()=>{
+   image.hidden=true;
+   if(fallback)fallback.hidden=false;
+  });
+  image.addEventListener("load",()=>{
+   image.hidden=false;
+   if(fallback)fallback.hidden=true;
+  });
+ });
+}
+bindAssistantPortraitFallbacks();
+\nfunction startGuidedHelp(){
  selectAssistant("jan");
  const input=el("question");
  if(input){
