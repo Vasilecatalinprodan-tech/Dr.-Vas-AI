@@ -934,3 +934,11 @@ Founder feedback:
 - Previous statements that workflow #478 was still pending are superseded by this completed success result.
 - The workflow's smoke test confirmed Worker health, homepage module markers and unauthenticated admin-status rejection. It does not prove authenticated TTS provider secrets, voice cloning, Android audio, Supabase production migrations or Google Play readiness.
 - No APK release or Play Store deployment occurred.
+
+
+## 2026-11-06 — manual voice replay correction (pending CI)
+
+- Fixed a frontend playback-state bug: manually replaying the last answer now passes an explicit `forcePlayback` flag through `speakDrVas()` and `playAssistantVoice()`. This prevents the dedicated TTS response from being discarded after the UI restores the user's previous auto-read-off setting.
+- Added Playwright regression coverage in `tests/e2e/module-persistence.spec.cjs` for replay with auto-read disabled, authenticated TTS request routing, and actual audio play invocation.
+- Code commit: `3b3b2b9c0f9448c24e4bcb3b68c244b16b78cc82`. Test commit: `022705e4f0fdf819fc3e126e359d2e293b5b573d`.
+- CI for these latest commits is not yet confirmed. Do not claim the new replay test passes until a PR workflow completes successfully.
