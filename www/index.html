@@ -2605,7 +2605,7 @@ function waitForSpeechVoices(){
 let founderSpeechAudio=null;
 let founderSpeechObjectUrl=null;
 let founderSpeechRequestId=0;
-async function playAssistantVoice(text){
+async function playAssistantVoice(text,forcePlayback=false){
  const requestId=++founderSpeechRequestId;
  const assistantId=activeAssistant;
  if(!["drvas","jan","aurora"].includes(assistantId)||!currentUser||!text)return false;
@@ -2618,7 +2618,7 @@ async function playAssistantVoice(text){
   });
   if(!response.ok)return false;
   const audioBlob=await response.blob();
-  if(requestId!==founderSpeechRequestId||!voiceAutoRead||activeAssistant!==assistantId)return true;
+  if(requestId!==founderSpeechRequestId||(!voiceAutoRead&&!forcePlayback)||activeAssistant!==assistantId)return true;
   if(!audioBlob.size)return false;
   if(founderSpeechAudio){founderSpeechAudio.pause();founderSpeechAudio.src="";}
   if(founderSpeechObjectUrl)URL.revokeObjectURL(founderSpeechObjectUrl);
@@ -2634,13 +2634,13 @@ async function playAssistantVoice(text){
   return false;
  }
 }
-async function speakDrVas(text){
- if(!voiceAutoRead||!text)return;
+async function speakDrVas(text,forcePlayback=false){
+ if((!voiceAutoRead&&!forcePlayback)||!text)return;
  const spokenText=prepareSpeechText(text);
  if(!spokenText)return;
  lastSpokenAnswer=text;
  // Prefer the authenticated server-side voice provider even on browsers without Web Speech synthesis.
- const dedicatedVoicePlayed=await playAssistantVoice(spokenText);
+ const dedicatedVoicePlayed=await playAssistantVoice(spokenText,forcePlayback);
  if(dedicatedVoicePlayed)return;
  if(!window.speechSynthesis){refreshVoiceUi("voiceUnavailable");return;}
  const lang=speechLanguage();
@@ -2677,7 +2677,7 @@ function replayLastAnswer(){
  if(!lastSpokenAnswer)return;
  const wasEnabled=voiceAutoRead;
  voiceAutoRead=true;
- speakDrVas(lastSpokenAnswer);
+ speakDrVas(lastSpokenAnswer,true);
  voiceAutoRead=wasEnabled;
  refreshVoiceUi("speaking");
 }
