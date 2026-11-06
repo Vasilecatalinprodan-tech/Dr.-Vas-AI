@@ -155,3 +155,10 @@ Additional commits:
 - Updated Studio and Business tests to navigate to their dedicated Projects/Video/Cashbook/Break-even/Student Desk/Cashflow pages. The project lifecycle test timeout was increased to 60 seconds with per-module diagnostics to identify any remaining slow step.
 - Commit: `b0fb3a56` (diagnostic project test); preceding code fixes are on the same PR branch.
 - Latest browser run #508 / ID `42296186730` is validating the current candidate.
+
+## Production migration gate
+- Added a migration step to `.github/workflows/deploy-worker.yml` before Cloudflare Worker deployment. It initializes/links the Supabase CLI, prints remote migration history, applies pending migrations with `supabase db push --linked --yes`, and prints history again.
+- The workflow requires repository Actions secrets `SUPABASE_ACCESS_TOKEN` and `SUPABASE_DB_PASSWORD`; the project ref is the known Supabase ref `bqgshoqspcfbflgsnntn`.
+- If either secret is absent, the workflow fails before Worker deployment rather than silently shipping code against an unmigrated database.
+- Browser CI now checks that this migration step and both secrets are present and ordered before the Worker deploy step. Run #508 passed that static migration-gate verification.
+- The migration step has not executed yet because this branch is not merged to main and this session has no direct authorized Supabase database connection. After merge, the main-branch deploy workflow will apply migrations only if the two repository secrets are configured.
