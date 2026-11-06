@@ -938,8 +938,7 @@ body.chat-focus-mode main{padding-bottom:64px!important}
  </div>
 </section>
 <section id="heroSection" class="hero">
- <div class="hero-content">
-  <div class="dna-helix-visual dna-helix-left" aria-hidden="true"><svg viewBox="0 0 180 640" role="presentation" focusable="false">
+ <div class="dna-helix-visual dna-helix-left" aria-hidden="true"><svg viewBox="0 0 180 640" role="presentation" focusable="false">
     <defs><linearGradient id="dnaStrandA-left" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#d5fff7"/><stop offset=".38" stop-color="#54e2d5"/><stop offset="1" stop-color="#167b91"/></linearGradient><linearGradient id="dnaStrandB-left" x1="1" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#d8ddff"/><stop offset=".5" stop-color="#8999ff"/><stop offset="1" stop-color="#4955a8"/></linearGradient></defs>
     <g class="dna-helix-core">
      <path class="dna-strand dna-strand-a" d="M28 8 C152 42 28 78 152 112 S28 182 152 216 S28 286 152 320 S28 390 152 424 S28 494 152 528 S28 598 152 632"/>
@@ -955,6 +954,7 @@ body.chat-focus-mode main{padding-bottom:64px!important}
      <g class="dna-rungs"><path d="M43 25 L137 25 M67 57 L113 57 M43 89 L137 89 M67 121 L113 121 M43 153 L137 153 M67 185 L113 185 M43 217 L137 217 M67 249 L113 249 M43 281 L137 281 M67 313 L113 313 M43 345 L137 345 M67 377 L113 377 M43 409 L137 409 M67 441 L113 441 M43 473 L137 473 M67 505 L113 505 M43 537 L137 537 M67 569 L113 569 M43 601 L137 601"/></g>
     </g>
    </svg></div>
+ <div class="hero-content">
   <div class="tag">INTELLIGENCE WITHOUT LIMITS</div>
   <button type="button" class="presentation-open-button hero-presentation-button" id="heroPresentationOpenButton" onclick="openDrvasPresentation()">▶ Deschide prezentarea</button>
   <button type="button" class="landing-primary hero-entry-button" id="heroChatCta" onclick="startDrVas()">Vorbește cu Dr.Vas <span aria-hidden="true">→</span></button>
@@ -2730,7 +2730,7 @@ function saveSpeechVoiceChoice(){
 function selectedSpeechRate(){const rate=Number(el("speechRateSelect")?.value||0.92);return Number.isFinite(rate)?Math.min(1.2,Math.max(0.75,rate)):0.92;}
 function isFemaleSpeechVoice(voice){
  const identity=[voice?.name,voice?.voiceURI].filter(Boolean).join(" ").toLowerCase();
- return /female|woman|zira|susan|hazel|aria|jenny|samantha|victoria|karen|moira|tessa|ava|serena|libby|sonia|helena|eva|google.*female|microsoft.*(zira|hazel|aria|jenny)/i.test(identity);
+ return String(voice?.gender||"").toLowerCase()==="female"||/female|woman|zira|susan|hazel|aria|jenny|samantha|victoria|karen|moira|tessa|ava|serena|libby|sonia|helena|eva|alina|andreea|ioana|carmen|maria|elena|irina|mihaela|sofia|olivia|emma|salli|joanna|kendra|kimberly|nicole|fiona|lucia|monica|google.*female|microsoft.*(zira|hazel|aria|jenny)/i.test(identity);
 }
 function chooseSpeechVoice(lang){
  if(!window.speechSynthesis)return null;
