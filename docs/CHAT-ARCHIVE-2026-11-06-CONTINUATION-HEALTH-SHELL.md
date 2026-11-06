@@ -108,3 +108,10 @@ Additional commits:
 - Commits: `9131a909`, `e078d94a`, `20dfb306`, `d8a7040b`.
 - PR #39 latest head: `d8a7040b64874bb6f62de0279c30c18a300ff935`; browser run #464 / ID `42293006432` is queued. Await its final test result.
 - User-facing rule preserved: do not claim a merge, migration, production deploy, APK build or passing browser suite without the corresponding evidence.
+
+## Global navigation refinement
+- Moved “Înapoi la module” from the chat toolbar into the global top header beside the top Deconectare control, matching the requested placement.
+- Bottom Deconectare remains in the footer; top and bottom logout remain independent controls.
+- Added regression checks that Back to modules is hidden outside a module workspace and visible in every active module.
+- Commits: `6a96eda4` (top header button and removal from chat toolbar), `2a6d81f2` (header styling), `33b8fb6e` and `7f028235` (browser assertions).
+- Latest browser run for this top-header change: `42293674406` / run #476, currently in progress.
