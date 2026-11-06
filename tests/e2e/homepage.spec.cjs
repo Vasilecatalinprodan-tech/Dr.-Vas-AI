@@ -2415,3 +2415,41 @@ test("Explore reflects account access and Images states that AI generation is no
   await expect(page.locator("#freeNavWorkspace")).toContainText("Generarea AI de imagini în Dr.Vas nu este încă activată.");
   await expect(page.locator("#freeNavWorkspace button", { hasText: "Alege imagine" })).toBeVisible();
 });
+
+
+test("Dr.Vas Free mobile chat remains viewport-fitted with the attachment control beside Send", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-free-mobile-viewport", email: "mobile@example.invalid" };
+    isDrvasAdmin = false;
+    showModuleSelection();
+    selectModule("free", true);
+  });
+
+  const layout = await page.evaluate(() => {
+    const main = document.querySelector("main");
+    const transcript = document.querySelector("#freeChatView>#chat");
+    const composer = document.querySelector("#freeChatView .input-area");
+    const attach = composer.querySelector(".chat-file-button");
+    const send = composer.querySelector("#sendButton");
+    return {
+      bodyOverflow: getComputedStyle(document.body).overflowY,
+      mainBottom: main.getBoundingClientRect().bottom,
+      viewportHeight: innerHeight,
+      transcriptOverflow: getComputedStyle(transcript).overflowY,
+      composerBottom: composer.getBoundingClientRect().bottom,
+      attachParent: attach.parentElement === send.parentElement,
+      attachImmediatelyBeforeSend: attach.nextElementSibling === send,
+      sendVisible: send.getBoundingClientRect().bottom <= innerHeight
+    };
+  });
+
+  expect(layout.bodyOverflow).toBe("hidden");
+  expect(layout.mainBottom).toBeLessThanOrEqual(layout.viewportHeight);
+  expect(layout.transcriptOverflow).toBe("auto");
+  expect(layout.composerBottom).toBeLessThanOrEqual(layout.viewportHeight);
+  expect(layout.attachParent).toBe(true);
+  expect(layout.attachImmediatelyBeforeSend).toBe(true);
+  expect(layout.sendVisible).toBe(true);
+});
