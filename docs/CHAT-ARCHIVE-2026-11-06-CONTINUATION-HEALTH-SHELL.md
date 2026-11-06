@@ -136,3 +136,12 @@ Additional commits:
 - Added Playwright checks proving that changing a feature does not overwrite another feature's draft.
 - Commit: `1dbd75a2` (draft isolation) and `6065e1cf` (draft-isolation regression).
 - Latest browser run #494 / ID `42294568843` is testing this snapshot.
+
+## Latest regression fixes before run #502
+- The global top Back control now uses both workspace state and an explicit visibility sync; it appears only inside an active module and returns to the module chooser. Top and bottom Deconectare remain.
+- New chat now restores the chat panel for every module, including Health and the four paid/admin workspaces.
+- Mobile Free/Health chat now uses a flex column layout for the toolbar and a fixed composer above the footer; the transcript reserves space below the composer.
+- Tests now navigate to the correct dedicated Business pages before checking Cashbook, Break-even, Student Desk and Cashflow. Studio render tests open Projects to set the project title and then return to Video. Academy/Commerce saved-project tests open their own project pages.
+- Updated the legacy grid expectation to two columns: shared sidebar plus one chat column.
+- Commits: `b043f4a6` (global Back sync and all-module New chat), `c9d5b1e7` (mobile flex), `a8f8b6b1` (Studio/Business feature page test navigation), `d4b7f0c2` (global Back test updates), `ac2896ab` (top Back navigation regression).
+- Latest browser run #502 / ID `42295378855` is running the full Playwright suite on the integrated candidate. No pass is claimed until completion.
