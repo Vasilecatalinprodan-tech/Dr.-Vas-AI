@@ -979,6 +979,13 @@ body.free-module-mode .conversation-item.active{border-color:#54d8cf;background:
  body.free-module-mode .chat-history-toggle{display:inline-flex!important}
 }
 
+
+/* Override older Free-mode sizing rules: the transcript is the only scrolling pane. */
+body.free-module-mode #chatSection .chat-main{height:100%!important;min-height:0!important;max-height:none!important;overflow:hidden!important}
+body.free-module-mode #chatSection .chat-main #freeChatView>#chat{height:auto!important;min-height:0!important;max-height:none!important;overflow-y:auto!important;overscroll-behavior:contain}
+body.free-module-mode #chatSection .chat-main #freeChatView .input-area{flex:0 0 auto;position:relative!important;bottom:auto!important}
+body.free-module-mode #chatSection .chat-main #freeChatView{min-height:0!important;max-height:none!important}
+
 </style>
 </head>
 
@@ -5129,9 +5136,26 @@ function renderWelcome(){
 let showArchivedConversations = false;
 let currentConversationIsLegacy = false;
 let freeNavCurrentView = "chat";
+function localConversationContextKey(){return "drvas_conversation_context:"+currentUser.id;}
+function rememberLocalConversationContext(conversationId,moduleId,title=""){
+ if(!currentUser||!conversationId)return;
+ try{
+  const key=localConversationContextKey(),saved=JSON.parse(localStorage.getItem(key)||"{}");
+  saved[conversationId]={module:moduleId,conversation_kind:moduleId==="free"?"general":"module_assistant",title:String(title||"").slice(0,120),updated_at:new Date().toISOString()};
+  localStorage.setItem(key,JSON.stringify(saved));
+ }catch(error){console.warn("Local conversation context unavailable:",error);}
+}
+function readLocalConversationContext(){
+ if(!currentUser)return {};
+ try{return JSON.parse(localStorage.getItem(localConversationContextKey())||"{}")}catch{return {}}
+}
 async function ensureConversationMetadata(conversationId,moduleId=activeModule,title=""){
  if(!currentUser||!conversationId)return;
- const payload={user_id:currentUser.id,conversation_id:conversationId,module:moduleId,conversation_kind:moduleId==="free"?"general":"module_assistant",title:String(title||"").replace(/\\s+/g," ").trim().slice(0,120),updated_at:new Date().toISOString()};
+ const cleanTitle=String(title||"").replace(/\\s+/g," ").trim().slice(0,120);
+ rememberLocalConversationContext(conversationId,moduleId,cleanTitle);
+ const {data:existing,error:readError}=await supabaseClient.from("drvas_conversation_metadata").select("title").eq("user_id",currentUser.id).eq("conversation_id",conversationId).maybeSingle();
+ if(readError)throw readError;
+ const payload={user_id:currentUser.id,conversation_id:conversationId,module:moduleId,conversation_kind:moduleId==="free"?"general":"module_assistant",title:existing?.title||cleanTitle,updated_at:new Date().toISOString()};
  const {error}=await supabaseClient.from("drvas_conversation_metadata").upsert(payload,{onConflict:"user_id,conversation_id"});
  if(error)throw error;
 }
@@ -5151,8 +5175,10 @@ async function getConversationIds(){
    console.warn("Conversation context migration unavailable; loading legacy metadata:",metadata.error.message);
    metadata=await supabaseClient.from("drvas_conversation_metadata").select("conversation_id,title,archived_at").eq("user_id",currentUser.id).in("conversation_id",conversations.map(x=>x.id));
   }
+  const localContext=readLocalConversationContext();
   if(metadata.error){console.warn("Conversation metadata unavailable:",metadata.error.message);}
   else {const byId=new Map((metadata.data||[]).map(x=>[x.conversation_id,x]));conversations.forEach(item=>{const saved=byId.get(item.id);if(saved){item.archived_at=saved.archived_at;if(saved.title)item.title=saved.title;item.module=saved.module||null;item.conversation_kind=saved.conversation_kind||null;item.feature_key=saved.feature_key||null;}});}
+  conversations.forEach(item=>{const local=localContext[item.id];if(!item.module&&local?.module)item.module=local.module;if(!item.title&&local?.title)item.title=local.title;});
 
  }
  return conversations;
