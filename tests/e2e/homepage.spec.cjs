@@ -2563,6 +2563,10 @@ test("all six module chats share the same sidebar destinations and attachment co
   for (const moduleName of ["free","health","studio","academy","commerce","business"]) {
     await page.evaluate(name => selectModule(name, true), moduleName);
     await expect(page.locator("#chatSection .history-panel"), moduleName + " sidebar").toBeVisible();
+    const shellModes = await page.evaluate(() => ({ free: document.body.classList.contains("free-module-mode"), health: document.body.classList.contains("health-module-mode"), shared: document.body.classList.contains("shared-chat-sidebar-mode") }));
+    if (moduleName === "free") expect(shellModes.free).toBe(true);
+    else if (moduleName === "health") { expect(shellModes.free).toBe(true); expect(shellModes.health).toBe(true); await expect(page.locator("#healthWorkspace")).toBeVisible(); }
+    else expect(shellModes.shared).toBe(true);
     const labels = await page.locator("[data-free-nav]").allTextContents();
     expect(labels.map(value => value.trim()), moduleName + " navigation").toEqual(expected);
     await expect(page.locator("#freeChatView .input-area .chat-file-button"), moduleName + " attachment").toBeVisible();
