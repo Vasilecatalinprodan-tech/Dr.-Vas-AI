@@ -1,6 +1,6 @@
 # Dr.Vas AI — Project Status
 
-Last updated: 2026-11-03
+Last updated: 2026-11-06
 Working branch: `drvas-integrated-platform`
 
 ## Product direction
@@ -875,3 +875,10 @@ Founder feedback:
 - JavaScript validation, the full homepage/persisted-session Playwright test step (including server-side TTS without browser speech synthesis), Worker deployment, production smoke test and SBOM upload all completed successfully.
 - Cloudflare Workers Builds check passed; production Worker version `f88f84eb-45b6-45b8-84f4-0d109c88864f`.
 - This validates the latest code paths in CI and production smoke checks. It does not configure the missing Jan/Sarah voice secrets or replace live Supabase user-account tests.
+
+
+## 2026-11-06 — zero-cost continuation
+
+- Founder requested continued development with no new costs and preservation of all work/chat. This instruction is recorded in `docs/CHAT-ARCHIVE-2026-11-06.md`.
+- No paid provider usage, new subscriptions, render jobs, voice credits, or APK replacement were initiated.
+- Added regression coverage to verify that updating an existing Academy project uses the same row, preserves the latest AI output, and filters by project ID, authenticated user ID and module. Await CI confirmation.
