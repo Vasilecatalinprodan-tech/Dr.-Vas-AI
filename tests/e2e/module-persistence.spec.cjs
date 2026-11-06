@@ -212,3 +212,54 @@ test("saving an already-open Academy project updates the same owner-scoped row a
     ["module", "academy"]
   ]);
 });
+
+
+test("deleting a saved Commerce project removes only the selected owner-scoped row", async ({ page }) => {
+  await openApp(page);
+  await page.evaluate(async () => {
+    const operations = [];
+    window.__DRVAS_DELETE_OPERATIONS__ = operations;
+    moduleProjectState.commerce = "e2e-existing-commerce";
+    moduleProjectOutputs.commerce = "Draft de eliminat";
+    const select = document.getElementById("commerceProjectList");
+    select.add(new Option("Proiect test", "e2e-existing-commerce"));
+    select.value = "e2e-existing-commerce";
+    window.confirm = () => true;
+
+    supabaseClient.from = table => {
+      const query = { operation: null, filters: [] };
+      query.select = function () { return this; };
+      query.delete = function () { this.operation = "delete"; return this; };
+      query.eq = function (key, value) { this.filters.push([key, value]); return this; };
+      query.order = function () { return this; };
+      query.limit = async function () { return { data: [], error: null }; };
+      query.then = function (resolve, reject) {
+        operations.push({ table, operation: this.operation, filters: this.filters });
+        return Promise.resolve({ error: null }).then(resolve, reject);
+      };
+      return query;
+    };
+
+    await deleteModuleProject("commerce");
+  });
+
+  const result = await page.evaluate(() => ({
+    operations: window.__DRVAS_DELETE_OPERATIONS__,
+    activeId: moduleProjectState.commerce,
+    latestOutput: moduleProjectOutputs.commerce,
+    title: document.getElementById("commerceProjectTitle").value,
+    selectedProject: document.getElementById("commerceProjectList").value
+  }));
+  expect(result.operations).toHaveLength(1);
+  expect(result.operations[0].table).toBe("drvas_module_projects");
+  expect(result.operations[0].operation).toBe("delete");
+  expect(result.operations[0].filters).toEqual([
+    ["id", "e2e-existing-commerce"],
+    ["user_id", "e2e-module-owner"],
+    ["module", "commerce"]
+  ]);
+  expect(result.activeId).toBeNull();
+  expect(result.latestOutput).toBe("");
+  expect(result.title).toBe("");
+  expect(result.selectedProject).toBe("");
+});
