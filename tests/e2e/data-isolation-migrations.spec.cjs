@@ -130,6 +130,8 @@ test("Scheduled reminders and notifications are private, bounded and delivered o
   expect(sql).toMatch(/unique references public\.drvas_scheduled_tasks/i);
   expect(sql).toMatch(/revoke insert on public\.drvas_notifications from authenticated/i);
   const worker = fs.readFileSync(path.join(__dirname, "../../worker/index.js"), "utf8");
+  const wrangler = fs.readFileSync(path.join(__dirname, "../../wrangler.toml"), "utf8");
+  expect(wrangler).toContain('crons = ["*/5 * * * *"]');
   expect(worker).toContain("async scheduled(controller, env, ctx)");
   expect(worker).toContain("processDrVasScheduledReminders(env)");
   expect(worker).toContain("resolution=ignore-duplicates,return=minimal");
