@@ -82,3 +82,21 @@ Important hosting limitation:
 - Updated the E2E test on branch `fix/presenter-photo-e2e-2026-11-06` to assert that the photorealistic portrait is visible and has the correct alt text for Dr.Vas, Dr.Jan and Sarah. This change is awaiting PR/CI validation.
 - Earlier import attempt workflow #42218528767 failed while downloading the signed Runway image URL with HTTP 401; it did not commit binary assets. The main E2E run subsequently observed the portrait image element load and hide the SVG fallback, so browser-level image loading has been observed in CI, but permanent repository hosting remains outstanding.
 - No production deploy has occurred for commit `59652cf96f3390e60934e8712df99debb6741ec0` because the E2E gate failed. Do not claim that commit is live until a later workflow passes.
+
+
+## Latest user instructions and continuation — 2026-11-06
+User: “bun sa continuam de unde am ramas ....de acum nu ma mai intrebi de deploy si de merge faci tu direct astea...si vreau sa vad pagina functionala cu noile poze si etc ....salveaza tot inclusiv chatul”
+
+Actions since the prior checkpoint:
+- Verified main was at `cc632432942088758f0933914c67f227dc204278` before this avatar work.
+- Recovered successful Runway task IDs for Sarah and Jan, and verified Dr.Vas's existing `www/drvas.jpeg` asset.
+- PR #11 merged the first archive: `3e44463ca464e3495a12d5bcc18cb3045a66945d`.
+- PR #12 was closed unmerged after becoming behind main; no code was lost.
+- PR #13 merged the portrait-loading code and archive: `59652cf96f3390e60934e8712df99debb6741ec0`. It adds image elements for Dr.Vas/Jan/Sarah to the presentation scene, accessible alt text, and SVG fallback.
+- Workflow #42219563939 validated JS but failed the E2E gate at 84/85 because an existing test required the old SVG art to remain visible. The log showed the SVG had class `is-hidden`, indicating the new photo had loaded. Deployment was correctly skipped.
+- PR #14 corrected the E2E assertion to expect the portrait image and verify presenter-specific alt text. PR #14 merged as `dbc7eeec92a880e9e9dbc83732f7d0b8947b6bf1`.
+- New main workflow #42219822820 was triggered by PR #14 merge. At archive time it has passed dependency install, SBOM generation and JavaScript validation; Chromium installation is still in progress, and E2E/deploy/smoke-test steps have not yet run. Do not claim deployment until it finishes successfully.
+- A separate earlier asset-import workflow #42218528767 failed with HTTP 401 when downloading signed CloudFront URLs. The E2E browser run did observe the photo load in the presentation (the SVG became hidden), but permanent repository hosting is still unresolved. The Runway URLs are temporary and expire on 2026-11-08. Keep the fallback and replace with permanent local assets before expiry.
+- No paid credits, purchased credits, secrets, migrations or production settings were changed.
+
+Current latest verified main commit: `dbc7eeec92a880e9e9dbc83732f7d0b8947b6bf1`.
