@@ -1430,6 +1430,10 @@ body.presentation-open{overflow:hidden!important}
       <div><small>Căldură disipată</small><strong id="cryptoHeatLoad">—</strong></div>
      </div>
      <p id="cryptoCalcNotice" class="admin-footnote" role="status">Calcul demonstrativ. Mining-ul și tranzacționarea rămân dezactivate.</p>
+     <div class="income-actions">
+      <button type="button" onclick="exportCryptoMiningReport()">Exportă raportul scenariului (JSON)</button>
+      <span id="cryptoReportNotice" class="admin-footnote" role="status">Raportul include ipotezele, formulele și rezultatele afișate; nu execută mining.</span>
+     </div>
     </div>
    </section>
    <section class="founder-workbench" aria-labelledby="founderProductionHeading">
@@ -2605,7 +2609,7 @@ function waitForSpeechVoices(){
 let founderSpeechAudio=null;
 let founderSpeechObjectUrl=null;
 let founderSpeechRequestId=0;
-async function playAssistantVoice(text){
+async function playAssistantVoice(text,forcePlayback=false){
  const requestId=++founderSpeechRequestId;
  const assistantId=activeAssistant;
  if(!["drvas","jan","aurora"].includes(assistantId)||!currentUser||!text)return false;
@@ -2618,7 +2622,7 @@ async function playAssistantVoice(text){
   });
   if(!response.ok)return false;
   const audioBlob=await response.blob();
-  if(requestId!==founderSpeechRequestId||!voiceAutoRead||activeAssistant!==assistantId)return true;
+  if(requestId!==founderSpeechRequestId||(!voiceAutoRead&&!forcePlayback)||activeAssistant!==assistantId)return true;
   if(!audioBlob.size)return false;
   if(founderSpeechAudio){founderSpeechAudio.pause();founderSpeechAudio.src="";}
   if(founderSpeechObjectUrl)URL.revokeObjectURL(founderSpeechObjectUrl);
@@ -2634,13 +2638,13 @@ async function playAssistantVoice(text){
   return false;
  }
 }
-async function speakDrVas(text){
- if(!voiceAutoRead||!text)return;
+async function speakDrVas(text,forcePlayback=false){
+ if((!voiceAutoRead&&!forcePlayback)||!text)return;
  const spokenText=prepareSpeechText(text);
  if(!spokenText)return;
  lastSpokenAnswer=text;
  // Prefer the authenticated server-side voice provider even on browsers without Web Speech synthesis.
- const dedicatedVoicePlayed=await playAssistantVoice(spokenText);
+ const dedicatedVoicePlayed=await playAssistantVoice(spokenText,forcePlayback);
  if(dedicatedVoicePlayed)return;
  if(!window.speechSynthesis){refreshVoiceUi("voiceUnavailable");return;}
  const lang=speechLanguage();
@@ -2677,7 +2681,7 @@ function replayLastAnswer(){
  if(!lastSpokenAnswer)return;
  const wasEnabled=voiceAutoRead;
  voiceAutoRead=true;
- speakDrVas(lastSpokenAnswer);
+ speakDrVas(lastSpokenAnswer,true);
  voiceAutoRead=wasEnabled;
  refreshVoiceUi("speaking");
 }
@@ -3754,9 +3758,11 @@ async function saveModuleProject(module){
   el(module+"ProjectTitle").value=title;
   await loadModuleProjectList(module,result.data.id);
   moduleProjectStatus(module,"Proiect salvat privat în contul tău.");
+  return true;
  }catch(error){
   console.error("Dr.Vas module project save:",error);
   moduleProjectStatus(module,error.message.includes("drvas_module_projects")?"Tabelul de proiecte nu este încă activ. Aplică migrarea SQL 202611040001_module_projects.sql în Supabase.":"Nu am putut salva proiectul: "+error.message,true);
+  return false;
  }
 }
 async function openModuleProject(module){
@@ -4261,15 +4267,34 @@ async function launchFounderWorkbenchPrompt(moduleId,prompt,notice,studioProject
  if(!currentUser||!isDrvasAdmin){founderWorkbenchMessage("Acces rezervat administratorului confirmat de server.",true);return;}
  if(!["studio","academy","business"].includes(moduleId)){founderWorkbenchMessage("Modul de lucru nepermis.",true);return;}
  selectModule(moduleId);
- let studioSaved=null;
- if(studioProject){
-  newStudioProject();el("studioDeliverable").value=studioProject.type;
-  el("studioProjectTitle").value=studioProject.title.slice(0,120);el("studioIdea").value=prompt;
-  studioSaved=await saveStudioProject();
+ const workbenchTitle=String(prompt.split("\n")[0]||"Dr.Vas Workbench").replace(/^DR\.VAS\s*/i,"").slice(0,120)||"Dr.Vas Workbench";
+ let saved=false;
+ if(moduleId==="studio"){
+  newStudioProject();
+  el("studioDeliverable").value=studioProject?.type||"article";
+  el("studioProjectTitle").value=(studioProject?.title||workbenchTitle).slice(0,120);
+  el("studioIdea").value=prompt;
+  saved=await saveStudioProject();
+ }else{
+  moduleProjectState[moduleId]=null;
+  moduleProjectOutputs[moduleId]="";
+  if(moduleId==="academy"){
+   el("academySubject").value=workbenchTitle;
+   el("academyProjectTitle").value=workbenchTitle;
+   el("academyBrief").value=prompt;
+  }else{
+   el("businessIdea").value=workbenchTitle;
+   el("businessProjectTitle").value=workbenchTitle;
+   el("businessBrief").value=prompt;
+  }
+  saved=await saveModuleProject(moduleId);
  }
  submitModuleBrief(prompt,notice);
  const workspaceName=moduleId==="studio"?"Dr.Vas Studio":moduleId==="academy"?"AI Evaluation & Training":"Dr.Vas Business";
- founderWorkbenchMessage(studioProject?(studioSaved?"Proiectul a fost salvat în Dr.Vas Studio. Brief-ul este pregătit; revizuiește mesajul în chat și apasă Trimite.":"Brief-ul este pregătit, dar salvarea proiectului nu a fost confirmată. Verifică mesajul din Proiectele mele Studio."):"Brief pregătit în "+workspaceName+". Revizuiește mesajul în chat și apasă Trimite.",Boolean(studioProject&&!studioSaved));
+ founderWorkbenchMessage(saved
+  ?"Proiectul privat a fost salvat în "+workspaceName+". Brief-ul este pregătit; revizuiește mesajul în chat și apasă Trimite."
+  :"Brief-ul este pregătit în "+workspaceName+", dar salvarea nu a fost confirmată. Verifică proiectele salvate înainte de a continua.",
+  !saved);
 }
 function buildFounderBookPrompt(){
  const title=el("founderBookTitle")?.value.trim()||"Carte nouă",genre=el("founderBookGenre")?.value||"Roman",language=el("founderBookLanguage")?.value||"Română",concept=el("founderBookConcept")?.value.trim()||"",length=el("founderBookLength")?.value||"Stabilim după schiță";
@@ -4394,6 +4419,48 @@ function calculateCryptoMiningEconomics(){
  const annualEnergyNode=el("cryptoAnnualEnergyCost");if(annualEnergyNode)annualEnergyNode.textContent=money(energy*365);
  const heatNode=el("cryptoHeatLoad");if(heatNode)heatNode.textContent=((watts+cooling)*3.412).toLocaleString("en-GB",{maximumFractionDigits:0})+" BTU/h";
  if(notice)notice.textContent=net>0?"Scenariu orientativ după energie, răcire, indisponibilitate, mentenanță și rezerva fiscală introdusă. Pragurile BTC/energie sunt matematice, nu predicții. Nu includ toate taxele, amortizarea, dificultatea rețelei sau volatilitatea BTC.":"În acest scenariu, costurile depășesc venitul estimat. Nu cumpăra echipament pe baza acestui calcul.";
+}
+
+
+function exportCryptoMiningReport(){
+ if(!isDrvasAdmin){const notice=el("cryptoReportNotice");if(notice)notice.textContent="Acces rezervat administratorului.";return;}
+ const ids=["cryptoBtcPerDay","cryptoBtcPrice","cryptoPowerWatts","cryptoCoolingWatts","cryptoElectricityRate","cryptoPoolFee","cryptoHardwareCost","cryptoMaintenanceMonthly","cryptoDowntime","cryptoTaxReserve","cryptoBearRevenue","cryptoBaseRevenue","cryptoBullRevenue","cryptoBearPower","cryptoBullPower"];
+ const assumptions={};
+ for(const id of ids){
+  const node=el(id);
+  if(!node){const notice=el("cryptoReportNotice");if(notice)notice.textContent="Nu pot construi raportul: lipsește câmpul "+id+".";return;}
+  const value=Number(node.value);
+  if(!Number.isFinite(value)||value<0){const notice=el("cryptoReportNotice");if(notice)notice.textContent="Verifică valorile numerice înainte de export.";return;}
+  assumptions[id]=value;
+ }
+ const report={
+  product:"Dr.Vas Crypto & Mining — scenario report",
+  generated_at:new Date().toISOString(),
+  currency:"GBP",
+  assumptions,
+  results:{
+   gross_daily:el("cryptoGrossDaily")?.textContent||"",
+   electricity_daily:el("cryptoEnergyDaily")?.textContent||"",
+   pool_fee_daily:el("cryptoPoolDaily")?.textContent||"",
+   net_daily:el("cryptoNetDaily")?.textContent||"",
+   net_30_days:el("cryptoNetMonthly")?.textContent||"",
+   net_annual:el("cryptoNetAnnual")?.textContent||"",
+   equipment_payback:el("cryptoPayback")?.textContent||"",
+   break_even_btc_price:el("cryptoBreakEvenBtc")?.textContent||"",
+   maximum_electricity_tariff:el("cryptoMaxElectricity")?.textContent||"",
+   monthly_energy_kwh:el("cryptoMonthlyKwh")?.textContent||"",
+   annual_energy_cost:el("cryptoAnnualEnergyCost")?.textContent||"",
+   estimated_heat_load:el("cryptoHeatLoad")?.textContent||"",
+   sensitivity:{bear:el("cryptoScenarioBear")?.textContent||"",base:el("cryptoScenarioBase")?.textContent||"",bull:el("cryptoScenarioBull")?.textContent||""}
+  },
+  methodology:"Manual-input scenario only. Daily gross revenue = BTC/day after downtime × user-entered BTC price. Daily energy cost = (miner watts + cooling watts)/1000 × 24 × electricity tariff. Pool fee, daily maintenance and user-entered tax reserve are deducted. Sensitivity multipliers are user-entered assumptions.",
+  limitations:["No live BTC price, network difficulty, block reward or pool data.","No hardware depreciation, financing, hosting, insurance or complete tax calculation unless represented in user inputs.","No prediction, investment advice or guaranteed return.","No mining process, wallet, exchange, transfer, trade or device compute is started."]
+ };
+ const blob=new Blob([JSON.stringify(report,null,2)],{type:"application/json;charset=utf-8"});
+ const url=URL.createObjectURL(blob),link=document.createElement("a");
+ link.href=url;link.download="drvas-bitcoin-scenario-"+new Date().toISOString().slice(0,10)+".json";
+ document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);
+ const notice=el("cryptoReportNotice");if(notice)notice.textContent="Raport JSON exportat. Păstrează-l în arhiva ta; este un scenariu cu ipoteze manuale, nu o prognoză.";
 }
 
 async function loadCryptoDevices(){
