@@ -134,8 +134,8 @@ SELECT
   (SELECT count(*) FROM pg_policies p
     WHERE p.schemaname = 'public'
       AND p.tablename = e.table_name
-      AND coalesce(p.qual, '') ILIKE '%auth.uid()%user_id%'
-      AND coalesce(p.with_check, '') ILIKE '%auth.uid()%user_id%') AS owner_policy_count,
+      AND (coalesce(p.qual, '') ILIKE '%auth.uid()%user_id%'
+        OR coalesce(p.with_check, '') ILIKE '%auth.uid()%user_id%')) AS owner_policy_count,
   e.expected_policy_count,
   has_table_privilege('authenticated', format('public.%I', e.table_name), 'SELECT') AS authenticated_can_select,
   has_table_privilege('authenticated', format('public.%I', e.table_name), 'INSERT') AS authenticated_can_insert,
