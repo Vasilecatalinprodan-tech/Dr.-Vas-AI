@@ -763,6 +763,32 @@ test("first spoken answer waits for asynchronously loaded browser voices and pla
   expect(playback[0].voice).toBe("Andrei Romanian");
 });
 
+test("Sarah always selects a feminine device voice and never silently falls back to a masculine voice", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(() => {
+    const voices = [
+      { name: "Microsoft Andrei", lang: "ro-RO", voiceURI: "andrei-ro", default: true },
+      { name: "Microsoft Zira", lang: "ro-RO", voiceURI: "zira-ro" },
+      { name: "Google UK English Female", lang: "en-GB", voiceURI: "google-female" }
+    ];
+    Object.defineProperty(window, "speechSynthesis", { configurable: true, value: { getVoices: () => voices } });
+    activeAssistant = "aurora";
+    const chatVoice = chooseSpeechVoice("ro-RO");
+    const presentation = getDrvasPresentationVoiceProfile(voices, "ro-RO");
+    const noFemale = getDrvasPresentationVoiceProfile([voices[0]], "ro-RO");
+    return {
+      chatVoice: chatVoice?.voiceURI || null,
+      presentationSarah: presentation.sarah?.voiceURI || null,
+      presentationHasFemale: presentation.hasFemale,
+      noFemaleSarah: noFemale.sarah?.voiceURI || null
+    };
+  });
+  expect(result.chatVoice).toBe("zira-ro");
+  expect(result.presentationSarah).toBe("zira-ro");
+  expect(result.presentationHasFemale).toBe(true);
+  expect(result.noFemaleSarah).toBeNull();
+});
+
 test("live voice room shows the selected assistant avatar and speaking animation for all three characters", async ({ page }) => {
   await openApp(page, "ro");
   const states = await page.evaluate(() => {
@@ -1830,8 +1856,25 @@ test("Crypto profitability core subtracts pool fee, energy and maintenance", asy
 
 test("landing hero renders two animated DNA strands and emergency stop latches locally", async ({ page }) => {
   await openApp(page, "ro");
-  await expect(page.locator("#heroSection .dna-helix-visual")).toBeVisible();
-  await expect(page.locator("#heroSection .dna-strand")).toHaveCount(2);
+  await expect(page.locator("#heroSection .dna-helix-visual")).toHaveCount(2);
+  await expect(page.locator("#heroSection .dna-helix-left")).toBeVisible();
+  await expect(page.locator("#heroSection .dna-helix-right")).toBeVisible();
+  await expect(page.locator("#heroSection .dna-strand")).toHaveCount(4);
+  const dnaLayout = await page.locator("#heroSection").evaluate(hero => {
+    const heroHeight = hero.getBoundingClientRect().height;
+    const rails = [...hero.querySelectorAll(".dna-helix-visual")].map(node => ({
+      height: node.getBoundingClientRect().height,
+      animation: getComputedStyle(node.querySelector(".dna-helix-core")).animationName,
+      side: node.classList.contains("dna-helix-left") ? "left" : "right"
+    }));
+    return { heroHeight, rails };
+  });
+  expect(dnaLayout.heroHeight).toBeGreaterThan(600);
+  expect(dnaLayout.rails).toHaveLength(2);
+  for (const rail of dnaLayout.rails) {
+    expect(rail.height).toBeGreaterThanOrEqual(dnaLayout.heroHeight - 2);
+    expect(rail.animation).toBe("dnaHelixTurn");
+  }
   const state = await page.evaluate(() => {
     document.querySelector("#cryptoEmergencyStopButton").click();
     return {
