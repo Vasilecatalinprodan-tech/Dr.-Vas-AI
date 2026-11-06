@@ -1,7 +1,7 @@
 # Dr.Vas platform audit — 2026-11-06
 
 ## Scope requested by founder
-A general audit of Dr.Vas Free, Health, Studio, Academy & Commerce, Business & Management, Android APK, security/infrastructure, and release readiness (website, APK, Google Play). Founder explicitly authorised implementation, merge and deployment of work, subject to truthful verification.
+A general audit of Dr.Vas Free, Health, Studio, Academy & Commerce, Business & Management, Android APK, security/infrastructure, and release readiness (website, APK, Google Play). The founder requires separate confirmation before each merge, APK build/release action and production deployment; never infer approval for one action from approval for another.
 
 ## Repository baseline
 - Repository: `Vasilecatalinprodan-tech/Dr.-Vas-AI`
@@ -66,15 +66,17 @@ A general audit of Dr.Vas Free, Health, Studio, Academy & Commerce, Business & M
 - Updated `.github/workflows/android.yml` so relevant pushes to both `main` and `drvas-integrated-platform` can build the APK.
 - Updated `.github/workflows/browser-e2e.yml` so relevant pushes to `main` also run browser regression tests.
 - Opened PR #22: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/22
-- PR head commit: `4d88ef2879628773751d8eebfb6f2bd2e4ba387e`.
-- At checkpoint time PR #22 was open and GitHub reported mergeable=false. The available workflow-run and combined-status queries returned no records for its head. Do not merge until the actual required checks and mergeability can be confirmed.
-- No runtime code, production secrets, live Supabase data/schema, Cloudflare production configuration or paid services were changed in this CI-only patch.
-- No production deployment is expected from this patch because it changes only CI workflow files and does not change Worker/frontend runtime paths.
+- Initial PR head commit: `4d88ef2879628773751d8eebfb6f2bd2e4ba387e`; subsequent commits add regression fixes and CI trigger coverage.
+- Initial browser run on the first PR commit: static Worker/HTML/migration validation passed; Playwright reported 61 passed and 2 failed. Failures exposed a stale accessibility-label assertion and a real portrait fallback recovery issue.
+- Follow-up changes on the PR branch: presenter portrait images now restore visibility and hide fallback on successful reload; E2E assertions match the current descriptive alt text; browser workflow runs on PR `synchronize`; Android workflow now runs for relevant PRs targeting main.
+- Latest observed PR head at this checkpoint: `348d687c52b77ff88062f01231ecf2cd97d976f5`. GitHub reports the PR open and mergeable=true, but its new browser and Android workflows are still in progress. No successful result has yet been established.
+- A Cloudflare preview build for an earlier PR commit failed. That is a preview build, not evidence that production deployment succeeded or failed. Production deployment remains unverified.
+- No live Supabase data/schema, production secrets, Cloudflare production configuration or paid services were intentionally changed.
 
 ## Next work sequence
-1. Confirm PR #22 CI and mergeability; merge after checks are green.
-2. Confirm the Android workflow runs on main and produces an APK artifact; inspect build logs and artifact metadata.
-3. Run the full main-branch browser/security suite and verify the main-branch Worker deploy plus production smoke test.
+1. Wait for PR #22 browser and Android checks; review logs/artifacts, confirm mergeability, then request the founder's separate merge confirmation.
+2. After the founder separately authorises the APK build/release step, confirm the main-branch Android workflow produces an artifact; inspect build logs and artifact metadata. A PR debug build is not a release APK.
+3. After separate deploy confirmation, run the full main-branch browser/security suite and verify the main-branch Worker deploy plus production smoke test.
 4. Perform a focused runtime pass for Free/Health/Studio/Academy/Commerce/Business, with explicit consent and test accounts.
 5. Verify live Supabase migrations/RLS/storage policies using read-only checks first; do not apply unverified write migrations automatically.
 6. Test Android APK installation and voice on a physical device; then prepare a signed release build and Play Console compliance package.
