@@ -350,3 +350,46 @@ Resume with safe PR #9 conflict resolution and fresh CI evidence, exact npm audi
 - No workflow run or commit status was returned for the feature/test commits at verification time. CI is therefore pending/unverified, not passing.
 - PR #9 remains open and dirty (`mergeable=false`); the branch is divergent from `main` (80 commits ahead, 1 behind at the latest comparison). No merge, rebase, reset, force-push or deployment was performed.
 - No paid credits/services, production secrets, migrations, live database or APK were touched.
+
+
+## 2026-11-06 — user requested all-module development, merge, deploy and full chat preservation
+
+### User instruction (verbatim)
+> continua cu toate modulele sa le dezvolti,fa merge si deploy si salveaza tot inclusiv chatul
+
+### Verified deployment evidence
+- Re-inspected GitHub Actions workflow #485 / run `42194776169` after its retry.
+- The latest attempt completed successfully: all 12 steps succeeded, including npm ci, CycloneDX SBOM generation, Worker/browser JavaScript validation, Chromium installation, the full homepage/persisted-session browser suite, Cloudflare Worker deployment, production smoke test and SBOM upload.
+- The run checked out `drvas-integrated-platform` at commit `3ae6b4ee0dbd7952485ea01eb6c2a91a44d684b2`.
+- Production smoke test returned Worker `online`, worker `ok`, assets/AI/database configured, Studio renderer configured, and file analysis disabled. It verified all six public module cards and an unauthenticated admin-status request returning HTTP 401.
+- This is a confirmed deployment of commit `3ae6b4e...`, not the later founder-workbench persistence commits. Do not imply the newest source is already deployed.
+
+### Latest source and regression changes after that deployment
+- Founder workbench project persistence: `4ab863f29be718fdefee55f615fed6573982ce65`.
+- Workbench title normalization: `05d2cc7f5df655153c259dfe6bce7181a7997049`.
+- Hidden workbench routing regression: `05e92e49213999692dbe8abd991dc6ddcafc67fa`.
+- Test newline fixture correction: `5bbf1af37802f3c0dc1c6cbb40419dd6fb2ab10c`.
+- New failure-path regression: `94ef70b3bb764260c1067f86885610405a43bb57`. It checks that a failed private project save is reported as a failure rather than falsely claimed as saved.
+- The last commit is now the PR #9 head. Its CI is not yet verifiably complete; the commit-associated PR workflow and status queries returned no run/status records. The changed test path is included in the branch's push-triggered workflow path filters, but the run itself has not been retrieved.
+
+### Merge state and conflict analysis
+- PR #9 remains open, unmerged, and GitHub reports `mergeable=false`.
+- PR #9 head: `94ef70b3bb764260c1067f86885610405a43bb57`.
+- `main` head/base: `3f74057ffde7fb9690721fcb67e15d2d30291bd6`.
+- Compare: integration branch 88 commits ahead / 1 behind; merge base `69c57c5eb1c8a3b1d4612ec572831a3ec072ee67`.
+- The only code-level overlap visible in the PR patch is the deploy workflow's old TTS static invariant on main versus the updated `forcePlayback` signature and manual replay assertion on the integration branch. Preserve both new assertions and every deploy/test/security gate.
+- No merge was attempted while mergeability and current-head CI were unverified. No force-push, reset, rebase, branch deletion, or deployment of the latest workbench source was performed.
+
+### Cost and release safety
+- No new paid services, provider credits, render jobs, voice cloning, secrets, production Supabase migrations, live RLS changes, or APK replacement were initiated.
+- The production smoke test explicitly reported Health file analysis disabled. Keep it disabled until private Storage/RLS, provider DPA/retention, UK GDPR special-category lawful basis/consent and DPIA gates are complete.
+- Keep Crypto non-executing and admin-only; no custody, transfers, trading or mining execution.
+- Do not expose premium Studio/Academy/Commerce/Business to the public before server-side entitlement/billing controls are implemented and verified.
+
+### Next actions
+1. Retrieve the latest push-triggered workflow run for commit `94ef70b...`; confirm the new regression and all browser tests pass.
+2. Resolve PR #9 against current main without dropping the force-playback invariant or any CI/deploy checks. Preserve main-only documentation from the PR #8 squash if needed.
+3. Obtain a mergeable PR state and merge using the exact current head SHA only after required checks pass.
+4. Verify the post-merge main workflow deploy and production smoke test, then confirm the deployed source commit/version.
+5. Continue the six public workspaces and every hidden founder workbench with individual lifecycle, owner isolation, exports and tests; do not treat UI presence as production completion.
+6. Preserve all conversation decisions and future work in the dated chat archive. This archive is a structured project record, not a verbatim export of the entire ChatGPT UI transcript.
