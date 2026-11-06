@@ -51,6 +51,7 @@ jobs:
         run: |
           node --check worker/index.js
           node --check www/crypto-engine.js
+          node --check www/module-workspaces.js
           node <<'NODE'
           const fs = require('fs');
           const vm = require('vm');
