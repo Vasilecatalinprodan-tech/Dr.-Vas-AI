@@ -1641,3 +1641,27 @@ test("hidden founder workbench briefs are persisted to their matching private mo
   });
   expect(result.filter(item => item.handoff)).toHaveLength(3);
 });
+
+
+test("hidden founder workbench reports a private-save failure instead of claiming success", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(async () => {
+    currentUser = { id: "e2e-founder-workbench", email: "founder@example.invalid" };
+    isDrvasAdmin = true;
+    const calls = [];
+    selectModule = () => {};
+    submitModuleBrief = prompt => calls.push({ handoff: prompt });
+    saveModuleProject = async module => {
+      calls.push({ saveAttempt: module });
+      return false;
+    };
+    const notices = [];
+    founderWorkbenchMessage = (message, isError = false) => notices.push({ message, isError });
+    await launchFounderWorkbenchPrompt("academy", "DR.VAS AI EVALUATION & TRAINING LAB\\nEvaluation brief", "Ready");
+    return { calls, notices };
+  });
+  expect(result.calls).toContainEqual({ saveAttempt: "academy" });
+  expect(result.calls).toContainEqual({ handoff: "DR.VAS AI EVALUATION & TRAINING LAB\nEvaluation brief" });
+  expect(result.notices.at(-1)).toMatchObject({ isError: true });
+  expect(result.notices.at(-1).message).toContain("salvarea nu a fost confirmată");
+});
