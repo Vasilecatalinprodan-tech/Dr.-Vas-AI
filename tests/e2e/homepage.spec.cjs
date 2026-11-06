@@ -323,7 +323,8 @@ test("desktop module opens one isolated full-width workspace without the global 
   await expect(page.locator("#moduleSelectionSection > .modules-grid")).toBeHidden();
   await expect(page.locator(".chat-module-rail")).toBeHidden();
   await expect(page.locator("#question")).toBeVisible();
-  await expect(page.locator(".chat-back-button")).toContainText("Înapoi la module");
+  await expect(page.locator("#globalBackToModules")).toBeVisible();
+  await expect(page.locator("#globalBackToModules")).toContainText("Înapoi la module");
   await expect(page.locator("#globalLogoutTop")).toBeVisible();
   await expect(page.locator("#globalLogoutBottom")).toBeVisible();
   await expect(page.locator(".chat-module-rail")).toBeHidden();
