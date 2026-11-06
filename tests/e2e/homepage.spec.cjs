@@ -1758,8 +1758,10 @@ test("Sarah and Dr.Jan portraits load from permanent local assets in selector, p
 
 test("assistant portrait fallback appears if a local image cannot load and recovers when restored", async ({ page }) => {
   await openApp(page, "ro");
+  await page.evaluate(() => document.querySelector("#chatSection").classList.remove("hidden"));
   const image = page.locator('[data-assistant="jan"] .assistant-avatar');
   const fallback = page.locator('[data-assistant="jan"] .assistant-avatar-fallback');
+  await expect(image).toBeVisible();
   await image.evaluate(node => { node.src = "/assets/presenters/missing-test-image.jpg"; });
   await expect(image).toBeHidden();
   await expect(fallback).toBeVisible();
