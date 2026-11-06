@@ -603,3 +603,14 @@ Keep the zero-new-cost rule. Do not buy provider usage, create subscriptions, st
 - Runway workspace has no available video or speech models. No generation was started and no credits were spent. A Sarah upload was initialized but not completed; do not claim an asset was uploaded or edited.
 - Next: use the original founder portrait in presentation; edit Sarah from her supplied reference to an adult professional appearance while preserving identity; create a photorealistic fictional Jan AI avatar (clearly labelled virtual collaborator, not a human doctor); connect each presenter's audio to the corresponding existing TTS route and make speaking state accurately follow playback.
 - Continue the ten workstreams in small tested commits. Zero-new-cost rule remains in force. No deployment, voice cloning, video generation, or module completion is claimed by this checkpoint.
+
+
+
+## Handoff — 2026-11-06 PR #8 completed
+
+- CI #478 / run `42187371574` passed in full, including Playwright homepage/persisted-session/data-isolation/module-persistence tests, Worker deploy, production smoke test and SBOM upload.
+- PR #8 merged successfully into `main` by squash. Merge SHA: `3f74057ffde7fb9690721fcb67e15d2d30291bd6`.
+- Production Worker deploy was completed by the same successful workflow from the validated `drvas-integrated-platform` source. This PR did not change runtime app code; it integrated the test coverage and documentation archive.
+- `main` and `drvas-integrated-platform` now show a one-commit squash-history divergence. Preserve both; do not force push or reset. Keep development on integrated branch and use PRs for future integration.
+- Workflow smoke tests confirm Worker health and expected public module markers; they do not validate authenticated TTS secrets, actual voice clone, Android device playback, live database migrations or Play Store readiness.
+- User reiterated: continue all work that can be done and save everything, including the chat. Keep zero-new-cost constraint and no external paid actions without approval.
