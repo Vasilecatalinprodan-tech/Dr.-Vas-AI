@@ -882,3 +882,9 @@ Founder feedback:
 - Founder requested continued development with no new costs and preservation of all work/chat. This instruction is recorded in `docs/CHAT-ARCHIVE-2026-11-06.md`.
 - No paid provider usage, new subscriptions, render jobs, voice credits, or APK replacement were initiated.
 - Added regression coverage to verify that updating an existing Academy project uses the same row, preserves the latest AI output, and filters by project ID, authenticated user ID and module. Await CI confirmation.
+
+
+## 2026-11-06 — module persistence regression coverage
+
+- Workflow #475 / run `42181944554` passed, including owner-scoped updates to existing Academy projects and preservation of the latest AI output.
+- Added a Commerce deletion regression test for the selected project, verifying filters by project ID, user ID and module, and clearing local project state. Awaiting CI confirmation.
