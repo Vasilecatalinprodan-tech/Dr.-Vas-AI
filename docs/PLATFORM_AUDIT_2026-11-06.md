@@ -105,3 +105,11 @@ This is a structured engineering checkpoint of the user's 2026-11-06 audit reque
 - Branch: fix/presenter-fallback-display-2026-11-06; latest code commit at this note: e0aaa7f0e34ea132f2f7031d21874a91016e36c3.
 - The fallback implementation now uses explicit CSS display state instead of toggling the HTML hidden attribute: image error hides the broken image and displays the fallback; image load restores the image and hides the fallback.
 - PR #24 browser regression and Android checks have started. Merge is pending their results. The next main deploy workflow must run the expanded 88-test suite before its Worker deploy and production smoke-test steps can complete.
+
+
+## Follow-up correction — presenter fallback PR #25 (2026-11-06 14:20 UTC)
+- PR #24 was closed as superseded after its browser test still reproduced the same race.
+- PR #25: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/25
+- Branch: fix/presenter-fallback-race-2026-11-06; code commit: 7ff26e8f8bcd9537809301820deff920dfeecd81.
+- Root-cause hypothesis supported by test timing: a stale image load event may hide the fallback after the error event. The revised code keeps fallback hidden by default, shows it only on error, and checks naturalWidth before restoring/hiding it on load.
+- PR #25 browser and Android workflows are queued. Merge only after the new browser test passes; then main deploy workflow must complete all 88 browser tests and production health smoke test.
