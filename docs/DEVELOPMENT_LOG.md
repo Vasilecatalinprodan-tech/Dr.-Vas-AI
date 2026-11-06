@@ -243,3 +243,9 @@ Founder feedback:
 - Added a Playwright regression test for updating an already-open Academy project: verifies update (not duplicate insert), latest AI output persistence, and row filters for project ID, user ID and module. CI result is pending.
 - Saved a structured session archive at `docs/CHAT-ARCHIVE-2026-11-06.md`; this is a project checkpoint, not a verbatim export of the full ChatGPT conversation.
 - Next no-cost development focus: extend module persistence tests, review Studio/Health/Free workflows, and keep live Supabase checks clearly marked as pending until verified by the user.
+
+
+### Follow-up validation — module project update and deletion
+
+- Workflow #475 / run `42181944554` completed SUCCESS, including the new Academy existing-project update regression test, browser suite, Worker deployment and production smoke test.
+- Added a Commerce project deletion regression test verifying the delete request is scoped by `id`, `user_id` and `module`, and that local project state is cleared after deletion. Awaiting the next CI run.
