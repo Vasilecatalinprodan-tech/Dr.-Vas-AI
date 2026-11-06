@@ -1585,3 +1585,59 @@ test("public dashboard exposes exactly six customer modules while internal workb
   });
   expect(internalWorkbenchState.workbenchCount).toBeGreaterThanOrEqual(10);
 });
+
+
+test("hidden founder workbench briefs are persisted to their matching private module before chat handoff", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(async () => {
+    currentUser = { id: "e2e-founder-workbench", email: "founder@example.invalid" };
+    isDrvasAdmin = true;
+    const calls = [];
+    window.__DRVAS_FOUNDER_WORKBENCH_SAVES__ = calls;
+    selectModule = () => {};
+    submitModuleBrief = (prompt) => calls.push({ handoff: prompt });
+    saveStudioProject = async () => {
+      calls.push({
+        save: "studio",
+        title: document.getElementById("studioProjectTitle").value,
+        deliverable: document.getElementById("studioDeliverable").value,
+        brief: document.getElementById("studioIdea").value
+      });
+      return true;
+    };
+    saveModuleProject = async (module) => {
+      calls.push({
+        save: module,
+        title: document.getElementById(module + "ProjectTitle").value,
+        primary: document.getElementById(module === "academy" ? "academySubject" : "businessIdea").value,
+        brief: document.getElementById(module === "academy" ? "academyBrief" : "businessBrief").value
+      });
+      return true;
+    };
+
+    await launchFounderWorkbenchPrompt("studio", "DR.VAS CONTENT & CAMPAIGN PLANNER\\nCampaign brief", "Ready");
+    await launchFounderWorkbenchPrompt("academy", "DR.VAS AI EVALUATION & TRAINING LAB\\nEvaluation brief", "Ready");
+    await launchFounderWorkbenchPrompt("business", "DR.VAS BUSINESS OPERATIONS PLANNER\\nOperations brief", "Ready");
+    return calls;
+  });
+
+  const studio = result.find(item => item.save === "studio");
+  const academy = result.find(item => item.save === "academy");
+  const business = result.find(item => item.save === "business");
+  expect(studio).toMatchObject({
+    title: "CONTENT & CAMPAIGN PLANNER",
+    deliverable: "article",
+    brief: "DR.VAS CONTENT & CAMPAIGN PLANNER\\nCampaign brief"
+  });
+  expect(academy).toMatchObject({
+    title: "AI EVALUATION & TRAINING LAB",
+    primary: "AI EVALUATION & TRAINING LAB",
+    brief: "DR.VAS AI EVALUATION & TRAINING LAB\\nEvaluation brief"
+  });
+  expect(business).toMatchObject({
+    title: "BUSINESS OPERATIONS PLANNER",
+    primary: "BUSINESS OPERATIONS PLANNER",
+    brief: "DR.VAS BUSINESS OPERATIONS PLANNER\\nOperations brief"
+  });
+  expect(result.filter(item => item.handoff)).toHaveLength(3);
+});
