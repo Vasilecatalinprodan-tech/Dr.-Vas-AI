@@ -1684,8 +1684,8 @@ test("Sarah and Dr.Jan portraits load from permanent local assets in selector, p
   await openApp(page, "ro");
   const expected = [
     ['[data-assistant="drvas"] .assistant-avatar', "drvas.jpeg"],
-    ['[data-assistant="jan"] .assistant-avatar', "/assets/presenters/dr-jan.jpg"],
-    ['[data-assistant="aurora"] .assistant-avatar', "/assets/presenters/sarah.jpg"]
+    ['[data-assistant="jan"] .assistant-avatar', "/assets/presenters/drjan.jpg"],
+    ['[data-assistant="aurora"] .assistant-avatar', "/assets/presenters/Sarah23.jpg"]
   ];
   for (const [selector, source] of expected) {
     const image = page.locator(selector);
@@ -1730,8 +1730,8 @@ test("Sarah and Dr.Jan portraits load from permanent local assets in selector, p
     return results;
   });
   expect(presentation.map(item => item.key)).toEqual(["drvas", "jan", "sarah"]);
-  expect(presentation[1].src).toBe("/assets/presenters/dr-jan.jpg");
-  expect(presentation[2].src).toBe("/assets/presenters/sarah.jpg");
+  expect(presentation[1].src).toBe("/assets/presenters/drjan.jpg");
+  expect(presentation[2].src).toBe("/assets/presenters/Sarah23.jpg");
   for (const item of presentation) {
     expect(item.width).toBeGreaterThan(0);
     expect(item.animation).toContain("presenterPhotoTalk");
@@ -1750,8 +1750,8 @@ test("Sarah and Dr.Jan portraits load from permanent local assets in selector, p
     return results;
   });
   expect(live.map(({ assistant, src }) => ({ assistant, src }))).toEqual([
-    { assistant: "jan", src: "/assets/presenters/dr-jan.jpg" },
-    { assistant: "aurora", src: "/assets/presenters/sarah.jpg" }
+    { assistant: "jan", src: "/assets/presenters/drjan.jpg" },
+    { assistant: "aurora", src: "/assets/presenters/Sarah23.jpg" }
   ]);
   for (const item of live) expect(item.width).toBeGreaterThanOrEqual(256);
 });
@@ -1763,7 +1763,7 @@ test("assistant portrait fallback appears if a local image cannot load and recov
   await image.evaluate(node => { node.src = "/assets/presenters/missing-test-image.jpg"; });
   await expect(image).toBeHidden();
   await expect(fallback).toBeVisible();
-  await image.evaluate(node => { node.src = "/assets/presenters/dr-jan.jpg"; });
+  await image.evaluate(node => { node.src = "/assets/presenters/drjan.jpg"; });
   await expect.poll(() => image.evaluate(node => node.naturalWidth)).toBeGreaterThan(0);
   await expect(image).toBeVisible();
   await expect(fallback).toBeHidden();
@@ -1774,6 +1774,6 @@ test("presenter assets do not depend on temporary Runway signed URLs", async ({ 
   const source = await page.locator("script").evaluateAll(nodes => nodes.map(node => node.textContent || "").join("\\n"));
   expect(source).not.toContain("dnznrvs05pmza.cloudfront.net");
   expect(source).not.toContain("_jwt=");
-  expect(source).toContain('/assets/presenters/dr-jan.jpg');
-  expect(source).toContain('/assets/presenters/sarah.jpg');
+  expect(source).toContain('/assets/presenters/drjan.jpg');
+  expect(source).toContain('/assets/presenters/Sarah23.jpg');
 });
