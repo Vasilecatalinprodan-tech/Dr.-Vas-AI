@@ -175,3 +175,9 @@ Additional commits:
 - Added explicit final New Chat navigation after the welcome view is rendered, explicit top Back visibility on the module activation animation frame, and explicit Dr.Jan alt text after the speaker scene changes.
 - The next browser workflow run initially failed its static migration-order check because the Health diagnostic was implemented inside the migration step rather than as a separate step. Corrected the marker to the actual diagnostic command text; no application code change was needed for that static check.
 - Latest source commit at this checkpoint: `f4bf4d7a`; browser CI run #515 failed only the static marker check. The corrected workflow is committed after it and requires a fresh run.
+
+## Android APK release pipeline
+- Confirmed `.github/workflows/android.yml` runs on main when web/app assets change, executes `npx cap sync android`, builds with `./gradlew assembleDebug` and uploads `DrVas-APK`.
+- Added `node --check www/module-workspaces.js` before Capacitor sync so the APK build validates the new feature router.
+- Browser CI statically checks that the Android workflow contains the module-router syntax check, APK build command and artifact upload.
+- No APK has been built from this release candidate yet; the workflow will run after the changes reach main.
