@@ -265,3 +265,14 @@ Founder feedback:
 - Account deletion remains documented but unimplemented; no destructive account deletion route was enabled.
 - Preserved all divergent legacy branches; no force-push, rebase, deletion or wholesale merge was performed.
 - Added E2E test for Academy Markdown export content and download metadata. Workflow #478 / run `42187371574` was still running when this note was written.
+
+
+## 2026-11-06 — repository-wide continuation and Commerce/Business regression coverage
+
+- Founder reiterated: continue development across all branches and preserve all work and this conversation. The previously established zero-new-cost restriction remains active.
+- Re-verified repository branches and PR #7. PR #7 is merged into `drvas-integrated-platform` at `c194068c4e13bc3c69ccf2208d67ed13db45ec46`; the private attachment workflow is integrated, but live Supabase migration execution and Health document-analysis enablement remain gated by database, privacy, DPA and UK GDPR/DPIA checks.
+- Confirmed the safe branch policy: continue on `drvas-integrated-platform`, keep `main` behind until CI passes, and preserve divergent legacy branches without force-push, rebase, deletion or wholesale merges.
+- Reviewed shared Academy/Commerce/Business project persistence. The save implementation uses the same shared table and scopes updates by project ID, authenticated user ID and module; export is implemented through one shared Markdown export function.
+- Added Commerce and Business Playwright regressions for updating an existing saved project (including latest AI output and owner/module filters) and exporting the brief plus latest AI response. Commit: `7c8e6b89d97fd8b2e22d9b6577fc484e3d96fb15`.
+- The previous workflow #478 / run `42187371574` was still in progress at last check (Chromium installation); its result is not claimed. The new test commit has no completed CI result yet. Do not claim these new tests passed until the relevant run completes.
+- No paid services, secrets, Supabase SQL, production feature flags, or APK installation/replacement were changed.
