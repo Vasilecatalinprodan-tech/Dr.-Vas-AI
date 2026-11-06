@@ -1,8 +1,8 @@
 # Dr.Vas AI — landing DNA and Sarah voice handoff
 **Date:** 6 November 2026  
 **Repository:** `Vasilecatalinprodan-tech/Dr.-Vas-AI`  
-**Feature branch:** `feature/landing-dna-sarah-voice-2026-11-06`  
-**Base checkpoint:** logout branch head `7b3341e8a596dca3ca1e2ee04504863e549c6fa9`
+**Feature branch:** `feature/landing-dna-sarah-voice-main-2026-11-06`  
+**Base checkpoint:** main after global logout PR #30 merge, commit `e9930242e1a89de4b0e7ce01dfc078370999a70b`
 **Latest implementation commits:** `074fe46e18eee6e0f35ef10c0b37012f68629ab4` (full-height rail placement and Romanian female voice recognition), `9a4f2611490ca41c68587a49c962382abd6b018d` (presentation test confirms Sarah uses Microsoft Alina).
 
 ## Founder requirements
@@ -34,3 +34,10 @@ The actual ChatGPT conversation remains in the user's chat history. This file re
   1. Sarah's presentation test fixture offered a female Romanian voice named "Microsoft Alina", but the first female-name heuristic did not recognize that name. The heuristic now recognizes Alina and several common Romanian female voice names; the test now expects Sarah to use Microsoft Alina.
   2. The DNA rails had initially been nested inside the hero text container, so their absolute height matched the text block instead of the whole hero. They have been moved to direct children of the hero section so top/bottom positioning spans the complete landing hero.
 - Rerun the full browser workflow on the latest PR #31 head. Do not merge until green.
+
+
+## Verified source branch and clean main-based continuation
+- PR #30 global logout controls was merged successfully to main as `e9930242e1a89de4b0e7ce01dfc078370999a70b`.
+- The full browser suite passed on the combined source branch at commit `caaed2a5636d838c2ed63c68f1531fa784813873`: **75 passed** (workflow #42249729655, success).
+- A clean feature branch `feature/landing-dna-sarah-voice-main-2026-11-06` was created from the merged main commit and the final `www/index.html` and `tests/e2e/homepage.spec.cjs` changes were copied forward, so the new PR contains only DNA/Sarah improvements on top of main.
+- Run the browser suite again on the clean branch PR before merge. Then verify the production Worker deployment and real device voice behaviour. The full-height DNA change is in the landing hero; the Sarah browser fallback now selects only female voices and explicitly skips narration if no female voice is available.
