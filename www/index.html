@@ -1534,7 +1534,7 @@ body.free-module-mode #chatSection>.chat-view-nav .chat-history-toggle{display:i
    <strong id="chatWorkspaceTitle">✦ DR.VAS · CONVERSAȚIE</strong>
    <div class="chat-view-nav-actions">
     <button type="button" class="chat-history-toggle" onclick="toggleChatHistory()">☷ Istoric</button>
-    <button type="button" class="chat-back-button" onclick="goToModules()">← Înapoi la platformă</button>
+    <button type="button" class="chat-back-button" onclick="goToModules()">← Înapoi la module</button>
    </div>
   </div>
   <aside class="chat-module-rail" aria-label="Navigare module Dr.Vas">
@@ -1816,7 +1816,7 @@ body.free-module-mode #chatSection>.chat-view-nav .chat-history-toggle{display:i
 
   <div class="chat-layout">
    <aside class="history-panel" aria-label="Navigare Dr.Vas Free">
-    <div class="free-sidebar-brand">✦ Dr.Vas Free</div>
+    <div class="free-sidebar-brand" id="freeSidebarBrand">✦ Dr.Vas Free</div>
     <nav class="free-primary-nav" aria-label="Navigare principală">
      <button type="button" class="new-chat-button active" data-free-nav="chat" onclick="newConversation()"><span class="free-nav-icon">＋</span>New chat</button>
      <button type="button" data-free-nav="images" onclick="openFreeNavView('images')"><span class="free-nav-icon">▧</span>Images</button>
@@ -2651,6 +2651,8 @@ function selectModule(moduleName,userInitiated=false,suppressConversationRestore
   let moduleConversationToRestore=null;
   if(previousModule!==moduleName)clearPendingChatFiles();
   activeModule=moduleName;
+  const sidebarBrand=el("freeSidebarBrand");
+  if(sidebarBrand)sidebarBrand.textContent=moduleName==="health"?"✚ Dr.Vas Health":"✦ Dr.Vas Free";
   if(currentUser&&previousModule!==moduleName){
     const rememberedForModule=getRememberedConversation(moduleName);
     moduleConversationToRestore=rememberedForModule;
@@ -2716,14 +2718,14 @@ function selectModule(moduleName,userInitiated=false,suppressConversationRestore
     const chatSection=el("chatSection");
     chatSection?.classList.remove("hidden");
     document.body.classList.add("module-workspace-mode");
-    if(moduleName==="free"){
+    if(moduleName==="free"||moduleName==="health"){
       document.body.classList.add("free-module-mode");
       document.documentElement.classList.add("drvas-free-shell");
       el("moduleSelectionShell")?.classList.remove("modules-open");
       openFreeNavView("chat",false);
     }
     requestAnimationFrame(()=>{
-      if(moduleName==="free")el("question")?.focus({preventScroll:true});
+      if(moduleName==="free"||moduleName==="health")el("question")?.focus({preventScroll:true});
       else{const chat=el("chat");if(chat)chat.scrollTop=chat.scrollHeight;}
     });
     if(previousModule!==moduleName&&!suppressConversationRestore){
@@ -5930,7 +5932,7 @@ async function freeNavLoadPlugins(){
 }
 
 function openFreeNavView(view="chat",render=true){
- if(activeModule!=="free")return;
+ if(!["free","health","studio","academy","commerce","business"].includes(activeModule))return;
  const allowed=["chat","images","scheduled","library","plugins","explore","projects","recents"];
  if(!allowed.includes(view))return;
  freeNavCurrentView=view;freeNavSetActive(view);
