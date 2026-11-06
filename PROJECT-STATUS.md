@@ -921,3 +921,16 @@ Founder feedback:
 - Test commits: `7c8e6b89d97fd8b2e22d9b6577fc484e3d96fb15` and `a60ac62ed5ce7b620d44c0cae46a76403a37f9ee`.
 - These are test-only changes on `drvas-integrated-platform`. No application runtime code was changed in this follow-up.
 - CI for the new commits has not yet returned a completed status. Workflow #478 / run `42187371574` remained at Chromium installation on the last inspection; its browser test, deploy and production smoke-test steps were still pending. Do not claim a passing result or advance `main` until a completed successful workflow is confirmed.
+
+
+
+## 2026-11-06 — PR #8 validation, merge and production deploy
+
+- GitHub Actions workflow #478 / run `42187371574` completed SUCCESS. Every job step passed: JavaScript validation, Chromium installation, homepage/session/persistence browser regression suite, Worker deployment, production smoke test and SBOM upload.
+- PR #8 (`drvas-integrated-platform` → `main`) was marked ready and successfully squash-merged after the workflow passed.
+- Merge commit on `main`: `3f74057ffde7fb9690721fcb67e15d2d30291bd6`.
+- The deployed Worker was published by workflow #478 from the same validated integrated-branch code. The PR delta itself consisted of project documentation/checkpoints and E2E persistence tests, not new runtime application code.
+- The compare API reports `main` and `drvas-integrated-platform` as diverged by one squash-merge commit even though the merged file content is represented in `main`. Do not force-reset or rewrite either branch. Continue on `drvas-integrated-platform`; use future PRs to integrate tested changes.
+- Previous statements that workflow #478 was still pending are superseded by this completed success result.
+- The workflow's smoke test confirmed Worker health, homepage module markers and unauthenticated admin-status rejection. It does not prove authenticated TTS provider secrets, voice cloning, Android audio, Supabase production migrations or Google Play readiness.
+- No APK release or Play Store deployment occurred.
