@@ -270,3 +270,44 @@ Founder feedback:
 - Retrieve the exact npm audit report before any dependency update.
 - Resolve PR #9 in a safe candidate integration without dropping main's deployment checks or the current TTS `forcePlayback`/stale-audio guards.
 - Do not deploy or run billable provider operations until all relevant gates and approvals are met.
+
+
+## 2026-11-06 — founder workbench persistence expansion
+
+### User instruction (verbatim)
+> continua cu toate modulele dezvoltale si salveaza tot
+
+### Implemented source changes
+- Updated `launchFounderWorkbenchPrompt()` in `www/index.html` so every hidden founder workbench brief is saved as a private project before the brief is handed to chat:
+  - Studio workbenches without a dedicated project type now create a private Studio project (for example, Content & Campaign Planner).
+  - Academy workbenches such as AI Evaluation & Training save into an owner-scoped Academy project, with the workbench brief retained in the project brief.
+  - Business workbenches such as Online Income, Business Operations and Customer Journey save into an owner-scoped Business project.
+  - Existing book, music, digital-product, publishing and music-release workbenches continue using their selected Studio project types and private Studio persistence.
+- New hidden workbench launches create a fresh module project rather than silently overwriting the last ordinary Academy/Business project selected by the founder.
+- The generic `saveModuleProject()` helper now returns explicit success/failure so the workbench UI reports whether persistence was confirmed instead of claiming that it saved.
+- The admin guard and allowed destination list (`studio`, `academy`, `business`) remain unchanged. No private workbench is made public.
+- Fixed title normalization for the workbench heading.
+
+### Source commits
+- `4ab863f29be718fdefee55f615fed6573982ce65` — persist hidden workbench briefs.
+- `05d2cc7f5df655153c259dfe6bce7181a7997049` — title normalization correction.
+- `05e92e49213999692dbe8abd991dc6ddcafc67fa` — Playwright regression test.
+
+### Regression coverage added
+- Added a Playwright test in `tests/e2e/homepage.spec.cjs` that exercises the generic hidden-workbench handoff for Studio, Academy and Business and checks that the matching private project saver receives the workbench title and full brief before chat handoff.
+- The test is committed, but the GitHub commit workflow/status query returned no run or check records for `05e92e49213999692dbe8abd991dc6ddcafc67fa` at this checkpoint. Do not claim the test passed until a completed CI result is available.
+- Existing tests continue to cover public/private module boundaries, project CRUD owner filters, exports, assistant voice and module routing. They have not been rerun in this checkpoint.
+
+### Scope and safety
+- No database migration, RLS policy, production secret, provider setting, Cloudflare deployment or Android APK was changed.
+- No rendering, TTS, paid API or other billable provider operation was started.
+- This improves persistence for hidden workbench briefs; it does not mean that every workbench now has its own dedicated UI, independent output history, external publishing integration or production automation.
+- Continue developing the six public workspaces and hidden workbenches individually; verify each feature against its real storage and access rules. Preserve Health clinical boundaries, Crypto non-execution, owner isolation and all server-side gates.
+
+### Next actions
+1. Obtain a verifiable CI run for the latest source commit and fix any regression before further integration.
+2. Add end-to-end tests for each hidden builder and its correct private project type.
+3. Audit and complete the module-specific project lifecycle (open, continue, version, export, delete) for Studio, Academy, Commerce and Business.
+4. Verify RLS for `drvas_studio_projects`, `drvas_module_projects`, cashbook, income tracker and admin records with separate test users.
+5. Continue six public module improvements and private workbench workflows without exposing admin features.
+6. Resume npm audit, PR #9 conflict resolution, Cloudflare deployment and Android voice checks only with verifiable results and no unapproved spend.
