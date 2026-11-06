@@ -3,7 +3,7 @@ name: Dr.Vas browser regression tests
 on:
   pull_request:
     branches: [drvas-integrated-platform, main]
-    types: [opened, reopened, ready_for_review]
+    types: [opened, reopened, ready_for_review, synchronize]
   push:
     branches: [main, universal-chat-attachments, feature/presenter-assets-animation-2026-11-06]
     paths:
