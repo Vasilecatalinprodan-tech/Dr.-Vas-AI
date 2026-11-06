@@ -142,7 +142,8 @@ button:disabled{opacity:.5;cursor:not-allowed}
 .assistant-choice{display:flex;align-items:center;gap:10px;min-width:155px;padding:10px 13px;border:1px solid #34566b;border-radius:14px;background:#10283b;color:#d7e9f0;font-size:12px;font-weight:700;text-align:left;transition:border-color .2s,background .2s}
 .assistant-choice[aria-pressed="true"]{border-color:#58d8cf;background:linear-gradient(135deg,#174b51,#17384a);color:#fff;box-shadow:0 0 0 1px rgba(88,216,207,.15)}
 .assistant-choice small{display:block;font-size:10px;color:#9ab6c4;font-weight:500;margin-top:3px}
-.assistant-avatar{width:40px;height:40px;flex:0 0 40px;border-radius:50%;object-fit:cover;border:1px solid #5a9b9d;transition:transform .2s,filter .2s}\n.assistant-avatar-fallback{display:grid;place-items:center;width:40px;height:40px;flex:0 0 40px;border-radius:50%;background:#17354b;border:1px solid #5a9b9d;color:#9de8e1;font-size:20px}.assistant-avatar-fallback[hidden]{display:none!important}
+.assistant-avatar{width:40px;height:40px;flex:0 0 40px;border-radius:50%;object-fit:cover;border:1px solid #5a9b9d;transition:transform .2s,filter .2s}
+.assistant-avatar-fallback{display:grid;place-items:center;width:40px;height:40px;flex:0 0 40px;border-radius:50%;background:#17354b;border:1px solid #5a9b9d;color:#9de8e1;font-size:20px}.assistant-avatar-fallback[hidden]{display:none!important}
 .assistant-avatar-symbol{display:block;width:68px;height:82px;flex:0 0 68px;border-radius:15px;overflow:hidden;background:#17354b;border:1px solid #5a9b9d;box-shadow:0 5px 16px #07152288;transform:translateZ(0)}
 .assistant-avatar-symbol svg{display:block;width:100%;height:100%;animation:avatarIdle 4.8s ease-in-out infinite;transform-origin:50% 80%}
 .assistant-aurora{background:#40304c;border-color:#c2a1bd}
@@ -168,7 +169,10 @@ button:disabled{opacity:.5;cursor:not-allowed}
 @keyframes liveWave{from{height:5px;transform:scaleY(.7)}to{height:20px;transform:scaleY(1)}}
 @keyframes liveAvatarTalk{from{transform:scale(1)}to{transform:scale(1.045)}}
 body.assistant-speaking .assistant-choice[aria-pressed="true"] .assistant-avatar{animation:liveAvatarTalk .38s ease-in-out infinite alternate;box-shadow:0 0 0 4px #54d8cf30}
-.live-voice-stage.is-speaking .live-stage-avatar img{animation:presenterPhotoTalk .38s ease-in-out infinite alternate;filter:brightness(1.06) saturate(1.04)}\n.presentation-presenter.is-speaking .presentation-photo{animation:presenterPhotoTalk .42s ease-in-out infinite alternate;filter:brightness(1.05) saturate(1.04)}\nbody.assistant-speaking .assistant-choice[aria-pressed="true"] .assistant-avatar{filter:brightness(1.07) saturate(1.06)}\n@keyframes presenterPhotoTalk{from{transform:translateY(0) scale(1)}to{transform:translateY(-1px) scale(1.018)}}
+.live-voice-stage.is-speaking .live-stage-avatar img{animation:presenterPhotoTalk .38s ease-in-out infinite alternate;filter:brightness(1.06) saturate(1.04)}
+.presentation-presenter.is-speaking .presentation-photo{animation:presenterPhotoTalk .42s ease-in-out infinite alternate;filter:brightness(1.05) saturate(1.04)}
+body.assistant-speaking .assistant-choice[aria-pressed="true"] .assistant-avatar{filter:brightness(1.07) saturate(1.06)}
+@keyframes presenterPhotoTalk{from{transform:translateY(0) scale(1)}to{transform:translateY(-1px) scale(1.018)}}
 .live-voice-stage.is-speaking .live-stage-avatar .assistant-avatar-symbol svg{animation:avatarTalk .22s ease-in-out infinite alternate}
 .live-voice-stage.is-speaking .live-stage-avatar .assistant-avatar-symbol svg path[d^="M52 76"],.live-voice-stage.is-speaking .live-stage-avatar .assistant-avatar-symbol svg path[d^="M51 79"]{animation:avatarMouth .18s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}
 
@@ -799,7 +803,7 @@ body.presentation-open{overflow:hidden!important}
 .presentation-presenter.is-speaking .presenter-character-art{animation:characterTalk .42s ease-in-out infinite alternate}
 @keyframes characterMouth{from{transform:scaleY(.35)}to{transform:scaleY(1.45)}}
 @keyframes characterTalk{from{transform:translateY(0) rotate(-1deg)}to{transform:translateY(-3px) rotate(1deg)}}
-@media(prefers-reduced-motion:reduce){.character-orbit,.character-blink,.presentation-presenter.is-speaking .presentation-avatar,.presentation-presenter.is-speaking .character-mouth,.presentation-presenter.is-speaking .presenter-character-art,.presentation-presenter.is-animated .presentation-avatar,.presentation-scene,#presentationPresenter.scene-enter{animation:none!important}}
+@media(prefers-reduced-motion:reduce){.character-orbit,.character-blink,.presentation-presenter.is-speaking .presentation-avatar,.presentation-presenter.is-speaking .character-mouth,.presentation-presenter.is-speaking .presenter-character-art,.presentation-presenter.is-speaking .presentation-photo,.live-voice-stage.is-speaking .live-stage-avatar img,.presentation-presenter.is-animated .presentation-avatar,.presentation-scene,#presentationPresenter.scene-enter{animation:none!important}}
 .presentation-avatar-jan{border-color:#8ac9df;background:radial-gradient(circle at 35% 25%,#4c8fa9,#20364d 72%);box-shadow:0 0 0 7px #74b8df14,0 0 30px #74b8df25}
 .presentation-avatar-sarah{border-color:#e4b6e2;background:radial-gradient(circle at 35% 25%,#bd83bb,#4a345d 72%);box-shadow:0 0 0 7px #d9a5db14,0 0 30px #d9a5db25}
 .presentation-presenter.is-speaking .presentation-avatar{animation:presentationAvatarTalk .42s ease-in-out infinite alternate}

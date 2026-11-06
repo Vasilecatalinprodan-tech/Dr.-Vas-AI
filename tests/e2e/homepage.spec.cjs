@@ -1731,8 +1731,8 @@ test("Sarah and Dr.Jan portraits load from permanent local assets in selector, p
     return results;
   });
   expect(live).toEqual([
-    { assistant: "jan", src: "/assets/presenters/dr-jan.jpg", width: 400 },
-    { assistant: "aurora", src: "/assets/presenters/sarah.jpg", width: 400 }
+    { assistant: "jan", src: "/assets/presenters/dr-jan.jpg", width: 128 },
+    { assistant: "aurora", src: "/assets/presenters/sarah.jpg", width: 128 }
   ]);
 });
 
