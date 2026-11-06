@@ -2722,7 +2722,10 @@ function selectModule(moduleName,userInitiated=false,suppressConversationRestore
       el("moduleSelectionShell")?.classList.remove("modules-open");
       openFreeNavView("chat",false);
     }
-    requestAnimationFrame(()=>{if(moduleName==="free")el("question")?.focus({preventScroll:true});const chat=el("chat");if(chat)chat.scrollTop=chat.scrollHeight;});
+    requestAnimationFrame(()=>{
+      if(moduleName==="free")el("question")?.focus({preventScroll:true});
+      else{const chat=el("chat");if(chat)chat.scrollTop=chat.scrollHeight;}
+    });
     if(previousModule!==moduleName&&!suppressConversationRestore){
       if(moduleConversationToRestore)openConversation(moduleConversationToRestore,moduleName).catch(error=>console.warn("Could not restore module conversation:",error));
       else loadConversationList().catch(error=>console.warn("Could not refresh module history:",error));
