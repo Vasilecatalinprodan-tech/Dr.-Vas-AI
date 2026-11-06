@@ -17,7 +17,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: drvas-browser-e2e-${{ github.ref }}
+  group: drvas-browser-e2e-${{ github.ref }}-${{ github.event.pull_request.head.sha || github.sha }}
   cancel-in-progress: false
 
 jobs:
