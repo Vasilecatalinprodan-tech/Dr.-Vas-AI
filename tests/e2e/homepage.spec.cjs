@@ -776,17 +776,30 @@ test("Sarah always selects a feminine device voice and never silently falls back
     const chatVoice = chooseSpeechVoice("ro-RO");
     const presentation = getDrvasPresentationVoiceProfile(voices, "ro-RO");
     const noFemale = getDrvasPresentationVoiceProfile([voices[0]], "ro-RO");
+    const crossLanguageVoices = [
+      voices[0],
+      { name: "Google UK English Female", lang: "en-GB", voiceURI: "google-female" }
+    ];
+    Object.defineProperty(window, "speechSynthesis", { configurable: true, value: { getVoices: () => crossLanguageVoices } });
+    const crossLanguageChatVoice = chooseSpeechVoice("ro-RO");
+    const crossLanguagePresentation = getDrvasPresentationVoiceProfile(crossLanguageVoices, "ro-RO");
     return {
       chatVoice: chatVoice?.voiceURI || null,
       presentationSarah: presentation.sarah?.voiceURI || null,
       presentationHasFemale: presentation.hasFemale,
-      noFemaleSarah: noFemale.sarah?.voiceURI || null
+      noFemaleSarah: noFemale.sarah?.voiceURI || null,
+      crossLanguageChatVoice: crossLanguageChatVoice?.voiceURI || null,
+      crossLanguagePresentationSarah: crossLanguagePresentation.sarah?.voiceURI || null,
+      crossLanguageVoiceLanguage: crossLanguagePresentation.sarah?.lang || null
     };
   });
   expect(result.chatVoice).toBe("zira-ro");
   expect(result.presentationSarah).toBe("zira-ro");
   expect(result.presentationHasFemale).toBe(true);
   expect(result.noFemaleSarah).toBeNull();
+  expect(result.crossLanguageChatVoice).toBe("google-female");
+  expect(result.crossLanguagePresentationSarah).toBe("google-female");
+  expect(result.crossLanguageVoiceLanguage).toBe("en-GB");
 });
 
 test("live voice room shows the selected assistant avatar and speaking animation for all three characters", async ({ page }) => {
