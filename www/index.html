@@ -4263,7 +4263,7 @@ async function launchFounderWorkbenchPrompt(moduleId,prompt,notice,studioProject
  if(!currentUser||!isDrvasAdmin){founderWorkbenchMessage("Acces rezervat administratorului confirmat de server.",true);return;}
  if(!["studio","academy","business"].includes(moduleId)){founderWorkbenchMessage("Modul de lucru nepermis.",true);return;}
  selectModule(moduleId);
- const workbenchTitle=String(prompt.split("\n")[0]||"Dr.Vas Workbench").replace(/^DR\\.VAS\\s*/i,"").slice(0,120)||"Dr.Vas Workbench";
+ const workbenchTitle=String(prompt.split("\n")[0]||"Dr.Vas Workbench").replace(/^DR\.VAS\s*/i,"").slice(0,120)||"Dr.Vas Workbench";
  let saved=false;
  if(moduleId==="studio"){
   newStudioProject();
