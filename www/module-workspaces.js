@@ -16,7 +16,7 @@
    const title=document.createElement("h3");title.textContent=item.title||item.label;heading.appendChild(title);
    if(item.description){const desc=document.createElement("p");desc.textContent=item.description;heading.appendChild(desc);}
    const content=document.createElement("div");content.className="drvas-feature-page-content";
-   page.append(heading,content);pages.appendChild(page);nav.appendChild(button);pageMap.set(item.id,{button,page,content,item});
+   page.append(heading,content);pages.appendChild(page);nav.appendChild(button);pageMap.set(item.id,{button,page,content,item});(item.nodes||[]).forEach(node=>{if(node)content.appendChild(node);});
    button.addEventListener("click",()=>open(item.id));
   });
   root.append(nav,pages);
