@@ -2453,3 +2453,42 @@ test("Dr.Vas Free mobile chat remains viewport-fitted with the attachment contro
   expect(layout.attachImmediatelyBeforeSend).toBe(true);
   expect(layout.sendVisible).toBe(true);
 });
+
+
+test("Dr.Vas Health uses the same chat shell, sidebar destinations and attachment composer as Free", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-health-shell-user", email: "health@example.invalid" };
+    isDrvasAdmin = false;
+    showModuleSelection();
+    selectModule("health", true);
+  });
+
+  await expect(page.locator("#chatSection .history-panel")).toBeVisible();
+  await expect(page.locator("#freeSidebarBrand")).toHaveText("✚ Dr.Vas Health");
+  const labels = await page.locator("[data-free-nav]").allTextContents();
+  expect(labels.map(value => value.trim())).toEqual(["＋New chat","▧Images","◷Scheduled","▤Library","⌘Plugins","✧Explore","▣Projects","View all"]);
+  await expect(page.locator("#freeChatView .input-area .chat-file-button")).toBeVisible();
+  await expect(page.locator("#sendButton")).toContainText("Trimite");
+  await expect(page.locator(".chat-back-button")).toContainText("Înapoi la module");
+
+  await page.locator('[data-free-nav="scheduled"]').click();
+  await expect(page.locator("#freeNavWorkspace")).toBeVisible();
+  await expect(page.locator("#freeNavWorkspace h2")).toHaveText("Scheduled");
+  await expect(page.locator("#freeChatView")).toBeHidden();
+  await page.locator('[data-free-nav="chat"]').click();
+  await expect(page.locator("#freeChatView")).toBeVisible();
+
+  const layout = await page.evaluate(() => ({
+    shellEnabled: document.body.classList.contains("free-module-mode"),
+    bodyOverflow: getComputedStyle(document.body).overflowY,
+    transcriptOverflow: getComputedStyle(document.querySelector("#freeChatView>#chat")).overflowY,
+    composerBottom: document.querySelector("#freeChatView .input-area").getBoundingClientRect().bottom,
+    viewportHeight: innerHeight
+  }));
+  expect(layout.shellEnabled).toBe(true);
+  expect(layout.bodyOverflow).toBe("hidden");
+  expect(layout.transcriptOverflow).toBe("auto");
+  expect(layout.composerBottom).toBeLessThanOrEqual(layout.viewportHeight);
+});
