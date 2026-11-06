@@ -1692,6 +1692,25 @@ test("Sarah and Dr.Jan portraits load from permanent local assets in selector, p
     await expect(image).toHaveAttribute("src", source);
     await expect.poll(() => image.evaluate(node => node.naturalWidth)).toBeGreaterThan(0);
   }
+  const portraitIntegrity = await page.evaluate(async () => {
+    const inspect = async selector => {
+      const image = document.querySelector(selector);
+      const response = await fetch(image.currentSrc);
+      const bytes = await response.arrayBuffer();
+      const digest = await crypto.subtle.digest("SHA-256", bytes);
+      return {
+        width: image.naturalWidth,
+        hash: Array.from(new Uint8Array(digest)).map(value => value.toString(16).padStart(2, "0")).join("")
+      };
+    };
+    return {
+      jan: await inspect('[data-assistant="jan"] .assistant-avatar'),
+      sarah: await inspect('[data-assistant="aurora"] .assistant-avatar')
+    };
+  });
+  expect(portraitIntegrity.jan.width).toBeGreaterThanOrEqual(256);
+  expect(portraitIntegrity.sarah.width).toBeGreaterThanOrEqual(256);
+  expect(portraitIntegrity.jan.hash).not.toBe(portraitIntegrity.sarah.hash);
 
   const presentation = await page.evaluate(async () => {
     const results = [];
@@ -1730,10 +1749,11 @@ test("Sarah and Dr.Jan portraits load from permanent local assets in selector, p
     updateLiveVoiceStage("closed");
     return results;
   });
-  expect(live).toEqual([
-    { assistant: "jan", src: "/assets/presenters/dr-jan.jpg", width: 128 },
-    { assistant: "aurora", src: "/assets/presenters/sarah.jpg", width: 128 }
+  expect(live.map(({ assistant, src }) => ({ assistant, src }))).toEqual([
+    { assistant: "jan", src: "/assets/presenters/dr-jan.jpg" },
+    { assistant: "aurora", src: "/assets/presenters/sarah.jpg" }
   ]);
+  for (const item of live) expect(item.width).toBeGreaterThanOrEqual(256);
 });
 
 test("assistant portrait fallback appears if a local image cannot load and recovers when restored", async ({ page }) => {
