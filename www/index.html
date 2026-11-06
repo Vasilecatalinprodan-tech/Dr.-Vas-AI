@@ -2760,6 +2760,10 @@ function selectModule(moduleName,userInitiated=false,suppressConversationRestore
       else loadConversationList().catch(error=>console.warn("Could not refresh module history:",error));
     }
   }
+  if(currentUser&&(moduleName==="free"||moduleName==="health"||isDrvasAdmin)){
+    const topBack=document.getElementById("globalBackToModules");
+    if(topBack){topBack.hidden=false;topBack.style.setProperty("display","inline-flex","important");}
+  }
 }
 
 let voiceRecognition = null;
