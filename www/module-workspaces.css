@@ -38,3 +38,8 @@ body.shared-chat-sidebar-mode.module-workspace-mode #chatSection .chat-main #fre
  body.shared-chat-sidebar-mode.module-workspace-mode #chatSection .chat-main #freeChatView .input-area .chat-file-button{width:38px;flex-basis:38px;height:40px}
  body.shared-chat-sidebar-mode.module-workspace-mode .chat-history-toggle{display:inline-flex!important}
 }
+
+#globalBackToModules{display:none;align-items:center;justify-content:center;min-height:36px;padding:7px 11px;border:1px solid #31566b;border-radius:10px;background:#10283a;color:#d9f5f2;font-size:11px;font-weight:800;cursor:pointer;white-space:nowrap}
+body.module-workspace-mode #globalBackToModules{display:inline-flex!important}
+#globalBackToModules:hover{background:#174455;border-color:#55cfc5}
+@media(max-width:600px){#globalBackToModules{padding:6px 8px;font-size:10px}}
