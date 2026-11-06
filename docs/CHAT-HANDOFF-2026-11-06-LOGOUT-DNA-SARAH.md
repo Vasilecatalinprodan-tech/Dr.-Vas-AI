@@ -85,3 +85,13 @@ Interpretation: deploy every successful new merge; continue integrated developme
   - Browser workflow #42251817360 was still running at the latest check; do not merge until it succeeds.
 - Previous main deploy run #42250521998 remained stuck at Chromium installation on the original workflow version. The next successful code/test merge should trigger the updated deployment workflow; verify that it cancels/replaces the stalled run and completes the production smoke test.
 - Main app source remains at the DNA/Sarah/logout commit; later commits are handoff documentation and deployment workflow changes. Do not say the app is live until the new deployment workflow succeeds.
+
+
+## Latest verified checkpoint — 6 Nov 2026
+- PR #34 merged as `05fa00a73dd407ed99d2a97964261088579abcf9`: six-module logout navigation regression; its PR browser suite passed 76 tests.
+- PR #35 merged as `f7bf2a08beea241337b64faa6ae28c0b4e7a2859`: Android workflow now automatically builds and uploads a debug APK on main pushes that change app assets, Android source, Capacitor/package configuration or the Android workflow; manual dispatch remains available.
+- Main browser workflow #42252068241 passed.
+- Main deployment workflow #42252068697 passed on `05fa00a73dd407ed99d2a97964261088579abcf9`: **101 tests passed**, Cloudflare Worker deployment succeeded, production smoke test verified the homepage and all six module cards, and unauthenticated admin access was rejected with HTTP 401.
+- Old stalled deployment run #42250521998 was cancelled and replaced by the successful deployment run above.
+- Automatic APK build run #42252598874 was started by the PR #35 merge on main commit `f7bf2a08beea241337b64faa6ae28c0b4e7a2859`. At the latest check it had completed npm install, Capacitor sync and Android privacy checks, and was still executing Gradle `assembleDebug`; no new APK artifact was confirmed yet.
+- Next: verify APK run #42252598874, confirm the uploaded artifact and record its artifact ID/size. Do not claim the new APK is available until the artifact upload step succeeds.
