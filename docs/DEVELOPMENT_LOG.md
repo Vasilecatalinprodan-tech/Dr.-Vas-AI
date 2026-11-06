@@ -624,3 +624,18 @@ Resume with safe PR #9 conflict resolution and fresh CI evidence, exact npm audi
 - Două compoziții exploratorii ImageGen au ieșit ca postere de echipă, nu portrete separate; nu sunt aprobate și nu se folosesc în aplicație.
 - Nicio modificare de cod, APK, secret, DB/RLS, setare de producție, merge sau deploy nu a fost făcută în această etapă.
 - Următorul pas: verifică imaginile finale, apoi adaugă numai portretele aprobate în `www/assets/presenters/`, înlocuiește SVG-urile în selector/prezentare, păstrează fallback/reduced-motion, apoi testează complet înainte de merge/deploy. Nu pretinde lip-sync real; animația CSS este doar indicator vizual.
+
+
+## Resume checkpoint — generated portraits completed, integration blocked on durable asset retrieval
+Date: 2026-11-06
+- Resumed both previously submitted Runway tasks and confirmed they completed successfully:
+  - Dr.Jan image task `d3842309-f86b-4f5e-991f-0698b3573c08`, asset `2579d925-d043-44e7-bfe4-5b1f167316c4`.
+  - Sarah age-progressed image task `122ba613-ef40-4b59-99e7-7903cca5b905`, asset `2c0667f8-7cc5-44b4-93b6-521d7899e3f5`.
+- Runway returns signed CloudFront preview URLs for both outputs. They are temporary bearer URLs with expiry on 2026-11-08 (Jan 05:40 UTC; Sarah 09:58 UTC). The URLs/tokens are deliberately NOT copied into the repository or this archive.
+- The current connector exposes the asset URL and metadata but not binary download/export. The GitHub connector explicitly rejects binary downloads, and the web/container fetch paths cannot retrieve the signed image bytes. Therefore the actual image files could not be reviewed, downloaded, optimised or committed to `www/assets/presenters/` in this session.
+- The two generated images must be treated as pending review, not approved production assets. Do not embed the expiring signed URLs in the app.
+- Frontend work remains isolated on `feature/presenter-faces-2026-11-06`; latest branch HEAD observed: `ce58642e65ff806dba6825f537804b62880b94f7`. `main` remained at `cc632432942088758f0933914c67f227dc204278` at the time of verification.
+- Existing WIP frontend references `assets/presenters/jan.webp` and `assets/presenters/sarah.webp`, which are not yet present. Thus browser tests, APK build, merge and production deploy were NOT run. No broken build was merged or deployed.
+- Dr.Vas continues to use existing `www/drvas.jpeg`; no duplicate copy was created.
+- To complete safely, retrieve/export the two generated image binaries through an available Runway asset download/export route (or upload the two outputs as files), visually review them, convert/optimise to WebP, add them at the referenced paths, then run full CI, PR checks, merge and post-merge production smoke test. Do not request payment or top-up.
+- This checkpoint and the user's instruction to resume, merge/deploy and archive the chat are recorded here. This is a structured continuity archive, not a verbatim export of the entire ChatGPT UI.
