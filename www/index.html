@@ -863,6 +863,18 @@ body.presentation-open{overflow:hidden!important}
  .studio-scene-timeline{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:360px){.drvas-presentation{padding:12px}.presentation-avatar{width:82px;height:82px;flex-basis:82px}.presentation-presenter-copy strong{font-size:15px}}
+
+/* Photorealistic presenter portraits — image assets are committed alongside this change. */
+.assistant-avatar-photo{display:block;width:40px;height:40px;flex:0 0 40px;object-fit:cover;object-position:center 28%;border-radius:50%;border:1px solid #5a9b9d;background:#17354b}
+.assistant-jan.assistant-avatar-photo{border-color:#78c8c4}.assistant-aurora.assistant-avatar-photo{border-color:#c2a1bd}
+body.assistant-speaking .assistant-choice[aria-pressed="true"] .assistant-avatar-photo{animation:avatarTalk .22s ease-in-out infinite alternate}
+.presentation-avatar{overflow:hidden}
+.presentation-avatar-photo{position:relative;z-index:2;display:block;width:100%;height:100%;object-fit:cover;object-position:center 26%;border-radius:50%;filter:drop-shadow(0 8px 10px #0005)}
+.presentation-presenter.is-speaking .presentation-avatar-photo{animation:presentationPhotoTalk .42s ease-in-out infinite alternate}
+@keyframes presentationPhotoTalk{from{transform:scale(1)}to{transform:scale(1.035)}}
+#presentationAvatar::after{content:attr(data-initials);display:none;position:absolute;inset:0;place-items:center;color:#eaffff;font-size:30px;font-weight:800;letter-spacing:1px;background:radial-gradient(circle at 35% 25%,#4baeb1,#16445a 72%)}
+#presentationAvatar.portrait-unavailable::after{display:grid}
+@media(prefers-reduced-motion:reduce){.assistant-avatar-photo,.presentation-avatar-photo,body.assistant-speaking .assistant-choice[aria-pressed="true"] .assistant-avatar-photo{animation:none!important}}
 </style>
 </head>
 
@@ -920,21 +932,7 @@ body.presentation-open{overflow:hidden!important}
      <div class="presentation-presenter" id="presentationPresenter">
       <div class="presentation-avatar presentation-avatar-drvas" id="presentationAvatar" aria-hidden="true">
        <span class="character-orbit character-orbit-one"></span><span class="character-orbit character-orbit-two"></span>
-       <svg class="presenter-character-art" viewBox="0 0 180 180" role="presentation" aria-hidden="true">
-        <defs><linearGradient id="presenterSkin" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe0c6"/><stop offset="1" stop-color="#c98d72"/></linearGradient><linearGradient id="presenterCoat" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8f4f5"/><stop offset="1" stop-color="#8db5c4"/></linearGradient></defs>
-        <path class="character-shoulders" d="M18 180c4-39 28-57 72-57s68 18 72 57" fill="url(#presenterCoat)"/>
-        <path class="character-hair-long" d="M42 63c-12 31-5 85 17 111l16-7-8-67 46-1-7 68 17 7c20-26 26-79 10-111-22 14-69 14-91 0z" fill="#59314c"/>
-        <path d="M73 119h34v27H73z" fill="url(#presenterSkin)"/>
-        <ellipse cx="90" cy="79" rx="48" ry="55" fill="url(#presenterSkin)"/>
-        <path class="character-hair" d="M42 76C35 30 58 12 94 15c34 2 51 24 44 62-8-16-15-26-27-31-20 13-40 15-69 9z" fill="#26384b"/>
-        <path class="character-hair-detail" d="M47 59c12-28 29-36 53-36 15 0 28 7 36 20-22-9-46-4-62 7-9 6-18 9-27 9z" fill="#526d82"/>
-        <ellipse cx="70" cy="82" rx="5" ry="4" fill="#23384a"/><ellipse cx="110" cy="82" rx="5" ry="4" fill="#23384a"/>
-        <g class="character-glasses" fill="none" stroke="#c6e4ed" stroke-width="3"><rect x="54" y="70" width="32" height="24" rx="9"/><rect x="94" y="70" width="32" height="24" rx="9"/><path d="M86 80h8"/></g>
-        <g class="character-earrings" fill="#f2d38c" stroke="#fff0c6" stroke-width="1"><circle cx="43" cy="105" r="3.5"/><circle cx="137" cy="105" r="3.5"/></g>
-        <path class="character-blink" d="M63 82h14M103 82h14" fill="none" stroke="#23384a" stroke-width="4" stroke-linecap="round"/>
-        <path d="M84 94q6 5 12 0" fill="none" stroke="#a96f62" stroke-width="3" stroke-linecap="round"/><path class="character-mouth" d="M76 108q14 11 28 0" fill="none" stroke="#874d50" stroke-width="4" stroke-linecap="round"/>
-        <path d="M55 72q14-9 27-2M99 70q14-7 27 2" fill="none" stroke="#293d50" stroke-width="4" stroke-linecap="round"/><path d="M70 143l20 17 20-17" fill="none" stroke="#4c7d92" stroke-width="5"/>
-       </svg><span class="character-status-light"></span>
+       <img id="presentationPortrait" class="presentation-avatar-photo" src="drvas.jpeg" alt="" loading="eager" decoding="async"><span class="character-status-light"></span>
       </div>
       <div class="presentation-presenter-copy"><strong id="presentationSpeakerName">Dr.Vas</strong><span id="presentationSpeakerRole">Asistentul principal</span><small id="presentationSpeakerModules">Dr.Vas Free · Dr.Vas Health</small></div>
       <span class="presentation-speaking-indicator" id="presentationSpeakingIndicator" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -1618,8 +1616,8 @@ body.presentation-open{overflow:hidden!important}
     <div class="assistant-switcher" role="group" aria-label="Alege asistentul">
      <span class="assistant-switcher-label">Alege asistentul tău</span>
      <button type="button" class="assistant-choice" data-assistant="drvas" aria-pressed="true" onclick="selectAssistant('drvas')"><img class="assistant-avatar" src="drvas.jpeg" alt=""><span>Dr.Vas<small>Asistent principal</small></span></button>
-     <button type="button" class="assistant-choice" data-assistant="jan" aria-pressed="false" onclick="selectAssistant('jan')"><span class="assistant-avatar-symbol assistant-jan" aria-hidden="true"><svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="janbg" x2="1" y2="1"><stop stop-color="#376d78"/><stop offset="1" stop-color="#172d49"/></linearGradient><linearGradient id="jansuit" x2="0" y2="1"><stop stop-color="#263f55"/><stop offset="1" stop-color="#101d31"/></linearGradient></defs><rect width="120" height="140" fill="url(#janbg)"/><path d="M10 140Q15 91 60 89Q105 91 110 140" fill="url(#jansuit)"/><path d="M43 94L60 113 77 94 88 140H32Z" fill="#e8edf0"/><path d="M54 108L60 116 66 108 72 140H48Z" fill="#4d8790"/><path d="M34 47Q32 10 61 12Q92 12 88 54L81 78H38Z" fill="#302a27"/><ellipse cx="60" cy="57" rx="27" ry="34" fill="#d9a47f"/><path d="M33 49Q32 14 62 17Q88 17 87 47L76 36Q59 42 43 34Z" fill="#302a27"/><path d="M34 53Q28 57 34 66M86 53Q92 57 86 66" fill="none" stroke="#c58e6e" stroke-width="5"/><path d="M46 54h9M65 54h9" stroke="#45342e" stroke-width="3" stroke-linecap="round"/><ellipse cx="51" cy="57" rx="3" ry="2.4" fill="#594638"/><ellipse cx="69" cy="57" rx="3" ry="2.4" fill="#594638"/><path d="M60 59l-2 10 5 1M52 76Q60 81 68 76" fill="none" stroke="#9b5f51" stroke-width="2" stroke-linecap="round"/><path d="M47 89L60 102 73 89" fill="#d9a47f"/><path d="M43 96L60 113 77 96" fill="none" stroke="#b8c6d0" stroke-width="2"/></svg></span><span>Dr.Jan<small>Ghid strategic AI</small></span></button>
-     <button type="button" class="assistant-choice" data-assistant="aurora" aria-pressed="false" onclick="selectAssistant('aurora')"><span class="assistant-avatar-symbol assistant-aurora" aria-hidden="true"><svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="aurorabg" x2="1" y2="1"><stop stop-color="#8b6682"/><stop offset="1" stop-color="#3b355b"/></linearGradient><linearGradient id="aurorahair" x2="1" y2="1"><stop stop-color="#4a251d"/><stop offset=".55" stop-color="#241716"/><stop offset="1" stop-color="#70402c"/></linearGradient><linearGradient id="aurorablazer" x2="0" y2="1"><stop stop-color="#5d4c69"/><stop offset="1" stop-color="#25283f"/></linearGradient></defs><rect width="120" height="140" fill="url(#aurorabg)"/><path d="M8 140Q8 89 60 88Q112 89 112 140" fill="url(#aurorablazer)"/><path d="M42 94L60 116 78 94 91 140H29Z" fill="#eee5e5"/><path d="M35 44Q28 7 61 7Q96 8 91 52L95 118 79 135 40 134 25 118Z" fill="url(#aurorahair)"/><ellipse cx="60" cy="56" rx="27" ry="34" fill="#e8b99c"/><path d="M33 51Q28 13 60 15Q91 14 88 49L81 39Q61 34 42 40Z" fill="url(#aurorahair)"/><path d="M34 50Q27 81 39 111L27 127Q16 87 25 50M86 48Q96 77 83 115L96 129Q106 82 94 48" fill="url(#aurorahair)"/><path d="M43 53Q51 48 56 53M65 53Q72 48 78 53" fill="none" stroke="#55372e" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="50" cy="58" rx="4" ry="3.2" fill="#76502d"/><ellipse cx="70" cy="58" rx="4" ry="3.2" fill="#76502d"/><circle cx="50" cy="58" r="1.8" fill="#241a14"/><circle cx="70" cy="58" r="1.8" fill="#241a14"/><path d="M60 60L57 70 62 71" fill="none" stroke="#c18c73" stroke-width="2" stroke-linecap="round"/><path d="M51 79Q60 85 69 79" fill="none" stroke="#a95f62" stroke-width="2.4" stroke-linecap="round"/><path d="M47 94L60 109 73 94" fill="#e8b99c"/><path d="M42 95L60 116 78 95" fill="none" stroke="#c6b6c9" stroke-width="2"/></svg></span><span>Sarah<small>Învățare și creativitate</small></span></button>
+     <button type="button" class="assistant-choice" data-assistant="jan" aria-pressed="false" onclick="selectAssistant('jan')"><img class="assistant-avatar assistant-avatar-photo assistant-jan" src="assets/presenters/jan.webp" alt="" loading="lazy" decoding="async"><span>Dr.Jan<small>Ghid strategic AI</small></span></button>
+     <button type="button" class="assistant-choice" data-assistant="aurora" aria-pressed="false" onclick="selectAssistant('aurora')"><img class="assistant-avatar assistant-avatar-photo assistant-aurora" src="assets/presenters/sarah.webp" alt="" loading="lazy" decoding="async"><span>Sarah<small>Ghid pentru învățare și idei</small></span></button>
      <button type="button" class="assistant-choice assistant-help-choice" onclick="startGuidedHelp()">Ghidează-mă pas cu pas</button>
      <p class="assistant-intro" id="assistantIntro">Asistentul principal Dr.Vas este pregătit să te ajute.</p>
     </div>
@@ -1922,7 +1920,7 @@ function updateDrvasPresentationScene(index){
  const key=["drvas","jan","sarah"][index],speaker=DRVAS_PRESENTERS[key],data=DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro;
  const presenter=el("presentationPresenter"),avatar=el("presentationAvatar"),grid=el("presentationModuleGrid");
  if(presenter){presenter.classList.remove("is-speaking","is-animated","scene-enter");void presenter.offsetWidth;presenter.classList.add("scene-enter");}
- if(avatar){avatar.className="presentation-avatar presentation-avatar-"+key;avatar.dataset.presenter=key;}
+ if(avatar){avatar.className="presentation-avatar presentation-avatar-"+key;avatar.dataset.presenter=key;avatar.dataset.initials=({drvas:"DV",jan:"DJ",sarah:"SA"})[key]||"";const portrait=el("presentationPortrait");if(portrait){portrait.src=({drvas:"drvas.jpeg",jan:"assets/presenters/jan.webp",sarah:"assets/presenters/sarah.webp"})[key];portrait.alt="";}}
  const set=(id,value)=>{const node=el(id);if(node)node.textContent=value};
  set("presentationSpeakerName",speaker.name);set("presentationSpeakerRole",speaker.role[currentLanguage]||speaker.role.ro);
  const moduleNames=["Dr.Vas Free","Dr.Vas Health","Dr.Vas Studio","Dr.Vas Academy","Dr.Vas Commerce","Dr.Vas Business"];
