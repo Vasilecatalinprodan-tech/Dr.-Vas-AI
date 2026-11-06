@@ -65,3 +65,13 @@ Acest fișier păstrează mesajele utilizatorului din această continuare și de
 - Deploy workflow #42298304428 s-a oprit înainte de Supabase migration și Cloudflare deploy, deoarece testele browser au eșuat; nu este încă dovadă că lipsesc secretele.
 - A fost creat PR #40, branch `fix/migration-grant-regex-2026-11-06`, commit `f24579148f4e2233f58f7b81425031e248e25b68`, pentru a face aserțiunile de grant robuste la whitespace și la prezența opțională a cuvântului TABLE. Run #535 / `42300016696` este în curs la momentul arhivării.
 - Nu s-au modificat migrările SQL, datele, RLS, secretele, setările de producție sau abonamentele.
+
+
+## 2026-11-06 22:00 UTC — continuation across all modules; SQL regression correction
+- Founder instruction (verbatim): “continua cu toate modulele si salveaza tot cand termini inclusiv chatul”. Continue the six integrated customer workspaces and the shared interface together; preserve this chat and all engineering evidence.
+- Rechecked PR #40 on branch `fix/migration-grant-regex-2026-11-06`. Its browser workflow #535 / run `42300016696` completed SUCCESS with 87 tests passed.
+- A separate main/deploy browser run #536 / run `42300319758` completed with 110 passed and 6 failed. Failures were in static SQL-policy/privilege assertions in `tests/e2e/data-isolation-migrations.spec.cjs`; the source migrations inspected for module projects, Business cashbook, Studio render jobs, chat attachments, Library and standalone Projects contain owner-scoped RLS and authenticated grants. No production SQL was run by this failed test job.
+- Corrected JavaScript RegExp string escaping in the owner-scoped migration regression tests and pushed commit `335fe6f66dfce6910c5ac7b2d4ce209b37afb259` to the PR #40 branch. This changes tests only; it does not weaken or alter RLS, SQL migrations, Worker runtime, secrets, entitlements or production data.
+- New browser workflow #541 / run `42306359472` was triggered for that exact commit and is still in progress at this checkpoint (Chromium installation; Playwright not yet started). Do not merge PR #40 until this latest run is complete and green.
+- The six workspaces and feature-specific pages remain integrated in main via PR #39; APK build run `42298304435` succeeded. Production deploy run `42298304428` has not passed because the browser gate failed. No production migration or deploy is claimed.
+- Next: verify run #541, fix any genuine remaining test mismatch without weakening security assertions, then inspect the main deploy workflow and Supabase credential/migration gates. Continue the module-by-module quality audit (Free, Health, Studio, Academy, Commerce, Business), preserve owner isolation, and record each code/test/deploy checkpoint here.
