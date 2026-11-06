@@ -162,3 +162,9 @@ Additional commits:
 - If either secret is absent, the workflow fails before Worker deployment rather than silently shipping code against an unmigrated database.
 - Browser CI now checks that this migration step and both secrets are present and ordered before the Worker deploy step. Run #508 passed that static migration-gate verification.
 - The migration step has not executed yet because this branch is not merged to main and this session has no direct authorized Supabase database connection. After merge, the main-branch deploy workflow will apply migrations only if the two repository secrets are configured.
+
+## Health 503 production verification gate
+- Extended the release migration step to run the read-only `supabase/diagnostics/VERIFY_RATE_LIMITS.sql` after `supabase db push`.
+- The workflow requires the diagnostic JSON to contain `rate_limit_setup_ok: true`; otherwise it stops before Cloudflare Worker deployment.
+- Browser CI statically verifies the migration step, the Health diagnostic step, the required credential names and their order before Worker deployment.
+- This does not claim that the production RPC has already been repaired. It makes the next authorized production release apply pending migrations and verify the RPC/security grants before deployment.
