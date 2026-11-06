@@ -143,6 +143,11 @@
   window.selectModule=function(moduleName,...rest){
    const result=original.call(this,moduleName,...rest);
    init(moduleName);
+   const back=byId("globalBackToModules"),chat=byId("chatSection"),workspace=byId(moduleName+"Workspace");
+   const active=["free","health"].includes(moduleName)
+    ?document.body.classList.contains("free-module-mode")&&chat&&!chat.classList.contains("hidden")
+    :document.body.classList.contains("module-workspace-mode")&&workspace&&!workspace.classList.contains("hidden");
+   if(back&&active){back.hidden=false;back.style.display="inline-flex";}
    return result;
   };
  }
