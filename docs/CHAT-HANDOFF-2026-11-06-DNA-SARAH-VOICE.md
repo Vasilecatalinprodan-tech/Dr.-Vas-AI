@@ -3,7 +3,7 @@
 **Repository:** `Vasilecatalinprodan-tech/Dr.-Vas-AI`  
 **Feature branch:** `feature/landing-dna-sarah-voice-2026-11-06`  
 **Base checkpoint:** logout branch head `7b3341e8a596dca3ca1e2ee04504863e549c6fa9`
-**Latest feature branch implementation commit:** `0f4bfc7f5db386804a2063b7fc7921da79b4494a`
+**Latest implementation commits:** `074fe46e18eee6e0f35ef10c0b37012f68629ab4` (full-height rail placement and Romanian female voice recognition), `9a4f2611490ca41c68587a49c962382abd6b018d` (presentation test confirms Sarah uses Microsoft Alina).
 
 ## Founder requirements
 - Landing page: make the DNA motif more realistic, with one rotating double helix on the left and one on the right, extending from the top to the bottom of the first/home page. Preserve the existing 13-second rotation and flowing strand/rung animation.
@@ -26,3 +26,11 @@
 
 ## Conversation preservation
 The actual ChatGPT conversation remains in the user's chat history. This file records the technical decisions and continuation state; it is not a verbatim export of private chat history.
+
+
+## CI findings and corrections
+- Draft PR #31: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/31
+- First full E2E run #42249285356: 73 passed, 2 failed. The failures exposed:
+  1. Sarah's presentation test fixture offered a female Romanian voice named "Microsoft Alina", but the first female-name heuristic did not recognize that name. The heuristic now recognizes Alina and several common Romanian female voice names; the test now expects Sarah to use Microsoft Alina.
+  2. The DNA rails had initially been nested inside the hero text container, so their absolute height matched the text block instead of the whole hero. They have been moved to direct children of the hero section so top/bottom positioning spans the complete landing hero.
+- Rerun the full browser workflow on the latest PR #31 head. Do not merge until green.
