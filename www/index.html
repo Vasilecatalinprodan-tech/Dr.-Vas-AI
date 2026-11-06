@@ -5804,10 +5804,27 @@ async function freeNavLoadProjects(){
    const actions=document.createElement("div");actions.className="free-scheduled-task-actions";
    const open=document.createElement("button");open.type="button";open.textContent="Deschide";open.addEventListener("click",()=>freeNavOpenProject(project.id));actions.appendChild(open);
    const rename=document.createElement("button");rename.type="button";rename.textContent="Redenumește";rename.addEventListener("click",async()=>{const next=window.prompt("Noul nume al proiectului:",project.title);if(!next?.trim())return;rename.disabled=true;const {error}=await supabaseClient.from("drvas_projects").update({title:next.trim().slice(0,160),updated_at:new Date().toISOString()}).eq("id",project.id).eq("user_id",currentUser.id);if(error){window.alert("Nu am putut redenumi proiectul: "+error.message);rename.disabled=false;}else freeNavLoadProjects();});actions.appendChild(rename);
-   const archive=document.createElement("button");archive.type="button";archive.textContent=project.archived_at?"Restabilește":"Arhivează";archive.addEventListener("click",async()=>{archive.disabled=true;const {error}=await supabaseClient.from("drvas_projects").update({archived_at:project.archived_at?null:new Date().toISOString(),updated_at:new Date().toISOString()}).eq("id",project.id).eq("user_id",currentUser.id);if(error){window.alert("Nu am putut actualiza proiectul: "+error.message);archive.disabled=false;}else freeNavLoadProjects();});actions.appendChild(archive);card.appendChild(actions);grid.appendChild(card);
+   const archive=document.createElement("button");archive.type="button";archive.textContent=project.archived_at?"Restabilește":"Arhivează";archive.addEventListener("click",async()=>{archive.disabled=true;const {error}=await supabaseClient.from("drvas_projects").update({archived_at:project.archived_at?null:new Date().toISOString(),updated_at:new Date().toISOString()}).eq("id",project.id).eq("user_id",currentUser.id);if(error){window.alert("Nu am putut actualiza proiectul: "+error.message);archive.disabled=false;}else freeNavLoadProjects();});actions.appendChild(archive);
+   const remove=document.createElement("button");remove.type="button";remove.textContent="Șterge";remove.addEventListener("click",async()=>{if(!window.confirm("Ștergi definitiv acest proiect?"))return;remove.disabled=true;const {error}=await supabaseClient.from("drvas_projects").delete().eq("id",project.id).eq("user_id",currentUser.id);if(error){window.alert("Nu am putut șterge proiectul: "+error.message);remove.disabled=false;}else freeNavLoadProjects();});actions.appendChild(remove);
+   card.appendChild(actions);grid.appendChild(card);
   }
   if(isDrvasAdmin){
-   const legacy=document.createElement("div");legacy.className="free-nav-status";legacy.textContent="Proiectele existente din Studio și celelalte module rămân în modulele lor. Această listă nouă este pentru proiectele independente Dr.Vas.";page.appendChild(legacy);
+   const legacyHeading=document.createElement("h3");legacyHeading.textContent="Proiecte salvate în module";legacyHeading.style.margin="22px 0 8px";page.appendChild(legacyHeading);
+   const legacyGrid=document.createElement("div");legacyGrid.className="free-nav-grid";page.appendChild(legacyGrid);
+   const [studioResult,moduleResult]=await Promise.all([
+    supabaseClient.from("drvas_studio_projects").select("id,title,project_type,updated_at").eq("user_id",currentUser.id).order("updated_at",{ascending:false}).limit(100),
+    supabaseClient.from("drvas_module_projects").select("id,module,title,project_type,updated_at").eq("user_id",currentUser.id).order("updated_at",{ascending:false}).limit(200)
+   ]);
+   if(studioResult.error)throw studioResult.error;if(moduleResult.error)throw moduleResult.error;
+   const legacyProjects=[...(studioResult.data||[]).map(x=>({...x,module:"studio"})),...(moduleResult.data||[])].sort((a,b)=>new Date(b.updated_at)-new Date(a.updated_at));
+   if(!legacyProjects.length){const empty=document.createElement("div");empty.className="free-nav-status";empty.textContent="Nu există proiecte salvate în module.";legacyGrid.appendChild(empty);}
+   legacyProjects.forEach(project=>{
+    const label=project.module==="studio"?"Studio":project.module[0].toUpperCase()+project.module.slice(1);
+    freeNavCard(legacyGrid,project.title||"Proiect fără titlu",label+" · "+(project.project_type||"proiect")+" · "+new Date(project.updated_at).toLocaleDateString(),"Deschide în modul",async()=>{
+     if(project.module==="studio"){selectModule("studio",true);await loadStudioProjects(project.id);if(el("studioSavedProjects"))el("studioSavedProjects").value=project.id;await openStudioProject();}
+     else{selectModule(project.module,true);await loadModuleProjectList(project.module,project.id);if(el(project.module+"ProjectList"))el(project.module+"ProjectList").value=project.id;await openModuleProject(project.module);}
+    });
+   });
   }
  }catch(error){grid.replaceChildren();const failed=document.createElement("div");failed.className="free-nav-status";failed.textContent="Nu am putut încărca Projects: "+error.message+". Aplică migrarea 202611060004_projects.sql în Supabase.";grid.appendChild(failed);}
 }
