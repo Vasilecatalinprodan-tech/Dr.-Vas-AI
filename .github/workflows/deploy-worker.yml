@@ -206,6 +206,18 @@ jobs:
           supabase db push --linked --yes
           echo "Remote migration history after push:"
           supabase migration list --linked
+          echo "Verifying the Health rate-limit RPC and its security grants:"
+          supabase db query --linked --file supabase/diagnostics/VERIFY_RATE_LIMITS.sql --output json > /tmp/drvas-rate-limit-check.json
+          node <<'NODE'
+          const fs = require("fs");
+          const result = JSON.parse(fs.readFileSync("/tmp/drvas-rate-limit-check.json", "utf8"));
+          const serialized = JSON.stringify(result);
+          if (!/"rate_limit_setup_ok"\s*:\s*true/.test(serialized)) {
+            console.error(JSON.stringify(result, null, 2));
+            throw new Error("Health rate-limit RPC verification failed; Worker deployment is blocked.");
+          }
+          console.log("Health rate-limit RPC, RLS and service_role grants verified.");
+          NODE
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
