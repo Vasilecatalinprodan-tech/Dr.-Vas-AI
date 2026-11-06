@@ -487,7 +487,7 @@ test("legacy focused workspace never exposes other modules or cross-module histo
     }
     return { value, count };
   });
-  expect(layout.count, `Expected one grid track, received "${layout.value}"`).toBe(1);
+  expect(layout.count, `Expected the shared sidebar and one chat track, received "${layout.value}"`).toBe(2);
 });
 
 test("clicking a module as a visitor opens the sign-in gate and preserves the selected module", async ({ page }) => {
