@@ -2520,12 +2520,31 @@ test("module capabilities open dedicated feature pages instead of one crowded wo
 
   await page.evaluate(() => selectModule("academy", true));
   await expect(page.locator("#academyWorkspace .drvas-feature-navigation")).toBeVisible();
+  await page.locator('#academyWorkspace [data-feature="lessons"]').click();
+  await expect(page.locator('#academyWorkspace [data-feature-page="lessons"]')).toBeVisible();
+  await expect(page.locator("#academyWorkspace #academySubject")).toBeVisible();
+  await expect.poll(() => page.evaluate(() => window.DrVasAcademyFeature)).toBe("lessons");
+  await page.locator("#academySubject").fill("E2E course");
+  await page.evaluate(() => buildAcademyPrompt());
+  await expect(page.locator("#question")).toContainText("FOCUS: scrie lecțiile în detaliu");
+  await page.locator('#academyWorkspace [data-feature="exercises"]').click();
+  await expect.poll(() => page.evaluate(() => window.DrVasAcademyFeature)).toBe("exercises");
+  await page.locator('#academyWorkspace [data-feature="learning-plan"]').click();
+  await expect.poll(() => page.evaluate(() => window.DrVasAcademyFeature)).toBe("learning-plan");
   await page.locator('#academyWorkspace [data-feature="courses"]').click();
   await expect(page.locator('#academyWorkspace [data-feature-page="courses"] #academyProjectList')).toBeVisible();
   await expect(page.locator('#academyWorkspace [data-feature-page="course"]')).toBeHidden();
 
   await page.evaluate(() => selectModule("commerce", true));
   await expect(page.locator("#commerceWorkspace .drvas-feature-navigation")).toBeVisible();
+  await page.locator('#commerceWorkspace [data-feature="suppliers"]').click();
+  await expect(page.locator('#commerceWorkspace [data-feature-page="suppliers"] #commerceProduct')).toBeVisible();
+  await expect.poll(() => page.evaluate(() => window.DrVasCommerceFeature)).toBe("suppliers");
+  await page.locator("#commerceProduct").fill("E2E product");
+  await page.evaluate(() => buildCommercePrompt());
+  await expect(page.locator("#question")).toContainText("FOCUS: construiește o comparație de furnizori");
+  await page.locator('#commerceWorkspace [data-feature="launch"]').click();
+  await expect.poll(() => page.evaluate(() => window.DrVasCommerceFeature)).toBe("launch");
   await page.locator('#commerceWorkspace [data-feature="pricing"]').click();
   await expect(page.locator('#commerceWorkspace [data-feature-page="pricing"] #commerceContribution')).toBeVisible();
   await expect(page.locator('#commerceWorkspace [data-feature-page="research"]')).toBeHidden();
