@@ -1839,3 +1839,70 @@ test("landing hero renders two animated DNA strands and emergency stop latches l
   expect(state.scanDisabled).toBe(true);
   expect(state.status).toContain("OPRIRE LOCALĂ ARMATĂ");
 });
+
+
+test("Commerce unit economics calculates per-order margin, price floor and budget recovery and persists assumptions", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-commerce-owner", email: "admin@example.invalid" };
+    isDrvasAdmin = true;
+    selectModule("commerce", true);
+  });
+  await expect(page.locator("#commerceWorkspace")).toBeVisible();
+
+  const result = await page.evaluate(() => {
+    const values = {
+      commercePrice: "30",
+      commerceBudget: "100",
+      commerceCurrency: "GBP",
+      commerceUnitCost: "10",
+      commerceShippingCost: "3",
+      commercePackagingCost: "1",
+      commercePlatformFee: "10",
+      commercePaymentFee: "2.9",
+      commerceMarketingCost: "2",
+      commerceReturnsReserve: "5",
+      commerceMonthlyOrders: "20"
+    };
+    Object.entries(values).forEach(([id, value]) => { document.getElementById(id).value = value; });
+    const calculation = calculateCommerceUnitEconomics();
+    const savedBrief = moduleProjectBrief("commerce");
+    return {
+      calculation,
+      outputs: Object.fromEntries([
+        "commerceLandedCost", "commerceFeeTotal", "commerceVariableTotal",
+        "commerceContribution", "commerceMargin", "commercePriceFloor",
+        "commerceBreakEvenOrders", "commerceMonthlyContribution"
+      ].map(id => [id, document.getElementById(id).textContent])),
+      savedBrief,
+      promptReady: (() => {
+        buildCommercePrompt();
+        return document.getElementById("question").value;
+      })()
+    };
+  });
+
+  expect(result.calculation.landed).toBe(14);
+  expect(result.calculation.feeTotal).toBeCloseTo(5.37, 8);
+  expect(result.calculation.variableTotal).toBeCloseTo(21.37, 8);
+  expect(result.calculation.contribution).toBeCloseTo(8.63, 8);
+  expect(result.calculation.margin).toBeCloseTo(28.7666667, 5);
+  expect(result.calculation.priceFloor).toBeCloseTo(19.4884287, 5);
+  expect(result.calculation.breakEvenOrders).toBe(12);
+  expect(result.calculation.monthlyContribution).toBeCloseTo(172.6, 8);
+  expect(result.outputs.commerceBreakEvenOrders).toContain("12");
+  expect(result.savedBrief.commerceUnitCost).toBe("10");
+  expect(result.savedBrief.commercePaymentFee).toBe("2.9");
+  expect(result.savedBrief.commerceMonthlyOrders).toBe("20");
+  expect(result.promptReady).toContain("REZULTAT CALCULATOR");
+  expect(result.promptReady).toContain('"contribution":8.63');
+
+  const lossScenario = await page.evaluate(() => {
+    document.getElementById("commercePrice").value = "10";
+    const result = calculateCommerceUnitEconomics();
+    return { contribution: result.contribution, breakEven: result.breakEvenOrders, status: document.getElementById("commerceEconomicsStatus").textContent };
+  });
+  expect(lossScenario.contribution).toBeLessThan(0);
+  expect(lossScenario.breakEven).toBeNull();
+  expect(lossScenario.status).toContain("contribuția pe comandă este zero sau negativă");
+});
