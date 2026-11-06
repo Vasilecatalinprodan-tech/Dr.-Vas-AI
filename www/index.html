@@ -625,7 +625,7 @@ body.module-workspace-mode #chatSection .assistant-switcher{margin-top:0}
 body.module-workspace-mode #chatSection .chat-toolbar{margin-top:8px}
 body.module-workspace-mode #chatSection .chat-main .voice-toolbar{gap:7px}
 body.module-workspace-mode.free-module-mode main{display:block;max-width:1120px;padding:18px 22px}
-body.free-module-mode .module-selection-shell{display:none!important}
+body.free-module-mode:not(.health-module-mode) .module-selection-shell{display:none!important}
 body.free-module-mode #chatSection{max-width:100%;margin:auto}
 body.free-module-mode #chatSection>.chat-view-nav{margin-bottom:14px}
 body.free-module-mode #chatSection .chat-main{min-height:calc(100vh - 180px);background:#0c1e2e;border:1px solid #25465b;border-radius:20px;padding:22px}
@@ -938,6 +938,7 @@ body.free-module-mode .history-panel h3,body.free-module-mode .history-panel>.ne
 body.free-module-mode .history-panel .delete-history-button,body.free-module-mode .history-panel .history-filter-button{flex:0 0 auto;padding:7px 8px;font-size:10px}
 body.free-module-mode .chat-main{display:flex!important;flex-direction:column;min-width:0;min-height:0;width:100%;height:100%!important;max-height:none!important;overflow:hidden!important;padding:12px!important;background:#0c1e2e;border:1px solid #25465b;border-radius:16px}
 body.free-module-mode #freeChatView{display:flex;flex:1 1 auto;flex-direction:column;min-width:0;min-height:0;height:100%;overflow:hidden}
+body.free-module-mode #freeChatView[hidden]{display:none!important}
 body.free-module-mode #freeChatView .chat-toolbar,body.free-module-mode #freeChatView .assistant-switcher,body.free-module-mode #freeChatView #saveMessage{display:none!important}
 body.free-module-mode #freeChatView>#chat{display:block;flex:1 1 auto;min-height:0;max-height:none!important;height:auto;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-gutter:stable;padding:10px 12px 18px}
 body.free-module-mode #freeChatView .conversation-attachments,body.free-module-mode #freeChatView .pending-chat-files,body.free-module-mode #freeChatView .chat-file-toolbar{flex:0 0 auto;max-height:22vh;overflow:auto}
@@ -973,6 +974,11 @@ body.free-module-mode .conversation-item.active{border-color:#54d8cf;background:
  body.free-module-mode #chatSection .history-panel{display:none!important;position:fixed;z-index:50;left:8px;top:72px;bottom:8px;width:min(86vw,310px);max-height:none;box-shadow:0 18px 55px #0009}
  body.free-module-mode.history-open #chatSection .history-panel{display:flex!important}
  body.free-module-mode #chatSection .chat-main{padding:8px!important}
+ body.free-module-mode #chatSection{height:100%!important;min-height:0!important;overflow:hidden!important}
+ body.free-module-mode #chatSection>.chat-layout{height:100%!important;min-height:0!important}
+ body.free-module-mode #chatSection .chat-main{height:100%!important;min-height:0!important;max-height:none!important}
+ body.free-module-mode #freeChatView .voice-toolbar{max-height:48px!important;overflow-y:auto!important}
+ body.free-module-mode #freeChatView .input-area{margin-bottom:0!important}
  body.free-module-mode #freeChatView>#chat{padding:8px 4px 12px}
  body.free-module-mode #freeChatView .input-area{gap:5px;padding:7px}
  body.free-module-mode #freeChatView .input-area #sendButton{padding:9px 11px;font-size:11px}
@@ -2652,6 +2658,7 @@ function selectModule(moduleName,userInitiated=false,suppressConversationRestore
   let moduleConversationToRestore=null;
   if(previousModule!==moduleName)clearPendingChatFiles();
   activeModule=moduleName;
+  document.body.classList.toggle("health-module-mode",moduleName==="health");
   const sidebarBrand=el("freeSidebarBrand");
   if(sidebarBrand)sidebarBrand.textContent=moduleName==="health"?"✚ Dr.Vas Health":"✦ Dr.Vas Free";
   if(currentUser&&previousModule!==moduleName){
