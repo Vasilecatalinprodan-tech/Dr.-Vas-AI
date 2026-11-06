@@ -85,3 +85,17 @@ Additional commits:
 - Corrected the higher-specificity rule to exclude `.health-module-mode` as well. This is necessary because the Health workspace is inside the module selection shell.
 - Commit: `7a1d740d51dec6820446d4d793dc312fe63b1d05`.
 - The browser run #457 started before this last CSS correction; its result must not be used to certify this exact head. A fresh run on the latest PR #39 head is required.
+
+## Shared chat sidebar across all six modules
+- Extended the same left navigation and attachment composer to Studio, Academy, Commerce and Business, not only Free/Health.
+- Premium module workspaces retain their own feature pages; the chat panel now has its own left sidebar with New chat, Images, Scheduled, Library, Plugins, Explore, Projects and Recents.
+- Sidebar branding changes to the active module. Switching modules resets the sidebar to Chat.
+- Mobile premium chat uses the same history drawer behaviour as Free/Health.
+- Added a six-module Playwright regression that checks the same navigation destinations, attachment control, Send button and top/bottom sign-out in each chat.
+- Commits: `9131a909` (shared module state), `e078d94a` (shared sidebar CSS), `20dfb306` (six-module browser regression).
+
+## Latest status
+- PR #39 is the integrated release candidate targeting `main`: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/39
+- The latest confirmed static validation passed for `www/module-workspaces.js`.
+- Browser run #457 (`42292634912`) was still installing Chromium when checked; no Playwright result is claimed yet for the all-six sidebar extension.
+- Production DB migrations, live Health rate-limit verification, merge, Worker/web deploy, smoke test and APK remain outstanding.
