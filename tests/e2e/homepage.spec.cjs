@@ -2366,6 +2366,7 @@ test("Dr.Vas Free mobile sidebar opens as a drawer and remains usable", async ({
   await openApp(page, "ro");
   await page.evaluate(() => {
     currentUser = { id: "e2e-free-mobile-user", email: "mobile@example.invalid" };
+    freeNavLoadScheduled = async () => { const host=freeNavPage("Scheduled","In-app reminders"); host.append("Scheduled reminders"); };
     showModuleSelection();
     selectModule("free", true);
   });
