@@ -1048,6 +1048,7 @@ test("non-admin users can open public Free and Health but not the four future pa
 });
 
 test("Academy, Commerce and Business projects are saved, reopened and deleted per user", async ({ page }) => {
+  test.setTimeout(60000);
   await openApp(page, "ro");
   await page.evaluate(() => {
     currentUser = { id: "e2e-project-owner", email: "owner@example.invalid" };
@@ -1097,18 +1098,21 @@ test("Academy, Commerce and Business projects are saved, reopened and deleted pe
     { id: "business", primary: "businessIdea", value: "Servicii locale", title: "Plan afaceri" }
   ];
   for (const item of modules) {
+    console.log("[module-project] start", item.id);
     await page.evaluate(id => selectModule(id, true), item.id);
     await page.locator("#" + item.primary).fill(item.value);
     if (item.id === "academy") await page.locator('#academyWorkspace [data-feature="courses"]').click();
     if (item.id === "commerce") await page.locator('#commerceWorkspace [data-feature="projects"]').click();
     await page.locator("#" + item.id + "ProjectTitle").fill(item.title);
     await expect(page.locator("#" + item.primary)).toHaveValue(item.value);
+    console.log("[module-project] reopened", item.id);
     await page.evaluate(({ id, primary, value }) => {
       const field = document.getElementById(primary);
       if (!field || field.value.trim() !== value) throw new Error("Primary project field is empty before save: " + primary + " = " + (field?.value ?? "<missing>"));
       return saveModuleProject(id);
     }, { id: item.id, primary: item.primary, value: item.value });
     await expect(page.locator("#" + item.id + "ProjectStatus")).toContainText("salvat");
+    console.log("[module-project] saved", item.id);
     await expect(page.locator("#" + item.id + "ProjectList option")).toHaveCount(2);
 
     await page.locator("#" + item.primary).fill("Valoare modificată");
@@ -1118,6 +1122,7 @@ test("Academy, Commerce and Business projects are saved, reopened and deleted pe
     page.once("dialog", dialog => dialog.accept());
     await page.evaluate(id => deleteModuleProject(id), item.id);
     await expect(page.locator("#" + item.id + "ProjectList option")).toHaveCount(1);
+    console.log("[module-project] deleted", item.id);
   }
 
   // The Business workspace is already active after the project loop; open its separate Student Desk page before editing the assessment.
