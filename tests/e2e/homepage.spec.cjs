@@ -2285,7 +2285,9 @@ test("Dr.Vas Free sidebar destinations open their own truthful views", async ({ 
     showModuleSelection();
     selectModule("free", true);
     window.__freeNavScheduledSource = freeNavLoadScheduled.toString();
+    window.__freeNavPluginsSource = freeNavLoadPlugins.toString();
     freeNavLoadScheduled = async () => { const host=freeNavPage("Scheduled","In-app reminders"); host.append("Scheduled reminders"); };
+    freeNavLoadPlugins = async () => { const host=freeNavPage("Plugins","Integration status"); host.append("Integration status"); };
     freeNavLoadAttachments = async imagesOnly => {
       const host = freeNavPage(imagesOnly ? "Images" : "Library", "Test view");
       const status = document.createElement("div"); status.className = "free-nav-status"; status.textContent = "Test data"; host.appendChild(status);
@@ -2304,7 +2306,12 @@ test("Dr.Vas Free sidebar destinations open their own truthful views", async ({ 
   expect(scheduledSource).toContain("drvas_scheduled_tasks");
   expect(scheduledSource).toContain("drvas_notifications");
   await page.locator('[data-free-nav="plugins"]').click();
-  await expect(page.locator("#freeNavWorkspace")).toContainText("nu există pluginuri externe conectate");
+  await expect(page.locator("#freeNavWorkspace")).toContainText("Integration status");
+  const pluginsSource = await page.evaluate(() => window.__freeNavPluginsSource);
+  expect(pluginsSource).toContain('API_URL+"/health"');
+  expect(pluginsSource).toContain("studio_renderer");
+  expect(pluginsSource).toContain("database");
+  expect(pluginsSource).toContain("nu există încă un catalog de instalare");
 });
 
 test("Free and Health remember separate conversation IDs for the same user", async ({ page }) => {
