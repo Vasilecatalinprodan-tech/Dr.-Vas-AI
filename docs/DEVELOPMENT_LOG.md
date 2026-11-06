@@ -703,3 +703,13 @@ Expanded implementation now on PR #38:
 - Critical release blocker: migrations are committed but not applied to Supabase. Existing Cloudflare deployment workflow does not apply SQL. No Supabase connector is currently available in this session, so do not merge/deploy until the database migrations are applied through an authorised Supabase connection and verified.
 - After database access is available: apply migrations in order; test user-owned RLS and Storage; merge PR #38; allow Cloudflare Worker/static asset deploy and cron trigger to publish; check production /health; perform real desktop/mobile smoke tests; rebuild APK only after web release verification.
 - Founder expressly authorises autonomous merge/deploy after all requirements and release gates pass. No new paid provider services or image-generation spend without explicit approval.
+
+
+## Projects workspace implementation checkpoint — 6 November 2026
+
+- Added a separate owner-scoped `public.drvas_projects` model in `supabase/migrations/202611060004_projects.sql`; it stores title, description, module association, notes, archive state and timestamps independently of chat history.
+- Free Projects now supports create, open, edit/save, rename, archive, restore, delete, and a separate archived-projects view. Existing Studio and module-specific project records remain accessible through separate module shortcuts.
+- The project form limits module options according to the current user's access; every query/update/delete filters by the current user ID and database RLS enforces `auth.uid() = user_id`.
+- Added migration and browser-source tests for standalone project CRUD. Latest relevant E2E run `42287908611` was still running at the time of this note; the previous project-code run `42287773249` passed all 81 Playwright tests. Do not claim the newest added tests pass until run `42287908611` completes.
+- Four additive migrations now accompany PR #38: conversation context (`202611060001`), Scheduled reminders (`202611060002`), independent Library files (`202611060003`), and standalone Projects (`202611060004`). None are applied to live Supabase yet.
+- PR #38 remains open and mergeable; do not merge or deploy until the newest CI run passes and all four SQL migrations are applied and live RLS/Storage behavior is verified.
