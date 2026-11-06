@@ -49,6 +49,7 @@ jobs:
       - name: Validate Worker and browser JavaScript
         run: |
           node --check worker/index.js
+          node --check www/crypto-engine.js
           node <<'NODE'
           const fs = require('fs');
           const vm = require('vm');
