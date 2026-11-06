@@ -2492,3 +2492,42 @@ test("Dr.Vas Health uses the same chat shell, sidebar destinations and attachmen
   expect(layout.transcriptOverflow).toBe("auto");
   expect(layout.composerBottom).toBeLessThanOrEqual(layout.viewportHeight);
 });
+
+
+test("module capabilities open dedicated feature pages instead of one crowded workspace", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-feature-pages-user", email: "owner@example.invalid" };
+    isDrvasAdmin = true;
+    showModuleSelection();
+  });
+
+  await page.evaluate(() => selectModule("studio", true));
+  await expect(page.locator("#studioWorkspace .drvas-feature-navigation")).toBeVisible();
+  await page.locator('#studioWorkspace [data-feature="book"]').click();
+  await expect(page.locator('#studioWorkspace [data-feature-page="book"]')).toBeVisible();
+  await expect(page.locator('#studioWorkspace [data-feature-page="book"] h3')).toHaveText("Cărți și eBookuri");
+  await expect(page.locator("#studioDeliverable")).toHaveValue("book");
+  await page.locator('#studioWorkspace [data-feature="video"]').click();
+  await expect(page.locator('#studioWorkspace [data-feature-page="video"] #studioRenderCreateButton')).toBeVisible();
+  await page.locator('#studioWorkspace [data-feature="projects"]').click();
+  await expect(page.locator('#studioWorkspace [data-feature-page="projects"] #studioSavedProjects')).toBeVisible();
+
+  await page.evaluate(() => selectModule("academy", true));
+  await expect(page.locator("#academyWorkspace .drvas-feature-navigation")).toBeVisible();
+  await page.locator('#academyWorkspace [data-feature="courses"]').click();
+  await expect(page.locator('#academyWorkspace [data-feature-page="courses"] #academyProjectList')).toBeVisible();
+  await expect(page.locator('#academyWorkspace [data-feature-page="course"]')).toBeHidden();
+
+  await page.evaluate(() => selectModule("commerce", true));
+  await expect(page.locator("#commerceWorkspace .drvas-feature-navigation")).toBeVisible();
+  await page.locator('#commerceWorkspace [data-feature="pricing"]').click();
+  await expect(page.locator('#commerceWorkspace [data-feature-page="pricing"] #commerceContribution')).toBeVisible();
+  await expect(page.locator('#commerceWorkspace [data-feature-page="research"]')).toBeHidden();
+
+  await page.evaluate(() => selectModule("business", true));
+  await expect(page.locator("#businessWorkspace .drvas-feature-navigation")).toBeVisible();
+  await page.locator('#businessWorkspace [data-feature="cashbook"]').click();
+  await expect(page.locator('#businessWorkspace [data-feature-page="cashbook"] #businessLedgerRows')).toBeVisible();
+  await expect(page.locator('#businessWorkspace [data-feature-page="plan"]')).toBeHidden();
+});
