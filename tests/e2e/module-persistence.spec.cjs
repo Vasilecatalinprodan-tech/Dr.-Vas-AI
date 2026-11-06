@@ -504,3 +504,49 @@ test("manual replay keeps dedicated assistant audio enabled when auto-read was p
   expect(result.autoReadRemainsOff).toBe(false);
   expect(result.playCount).toBe(1);
 });
+
+
+test("pending assistant TTS audio is discarded after switching assistants", async ({ page }) => {
+  await openApp(page);
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-voice-owner", email: "voice@example.invalid" };
+    activeAssistant = "drvas";
+    voiceAutoRead = true;
+    supabaseClient.auth.getSession = async () => ({
+      data: { session: { access_token: "e2e-access-token" } },
+      error: null
+    });
+    window.__DRVAS_AUDIO_PLAY_COUNT__ = 0;
+    window.fetch = () => new Promise(resolve => {
+      window.__DRVAS_FETCH_PENDING__ = true;
+      window.__DRVAS_RESOLVE_TTS__ = resolve;
+    });
+    window.Audio = class {
+      play() {
+        window.__DRVAS_AUDIO_PLAY_COUNT__++;
+        return Promise.resolve();
+      }
+      pause() {}
+      set src(value) {}
+      set currentTime(value) {}
+    };
+    window.__DRVAS_PENDING_VOICE__ = playAssistantVoice("Voice response pending");
+  });
+
+  await page.waitForFunction(() => window.__DRVAS_FETCH_PENDING__ === true);
+  const result = await page.evaluate(async () => {
+    activeAssistant = "jan";
+    window.__DRVAS_RESOLVE_TTS__({
+      ok: true,
+      blob: async () => new Blob(["mock-audio"], { type: "audio/mpeg" })
+    });
+    await window.__DRVAS_PENDING_VOICE__;
+    return {
+      playCount: window.__DRVAS_AUDIO_PLAY_COUNT__,
+      activeAssistant
+    };
+  });
+
+  expect(result.activeAssistant).toBe("jan");
+  expect(result.playCount).toBe(0);
+});
