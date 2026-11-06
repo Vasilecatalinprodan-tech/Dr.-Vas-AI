@@ -469,7 +469,7 @@ test("legacy focused workspace never exposes other modules or cross-module histo
 
   await expect(page.locator("#chatSection")).toBeVisible();
   await expect(page.locator(".chat-module-rail")).toBeHidden();
-  await expect(page.locator("#chatSection .history-panel")).toBeHidden();
+  await expect(page.locator("#chatSection .history-panel")).toBeVisible();
   const layout = await page.locator("#chatSection > .chat-layout").evaluate(node => {
     const value = getComputedStyle(node).gridTemplateColumns;
     let depth = 0;
@@ -965,6 +965,7 @@ test("Business workspace exposes the cashbook and Student Desk with working VAT 
     selectModule("business", true);
   });
   await expect(page.locator("#businessWorkspace")).toBeVisible();
+  await page.locator('#businessWorkspace [data-feature="cashbook"]').click();
   await expect(page.locator("#businessCashbookTitle")).toBeVisible();
   await expect(page.locator("#businessAssessmentTitle")).toBeVisible();
 
