@@ -85,3 +85,11 @@ Date: 2026-11-06
 - Fișierele `jan.jpg` și `sarah.jpg` NU există încă în repository; de aceea nu s-au rulat verificările finale, nu s-a deschis PR, nu s-a făcut merge și nu s-a făcut deploy. Este intenționat: nu publicăm o versiune care ar afișa fallback în locul portretelor promise.
 - Nu s-au consumat credite suplimentare după cele 8 credite incluse raportate anterior; nu s-a cumpărat nimic.
 - Următorul pas tehnic necesar: obținerea fișierelor binare originale ale celor două imagini printr-un export/descărcare autorizată din Runway (sau prin furnizarea lor ca atașamente de către utilizator). După ce fișierele sunt disponibile local, optimizare și commit, testare E2E, PR, verificări complete, merge și deploy pe main.
+
+
+## Continuarea conversației — instrucțiuni exacte arhivate
+> vezi ca teai blocat reia de unde ai ramas la poze sa dai deploy si merge....si sa continuam....salveaza tot inclusiv chatul
+
+> continue de unde ai ramas si dai si deploy si merge si salveaza tot inclusiv chatul
+
+Aceste solicitări au fost executate în limita accesului tehnic disponibil: task-urile de imagine au fost reluate și au finalizat; importul binar a fost blocat de răspunsul HTTP 401 al URL-urilor temporare; workflow-ul de import a fost șters; nu s-a făcut merge/deploy pentru a nu publica portrete inexistente. Starea și motivul blocajului sunt păstrate mai sus în această arhivă și în status/handoff/development log.
