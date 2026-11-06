@@ -259,7 +259,7 @@ function rateLimitResponse(headers, rateLimit) {
 
 
 async function processDrVasScheduledReminders(env) {
-  const supabaseUrl = String(env.SUPABASE_URL || "").replace(/\\/+$/, "");
+  const supabaseUrl = String(env.SUPABASE_URL || "").replace(/\/+$/, "");
   const serviceKey = env.SUPABASE_KEY;
   if (!supabaseUrl || !serviceKey) throw new Error("Supabase service configuration is missing for scheduled reminders.");
   const headers = {
