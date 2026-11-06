@@ -1430,6 +1430,10 @@ body.presentation-open{overflow:hidden!important}
       <div><small>Căldură disipată</small><strong id="cryptoHeatLoad">—</strong></div>
      </div>
      <p id="cryptoCalcNotice" class="admin-footnote" role="status">Calcul demonstrativ. Mining-ul și tranzacționarea rămân dezactivate.</p>
+     <div class="income-actions">
+      <button type="button" onclick="exportCryptoMiningReport()">Exportă raportul scenariului (JSON)</button>
+      <span id="cryptoReportNotice" class="admin-footnote" role="status">Raportul include ipotezele, formulele și rezultatele afișate; nu execută mining.</span>
+     </div>
     </div>
    </section>
    <section class="founder-workbench" aria-labelledby="founderProductionHeading">
@@ -4415,6 +4419,48 @@ function calculateCryptoMiningEconomics(){
  const annualEnergyNode=el("cryptoAnnualEnergyCost");if(annualEnergyNode)annualEnergyNode.textContent=money(energy*365);
  const heatNode=el("cryptoHeatLoad");if(heatNode)heatNode.textContent=((watts+cooling)*3.412).toLocaleString("en-GB",{maximumFractionDigits:0})+" BTU/h";
  if(notice)notice.textContent=net>0?"Scenariu orientativ după energie, răcire, indisponibilitate, mentenanță și rezerva fiscală introdusă. Pragurile BTC/energie sunt matematice, nu predicții. Nu includ toate taxele, amortizarea, dificultatea rețelei sau volatilitatea BTC.":"În acest scenariu, costurile depășesc venitul estimat. Nu cumpăra echipament pe baza acestui calcul.";
+}
+
+
+function exportCryptoMiningReport(){
+ if(!isDrvasAdmin){const notice=el("cryptoReportNotice");if(notice)notice.textContent="Acces rezervat administratorului.";return;}
+ const ids=["cryptoBtcPerDay","cryptoBtcPrice","cryptoPowerWatts","cryptoCoolingWatts","cryptoElectricityRate","cryptoPoolFee","cryptoHardwareCost","cryptoMaintenanceMonthly","cryptoDowntime","cryptoTaxReserve","cryptoBearRevenue","cryptoBaseRevenue","cryptoBullRevenue","cryptoBearPower","cryptoBullPower"];
+ const assumptions={};
+ for(const id of ids){
+  const node=el(id);
+  if(!node){const notice=el("cryptoReportNotice");if(notice)notice.textContent="Nu pot construi raportul: lipsește câmpul "+id+".";return;}
+  const value=Number(node.value);
+  if(!Number.isFinite(value)||value<0){const notice=el("cryptoReportNotice");if(notice)notice.textContent="Verifică valorile numerice înainte de export.";return;}
+  assumptions[id]=value;
+ }
+ const report={
+  product:"Dr.Vas Crypto & Mining — scenario report",
+  generated_at:new Date().toISOString(),
+  currency:"GBP",
+  assumptions,
+  results:{
+   gross_daily:el("cryptoGrossDaily")?.textContent||"",
+   electricity_daily:el("cryptoEnergyDaily")?.textContent||"",
+   pool_fee_daily:el("cryptoPoolDaily")?.textContent||"",
+   net_daily:el("cryptoNetDaily")?.textContent||"",
+   net_30_days:el("cryptoNetMonthly")?.textContent||"",
+   net_annual:el("cryptoNetAnnual")?.textContent||"",
+   equipment_payback:el("cryptoPayback")?.textContent||"",
+   break_even_btc_price:el("cryptoBreakEvenBtc")?.textContent||"",
+   maximum_electricity_tariff:el("cryptoMaxElectricity")?.textContent||"",
+   monthly_energy_kwh:el("cryptoMonthlyKwh")?.textContent||"",
+   annual_energy_cost:el("cryptoAnnualEnergyCost")?.textContent||"",
+   estimated_heat_load:el("cryptoHeatLoad")?.textContent||"",
+   sensitivity:{bear:el("cryptoScenarioBear")?.textContent||"",base:el("cryptoScenarioBase")?.textContent||"",bull:el("cryptoScenarioBull")?.textContent||""}
+  },
+  methodology:"Manual-input scenario only. Daily gross revenue = BTC/day after downtime × user-entered BTC price. Daily energy cost = (miner watts + cooling watts)/1000 × 24 × electricity tariff. Pool fee, daily maintenance and user-entered tax reserve are deducted. Sensitivity multipliers are user-entered assumptions.",
+  limitations:["No live BTC price, network difficulty, block reward or pool data.","No hardware depreciation, financing, hosting, insurance or complete tax calculation unless represented in user inputs.","No prediction, investment advice or guaranteed return.","No mining process, wallet, exchange, transfer, trade or device compute is started."]
+ };
+ const blob=new Blob([JSON.stringify(report,null,2)],{type:"application/json;charset=utf-8"});
+ const url=URL.createObjectURL(blob),link=document.createElement("a");
+ link.href=url;link.download="drvas-bitcoin-scenario-"+new Date().toISOString().slice(0,10)+".json";
+ document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);
+ const notice=el("cryptoReportNotice");if(notice)notice.textContent="Raport JSON exportat. Păstrează-l în arhiva ta; este un scenariu cu ipoteze manuale, nu o prognoză.";
 }
 
 async function loadCryptoDevices(){
