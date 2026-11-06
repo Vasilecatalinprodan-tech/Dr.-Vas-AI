@@ -77,3 +77,22 @@ The user reiterated that development should continue across all repository branc
 ## Cost restriction carried forward
 
 No paid services, new subscriptions, usage-based render jobs, voice credits, or APK replacement are authorized. Continue with repository changes, local/browser tests, security review and documentation only.
+
+
+## User instruction — 2026-11-06 (continued development)
+
+> „continua dezvoltarea pe toate ramurile....salveaza tot inclusiv chatul”
+
+The founder asked to continue the full Dr.Vas development and preserve all work and the current conversation. The zero-new-cost restriction from the preceding instruction remains active.
+
+## Follow-up actions in this continuation
+
+- Rechecked the repository inventory and confirmed PR #7 is merged at `c194068c4e13bc3c69ccf2208d67ed13db45ec46`. This supersedes the earlier archive note that described PR #7 as open/draft. The live Supabase migration, privacy/compliance review and Health-analysis feature flag remain outstanding; do not enable the feature.
+- Reconfirmed the eight-branch audit and safe integration policy. Continue on `drvas-integrated-platform`; preserve divergent legacy branches and advance `main` only after successful CI.
+- Reviewed the shared project save/export implementation for Academy, Commerce and Business.
+- Added Commerce and Business E2E regressions for updating an existing owner-scoped project with the latest AI output, and for Markdown export containing the module brief and latest AI output.
+- Code commit: `7c8e6b89d97fd8b2e22d9b6577fc484e3d96fb15`.
+- At the last check, workflow #478 / run `42187371574` was still installing Chromium; the newly added tests had no completed CI result yet. No test success is claimed until a completed run is inspected.
+- No paid services, secrets, Supabase SQL, feature flags, production APK or installed device app were changed.
+
+This archive preserves the instruction, decisions and technical actions from this continuation; it is not a verbatim export of the ChatGPT transcript. The original conversation remains in ChatGPT history.
