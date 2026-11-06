@@ -1556,3 +1556,112 @@ test("server-side assistant TTS still works when browser speech synthesis is una
   expect(requests[0].assistant).toBe("drvas");
   await expect(page.locator("#voiceStatus")).not.toContainText("unsupported");
 });
+
+
+test("public dashboard exposes exactly six customer modules while internal workbenches stay inside the hidden admin centre", async ({ page }) => {
+  await openApp(page, "ro");
+
+  const publicModuleIds = await page.locator("#moduleSelectionSection .module-card").evaluateAll(cards =>
+    cards.map(card => card.getAttribute("data-module"))
+  );
+  expect(publicModuleIds).toEqual(["free", "health", "studio", "academy", "commerce", "business"]);
+  await expect(page.locator('#moduleSelectionSection [data-module="crypto"]')).toHaveCount(0);
+  await expect(page.locator("#adminPanel")).toBeHidden();
+
+  const internalWorkbenchState = await page.locator("#adminPanel").evaluate(panel => ({
+    cryptoInsideAdmin: Boolean(panel.querySelector("#cryptoAdminHeading")),
+    creatorLabInsideAdmin: Array.from(panel.querySelectorAll("h4, h5")).some(node => node.textContent.includes("Creator & Online Income Lab")),
+    evaluationLabInsideAdmin: Array.from(panel.querySelectorAll("h5")).some(node => node.textContent.includes("AI Evaluation & Training Lab")),
+    digitalProductStudioInsideAdmin: Array.from(panel.querySelectorAll("h5")).some(node => node.textContent.includes("Digital Product Studio")),
+    founderProvenanceInsideAdmin: Boolean(panel.querySelector("#founderProvenanceHeading")),
+    workbenchCount: panel.querySelectorAll(".founder-tool").length
+  }));
+  expect(internalWorkbenchState).toMatchObject({
+    cryptoInsideAdmin: true,
+    creatorLabInsideAdmin: true,
+    evaluationLabInsideAdmin: true,
+    digitalProductStudioInsideAdmin: true,
+    founderProvenanceInsideAdmin: true
+  });
+  expect(internalWorkbenchState.workbenchCount).toBeGreaterThanOrEqual(10);
+});
+
+
+test("hidden founder workbench briefs are persisted to their matching private module before chat handoff", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(async () => {
+    currentUser = { id: "e2e-founder-workbench", email: "founder@example.invalid" };
+    isDrvasAdmin = true;
+    const calls = [];
+    window.__DRVAS_FOUNDER_WORKBENCH_SAVES__ = calls;
+    selectModule = () => {};
+    submitModuleBrief = (prompt) => calls.push({ handoff: prompt });
+    saveStudioProject = async () => {
+      calls.push({
+        save: "studio",
+        title: document.getElementById("studioProjectTitle").value,
+        deliverable: document.getElementById("studioDeliverable").value,
+        brief: document.getElementById("studioIdea").value
+      });
+      return true;
+    };
+    saveModuleProject = async (module) => {
+      calls.push({
+        save: module,
+        title: document.getElementById(module + "ProjectTitle").value,
+        primary: document.getElementById(module === "academy" ? "academySubject" : "businessIdea").value,
+        brief: document.getElementById(module === "academy" ? "academyBrief" : "businessBrief").value
+      });
+      return true;
+    };
+
+    await launchFounderWorkbenchPrompt("studio", "DR.VAS CONTENT & CAMPAIGN PLANNER\nCampaign brief", "Ready");
+    await launchFounderWorkbenchPrompt("academy", "DR.VAS AI EVALUATION & TRAINING LAB\nEvaluation brief", "Ready");
+    await launchFounderWorkbenchPrompt("business", "DR.VAS BUSINESS OPERATIONS PLANNER\nOperations brief", "Ready");
+    return calls;
+  });
+
+  const studio = result.find(item => item.save === "studio");
+  const academy = result.find(item => item.save === "academy");
+  const business = result.find(item => item.save === "business");
+  expect(studio).toMatchObject({
+    title: "CONTENT & CAMPAIGN PLANNER",
+    deliverable: "article",
+    brief: "DR.VAS CONTENT & CAMPAIGN PLANNER\nCampaign brief"
+  });
+  expect(academy).toMatchObject({
+    title: "AI EVALUATION & TRAINING LAB",
+    primary: "AI EVALUATION & TRAINING LAB",
+    brief: "DR.VAS AI EVALUATION & TRAINING LAB\nEvaluation brief"
+  });
+  expect(business).toMatchObject({
+    title: "BUSINESS OPERATIONS PLANNER",
+    primary: "BUSINESS OPERATIONS PLANNER",
+    brief: "DR.VAS BUSINESS OPERATIONS PLANNER\nOperations brief"
+  });
+  expect(result.filter(item => item.handoff)).toHaveLength(3);
+});
+
+
+test("hidden founder workbench reports a private-save failure instead of claiming success", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(async () => {
+    currentUser = { id: "e2e-founder-workbench", email: "founder@example.invalid" };
+    isDrvasAdmin = true;
+    const calls = [];
+    selectModule = () => {};
+    submitModuleBrief = prompt => calls.push({ handoff: prompt });
+    saveModuleProject = async module => {
+      calls.push({ saveAttempt: module });
+      return false;
+    };
+    const notices = [];
+    founderWorkbenchMessage = (message, isError = false) => notices.push({ message, isError });
+    await launchFounderWorkbenchPrompt("academy", "DR.VAS AI EVALUATION & TRAINING LAB\nEvaluation brief", "Ready");
+    return { calls, notices };
+  });
+  expect(result.calls).toContainEqual({ saveAttempt: "academy" });
+  expect(result.calls).toContainEqual({ handoff: "DR.VAS AI EVALUATION & TRAINING LAB\nEvaluation brief" });
+  expect(result.notices.at(-1)).toMatchObject({ isError: true });
+  expect(result.notices.at(-1).message).toContain("salvarea nu a fost confirmată");
+});
