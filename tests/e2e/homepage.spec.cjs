@@ -666,7 +666,7 @@ test("text chat request carries the selected module and Worker has dedicated mod
   expect(workerSource).not.toContain('const privatePilotModules = new Set(["health", "studio", "academy", "commerce", "business"]);');
 });
 
-test("mobile Free chat stays simple and offers only module navigation and logout", async ({ page }) => {
+test("mobile Free chat offers its sidebar drawer and logout", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openApp(page, "ro");
   await page.evaluate(() => {
@@ -681,7 +681,7 @@ test("mobile Free chat stays simple and offers only module navigation and logout
   await expect(page.locator(".chat-back-button")).toBeVisible();
   await expect(page.locator("#globalLogoutTop")).toBeVisible();
   await expect(page.locator("#globalLogoutBottom")).toBeVisible();
-  await expect(page.locator(".chat-history-toggle")).toBeHidden();
+  await expect(page.locator(".chat-history-toggle")).toBeVisible();
   await expect(page.locator(".assistant-switcher")).toBeHidden();
   await expect(page.locator(".chat-module-rail")).toBeHidden();
   await page.locator(".chat-back-button").click();
