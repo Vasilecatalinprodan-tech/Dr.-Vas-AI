@@ -2333,3 +2333,45 @@ test("Free and Health remember separate conversation IDs for the same user", asy
   expect(ids.freeStored).toBe("free-thread-1");
   expect(ids.healthStored).toBe(ids.healthId);
 });
+
+
+test("Dr.Vas Free transcript keeps its own scroll and does not yank users reading older messages", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-free-scroll-user", email: "scroll@example.invalid" };
+    showModuleSelection();
+    selectModule("free", true);
+    const chat = el("chat");
+    chat.replaceChildren();
+    for (let i = 0; i < 40; i++) appendMessage("assistant", "Mesaj de test " + i + " cu text pentru a umple istoricul.");
+    chat.scrollTop = 0;
+    appendMessage("assistant", "Mesaj nou în timp ce utilizatorul citește istoricul.");
+  });
+  const state = await page.locator("#freeChatView>#chat").evaluate(node => ({
+    scrollTop: node.scrollTop,
+    scrollHeight: node.scrollHeight,
+    clientHeight: node.clientHeight,
+    pageScroll: document.scrollingElement.scrollTop
+  }));
+  expect(state.scrollTop).toBe(0);
+  expect(state.scrollHeight).toBeGreaterThan(state.clientHeight);
+  expect(state.pageScroll).toBe(0);
+});
+
+test("Dr.Vas Free mobile sidebar opens as a drawer and remains usable", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-free-mobile-user", email: "mobile@example.invalid" };
+    showModuleSelection();
+    selectModule("free", true);
+  });
+  await expect(page.locator("#chatSection .history-panel")).toBeHidden();
+  await expect(page.locator(".chat-history-toggle")).toBeVisible();
+  await page.locator(".chat-history-toggle").click();
+  await expect(page.locator("#chatSection .history-panel")).toBeVisible();
+  await page.locator('[data-free-nav="scheduled"]').click();
+  await expect(page.locator("#freeNavWorkspace h2")).toHaveText("Scheduled");
+  await expect(page.locator("#chatSection .history-panel")).toBeHidden();
+});
