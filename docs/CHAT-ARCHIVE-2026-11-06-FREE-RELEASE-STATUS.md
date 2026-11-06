@@ -76,3 +76,5 @@ Resume from PR #38 and this checkpoint. Do not ask the founder to repeat any Fre
 - Added Playwright coverage for Explore access states and the Images capability disclosure. Workflow run 42289446602 was pending at checkpoint time on commit c0b748d8bf6e06dc0c11a1c003857ab602e2c9ac; wait for it to complete and inspect the test result before release.
 - The previous code run 42287129054 passed 81/81 Playwright tests on code commit 5d21479d3ab67270394b5f024afde3914125442e. Later changes above require their own green run.
 - PR #38 remains open. No Supabase migrations have been applied. Do not merge/deploy until live database verification and all release gates are complete.
+
+- Added an additional Playwright check on commit c7c917d31f07e083e64682e3928a42e233692fef: mobile Free viewport bounds, transcript-only scrolling, composer remaining in viewport, and attachment button immediately adjacent to Send. Latest run `42289628358` was pending at checkpoint time; inspect it before release.
