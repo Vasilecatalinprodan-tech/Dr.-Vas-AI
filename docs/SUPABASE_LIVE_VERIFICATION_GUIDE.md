@@ -61,3 +61,32 @@ Do not rerun the migration merely because this checklist remains open; it is des
 - The shared project table supports all three modules.
 - When the user already has a saved project open, the frontend now writes each new AI reply back into that existing project together with its current brief. A new project is not created automatically for every chat; the user can still choose when to save a new draft.
 - The UI also supports listing, reopening, exporting and deleting each module project. Verify these actions in the live Supabase project after running the read-only checks, including a second disposable account to confirm owner isolation.
+
+
+## 2026-11-06 — Dr.Vas Free chat, Scheduled, Library and Projects migrations
+
+The Free sidebar and its independent workspaces now require these additive migrations, in this order, after confirming the earlier migration history is current:
+
+1. `supabase/migrations/202611060001_conversation_context.sql`
+   - Adds nullable `module`, `conversation_kind` and `feature_key` to `drvas_conversation_metadata`.
+   - Existing rows intentionally remain NULL/unclassified. Do not bulk assign legacy conversations to Free or another module.
+   - Confirm owner-scoped RLS and authenticated grants from the existing conversation metadata migration remain unchanged.
+2. `supabase/migrations/202611060002_scheduled_reminders.sql`
+   - Creates owner-scoped `drvas_scheduled_tasks` and `drvas_notifications`.
+   - Notifications are inserted by the Worker service role; authenticated clients cannot insert notifications directly.
+   - Cloudflare Cron checks due one-time reminders every five minutes. Notifications are in-app only.
+3. `supabase/migrations/202611060003_library_items.sql`
+   - Creates owner-scoped `drvas_library_items`.
+   - Verify the private `drvas-media` bucket remains private and the existing storage object policy allows only the authenticated user's first path segment. Library objects use `{user_id}/library/...`.
+4. `supabase/migrations/202611060004_projects.sql`
+   - Creates owner-scoped `drvas_projects` for standalone Free projects, notes, module association and archive state.
+
+### Verification after applying
+
+- Confirm all three new tables (`drvas_scheduled_tasks`, `drvas_notifications`, `drvas_library_items`, `drvas_projects`) exist and have RLS enabled.
+- Confirm each table's policies use `auth.uid() = user_id`; confirm authenticated notification INSERT is revoked.
+- Confirm `drvas_conversation_metadata` has the three new context columns and legacy rows remain NULL unless explicitly classified by the owner.
+- Confirm `drvas_library_items.storage_path` is constrained to the current owner's `/library/` folder and signed URLs cannot be created by another account.
+- Use two disposable accounts to test create/list/open/update/archive/delete for reminders, Library items and standalone Projects; verify neither account can access the other's rows or Storage objects.
+- Test a due reminder through the actual Cloudflare Cron and confirm one in-app notification is created once, then the task is completed.
+- Do not merge/deploy PR #38 until this database verification is complete. The current Cloudflare deploy workflow does not execute Supabase SQL migrations.

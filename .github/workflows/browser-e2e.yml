@@ -17,7 +17,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: drvas-browser-e2e-${{ github.ref }}
+  group: drvas-browser-e2e-${{ github.ref }}-${{ github.event.pull_request.head.sha || github.sha }}
   cancel-in-progress: false
 
 jobs:
@@ -37,6 +37,7 @@ jobs:
         run: |
           node --check worker/index.js
           node --check www/crypto-engine.js
+          node --check www/module-workspaces.js
           node <<'NODE'
           const fs = require('fs');
           const vm = require('vm');
@@ -68,11 +69,32 @@ jobs:
           console.log(`Validated Worker, ${scripts.length} inline script(s), private attachment migration, and consent withdrawal routes.`);
           NODE
 
+      - name: Verify production migration gate precedes Worker deployment
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const workflow = fs.readFileSync('.github/workflows/deploy-worker.yml', 'utf8');
+          const android = fs.readFileSync('.github/workflows/android.yml', 'utf8');
+          const migration = workflow.indexOf('Link and apply pending Supabase migrations');
+          const healthCheck = workflow.indexOf('Verifying the Health rate-limit RPC and its security grants:');
+          const deploy = workflow.indexOf('Deploy Worker');
+          for (const marker of ['SUPABASE_ACCESS_TOKEN', 'SUPABASE_DB_PASSWORD', 'supabase db push --linked --yes', 'supabase/diagnostics/VERIFY_RATE_LIMITS.sql', 'rate_limit_setup_ok']) {
+            if (!workflow.includes(marker)) throw new Error('Production migration/Health verification gate is missing: ' + marker);
+          }
+          if (migration < 0 || healthCheck < migration || deploy < healthCheck) {
+            throw new Error('Supabase migrations and Health rate-limit verification must both pass before Cloudflare Worker deployment.');
+          }
+          if (!android.includes('node --check www/module-workspaces.js') || !android.includes('./gradlew assembleDebug') || !android.includes('name: DrVas-APK')) {
+            throw new Error('Android APK workflow must validate module workspaces and upload a fresh APK artifact.');
+          }
+          console.log('Verified: migrations and Health rate-limit RPC checks gate Worker deployment; Android APK workflow is configured.');
+          NODE
+
       - name: Install browser test runner
         run: npm install --no-save --package-lock=false --save-exact @playwright/test@1.64.1 playwright-core@1.64.1
 
       - name: Install Chromium
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install --with-deps --only-shell chromium
 
       - name: Start local static site
         run: |

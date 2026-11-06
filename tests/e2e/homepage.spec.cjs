@@ -323,7 +323,8 @@ test("desktop module opens one isolated full-width workspace without the global 
   await expect(page.locator("#moduleSelectionSection > .modules-grid")).toBeHidden();
   await expect(page.locator(".chat-module-rail")).toBeHidden();
   await expect(page.locator("#question")).toBeVisible();
-  await expect(page.locator(".chat-back-button")).toContainText("Înapoi la module");
+  await expect(page.locator("#globalBackToModules")).toBeVisible();
+  await expect(page.locator("#globalBackToModules")).toContainText("Înapoi la module");
   await expect(page.locator("#globalLogoutTop")).toBeVisible();
   await expect(page.locator("#globalLogoutBottom")).toBeVisible();
   await expect(page.locator(".chat-module-rail")).toBeHidden();
@@ -346,7 +347,7 @@ test("each premium module shows only its own tools and keeps the other module wo
     await page.evaluate(name => selectModule(name, true), moduleName);
     await expect(page.locator("#moduleSelectionSection > .modules-grid")).toBeHidden();
     await expect(page.locator(".chat-module-rail")).toBeHidden();
-    await expect(page.locator("#chatSection .history-panel")).toBeHidden();
+    await expect(page.locator("#chatSection .history-panel")).toBeVisible();
     await expect(page.locator("#globalLogoutTop")).toBeVisible();
     await expect(page.locator("#globalLogoutBottom")).toBeVisible();
     for (const otherModule of modules) {
@@ -468,7 +469,7 @@ test("legacy focused workspace never exposes other modules or cross-module histo
 
   await expect(page.locator("#chatSection")).toBeVisible();
   await expect(page.locator(".chat-module-rail")).toBeHidden();
-  await expect(page.locator("#chatSection .history-panel")).toBeHidden();
+  await expect(page.locator("#chatSection .history-panel")).toBeVisible();
   const layout = await page.locator("#chatSection > .chat-layout").evaluate(node => {
     const value = getComputedStyle(node).gridTemplateColumns;
     let depth = 0;
@@ -486,7 +487,7 @@ test("legacy focused workspace never exposes other modules or cross-module histo
     }
     return { value, count };
   });
-  expect(layout.count, `Expected one grid track, received "${layout.value}"`).toBe(1);
+  expect(layout.count, `Expected the shared sidebar and one chat track, received "${layout.value}"`).toBe(2);
 });
 
 test("clicking a module as a visitor opens the sign-in gate and preserves the selected module", async ({ page }) => {
@@ -524,7 +525,7 @@ for (const [moduleId, workspaceId] of [
       ({free:"Dr.Vas Free",health:"Dr.Vas Health",studio:"Dr.Vas Studio",academy:"Dr.Vas Academy",commerce:"Dr.Vas Commerce",business:"Dr.Vas Business"})[moduleId]
     );
     if (workspaceId) await expect(page.locator(`#${workspaceId}`)).toBeVisible();
-    await expect(page.locator(".chat-back-button")).toBeVisible();
+    await expect(page.locator("#globalBackToModules")).toBeVisible();
     await expect(page.locator("#globalLogoutTop")).toBeVisible();
   await expect(page.locator("#globalLogoutBottom")).toBeVisible();
     expect(await page.evaluate(() => document.body.classList.contains("module-workspace-mode"))).toBe(true);
@@ -666,7 +667,7 @@ test("text chat request carries the selected module and Worker has dedicated mod
   expect(workerSource).not.toContain('const privatePilotModules = new Set(["health", "studio", "academy", "commerce", "business"]);');
 });
 
-test("mobile Free chat stays simple and offers only module navigation and logout", async ({ page }) => {
+test("mobile Free chat offers its sidebar drawer and logout", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openApp(page, "ro");
   await page.evaluate(() => {
@@ -678,13 +679,13 @@ test("mobile Free chat stays simple and offers only module navigation and logout
 
   await expect(page.locator("#chatSection")).toBeVisible();
   await expect(page.locator("#question")).toBeVisible();
-  await expect(page.locator(".chat-back-button")).toBeVisible();
+  await expect(page.locator("#globalBackToModules")).toBeVisible();
   await expect(page.locator("#globalLogoutTop")).toBeVisible();
   await expect(page.locator("#globalLogoutBottom")).toBeVisible();
-  await expect(page.locator(".chat-history-toggle")).toBeHidden();
+  await expect(page.locator(".chat-history-toggle")).toBeVisible();
   await expect(page.locator(".assistant-switcher")).toBeHidden();
   await expect(page.locator(".chat-module-rail")).toBeHidden();
-  await page.locator(".chat-back-button").click();
+  await page.locator("#globalBackToModules").click();
   await expect(page.locator("#chatSection")).toBeHidden();
   await expect(page.locator("#moduleSelectionShell")).toBeVisible();
 });
@@ -931,14 +932,16 @@ test("Studio creates a branded MP4 render request and restores a private complet
     selectModule("studio", true);
   });
   await expect(page.locator("#studioWorkspace")).toBeVisible();
-  await expect(page.locator("#studioRenderTitle")).toBeVisible();
+  await page.locator('#studioWorkspace [data-feature="projects"]').click();
   await expect(page.locator("#studioProjectStatus")).toContainText("Studio este pregătit");
+  await page.locator("#studioProjectTitle").fill("Dr.Vas — primul teaser");
+  await page.locator('#studioWorkspace [data-feature="video"]').click();
+  await expect(page.locator("#studioRenderTitle")).toBeVisible();
   await page.locator("#studioSceneAudio").setInputFiles({
     name: "voice.mp3",
     mimeType: "audio/mpeg",
     buffer: Buffer.from("e2e-audio")
   });
-  await page.locator("#studioProjectTitle").fill("Dr.Vas — primul teaser");
   await page.evaluate(async () => { await renderStudioVideo(); });
   await expect(page.locator("#studioRenderStatus")).toContainText("Randarea a pornit");
   expect(createPayload.action).toBe("studio_render_create");
@@ -964,8 +967,8 @@ test("Business workspace exposes the cashbook and Student Desk with working VAT 
     selectModule("business", true);
   });
   await expect(page.locator("#businessWorkspace")).toBeVisible();
+  await page.locator('#businessWorkspace [data-feature="cashbook"]').click();
   await expect(page.locator("#businessCashbookTitle")).toBeVisible();
-  await expect(page.locator("#businessAssessmentTitle")).toBeVisible();
 
   const accounting = await page.evaluate(() => {
     businessLedgerState.rows = [
@@ -987,6 +990,7 @@ test("Business workspace exposes the cashbook and Student Desk with working VAT 
   expect(accounting.vat).toContain("10");
   expect(accounting.rows).toBe(2);
 
+  await page.locator('#businessWorkspace [data-feature="break-even"]').click();
   await page.locator("#businessFixedCosts").fill("1000");
   await page.locator("#businessUnitPrice").fill("50");
   await page.locator("#businessVariableCost").fill("25");
@@ -996,6 +1000,8 @@ test("Business workspace exposes the cashbook and Student Desk with working VAT 
   await expect(page.locator("#businessContributionMargin")).toContainText("50.0%");
   await expect(page.locator("#businessExpectedProfit")).toContainText("250");
 
+  await page.locator('#businessWorkspace [data-feature="student"]').click();
+  await expect(page.locator("#businessAssessmentTitle")).toBeVisible();
   await page.locator("#studentAssessmentSubject").fill("Business Management");
   await page.locator("#studentAssessmentBrief").fill("Evaluate a business strategy using evidence.");
   await page.locator("#studentAssessmentDraft").fill("My draft explains the strategy and its limitations.");
@@ -1042,6 +1048,7 @@ test("non-admin users can open public Free and Health but not the four future pa
 });
 
 test("Academy, Commerce and Business projects are saved, reopened and deleted per user", async ({ page }) => {
+  test.setTimeout(60000);
   await openApp(page, "ro");
   await page.evaluate(() => {
     currentUser = { id: "e2e-project-owner", email: "owner@example.invalid" };
@@ -1091,28 +1098,39 @@ test("Academy, Commerce and Business projects are saved, reopened and deleted pe
     { id: "business", primary: "businessIdea", value: "Servicii locale", title: "Plan afaceri" }
   ];
   for (const item of modules) {
+    console.log("[module-project] start", item.id);
     await page.evaluate(id => selectModule(id, true), item.id);
-    await page.locator("#" + item.id + "ProjectTitle").fill(item.title);
     await page.locator("#" + item.primary).fill(item.value);
+    if (item.id === "academy") await page.locator('#academyWorkspace [data-feature="courses"]').click();
+    if (item.id === "commerce") await page.locator('#commerceWorkspace [data-feature="projects"]').click();
+    await page.locator("#" + item.id + "ProjectTitle").fill(item.title);
     await expect(page.locator("#" + item.primary)).toHaveValue(item.value);
+    console.log("[module-project] reopened", item.id);
     await page.evaluate(({ id, primary, value }) => {
       const field = document.getElementById(primary);
       if (!field || field.value.trim() !== value) throw new Error("Primary project field is empty before save: " + primary + " = " + (field?.value ?? "<missing>"));
       return saveModuleProject(id);
     }, { id: item.id, primary: item.primary, value: item.value });
     await expect(page.locator("#" + item.id + "ProjectStatus")).toContainText("salvat");
+    console.log("[module-project] saved", item.id);
     await expect(page.locator("#" + item.id + "ProjectList option")).toHaveCount(2);
 
+    if (item.id === "academy") await page.locator('#academyWorkspace [data-feature="course"]').click();
+    if (item.id === "commerce") await page.locator('#commerceWorkspace [data-feature="research"]').click();
     await page.locator("#" + item.primary).fill("Valoare modificată");
+    if (item.id === "academy") await page.locator('#academyWorkspace [data-feature="courses"]').click();
+    if (item.id === "commerce") await page.locator('#commerceWorkspace [data-feature="projects"]').click();
     await page.evaluate(id => openModuleProject(id), item.id);
     await expect(page.locator("#" + item.primary)).toHaveValue(item.value);
 
     page.once("dialog", dialog => dialog.accept());
     await page.evaluate(id => deleteModuleProject(id), item.id);
     await expect(page.locator("#" + item.id + "ProjectList option")).toHaveCount(1);
+    console.log("[module-project] deleted", item.id);
   }
 
-  // The Business workspace is already active after the project loop; avoid re-entering it while its project list refresh is still resolving.
+  // The Business workspace is already active after the project loop; open its separate Student Desk page before editing the assessment.
+  await page.locator('#businessWorkspace [data-feature="student"]').click();
   await page.locator("#studentAssessmentSubject").fill("Business Management");
   await page.locator("#studentAssessmentBrief").fill("Assess a business strategy using evidence.");
   await page.locator("#studentAssessmentRubric").fill("Analysis 40%, evidence 30%, structure 30%.");
@@ -1193,8 +1211,10 @@ test("Business cashbook monthly cashflow report summarizes and filters saved tra
     selectModule("business", true);
   });
   await expect(page.locator("#businessWorkspace")).toBeVisible();
+  await page.locator('#businessWorkspace [data-feature="cashbook"]').click();
   // Wait for the workspace's asynchronous cashbook load to finish before seeding test rows.
   await expect(page.locator("#businessLedgerStatus")).toContainText("Registru încărcat");
+  await page.locator('#businessWorkspace [data-feature="cashflow"]').click();
   await page.evaluate(() => {
     const today = new Date();
     const monthDate = offset => {
@@ -2205,12 +2225,14 @@ test("authenticated users can always sign out from the global top header and tru
   await openApp(page, "ro");
   await expect(page.locator("#globalLogoutTop")).toBeHidden();
   await expect(page.locator("#globalLogoutBottom")).toBeHidden();
+  await expect(page.locator("#globalBackToModules")).toBeHidden();
   await page.evaluate(() => {
     currentUser = { id: "e2e-global-logout-user", email: "user@example.invalid" };
     syncGlobalLogoutControls();
   });
   await expect(page.locator("#globalLogoutTop")).toBeVisible();
   await expect(page.locator("#globalLogoutBottom")).toBeVisible();
+  await expect(page.locator("#globalBackToModules")).toBeHidden();
   const positions = await page.evaluate(() => ({
     top: document.querySelector("#globalLogoutTop").getBoundingClientRect().top,
     bottom: document.querySelector("#globalLogoutBottom").getBoundingClientRect().bottom,
@@ -2243,6 +2265,384 @@ test("global logout stays available while moving through all six module workspac
     await page.evaluate(module => selectModule(module), moduleName);
     await expect(page.locator("#globalLogoutTop"), moduleName + " top logout").toBeVisible();
     await expect(page.locator("#globalLogoutBottom"), moduleName + " bottom logout").toBeVisible();
+    await expect(page.locator("#globalBackToModules"), moduleName + " back to modules").toBeVisible();
     expect(await page.evaluate(() => activeModule)).toBe(moduleName);
   }
+});
+
+
+test("Dr.Vas Free uses a viewport chat shell with the requested sidebar and attachment control", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-free-shell-user", email: "free@example.invalid" };
+    isDrvasAdmin = false;
+    showModuleSelection();
+    selectModule("free", true);
+  });
+  await expect(page.locator("#chatSection .history-panel")).toBeVisible();
+  const labels = await page.locator("[data-free-nav]").allTextContents();
+  expect(labels.map(value => value.trim())).toEqual(["＋New chat","▧Images","◷Scheduled","▤Library","⌘Plugins","✧Explore","▣Projects","View all"]);
+  await expect(page.locator(".free-recents-heading")).toContainText("Recents");
+  await expect(page.locator("#freeChatView .input-area .chat-file-button")).toBeVisible();
+  await expect(page.locator("#sendButton")).toContainText("Trimite");
+  const layout = await page.evaluate(() => ({
+    bodyOverflow: getComputedStyle(document.body).overflowY,
+    mainHeight: document.querySelector("main").getBoundingClientRect().height,
+    viewportHeight: innerHeight,
+    chatOverflow: getComputedStyle(document.querySelector("#freeChatView>#chat")).overflowY,
+    composerBottom: document.querySelector("#freeChatView .input-area").getBoundingClientRect().bottom,
+    chatBottom: document.querySelector("#freeChatView>#chat").getBoundingClientRect().bottom
+  }));
+  expect(layout.bodyOverflow).toBe("hidden");
+  expect(layout.mainHeight).toBeLessThanOrEqual(layout.viewportHeight);
+  expect(layout.chatOverflow).toBe("auto");
+  expect(layout.composerBottom).toBeGreaterThan(layout.chatBottom);
+});
+
+test("Dr.Vas Free sidebar destinations open their own truthful views", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-free-nav-user", email: "free@example.invalid" };
+    isDrvasAdmin = true;
+    showModuleSelection();
+    selectModule("free", true);
+    window.__freeNavScheduledSource = freeNavLoadScheduled.toString();
+    window.__freeNavPluginsSource = freeNavLoadPlugins.toString();
+    window.__freeNavLibrarySource = freeNavLoadLibrary.toString();
+    window.__freeNavProjectsSource = freeNavLoadProjects.toString();
+    window.__freeNavProjectOpenSource = freeNavOpenProject.toString();
+    freeNavLoadLibrary = async imagesOnly => { const host=freeNavPage(imagesOnly ? "Images" : "Library","Private file library"); host.append("Saved files"); };
+    freeNavLoadScheduled = async () => { const host=freeNavPage("Scheduled","In-app reminders"); host.append("Scheduled reminders"); };
+    freeNavLoadPlugins = async () => { const host=freeNavPage("Plugins","Integration status"); host.append("Integration status"); };
+    freeNavLoadProjects = async () => { const host=freeNavPage("Projects","Test projects"); host.append("Saved projects"); };
+    freeNavLoadRecents = async () => { const host=freeNavPage("Recents","Test recents"); host.append("Recent conversations"); };
+  });
+  for (const [key, heading] of [["images","Images"],["scheduled","Scheduled"],["library","Library"],["plugins","Plugins"],["explore","Explore"],["projects","Projects"],["recents","Recents"]]) {
+    await page.locator('[data-free-nav="' + key + '"]').click();
+    await expect(page.locator("#freeNavWorkspace")).toBeVisible();
+    await expect(page.locator("#freeNavWorkspace h2")).toHaveText(heading);
+  }
+  const librarySource = await page.evaluate(() => window.__freeNavLibrarySource);
+  expect(librarySource).toContain("drvas_library_items");
+  expect(librarySource).toContain(".upload(");
+  expect(librarySource).toContain("createSignedUrl");
+  const projectsSource = await page.evaluate(() => window.__freeNavProjectsSource);
+  const projectOpenSource = await page.evaluate(() => window.__freeNavProjectOpenSource);
+  expect(projectsSource).toContain("drvas_projects");
+  expect(projectsSource).toContain(".insert(");
+  expect(projectsSource).toContain(".update(");
+  expect(projectsSource).toContain(".delete(");
+  expect(projectOpenSource).toContain("drvas_projects");
+  expect(projectOpenSource).toContain("notes");
+  await page.locator('[data-free-nav="scheduled"]').click();
+  await expect(page.locator("#freeNavWorkspace")).toContainText("Scheduled reminders");
+  const scheduledSource = await page.evaluate(() => window.__freeNavScheduledSource);
+  expect(scheduledSource).toContain("drvas_scheduled_tasks");
+  expect(scheduledSource).toContain("drvas_notifications");
+  await page.locator('[data-free-nav="plugins"]').click();
+  await expect(page.locator("#freeNavWorkspace")).toContainText("Integration status");
+  const pluginsSource = await page.evaluate(() => window.__freeNavPluginsSource);
+  expect(pluginsSource).toContain('API_URL+"/health"');
+  expect(pluginsSource).toContain("studio_renderer");
+  expect(pluginsSource).toContain("database");
+  expect(pluginsSource).toContain("nu există încă un catalog de instalare");
+});
+
+test("Free and Health remember separate conversation IDs for the same user", async ({ page }) => {
+  await openApp(page, "ro");
+  const ids = await page.evaluate(() => {
+    currentUser = { id: "e2e-context-user", email: "context@example.invalid" };
+    isDrvasAdmin = false;
+    ensureConversationMetadata = async () => {};
+    activeModule = "free";
+    currentConversationId = "free-thread-1";
+    rememberActiveConversation(currentConversationId, "free");
+    selectModule("health", true);
+    const healthId = currentConversationId;
+    selectModule("free", true);
+    return { healthId, restoredFreeId: currentConversationId, freeStored: getRememberedConversation("free"), healthStored: getRememberedConversation("health") };
+  });
+  expect(ids.healthId).not.toBe("free-thread-1");
+  expect(ids.restoredFreeId).toBe("free-thread-1");
+  expect(ids.freeStored).toBe("free-thread-1");
+  expect(ids.healthStored).toBe(ids.healthId);
+});
+
+
+test("Dr.Vas Free transcript keeps its own scroll and does not yank users reading older messages", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-free-scroll-user", email: "scroll@example.invalid" };
+    showModuleSelection();
+    selectModule("free", true);
+    const chat = el("chat");
+    chat.replaceChildren();
+    for (let i = 0; i < 40; i++) appendMessage("assistant", "Mesaj de test " + i + " cu text pentru a umple istoricul.");
+    chat.scrollTop = 0;
+    appendMessage("assistant", "Mesaj nou în timp ce utilizatorul citește istoricul.");
+  });
+  const state = await page.locator("#freeChatView>#chat").evaluate(node => ({
+    scrollTop: node.scrollTop,
+    scrollHeight: node.scrollHeight,
+    clientHeight: node.clientHeight,
+    pageScroll: document.scrollingElement.scrollTop
+  }));
+  expect(state.scrollTop).toBe(0);
+  expect(state.scrollHeight).toBeGreaterThan(state.clientHeight);
+  expect(state.pageScroll).toBe(0);
+});
+
+test("Dr.Vas Free mobile sidebar opens as a drawer and remains usable", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-free-mobile-user", email: "mobile@example.invalid" };
+    freeNavLoadScheduled = async () => { const host=freeNavPage("Scheduled","In-app reminders"); host.append("Scheduled reminders"); };
+    showModuleSelection();
+    selectModule("free", true);
+  });
+  await expect(page.locator("#chatSection .history-panel")).toBeHidden();
+  await expect(page.locator(".chat-history-toggle")).toBeVisible();
+  await page.locator(".chat-history-toggle").click();
+  await expect(page.locator("#chatSection .history-panel")).toBeVisible();
+  await page.locator('[data-free-nav="scheduled"]').click();
+  await expect(page.locator("#freeNavWorkspace h2")).toHaveText("Scheduled");
+  await expect(page.locator("#chatSection .history-panel")).toBeHidden();
+});
+
+
+test("Explore reflects account access and Images states that AI generation is not yet connected", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-free-explore-access", email: "free@example.invalid" };
+    isDrvasAdmin = false;
+    showModuleSelection();
+    selectModule("free", true);
+  });
+
+  await page.locator('[data-free-nav="explore"]').click();
+  await expect(page.locator("#freeNavWorkspace h2")).toHaveText("Explore");
+  const cards = page.locator("#freeNavWorkspace .free-nav-card");
+  await expect(cards).toHaveCount(6);
+  await expect(cards.filter({ hasText: "Dr.Vas Free" }).getByRole("button", { name: "Deschide modulul" })).toBeVisible();
+  await expect(cards.filter({ hasText: "Dr.Vas Health" }).getByRole("button", { name: "Deschide modulul" })).toBeVisible();
+  for (const moduleName of ["Dr.Vas Studio", "Dr.Vas Academy", "Dr.Vas Commerce", "Dr.Vas Business"]) {
+    const card = cards.filter({ hasText: moduleName });
+    await expect(card).toContainText("Acces restricționat pentru acest cont.");
+    await expect(card.getByRole("button")).toHaveCount(0);
+  }
+
+  await page.locator('[data-free-nav="images"]').click();
+  await expect(page.locator("#freeNavWorkspace")).toContainText("Generarea AI de imagini în Dr.Vas nu este încă activată.");
+  await expect(page.locator("#freeNavWorkspace button", { hasText: "Alege imagine" })).toBeVisible();
+});
+
+
+test("Dr.Vas Free mobile chat remains viewport-fitted with the attachment control beside Send", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-free-mobile-viewport", email: "mobile@example.invalid" };
+    isDrvasAdmin = false;
+    showModuleSelection();
+    selectModule("free", true);
+  });
+
+  const layout = await page.evaluate(() => {
+    const main = document.querySelector("main");
+    const transcript = document.querySelector("#freeChatView>#chat");
+    const composer = document.querySelector("#freeChatView .input-area");
+    const attach = composer.querySelector(".chat-file-button");
+    const send = composer.querySelector("#sendButton");
+    return {
+      bodyOverflow: getComputedStyle(document.body).overflowY,
+      mainBottom: main.getBoundingClientRect().bottom,
+      viewportHeight: innerHeight,
+      transcriptOverflow: getComputedStyle(transcript).overflowY,
+      composerBottom: composer.getBoundingClientRect().bottom,
+      attachParent: attach.parentElement === send.parentElement,
+      attachImmediatelyBeforeSend: attach.nextElementSibling === send,
+      sendVisible: send.getBoundingClientRect().bottom <= innerHeight
+    };
+  });
+
+  expect(layout.bodyOverflow).toBe("hidden");
+  expect(layout.mainBottom).toBeLessThanOrEqual(layout.viewportHeight);
+  expect(layout.transcriptOverflow).toBe("auto");
+  expect(layout.composerBottom).toBeLessThanOrEqual(layout.viewportHeight);
+  expect(layout.attachParent).toBe(true);
+  expect(layout.attachImmediatelyBeforeSend).toBe(true);
+  expect(layout.sendVisible).toBe(true);
+});
+
+
+test("Dr.Vas Health uses the same chat shell, sidebar destinations and attachment composer as Free", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-health-shell-user", email: "health@example.invalid" };
+    isDrvasAdmin = false;
+    showModuleSelection();
+    selectModule("health", true);
+  });
+
+  await expect(page.locator("#chatSection .history-panel")).toBeVisible();
+  await expect(page.locator("#freeSidebarBrand")).toHaveText("✚ Dr.Vas Health");
+  const labels = await page.locator("[data-free-nav]").allTextContents();
+  expect(labels.map(value => value.trim())).toEqual(["＋New chat","▧Images","◷Scheduled","▤Library","⌘Plugins","✧Explore","▣Projects","View all"]);
+  await expect(page.locator("#freeChatView .input-area .chat-file-button")).toBeVisible();
+  await expect(page.locator("#sendButton")).toContainText("Trimite");
+  await expect(page.locator("#globalBackToModules")).toBeVisible();
+  await expect(page.locator("#globalBackToModules")).toContainText("Înapoi la module");
+
+  await page.locator('[data-free-nav="scheduled"]').click();
+  await expect(page.locator("#freeNavWorkspace")).toBeVisible();
+  await expect(page.locator("#freeNavWorkspace h2")).toHaveText("Scheduled");
+  await expect(page.locator("#freeChatView")).toBeHidden();
+  await page.locator('[data-free-nav="chat"]').click();
+  await expect(page.locator("#freeChatView")).toBeVisible();
+
+  const layout = await page.evaluate(() => ({
+    shellEnabled: document.body.classList.contains("free-module-mode"),
+    bodyOverflow: getComputedStyle(document.body).overflowY,
+    transcriptOverflow: getComputedStyle(document.querySelector("#freeChatView>#chat")).overflowY,
+    composerBottom: document.querySelector("#freeChatView .input-area").getBoundingClientRect().bottom,
+    viewportHeight: innerHeight
+  }));
+  expect(layout.shellEnabled).toBe(true);
+  expect(layout.bodyOverflow).toBe("hidden");
+  expect(layout.transcriptOverflow).toBe("auto");
+  expect(layout.composerBottom).toBeLessThanOrEqual(layout.viewportHeight);
+});
+
+
+test("module capabilities open dedicated feature pages instead of one crowded workspace", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-feature-pages-user", email: "owner@example.invalid" };
+    isDrvasAdmin = true;
+    showModuleSelection();
+  });
+
+  await page.evaluate(() => selectModule("studio", true));
+  await expect(page.locator("#studioWorkspace .drvas-feature-navigation")).toBeVisible();
+  await page.locator('#studioWorkspace [data-feature="book"]').click();
+  await expect(page.locator('#studioWorkspace [data-feature-page="book"]')).toBeVisible();
+  await expect(page.locator('#studioWorkspace [data-feature-page="book"] h3')).toHaveText("Cărți și eBookuri");
+  await expect(page.locator("#studioDeliverable")).toHaveValue("book");
+  await page.locator("#studioIdea").fill("Book-only draft");
+  await page.locator('#studioWorkspace [data-feature="series"]').click();
+  await expect(page.locator("#studioIdea")).not.toHaveValue("Book-only draft");
+  await page.locator("#studioIdea").fill("Series-only draft");
+  await page.locator('#studioWorkspace [data-feature="book"]').click();
+  await expect(page.locator("#studioIdea")).toHaveValue("Book-only draft");
+  await page.locator('#studioWorkspace [data-feature="video"]').click();
+  await expect(page.locator('#studioWorkspace [data-feature-page="video"] #studioRenderCreateButton')).toBeVisible();
+  await page.locator('#studioWorkspace [data-feature="projects"]').click();
+  await expect(page.locator('#studioWorkspace [data-feature-page="projects"] #studioSavedProjects')).toBeVisible();
+
+  await page.evaluate(() => selectModule("academy", true));
+  await expect(page.locator("#academyWorkspace .drvas-feature-navigation")).toBeVisible();
+  await page.locator('#academyWorkspace [data-feature="lessons"]').click();
+  await expect(page.locator('#academyWorkspace [data-feature-page="lessons"]')).toBeVisible();
+  await expect(page.locator("#academyWorkspace #academySubject")).toBeVisible();
+  await expect.poll(() => page.evaluate(() => window.DrVasAcademyFeature)).toBe("lessons");
+  await page.locator("#academySubject").fill("Lesson-only course");
+  await page.locator('#academyWorkspace [data-feature="exercises"]').click();
+  await expect(page.locator("#academySubject")).not.toHaveValue("Lesson-only course");
+  await page.locator("#academySubject").fill("Quiz-only course");
+  await page.locator('#academyWorkspace [data-feature="lessons"]').click();
+  await expect(page.locator("#academySubject")).toHaveValue("Lesson-only course");
+  await page.locator("#academySubject").fill("E2E course");
+  await page.evaluate(() => buildAcademyPrompt());
+  await expect(page.locator("#question")).toHaveValue(/FOCUS: scrie lecțiile în detaliu/);
+  await page.locator('#academyWorkspace [data-feature="exercises"]').click();
+  await expect.poll(() => page.evaluate(() => window.DrVasAcademyFeature)).toBe("exercises");
+  await page.locator('#academyWorkspace [data-feature="learning-plan"]').click();
+  await expect.poll(() => page.evaluate(() => window.DrVasAcademyFeature)).toBe("learning-plan");
+  await page.locator('#academyWorkspace [data-feature="courses"]').click();
+  await expect(page.locator('#academyWorkspace [data-feature-page="courses"] #academyProjectList')).toBeVisible();
+  await expect(page.locator('#academyWorkspace [data-feature-page="course"]')).toBeHidden();
+
+  await page.evaluate(() => selectModule("commerce", true));
+  await expect(page.locator("#commerceWorkspace .drvas-feature-navigation")).toBeVisible();
+  await page.locator('#commerceWorkspace [data-feature="suppliers"]').click();
+  await expect(page.locator('#commerceWorkspace [data-feature-page="suppliers"] #commerceProduct')).toBeVisible();
+  await expect.poll(() => page.evaluate(() => window.DrVasCommerceFeature)).toBe("suppliers");
+  await page.locator("#commerceProduct").fill("Supplier-only product");
+  await page.locator('#commerceWorkspace [data-feature="launch"]').click();
+  await expect(page.locator("#commerceProduct")).not.toHaveValue("Supplier-only product");
+  await page.locator("#commerceProduct").fill("Launch-only product");
+  await page.locator('#commerceWorkspace [data-feature="suppliers"]').click();
+  await expect(page.locator("#commerceProduct")).toHaveValue("Supplier-only product");
+  await page.locator("#commerceProduct").fill("E2E product");
+  await page.evaluate(() => buildCommercePrompt());
+  await expect(page.locator("#question")).toHaveValue(/FOCUS: construiește o comparație de furnizori/);
+  await page.locator('#commerceWorkspace [data-feature="launch"]').click();
+  await expect.poll(() => page.evaluate(() => window.DrVasCommerceFeature)).toBe("launch");
+  await page.locator('#commerceWorkspace [data-feature="pricing"]').click();
+  await expect(page.locator('#commerceWorkspace [data-feature-page="pricing"] #commerceContribution')).toBeVisible();
+  await expect(page.locator('#commerceWorkspace [data-feature-page="research"]')).toBeHidden();
+
+  await page.evaluate(() => selectModule("business", true));
+  await expect(page.locator("#businessWorkspace .drvas-feature-navigation")).toBeVisible();
+  await page.locator('#businessWorkspace [data-feature="cashbook"]').click();
+  await expect(page.locator('#businessWorkspace [data-feature-page="cashbook"] #businessLedgerRows')).toBeVisible();
+  await page.locator('#businessWorkspace [data-feature="cashflow"]').click();
+  await expect(page.locator('#businessWorkspace [data-feature-page="cashflow"] #businessCashflowRows')).toBeVisible();
+  await expect(page.locator('#businessWorkspace [data-feature-page="plan"]')).toBeHidden();
+});
+
+
+test("Health information desk opens as its own feature page while the shared chat remains available", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-health-feature-page", email: "health@example.invalid" };
+    isDrvasAdmin = false;
+    showModuleSelection();
+    selectModule("health", true);
+  });
+  await expect(page.locator("#healthWorkspace .drvas-feature-navigation")).toBeVisible();
+  await expect(page.locator('#healthWorkspace [data-feature-page="health-brief"]')).toBeVisible();
+  await expect(page.locator("#healthWorkspace #healthBrief")).toBeVisible();
+  await expect(page.locator("#chatSection .history-panel")).toBeVisible();
+  await expect(page.locator("#freeChatView .input-area .chat-file-button")).toBeVisible();
+  await expect(page.locator("#healthDataProcessingConsentWrap")).toBeHidden();
+});
+
+
+test("all six module chats share the same sidebar destinations and attachment composer", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-all-chat-shells", email: "owner@example.invalid" };
+    isDrvasAdmin = true;
+    showModuleSelection();
+  });
+  const expected = ["＋New chat","▧Images","◷Scheduled","▤Library","⌘Plugins","✧Explore","▣Projects","View all"];
+  for (const moduleName of ["free","health","studio","academy","commerce","business"]) {
+    await page.evaluate(name => selectModule(name, true), moduleName);
+    await expect(page.locator("#chatSection .history-panel"), moduleName + " sidebar").toBeVisible();
+    const shellModes = await page.evaluate(() => ({ free: document.body.classList.contains("free-module-mode"), health: document.body.classList.contains("health-module-mode"), shared: document.body.classList.contains("shared-chat-sidebar-mode") }));
+    if (moduleName === "free") expect(shellModes.free).toBe(true);
+    else if (moduleName === "health") { expect(shellModes.free).toBe(true); expect(shellModes.health).toBe(true); await expect(page.locator("#healthWorkspace")).toBeVisible(); }
+    else expect(shellModes.shared).toBe(true);
+    const labels = await page.locator("[data-free-nav]").allTextContents();
+    expect(labels.map(value => value.trim()), moduleName + " navigation").toEqual(expected);
+    await expect(page.locator("#freeChatView .input-area .chat-file-button"), moduleName + " attachment").toBeVisible();
+    await expect(page.locator("#sendButton"), moduleName + " send").toContainText("Trimite");
+    await expect(page.locator("#globalLogoutTop")).toBeVisible();
+    await expect(page.locator("#globalLogoutBottom")).toBeVisible();
+    await page.locator('[data-free-nav="scheduled"]').click();
+    await expect(page.locator("#freeNavWorkspace h2")).toHaveText("Scheduled");
+    await expect(page.locator("#freeChatView")).toBeHidden();
+    await page.locator('[data-free-nav="chat"]').click();
+    await expect(page.locator("#freeChatView")).toBeVisible();
+  }
+  await page.locator("#globalBackToModules").click();
+  await expect(page.locator("#globalBackToModules")).toBeHidden();
+  await expect(page.locator("#moduleSelectionShell")).toBeVisible();
 });

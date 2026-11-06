@@ -103,3 +103,59 @@ test("Health assistant keeps clinical boundaries and emergency escalation in its
   expect(worker).toContain("Do not reassure someone that serious symptoms are harmless");
   expect(worker).toContain('liveModule === "health" && env.GEMINI_LIVE_HEALTH_ENABLED !== "true"');
 });
+
+
+test("Conversation context migration classifies only new threads and preserves unknown legacy context", async () => {
+  const sql = migration("202611060001_conversation_context.sql");
+  expect(sql).toMatch(/add column if not exists module text/i);
+  expect(sql).toMatch(/add column if not exists conversation_kind text/i);
+  expect(sql).toMatch(/add column if not exists feature_key text/i);
+  expect(sql).toMatch(/module is null or module in\s*\('free','health','studio','academy','commerce','business'\)/i);
+  expect(sql).toMatch(/conversation_kind is null or conversation_kind in\s*\('general','module_assistant','feature_assistant'\)/i);
+  expect(sql).toMatch(/user_id, module, archived_at, updated_at desc/i);
+  expect(sql).toMatch(/NULL means legacy context is unknown and must not be guessed/i);
+  expect(sql).not.toMatch(/update public\.drvas_conversation_metadata\s+set\s+module/i);
+  expect(sql).not.toMatch(/drop policy|disable row level security|delete from public\.drvas_conversation_metadata/i);
+});
+
+
+test("Scheduled reminders and notifications are private, bounded and delivered once by the Worker cron", async () => {
+  const sql = migration("202611060002_scheduled_reminders.sql");
+  expect(sql).toMatch(/create table if not exists public\.drvas_scheduled_tasks/i);
+  expect(sql).toMatch(/create table if not exists public\.drvas_notifications/i);
+  for (const table of ["drvas_scheduled_tasks", "drvas_notifications"]) {
+    expect(sql).toMatch(new RegExp("alter table public\\." + table + " enable row level security", "i"));
+    expect(sql).toMatch(new RegExp("auth\\.uid\\(\\) = user_id", "i"));
+  }
+  expect(sql).toMatch(/unique references public\.drvas_scheduled_tasks/i);
+  expect(sql).toMatch(/revoke insert on public\.drvas_notifications from authenticated/i);
+  const worker = fs.readFileSync(path.join(__dirname, "../../worker/index.js"), "utf8");
+  const wrangler = fs.readFileSync(path.join(__dirname, "../../wrangler.toml"), "utf8");
+  expect(wrangler).toContain('crons = ["*/5 * * * *"]');
+  expect(worker).toContain("async scheduled(controller, env, ctx)");
+  expect(worker).toContain("processDrVasScheduledReminders(env)");
+  expect(worker).toContain("resolution=ignore-duplicates,return=minimal");
+  expect(worker).toContain("drvas_notifications");
+});
+
+
+test("Private Library migration enforces owner-only access and a user-owned storage path", async () => {
+  const sql = migration("202611060003_library_items.sql");
+  expect(sql).toMatch(/create table if not exists public\.drvas_library_items/i);
+  expect(sql).toMatch(/storage_path like user_id::text \|\| '\/library\/%'/i);
+  expect(sql).toMatch(/alter table public\.drvas_library_items enable row level security/i);
+  expect(sql).toMatch(/auth\.uid\(\) = user_id/i);
+  expect(sql).toMatch(/grant select, insert, delete on table public\.drvas_library_items to authenticated/i);
+  expect(sql).toMatch(/revoke all on table public\.drvas_library_items from public, anon/i);
+});
+
+
+test("Standalone Projects migration enforces owner-scoped CRUD and module context", async () => {
+  const sql = migration("202611060004_projects.sql");
+  expect(sql).toMatch(/create table if not exists public\.drvas_projects/i);
+  expect(sql).toMatch(/alter table public\.drvas_projects enable row level security/i);
+  expect(sql).toMatch(/auth\.uid\(\) = user_id/i);
+  expect(sql).toMatch(/module in \('free','health','studio','academy','commerce','business'\)/i);
+  expect(sql).toMatch(/grant select, insert, update, delete on table public\.drvas_projects to authenticated/i);
+  expect(sql).toMatch(/notes text not null default ''/i);
+});

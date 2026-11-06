@@ -625,7 +625,7 @@ body.module-workspace-mode #chatSection .assistant-switcher{margin-top:0}
 body.module-workspace-mode #chatSection .chat-toolbar{margin-top:8px}
 body.module-workspace-mode #chatSection .chat-main .voice-toolbar{gap:7px}
 body.module-workspace-mode.free-module-mode main{display:block;max-width:1120px;padding:18px 22px}
-body.free-module-mode .module-selection-shell{display:none!important}
+body.free-module-mode:not(.health-module-mode) .module-selection-shell{display:none!important}
 body.free-module-mode #chatSection{max-width:100%;margin:auto}
 body.free-module-mode #chatSection>.chat-view-nav{margin-bottom:14px}
 body.free-module-mode #chatSection .chat-main{min-height:calc(100vh - 180px);background:#0c1e2e;border:1px solid #25465b;border-radius:20px;padding:22px}
@@ -735,7 +735,7 @@ body.module-workspace-mode.free-module-mode main{
   grid-template-rows:none!important;
   max-width:1120px!important;
 }
-body.module-workspace-mode.free-module-mode .module-selection-shell{display:none!important}
+body.module-workspace-mode.free-module-mode:not(.health-module-mode) .module-selection-shell{display:none!important}
 body.module-workspace-mode.free-module-mode #chatSection{
   grid-column:auto!important;
   grid-row:auto!important;
@@ -913,13 +913,131 @@ body.chat-focus-mode footer{display:flex!important;position:fixed!important;left
 body.chat-focus-mode footer .global-logout-button{margin:0}
 body.chat-focus-mode main{padding-bottom:64px!important}
 @media(max-width:520px){.header-actions{gap:5px}.global-logout-button{padding:8px 9px!important;font-size:10px!important}.status{display:none}}
+
+/* Dr.Vas Free viewport shell: fixed application frame, transcript-only scrolling */
+html.drvas-free-shell,html.drvas-free-shell body{height:100%;min-height:0;overflow:hidden}
+body.free-module-mode{height:100dvh;min-height:0;overflow:hidden}
+body.free-module-mode header{min-height:75px}
+body.free-module-mode footer{display:flex!important;position:fixed!important;left:0;right:0;bottom:0;height:38px;min-height:38px;max-height:38px;padding:3px 12px;justify-content:flex-end;align-items:center;background:#071521;border-top:1px solid #1d394d;z-index:30}
+body.free-module-mode footer>span{display:none!important}
+body.free-module-mode main{display:block!important;width:100%!important;max-width:none!important;height:calc(100dvh - 113px)!important;min-height:0!important;margin:0!important;padding:10px 12px!important;overflow:hidden!important}
+body.free-module-mode #appMain{height:calc(100dvh - 113px)!important;min-height:0!important;overflow:hidden!important}
+body.free-module-mode #chatSection{display:flex!important;flex-direction:column;width:100%;height:100%;min-height:0;max-width:none;margin:0;overflow:hidden}
+body.free-module-mode #chatSection>.chat-view-nav{flex:0 0 auto;margin:0 0 9px;padding:8px 12px}
+body.free-module-mode #chatSection>.chat-layout{display:grid!important;grid-template-columns:248px minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr)!important;gap:12px;width:100%;height:auto;flex:1 1 auto;min-height:0;overflow:hidden;margin:0}
+body.free-module-mode #chatSection .history-panel{display:flex!important;flex-direction:column;gap:8px;min-width:0;min-height:0;max-height:none;overflow:hidden;padding:12px;background:#091827;border:1px solid #203d54;border-radius:15px}
+body.free-module-mode .free-sidebar-brand{padding:3px 7px 8px;color:#e7f5f8;font-size:14px;font-weight:900}
+body.free-module-mode .free-primary-nav{display:grid;gap:4px;flex:0 0 auto}
+body.free-module-mode .free-primary-nav button{display:flex;align-items:center;gap:10px;width:100%;min-height:38px;padding:8px 10px;text-align:left;background:transparent;border:1px solid transparent;border-radius:9px;color:#c6d7e1;font-size:12px;font-weight:650}
+body.free-module-mode .free-primary-nav button:hover,body.free-module-mode .free-primary-nav button.active{background:#173849;border-color:#315b6d;color:#fff}
+body.free-module-mode .free-primary-nav button .free-nav-icon{display:inline-grid;place-items:center;width:20px;color:#83e3dc;font-size:15px}
+body.free-module-mode .free-recents-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 3px 0;color:#9bb5c4;font-size:11px;font-weight:800}
+body.free-module-mode .free-recents-heading button{padding:3px 6px;background:transparent;color:#81cfc9;border:0;font-size:10px}
+body.free-module-mode #conversationList{flex:1 1 auto;min-height:50px;max-height:none;overflow-y:auto;overscroll-behavior:contain;margin:0;padding-right:3px}
+body.free-module-mode .history-panel h3,body.free-module-mode .history-panel>.new-chat-button{display:none!important}
+body.free-module-mode .history-panel .delete-history-button,body.free-module-mode .history-panel .history-filter-button{flex:0 0 auto;padding:7px 8px;font-size:10px}
+body.free-module-mode .chat-main{display:flex!important;flex-direction:column;min-width:0;min-height:0;width:100%;height:100%!important;max-height:none!important;overflow:hidden!important;padding:12px!important;background:#0c1e2e;border:1px solid #25465b;border-radius:16px}
+body.free-module-mode #freeChatView{display:flex;flex:1 1 auto;flex-direction:column;min-width:0;min-height:0;height:100%;overflow:hidden}
+body.free-module-mode #freeChatView[hidden]{display:none!important}
+body.free-module-mode #freeChatView .chat-toolbar,body.free-module-mode #freeChatView .assistant-switcher,body.free-module-mode #freeChatView #saveMessage{display:none!important}
+body.free-module-mode #freeChatView>#chat{display:block;flex:1 1 auto;min-height:0;max-height:none!important;height:auto;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-gutter:stable;padding:10px 12px 18px}
+body.free-module-mode #freeChatView .conversation-attachments,body.free-module-mode #freeChatView .pending-chat-files,body.free-module-mode #freeChatView .chat-file-toolbar{flex:0 0 auto;max-height:22vh;overflow:auto}
+body.free-module-mode #freeChatView .chat-file-toolbar{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;background:transparent}
+body.free-module-mode #freeChatView .chat-file-button{display:none}
+body.free-module-mode #freeChatView .input-area{display:flex;flex:0 0 auto;align-items:flex-end;gap:8px;position:relative;bottom:auto;margin:8px 0 0;padding:10px;background:#10283a;border:1px solid #31566b;border-radius:16px;z-index:3}
+body.free-module-mode #freeChatView .input-area textarea{flex:1;min-width:0;min-height:44px;max-height:180px;resize:vertical;background:transparent;border:0;outline:none;color:#fff;padding:9px 8px}
+body.free-module-mode #freeChatView .input-area .chat-file-button{display:inline-flex;flex:0 0 42px;align-items:center;justify-content:center;width:42px;height:42px;padding:0;border-radius:12px;background:#183c50;color:#d8f7f2;border:1px solid #3b6878;font-size:18px;cursor:pointer}
+body.free-module-mode #freeChatView .input-area #sendButton{flex:0 0 auto;min-height:42px;padding:10px 16px}
+body.free-module-mode #freeChatView .voice-toolbar{flex:0 0 auto;max-height:70px;overflow:auto;margin-top:7px;padding:4px 0}
+body.free-module-mode #freeChatView>.voice-privacy,body.free-module-mode #freeChatView>.note{display:none!important}
+body.free-module-mode #freeNavWorkspace{display:block;flex:1 1 auto;min-height:0;overflow-y:auto;padding:8px 10px}
+body.free-module-mode #freeNavWorkspace[hidden]{display:none!important}
+body.free-module-mode .free-nav-page{max-width:1050px;margin:0 auto}
+body.free-module-mode .free-nav-page h2{margin:4px 0 8px;color:#eaf7f8;font-size:22px}
+body.free-module-mode .free-nav-page>p{color:#9fb9c8;line-height:1.55;font-size:13px}
+body.free-module-mode .free-nav-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:18px}
+body.free-module-mode .free-nav-card{padding:15px;background:#10283a;border:1px solid #2c4e62;border-radius:13px;min-width:0}
+body.free-module-mode .free-nav-card h3{margin:0 0 6px;font-size:14px;color:#dff6f4}
+body.free-module-mode .free-nav-card p{margin:0 0 12px;color:#9fb9c8;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+body.free-module-mode .free-nav-card button,body.free-module-mode .free-nav-card a{display:inline-flex;align-items:center;gap:6px;padding:8px 10px;border-radius:9px;background:#1b4659;color:#e4fbf7;border:1px solid #3b6878;text-decoration:none;font-size:11px}
+body.free-module-mode .free-nav-status{padding:14px;background:#10283a;border:1px solid #2c4e62;border-radius:12px;color:#b4cbd6;line-height:1.6;font-size:13px}
+body.free-module-mode .free-nav-file-image{display:block;width:100%;max-height:210px;object-fit:contain;margin-bottom:10px;border-radius:8px;background:#07111f}
+body.free-module-mode .conversation-row{margin-bottom:5px}
+body.free-module-mode .conversation-item{min-height:48px}
+body.free-module-mode .conversation-actions{display:none}
+body.free-module-mode .conversation-item.active{border-color:#54d8cf;background:#173c4c}
+@media(max-width:760px){
+ body.free-module-mode main{height:calc(100dvh - 103px)!important;padding:6px!important}
+ body.free-module-mode #appMain{height:calc(100dvh - 103px)!important}
+ body.free-module-mode header{min-height:65px}
+ body.free-module-mode #chatSection>.chat-layout{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr)!important;gap:0}
+ body.free-module-mode #chatSection .history-panel{display:none!important;position:fixed;z-index:50;left:8px;top:72px;bottom:8px;width:min(86vw,310px);max-height:none;box-shadow:0 18px 55px #0009}
+ body.free-module-mode.history-open #chatSection .history-panel{display:flex!important}
+ body.free-module-mode #chatSection .chat-main{padding:8px!important}
+ body.free-module-mode #chatSection{height:100%!important;min-height:0!important;overflow:hidden!important}
+ body.free-module-mode #chatSection>.chat-layout{height:100%!important;min-height:0!important}
+ body.free-module-mode #chatSection .chat-main{height:100%!important;min-height:0!important;max-height:none!important}
+ body.free-module-mode #chatSection .chat-main #freeChatView{flex:1 1 0!important;height:0!important;min-height:0!important;max-height:none!important}
+ body.free-module-mode #freeChatView .voice-toolbar{max-height:48px!important;overflow-y:auto!important}
+ body.free-module-mode #freeChatView .input-area{margin-bottom:0!important}
+ body.free-module-mode #freeChatView>#chat{padding:8px 4px 12px}
+ body.free-module-mode #freeChatView .input-area{gap:5px;padding:7px}
+ body.free-module-mode #freeChatView .input-area #sendButton{padding:9px 11px;font-size:11px}
+ body.free-module-mode #freeChatView .input-area .chat-file-button{width:38px;flex-basis:38px;height:40px}
+ body.free-module-mode #chatSection{display:flex!important;flex-direction:column!important;height:100%!important;min-height:0!important;overflow:hidden!important}
+ body.free-module-mode #chatSection>.chat-view-nav{flex:0 0 auto!important}
+ body.free-module-mode #chatSection>.chat-layout{flex:1 1 0!important;height:0!important;min-height:0!important;overflow:hidden!important}
+ body.free-module-mode #chatSection .chat-main{flex:1 1 0!important;height:100%!important;min-height:0!important}
+ body.free-module-mode #chatSection .chat-main #freeChatView{flex:1 1 0!important;height:0!important;min-height:0!important}
+ body.free-module-mode #freeChatView .input-area{position:fixed!important;left:10px!important;right:10px!important;bottom:calc(42px + env(safe-area-inset-bottom,0px))!important;margin:0!important;z-index:60!important;box-sizing:border-box!important}
+ body.free-module-mode #freeChatView>#chat{padding-bottom:170px!important}
+ body.free-module-mode .chat-history-toggle{display:inline-flex!important}
+}
+
+
+/* Override older Free-mode sizing rules: the transcript is the only scrolling pane. */
+body.free-module-mode #chatSection .chat-main{height:100%!important;min-height:0!important;max-height:none!important;overflow:hidden!important}
+body.free-module-mode #chatSection .chat-main #freeChatView>#chat{height:auto!important;min-height:0!important;max-height:none!important;overflow-y:auto!important;overscroll-behavior:contain}
+body.free-module-mode #chatSection .chat-main #freeChatView .input-area{flex:0 0 auto;position:relative!important;bottom:auto!important}
+body.free-module-mode #chatSection .chat-main #freeChatView{min-height:0!important;max-height:none!important}
+
+
+body.free-module-mode .free-scheduled-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:14px;background:#10283a;border:1px solid #31566b;border-radius:13px}
+body.free-module-mode .free-scheduled-form label{display:grid;gap:5px;color:#b6ccd7;font-size:11px}
+body.free-module-mode .free-scheduled-form input,body.free-module-mode .free-scheduled-form textarea{width:100%;min-width:0;padding:9px;background:#071827;color:#f4fbff;border:1px solid #34576a;border-radius:8px}
+body.free-module-mode .free-scheduled-form textarea{min-height:68px;resize:vertical}
+body.free-module-mode .free-scheduled-form .wide{grid-column:1/-1}
+body.free-module-mode .free-scheduled-form button{justify-self:start;padding:9px 13px}
+body.free-module-mode .free-scheduled-task{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+body.free-module-mode .free-scheduled-task-actions{display:flex;gap:6px;flex-wrap:wrap}
+body.free-module-mode .free-scheduled-task-actions button{padding:6px 8px}
+@media(max-width:600px){body.free-module-mode .free-scheduled-form{grid-template-columns:1fr}body.free-module-mode .free-scheduled-form .wide{grid-column:auto}body.free-module-mode .free-scheduled-task{flex-direction:column}}
+
+
+/* Keep Free navigation focused on the requested ChatGPT-style destinations. */
+body.free-module-mode .history-panel .delete-history-button,body.free-module-mode .history-panel .history-filter-button{display:none!important}
+body.free-module-mode .conversation-row{grid-template-columns:minmax(0,1fr) auto;gap:3px;margin:4px 0}
+body.free-module-mode .conversation-actions{display:flex!important;flex-direction:row;align-items:center;gap:2px;opacity:0;transition:opacity .15s ease}
+body.free-module-mode .conversation-row:hover .conversation-actions,body.free-module-mode .conversation-row:focus-within .conversation-actions{opacity:1}
+body.free-module-mode .conversation-actions button{width:25px;height:28px;padding:3px;font-size:10px}
+body.free-module-mode .conversation-legacy-label{color:#e3bb8d!important;font-size:9px}
+@media(max-width:760px){body.free-module-mode .conversation-actions{opacity:1}}
+
+body.free-module-mode #chatSection>.chat-view-nav .chat-history-toggle{display:inline-flex!important}
+
+@media(max-width:760px){
+ body.free-module-mode #chatSection .chat-main #freeChatView .input-area{position:fixed!important;left:10px!important;right:10px!important;bottom:calc(42px + env(safe-area-inset-bottom,0px))!important;margin:0!important;z-index:100!important;box-sizing:border-box!important}
+ body.free-module-mode main,body.free-module-mode #appMain,body.free-module-mode #chatSection,body.free-module-mode #chatSection .chat-main,body.free-module-mode #freeChatView{transform:none!important}
+ body.free-module-mode #freeChatView>#chat{padding-bottom:170px!important}
+}
 </style>
+<link rel="stylesheet" href="/module-workspaces.css">
 </head>
 
 <body>
 <header>
  <div class="logo">✚ Dr.Vas AI <span class="flag" role="img" aria-label="Steagul României" title="Creat în România"><i></i><i></i><i></i></span></div>
- <div class="header-actions"><div class="status" id="onlineStatus">● AI ASSISTANT ONLINE</div><button type="button" id="globalLogoutTop" class="global-logout-button" onclick="logout()" aria-label="Deconectare din Dr.Vas">↪ Deconectare</button><button type="button" class="header-chat-cta" id="headerChatCta" onclick="startDrVas()">VORBEȘTE CU DR.VAS</button><button type="button" class="language-switch" id="languageSwitch" onclick="showLanguageGate()">🌐 Language</button></div>
+ <div class="header-actions"><div class="status" id="onlineStatus">● AI ASSISTANT ONLINE</div><button type="button" id="globalBackToModules" class="global-back-button" onclick="goToModules()" aria-label="Înapoi la module">← Înapoi la module</button><button type="button" id="globalLogoutTop" class="global-logout-button" onclick="logout()" aria-label="Deconectare din Dr.Vas">↪ Deconectare</button><button type="button" class="header-chat-cta" id="headerChatCta" onclick="startDrVas()">VORBEȘTE CU DR.VAS</button><button type="button" class="language-switch" id="languageSwitch" onclick="showLanguageGate()">🌐 Language</button></div>
 </header>
 
 <main id="appMain">
@@ -1436,7 +1554,6 @@ body.chat-focus-mode main{padding-bottom:64px!important}
    <strong id="chatWorkspaceTitle">✦ DR.VAS · CONVERSAȚIE</strong>
    <div class="chat-view-nav-actions">
     <button type="button" class="chat-history-toggle" onclick="toggleChatHistory()">☷ Istoric</button>
-    <button type="button" class="chat-back-button" onclick="goToModules()">← Înapoi la module</button>
    </div>
   </div>
   <aside class="chat-module-rail" aria-label="Navigare module Dr.Vas">
@@ -1717,15 +1834,26 @@ body.chat-focus-mode main{padding-bottom:64px!important}
   </section>
 
   <div class="chat-layout">
-   <aside class="history-panel">
-    <h3>🧠 Istoricul conversațiilor salvate</h3>
-    <button class="new-chat-button" onclick="newConversation()">＋ Conversație nouă</button>
+   <aside class="history-panel" aria-label="Navigare Dr.Vas Free">
+    <div class="free-sidebar-brand" id="freeSidebarBrand">✦ Dr.Vas Free</div>
+    <nav class="free-primary-nav" aria-label="Navigare principală">
+     <button type="button" class="new-chat-button active" data-free-nav="chat" onclick="newConversation()"><span class="free-nav-icon">＋</span>New chat</button>
+     <button type="button" data-free-nav="images" onclick="openFreeNavView('images')"><span class="free-nav-icon">▧</span>Images</button>
+     <button type="button" data-free-nav="scheduled" onclick="openFreeNavView('scheduled')"><span class="free-nav-icon">◷</span>Scheduled</button>
+     <button type="button" data-free-nav="library" onclick="openFreeNavView('library')"><span class="free-nav-icon">▤</span>Library</button>
+     <button type="button" data-free-nav="plugins" onclick="openFreeNavView('plugins')"><span class="free-nav-icon">⌘</span>Plugins</button>
+     <button type="button" data-free-nav="explore" onclick="openFreeNavView('explore')"><span class="free-nav-icon">✧</span>Explore</button>
+     <button type="button" data-free-nav="projects" onclick="openFreeNavView('projects')"><span class="free-nav-icon">▣</span>Projects</button>
+    </nav>
+    <div class="free-recents-heading"><span>Recents</span><button type="button" data-free-nav="recents" onclick="openFreeNavView('recents')">View all</button></div>
     <button class="delete-history-button" onclick="deleteAllConversations()">Șterge tot istoricul</button>
     <button type="button" id="historyFilterButton" class="history-filter-button" onclick="toggleArchivedConversations()">Vezi conversațiile arhivate</button>
-    <div id="conversationList"></div>
+    <div id="conversationList" aria-label="Conversații recente"></div>
    </aside>
 
    <div class="chat-main">
+    <section id="freeNavWorkspace" hidden aria-live="polite"></section>
+    <div id="freeChatView">
     <div class="chat-toolbar">
      <div class="chat-module-label" id="chatModuleLabel">✦ Discuți cu Dr.Vas Free</div>
      <span id="autoSaveStatus" class="auto-save-indicator" role="status">● Salvare automată activă</span>
@@ -1752,6 +1880,7 @@ body.chat-focus-mode main{padding-bottom:64px!important}
     </div>
     <div class="input-area">
      <textarea id="question" aria-label="Mesaj pentru Dr.Vas" placeholder="Scrie mesajul tău aici..." rows="1" wrap="soft" maxlength="100000" autocomplete="off"></textarea>
+     <label class="chat-file-button" for="chatFileInput" title="Atașează fișiere" aria-label="Atașează fișiere">📎</label>
      <button id="sendButton" onclick="send()">Trimite ➤</button>
     </div>
     <div class="voice-toolbar" aria-label="Controale vocale Dr.Vas">
@@ -1773,6 +1902,7 @@ body.chat-focus-mode main{padding-bottom:64px!important}
     </section>
     <p class="voice-privacy">Microfonul se activează numai după apăsare. În modul Live, sunetul este transmis către Gemini pentru răspuns în timp real și poate consuma utilizare API; în modul dictare, recunoașterea poate fi procesată de browser. Dr.Vas nu păstrează înregistrări audio; transcrierile text se salvează în istoricul conversației.</p>
     <div class="note">Răspunsurile AI pot conține erori. Verifică informațiile importante.</div>
+    </div>
    </div>
   </div>
   <div class="chat-account-footer" aria-label="Acțiuni cont"><button type="button" onclick="editProfile()">Profilul meu</button></div>
@@ -2063,7 +2193,7 @@ function updateDrvasPresentationScene(index){
  const key=["drvas","jan","sarah"][index],speaker=DRVAS_PRESENTERS[key],data=DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro;
  const presenter=el("presentationPresenter"),avatar=el("presentationAvatar"),grid=el("presentationModuleGrid");
  if(presenter){presenter.classList.remove("is-speaking","is-animated","scene-enter");void presenter.offsetWidth;presenter.classList.add("scene-enter");}
- if(avatar){avatar.className="presentation-avatar presentation-avatar-"+key;avatar.dataset.presenter=key;setDrvasPresenterPortrait(key,avatar);}
+ if(avatar){avatar.className="presentation-avatar presentation-avatar-"+key;avatar.dataset.presenter=key;setDrvasPresenterPortrait(key,avatar);const photo=avatar.querySelector(".presentation-photo");if(photo)photo.alt=({drvas:"Dr.Vas — fotografia fondatorului",jan:"Dr.Jan — personaj AI fictiv",sarah:"Sarah — portret profesional adult"})[key]||"Portretul asistentului";}
  const set=(id,value)=>{const node=el(id);if(node)node.textContent=value};
  set("presentationSpeakerName",speaker.name);set("presentationSpeakerRole",speaker.role[currentLanguage]||speaker.role.ro);
  const moduleNames=["Dr.Vas Free","Dr.Vas Health","Dr.Vas Studio","Dr.Vas Academy","Dr.Vas Commerce","Dr.Vas Business"];
@@ -2388,14 +2518,17 @@ function setChatNavigationDisabled(disabled){
     .forEach(button=>{button.disabled=disabled;});
 }
 
-function rememberActiveConversation(conversationId){
+function conversationStorageKey(userId,moduleId=activeModule){return ACTIVE_CONVERSATION_PREFIX+userId+":"+moduleId;}
+function rememberActiveConversation(conversationId,moduleId=activeModule){
   if(!currentUser || !conversationId) return;
-  try{localStorage.setItem(ACTIVE_CONVERSATION_PREFIX+currentUser.id,conversationId)}catch(error){console.warn("Active conversation storage unavailable:",error)}
+  try{
+   localStorage.setItem(conversationStorageKey(currentUser.id,moduleId),conversationId);
+   if(moduleId==="free")localStorage.setItem(ACTIVE_CONVERSATION_PREFIX+currentUser.id,conversationId);
+  }catch(error){console.warn("Active conversation storage unavailable:",error)}
 }
-
-function getRememberedConversation(){
+function getRememberedConversation(moduleId=activeModule){
   if(!currentUser) return null;
-  try{return localStorage.getItem(ACTIVE_CONVERSATION_PREFIX+currentUser.id)}catch{return null}
+  try{return localStorage.getItem(conversationStorageKey(currentUser.id,moduleId))||(moduleId==="free"?localStorage.getItem(ACTIVE_CONVERSATION_PREFIX+currentUser.id):null)}catch{return null}
 }
 
 function scrollPageToChat(){
@@ -2412,18 +2545,16 @@ function scrollPageToChat(){
 }
 
 let chatScrollFrame = 0;
-function scrollToLatestMessage(target){
+function scrollToLatestMessage(target,force=false){
   const chat=el("chat");
   if(!chat)return;
+  const nearBottom=chat.scrollHeight-chat.scrollTop-chat.clientHeight<120;
+  if(!force&&!nearBottom)return;
   cancelAnimationFrame(chatScrollFrame);
   chatScrollFrame=requestAnimationFrame(()=>{
     if(!chat.isConnected)return;
-    chat.scrollTop=chat.scrollHeight;
-    chatScrollFrame=requestAnimationFrame(()=>{
-      if(!chat.isConnected)return;
-      // Re-check after message text/layout has settled; never move the outer page.
-      chat.scrollTop=chat.scrollHeight;
-    });
+    const stillNearBottom=chat.scrollHeight-chat.scrollTop-chat.clientHeight<120;
+    if(force||stillNearBottom)chat.scrollTop=chat.scrollHeight;
   });
 }
 let activeModule = "free";
@@ -2477,7 +2608,7 @@ function selectAssistant(assistantId){
  if(voiceAutoRead)refreshVoiceUi("ready");
  try{if(currentUser)localStorage.setItem("drvas_assistant_"+currentUser.id,assistantId)}catch{}
 }
-function selectModule(moduleName,userInitiated=false){
+function selectModule(moduleName,userInitiated=false,suppressConversationRestore=false){
   const modules={
     free:{icon:"✦",name:"Dr.Vas Free — Asistent general",description:"Modulul general este selectat. Poți începe conversația."},
     health:{icon:"✚",name:"Dr.Vas Health — Informații generale",description:"Informații despre sănătate, explicații și pregătirea consultațiilor. Nu înlocuiește medicul."},
@@ -2535,13 +2666,33 @@ function selectModule(moduleName,userInitiated=false){
   }
   const selectionStatus=el("moduleSelectionStatus");
   if(selectionStatus){selectionStatus.textContent="";selectionStatus.classList.add("hidden");}
-  if(activeModule!==moduleName)clearPendingChatFiles();
+  const previousModule=activeModule;
+  let moduleConversationToRestore=null;
+  if(previousModule!==moduleName)clearPendingChatFiles();
   activeModule=moduleName;
+  const sidebarBrand=el("freeSidebarBrand");
+  const sidebarNames={free:"✦ Dr.Vas Free",health:"✚ Dr.Vas Health",studio:"🎬 Dr.Vas Studio",academy:"🎓 Dr.Vas Academy",commerce:"🛒 Dr.Vas Commerce",business:"📊 Dr.Vas Business"};
+  if(sidebarBrand)sidebarBrand.textContent=sidebarNames[moduleName]||"✦ Dr.Vas";
+  if(currentUser&&previousModule!==moduleName){
+    const rememberedForModule=getRememberedConversation(moduleName);
+    moduleConversationToRestore=rememberedForModule;
+    currentConversationId=rememberedForModule||makeId();
+    currentConversationIsLegacy=false;
+    conversationSaved=Boolean(rememberedForModule);
+    pendingMessages=[];
+    rememberActiveConversation(currentConversationId,moduleName);
+    if(!rememberedForModule){
+      ensureConversationMetadata(currentConversationId,moduleName,"").catch(error=>console.warn("Conversation context metadata will be saved with the first message:",error));
+      renderWelcome();
+    }
+  }
   renderPendingChatFiles();
   if(currentUser)rememberActiveModule(moduleName);
   el("moduleSelectionSection")?.classList.remove("hidden","auth-flow-mode");
-  document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode","history-open");
-  document.documentElement.classList.remove("chat-focus-document");
+  document.body.classList.remove("module-workspace-mode","free-module-mode","health-module-mode","shared-chat-sidebar-mode","chat-focus-mode","history-open");
+  document.documentElement.classList.remove("chat-focus-document","drvas-free-shell");
+  document.body.classList.toggle("health-module-mode",moduleName==="health");
+  document.body.classList.toggle("shared-chat-sidebar-mode",!["free","health"].includes(moduleName));
   el("moduleSelectionShell")?.classList.add("modules-open");
   el("landingActions")?.classList.add("hidden");
   document.querySelectorAll(".module-card").forEach(card=>{
@@ -2589,11 +2740,29 @@ function selectModule(moduleName,userInitiated=false){
     const chatSection=el("chatSection");
     chatSection?.classList.remove("hidden");
     document.body.classList.add("module-workspace-mode");
-    if(moduleName==="free"){
+    const topBack=el("globalBackToModules");
+    if(topBack){topBack.hidden=false;topBack.style.display="inline-flex";}
+    syncGlobalLogoutControls();
+    if(moduleName==="free"||moduleName==="health"){
       document.body.classList.add("free-module-mode");
+      document.documentElement.classList.add("drvas-free-shell");
       el("moduleSelectionShell")?.classList.remove("modules-open");
     }
-    requestAnimationFrame(()=>{el("question")?.focus({preventScroll:true});const chat=el("chat");if(chat)chat.scrollTop=chat.scrollHeight;});
+    openFreeNavView("chat",false);
+    requestAnimationFrame(()=>{
+      const back=el("globalBackToModules");
+      if(back){back.hidden=false;back.style.display="inline-flex";}
+      if(moduleName==="free"||moduleName==="health")el("question")?.focus({preventScroll:true});
+      else{const chat=el("chat");if(chat)chat.scrollTop=chat.scrollHeight;}
+    });
+    if(previousModule!==moduleName&&!suppressConversationRestore){
+      if(moduleConversationToRestore)openConversation(moduleConversationToRestore,moduleName).catch(error=>console.warn("Could not restore module conversation:",error));
+      else loadConversationList().catch(error=>console.warn("Could not refresh module history:",error));
+    }
+  }
+  if(currentUser&&(moduleName==="free"||moduleName==="health"||isDrvasAdmin)){
+    const topBack=document.getElementById("globalBackToModules");
+    if(topBack){topBack.hidden=false;topBack.style.setProperty("display","inline-flex","important");}
   }
 }
 
@@ -3748,7 +3917,14 @@ function buildAcademyPrompt(){
  const v=id=>el(id)?.value?.trim()||"";
  if(!v("academySubject")){el("academySubject").focus();return;}
  const prompt="DR.VAS ACADEMY — PROIECTARE CURS\nSUBIECT: "+v("academySubject")+"\nNIVEL: "+v("academyLevel")+"\nPUBLIC: "+v("academyAudience")+"\nFORMAT: "+v("academyFormat")+"\nLIMBA: "+v("academyLanguage")+"\nREZULTAT: "+v("academyOutcome")+"\nCERINȚE: "+v("academyBrief")+"\n\nLivrează un curs original și practic: obiective măsurabile, structură pe module și lecții, explicații, exemple, exerciții, teme, quiz cu răspunsuri explicate, proiect final, rubrică de evaluare și resurse recomandate. Separă faptele verificate de ipoteze. Nu inventa acreditări, certificări sau garanții de angajare/venit. Pentru fiscalitate, legislație sau domenii reglementate, indică verificarea cu un profesionist local.";
- submitModuleBrief(prompt,"Brieful Academy este pregătit. Verifică-l și apasă Trimite.");
+ const focus=window.DrVasAcademyFeature||"course";
+ const focusInstructions={
+  course:"FOCUS: proiectează arhitectura completă a cursului, modulele, obiectivele măsurabile și evaluarea finală.",
+  lessons:"FOCUS: scrie lecțiile în detaliu, fiecare cu obiective, explicații pas cu pas, exemple, recapitulare, materiale și teme.",
+  exercises:"FOCUS: creează un set progresiv de exerciții și quiz-uri, cu răspunsuri corecte explicate, barem și criterii de evaluare.",
+  "learning-plan":"FOCUS: creează un plan de învățare săptămânal, cu durată, obiective, activități, verificări de progres și recuperare pentru întârzieri."
+ }[focus];
+ submitModuleBrief(prompt+"\n\n"+focusInstructions,"Brieful Academy este pregătit. Verifică-l și apasă Trimite.");
 }
 function calculateCommerceUnitEconomics(){
  const v=id=>Number(el(id)?.value);
@@ -3802,7 +3978,13 @@ function buildCommercePrompt(){
   ?JSON.stringify(economics)
   :"Calculatorul local nu are încă suficiente date pentru un rezultat.";
  const prompt="DR.VAS COMMERCE — ANALIZĂ OPORTUNITATE\nPRODUS/NIȘĂ: "+v("commerceProduct")+"\nPIAȚĂ: "+v("commerceMarket")+"\nBUGET MAXIM: "+budget+"\nMODEL: "+v("commerceModel")+"\nCANAL: "+v("commerceChannel")+"\nPREȚ ȚINTĂ: "+(price||"neprecizat")+"\nCOST PRODUS: "+v("commerceUnitCost")+"\nTRANSPORT: "+v("commerceShippingCost")+"\nAMBALARE: "+v("commercePackagingCost")+"\nCOMISION PLATFORMĂ: "+v("commercePlatformFee")+"%\nCOMISION PLATĂ: "+v("commercePaymentFee")+"%\nMARKETING / COMANDĂ: "+v("commerceMarketingCost")+"\nREZERVĂ RETURURI: "+v("commerceReturnsReserve")+"%\nREZULTAT CALCULATOR: "+economicsSummary+"\nBRIEF: "+v("commerceBrief")+"\n\nAnalizează fără promisiuni de profit: cerere și concurență (marchează ce necesită cercetare actuală), profilul clientului, verificarea furnizorilor, mostre, termene și retururi, siguranța produsului, proprietate intelectuală, obligații UK/UE relevante, cost complet pe unitate, taxe/VAT și comisioane, cost de achiziție client, marjă, prag de rentabilitate și scenarii pesimist/bază/optimist. Verifică independent aritmetica locală și explică diferența dintre contribuția pe comandă, profitul contabil și fluxul de numerar. Respectă strict bugetul; nu presupune că toate fondurile pot fi cheltuite pe stoc sau reclame. Încheie cu o listă de verificări înainte de orice plată și recomandă să nu comandăm până nu verificăm furnizorul și o mostră.";
- submitModuleBrief(prompt,"Analiza Commerce este pregătită. Verifică ipotezele și apasă Trimite.");
+ const focus=window.DrVasCommerceFeature||"research";
+ const focusInstructions={
+  research:"FOCUS: verifică cererea, concurența, profilul clientului și riscurile pieței; marchează ce necesită cercetare actuală.",
+  suppliers:"FOCUS: construiește o comparație de furnizori cu verificarea firmei, mostre, cost complet, MOQ, termene, retururi, trasabilitate și semnale de fraudă. Nu recomanda plata înainte de verificarea independentă.",
+  launch:"FOCUS: pregătește planul de lansare al magazinului: listări, fotografii și texte, politici, livrare, retururi, suport clienți, buget de test și calendar de 30 de zile."
+ }[focus];
+ submitModuleBrief(prompt+"\n\n"+focusInstructions,"Analiza Commerce este pregătită. Verifică ipotezele și apasă Trimite.");
 }
 const businessLedgerState={rows:[],currency:"GBP"};
 const studentAssessmentState={id:null};
@@ -4173,8 +4355,11 @@ async function startDrVas(){
 }
 function showModuleSelection(){
  if(!languageReady)return;
- document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode","history-open");
- document.documentElement.classList.remove("chat-focus-document");
+ document.body.classList.remove("module-workspace-mode","free-module-mode","health-module-mode","shared-chat-sidebar-mode","chat-focus-mode","history-open");
+ document.documentElement.classList.remove("chat-focus-document","drvas-free-shell");
+ const topBack=el("globalBackToModules");
+ if(topBack){topBack.hidden=true;topBack.style.display="none";}
+ syncGlobalLogoutControls();
  el("heroSection")?.classList.add("hidden");
  document.querySelector(".origin-story")?.classList.add("hidden");
  el("landingActions")?.classList.add("hidden");
@@ -4189,8 +4374,11 @@ function enterChatFocus(){showModuleSelection();}
 function exitChatFocus(){goToModules();}
 function toggleChatHistory(){document.body.classList.toggle("history-open");}
 function goToModules(){
- document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode","history-open");
- document.documentElement.classList.remove("chat-focus-document");
+ document.body.classList.remove("module-workspace-mode","free-module-mode","health-module-mode","shared-chat-sidebar-mode","chat-focus-mode","history-open");
+ document.documentElement.classList.remove("chat-focus-document","drvas-free-shell");
+ const topBack=el("globalBackToModules");
+ if(topBack){topBack.hidden=true;topBack.style.display="none";}
+ syncGlobalLogoutControls();
  el("chatSection")?.classList.add("hidden");
  el("heroSection")?.classList.add("hidden");
  document.querySelector(".origin-story")?.classList.add("hidden");
@@ -4923,8 +5111,8 @@ async function showChat(user,displayName){
   try{const savedAssistant=localStorage.getItem("drvas_assistant_"+user.id);if(savedAssistant&&ASSISTANTS[savedAssistant])activeAssistant=savedAssistant;}catch{}
   selectAssistant(activeAssistant);
   ["authSection","profileSection","chatSection"].forEach(id=>el(id)?.classList.add("hidden"));
-  document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode");
-  document.documentElement.classList.remove("chat-focus-document");
+  document.body.classList.remove("module-workspace-mode","free-module-mode","health-module-mode","shared-chat-sidebar-mode","chat-focus-mode","history-open");
+  document.documentElement.classList.remove("chat-focus-document","drvas-free-shell");
   // Session restoration returns to the presentation. A module opens only after the user chooses it.
   // Privacy: never expose the founder's personal name or email in the signed-in workspace header.
   // The identity remains unchanged in Supabase and the private profile settings.
@@ -4944,7 +5132,7 @@ async function showChat(user,displayName){
   }catch{}
   if(pendingModule&&["free","health","studio","academy","commerce","business"].includes(pendingModule)){
     showModuleSelection();
-    selectModule(pendingModule,true);
+    selectModule(pendingModule,true,true);
     if(isDrvasAdmin||pendingModule==="free"||pendingModule==="health")scrollPageToChat();
   }else if(pendingEntry==="modules"){
     showModuleSelection();
@@ -4953,7 +5141,7 @@ async function showChat(user,displayName){
     const rememberedModule=getRememberedModule();
     const resumableModule=rememberedModule&&((rememberedModule==="free"||rememberedModule==="health")||isDrvasAdmin)?rememberedModule:"free";
     showModuleSelection();
-    selectModule(resumableModule,true);
+    selectModule(resumableModule,true,true);
     if(resumableModule==="free"||resumableModule==="health"||isDrvasAdmin)scrollPageToChat();
   }
 
@@ -4962,15 +5150,18 @@ async function showChat(user,displayName){
   // the module buttons appear unresponsive or strand the user on the login screen.
   try{
     const conversations=await loadConversationList();
-    const rememberedId=getRememberedConversation();
-    const resumeId=conversations.some(item=>item.id===rememberedId)
+    const scopedConversations=conversations.filter(item=>item.module===activeModule||(!item.module&&activeModule==="free"));
+    const rememberedId=getRememberedConversation(activeModule);
+    const resumeId=scopedConversations.some(item=>item.id===rememberedId)
       ? rememberedId
-      : (conversations[0]?.id || null);
+      : (scopedConversations[0]?.id || null);
     if(resumeId){
       await openConversation(resumeId);
     }else{
       currentConversationId=makeId();
-      rememberActiveConversation(currentConversationId);
+      currentConversationIsLegacy=false;
+      rememberActiveConversation(currentConversationId,activeModule);
+      ensureConversationMetadata(currentConversationId,activeModule,"").catch(error=>console.warn("Conversation context metadata pending first message:",error));
       logClientEvent("conversation_created");
       conversationSaved=false;
       pendingMessages=[];
@@ -5010,6 +5201,7 @@ async function showChat(user,displayName){
 }
 function renderWelcome(){
   el("chat").innerHTML = "";
+  el("chat").dataset.hasRenderedMessages="";
   const welcome = document.createElement("div");
   welcome.className = "msg bot";
   const assistant=ASSISTANTS[activeAssistant]||ASSISTANTS.drvas;
@@ -5019,6 +5211,31 @@ function renderWelcome(){
 }
 
 let showArchivedConversations = false;
+let currentConversationIsLegacy = false;
+let freeNavCurrentView = "chat";
+function localConversationContextKey(){return "drvas_conversation_context:"+currentUser.id;}
+function rememberLocalConversationContext(conversationId,moduleId,title=""){
+ if(!currentUser||!conversationId)return;
+ try{
+  const key=localConversationContextKey(),saved=JSON.parse(localStorage.getItem(key)||"{}");
+  saved[conversationId]={module:moduleId,conversation_kind:moduleId==="free"?"general":"module_assistant",title:String(title||"").slice(0,120),updated_at:new Date().toISOString()};
+  localStorage.setItem(key,JSON.stringify(saved));
+ }catch(error){console.warn("Local conversation context unavailable:",error);}
+}
+function readLocalConversationContext(){
+ if(!currentUser)return {};
+ try{return JSON.parse(localStorage.getItem(localConversationContextKey())||"{}")}catch{return {}}
+}
+async function ensureConversationMetadata(conversationId,moduleId=activeModule,title=""){
+ if(!currentUser||!conversationId)return;
+ const cleanTitle=String(title||"").replace(/\\s+/g," ").trim().slice(0,120);
+ rememberLocalConversationContext(conversationId,moduleId,cleanTitle);
+ const {data:existing,error:readError}=await supabaseClient.from("drvas_conversation_metadata").select("title").eq("user_id",currentUser.id).eq("conversation_id",conversationId).maybeSingle();
+ if(readError)throw readError;
+ const payload={user_id:currentUser.id,conversation_id:conversationId,module:moduleId,conversation_kind:moduleId==="free"?"general":"module_assistant",title:existing?.title||cleanTitle,updated_at:new Date().toISOString()};
+ const {error}=await supabaseClient.from("drvas_conversation_metadata").upsert(payload,{onConflict:"user_id,conversation_id"});
+ if(error)throw error;
+}
 async function getConversationIds(){
  if(!currentUser)return [];
  const {data,error}=await supabaseClient.from("chat_messages").select("conversation_id,created_at,role,content").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(500);
@@ -5030,9 +5247,15 @@ async function getConversationIds(){
  }
  const conversations=Array.from(seen.values());
  if(conversations.length){
-  const {data:meta,error:metaError}=await supabaseClient.from("drvas_conversation_metadata").select("conversation_id,title,archived_at").eq("user_id",currentUser.id).in("conversation_id",conversations.map(x=>x.id));
-  if(metaError){console.warn("Conversation metadata unavailable; apply migration 202611030006_conversation_management.sql:",metaError.message);}
-  else {const byId=new Map((meta||[]).map(x=>[x.conversation_id,x]));conversations.forEach(item=>{const saved=byId.get(item.id);if(saved){item.archived_at=saved.archived_at;if(saved.title)item.title=saved.title;}});}
+  let metadata=await supabaseClient.from("drvas_conversation_metadata").select("conversation_id,title,archived_at,module,conversation_kind,feature_key,updated_at").eq("user_id",currentUser.id).in("conversation_id",conversations.map(x=>x.id));
+  if(metadata.error){
+   console.warn("Conversation context migration unavailable; loading legacy metadata:",metadata.error.message);
+   metadata=await supabaseClient.from("drvas_conversation_metadata").select("conversation_id,title,archived_at").eq("user_id",currentUser.id).in("conversation_id",conversations.map(x=>x.id));
+  }
+  const localContext=readLocalConversationContext();
+  if(metadata.error){console.warn("Conversation metadata unavailable:",metadata.error.message);}
+  else {const byId=new Map((metadata.data||[]).map(x=>[x.conversation_id,x]));conversations.forEach(item=>{const saved=byId.get(item.id);if(saved){item.archived_at=saved.archived_at;if(saved.title)item.title=saved.title;item.module=saved.module||null;item.conversation_kind=saved.conversation_kind||null;item.feature_key=saved.feature_key||null;}});}
+  conversations.forEach(item=>{const local=localContext[item.id];if(!item.module&&local?.module)item.module=local.module;if(!item.title&&local?.title)item.title=local.title;});
 
  }
  return conversations;
@@ -5041,7 +5264,7 @@ async function loadConversationList(){
  const list=el("conversationList");list.innerHTML="";
  const filter=el("historyFilterButton");if(filter)setLocalizedText(filter,showArchivedConversations?"Vezi conversațiile active":"Vezi conversațiile arhivate");
  try{
-  const all=await getConversationIds(),items=all.filter(x=>showArchivedConversations?Boolean(x.archived_at):!x.archived_at);
+  const all=await getConversationIds(),scoped=all.filter(x=>x.module===activeModule||(!x.module&&activeModule==="free")),items=scoped.filter(x=>showArchivedConversations?Boolean(x.archived_at):!x.archived_at);
   if(!items.length){const empty=document.createElement("p");setLocalizedText(empty,showArchivedConversations?"Nu ai conversații arhivate.":"Nu ai încă discuții salvate.");empty.style.cssText="font-size:12px;color:#7fa4b5;line-height:1.5";list.appendChild(empty);return all;}
   items.forEach((conversation,index)=>{
    const row=document.createElement("div");row.className="conversation-row";
@@ -5049,7 +5272,9 @@ async function loadConversationList(){
    const title=document.createElement("span"),readable=String(conversation.title||"").replace(/\s+/g," ").trim();
    title.textContent=readable?(readable.length>52?readable.slice(0,49)+"…":readable):tr("Conversația ")+(index+1);title.title=readable||title.textContent;
    const date=document.createElement("small");date.textContent=new Date(conversation.date).toLocaleString(currentLanguage||"ro",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
-   button.append(title,date);button.addEventListener("click",()=>openConversation(conversation.id));
+   button.append(title,date);
+   if(!conversation.module){const legacy=document.createElement("small");legacy.className="conversation-legacy-label";legacy.textContent="Istoric vechi · modul neclasificat";button.appendChild(legacy);}
+   button.addEventListener("click",()=>openConversation(conversation.id,conversation.module||null));
    const actions=document.createElement("div");actions.className="conversation-actions";
    const addAction=(label,handler)=>{const b=document.createElement("button");b.type="button";b.textContent=label;b.addEventListener("click",event=>{event.stopPropagation();handler();});actions.appendChild(b);};
    addAction("Redenumește",()=>renameConversation(conversation));
@@ -5130,20 +5355,26 @@ async function deleteAllConversations(){
   }
 }
 
-async function openConversation(conversationId){
+async function openConversation(conversationId,conversationModule=activeModule){
   if(!currentUser || loadingConversation || isSendingMessage) return;
+  if(conversationModule&&conversationModule!==activeModule)return;
   loadingConversation = true;
   currentConversationId = conversationId;
+  currentConversationIsLegacy=!conversationModule;
+  if(["free","health","studio","academy","commerce","business"].includes(activeModule))openFreeNavView("chat",false);
+  if(el("question"))el("question").disabled=currentConversationIsLegacy;
+  if(el("sendButton"))el("sendButton").disabled=currentConversationIsLegacy;
   clearPendingChatFiles();
   rememberActiveConversation(conversationId);
   logClientEvent("conversation_opened");
   conversationSaved = true;
   pendingMessages = [];
-  setLocalizedText(el("saveMessage"),"Această conversație și mesajele noi se salvează automat în contul tău.");
+  setLocalizedText(el("saveMessage"),currentConversationIsLegacy?"Această conversație veche nu are modul identificat. O poți citi, dar pentru a continua fără amestecarea modulelor creează un chat nou.":"Această conversație și mesajele noi se salvează automat în contul tău.");
   updateSaveButton();
 
   const chat = el("chat");
   chat.innerHTML = "";
+  chat.dataset.hasRenderedMessages="";
   const loading = document.createElement("div");
   loading.className = "msg bot";
   setLocalizedText(loading,"Se încarcă discuția...");
@@ -5163,7 +5394,8 @@ async function openConversation(conversationId){
 
     await loadConversationAttachments(conversationId,activeModule);
     updateActiveConversation();
-    scrollToLatestMessage(chat.lastElementChild);
+    scrollToLatestMessage(chat.lastElementChild,true);
+    if(currentConversationIsLegacy)appendMessage("assistant","Acesta este un chat vechi, fără modul identificat. Îl poți consulta, dar nu poți continua aici. Apasă New chat pentru a începe o conversație separată.");
   }catch(error){
     chat.innerHTML = "";
     appendMessage("assistant",tr("Nu am putut încărca această conversație: ") + error.message);
@@ -5175,6 +5407,11 @@ async function openConversation(conversationId){
 function newConversation(){
   if(!currentUser || isSendingMessage) return;
   currentConversationId = makeId();
+  currentConversationIsLegacy=false;
+  if(["free","health","studio","academy","commerce","business"].includes(activeModule))openFreeNavView("chat",false);
+  if(el("question"))el("question").disabled=false;
+  if(el("sendButton"))el("sendButton").disabled=false;
+  ensureConversationMetadata(currentConversationId,activeModule,"").then(()=>loadConversationList()).catch(error=>console.warn("Conversation context metadata will be saved with the first message:",error));
   clearPendingChatFiles();
   el("conversationAttachments")?.replaceChildren();
   rememberActiveConversation(currentConversationId);
@@ -5184,6 +5421,7 @@ function newConversation(){
   setLocalizedText(el("saveMessage"),"Conversația nouă se salvează automat în contul tău.");
   updateSaveButton();
   renderWelcome();
+  openFreeNavView("chat",false);
   el("question").focus();
 }
 
@@ -5192,7 +5430,8 @@ function appendMessage(role,content){
   message.className = "msg " + (role === "user" ? "user" : "bot");
   message.textContent = content;
   el("chat").appendChild(message);
-  scrollToLatestMessage(message);
+  scrollToLatestMessage(message,role==="user"||!el("chat").dataset.hasRenderedMessages);
+  el("chat").dataset.hasRenderedMessages="true";
   return message;
 }
 
@@ -5490,9 +5729,292 @@ async function deleteAllConversationFiles(){
 }
 el("chatFileInput").addEventListener("change",handleChatFilesSelected);
 
+
+function freeNavSetActive(view){
+ document.querySelectorAll("[data-free-nav]").forEach(button=>{
+  const selected=button.dataset.freeNav===view;
+  button.classList.toggle("active",selected);
+  if(selected)button.setAttribute("aria-current","page");else button.removeAttribute("aria-current");
+ });
+}
+function freeNavPage(title,description){
+ const host=el("freeNavWorkspace");if(!host)return null;
+ host.replaceChildren();
+ const page=document.createElement("section");page.className="free-nav-page";
+ const heading=document.createElement("h2");heading.textContent=title;page.appendChild(heading);
+ if(description){const p=document.createElement("p");p.textContent=description;page.appendChild(p);}
+ host.appendChild(page);return page;
+}
+function freeNavCard(host,title,description,actionLabel,handler){
+ const card=document.createElement("article");card.className="free-nav-card";
+ const h=document.createElement("h3");h.textContent=title;card.appendChild(h);
+ const p=document.createElement("p");p.textContent=description;card.appendChild(p);
+ if(actionLabel&&handler){const button=document.createElement("button");button.type="button";button.textContent=actionLabel;button.addEventListener("click",handler);card.appendChild(button);}
+ host.appendChild(card);return card;
+}
+
+async function freeNavLoadLibrary(imagesOnly=false){
+ const page=freeNavPage(imagesOnly?"Images":"Library",imagesOnly?"Colecția ta privată de imagini, independentă de conversațiile în care le-ai încărcat.":"Fișierele salvate în biblioteca ta privată, independente de istoricul conversațiilor.");
+ if(imagesOnly){const capability=document.createElement("div");capability.className="free-nav-status";capability.textContent="Poți încărca, organiza, previzualiza și deschide imaginile salvate. Generarea AI de imagini în Dr.Vas nu este încă activată.";page.appendChild(capability);}
+ const uploadCard=document.createElement("article");uploadCard.className="free-nav-card";
+ const uploadTitle=document.createElement("h3");uploadTitle.textContent=imagesOnly?"Adaugă imagine":"Adaugă fișiere în Library";uploadCard.appendChild(uploadTitle);
+ const uploadDescription=document.createElement("p");uploadDescription.textContent=imagesOnly?"Încarcă JPG, PNG sau WebP în colecția ta de imagini.":"Încarcă PDF, imagini sau fișiere TXT/CSV. Fișierele rămân salvate separat de chat.";uploadCard.appendChild(uploadDescription);
+ const uploadButton=document.createElement("button");uploadButton.type="button";uploadButton.textContent=imagesOnly?"Alege imagine":"Alege fișiere";uploadCard.appendChild(uploadButton);page.appendChild(uploadCard);
+ const fileInput=document.createElement("input");fileInput.type="file";fileInput.multiple=true;fileInput.accept=imagesOnly?"image/jpeg,image/png,image/webp":"image/jpeg,image/png,image/webp,application/pdf,text/plain,text/csv";fileInput.hidden=true;page.appendChild(fileInput);
+ const uploadStatus=document.createElement("p");uploadStatus.className="free-nav-muted";uploadCard.appendChild(uploadStatus);
+ uploadButton.addEventListener("click",()=>fileInput.click());
+ fileInput.addEventListener("change",async()=>{
+  const files=[...(fileInput.files||[])];fileInput.value="";if(!files.length)return;
+  uploadButton.disabled=true;
+  const allowed=new Set(["image/jpeg","image/png","image/webp","application/pdf","text/plain","text/csv"]);
+  try{
+   for(let index=0;index<files.length;index++){
+    const file=files[index];
+    if(!allowed.has(file.type)||file.size<1||file.size>15*1024*1024)throw new Error(file.name+": tip de fișier neacceptat sau dimensiune peste 15 MB.");
+    if(imagesOnly&&!file.type.startsWith("image/"))throw new Error(file.name+": aici poți încărca doar imagini.");
+    uploadStatus.textContent="Încarc "+(index+1)+" din "+files.length+": "+file.name;
+    const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,"_").slice(-120)||"file";
+    const storagePath=currentUser.id+"/library/"+makeId()+"-"+safeName;
+    const {error:uploadError}=await supabaseClient.storage.from("drvas-media").upload(storagePath,file,{upsert:false,contentType:file.type,cacheControl:"3600"});
+    if(uploadError)throw uploadError;
+    const {error:recordError}=await supabaseClient.from("drvas_library_items").insert({user_id:currentUser.id,original_name:file.name,mime_type:file.type,file_size:file.size,storage_path:storagePath});
+    if(recordError){await supabaseClient.storage.from("drvas-media").remove([storagePath]);throw recordError;}
+   }
+   await freeNavLoadLibrary(imagesOnly);
+  }catch(error){uploadStatus.textContent="Încărcarea nu a fost finalizată: "+error.message;uploadButton.disabled=false;}
+ });
+ const grid=document.createElement("div");grid.className="free-nav-grid";page.appendChild(grid);
+ const loading=document.createElement("div");loading.className="free-nav-status";loading.textContent="Încarc biblioteca…";grid.appendChild(loading);
+ try{
+  let query=supabaseClient.from("drvas_library_items").select("id,original_name,mime_type,file_size,storage_path,created_at").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(200);
+  if(imagesOnly)query=query.like("mime_type","image/%");
+  const {data,error}=await query;if(error)throw error;
+  grid.replaceChildren();
+  if(!data?.length){const empty=document.createElement("div");empty.className="free-nav-status";empty.textContent=imagesOnly?"Nu ai imagini salvate încă. Încarcă prima imagine folosind butonul de mai sus.":"Library este goală. Încarcă primul fișier folosind butonul de mai sus.";grid.appendChild(empty);return;}
+  for(const file of data){
+   const card=document.createElement("article");card.className="free-nav-card";
+   const {data:signed,error:signedError}=await supabaseClient.storage.from("drvas-media").createSignedUrl(file.storage_path,3600);
+   if(imagesOnly&&!signedError&&signed?.signedUrl){const img=document.createElement("img");img.className="free-nav-file-image";img.src=signed.signedUrl;img.alt=file.original_name;card.appendChild(img);}
+   const h=document.createElement("h3");h.textContent=file.original_name;card.appendChild(h);
+   const p=document.createElement("p");p.textContent=file.mime_type+" · "+chatFileSizeLabel(file.file_size)+" · "+new Date(file.created_at).toLocaleDateString();card.appendChild(p);
+   if(!signedError&&signed?.signedUrl){const link=document.createElement("a");link.href=signed.signedUrl;link.target="_blank";link.rel="noopener noreferrer";link.textContent="Deschide fișierul";card.appendChild(link);}
+   const remove=document.createElement("button");remove.type="button";remove.textContent="Șterge din Library";remove.addEventListener("click",async()=>{
+    if(!window.confirm("Ștergi definitiv acest fișier din Library?"))return;
+    remove.disabled=true;
+    const {error:recordError}=await supabaseClient.from("drvas_library_items").delete().eq("id",file.id).eq("user_id",currentUser.id);
+    if(recordError){window.alert("Nu am putut șterge înregistrarea: "+recordError.message);remove.disabled=false;return;}
+    const {error:storageError}=await supabaseClient.storage.from("drvas-media").remove([file.storage_path]);
+    if(storageError)window.alert("Înregistrarea a fost ștearsă, dar fișierul din stocare nu a putut fi eliminat: "+storageError.message);
+    freeNavLoadLibrary(imagesOnly);
+   });card.appendChild(remove);
+   grid.appendChild(card);
+  }
+ }catch(error){grid.replaceChildren();const failed=document.createElement("div");failed.className="free-nav-status";failed.textContent="Nu am putut încărca Library: "+error.message+". Aplică migrarea 202611060003_library_items.sql în Supabase.";grid.appendChild(failed);}
+}
+
+
+let showArchivedFreeProjects=false;
+async function freeNavOpenProject(projectId){
+ const {data:project,error}=await supabaseClient.from("drvas_projects").select("id,title,description,module,notes,archived_at,updated_at").eq("id",projectId).eq("user_id",currentUser.id).maybeSingle();
+ if(error||!project){const page=freeNavPage("Project indisponibil","Nu am putut deschide proiectul selectat.");const status=document.createElement("div");status.className="free-nav-status";status.textContent=error?.message||"Proiectul nu a fost găsit.";page.appendChild(status);return;}
+ const page=freeNavPage("Projects / "+project.title,"Spațiu de lucru salvat separat de conversațiile tale.");
+ const back=document.createElement("button");back.type="button";back.textContent="← Înapoi la Projects";back.addEventListener("click",()=>freeNavLoadProjects());page.appendChild(back);
+ const form=document.createElement("form");form.className="free-scheduled-form";page.appendChild(form);
+ const addField=(labelText,control,wide=false)=>{const label=document.createElement("label");if(wide)label.className="wide";label.textContent=labelText;label.appendChild(control);form.appendChild(label);return control;};
+ const title=document.createElement("input");title.type="text";title.maxLength=160;title.required=true;title.value=project.title;addField("Numele proiectului",title);
+ const module=document.createElement("select");for(const [value,labelText] of [["free","Dr.Vas Free"],["health","Dr.Vas Health"],["studio","Dr.Vas Studio"],["academy","Dr.Vas Academy"],["commerce","Dr.Vas Commerce"],["business","Dr.Vas Business"]]){if(!isDrvasAdmin&&!["free","health"].includes(value))continue;const option=document.createElement("option");option.value=value;option.textContent=labelText;module.appendChild(option);}module.value=project.module;addField("Modul asociat",module);
+ const description=document.createElement("textarea");description.maxLength=1000;description.value=project.description||"";addField("Descriere",description,true);
+ const notes=document.createElement("textarea");notes.maxLength=30000;notes.value=project.notes||"";notes.style.minHeight="220px";addField("Notițe și conținut",notes,true);
+ const actions=document.createElement("div");actions.className="wide";actions.style.display="flex";actions.style.gap="8px";actions.style.flexWrap="wrap";
+ const save=document.createElement("button");save.type="submit";save.textContent="Salvează proiectul";actions.appendChild(save);
+ const archive=document.createElement("button");archive.type="button";archive.textContent=project.archived_at?"Restabilește":"Arhivează";archive.addEventListener("click",async()=>{archive.disabled=true;const {error}=await supabaseClient.from("drvas_projects").update({archived_at:project.archived_at?null:new Date().toISOString(),updated_at:new Date().toISOString()}).eq("id",project.id).eq("user_id",currentUser.id);if(error){window.alert("Nu am putut actualiza arhivarea: "+error.message);archive.disabled=false;}else freeNavLoadProjects();});actions.appendChild(archive);
+ const remove=document.createElement("button");remove.type="button";remove.textContent="Șterge";remove.addEventListener("click",async()=>{if(!window.confirm("Ștergi definitiv acest proiect?"))return;remove.disabled=true;const {error}=await supabaseClient.from("drvas_projects").delete().eq("id",project.id).eq("user_id",currentUser.id);if(error){window.alert("Nu am putut șterge proiectul: "+error.message);remove.disabled=false;}else freeNavLoadProjects();});actions.appendChild(remove);form.appendChild(actions);
+ const status=document.createElement("p");status.className="free-nav-muted wide";status.textContent="Ultima actualizare: "+new Date(project.updated_at).toLocaleString();form.appendChild(status);
+ form.addEventListener("submit",async event=>{event.preventDefault();save.disabled=true;status.textContent="Salvez proiectul…";const {error}=await supabaseClient.from("drvas_projects").update({title:title.value.trim(),description:description.value.trim(),module:module.value,notes:notes.value,updated_at:new Date().toISOString()}).eq("id",project.id).eq("user_id",currentUser.id);if(error){status.textContent="Nu am putut salva: "+error.message;save.disabled=false;}else freeNavOpenProject(project.id);});
+}
+async function freeNavLoadProjects(){
+ const page=freeNavPage("Projects","Creează proiecte independente, păstrează descrieri și notițe și redeschide-le oricând. Proiectele nu sunt amestecate cu istoricul conversațiilor.");
+ const form=document.createElement("form");form.className="free-scheduled-form";page.appendChild(form);
+ const titleLabel=document.createElement("label");titleLabel.textContent="Nume proiect";const titleInput=document.createElement("input");titleInput.type="text";titleInput.maxLength=160;titleInput.required=true;titleInput.placeholder="De exemplu: Planul meu de afaceri";titleLabel.appendChild(titleInput);form.appendChild(titleLabel);
+ const moduleLabel=document.createElement("label");moduleLabel.textContent="Modul";const moduleInput=document.createElement("select");for(const [value,labelText] of [["free","Dr.Vas Free"],["health","Dr.Vas Health"],["studio","Dr.Vas Studio"],["academy","Dr.Vas Academy"],["commerce","Dr.Vas Commerce"],["business","Dr.Vas Business"]]){if(!isDrvasAdmin&&!["free","health"].includes(value))continue;const option=document.createElement("option");option.value=value;option.textContent=labelText;moduleInput.appendChild(option);}moduleLabel.appendChild(moduleInput);form.appendChild(moduleLabel);
+ const descriptionLabel=document.createElement("label");descriptionLabel.className="wide";descriptionLabel.textContent="Descriere (opțional)";const descriptionInput=document.createElement("textarea");descriptionInput.maxLength=1000;descriptionInput.placeholder="Despre ce este proiectul?";descriptionLabel.appendChild(descriptionInput);form.appendChild(descriptionLabel);
+ const create=document.createElement("button");create.type="submit";create.textContent="＋ Creează proiect";form.appendChild(create);
+ const formStatus=document.createElement("p");formStatus.className="free-nav-muted wide";form.appendChild(formStatus);
+ form.addEventListener("submit",async event=>{event.preventDefault();const title=titleInput.value.trim();if(!title)return;create.disabled=true;formStatus.textContent="Creez proiectul…";const {data,error}=await supabaseClient.from("drvas_projects").insert({user_id:currentUser.id,title,description:descriptionInput.value.trim(),module:moduleInput.value,notes:""}).select("id").single();if(error){formStatus.textContent="Nu am putut crea proiectul: "+error.message+". Verifică migrarea 202611060004_projects.sql.";create.disabled=false;}else freeNavOpenProject(data.id);});
+ const tools=document.createElement("div");tools.style.display="flex";tools.style.alignItems="center";tools.style.gap="10px";tools.style.margin="18px 0 8px";
+ const heading=document.createElement("h3");heading.textContent=showArchivedFreeProjects?"Proiecte arhivate":"Proiectele mele";heading.style.margin="0";tools.appendChild(heading);
+ const toggle=document.createElement("button");toggle.type="button";toggle.textContent=showArchivedFreeProjects?"Vezi active":"Vezi arhivate";toggle.addEventListener("click",()=>{showArchivedFreeProjects=!showArchivedFreeProjects;freeNavLoadProjects();});tools.appendChild(toggle);page.appendChild(tools);
+ const grid=document.createElement("div");grid.className="free-nav-grid";page.appendChild(grid);
+ try{
+  let query=supabaseClient.from("drvas_projects").select("id,title,description,module,archived_at,updated_at").eq("user_id",currentUser.id).order("updated_at",{ascending:false}).limit(200);
+  query=showArchivedFreeProjects?query.not("archived_at","is",null):query.is("archived_at",null);
+  const {data:projects,error}=await query;if(error)throw error;
+  grid.replaceChildren();
+  if(!projects?.length){const empty=document.createElement("div");empty.className="free-nav-status";empty.textContent=showArchivedFreeProjects?"Nu ai proiecte arhivate.":"Nu ai proiecte încă. Creează primul proiect folosind formularul de mai sus.";grid.appendChild(empty);}
+  for(const project of projects){
+   const card=document.createElement("article");card.className="free-nav-card";
+   const h=document.createElement("h3");h.textContent=project.title;card.appendChild(h);
+   const p=document.createElement("p");p.textContent=(project.module||"free").toUpperCase()+" · "+(project.description||"Fără descriere")+" · "+new Date(project.updated_at).toLocaleDateString();card.appendChild(p);
+   const actions=document.createElement("div");actions.className="free-scheduled-task-actions";
+   const open=document.createElement("button");open.type="button";open.textContent="Deschide";open.addEventListener("click",()=>freeNavOpenProject(project.id));actions.appendChild(open);
+   const rename=document.createElement("button");rename.type="button";rename.textContent="Redenumește";rename.addEventListener("click",async()=>{const next=window.prompt("Noul nume al proiectului:",project.title);if(!next?.trim())return;rename.disabled=true;const {error}=await supabaseClient.from("drvas_projects").update({title:next.trim().slice(0,160),updated_at:new Date().toISOString()}).eq("id",project.id).eq("user_id",currentUser.id);if(error){window.alert("Nu am putut redenumi proiectul: "+error.message);rename.disabled=false;}else freeNavLoadProjects();});actions.appendChild(rename);
+   const archive=document.createElement("button");archive.type="button";archive.textContent=project.archived_at?"Restabilește":"Arhivează";archive.addEventListener("click",async()=>{archive.disabled=true;const {error}=await supabaseClient.from("drvas_projects").update({archived_at:project.archived_at?null:new Date().toISOString(),updated_at:new Date().toISOString()}).eq("id",project.id).eq("user_id",currentUser.id);if(error){window.alert("Nu am putut actualiza proiectul: "+error.message);archive.disabled=false;}else freeNavLoadProjects();});actions.appendChild(archive);
+   const remove=document.createElement("button");remove.type="button";remove.textContent="Șterge";remove.addEventListener("click",async()=>{if(!window.confirm("Ștergi definitiv acest proiect?"))return;remove.disabled=true;const {error}=await supabaseClient.from("drvas_projects").delete().eq("id",project.id).eq("user_id",currentUser.id);if(error){window.alert("Nu am putut șterge proiectul: "+error.message);remove.disabled=false;}else freeNavLoadProjects();});actions.appendChild(remove);
+   card.appendChild(actions);grid.appendChild(card);
+  }
+  if(isDrvasAdmin){
+   const legacyHeading=document.createElement("h3");legacyHeading.textContent="Proiecte salvate în module";legacyHeading.style.margin="22px 0 8px";page.appendChild(legacyHeading);
+   const legacyGrid=document.createElement("div");legacyGrid.className="free-nav-grid";page.appendChild(legacyGrid);
+   const [studioResult,moduleResult]=await Promise.all([
+    supabaseClient.from("drvas_studio_projects").select("id,title,project_type,updated_at").eq("user_id",currentUser.id).order("updated_at",{ascending:false}).limit(100),
+    supabaseClient.from("drvas_module_projects").select("id,module,title,project_type,updated_at").eq("user_id",currentUser.id).order("updated_at",{ascending:false}).limit(200)
+   ]);
+   if(studioResult.error)throw studioResult.error;if(moduleResult.error)throw moduleResult.error;
+   const legacyProjects=[...(studioResult.data||[]).map(x=>({...x,module:"studio"})),...(moduleResult.data||[])].sort((a,b)=>new Date(b.updated_at)-new Date(a.updated_at));
+   if(!legacyProjects.length){const empty=document.createElement("div");empty.className="free-nav-status";empty.textContent="Nu există proiecte salvate în module.";legacyGrid.appendChild(empty);}
+   legacyProjects.forEach(project=>{
+    const label=project.module==="studio"?"Studio":project.module[0].toUpperCase()+project.module.slice(1);
+    freeNavCard(legacyGrid,project.title||"Proiect fără titlu",label+" · "+(project.project_type||"proiect")+" · "+new Date(project.updated_at).toLocaleDateString(),"Deschide în modul",async()=>{
+     if(project.module==="studio"){selectModule("studio",true);await loadStudioProjects(project.id);if(el("studioSavedProjects"))el("studioSavedProjects").value=project.id;await openStudioProject();}
+     else{selectModule(project.module,true);await loadModuleProjectList(project.module,project.id);if(el(project.module+"ProjectList"))el(project.module+"ProjectList").value=project.id;await openModuleProject(project.module);}
+    });
+   });
+  }
+ }catch(error){grid.replaceChildren();const failed=document.createElement("div");failed.className="free-nav-status";failed.textContent="Nu am putut încărca Projects: "+error.message+". Aplică migrarea 202611060004_projects.sql în Supabase.";grid.appendChild(failed);}
+}
+
+async function freeNavLoadRecents(){
+ const page=freeNavPage("Recents","Conversațiile recente din Dr.Vas Free. Alege una pentru a redeschide exact acel fir.");
+ const grid=document.createElement("div");grid.className="free-nav-grid";page.appendChild(grid);
+ try{
+  const all=await getConversationIds(),items=all.filter(x=>x.module==="free"||!x.module);
+  if(!items.length){const empty=document.createElement("div");empty.className="free-nav-status";empty.textContent="Nu ai încă conversații recente.";grid.appendChild(empty);return;}
+  items.forEach((conversation,index)=>freeNavCard(grid,conversation.title||("Conversația "+(index+1)),new Date(conversation.date).toLocaleString()+" · "+(conversation.module?"Dr.Vas Free":"Istoric vechi, modul neclasificat"),conversation.module?"Redeschide conversația":"Deschide pentru citire",()=>openConversation(conversation.id,conversation.module||null)));
+ }catch(error){const failed=document.createElement("div");failed.className="free-nav-status";failed.textContent="Nu am putut încărca conversațiile: "+error.message;grid.appendChild(failed);}
+}
+
+function localDateTimeInputValue(date){
+ const local=new Date(date.getTime()-date.getTimezoneOffset()*60000);
+ return local.toISOString().slice(0,16);
+}
+async function freeNavLoadScheduled(){
+ const page=freeNavPage("Scheduled","Creează mementouri private în Dr.Vas. Acestea apar ca notificări în aplicație; nu se trimit prin e-mail sau push.");
+ const info=document.createElement("div");info.className="free-nav-status";info.textContent="Mementourile sunt verificate la fiecare 5 minute. Când ajung la termen, apar în Notificările tale din Dr.Vas.";page.appendChild(info);
+ const form=document.createElement("form");form.className="free-scheduled-form";page.appendChild(form);
+ const titleLabel=document.createElement("label");titleLabel.textContent="Titlu memento";
+ const titleInput=document.createElement("input");titleInput.type="text";titleInput.maxLength=160;titleInput.required=true;titleInput.placeholder="De exemplu: Sună contabilul";titleLabel.appendChild(titleInput);form.appendChild(titleLabel);
+ const timeLabel=document.createElement("label");timeLabel.textContent="Data și ora";
+ const timeInput=document.createElement("input");timeInput.type="datetime-local";timeInput.required=true;timeInput.min=localDateTimeInputValue(new Date(Date.now()+60000));timeInput.value=localDateTimeInputValue(new Date(Date.now()+3600000));timeLabel.appendChild(timeInput);form.appendChild(timeLabel);
+ const detailsLabel=document.createElement("label");detailsLabel.className="wide";detailsLabel.textContent="Detalii (opțional)";
+ const detailsInput=document.createElement("textarea");detailsInput.maxLength=2000;detailsInput.placeholder="Ce trebuie să îți amintească Dr.Vas?";detailsLabel.appendChild(detailsInput);form.appendChild(detailsLabel);
+ const submit=document.createElement("button");submit.type="submit";submit.textContent="＋ Programează mementoul";form.appendChild(submit);
+ const formStatus=document.createElement("div");formStatus.className="free-nav-muted wide";form.appendChild(formStatus);
+ form.addEventListener("submit",async event=>{
+  event.preventDefault();if(!currentUser)return;
+  const title=titleInput.value.trim(),localDate=new Date(timeInput.value);
+  if(!title||!timeInput.value||!Number.isFinite(localDate.getTime())||localDate.getTime()<=Date.now()){formStatus.textContent="Alege un titlu și o oră viitoare.";return;}
+  submit.disabled=true;formStatus.textContent="Salvez mementoul…";
+  try{
+   const runAt=localDate.toISOString(),timezone=Intl.DateTimeFormat().resolvedOptions().timeZone||"UTC";
+   const {error}=await supabaseClient.from("drvas_scheduled_tasks").insert({user_id:currentUser.id,title,details:detailsInput.value.trim(),timezone,run_at:runAt,next_run_at:runAt,status:"active"});
+   if(error)throw error;
+   await freeNavLoadScheduled();
+  }catch(error){formStatus.textContent="Nu am putut salva mementoul: "+error.message+". Verifică migrarea 202611060002_scheduled_reminders.sql.";submit.disabled=false;}
+ });
+ const sectionTitle=document.createElement("h3");sectionTitle.textContent="Mementouri programate";sectionTitle.style.margin="20px 0 8px";page.appendChild(sectionTitle);
+ const taskGrid=document.createElement("div");taskGrid.className="free-nav-grid";page.appendChild(taskGrid);
+ const noticeTitle=document.createElement("h3");noticeTitle.textContent="Notificări";noticeTitle.style.margin="22px 0 8px";page.appendChild(noticeTitle);
+ const noticeGrid=document.createElement("div");noticeGrid.className="free-nav-grid";page.appendChild(noticeGrid);
+ try{
+  const [taskResult,noticeResult]=await Promise.all([
+   supabaseClient.from("drvas_scheduled_tasks").select("id,title,details,timezone,run_at,status,created_at").eq("user_id",currentUser.id).order("run_at",{ascending:false}).limit(100),
+   supabaseClient.from("drvas_notifications").select("id,title,body,created_at,read_at").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(50)
+  ]);
+  if(taskResult.error)throw taskResult.error;if(noticeResult.error)throw noticeResult.error;
+  const tasks=taskResult.data||[],notices=noticeResult.data||[];
+  if(!tasks.length){const empty=document.createElement("div");empty.className="free-nav-status";empty.textContent="Nu ai mementouri programate.";taskGrid.appendChild(empty);}
+  tasks.forEach(task=>{
+   const card=document.createElement("article");card.className="free-nav-card free-scheduled-task";
+   const content=document.createElement("div");const h=document.createElement("h3");h.textContent=task.title;content.appendChild(h);
+   const p=document.createElement("p");p.textContent=new Date(task.run_at).toLocaleString(currentLanguage||"ro")+" · "+(task.status==="active"?"Programat":task.status==="completed"?"Finalizat":"Anulat");content.appendChild(p);
+   if(task.details){const d=document.createElement("p");d.textContent=task.details;content.appendChild(d);}card.appendChild(content);
+   const actions=document.createElement("div");actions.className="free-scheduled-task-actions";
+   if(task.status==="active"){const done=document.createElement("button");done.type="button";done.textContent="Marchează finalizat";done.addEventListener("click",async()=>{done.disabled=true;const {error}=await supabaseClient.from("drvas_scheduled_tasks").update({status:"completed",updated_at:new Date().toISOString()}).eq("id",task.id).eq("user_id",currentUser.id);if(error){window.alert("Nu am putut finaliza mementoul: "+error.message);done.disabled=false;}else freeNavLoadScheduled();});actions.appendChild(done);}
+   const remove=document.createElement("button");remove.type="button";remove.textContent="Șterge";remove.addEventListener("click",async()=>{if(!window.confirm("Ștergi acest memento?"))return;remove.disabled=true;const {error}=await supabaseClient.from("drvas_scheduled_tasks").delete().eq("id",task.id).eq("user_id",currentUser.id);if(error){window.alert("Nu am putut șterge mementoul: "+error.message);remove.disabled=false;}else freeNavLoadScheduled();});actions.appendChild(remove);card.appendChild(actions);taskGrid.appendChild(card);
+  });
+  if(!notices.length){const empty=document.createElement("div");empty.className="free-nav-status";empty.textContent="Nu ai notificări încă.";noticeGrid.appendChild(empty);}
+  notices.forEach(notice=>{
+   const card=document.createElement("article");card.className="free-nav-card";const h=document.createElement("h3");h.textContent=notice.title;card.appendChild(h);
+   const p=document.createElement("p");p.textContent=notice.body+" · "+new Date(notice.created_at).toLocaleString(currentLanguage||"ro");card.appendChild(p);
+   if(!notice.read_at){const read=document.createElement("button");read.type="button";read.textContent="Marchează citită";read.addEventListener("click",async()=>{read.disabled=true;const {error}=await supabaseClient.from("drvas_notifications").update({read_at:new Date().toISOString()}).eq("id",notice.id).eq("user_id",currentUser.id);if(error){window.alert("Nu am putut actualiza notificarea: "+error.message);read.disabled=false;}else freeNavLoadScheduled();});card.appendChild(read);}
+   noticeGrid.appendChild(card);
+  });
+ }catch(error){
+  const failed=document.createElement("div");failed.className="free-nav-status";failed.textContent="Nu am putut încărca programările și notificările: "+error.message+". Aplică migrarea 202611060002_scheduled_reminders.sql în Supabase.";taskGrid.replaceChildren(failed);
+ }
+}
+
+
+async function freeNavLoadPlugins(){
+ const page=freeNavPage("Plugins","Starea integrărilor tehnice care susțin Dr.Vas. Acestea sunt servicii interne; catalogul de pluginuri externe și conectarea conturilor terțe nu sunt încă activate.");
+ const grid=document.createElement("div");grid.className="free-nav-grid";page.appendChild(grid);
+ const loading=document.createElement("div");loading.className="free-nav-status";loading.textContent="Verific integrările Dr.Vas…";grid.appendChild(loading);
+ try{
+  const response=await fetch(API_URL+"/health",{cache:"no-store"});
+  const health=await response.json();
+  if(!response.ok||!health.checks)throw new Error(health.error||"Starea integrărilor nu este disponibilă.");
+  const items=[
+   ["Dr.Vas Worker","API-ul aplicației și procesele securizate",health.checks.worker==="ok"],
+   ["Supabase","Autentificare, conversații și stocare privată",health.checks.database==="configured"],
+   ["Gemini AI","Motorul de răspunsuri AI",health.checks.ai==="configured"],
+   ["Studio Renderer","Serviciul de randare video",health.checks.studio_renderer==="configured"],
+   ["Analiza fișierelor","Procesarea fișierelor atașate",health.checks.file_analysis==="enabled"]
+  ];
+  grid.replaceChildren();
+  items.forEach(([name,description,active])=>{
+   const card=document.createElement("article");card.className="free-nav-card";
+   const h=document.createElement("h3");h.textContent=name;card.appendChild(h);
+   const p=document.createElement("p");p.textContent=description;card.appendChild(p);
+   const state=document.createElement("p");state.textContent=active?"Disponibil / configurat":"Dezactivat sau neconfigurat";state.className="free-nav-muted";card.appendChild(state);grid.appendChild(card);
+  });
+  const external=document.createElement("div");external.className="free-nav-status";external.textContent="Pluginuri externe: nu există încă un catalog de instalare sau conexiuni OAuth în Dr.Vas. Nu afișăm conturi conectate fictiv.";page.appendChild(external);
+  const updated=document.createElement("p");updated.className="free-nav-muted";updated.textContent="Ultima verificare: "+new Date(health.timestamp||Date.now()).toLocaleString();page.appendChild(updated);
+ }catch(error){grid.replaceChildren();const failed=document.createElement("div");failed.className="free-nav-status";failed.textContent="Nu am putut verifica integrările: "+error.message;grid.appendChild(failed);}
+}
+
+function openFreeNavView(view="chat",render=true){
+ if(!["free","health","studio","academy","commerce","business"].includes(activeModule))return;
+ const allowed=["chat","images","scheduled","library","plugins","explore","projects","recents"];
+ if(!allowed.includes(view))return;
+ freeNavCurrentView=view;freeNavSetActive(view);
+ const chatView=el("freeChatView"),workspace=el("freeNavWorkspace");
+ if(chatView)chatView.hidden=view!=="chat";
+ if(workspace)workspace.hidden=view==="chat";
+ document.body.classList.remove("history-open");
+ if(view==="chat"){if(render){el("question")?.focus({preventScroll:true});scrollToLatestMessage(null,true);}return;}
+ if(!render)return;
+ if(view==="images"){freeNavLoadLibrary(true);return;}
+ if(view==="library"){freeNavLoadLibrary(false);return;}
+ if(view==="projects"){freeNavLoadProjects();return;}
+ if(view==="recents"){freeNavLoadRecents();return;}
+ if(view==="scheduled"){freeNavLoadScheduled();return;}
+ if(view==="plugins"){freeNavLoadPlugins();return;}
+ if(view==="explore"){
+  const page=freeNavPage("Explore","Descoperă modulele platformei Dr.Vas. Accesul la fiecare modul este afișat în funcție de drepturile contului tău.");
+  const grid=document.createElement("div");grid.className="free-nav-grid";page.appendChild(grid);
+  const modules=[["free","✦ Dr.Vas Free","Asistent AI general, conversații și fișiere."],["health","✚ Dr.Vas Health","Informații generale despre sănătate și pregătirea consultațiilor."],["studio","🎬 Dr.Vas Studio","Instrumente creative și proiecte salvate."],["academy","🎓 Dr.Vas Academy","Educație și proiecte de învățare."],["commerce","🛒 Dr.Vas Commerce","Analiză de comerț și proiecte."],["business","📊 Dr.Vas Business","Planificare și instrumente de afaceri."]];
+  modules.forEach(([id,title,description])=>{
+   const allowed=isDrvasAdmin||id==="free"||id==="health";
+   const card=freeNavCard(grid,title,description,allowed?"Deschide modulul":null,allowed?()=>selectModule(id,true):null);
+   if(!allowed){const state=document.createElement("p");state.className="free-nav-muted";state.textContent="Acces restricționat pentru acest cont.";card.appendChild(state);}
+  });
+ }
+}
+
 async function send(){
  const input=el("question"),button=el("sendButton");
  const typedMessage=input.value.trim();
+ if(currentConversationIsLegacy){window.alert("Acest chat vechi nu are modul identificat. Apasă New chat pentru a continua într-o conversație separată.");return;}
  const filesToUpload=[...pendingChatFiles];
  const existingAttachments=[...pendingUploadedAttachments];
  if(!typedMessage&&!filesToUpload.length&&!existingAttachments.length)return;
@@ -5512,6 +6034,7 @@ async function send(){
   const accessToken=sessionData.session?.access_token;
   if(!accessToken)throw new Error("Sesiunea a expirat. Conectează-te din nou.");
   await saveMessage("user",message,conversationId);
+  try{await ensureConversationMetadata(conversationId,moduleId,message.slice(0,120));}catch(metadataError){console.warn("Conversation context metadata save failed:",metadataError);}
   conversationSaved=true;pendingMessages=[];setLocalizedText(el("saveMessage"),"Mesajul tău este salvat automat în cont.");updateSaveButton();
 
   if(filesToUpload.length){
@@ -5696,6 +6219,7 @@ calculateCommerceUnitEconomics();
 calculateCryptoMiningEconomics();
 initLanguage();
 </script>
+<script src="/module-workspaces.js" defer></script>
 
 
 </body>

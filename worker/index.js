@@ -257,7 +257,67 @@ function rateLimitResponse(headers, rateLimit) {
   });
 }
 
+
+async function processDrVasScheduledReminders(env) {
+  const supabaseUrl = String(env.SUPABASE_URL || "").replace(/\/+$/, "");
+  const serviceKey = env.SUPABASE_KEY;
+  if (!supabaseUrl || !serviceKey) throw new Error("Supabase service configuration is missing for scheduled reminders.");
+  const headers = {
+    apikey: serviceKey,
+    Authorization: "Bearer " + serviceKey,
+    "Content-Type": "application/json"
+  };
+  const now = new Date().toISOString();
+  const dueUrl = new URL(supabaseUrl + "/rest/v1/drvas_scheduled_tasks");
+  dueUrl.searchParams.set("select", "id,user_id,title,details,run_at");
+  dueUrl.searchParams.set("status", "eq.active");
+  dueUrl.searchParams.set("next_run_at", "lte." + now);
+  dueUrl.searchParams.set("order", "next_run_at.asc");
+  dueUrl.searchParams.set("limit", "100");
+  const dueResponse = await fetch(dueUrl.toString(), { headers });
+  if (!dueResponse.ok) {
+    throw new Error("Could not load due reminders: " + (await dueResponse.text()).slice(0, 500));
+  }
+  const tasks = await dueResponse.json();
+  for (const task of tasks || []) {
+    const notificationResponse = await fetch(supabaseUrl + "/rest/v1/drvas_notifications?on_conflict=task_id", {
+      method: "POST",
+      headers: { ...headers, Prefer: "resolution=ignore-duplicates,return=minimal" },
+      body: JSON.stringify({
+        task_id: task.id,
+        user_id: task.user_id,
+        title: String(task.title || "Dr.Vas reminder").slice(0, 160),
+        body: String(task.details || "Mementoul programat de tine a sosit.").slice(0, 2000)
+      })
+    });
+    if (!notificationResponse.ok) {
+      console.error("Could not create scheduled reminder notification:", task.id, (await notificationResponse.text()).slice(0, 500));
+      continue;
+    }
+    const updateUrl = new URL(supabaseUrl + "/rest/v1/drvas_scheduled_tasks");
+    updateUrl.searchParams.set("id", "eq." + task.id);
+    updateUrl.searchParams.set("user_id", "eq." + task.user_id);
+    updateUrl.searchParams.set("status", "eq.active");
+    const updateResponse = await fetch(updateUrl.toString(), {
+      method: "PATCH",
+      headers: { ...headers, Prefer: "return=minimal" },
+      body: JSON.stringify({ status: "completed", last_run_at: now, updated_at: now })
+    });
+    if (!updateResponse.ok) {
+      console.error("Could not complete scheduled reminder:", task.id, (await updateResponse.text()).slice(0, 500));
+    }
+  }
+  return (tasks || []).length;
+}
+
 export default {
+  async scheduled(controller, env, ctx) {
+    const run = processDrVasScheduledReminders(env).catch(error => {
+      console.error("Dr.Vas scheduled reminder processing failed:", error.message);
+    });
+    if (ctx?.waitUntil) ctx.waitUntil(run);
+    else await run;
+  },
   async fetch(request, env, ctx) {
     // Allow only the production app, the Codespaces preview, and local/Capacitor development origins.
     // CORS is a browser boundary, not authentication: every sensitive action still validates its Supabase token.

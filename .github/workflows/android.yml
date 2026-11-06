@@ -39,6 +39,7 @@ jobs:
       - name: Prepare app
         run: |
           test -f www/index.html
+          node --check www/module-workspaces.js
           npx cap sync android
 
       - name: Check Android privacy defaults
