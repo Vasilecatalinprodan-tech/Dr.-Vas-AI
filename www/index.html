@@ -5702,6 +5702,7 @@ function freeNavCard(host,title,description,actionLabel,handler){
 
 async function freeNavLoadLibrary(imagesOnly=false){
  const page=freeNavPage(imagesOnly?"Images":"Library",imagesOnly?"Colecția ta privată de imagini, independentă de conversațiile în care le-ai încărcat.":"Fișierele salvate în biblioteca ta privată, independente de istoricul conversațiilor.");
+ if(imagesOnly){const capability=document.createElement("div");capability.className="free-nav-status";capability.textContent="Poți încărca, organiza, previzualiza și deschide imaginile salvate. Generarea AI de imagini în Dr.Vas nu este încă activată.";page.appendChild(capability);}
  const uploadCard=document.createElement("article");uploadCard.className="free-nav-card";
  const uploadTitle=document.createElement("h3");uploadTitle.textContent=imagesOnly?"Adaugă imagine":"Adaugă fișiere în Library";uploadCard.appendChild(uploadTitle);
  const uploadDescription=document.createElement("p");uploadDescription.textContent=imagesOnly?"Încarcă JPG, PNG sau WebP în colecția ta de imagini.":"Încarcă PDF, imagini sau fișiere TXT/CSV. Fișierele rămân salvate separat de chat.";uploadCard.appendChild(uploadDescription);
@@ -5946,10 +5947,14 @@ function openFreeNavView(view="chat",render=true){
  if(view==="scheduled"){freeNavLoadScheduled();return;}
  if(view==="plugins"){freeNavLoadPlugins();return;}
  if(view==="explore"){
-  const page=freeNavPage("Explore","Descoperă modulele și funcțiile Dr.Vas disponibile în contul tău.");
+  const page=freeNavPage("Explore","Descoperă modulele platformei Dr.Vas. Accesul la fiecare modul este afișat în funcție de drepturile contului tău.");
   const grid=document.createElement("div");grid.className="free-nav-grid";page.appendChild(grid);
   const modules=[["free","✦ Dr.Vas Free","Asistent AI general, conversații și fișiere."],["health","✚ Dr.Vas Health","Informații generale despre sănătate și pregătirea consultațiilor."],["studio","🎬 Dr.Vas Studio","Instrumente creative și proiecte salvate."],["academy","🎓 Dr.Vas Academy","Educație și proiecte de învățare."],["commerce","🛒 Dr.Vas Commerce","Analiză de comerț și proiecte."],["business","📊 Dr.Vas Business","Planificare și instrumente de afaceri."]];
-  modules.forEach(([id,title,description])=>freeNavCard(grid,title,description,"Deschide modulul",()=>selectModule(id,true)));
+  modules.forEach(([id,title,description])=>{
+   const allowed=isDrvasAdmin||id==="free"||id==="health";
+   const card=freeNavCard(grid,title,description,allowed?"Deschide modulul":null,allowed?()=>selectModule(id,true):null);
+   if(!allowed){const state=document.createElement("p");state.className="free-nav-muted";state.textContent="Acces restricționat pentru acest cont.";card.appendChild(state);}
+  });
  }
 }
 
