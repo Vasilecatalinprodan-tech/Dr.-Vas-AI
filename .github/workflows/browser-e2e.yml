@@ -75,14 +75,15 @@ jobs:
           const fs = require('fs');
           const workflow = fs.readFileSync('.github/workflows/deploy-worker.yml', 'utf8');
           const migration = workflow.indexOf('Link and apply pending Supabase migrations');
+          const healthCheck = workflow.indexOf('Verify the Health rate-limit RPC after migrations');
           const deploy = workflow.indexOf('Deploy Worker');
-          for (const marker of ['SUPABASE_ACCESS_TOKEN', 'SUPABASE_DB_PASSWORD', 'supabase db push --linked --yes']) {
-            if (!workflow.includes(marker)) throw new Error('Production migration gate is missing: ' + marker);
+          for (const marker of ['SUPABASE_ACCESS_TOKEN', 'SUPABASE_DB_PASSWORD', 'supabase db push --linked --yes', 'supabase/diagnostics/VERIFY_RATE_LIMITS.sql', 'rate_limit_setup_ok']) {
+            if (!workflow.includes(marker)) throw new Error('Production migration/Health verification gate is missing: ' + marker);
           }
-          if (migration < 0 || deploy < 0 || migration > deploy) {
-            throw new Error('Supabase migrations must be applied before Cloudflare Worker deployment.');
+          if (migration < 0 || healthCheck < migration || deploy < healthCheck) {
+            throw new Error('Supabase migrations and Health rate-limit verification must both pass before Cloudflare Worker deployment.');
           }
-          console.log('Verified: pending Supabase migrations are gated before Worker deployment.');
+          console.log('Verified: migrations and Health rate-limit RPC checks gate Worker deployment.');
           NODE
 
       - name: Install browser test runner
