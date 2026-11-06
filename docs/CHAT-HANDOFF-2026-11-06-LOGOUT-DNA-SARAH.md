@@ -72,3 +72,16 @@ Work in vertical slices that improve shared foundations and all affected modules
 > tiam mai spus fa deploy la tot ce faci nou si merge si salveaza toata conversatia inclusiv chatul si sa continuam sa dezvoltam toate modulele deodata si sa il facem cat mai functional....salveaza tot inclusiv chatul
 
 Interpretation: deploy every successful new merge; continue integrated development across all six modules in parallel; prioritize real working workflows, not decorative UI or claims unsupported by tests; keep the complete conversation in ChatGPT history and preserve durable project decisions in this repository. Do not claim a full verbatim ChatGPT export is stored in GitHub: this handoff file preserves the founder's exact instructions and implementation checkpoints.
+
+
+## Follow-up reliability and cross-module validation — 6 Nov 2026
+- PR #33 merged to main as `a6ca61e3f81d7b6dc94640cfbd521bc3594ea7b5`.
+  - Deployment job now has a 25-minute timeout.
+  - Pins Playwright and playwright-core to 1.64.1.
+  - Uses Chromium headless shell for the headless pre-deploy suite while retaining all browser, data-isolation and module-persistence tests before Worker deployment.
+  - The PR browser suite passed. Cloudflare's automatic PR preview check failed immediately on this workflow-only change; production Worker deployment still requires the main workflow and smoke test.
+- PR #34 is open: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/34
+  - Adds an end-to-end regression that switches through all six modules (Free, Health, Studio, Academy, Commerce, Business) and checks both global logout buttons remain visible.
+  - Browser workflow #42251817360 was still running at the latest check; do not merge until it succeeds.
+- Previous main deploy run #42250521998 remained stuck at Chromium installation on the original workflow version. The next successful code/test merge should trigger the updated deployment workflow; verify that it cancels/replaces the stalled run and completes the production smoke test.
+- Main app source remains at the DNA/Sarah/logout commit; later commits are handoff documentation and deployment workflow changes. Do not say the app is live until the new deployment workflow succeeds.
