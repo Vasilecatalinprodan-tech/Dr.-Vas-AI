@@ -2476,6 +2476,9 @@ let authMode = "login";
 let currentUser = null;
 function syncGlobalLogoutControls(){
   document.body.classList.toggle("has-auth-session",Boolean(currentUser));
+  const back=el("globalBackToModules");
+  const visible=Boolean(currentUser)&&document.body.classList.contains("module-workspace-mode");
+  if(back){back.hidden=!visible;back.style.display=visible?"inline-flex":"none";}
 }
 
 let isDrvasAdmin = false;
@@ -2728,6 +2731,7 @@ function selectModule(moduleName,userInitiated=false,suppressConversationRestore
     const chatSection=el("chatSection");
     chatSection?.classList.remove("hidden");
     document.body.classList.add("module-workspace-mode");
+    syncGlobalLogoutControls();
     if(moduleName==="free"||moduleName==="health"){
       document.body.classList.add("free-module-mode");
       document.documentElement.classList.add("drvas-free-shell");
@@ -4336,6 +4340,7 @@ function showModuleSelection(){
  if(!languageReady)return;
  document.body.classList.remove("module-workspace-mode","free-module-mode","health-module-mode","shared-chat-sidebar-mode","chat-focus-mode","history-open");
  document.documentElement.classList.remove("chat-focus-document","drvas-free-shell");
+ syncGlobalLogoutControls();
  el("heroSection")?.classList.add("hidden");
  document.querySelector(".origin-story")?.classList.add("hidden");
  el("landingActions")?.classList.add("hidden");
@@ -4352,6 +4357,7 @@ function toggleChatHistory(){document.body.classList.toggle("history-open");}
 function goToModules(){
  document.body.classList.remove("module-workspace-mode","free-module-mode","health-module-mode","shared-chat-sidebar-mode","chat-focus-mode","history-open");
  document.documentElement.classList.remove("chat-focus-document","drvas-free-shell");
+ syncGlobalLogoutControls();
  el("chatSection")?.classList.add("hidden");
  el("heroSection")?.classList.add("hidden");
  document.querySelector(".origin-story")?.classList.add("hidden");
@@ -5381,7 +5387,7 @@ function newConversation(){
   if(!currentUser || isSendingMessage) return;
   currentConversationId = makeId();
   currentConversationIsLegacy=false;
-  if(activeModule==="free")openFreeNavView("chat",false);
+  if(["free","health","studio","academy","commerce","business"].includes(activeModule))openFreeNavView("chat",false);
   if(el("question"))el("question").disabled=false;
   if(el("sendButton"))el("sendButton").disabled=false;
   ensureConversationMetadata(currentConversationId,activeModule,"").then(()=>loadConversationList()).catch(error=>console.warn("Conversation context metadata will be saved with the first message:",error));
