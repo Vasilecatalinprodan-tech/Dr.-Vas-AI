@@ -50,6 +50,10 @@ The user explicitly requires development to continue with **zero new costs** and
 5. Continue documenting each code change and CI result.
 6. Distinct Jan/Sarah paid TTS voices, paid video rendering, photorealistic avatar assets requiring an image pipeline, and physical APK testing are not part of the zero-cost work unless separately authorized later.
 
+## Branch synchronization
+
+- After workflow #476 passed, `main` was fast-forwarded to the working branch. Both branches were at commit `6079f1659d7cadbf2da3dc4f05a03e18c56e6dae` before this final archive update; they are kept synchronized after the archive update as well.
+
 ## Chat preservation note
 
 This file preserves the current session's instruction, decisions, technical checks, code changes and remaining tasks. It does not contain a verbatim transcript of all ChatGPT messages. The original conversation remains available in ChatGPT history; use ChatGPT's conversation export controls if a complete transcript file is required.
