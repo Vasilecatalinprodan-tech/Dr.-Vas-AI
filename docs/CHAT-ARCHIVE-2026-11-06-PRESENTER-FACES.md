@@ -49,3 +49,11 @@ Base: `main` at `cc632432942088758f0933914c67f227dc204278`
 6. Update `PROJECT-STATUS.md`, `PROJECT-HANDOFF.md`, `docs/DEVELOPMENT_LOG.md`, and this archive with exact asset names, commits, test runs, merge SHA and deployed Worker version.
 
 This is a structured continuation archive, not a verbatim export of the ChatGPT interface.
+
+
+## Update — frontend portrait wiring checkpoint
+- Frontend commit `90547de6969a63d35d41588ec9747bc834991628`: replaced the Dr.Jan and Sarah assistant-selector SVGs with image elements targeting `www/assets/presenters/jan.webp` and `www/assets/presenters/sarah.webp`; replaced the intro presenter SVG with an image element that switches between `drvas.jpeg`, `assets/presenters/jan.webp` and `assets/presenters/sarah.webp`.
+- Follow-up commit `2b12af13cedee58fa54e99a757340e338b230523`: added load/error handling, initials fallbacks, and reduced-motion-aware photo speaking animation for the presentation and assistant selector.
+- These commits are on `feature/presenter-faces-2026-11-06` only. The two new portrait files do not yet exist in the repository, so this is intentionally an unmerged work-in-progress branch. Do not merge, deploy or publish the branch until the generated portraits are retrieved, reviewed and added to the referenced paths, and tests pass.
+- The photo speaking animation is a subtle visual pulse plus the existing audio/speaking indicators; it is not genuine mouth/phoneme lip-sync.
+- No tests, APK build, merge or deployment have been run for these WIP changes.
