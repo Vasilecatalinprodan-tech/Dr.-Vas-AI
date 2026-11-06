@@ -115,3 +115,15 @@ Additional commits:
 - Added regression checks that Back to modules is hidden outside a module workspace and visible in every active module.
 - Commits: `6a96eda4` (top header button and removal from chat toolbar), `2a6d81f2` (header styling), `33b8fb6e` and `7f028235` (browser assertions).
 - Latest browser run for this top-header change: `42293674406` / run #476, currently in progress.
+
+## Latest feature-page and regression corrections
+- Fixed the direct-child selector used by the feature router. It now correctly finds existing form, project and module panel elements without cloning them.
+- New chat now returns to the chat view for every module, not only Free.
+- Added a mobile flex-basis correction so the transcript absorbs remaining viewport height and the composer stays on screen.
+- Updated the module-isolation regression to expect the common sidebar; Business cashbook checks now navigate to the Cashbook page before asserting its contents.
+- Academy now has separate pages for Course Builder, Lessons, Exercises/Quiz, Learning Plan and Saved Courses. The selected page adds its own task focus to the prompt.
+- Commerce now has separate pages for Product Research, Supplier Comparison, Store Launch, Pricing/Unit Economics and Saved Analyses. Supplier and launch pages add their own instructions and risk checks.
+- Business Cashflow now has a separate page from the Cashbook ledger; Plan, Cashbook, Cashflow, Break-even and Student Desk are independent.
+- Added Playwright assertions for the task-specific Academy and Commerce prompts and Business Cashflow page.
+- Commits: `88325b42` (router selector), `fdf4d4e7` (all-module New chat and mobile sizing), `fda629db` (test alignment), `76387020` (Business Cashflow page), `4a4acc55` (cashflow test), `0a27f887` (textarea prompt assertions).
+- Earlier run #472 (`42293377108`) completed with 78 passed and 9 failed; its failures were traced to the items above and the updated requirements. The latest integrated browser run #488 (`42294172064`) is now in progress against the current feature-page implementation. Do not mark the suite passed until it completes.
