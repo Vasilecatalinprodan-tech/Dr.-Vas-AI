@@ -2618,8 +2618,21 @@ function selectModule(moduleName,userInitiated=false){
   }
   const selectionStatus=el("moduleSelectionStatus");
   if(selectionStatus){selectionStatus.textContent="";selectionStatus.classList.add("hidden");}
-  if(activeModule!==moduleName)clearPendingChatFiles();
+  const previousModule=activeModule;
+  if(previousModule!==moduleName)clearPendingChatFiles();
   activeModule=moduleName;
+  if(currentUser&&previousModule!==moduleName){
+    const rememberedForModule=getRememberedConversation(moduleName);
+    currentConversationId=rememberedForModule||makeId();
+    currentConversationIsLegacy=false;
+    conversationSaved=Boolean(rememberedForModule);
+    pendingMessages=[];
+    rememberActiveConversation(currentConversationId,moduleName);
+    if(!rememberedForModule){
+      ensureConversationMetadata(currentConversationId,moduleName,"").catch(error=>console.warn("Conversation context metadata will be saved with the first message:",error));
+      renderWelcome();
+    }
+  }
   renderPendingChatFiles();
   if(currentUser)rememberActiveModule(moduleName);
   el("moduleSelectionSection")?.classList.remove("hidden","auth-flow-mode");
@@ -2674,9 +2687,11 @@ function selectModule(moduleName,userInitiated=false){
     document.body.classList.add("module-workspace-mode");
     if(moduleName==="free"){
       document.body.classList.add("free-module-mode");
+      document.documentElement.classList.add("drvas-free-shell");
       el("moduleSelectionShell")?.classList.remove("modules-open");
+      openFreeNavView("chat",false);
     }
-    requestAnimationFrame(()=>{el("question")?.focus({preventScroll:true});const chat=el("chat");if(chat)chat.scrollTop=chat.scrollHeight;});
+    requestAnimationFrame(()=>{if(moduleName==="free")el("question")?.focus({preventScroll:true});const chat=el("chat");if(chat)chat.scrollTop=chat.scrollHeight;});
   }
 }
 
@@ -4257,7 +4272,7 @@ async function startDrVas(){
 function showModuleSelection(){
  if(!languageReady)return;
  document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode","history-open");
- document.documentElement.classList.remove("chat-focus-document");
+ document.documentElement.classList.remove("chat-focus-document","drvas-free-shell");
  el("heroSection")?.classList.add("hidden");
  document.querySelector(".origin-story")?.classList.add("hidden");
  el("landingActions")?.classList.add("hidden");
@@ -4273,7 +4288,7 @@ function exitChatFocus(){goToModules();}
 function toggleChatHistory(){document.body.classList.toggle("history-open");}
 function goToModules(){
  document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode","history-open");
- document.documentElement.classList.remove("chat-focus-document");
+ document.documentElement.classList.remove("chat-focus-document","drvas-free-shell");
  el("chatSection")?.classList.add("hidden");
  el("heroSection")?.classList.add("hidden");
  document.querySelector(".origin-story")?.classList.add("hidden");
@@ -5006,8 +5021,8 @@ async function showChat(user,displayName){
   try{const savedAssistant=localStorage.getItem("drvas_assistant_"+user.id);if(savedAssistant&&ASSISTANTS[savedAssistant])activeAssistant=savedAssistant;}catch{}
   selectAssistant(activeAssistant);
   ["authSection","profileSection","chatSection"].forEach(id=>el(id)?.classList.add("hidden"));
-  document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode");
-  document.documentElement.classList.remove("chat-focus-document");
+  document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode","history-open");
+  document.documentElement.classList.remove("chat-focus-document","drvas-free-shell");
   // Session restoration returns to the presentation. A module opens only after the user chooses it.
   // Privacy: never expose the founder's personal name or email in the signed-in workspace header.
   // The identity remains unchanged in Supabase and the private profile settings.
@@ -5045,15 +5060,18 @@ async function showChat(user,displayName){
   // the module buttons appear unresponsive or strand the user on the login screen.
   try{
     const conversations=await loadConversationList();
-    const rememberedId=getRememberedConversation();
-    const resumeId=conversations.some(item=>item.id===rememberedId)
+    const scopedConversations=conversations.filter(item=>item.module===activeModule||(!item.module&&activeModule==="free"));
+    const rememberedId=getRememberedConversation(activeModule);
+    const resumeId=scopedConversations.some(item=>item.id===rememberedId)
       ? rememberedId
-      : (conversations[0]?.id || null);
+      : (scopedConversations[0]?.id || null);
     if(resumeId){
       await openConversation(resumeId);
     }else{
       currentConversationId=makeId();
-      rememberActiveConversation(currentConversationId);
+      currentConversationIsLegacy=false;
+      rememberActiveConversation(currentConversationId,activeModule);
+      ensureConversationMetadata(currentConversationId,activeModule,"").catch(error=>console.warn("Conversation context metadata pending first message:",error));
       logClientEvent("conversation_created");
       conversationSaved=false;
       pendingMessages=[];
@@ -5247,6 +5265,7 @@ async function openConversation(conversationId,conversationModule=activeModule){
 
   const chat = el("chat");
   chat.innerHTML = "";
+  chat.dataset.hasRenderedMessages="";
   const loading = document.createElement("div");
   loading.className = "msg bot";
   setLocalizedText(loading,"Se încarcă discuția...");
@@ -5266,7 +5285,8 @@ async function openConversation(conversationId,conversationModule=activeModule){
 
     await loadConversationAttachments(conversationId,activeModule);
     updateActiveConversation();
-    scrollToLatestMessage(chat.lastElementChild);
+    scrollToLatestMessage(chat.lastElementChild,true);
+    if(currentConversationIsLegacy)appendMessage("assistant","Acesta este un chat vechi, fără modul identificat. Îl poți consulta, dar nu poți continua aici. Apasă New chat pentru a începe o conversație separată.");
   }catch(error){
     chat.innerHTML = "";
     appendMessage("assistant",tr("Nu am putut încărca această conversație: ") + error.message);
