@@ -103,3 +103,17 @@ test("Health assistant keeps clinical boundaries and emergency escalation in its
   expect(worker).toContain("Do not reassure someone that serious symptoms are harmless");
   expect(worker).toContain('liveModule === "health" && env.GEMINI_LIVE_HEALTH_ENABLED !== "true"');
 });
+
+
+test("Conversation context migration classifies only new threads and preserves unknown legacy context", async () => {
+  const sql = migration("202611060001_conversation_context.sql");
+  expect(sql).toMatch(/add column if not exists module text/i);
+  expect(sql).toMatch(/add column if not exists conversation_kind text/i);
+  expect(sql).toMatch(/add column if not exists feature_key text/i);
+  expect(sql).toMatch(/module is null or module in\s*\('free','health','studio','academy','commerce','business'\)/i);
+  expect(sql).toMatch(/conversation_kind is null or conversation_kind in\s*\('general','module_assistant','feature_assistant'\)/i);
+  expect(sql).toMatch(/user_id, module, archived_at, updated_at desc/i);
+  expect(sql).toMatch(/NULL means legacy context is unknown and must not be guessed/i);
+  expect(sql).not.toMatch(/update public\.drvas_conversation_metadata\s+set\s+module/i);
+  expect(sql).not.toMatch(/drop policy|disable row level security|delete from public\.drvas_conversation_metadata/i);
+});
