@@ -111,3 +111,21 @@ Verified actions:
 - Production smoke test verified health endpoint, six module markers and rejection of unauthenticated admin-status call with HTTP 401.
 - `main` vs `drvas-integrated-platform` compare now reports one-commit divergence because the merge used squash. Preserve both branches; do not force reset. Continue work on integrated branch.
 - No Android APK release, Play Store submission, actual avatar edit, founder voice cloning, or live Health database/privacy enablement was performed.
+
+
+## Additional user instruction and latest development
+User: “continua cu tot ce poti face....salveaza tot”
+
+Assistant verified and completed PR #8:
+- Workflow #478 / run `42187371574` completed successfully, including Playwright browser tests, Worker deploy, production smoke test and SBOM upload.
+- PR #8 squash-merged into `main`, merge SHA `3f74057ffde7fb9690721fcb67e15d2d30291bd6`.
+- The production smoke test checked Worker health, all six public module markers, and HTTP 401 rejection for unauthenticated admin-status.
+- The current branch graph has one-commit squash divergence between `main` and `drvas-integrated-platform`; preserve both and use normal PRs, no force push/reset.
+
+Latest runtime correction:
+- Manual replay had a race/state bug: `replayLastAnswer()` briefly enabled auto-read, called asynchronous speech playback, then immediately restored the previous disabled preference. Dedicated TTS could therefore discard the audio response.
+- Fixed with an explicit `forcePlayback` argument carried by `speakDrVas` and `playAssistantVoice`; the flag bypasses only auto-read-off and still requires a signed-in user and valid selected assistant.
+- Added a Playwright regression test to verify authenticated Dr.Vas TTS is requested and the returned audio is played when auto-read is off.
+- Code commit `3b3b2b9c0f9448c24e4bcb3b68c244b16b78cc82`; test commit `022705e4f0fdf819fc3e126e359d2e293b5b573d`.
+- CI for this new fix/test has not yet been verified. No claim that the fix has passed browser tests or been deployed.
+- This is not proof that the user's 4.57-second voice sample is cloned or that Android audio is fully fixed. Continue with device playback testing and verify provider configuration without exposing secrets.
