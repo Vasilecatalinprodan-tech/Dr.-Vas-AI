@@ -2554,6 +2554,8 @@ test("module capabilities open dedicated feature pages instead of one crowded wo
   await expect(page.locator("#businessWorkspace .drvas-feature-navigation")).toBeVisible();
   await page.locator('#businessWorkspace [data-feature="cashbook"]').click();
   await expect(page.locator('#businessWorkspace [data-feature-page="cashbook"] #businessLedgerRows')).toBeVisible();
+  await page.locator('#businessWorkspace [data-feature="cashflow"]').click();
+  await expect(page.locator('#businessWorkspace [data-feature-page="cashflow"] #businessCashflowRows')).toBeVisible();
   await expect(page.locator('#businessWorkspace [data-feature-page="plan"]')).toBeHidden();
 });
 
