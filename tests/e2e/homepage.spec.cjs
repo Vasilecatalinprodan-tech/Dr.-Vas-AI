@@ -1254,6 +1254,7 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
   await expect(page.locator("#drvasPresentation")).toBeVisible();
   await expect(page.locator("#presentationAvatar .presentation-photo")).toBeVisible();
   await expect(page.locator("#presentationAvatar .presentation-photo")).toHaveAttribute("alt", "Dr.Vas — fotografia fondatorului");
+  await expect.poll(() => page.locator("#presentationAvatar .presentation-photo").evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
   await expect(page.locator("#presentationAvatar .character-orbit")).toHaveCount(2);
   const presentationButtonStyle = await page.locator("#heroPresentationOpenButton").evaluate(node => {
     const style = getComputedStyle(node);
@@ -1298,6 +1299,7 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
   await expect(page.locator("#presentationAvatar")).toHaveClass(/presentation-avatar-jan/);
   await expect(page.locator("#presentationAvatar .presentation-photo")).toBeVisible();
   await expect(page.locator("#presentationAvatar .presentation-photo")).toHaveAttribute("alt", "Dr.Jan — personaj AI fictiv");
+  await expect.poll(() => page.locator("#presentationAvatar .presentation-photo").evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
   expect(await page.locator("#presentationAvatar .character-glasses").evaluate(node => getComputedStyle(node).display)).toBe("block");
   expect(await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].voice?.name)).toBe("Microsoft Andrei");
   expect(jan.modules).toContain("Dr.Vas Studio");
@@ -1316,6 +1318,7 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
   await expect(page.locator("#presentationAvatar")).toHaveClass(/presentation-avatar-sarah/);
   await expect(page.locator("#presentationAvatar .presentation-photo")).toBeVisible();
   await expect(page.locator("#presentationAvatar .presentation-photo")).toHaveAttribute("alt", "Sarah — portret profesional adult");
+  await expect.poll(() => page.locator("#presentationAvatar .presentation-photo").evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
   expect(await page.locator("#presentationAvatar .character-hair-long").evaluate(node => getComputedStyle(node).display)).toBe("block");
   expect(await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].voice?.name)).toBe("Microsoft Andrei");
   expect(sarah.modules).toContain("Dr.Vas Academy");
