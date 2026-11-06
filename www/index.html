@@ -5730,6 +5730,65 @@ async function freeNavLoadAttachments(imagesOnly=false){
   }
  }catch(error){grid.replaceChildren();const failed=document.createElement("div");failed.className="free-nav-status";failed.textContent="Nu am putut încărca fișierele: "+error.message;grid.appendChild(failed);}
 }
+
+async function freeNavLoadLibrary(imagesOnly=false){
+ const page=freeNavPage(imagesOnly?"Images":"Library",imagesOnly?"Colecția ta privată de imagini, independentă de conversațiile în care le-ai încărcat.":"Fișierele salvate în biblioteca ta privată, independente de istoricul conversațiilor.");
+ const uploadCard=document.createElement("article");uploadCard.className="free-nav-card";
+ const uploadTitle=document.createElement("h3");uploadTitle.textContent=imagesOnly?"Adaugă imagine":"Adaugă fișiere în Library";uploadCard.appendChild(uploadTitle);
+ const uploadDescription=document.createElement("p");uploadDescription.textContent=imagesOnly?"Încarcă JPG, PNG sau WebP în colecția ta de imagini.":"Încarcă PDF, imagini sau fișiere TXT/CSV. Fișierele rămân salvate separat de chat.";uploadCard.appendChild(uploadDescription);
+ const uploadButton=document.createElement("button");uploadButton.type="button";uploadButton.textContent=imagesOnly?"Alege imagine":"Alege fișiere";uploadCard.appendChild(uploadButton);page.appendChild(uploadCard);
+ const fileInput=document.createElement("input");fileInput.type="file";fileInput.multiple=true;fileInput.accept=imagesOnly?"image/jpeg,image/png,image/webp":"image/jpeg,image/png,image/webp,application/pdf,text/plain,text/csv";fileInput.hidden=true;page.appendChild(fileInput);
+ const uploadStatus=document.createElement("p");uploadStatus.className="free-nav-muted";uploadCard.appendChild(uploadStatus);
+ uploadButton.addEventListener("click",()=>fileInput.click());
+ fileInput.addEventListener("change",async()=>{
+  const files=[...(fileInput.files||[])];fileInput.value="";if(!files.length)return;
+  uploadButton.disabled=true;
+  const allowed=new Set(["image/jpeg","image/png","image/webp","application/pdf","text/plain","text/csv"]);
+  try{
+   for(let index=0;index<files.length;index++){
+    const file=files[index];
+    if(!allowed.has(file.type)||file.size<1||file.size>15*1024*1024)throw new Error(file.name+": tip de fișier neacceptat sau dimensiune peste 15 MB.");
+    if(imagesOnly&&!file.type.startsWith("image/"))throw new Error(file.name+": aici poți încărca doar imagini.");
+    uploadStatus.textContent="Încarc "+(index+1)+" din "+files.length+": "+file.name;
+    const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,"_").slice(-120)||"file";
+    const storagePath=currentUser.id+"/library/"+makeId()+"-"+safeName;
+    const {error:uploadError}=await supabaseClient.storage.from("drvas-media").upload(storagePath,file,{upsert:false,contentType:file.type,cacheControl:"3600"});
+    if(uploadError)throw uploadError;
+    const {error:recordError}=await supabaseClient.from("drvas_library_items").insert({user_id:currentUser.id,original_name:file.name,mime_type:file.type,file_size:file.size,storage_path:storagePath});
+    if(recordError){await supabaseClient.storage.from("drvas-media").remove([storagePath]);throw recordError;}
+   }
+   await freeNavLoadLibrary(imagesOnly);
+  }catch(error){uploadStatus.textContent="Încărcarea nu a fost finalizată: "+error.message;uploadButton.disabled=false;}
+ });
+ const grid=document.createElement("div");grid.className="free-nav-grid";page.appendChild(grid);
+ const loading=document.createElement("div");loading.className="free-nav-status";loading.textContent="Încarc biblioteca…";grid.appendChild(loading);
+ try{
+  let query=supabaseClient.from("drvas_library_items").select("id,original_name,mime_type,file_size,storage_path,created_at").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(200);
+  if(imagesOnly)query=query.like("mime_type","image/%");
+  const {data,error}=await query;if(error)throw error;
+  grid.replaceChildren();
+  if(!data?.length){const empty=document.createElement("div");empty.className="free-nav-status";empty.textContent=imagesOnly?"Nu ai imagini salvate încă. Încarcă prima imagine folosind butonul de mai sus.":"Library este goală. Încarcă primul fișier folosind butonul de mai sus.";grid.appendChild(empty);return;}
+  for(const file of data){
+   const card=document.createElement("article");card.className="free-nav-card";
+   const {data:signed,error:signedError}=await supabaseClient.storage.from("drvas-media").createSignedUrl(file.storage_path,3600);
+   if(imagesOnly&&!signedError&&signed?.signedUrl){const img=document.createElement("img");img.className="free-nav-file-image";img.src=signed.signedUrl;img.alt=file.original_name;card.appendChild(img);}
+   const h=document.createElement("h3");h.textContent=file.original_name;card.appendChild(h);
+   const p=document.createElement("p");p.textContent=file.mime_type+" · "+chatFileSizeLabel(file.file_size)+" · "+new Date(file.created_at).toLocaleDateString();card.appendChild(p);
+   if(!signedError&&signed?.signedUrl){const link=document.createElement("a");link.href=signed.signedUrl;link.target="_blank";link.rel="noopener noreferrer";link.textContent="Deschide fișierul";card.appendChild(link);}
+   const remove=document.createElement("button");remove.type="button";remove.textContent="Șterge din Library";remove.addEventListener("click",async()=>{
+    if(!window.confirm("Ștergi definitiv acest fișier din Library?"))return;
+    remove.disabled=true;
+    const {error:recordError}=await supabaseClient.from("drvas_library_items").delete().eq("id",file.id).eq("user_id",currentUser.id);
+    if(recordError){window.alert("Nu am putut șterge înregistrarea: "+recordError.message);remove.disabled=false;return;}
+    const {error:storageError}=await supabaseClient.storage.from("drvas-media").remove([file.storage_path]);
+    if(storageError)window.alert("Înregistrarea a fost ștearsă, dar fișierul din stocare nu a putut fi eliminat: "+storageError.message);
+    freeNavLoadLibrary(imagesOnly);
+   });card.appendChild(remove);
+   grid.appendChild(card);
+  }
+ }catch(error){grid.replaceChildren();const failed=document.createElement("div");failed.className="free-nav-status";failed.textContent="Nu am putut încărca Library: "+error.message+". Aplică migrarea 202611060003_library_items.sql în Supabase.";grid.appendChild(failed);}
+}
+
 async function freeNavLoadProjects(){
  const page=freeNavPage("Projects","Proiectele tale salvate în Dr.Vas, separate de conversațiile obișnuite.");
  const grid=document.createElement("div");grid.className="free-nav-grid";page.appendChild(grid);
@@ -5860,8 +5919,8 @@ function openFreeNavView(view="chat",render=true){
  document.body.classList.remove("history-open");
  if(view==="chat"){if(render){el("question")?.focus({preventScroll:true});scrollToLatestMessage(null,true);}return;}
  if(!render)return;
- if(view==="images"){freeNavLoadAttachments(true);return;}
- if(view==="library"){freeNavLoadAttachments(false);return;}
+ if(view==="images"){freeNavLoadLibrary(true);return;}
+ if(view==="library"){freeNavLoadLibrary(false);return;}
  if(view==="projects"){freeNavLoadProjects();return;}
  if(view==="recents"){freeNavLoadRecents();return;}
  if(view==="scheduled"){freeNavLoadScheduled();return;}
