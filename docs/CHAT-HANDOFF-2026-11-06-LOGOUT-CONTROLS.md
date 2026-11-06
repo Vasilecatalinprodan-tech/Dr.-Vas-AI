@@ -2,7 +2,7 @@
 **Date:** 6 November 2026  
 **Repository:** `Vasilecatalinprodan-tech/Dr.-Vas-AI`  
 **Feature branch:** `fix/global-top-bottom-logout-2026-11-06`  
-**Branch head:** `123e50eff44097cea5209bdb45bb585bb514b141`
+**Latest branch head:** `80b83ddd8146d948d749e9eb58e172d91ec71a68`
 
 ## User request
 The founder reported that sign-out is difficult to find and explicitly requested a logout control on every page, at the very top and at the very bottom of the page, never buried in the middle. The founder also requested that all work and this chat context be saved.
@@ -18,7 +18,8 @@ The founder reported that sign-out is difficult to find and explicitly requested
 - Files changed: `www/index.html`, `tests/e2e/homepage.spec.cjs`.
 
 ## Validation and next actions
-- The changes are committed on the feature branch. PR and CI validation are pending.
+- The changes are committed on the feature branch. PR [#30](https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/30) is open.
+- Browser regression workflow #362, run ID `42247938978`, was triggered on the initial PR commit `f7ba344201c9aa66f53735cfd42c85d9ea85fe09`. A follow-up commit `80b83ddd...` added a defensive sync when changing workspaces. The first run must finish; if it checked out the earlier SHA, rerun CI against the latest branch head before merging.
 - Review the PR diff, run the browser E2E workflow, fix any real regressions, then merge after green tests.
 - After merge, verify the production Worker deployment and test the controls on desktop/mobile and each module workspace.
 - Do not claim the controls are live until production deploy and smoke tests succeed.
