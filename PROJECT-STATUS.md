@@ -1026,3 +1026,52 @@ Founder feedback:
 
 ### Next checkpoint
 Resume with safe PR #9 conflict resolution and fresh CI evidence, exact npm audit triage, Cloudflare deployment/smoke verification, and Android voice playback validation. Do not merge, deploy, alter production secrets, or incur paid usage until the relevant checks/permissions are satisfied.
+
+
+## 2026-11-06 — integrated module development continuation: public/private boundary regression
+
+### User instruction (verbatim)
+> Continuăm de la ultimul commit confirmat. si continuam cu dezvoltarea la toate modulele inclusiv cele ascunse si salvam tot
+
+### Confirmed product structure from the current source and roadmap
+- The public customer dashboard currently exposes exactly six customer-facing workspaces: Dr.Vas Free, Health, Studio, Academy, Commerce and Business.
+- Studio, Academy, Commerce and Business remain server-gated to the authorized founder during the pilot. Do not unlock them for public customers until verified subscription entitlements and payment-webhook controls exist.
+- The hidden administrator centre contains Crypto device registry/calculator, Founder Provenance controls, Creator & Online Income Lab, Book Workshop, Music Lab, Online Income planner, AI Evaluation & Training Lab, Digital Product Studio, Publishing Lab, Music Release Lab, Commerce Profit Lab, Mining Sensitivity Lab, Business Operations Planner, Customer Journey & Retention Planner, Content & Campaign Planner, operational audit and saved-conversation administration.
+- AI Evaluation & Training is a capability inside Studio/Business, not a seventh public workspace.
+- Psychology/wellbeing referral and child-safeguarding/reporting are roadmap specifications only in the current source; they are not implemented live modules and must not be represented as available clinical or safeguarding services.
+- Crypto remains hidden and administrator-only. Current registry and calculator are non-executing; no mining, wallet custody, transfers, exchange withdrawals or trading are enabled.
+- Do not infer that all hidden workbenches have independent persistence, entitlement or production integrations merely because their UI controls exist. Verify each workflow and its storage/provider dependencies separately.
+
+### Source change in this continuation
+- Added a Playwright regression test to `tests/e2e/homepage.spec.cjs`:
+  - Public dashboard exposes exactly the six approved module IDs: `free`, `health`, `studio`, `academy`, `commerce`, `business`.
+  - Crypto is not a public module card.
+  - The administrator panel is hidden on the ordinary unauthenticated/public first view.
+  - Crypto, Creator & Online Income, AI Evaluation & Training, Digital Product Studio and Founder Provenance remain nested inside the administrator panel.
+  - At least ten internal founder workbenches must remain present inside that panel.
+- Test commit: `156dcc711a3691873bb72b7c5abf12e43cf84bc1`.
+- The test is committed but has not yet been observed passing in CI. The commit workflow/status endpoints returned no run/status records at the time of this checkpoint; do not claim the test passes until a completed run is visible.
+- PR #9 remains open and GitHub reports `mergeable=false`. The integration branch is divergent from `main` (latest compare at this checkpoint: 63 commits ahead, 1 behind; merge base `69c57c5eb1c8a3b1d4612ec572831a3ec072ee67`). Do not merge or rewrite history based on these counts.
+- No runtime application behaviour, production secrets, live database, APK or Cloudflare deployment was changed in this step. No paid service or provider usage was initiated.
+
+### Development sequence for the full product
+1. Preserve the six public module workspaces and harden their owner-scoped persistence and server-side access checks.
+2. Complete Studio's project lifecycle and test script/storyboard/media/render status/export; never start a billable render without explicit budget approval.
+3. Complete Academy course, lesson, quiz, progress and Student Desk flows without fabricated accreditation or assessment claims.
+4. Complete Commerce research, supplier due diligence, unit economics and store-planning flows without fake reviews or unverified supplier/order integrations.
+5. Complete Business planning, cashbook, break-even and Student Desk flows; statutory accounting, VAT/tax filing and professional advice require jurisdiction-specific review.
+6. Expand hidden Creator/Online Income, Book, Music, Digital Product, Publishing and campaign workbenches with private project persistence, versioning and export; do not promise earnings or claim publication/distribution integrations that are not connected.
+7. Expand AI Evaluation & Training with synthetic/licensed data, rubric versioning, reviewer audit and explicit separation between evaluation consent and training-data permission.
+8. Keep Crypto read-only/non-executing until device proof-of-possession, owner consent, legal/security/energy review and explicit separate approval.
+9. Do not launch Psychology or child-safeguarding workflows until clinical/safeguarding professionals, crisis protocols, DPIA, legal review, human escalation ownership and access/retention controls are in place.
+10. Maintain Dr.Vas/Dr.Jan/Aurora voice identity boundaries, voice race protections and Android playback validation; do not activate paid voice credits or clone providers without approval.
+11. Verify all Supabase migrations, RLS/storage policies, cross-user isolation and account deletion with authorized test accounts; source-level tests do not prove live database state.
+12. Maintain zero-unapproved-cost policy and archive all material user instructions, decisions, code commits, test outcomes and unresolved items in the handoff/status/chat archive/development log.
+
+### Next technical checkpoint
+- Wait for or obtain a verifiable CI result for commit `156dcc711a3691873bb72b7c5abf12e43cf84bc1`.
+- If the Playwright test fails, correct only the test assumptions or genuine source defect and rerun.
+- Continue a source-to-Worker access audit for all hidden/admin actions and the six module prompts.
+- Retrieve the exact npm audit report before any dependency update.
+- Resolve PR #9 in a safe candidate integration without dropping main's deployment checks or the current TTS `forcePlayback`/stale-audio guards.
+- Do not deploy or run billable provider operations until all relevant gates and approvals are met.
