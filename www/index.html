@@ -3664,7 +3664,12 @@ function calculateCommerceUnitEconomics(){
  const currency=el("commerceCurrency")?.value||"GBP";
  const outputs=["commerceLandedCost","commerceFeeTotal","commerceVariableTotal","commerceContribution","commerceMargin","commercePriceFloor","commerceBreakEvenOrders","commerceMonthlyContribution"];
  const status=el("commerceEconomicsStatus");
- const invalid=values.some(value=>!Number.isFinite(value)||value<0)||price<=0||platformFee>100||paymentFee>100||returnsReserve>100||platformFee+paymentFee+returnsReserve>=100;
+ const invalid=values.some(value=>!Number.isFinite(value)||value<0)||price<0||platformFee>100||paymentFee>100||returnsReserve>100||platformFee+paymentFee+returnsReserve>=100;
+ if(price===0&&!invalid){
+  outputs.forEach(id=>{if(el(id))el(id).textContent="—";});
+  if(status)status.textContent="Introdu prețul de vânzare pentru a calcula marja și pragul de rentabilitate.";
+  return null;
+ }
  if(invalid){
   outputs.forEach(id=>{if(el(id))el(id).textContent="—";});
   if(status)status.textContent="Completează un preț de vânzare mai mare decât zero. Costurile și procentele trebuie să fie valide și nenegative.";
