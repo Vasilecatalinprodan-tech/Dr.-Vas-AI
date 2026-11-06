@@ -104,3 +104,26 @@ This archive preserves the instruction, decisions and technical actions from thi
 - Test commits: `7c8e6b89d97fd8b2e22d9b6577fc484e3d96fb15` and `a60ac62ed5ce7b620d44c0cae46a76403a37f9ee`.
 - These are test-only changes on `drvas-integrated-platform`. No application runtime code was changed in this follow-up.
 - CI for the new commits has not yet returned a completed status. Workflow #478 / run `42187371574` remained at Chromium installation on the last inspection; its browser test, deploy and production smoke-test steps were still pending. Do not claim a passing result or advance `main` until a completed successful workflow is confirmed.
+
+
+## 2026-11-06 — user requested full continuation and preservation of this chat
+
+### User instruction (verbatim)
+> continuăm și salvăm tot inclusiv chatul
+
+### Work performed in this continuation
+- Rechecked PR #9, the active branch and the workflow evidence before continuing. PR #9 remains open; GitHub reports `mergeable=false`. Latest observed branch head at inspection: `3ae6b4ee0dbd7952485ea01eb6c2a91a44d684b2`.
+- The commit-status endpoint and commit-associated workflow query returned no statuses/runs for that latest documentation head. This is an absence of returned check data, not proof of passing CI.
+- Inspected the live `playAssistantVoice(text, forcePlayback=false)` implementation in `www/index.html`. It captures the selected assistant and request sequence before TTS fetch, then checks request sequence, auto-read/force-playback preference and current assistant again after the audio blob resolves. This correctly blocks stale audio when the assistant changes before playback.
+- Reviewed `.github/workflows/deploy-worker.yml`: it still runs npm ci, SBOM generation, JS/static security invariants, browser E2E tests, Wrangler deploy, production health/homepage/auth smoke tests and SBOM upload. Do not remove these release gates to make a merge/deploy pass.
+- Inspected the previous workflow job logs: Wrangler deploy failed with HTTP 503; SBOM artifact upload succeeded. The production smoke test did not run after the failed deploy. Do not report a production deployment.
+- Confirmed package.json declares Capacitor Android/Core/CLI 8.6.0 and Wrangler ^4.156.0. The earlier three moderate npm advisories remain untriaged because the exact npm audit report/dependency paths have not been retrieved. No dependency upgrade was made.
+- No changes to runtime application code, production secrets, Supabase, deployed Worker or installed APK were made in this continuation. No paid service, credits or paid provider use was initiated.
+- User explicitly reiterated that all work and the chat must be preserved. This entry records the user request and the actions/results of this continuation. It is a structured project archive, not a verbatim export of every prior UI message.
+
+### Next engineering actions
+1. Obtain a fresh CI run for the latest integration branch head and inspect its actual jobs/results; the prior retry request was accepted but its new attempt did not appear in the available job query.
+2. Resolve PR #9 conflicts on a separate candidate branch, preserving both the integration TTS `forcePlayback` invariant and the main branch deployment validation steps. Do not rewrite the active branch or merge until checks pass.
+3. Retrieve exact `npm audit --json` output and map all three moderate findings to dependency paths before selecting minimal compatible fixes.
+4. Test TTS playback on the actual Samsung Android APK/device, including automatic playback, manual replay, switching assistants during pending TTS, mute/stop, and error fallback.
+5. Verify Cloudflare deploy and production smoke test on the exact candidate commit before declaring release readiness.
