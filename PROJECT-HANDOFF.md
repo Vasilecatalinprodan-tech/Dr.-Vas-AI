@@ -614,3 +614,12 @@ Keep the zero-new-cost rule. Do not buy provider usage, create subscriptions, st
 - `main` and `drvas-integrated-platform` now show a one-commit squash-history divergence. Preserve both; do not force push or reset. Keep development on integrated branch and use PRs for future integration.
 - Workflow smoke tests confirm Worker health and expected public module markers; they do not validate authenticated TTS secrets, actual voice clone, Android device playback, live database migrations or Play Store readiness.
 - User reiterated: continue all work that can be done and save everything, including the chat. Keep zero-new-cost constraint and no external paid actions without approval.
+
+
+## Next handoff — voice replay fix awaiting CI
+
+- Manual replay bug fix committed to `www/index.html`: `replayLastAnswer()` now calls `speakDrVas(lastSpokenAnswer, true)`; the force flag is carried through dedicated TTS and bypasses only the auto-read preference, not authentication or selected-assistant checks.
+- Added a Playwright regression test in `tests/e2e/module-persistence.spec.cjs` that stubs an authenticated session, TTS audio response and Audio playback, then verifies Dr.Vas TTS is requested and played while auto-read remains off.
+- Commits: `3b3b2b9c0f9448c24e4bcb3b68c244b16b78cc82`, `022705e4f0fdf819fc3e126e359d2e293b5b573d`.
+- New CI result pending. Create a PR for this patch, wait for browser tests and Worker smoke checks, then merge/deploy only after success.
+- This correction addresses manual replay logic but does not prove the user's custom voice clone is configured or solve all Android audio playback cases.
