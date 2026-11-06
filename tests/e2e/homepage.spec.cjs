@@ -2290,10 +2290,6 @@ test("Dr.Vas Free sidebar destinations open their own truthful views", async ({ 
     freeNavLoadLibrary = async imagesOnly => { const host=freeNavPage(imagesOnly ? "Images" : "Library","Private file library"); host.append("Saved files"); };
     freeNavLoadScheduled = async () => { const host=freeNavPage("Scheduled","In-app reminders"); host.append("Scheduled reminders"); };
     freeNavLoadPlugins = async () => { const host=freeNavPage("Plugins","Integration status"); host.append("Integration status"); };
-    freeNavLoadAttachments = async imagesOnly => {
-      const host = freeNavPage(imagesOnly ? "Images" : "Library", "Test view");
-      const status = document.createElement("div"); status.className = "free-nav-status"; status.textContent = "Test data"; host.appendChild(status);
-    };
     freeNavLoadProjects = async () => { const host=freeNavPage("Projects","Test projects"); host.append("Saved projects"); };
     freeNavLoadRecents = async () => { const host=freeNavPage("Recents","Test recents"); host.append("Recent conversations"); };
   });
