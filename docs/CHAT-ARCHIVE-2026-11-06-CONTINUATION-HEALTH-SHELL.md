@@ -186,3 +186,8 @@ Additional commits:
 - Run #518 completed with 86 passed / 1 failed. The only remaining failure was the top Back button being hidden in the six-module logout/navigation test; the project lifecycle, presenter alt text and mobile composer checks passed.
 - Root cause: the shared logout synchronizer was also changing the Back button's hidden state after module entry. Removed Back-button handling from the logout synchronizer; module entry now shows it explicitly, while module chooser/logout explicitly hides it.
 - The latest run #523 (`42297300450`) has passed the static JavaScript, migration-gate and Android APK workflow checks; full browser tests are in progress.
+
+## Run #523 and final top Back synchronization
+- Run #523 still had one failure: the top Back control was not being shown in the global navigation test, even though the module shell and other controls were active.
+- Added a final synchronization in the shared module selector wrapper: after the original module selection and feature-page initialization, it checks that the selected workspace/chat is actually visible and then shows the global Back control. Unauthorized modules do not show it; returning to the module chooser still hides it.
+- Latest browser run #526 (`42297705166`) is validating this wrapper-level correction. Static JS, migration/Health diagnostic ordering and Android APK workflow checks passed before browser installation.
