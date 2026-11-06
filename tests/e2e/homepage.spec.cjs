@@ -1615,9 +1615,9 @@ test("hidden founder workbench briefs are persisted to their matching private mo
       return true;
     };
 
-    await launchFounderWorkbenchPrompt("studio", "DR.VAS CONTENT & CAMPAIGN PLANNER\\nCampaign brief", "Ready");
-    await launchFounderWorkbenchPrompt("academy", "DR.VAS AI EVALUATION & TRAINING LAB\\nEvaluation brief", "Ready");
-    await launchFounderWorkbenchPrompt("business", "DR.VAS BUSINESS OPERATIONS PLANNER\\nOperations brief", "Ready");
+    await launchFounderWorkbenchPrompt("studio", "DR.VAS CONTENT & CAMPAIGN PLANNER\nCampaign brief", "Ready");
+    await launchFounderWorkbenchPrompt("academy", "DR.VAS AI EVALUATION & TRAINING LAB\nEvaluation brief", "Ready");
+    await launchFounderWorkbenchPrompt("business", "DR.VAS BUSINESS OPERATIONS PLANNER\nOperations brief", "Ready");
     return calls;
   });
 
@@ -1627,17 +1627,17 @@ test("hidden founder workbench briefs are persisted to their matching private mo
   expect(studio).toMatchObject({
     title: "CONTENT & CAMPAIGN PLANNER",
     deliverable: "article",
-    brief: "DR.VAS CONTENT & CAMPAIGN PLANNER\\nCampaign brief"
+    brief: "DR.VAS CONTENT & CAMPAIGN PLANNER\nCampaign brief"
   });
   expect(academy).toMatchObject({
     title: "AI EVALUATION & TRAINING LAB",
     primary: "AI EVALUATION & TRAINING LAB",
-    brief: "DR.VAS AI EVALUATION & TRAINING LAB\\nEvaluation brief"
+    brief: "DR.VAS AI EVALUATION & TRAINING LAB\nEvaluation brief"
   });
   expect(business).toMatchObject({
     title: "BUSINESS OPERATIONS PLANNER",
     primary: "BUSINESS OPERATIONS PLANNER",
-    brief: "DR.VAS BUSINESS OPERATIONS PLANNER\\nOperations brief"
+    brief: "DR.VAS BUSINESS OPERATIONS PLANNER\nOperations brief"
   });
   expect(result.filter(item => item.handoff)).toHaveLength(3);
 });
