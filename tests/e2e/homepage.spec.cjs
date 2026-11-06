@@ -2206,12 +2206,14 @@ test("authenticated users can always sign out from the global top header and tru
   await openApp(page, "ro");
   await expect(page.locator("#globalLogoutTop")).toBeHidden();
   await expect(page.locator("#globalLogoutBottom")).toBeHidden();
+  await expect(page.locator("#globalBackToModules")).toBeHidden();
   await page.evaluate(() => {
     currentUser = { id: "e2e-global-logout-user", email: "user@example.invalid" };
     syncGlobalLogoutControls();
   });
   await expect(page.locator("#globalLogoutTop")).toBeVisible();
   await expect(page.locator("#globalLogoutBottom")).toBeVisible();
+  await expect(page.locator("#globalBackToModules")).toBeHidden();
   const positions = await page.evaluate(() => ({
     top: document.querySelector("#globalLogoutTop").getBoundingClientRect().top,
     bottom: document.querySelector("#globalLogoutBottom").getBoundingClientRect().bottom,
@@ -2244,6 +2246,7 @@ test("global logout stays available while moving through all six module workspac
     await page.evaluate(module => selectModule(module), moduleName);
     await expect(page.locator("#globalLogoutTop"), moduleName + " top logout").toBeVisible();
     await expect(page.locator("#globalLogoutBottom"), moduleName + " bottom logout").toBeVisible();
+    await expect(page.locator("#globalBackToModules"), moduleName + " back to modules").toBeVisible();
     expect(await page.evaluate(() => activeModule)).toBe(moduleName);
   }
 });
@@ -2472,7 +2475,8 @@ test("Dr.Vas Health uses the same chat shell, sidebar destinations and attachmen
   expect(labels.map(value => value.trim())).toEqual(["＋New chat","▧Images","◷Scheduled","▤Library","⌘Plugins","✧Explore","▣Projects","View all"]);
   await expect(page.locator("#freeChatView .input-area .chat-file-button")).toBeVisible();
   await expect(page.locator("#sendButton")).toContainText("Trimite");
-  await expect(page.locator(".chat-back-button")).toContainText("Înapoi la module");
+  await expect(page.locator("#globalBackToModules")).toBeVisible();
+  await expect(page.locator("#globalBackToModules")).toContainText("Înapoi la module");
 
   await page.locator('[data-free-nav="scheduled"]').click();
   await expect(page.locator("#freeNavWorkspace")).toBeVisible();
