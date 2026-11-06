@@ -311,3 +311,13 @@ Founder feedback:
 4. Verify RLS for `drvas_studio_projects`, `drvas_module_projects`, cashbook, income tracker and admin records with separate test users.
 5. Continue six public module improvements and private workbench workflows without exposing admin features.
 6. Resume npm audit, PR #9 conflict resolution, Cloudflare deployment and Android voice checks only with verifiable results and no unapproved spend.
+
+
+### Follow-up correction — Playwright fixture escaping and current checkpoint
+- Corrected the new regression test's newline fixtures so the workbench heading and full brief are split/preserved as intended at runtime.
+- Correction commit: `5bbf1af37802f3c0dc1c6cbb40419dd6fb2ab10c`.
+- This is a test-fixture correction only; the application persistence implementation remains in `4ab863f29be718fdefee55f615fed6573982ce65` with the title-normalization fix in `05d2cc7f5df655153c259dfe6bce7181a7997049`.
+- Source, test and all seven project documents were re-read from `drvas-integrated-platform`. The docs include the user's latest request and this implementation checkpoint.
+- No workflow run or commit status was returned for the feature/test commits at verification time. CI is therefore pending/unverified, not passing.
+- PR #9 remains open and dirty (`mergeable=false`); the branch is divergent from `main` (80 commits ahead, 1 behind at the latest comparison). No merge, rebase, reset, force-push or deployment was performed.
+- No paid credits/services, production secrets, migrations, live database or APK were touched.
