@@ -181,3 +181,8 @@ Additional commits:
 - Added `node --check www/module-workspaces.js` before Capacitor sync so the APK build validates the new feature router.
 - Browser CI statically checks that the Android workflow contains the module-router syntax check, APK build command and artifact upload.
 - No APK has been built from this release candidate yet; the workflow will run after the changes reach main.
+
+## Run #518 and final Back-button state fix
+- Run #518 completed with 86 passed / 1 failed. The only remaining failure was the top Back button being hidden in the six-module logout/navigation test; the project lifecycle, presenter alt text and mobile composer checks passed.
+- Root cause: the shared logout synchronizer was also changing the Back button's hidden state after module entry. Removed Back-button handling from the logout synchronizer; module entry now shows it explicitly, while module chooser/logout explicitly hides it.
+- The latest run #523 (`42297300450`) has passed the static JavaScript, migration-gate and Android APK workflow checks; full browser tests are in progress.
