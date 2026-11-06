@@ -1058,3 +1058,13 @@ Expanded implementation now on PR #38:
 - Added migration and browser-source tests for standalone project CRUD. Latest relevant E2E run `42287908611` was still running at the time of this note; the previous project-code run `42287773249` passed all 81 Playwright tests. Do not claim the newest added tests pass until run `42287908611` completes.
 - Four additive migrations now accompany PR #38: conversation context (`202611060001`), Scheduled reminders (`202611060002`), independent Library files (`202611060003`), and standalone Projects (`202611060004`). None are applied to live Supabase yet.
 - PR #38 remains open and mergeable; do not merge or deploy until the newest CI run passes and all four SQL migrations are applied and live RLS/Storage behavior is verified.
+
+
+## 2026-11-06 21:49 UTC — all-module integration checkpoint
+- User's latest instruction: continue all modules and interface simultaneously, improve everything, preserve the full work/chat and show concrete changes.
+- Main is already integrated with PR #39: `365f73cd68ec1de4c76148994c9e5f0e8da7e0e2`; documentation checkpoint on main is `4e67e140539473f5182715c3bac1bb64fbb3bcdd`.
+- Shared chat/navigation and dedicated feature pages are integrated across Free, Health, Studio, Academy, Commerce and Business. The precise feature list and limitations are recorded in PROJECT-STATUS.md and docs/CHAT-TRANSCRIPT-2026-11-06-DRVAS-ALL-MODULES.md.
+- Browser run #42298304497 passed; APK build run #42298304435 passed. Worker deploy run #42298304428 failed before Supabase migration/deploy because 2 of 116 static migration tests failed (114 passed). Both failures were the Library/Projects privilege grant assertions, not a reported production database error.
+- PR #40: `https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/40`; branch `fix/migration-grant-regex-2026-11-06`; commit `f24579148f4e2233f58f7b81425031e248e25b68`. It adjusts only test regexes to tolerate whitespace and optional TABLE syntax. Browser run #535 / `42300016696` is in progress.
+- Resume by polling PR #40. If green, merge and inspect the next main deploy attempt. Supabase secrets may be required; never request secrets in chat. No claim of production migration/deployment until workflow and live health checks confirm.
+- Physical APK installation and speaker/TTS playback are still not verified on the user's Samsung device.
