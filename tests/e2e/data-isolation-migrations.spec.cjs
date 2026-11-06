@@ -9,15 +9,15 @@ const migration = name => fs.readFileSync(
 
 function assertOwnerScopedTable(sql, table, label) {
   expect(sql, label + ": RLS must be enabled").toMatch(
-    new RegExp("alter\s+table\s+(?:public\\.)?" + table + "\s+enable\s+row\s+level\s+security", "i")
+    new RegExp("alter\\s+table\\s+(?:public\\.)?" + table + "\\s+enable\\s+row\\s+level\\s+security", "i")
   );
   expect(sql, label + ": public and anon must have no table privileges").toMatch(
-    new RegExp("revoke\s+all\s+on\s+table\s+(?:public\\.)?" + table + "\s+from\s+public\s*,\s*anon", "i")
+    new RegExp("revoke\\s+all\\s+on\\s+table\\s+(?:public\\.)?" + table + "\\s+from\\s+public\\s*,\\s*anon", "i")
   );
   for (const operation of ["select", "insert", "update", "delete"]) {
     const policy = new RegExp(
-      "create\s+policy[\s\\S]{0,180}?on\s+(?:public\\.)?" + table +
-      "\s+for\s+" + operation + "[\s\\S]{0,500}?(?:using|with\s+check)\s*\\([\s\\S]{0,180}?auth\s*\\.\s*uid\s*\\(\s*\\)\s*=\s*user_id",
+      "create\\s+policy[\\s\\S]{0,180}?on\\s+(?:public\\.)?" + table +
+      "\\s+for\\s+" + operation + "[\\s\\S]{0,500}?(?:using|with\\s+check)\\s*\\([\\s\\S]{0,180}?auth\\s*\\.\\s*uid\\s*\\(\\s*\\)\\s*=\\s*user_id",
       "i"
     );
     expect(sql, label + ": " + operation + " policy must bind rows to auth.uid()").toMatch(policy);
@@ -44,8 +44,8 @@ test("Studio render jobs and media storage remain private and owner-scoped", asy
   expect(sql).toMatch(/values\s*\(\s*'drvas-media'\s*,\s*'drvas-media'\s*,\s*false/i);
   for (const operation of ["select", "insert", "update", "delete"]) {
     const policy = new RegExp(
-      "on\s+storage\\.objects\s+for\s+" + operation +
-      "[\s\\S]{0,350}?bucket_id\s*=\s*'drvas-media'[\s\\S]{0,350}?storage\\.foldername\s*\\(\s*name\s*\\)\s*\\)\s*\\[\s*1\s*\\]\s*=\s*auth\s*\\.\s*uid\s*\\(\s*\\)\s*::\s*text",
+      "on\\s+storage\\.objects\\s+for\\s+" + operation +
+      "[\\s\\S]{0,350}?bucket_id\\s*=\\s*'drvas-media'[\\s\\S]{0,350}?storage\\.foldername\\s*\\(\\s*name\\s*\\)\\s*\\)\\s*\\[\\s*1\\s*\\]\\s*=\\s*auth\\s*\\.\\s*uid\\s*\\(\\s*\\)\\s*::\\s*text",
       "i"
     );
     expect(sql, "Studio storage " + operation + " policy must scope the first folder to the signed-in user").toMatch(policy);
@@ -70,7 +70,7 @@ test("Chat attachment metadata is owner-scoped, bounded and restricted to suppor
   expect(sql).toMatch(/grant select, insert, delete on public\.drvas_chat_attachments to authenticated/i);
   for (const operation of ["select", "insert", "delete"]) {
     expect(sql).toMatch(new RegExp(
-      "create\s+policy[\s\\S]{0,180}?on public\\.drvas_chat_attachments\s+for\s+" + operation,
+      "create\\s+policy[\\s\\S]{0,180}?on public\\.drvas_chat_attachments\\s+for\\s+" + operation,
       "i"
     ));
   }
