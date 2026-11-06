@@ -563,3 +563,43 @@ New AI replies now update the currently opened saved module project, preserving 
 Workflow #473 / run `42130733280` completed SUCCESS. Playwright browser regression suite, JavaScript validation, Worker deploy, production smoke test and SBOM upload passed. Cloudflare Workers Builds check deployed Worker version `f88f84eb-45b6-45b8-84f4-0d109c88864f` from code commit `a91e562c122e3954c051e5d31ddcaa9ece0f08b7`.
 
 Remaining external gates: configure distinct Jan/Sarah voice secrets after approval, test audible voice profiles on Samsung, run live Supabase read-only/RLS checks and two-account module persistence tests.
+
+
+## 2026-11-06 — repository-wide branch integration checkpoint
+
+The founder requested development across every branch and preservation of all work and the chat, with no new costs. All 8 repository branches were inventoried. See `docs/BRANCH_INTEGRATION_AUDIT_2026-11-06.md` for branch heads, divergence, feature presence and safe handling.
+
+The active integration line already includes the main functional work from the long-input, founder-workbench, universal attachment, session-restore and UI-startup-failsafe branches. The account-deletion branch contributes a security specification only; account deletion is not implemented and must remain release-gated. No legacy branch was force-updated or merged wholesale.
+
+A further Academy Markdown export regression test was added. Workflow #478 / run `42187371574` is in progress at checkpoint time. Wait for its result before claiming the export test passed or advancing `main`.
+
+
+## Handoff — 2026-11-06 latest continuation
+
+Continue on `drvas-integrated-platform`; keep `main` synchronized only after CI passes. All eight repository branches were inventoried and preserved. See `docs/BRANCH_INTEGRATION_AUDIT_2026-11-06.md`; do not merge divergent legacy branches wholesale.
+
+PR #7 is now confirmed merged at `c194068c4e13bc3c69ccf2208d67ed13db45ec46`. Universal private attachments are integrated, but do not enable Health document analysis until the Supabase migration and private Storage/RLS policies are verified live, Gemini Paid Services/DPA/retention are reviewed, and UK GDPR special-category lawful basis, explicit consent and DPIA are complete. No such live migration or feature-flag change was performed here.
+
+Latest code/test change: `7c8e6b89d97fd8b2e22d9b6577fc484e3d96fb15` adds Commerce and Business Playwright coverage for owner-scoped existing-project updates and Markdown exports. CI is pending. Workflow #478 / run `42187371574` was still installing Chromium at the last check; do not claim success until the browser suite, deploy and production smoke test finish.
+
+Keep the zero-new-cost rule. Do not buy provider usage, create subscriptions, start paid renders, change production secrets/flags, or replace the installed APK. Preserve chat continuity through `docs/CHAT-ARCHIVE-2026-11-06.md`; it is a structured project record, not a verbatim transcript export.
+
+
+### Additional module persistence coverage — 2026-11-06
+
+- Extended the shared Academy/Commerce/Business E2E coverage: Commerce and Business existing-project updates and Markdown exports are now covered; Academy and Business owner-scoped deletion/selection-state clearing are also covered (Commerce deletion was already covered).
+- Test commits: `7c8e6b89d97fd8b2e22d9b6577fc484e3d96fb15` and `a60ac62ed5ce7b620d44c0cae46a76403a37f9ee`.
+- These are test-only changes on `drvas-integrated-platform`. No application runtime code was changed in this follow-up.
+- CI for the new commits has not yet returned a completed status. Workflow #478 / run `42187371574` remained at Chromium installation on the last inspection; its browser test, deploy and production smoke-test steps were still pending. Do not claim a passing result or advance `main` until a completed successful workflow is confirmed.
+
+
+## Handoff — 2026-11-06 avatar and founder voice request
+
+- Founder explicitly requested completion of all ten platform workstreams (stability/security/auth/history; Voice AI; Studio; Health; Academy; Commerce; Business; Crypto & Mining; Online Income/Digital Products; subscriptions/access/Google Play) and requested that this chat be archived.
+- New checkpoint file committed: `docs/CHAT-ARCHIVE-2026-11-06-AVATARS-VOICE.md` — commit `5be8f3a81fe04a8b7d2fdb2484d575668cf584cd`.
+- Recovered founder portrait `Drvas.jpeg`, Sarah reference `sarah(1).jpeg`, and founder voice sample `/DrVas/Private/Voice/drvasvoice.ogg` (10,254 bytes, approximately 4.57 seconds).
+- Current presentation still uses illustrated SVG presenter faces and CSS mouth movement; it is not true photo lip-sync. Assistant selector already includes Dr.Vas, Dr.Jan and Sarah (`aurora`).
+- Worker already supports authenticated `voice_tts` for three server-side voice IDs. Presence/validity of the production ElevenLabs key and three voice IDs has NOT been verified. Never reveal secrets. The short OGG sample is not confirmed as a trained clone.
+- Runway workspace has no available video or speech models. No generation was started and no credits were spent. A Sarah upload was initialized but not completed; do not claim an asset was uploaded or edited.
+- Next: use the original founder portrait in presentation; edit Sarah from her supplied reference to an adult professional appearance while preserving identity; create a photorealistic fictional Jan AI avatar (clearly labelled virtual collaborator, not a human doctor); connect each presenter's audio to the corresponding existing TTS route and make speaking state accurately follow playback.
+- Continue the ten workstreams in small tested commits. Zero-new-cost rule remains in force. No deployment, voice cloning, video generation, or module completion is claimed by this checkpoint.

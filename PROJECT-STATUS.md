@@ -894,3 +894,30 @@ Founder feedback:
 
 - Workflow #476 / run `42182127089` completed SUCCESS. The Academy update and Commerce deletion regression tests both passed as part of the browser suite; JavaScript validation, Worker deployment, production smoke test and SBOM upload also passed.
 - `main` and `drvas-integrated-platform` were fast-forward synchronized after the successful test run.
+
+
+## 2026-11-06 — repository-wide branch audit
+
+- Founder instructed: continue development across all branches and save all work/chat, with the no-cost constraint unchanged.
+- Inventoried all 8 branches and recorded their heads, divergence and integration findings in `docs/BRANCH_INTEGRATION_AUDIT_2026-11-06.md`.
+- Confirmed that the active integrated line already contains key work from the long-input, founder-workbench, attachment, session-restore and startup-failsafe branches. Account deletion remains a specification, not an implemented destructive feature.
+- No legacy branch was deleted, force-pushed, rebased or wholesale merged. Their divergent histories make automatic merging unsafe.
+- Added an E2E test for Academy Markdown export, checking the exported brief, latest AI output, download name and status. Workflow #478 is running; do not claim the new test has passed until CI finishes.
+
+
+## 2026-11-06 — latest continuation checkpoint
+
+- Working branch: `drvas-integrated-platform`; production branch: `main`. Continue development on the integrated branch and fast-forward `main` only after the corresponding workflow passes.
+- PR #7 is confirmed merged at `c194068c4e13bc3c69ccf2208d67ed13db45ec46`. Attachment code is integrated; live Supabase migration, storage/RLS verification, Gemini Paid Services/DPA and UK GDPR special-category/DPIA gates remain unresolved. Health document analysis must remain disabled until all gates are completed.
+- Repository-wide branch audit is saved in `docs/BRANCH_INTEGRATION_AUDIT_2026-11-06.md`; all eight branches are preserved. No legacy branch was force-updated, rebased, deleted or wholesale merged.
+- Added Commerce and Business E2E tests for owner-scoped update and Markdown export. Commit: `7c8e6b89d97fd8b2e22d9b6577fc484e3d96fb15`. CI is pending; do not treat tests as passing yet.
+- Workflow #478 / run `42187371574` was in progress at last inspection, at Chromium installation. Await browser tests, deploy and smoke-test conclusion.
+- Zero-new-cost constraint remains active. No paid provider calls, new subscriptions, rendering, voice credits, production secrets, live SQL changes or APK replacement were initiated.
+
+
+### Additional module persistence coverage — 2026-11-06
+
+- Extended the shared Academy/Commerce/Business E2E coverage: Commerce and Business existing-project updates and Markdown exports are now covered; Academy and Business owner-scoped deletion/selection-state clearing are also covered (Commerce deletion was already covered).
+- Test commits: `7c8e6b89d97fd8b2e22d9b6577fc484e3d96fb15` and `a60ac62ed5ce7b620d44c0cae46a76403a37f9ee`.
+- These are test-only changes on `drvas-integrated-platform`. No application runtime code was changed in this follow-up.
+- CI for the new commits has not yet returned a completed status. Workflow #478 / run `42187371574` remained at Chromium installation on the last inspection; its browser test, deploy and production smoke-test steps were still pending. Do not claim a passing result or advance `main` until a completed successful workflow is confirmed.

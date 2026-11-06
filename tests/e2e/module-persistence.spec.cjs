@@ -263,3 +263,196 @@ test("deleting a saved Commerce project removes only the selected owner-scoped r
   expect(result.title).toBe("");
   expect(result.selectedProject).toBe("");
 });
+
+
+test("exporting a saved Academy project includes its brief and latest Dr.Vas output", async ({ page }) => {
+  await openApp(page);
+  const exported = await page.evaluate(async () => {
+    document.getElementById("academySubject").value = "Antreprenoriat pentru începători";
+    document.getElementById("academyLevel").value = "Începător";
+    document.getElementById("academyProjectTitle").value = "Curs practic de antreprenoriat";
+    moduleProjectOutputs.academy = "Planul cursului cu 5 module și exerciții.";
+
+    window.__DRVAS_EXPORTED_FILE__ = null;
+    Object.defineProperty(URL, "createObjectURL", {
+      configurable: true,
+      value: blob => {
+        window.__DRVAS_EXPORTED_FILE__ = { blob, href: "blob:e2e-project-export" };
+        return "blob:e2e-project-export";
+      }
+    });
+    Object.defineProperty(URL, "revokeObjectURL", { configurable: true, value: () => {} });
+    HTMLAnchorElement.prototype.click = function () {
+      window.__DRVAS_EXPORT_CLICK__ = { href: this.href, download: this.download };
+    };
+
+    exportModuleProject("academy");
+    const file = window.__DRVAS_EXPORTED_FILE__;
+    return {
+      text: await file.blob.text(),
+      href: window.__DRVAS_EXPORT_CLICK__?.href,
+      download: window.__DRVAS_EXPORT_CLICK__?.download,
+      status: document.getElementById("academyProjectStatus").textContent
+    };
+  });
+
+  expect(exported.text).toContain("# Curs practic de antreprenoriat");
+  expect(exported.text).toContain("Modul: academy");
+  expect(exported.text).toContain("Antreprenoriat pentru începători");
+  expect(exported.text).toContain("Planul cursului cu 5 module și exerciții.");
+  expect(exported.href).toBe("blob:e2e-project-export");
+  expect(exported.download).toMatch(/Curs-practic-de-antreprenoriat\.md$/);
+  expect(exported.status).toContain("pregătit");
+});
+
+
+for (const scenario of [
+  { module: "commerce", primary: "commerceProduct", title: "commerceProjectTitle", value: "Produs cu actualizare", output: "Analiza de piață actualizată" },
+  { module: "business", primary: "businessIdea", title: "businessProjectTitle", value: "Afacere cu actualizare", output: "Plan operațional actualizat" }
+]) {
+  test(`${scenario.module} updates its existing project with owner and module filters`, async ({ page }) => {
+    await openApp(page);
+    await page.evaluate(async ({ module, primary, title, value, output }) => {
+      const operations = [];
+      window.__DRVAS_GENERIC_UPDATE__ = operations;
+      const id = "e2e-existing-" + module;
+      moduleProjectState[module] = id;
+      moduleProjectOutputs[module] = output;
+      document.getElementById(primary).value = value;
+      document.getElementById(title).value = value + " — proiect";
+
+      supabaseClient.from = table => {
+        const query = { operation: null, payload: null, filters: [] };
+        query.select = function () { return this; };
+        query.update = function (payload) { this.operation = "update"; this.payload = payload; return this; };
+        query.eq = function (key, filterValue) { this.filters.push([key, filterValue]); return this; };
+        query.order = function () { return this; };
+        query.single = async function () {
+          operations.push({ table, operation: this.operation, payload: this.payload, filters: this.filters });
+          return { data: { id }, error: null };
+        };
+        query.limit = async function () {
+          return { data: [{ id, title: value + " — proiect", updated_at: new Date().toISOString() }], error: null };
+        };
+        return query;
+      };
+
+      await saveModuleProject(module);
+    }, scenario);
+
+    const operations = await page.evaluate(() => window.__DRVAS_GENERIC_UPDATE__);
+    expect(operations).toHaveLength(1);
+    expect(operations[0].table).toBe("drvas_module_projects");
+    expect(operations[0].operation).toBe("update");
+    expect(operations[0].payload.user_id).toBe("e2e-module-owner");
+    expect(operations[0].payload.module).toBe(scenario.module);
+    expect(operations[0].payload.title).toBe(scenario.value + " — proiect");
+    expect(operations[0].payload.brief.latest_output).toBe(scenario.output);
+    expect(operations[0].filters).toEqual([
+      ["id", "e2e-existing-" + scenario.module],
+      ["user_id", "e2e-module-owner"],
+      ["module", scenario.module]
+    ]);
+  });
+}
+
+for (const scenario of [
+  { module: "commerce", primary: "commerceProduct", title: "commerceProjectTitle", value: "Analiză produs online", output: "Marjă estimată și plan de lansare." },
+  { module: "business", primary: "businessIdea", title: "businessProjectTitle", value: "Plan companie locală", output: "Etape, costuri și obiective trimestriale." }
+]) {
+  test(`${scenario.module} project export includes the module brief and latest AI output`, async ({ page }) => {
+    await openApp(page);
+    const exported = await page.evaluate(async ({ module, primary, title, value, output }) => {
+      document.getElementById(primary).value = value;
+      document.getElementById(title).value = value + " — document";
+      moduleProjectOutputs[module] = output;
+      window.__DRVAS_EXPORTED_FILE__ = null;
+      Object.defineProperty(URL, "createObjectURL", {
+        configurable: true,
+        value: blob => {
+          window.__DRVAS_EXPORTED_FILE__ = { blob, href: "blob:e2e-" + module };
+          return "blob:e2e-" + module;
+        }
+      });
+      Object.defineProperty(URL, "revokeObjectURL", { configurable: true, value: () => {} });
+      HTMLAnchorElement.prototype.click = function () {
+        window.__DRVAS_EXPORT_CLICK__ = { href: this.href, download: this.download };
+      };
+      exportModuleProject(module);
+      const file = window.__DRVAS_EXPORTED_FILE__;
+      return {
+        text: await file.blob.text(),
+        href: window.__DRVAS_EXPORT_CLICK__?.href,
+        download: window.__DRVAS_EXPORT_CLICK__?.download,
+        status: document.getElementById(module + "ProjectStatus").textContent
+      };
+    }, scenario);
+
+    expect(exported.text).toContain("# " + scenario.value + " — document");
+    expect(exported.text).toContain("Modul: " + scenario.module);
+    expect(exported.text).toContain(scenario.value);
+    expect(exported.text).toContain(scenario.output);
+    expect(exported.href).toBe("blob:e2e-" + scenario.module);
+    expect(exported.download).toMatch(/\.md$/);
+    expect(exported.status).toContain("pregătit");
+  });
+}
+
+
+for (const scenario of [
+  { module: "academy", primary: "academySubject", title: "academyProjectTitle" },
+  { module: "business", primary: "businessIdea", title: "businessProjectTitle" }
+]) {
+  test(`${scenario.module} deletion clears only the selected owner-scoped project`, async ({ page }) => {
+    await openApp(page);
+    await page.evaluate(async ({ module, title }) => {
+      const operations = [];
+      window.__DRVAS_GENERIC_DELETE__ = operations;
+      const id = "e2e-delete-" + module;
+      moduleProjectState[module] = id;
+      moduleProjectOutputs[module] = "Output temporar";
+      document.getElementById(title).value = "Proiect de șters";
+      const select = document.getElementById(module + "ProjectList");
+      select.add(new Option("Proiect test", id));
+      select.value = id;
+      window.confirm = () => true;
+
+      supabaseClient.from = table => {
+        const query = { operation: null, filters: [] };
+        query.select = function () { return this; };
+        query.delete = function () { this.operation = "delete"; return this; };
+        query.eq = function (key, value) { this.filters.push([key, value]); return this; };
+        query.order = function () { return this; };
+        query.limit = async function () { return { data: [], error: null }; };
+        query.then = function (resolve, reject) {
+          operations.push({ table, operation: this.operation, filters: this.filters });
+          return Promise.resolve({ error: null }).then(resolve, reject);
+        };
+        return query;
+      };
+
+      await deleteModuleProject(module);
+    }, scenario);
+
+    const result = await page.evaluate(({ module, title }) => ({
+      operations: window.__DRVAS_GENERIC_DELETE__,
+      activeId: moduleProjectState[module],
+      latestOutput: moduleProjectOutputs[module],
+      title: document.getElementById(title).value,
+      selectedProject: document.getElementById(module + "ProjectList").value
+    }), scenario);
+
+    expect(result.operations).toHaveLength(1);
+    expect(result.operations[0].table).toBe("drvas_module_projects");
+    expect(result.operations[0].operation).toBe("delete");
+    expect(result.operations[0].filters).toEqual([
+      ["id", "e2e-delete-" + scenario.module],
+      ["user_id", "e2e-module-owner"],
+      ["module", scenario.module]
+    ]);
+    expect(result.activeId).toBeNull();
+    expect(result.latestOutput).toBe("");
+    expect(result.title).toBe("");
+    expect(result.selectedProject).toBe("");
+  });
+}

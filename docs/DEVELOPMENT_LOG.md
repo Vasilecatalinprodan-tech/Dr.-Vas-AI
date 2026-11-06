@@ -255,3 +255,32 @@ Founder feedback:
 
 - Workflow #476 / run `42182127089` completed SUCCESS. The new Commerce deletion regression test passed, together with the complete browser regression suite, JavaScript validation, Worker deployment, production smoke test and SBOM upload.
 - `main` was fast-forward synchronized with `drvas-integrated-platform` after the successful workflow. Documentation was updated to record the result.
+
+
+## 2026-11-06 — repository-wide branch integration audit
+
+- User instruction: continue development across all branches; save all work and chat; no-cost constraint remains active.
+- Inventoried all eight branches. Snapshot, divergence and feature integration findings saved in `docs/BRANCH_INTEGRATION_AUDIT_2026-11-06.md`.
+- Verified active integrated code already includes long-form 100,000-character chat input, founder workbench/cashbook/cashflow, private chat attachment migration and Worker handling, session/module continuity, and startup fail-open handling.
+- Account deletion remains documented but unimplemented; no destructive account deletion route was enabled.
+- Preserved all divergent legacy branches; no force-push, rebase, deletion or wholesale merge was performed.
+- Added E2E test for Academy Markdown export content and download metadata. Workflow #478 / run `42187371574` was still running when this note was written.
+
+
+## 2026-11-06 — repository-wide continuation and Commerce/Business regression coverage
+
+- Founder reiterated: continue development across all branches and preserve all work and this conversation. The previously established zero-new-cost restriction remains active.
+- Re-verified repository branches and PR #7. PR #7 is merged into `drvas-integrated-platform` at `c194068c4e13bc3c69ccf2208d67ed13db45ec46`; the private attachment workflow is integrated, but live Supabase migration execution and Health document-analysis enablement remain gated by database, privacy, DPA and UK GDPR/DPIA checks.
+- Confirmed the safe branch policy: continue on `drvas-integrated-platform`, keep `main` behind until CI passes, and preserve divergent legacy branches without force-push, rebase, deletion or wholesale merges.
+- Reviewed shared Academy/Commerce/Business project persistence. The save implementation uses the same shared table and scopes updates by project ID, authenticated user ID and module; export is implemented through one shared Markdown export function.
+- Added Commerce and Business Playwright regressions for updating an existing saved project (including latest AI output and owner/module filters) and exporting the brief plus latest AI response. Commit: `7c8e6b89d97fd8b2e22d9b6577fc484e3d96fb15`.
+- The previous workflow #478 / run `42187371574` was still in progress at last check (Chromium installation); its result is not claimed. The new test commit has no completed CI result yet. Do not claim these new tests passed until the relevant run completes.
+- No paid services, secrets, Supabase SQL, production feature flags, or APK installation/replacement were changed.
+
+
+### Additional module persistence coverage — 2026-11-06
+
+- Extended the shared Academy/Commerce/Business E2E coverage: Commerce and Business existing-project updates and Markdown exports are now covered; Academy and Business owner-scoped deletion/selection-state clearing are also covered (Commerce deletion was already covered).
+- Test commits: `7c8e6b89d97fd8b2e22d9b6577fc484e3d96fb15` and `a60ac62ed5ce7b620d44c0cae46a76403a37f9ee`.
+- These are test-only changes on `drvas-integrated-platform`. No application runtime code was changed in this follow-up.
+- CI for the new commits has not yet returned a completed status. Workflow #478 / run `42187371574` remained at Chromium installation on the last inspection; its browser test, deploy and production smoke-test steps were still pending. Do not claim a passing result or advance `main` until a completed successful workflow is confirmed.
