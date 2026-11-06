@@ -2677,7 +2677,7 @@ function selectModule(moduleName,userInitiated=false,suppressConversationRestore
   renderPendingChatFiles();
   if(currentUser)rememberActiveModule(moduleName);
   el("moduleSelectionSection")?.classList.remove("hidden","auth-flow-mode");
-  document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode","history-open");
+  document.body.classList.remove("module-workspace-mode","free-module-mode","health-module-mode","chat-focus-mode","history-open");
   document.documentElement.classList.remove("chat-focus-document");
   el("moduleSelectionShell")?.classList.add("modules-open");
   el("landingActions")?.classList.add("hidden");
@@ -4319,7 +4319,7 @@ async function startDrVas(){
 }
 function showModuleSelection(){
  if(!languageReady)return;
- document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode","history-open");
+ document.body.classList.remove("module-workspace-mode","free-module-mode","health-module-mode","chat-focus-mode","history-open");
  document.documentElement.classList.remove("chat-focus-document","drvas-free-shell");
  el("heroSection")?.classList.add("hidden");
  document.querySelector(".origin-story")?.classList.add("hidden");
@@ -4335,7 +4335,7 @@ function enterChatFocus(){showModuleSelection();}
 function exitChatFocus(){goToModules();}
 function toggleChatHistory(){document.body.classList.toggle("history-open");}
 function goToModules(){
- document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode","history-open");
+ document.body.classList.remove("module-workspace-mode","free-module-mode","health-module-mode","chat-focus-mode","history-open");
  document.documentElement.classList.remove("chat-focus-document","drvas-free-shell");
  el("chatSection")?.classList.add("hidden");
  el("heroSection")?.classList.add("hidden");
@@ -5069,7 +5069,7 @@ async function showChat(user,displayName){
   try{const savedAssistant=localStorage.getItem("drvas_assistant_"+user.id);if(savedAssistant&&ASSISTANTS[savedAssistant])activeAssistant=savedAssistant;}catch{}
   selectAssistant(activeAssistant);
   ["authSection","profileSection","chatSection"].forEach(id=>el(id)?.classList.add("hidden"));
-  document.body.classList.remove("module-workspace-mode","free-module-mode","chat-focus-mode","history-open");
+  document.body.classList.remove("module-workspace-mode","free-module-mode","health-module-mode","chat-focus-mode","history-open");
   document.documentElement.classList.remove("chat-focus-document","drvas-free-shell");
   // Session restoration returns to the presentation. A module opens only after the user chooses it.
   // Privacy: never expose the founder's personal name or email in the signed-in workspace header.
