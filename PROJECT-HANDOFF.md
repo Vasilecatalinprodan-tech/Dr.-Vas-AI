@@ -563,3 +563,12 @@ New AI replies now update the currently opened saved module project, preserving 
 Workflow #473 / run `42130733280` completed SUCCESS. Playwright browser regression suite, JavaScript validation, Worker deploy, production smoke test and SBOM upload passed. Cloudflare Workers Builds check deployed Worker version `f88f84eb-45b6-45b8-84f4-0d109c88864f` from code commit `a91e562c122e3954c051e5d31ddcaa9ece0f08b7`.
 
 Remaining external gates: configure distinct Jan/Sarah voice secrets after approval, test audible voice profiles on Samsung, run live Supabase read-only/RLS checks and two-account module persistence tests.
+
+
+## 2026-11-06 — repository-wide branch integration checkpoint
+
+The founder requested development across every branch and preservation of all work and the chat, with no new costs. All 8 repository branches were inventoried. See `docs/BRANCH_INTEGRATION_AUDIT_2026-11-06.md` for branch heads, divergence, feature presence and safe handling.
+
+The active integration line already includes the main functional work from the long-input, founder-workbench, universal attachment, session-restore and UI-startup-failsafe branches. The account-deletion branch contributes a security specification only; account deletion is not implemented and must remain release-gated. No legacy branch was force-updated or merged wholesale.
+
+A further Academy Markdown export regression test was added. Workflow #478 / run `42187371574` is in progress at checkpoint time. Wait for its result before claiming the export test passed or advancing `main`.
