@@ -109,3 +109,12 @@ Această arhivă păstrează mesajele noi ale utilizatorului și un rezumat tehn
 - A fost creat PR #24, branch fix/presenter-fallback-display-2026-11-06, cu o abordare mai robustă: starea de afișare a imaginii și fallback-ului este controlată direct prin CSS display, nu prin atributul hidden.
 - Commitul codului pentru PR #24: e0aaa7f0e34ea132f2f7031d21874a91016e36c3. Actualizările de audit și arhivă au fost adăugate ulterior pe aceeași ramură.
 - PR #24: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/24. Verificările browser și Android au fost pornite; merge-ul și redeploy-ul main sunt în așteptarea rezultatelor.
+
+
+### Actualizare PR #24 / PR #25 — 2026-11-06 14:20 UTC
+- PR #24 a fost închis ca superseded: browser E2E a reprodus în continuare fallback-ul ascuns după eroarea imaginii.
+- Analiza indică o posibilă cursă între evenimentul error și un eveniment load întârziat pentru aceeași imagine.
+- PR #25: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/25
+- Branch: fix/presenter-fallback-race-2026-11-06; commit cod: 7ff26e8f8bcd9537809301820deff920dfeecd81.
+- Noua implementare ascunde fallback-ul implicit, îl afișează numai la eroare și verifică naturalWidth înainte de a restaura imaginea la evenimentul load.
+- Browser și Android checks pentru PR #25 au fost puse în coadă. Nu s-a făcut încă merge; se așteaptă testul de regresie.
