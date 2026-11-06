@@ -5696,8 +5696,21 @@ function freeNavCard(host,title,description,actionLabel,handler){
  if(actionLabel&&handler){const button=document.createElement("button");button.type="button";button.textContent=actionLabel;button.addEventListener("click",handler);card.appendChild(button);}
  host.appendChild(card);return card;
 }
+
+function freeNavOpenFilePicker(accept=""){
+ const input=el("chatFileInput");if(!input)return;
+ const previousAccept=input.accept;
+ const restore=()=>{input.accept=previousAccept;input.removeEventListener("change",restore);input.removeEventListener("cancel",restore);};
+ input.accept=accept;
+ input.addEventListener("change",restore,{once:true});
+ input.addEventListener("cancel",restore,{once:true});
+ openFreeNavView("chat");
+ input.click();
+}
+
 async function freeNavLoadAttachments(imagesOnly=false){
- const page=freeNavPage(imagesOnly?"Images":"Library",imagesOnly?"Imaginile atașate conversațiilor Dr.Vas Free.":"Fișierele atașate conversațiilor tale. Fișierele sunt private și pot fi deschise din contul tău.");
+ const page=freeNavPage(imagesOnly?"Images":"Library",imagesOnly?"Imaginile atașate conversațiilor Dr.Vas Free. Poți adăuga o imagine la chat și o vei regăsi aici.":"Fișierele atașate conversațiilor tale. Poți adăuga un fișier la chat și îl vei regăsi aici.");
+ freeNavCard(page,imagesOnly?"Adaugă o imagine":"Adaugă un fișier",imagesOnly?"Alege o imagine de pe dispozitiv. Aceasta va fi atașată conversației curente după ce revii la chat.":"Alege un fișier de pe dispozitiv. Acesta va fi atașat conversației curente după ce revii la chat.",imagesOnly?"Alege imagine":"Alege fișier",()=>freeNavOpenFilePicker(imagesOnly?"image/*":""));
  const grid=document.createElement("div");grid.className="free-nav-grid";page.appendChild(grid);
  const loading=document.createElement("div");loading.className="free-nav-status";loading.textContent="Încarc fișierele…";grid.appendChild(loading);
  try{
