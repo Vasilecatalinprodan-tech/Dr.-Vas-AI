@@ -83,7 +83,7 @@ header{min-height:75px;padding:12px 7%;display:flex;align-items:center;justify-c
 .flag{display:inline-flex;width:30px;height:20px;margin-left:9px;vertical-align:-4px;border:1px solid rgba(255,255,255,.35);border-radius:2px;overflow:hidden;box-shadow:0 1px 5px rgba(0,0,0,.4)}
 .flag i{display:block;flex:1;height:100%}.flag i:nth-child(1){background:#002B7F}.flag i:nth-child(2){background:#FCD116}.flag i:nth-child(3){background:#CE1126}
 .status{font-size:12px;color:#63d8bd}
-.header-actions{display:flex;align-items:center;gap:12px}
+.header-actions{display:flex;align-items:center;gap:12px}.global-logout-button{display:none;padding:9px 13px;background:#482b35;color:#ffe1e4;border:1px solid #754652;border-radius:11px;font-size:12px;font-weight:800}.global-logout-button:hover{background:#603541}body.has-auth-session .global-logout-button{display:inline-flex;align-items:center;justify-content:center}
 .language-switch{padding:9px 12px;font-size:12px;background:#102b3d;color:#8fe8df;border:1px solid #31566a}
 main{max-width:1250px;margin:auto;padding:35px 22px 100px}
 main.language-pending{min-height:calc(100vh - 100px);display:grid;place-items:center}
@@ -901,13 +901,21 @@ body.presentation-open{overflow:hidden!important}
 .crypto-engine-footnote{color:#9bb3c2;font-size:11px;line-height:1.6;margin:10px 0 0}
 @media(max-width:620px){.crypto-engine-toolbar>*{width:100%}.crypto-engine-toolbar select{min-width:0}.crypto-emergency-stop{width:100%}}
 
+
+/* Persistent sign-out access: fixed in the global header and at the true page bottom. */
+footer{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+footer .global-logout-button{margin-left:auto}
+body.chat-focus-mode footer{display:flex!important;position:fixed!important;left:0;right:0;bottom:0;z-index:30;justify-content:center;gap:12px;padding:9px 14px calc(9px + env(safe-area-inset-bottom));background:#07111f;border-top:1px solid #24445b;box-shadow:0 -8px 24px #0005}
+body.chat-focus-mode footer .global-logout-button{margin:0}
+body.chat-focus-mode main{padding-bottom:64px!important}
+@media(max-width:520px){.header-actions{gap:5px}.global-logout-button{padding:8px 9px!important;font-size:10px!important}.status{display:none}}
 </style>
 </head>
 
 <body>
 <header>
  <div class="logo">✚ Dr.Vas AI <span class="flag" role="img" aria-label="Steagul României" title="Creat în România"><i></i><i></i><i></i></span></div>
- <div class="header-actions"><div class="status" id="onlineStatus">● AI ASSISTANT ONLINE</div><button type="button" class="header-chat-cta" id="headerChatCta" onclick="startDrVas()">VORBEȘTE CU DR.VAS</button><button type="button" class="language-switch" id="languageSwitch" onclick="showLanguageGate()">🌐 Language</button></div>
+ <div class="header-actions"><div class="status" id="onlineStatus">● AI ASSISTANT ONLINE</div><button type="button" id="globalLogoutTop" class="global-logout-button" onclick="logout()" aria-label="Deconectare din Dr.Vas">↪ Deconectare</button><button type="button" class="header-chat-cta" id="headerChatCta" onclick="startDrVas()">VORBEȘTE CU DR.VAS</button><button type="button" class="language-switch" id="languageSwitch" onclick="showLanguageGate()">🌐 Language</button></div>
 </header>
 
 <main id="appMain">
@@ -1420,7 +1428,6 @@ body.presentation-open{overflow:hidden!important}
    <div class="chat-view-nav-actions">
     <button type="button" class="chat-history-toggle" onclick="toggleChatHistory()">☷ Istoric</button>
     <button type="button" class="chat-back-button" onclick="goToModules()">← Înapoi la module</button>
-    <button type="button" class="chat-logout-button" onclick="logout()">Deconectare</button>
    </div>
   </div>
   <aside class="chat-module-rail" aria-label="Navigare module Dr.Vas">
@@ -1759,11 +1766,11 @@ body.presentation-open{overflow:hidden!important}
     <div class="note">Răspunsurile AI pot conține erori. Verifică informațiile importante.</div>
    </div>
   </div>
-  <div class="chat-account-footer" aria-label="Acțiuni cont"><button type="button" onclick="editProfile()">Profilul meu</button><button type="button" class="logout-button" onclick="logout()">Deconectare</button></div>
+  <div class="chat-account-footer" aria-label="Acțiuni cont"><button type="button" onclick="editProfile()">Profilul meu</button></div>
  </div>
 </main>
 
-<footer>© 2026 Dr.Vas AI · Think • Ask • Discover · <a href="/privacy-policy.html" target="_blank" rel="noopener">Confidențialitate</a></footer>
+<footer><span>© 2026 Dr.Vas AI · Think • Ask • Discover · <a href="/privacy-policy.html" target="_blank" rel="noopener">Confidențialitate</a></span><button type="button" id="globalLogoutBottom" class="global-logout-button" onclick="logout()" aria-label="Deconectare din Dr.Vas">↪ Deconectare</button></footer>
 
 <script src="/crypto-engine.js"></script>
 <script>
@@ -2325,6 +2332,10 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
 
 let authMode = "login";
 let currentUser = null;
+function syncGlobalLogoutControls(){
+  document.body.classList.toggle("has-auth-session",Boolean(currentUser));
+}
+
 let isDrvasAdmin = false;
 let adminLogPage = 0;
 let adminLogPages = 1;
@@ -2452,6 +2463,7 @@ function selectModule(moduleName,userInitiated=false){
     business:{icon:"📊",name:"Dr.Vas Business",description:"Planificare, management și analiză de afaceri — în pregătire."}
   };
   if(!Object.prototype.hasOwnProperty.call(modules,moduleName))return;
+  syncGlobalLogoutControls();
   // Public users may use Dr.Vas Free and general-information Health; the four future paid workspaces remain founder-only.
   // Preserve the requested module through the authentication/profile flow.
   if(userInitiated&&!currentUser){
@@ -4211,6 +4223,7 @@ async function showUser(user){
     if(typeof renderIncomeOpportunities==="function")renderIncomeOpportunities();
   }
   currentUser = user;
+  syncGlobalLogoutControls();
   showOnly("profileSection");
   setLocalizedText(el("profileMessage"),"Se încarcă profilul...");
   try{await loadProfile(user)}
@@ -5166,6 +5179,7 @@ function showLogin(){
   clearPendingChatFiles();
   el("conversationAttachments")?.replaceChildren();
   currentUser = null;
+  syncGlobalLogoutControls();
   isDrvasAdmin = false;
   activeModule = "free";
   currentConversationId = null;
