@@ -1024,7 +1024,7 @@ body.free-module-mode #chatSection>.chat-view-nav .chat-history-toggle{display:i
 <body>
 <header>
  <div class="logo">✚ Dr.Vas AI <span class="flag" role="img" aria-label="Steagul României" title="Creat în România"><i></i><i></i><i></i></span></div>
- <div class="header-actions"><div class="status" id="onlineStatus">● AI ASSISTANT ONLINE</div><button type="button" id="globalLogoutTop" class="global-logout-button" onclick="logout()" aria-label="Deconectare din Dr.Vas">↪ Deconectare</button><button type="button" class="header-chat-cta" id="headerChatCta" onclick="startDrVas()">VORBEȘTE CU DR.VAS</button><button type="button" class="language-switch" id="languageSwitch" onclick="showLanguageGate()">🌐 Language</button></div>
+ <div class="header-actions"><div class="status" id="onlineStatus">● AI ASSISTANT ONLINE</div><button type="button" id="globalBackToModules" class="global-back-button" onclick="goToModules()" aria-label="Înapoi la module">← Înapoi la module</button><button type="button" id="globalLogoutTop" class="global-logout-button" onclick="logout()" aria-label="Deconectare din Dr.Vas">↪ Deconectare</button><button type="button" class="header-chat-cta" id="headerChatCta" onclick="startDrVas()">VORBEȘTE CU DR.VAS</button><button type="button" class="language-switch" id="languageSwitch" onclick="showLanguageGate()">🌐 Language</button></div>
 </header>
 
 <main id="appMain">
@@ -1541,7 +1541,6 @@ body.free-module-mode #chatSection>.chat-view-nav .chat-history-toggle{display:i
    <strong id="chatWorkspaceTitle">✦ DR.VAS · CONVERSAȚIE</strong>
    <div class="chat-view-nav-actions">
     <button type="button" class="chat-history-toggle" onclick="toggleChatHistory()">☷ Istoric</button>
-    <button type="button" class="chat-back-button" onclick="goToModules()">← Înapoi la module</button>
    </div>
   </div>
   <aside class="chat-module-rail" aria-label="Navigare module Dr.Vas">
