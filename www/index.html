@@ -3955,6 +3955,7 @@ async function openModuleProject(module){
    if(brief[field]!==undefined&&el(field))el(field).value=String(brief[field]??"");
   }
   moduleProjectOutputs[module]=String(brief.latest_output||"");
+  if(module==="commerce")calculateCommerceUnitEconomics();
   moduleProjectStatus(module,"Proiect încărcat. Poți continua editarea.");
  }catch(error){moduleProjectStatus(module,"Nu am putut deschide proiectul: "+error.message,true);}
 }
