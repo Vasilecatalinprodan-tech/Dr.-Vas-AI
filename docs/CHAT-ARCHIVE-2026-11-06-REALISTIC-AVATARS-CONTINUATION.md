@@ -124,3 +124,12 @@ Current latest verified main commit: `dbc7eeec92a880e9e9dbc83732f7d0b8947b6bf1`.
 - Production URL remains https://dr--vas-ai.vasilecatalinprodan.workers.dev/.
 - Portrait caveat remains: Jan/Sarah images are currently served from signed Runway URLs and expire 2026-11-08 (Jan 05:40:30 UTC; Sarah 09:58:37 UTC). They are loading in CI and currently deployed, but still need to be exported as image files and committed to `www/assets/presenters/` for permanent hosting before expiry. SVG fallback remains in the presentation. No paid credits were bought.
 - Main HEAD at this checkpoint: `62b7ad83083e4845f51ffeb7dff3ba89068e963c`.
+
+
+## User handoff: downloading Jan and providing Sarah — 2026-11-06
+User asked in Romanian how to download Jan's portrait, says Sarah's image is already downloaded, asks for clear step-by-step instructions and wants all progress/chat saved.
+- Runway recent-assets lookup identified Jan portrait asset ID `2579d925-d043-44e7-bfe4-5b1f167316c4`, task `d3842309-f86b-4f5e-991f-0698b3573c08`, file name `A_single_standalone_photorealistic_head_and_shoulders_portra.jpg`.
+- Direct Runway image URL was surfaced in this conversation and is a signed temporary URL, expiring 2026-11-08 05:40:30 UTC. User can open it and save the image with right-click > Save image as (desktop), or long-press > Download image (mobile). Do not treat this URL as permanent.
+- User confirms Sarah JPG is already downloaded. Next step is for the user to attach both JPG files in this chat using paperclip/plus > upload file, or drag-and-drop from Downloads. Ask for no extra explanation; file attachments will be inspected for dimensions/format and then committed as permanent assets under `www/assets/presenters/`.
+- Proposed filenames: `dr-jan.jpg` and `sarah.jpg`. Verify actual image files and inspect content before committing. Do not commit a remote signed URL as a substitute for local image assets.
+- User wants a professional finish: consistent crop/ratio, accessible alt text, responsive sizing, fallback image, selector and live-stage consistency, browser E2E, merge and production deployment performed autonomously after validation.
