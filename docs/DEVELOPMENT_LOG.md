@@ -295,3 +295,12 @@ Founder feedback:
 - Production smoke test checked Worker health, all six expected module cards and HTTP 401 for unauthenticated admin-status requests.
 - The squash merge leaves a one-commit graph divergence between `main` and `drvas-integrated-platform`; keep both intact and continue with normal PR integration. No force-push/reset.
 - Android APK, Play Store, real avatar editing, founder voice cloning and live Health migration/privacy gates remain open tasks.
+
+
+## 2026-11-06 — manual voice replay fix and regression test
+
+- Fixed manual replay when auto-read is disabled: `speakDrVas(text, forcePlayback=false)` and `playAssistantVoice(text, forcePlayback=false)` now support explicit replay without changing the persisted auto-read preference.
+- `replayLastAnswer()` now passes the explicit replay flag. Dedicated server TTS remains authenticated and assistant-specific.
+- Added Playwright regression test for a mocked authenticated Dr.Vas TTS response and audio playback with auto-read off.
+- Commits: `3b3b2b9c0f9448c24e4bcb3b68c244b16b78cc82` and `022705e4f0fdf819fc3e126e359d2e293b5b573d`.
+- Awaiting CI; do not treat the new regression test as passed until the workflow reports success.
