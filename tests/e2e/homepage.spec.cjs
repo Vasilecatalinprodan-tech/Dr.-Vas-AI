@@ -2000,10 +2000,10 @@ test("Studio imports a small subtitle or text file locally and rejects oversized
   await openApp(page, "ro");
   const result = await page.evaluate(async () => {
     const input = document.getElementById("studioSourceFile");
-    const valid = new File(["1\\n00:00:00,000 --> 00:00:01,000\\nHello world"], ["captions.srt"], { type: "application/x-subrip" });
+    const valid = new File(["1\\n00:00:00,000 --> 00:00:01,000\\nHello world"], "captions.srt", { type: "application/x-subrip" });
     await loadStudioSourceFile(valid);
     const accepted = document.getElementById("studioIdea").value;
-    const oversized = new File(["x".repeat(2 * 1024 * 1024 + 1)], ["large.txt"], { type: "text/plain" });
+    const oversized = new File(["x".repeat(2 * 1024 * 1024 + 1)], "large.txt", { type: "text/plain" });
     await loadStudioSourceFile(oversized);
     return {
       accepted,
