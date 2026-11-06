@@ -956,3 +956,16 @@ Resume with safe PR #9 conflict resolution and fresh CI evidence, exact npm audi
 - Workflow Android #336 / run `42199232414` a trecut build-ul APK. APK-ul nu a fost instalat sau verificat fizic în această etapă; redarea vocală pe Samsung rămâne test de dispozitiv.
 - Arhiva conversației a fost completată în `docs/CHAT-ARCHIVE-2026-11-06.md`, iar handoff/status/development log au primit același checkpoint. Este o arhivă structurată de continuitate, nu un export integral al UI ChatGPT.
 - Limitele de siguranță rămân: fără mining real, wallet-uri/tranzacții, Health document analysis în producție, schimbări Supabase/RLS, abonamente sau servicii plătite fără aprobările și controalele necesare.
+
+
+## 2026-11-06 — portrete Dr.Vas, Dr.Jan și Sarah: în lucru
+- Utilizatorul a cerut explicit: „ok acum vreau sa modifici fetele la dr.vas si dr.jan si sarah asa cum am vorbit....salveaza tot inclusiv chat si dupa continuam”.
+- Deciziile anterioare au fost recuperate: Dr.Vas folosește fotografia fondatorului și vocea lui; Dr.Jan primește un portret masculin fotorealist fictiv, ca AI collaborator; Sarah primește o reprezentare adultă de aproximativ 23–24 de ani, derivată din fotografia ei de referință, cu identitatea recognoscibilă păstrată.
+- Fotografia fondatorului `Drvas.jpeg` a fost recuperată și confirmat că există deja în repo la `www/drvas.jpeg`. Fotografia de referință Sarah `sarah(1).jpeg` a fost recuperată din Library; este o fotografie din copilărie și nu trebuie afișată ca portret adult final.
+- Inspecția `www/index.html`: selectorul are deja imaginea Dr.Vas, dar Jan și Sarah sunt SVG; scena de prezentare folosește SVG pentru toți trei; Live Voice clonează avatarul selectat din selector.
+- Ramură creată din `main` la `cc632432942088758f0933914c67f227dc204278`: `feature/presenter-faces-2026-11-06`.
+- Arhivă dedicată: `docs/CHAT-ARCHIVE-2026-11-06-PRESENTER-FACES.md`, commit `5e65e4ef0f73f9362f7286d637d5bda27e87f3ce` pe ramura de feature.
+- Runway Free avea 500 credite incluse și 0 cumpărate; au fost trimise două sarcini de imagine folosind numai creditele incluse: Dr.Jan `d3842309-f86b-4f5e-991f-0698b3573c08`, Sarah age-progression `122ba613-ef40-4b59-99e7-7903cca5b905`. Răspunsurile erau `task_pending`; 8 credite incluse consumate, sold raportat 492, fără achiziții/top-up. Output-urile finale nu au fost încă verificate sau integrate.
+- Două compoziții exploratorii ImageGen au ieșit ca postere de echipă, nu portrete separate; nu sunt aprobate și nu se folosesc în aplicație.
+- Nicio modificare de cod, APK, secret, DB/RLS, setare de producție, merge sau deploy nu a fost făcută în această etapă.
+- Următorul pas: verifică imaginile finale, apoi adaugă numai portretele aprobate în `www/assets/presenters/`, înlocuiește SVG-urile în selector/prezentare, păstrează fallback/reduced-motion, apoi testează complet înainte de merge/deploy. Nu pretinde lip-sync real; animația CSS este doar indicator vizual.
