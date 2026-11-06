@@ -2463,6 +2463,7 @@ function selectModule(moduleName,userInitiated=false){
     business:{icon:"📊",name:"Dr.Vas Business",description:"Planificare, management și analiză de afaceri — în pregătire."}
   };
   if(!Object.prototype.hasOwnProperty.call(modules,moduleName))return;
+  syncGlobalLogoutControls();
   // Public users may use Dr.Vas Free and general-information Health; the four future paid workspaces remain founder-only.
   // Preserve the requested module through the authentication/profile flow.
   if(userInitiated&&!currentUser){
