@@ -90,3 +90,10 @@ The user specifically asked to save this chat. This file preserves the exact use
 >
 > Verificarea automată a început. Nu voi declara problema rezolvată și nu voi publica modificarea înainte să treacă testele.
 
+
+
+## CI follow-up — 7 November 2026
+- First browser run #615 (`42372651549`) finished with **127 passed / 5 failed**. The failures exposed three obsolete fixed-viewport assertions and a transcript max-height specificity collision.
+- Corrected the CSS with a higher-specificity bounded transcript rule, and updated the legacy tests to expect the requested document scrollbar.
+- Second browser run #619 (`42372929514`) was started on corrective code commit `fdd95c90658b3b95f5a4bef8813ef175288b71b5`; it was still **in progress** at the time of this archive update.
+- The repair is not yet merged or deployed. Continue to treat it as unverified until the second run (and any required final-head run) passes, then merge, deploy and request founder browser confirmation.
