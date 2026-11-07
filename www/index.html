@@ -2869,8 +2869,8 @@ function selectModule(moduleName,userInitiated=false,suppressConversationRestore
     conversationSaved=Boolean(rememberedForModule);
     pendingMessages=[];
     rememberActiveConversation(currentConversationId,moduleName);
-    if(!rememberedForModule){
-      ensureConversationMetadata(currentConversationId,moduleName,"").catch(error=>console.warn("Conversation context metadata will be saved with the first message:",error));
+    if(!rememberedForModule&&moduleName==="free"){
+      ensureConversationMetadata(currentConversationId,moduleName,"","").catch(error=>console.warn("Conversation context metadata will be saved with the first message:",error));
       renderWelcome();
     }
   }
