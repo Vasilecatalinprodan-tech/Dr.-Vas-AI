@@ -884,3 +884,15 @@ User's request (verbatim):
 - Main deploy run 42404191719 and main browser regression run 42404191767 were triggered and queued at this checkpoint. Await both before reporting production status.
 - Next implementation scope: systematic audit and translation of all static/dynamic module controls, labels, placeholders and messages for all supported languages. Current PR is not full localization completion.
 - Latest user instruction: “salveaza tot inclusiv chatul si continua”. Preserved in this archive. APK remains final stage of the founder's roadmap.
+
+
+## 2026-11-07 — PR #65 production verification, PR #66 archive merge, localization audit
+
+- PR #65 language-switch repair is confirmed in production. Merge commit: `b2d704d0629f6180dc2a5386202c254efea5632a`.
+- Main deploy workflow #529 run `42404191719` completed successfully. The homepage/persisted-session browser tests, pending Supabase migrations, IPv4 session-pooler migration, Cloudflare Worker deployment, and production Worker smoke test all passed.
+- Main browser regression run `42404191767` completed successfully.
+- Documentation/archive PR #66 passed its branch browser regression run `42404254061` and was squash-merged into main. Merge commit: `c964c3130f443bc66e8268f0651c868d80c5afe5`.
+- Preliminary localization audit of the static HTML in `www/index.html`: 791 distinct Romanian text-node strings were extracted from the static body markup. The current exact-string UI dictionaries contain approximately 32 English entries, 30 Italian, 30 Turkish, and 15 each for German, French, Spanish, and Russian. This is an initial static inventory, not a full runtime audit; dynamically generated strings, attributes, nested/split button labels, chat messages, and module-specific renderers need separate coverage.
+- This confirms that PR #65 fixed the reported assistant welcome/description issue and selected global controls, but did not complete the founder's requirement that every button and all interface text follow the selected language.
+- Next work: implement localization in controlled phases, beginning with shared navigation, language/auth controls, Dr.Vas Free and Dr.Vas Health, then Studio, Academy, Commerce and Business; add regression tests for language switching in each area. Preserve conversation history in its original language; do not silently translate prior user/assistant messages.
+- Latest user instruction: “ok hai sa continuam si tot asa salvam tot”. Continue the agreed roadmap; APK remains the final stage.

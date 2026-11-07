@@ -202,3 +202,22 @@ Founder request (verbatim): “hai sa continuam.....salveaza tot inclusiv chatul
 ## Continuation archive — 2026-11-07 (PR #65 merged)
 
 User message, verbatim: “salveaza tot inclusiv chatul si continua”. The assistant continued the Dr.Vas AI localization repair. Browser regression run 42400984726 completed successfully on commit c96238d6ae002a7873e7141a9e8a154dd15e4fff. The only failed check on the PR was the Cloudflare Workers PR-preview check (Workers Builds: dr--vas-ai); the browser E2E check passed. The PR was successfully squash-merged into main as merge commit b2d704d0629f6180dc2a5386202c254efea5632a. Main deployment workflow 42404191719 and main browser regression workflow 42404191767 were triggered for that commit and were queued at the time this archive note was written. Do not claim production deployment or post-merge tests passed until both workflows finish successfully. Full translation coverage across every module's buttons, labels, placeholders, and dynamic messages remains incomplete and requires a systematic audit. The user's ordered roadmap remains unchanged; Android APK is the final stage. This file is a structured project/chat archive preserving exact user messages and technical checkpoints, not a literal export of the complete ChatGPT UI transcript.
+
+
+## Continuation — 2026-11-07 (production verification and localization audit)
+
+User message: “ok hai sa continuam si tot asa salvam tot”.
+
+Verified outcomes after the previous checkpoint:
+- Main deploy run `42404191719`: completed successfully. Homepage/persisted-session tests, Supabase migrations, IPv4 session-pooler migration, Cloudflare Worker deployment, and production smoke test all passed.
+- Main browser regression run `42404191767`: completed successfully.
+- PR #66, which archives the previous conversation/checkpoint and PR #65 results, passed branch browser regression run `42404254061` and was squash-merged. Merge commit: `c964c3130f443bc66e8268f0651c868d80c5afe5`.
+- PR #65 localization repair is live in production. It localizes the assistant welcome/description and selected global controls in supported languages while preserving existing conversation history.
+
+Localization audit finding:
+- A preliminary static scan of `www/index.html` extracted 791 distinct text-node strings from the static body markup.
+- The current exact-string UI dictionaries are still small: approximately 32 English keys, 30 Italian, 30 Turkish, and 15 each for German, French, Spanish and Russian.
+- This scan does not include all dynamically generated UI, attributes, split/nested labels, module renderers or runtime messages. Treat it as an initial inventory only, not a complete coverage percentage.
+- Full localization remains unfinished. Next implementation should proceed in testable phases: shared navigation/language/auth controls; Dr.Vas Free and Health; then Studio, Academy, Commerce and Business. Existing chat history must remain in its original language.
+
+This file is a structured project/chat archive, not a literal export of the complete ChatGPT UI transcript.

@@ -189,3 +189,15 @@ The user asked to continue and save everything including the chat. PR #65 is sti
 ## Session checkpoint — 2026-11-07: localization PR merged
 
 User's latest instruction: “salveaza tot inclusiv chatul si continua”. Follow-up E2E run 42400984726 passed on corrected PR head c96238d6ae002a7873e7141a9e8a154dd15e4fff. PR #65 (fix: localize assistant welcome and language controls) successfully merged by squash into main; merge commit b2d704d0629f6180dc2a5386202c254efea5632a. Cloudflare PR preview check was failing, but it has failed on previous PR previews too; it is not the production deploy workflow. Main workflows were triggered: deploy 42404191719 and browser regression 42404191767; both were queued at checkpoint time. Next: poll both runs, inspect failures if any, confirm Worker deployment and browser suite on main, then extend localization to all module UI strings. Do not claim every button is translated yet. APK remains the last roadmap stage. This is a structured archive, not a full ChatGPT UI transcript export.
+
+
+## Updated checkpoint — 2026-11-07, after production verification
+
+- PR #65 merged as `b2d704d0629f6180dc2a5386202c254efea5632a`; its corrected browser regression passed.
+- Main deploy workflow run `42404191719`: SUCCESS. Confirmed homepage/persisted-session browser tests, Supabase migrations (including IPv4 session pooler), Worker deployment, and production Worker smoke test all passed.
+- Main browser regression run `42404191767`: SUCCESS.
+- PR #66 documentation archive passed browser regression run `42404254061` and was squash-merged as `c964c3130f443bc66e8268f0651c868d80c5afe5`.
+- Production language fix is deployed. It addresses the assistant welcome/description and selected shared controls; it does not yet satisfy full translation of every button and all interface text.
+- Preliminary static inventory: 791 distinct text-node strings in the static body of `www/index.html`; exact-string dictionaries currently contain about 32 EN, 30 IT, 30 TR, and 15 each DE/FR/ES/RU entries. Dynamic content and attributes require a separate runtime audit.
+- Next: implement and test localization in phases, starting with shared shell controls, Dr.Vas Free and Dr.Vas Health, followed by the remaining four modules. Preserve previous chat messages verbatim.
+- User's latest instruction: “ok hai sa continuam si tot asa salvam tot”. Keep documenting every meaningful change, test, merge and deployment. Android APK stays last.
