@@ -93,9 +93,9 @@
     const z=norm(sub(eye,center)),x=norm(cross(up,z)),y=cross(z,x);
     return new Float32Array([x[0],y[0],z[0],0,x[1],y[1],z[1],0,x[2],y[2],z[2],0,-dot(x,eye),-dot(y,eye),-dot(z,eye),1]);
   }
-  function rotationY(a){
-    const c=Math.cos(a),s=Math.sin(a);
-    return new Float32Array([c,0,-s,0,0,1,0,0,s,0,c,0,0,0,0,1]);
+  function rotationY(a,radialScale=1){
+    const c=Math.cos(a),s=Math.sin(a),k=clamp(radialScale,.5,1);
+    return new Float32Array([c*k,0,-s*k,0,0,1,0,0,s*k,0,c*k,0,0,0,0,1]);
   }
   function shader(gl,type,source){
     const sh=gl.createShader(type); gl.shaderSource(sh,source); gl.compileShader(sh);
@@ -157,7 +157,7 @@
       gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
       const projection=perspective(40*Math.PI/180,width/height,.1,50);
       const view=lookAt(vec3(0,0,13),vec3(0,0,0),vec3(0,1,0));
-      const model=rotationY(angle);
+      const model=rotationY(angle,clamp((width/height)/.25,.52,1));
       const mvp=multiply(multiply(projection,view),model);
       gl.useProgram(scene.program);gl.uniformMatrix4fv(scene.uMvp,false,mvp);gl.uniformMatrix4fv(scene.uModel,false,model);
       gl.drawArrays(gl.TRIANGLES,0,scene.vertexCount);
