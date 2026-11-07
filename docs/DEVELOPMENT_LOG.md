@@ -742,3 +742,17 @@ Expanded implementation now on PR #38:
 - Production deploy workflow run #528 / 42374244509 is active. Worker and browser JavaScript validation passed. Playwright homepage/session-restoration tests are still running; Supabase migration/diagnostic, Cloudflare deployment and production smoke tests are not yet confirmed.
 - The founder's actual page-scroll acceptance remains open until the production workflow passes and both scrollbars are tested in the live browser.
 - APK is explicitly deferred to the end; no APK build was triggered.
+
+
+## Follow-up checkpoint — 2026-11-07 (PR #63 / Health mobile handoff)
+
+- User requested continuation, merge/deploy completion, and saving all project progress and this conversation; the existing standing authorization for routine development/merge/deploy remains in effect.
+- Production workflow #528 (`42374244509`, commit `c74e97ddf71635d588e9631b223a8e59c3742d27`) completed with failure. Worker/browser JavaScript validation succeeded; homepage/session Playwright suite reported **131 passed, 1 failed**.
+- The single failure was `tests/e2e/homepage.spec.cjs:400`, “public non-admin can prepare a Health question from the mobile workspace”: after clicking “Discută cu Dr.Vas Health”, the chat composer retained only the raw brief instead of the structured `DR.VAS HEALTH — SPRIJIN INFORMATIV` prompt. This is a Health handoff regression, not a document/transcript scrolling failure.
+- All scrollbar-related checks in that run passed, including independent desktop document/transcript scrolling and mobile page scrolling to the attachment composer for Free and Health. These are automated results only; end-user live browser confirmation is still outstanding.
+- Because the browser gate failed, Supabase migrations, Cloudflare Worker deploy, and production smoke test were skipped. Production is therefore not confirmed updated by run #528.
+- Fix branch: `fix/health-brief-transfer-mobile-2026-11-07`; code commit `c279092cf04e6421e631d6f5b5f615c2b53091ed`; PR #63: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/63.
+- PR #63 explicitly exposes `buildHealthPrompt` on `window` and updates the Health CTA to call `window.buildHealthPrompt()`. Browser regression workflow #626 (`42374561670`) is running; at checkpoint time its JavaScript/migration-gate validations passed and browser test installation was in progress. Do not merge until the browser regression suite passes.
+- After PR #63 passes and is merged, verify the main deploy workflow through Supabase migration, Cloudflare deploy, and production smoke test. Then request user confirmation of both independent scrollbars and visible composer/attachments on the live site.
+- Keep the APK explicitly deferred until all web modules, presenters/voice, security and performance work is complete. Do not start APK build now.
+- Conversation archive note: this repository record captures the material project decisions, technical findings, test outcomes and next steps; it is not a literal export of the complete ChatGPT transcript.
