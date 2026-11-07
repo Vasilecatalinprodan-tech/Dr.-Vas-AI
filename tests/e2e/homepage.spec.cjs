@@ -3232,3 +3232,42 @@ test("Academy and Commerce workspaces localize their core controls in all suppor
     await expect(page.locator('#commerceWorkspace button[onclick="buildCommercePrompt()"]')).toContainText(commerceAction);
   }
 });
+
+test("Business workspace localizes its plan, cashbook, cashflow, break-even and Student Desk in all supported languages", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    checkSession = () => {};
+    selectModule("business", true);
+  });
+
+  const cases = [
+    ["en", "Turn an idea into a business plan, budget and implementation steps.", "PILOT · ADMIN ACCESS", "Business idea / sector", "Create business plan", "Dr.Vas Books — Income and expense ledger", "Cashflow — period report", "Check the assumptions: price must be higher than variable cost, and costs cannot be negative.", "Review draft and create feedback", "Sign in to access the private ledger."],
+    ["it", "Trasforma un'idea in un piano aziendale, un budget e fasi di attuazione.", "PILOTA · ACCESSO AMMINISTRATORE", "Idea / settore aziendale", "Crea il piano aziendale", "Dr.Vas Books — Registro di entrate e uscite", "Cashflow — rapporto per periodo", "Verifica le ipotesi: il prezzo deve essere superiore al costo variabile e i costi non possono essere negativi.", "Analizza la bozza e crea un feedback", "Accedi per accedere al registro privato."],
+    ["tr", "Bir fikri iş planına, bütçeye ve uygulama adımlarına dönüştür.", "PİLOT · YÖNETİCİ ERİŞİMİ", "İş fikri / sektör", "İş planı oluştur", "Dr.Vas Books — Gelir ve gider defteri", "Nakit akışı — dönem raporu", "Varsayımları kontrol edin: fiyat değişken maliyetten yüksek olmalı ve maliyetler negatif olamaz.", "Taslağı analiz et ve geri bildirim oluştur", "Özel deftere erişmek için giriş yapın."],
+    ["de", "Verwandle eine Idee in einen Geschäftsplan, ein Budget und Umsetzungsschritte.", "PILOT · ADMIN-ZUGANG", "Geschäftsidee / Branche", "Geschäftsplan erstellen", "Dr.Vas Books — Einnahmen- und Ausgabenbuch", "Cashflow — Zeitraumbericht", "Überprüfe die Annahmen: Der Preis muss über den variablen Kosten liegen, und Kosten dürfen nicht negativ sein.", "Entwurf analysieren und Feedback erstellen", "Melde dich an, um auf das private Kassenbuch zuzugreifen."],
+    ["fr", "Transformez une idée en plan d'affaires, budget et étapes de mise en œuvre.", "PILOTE · ACCÈS ADMINISTRATEUR", "Idée / secteur d'activité", "Créer le plan d'affaires", "Dr.Vas Books — Registre des recettes et dépenses", "Trésorerie — rapport par période", "Vérifiez les hypothèses : le prix doit être supérieur au coût variable et les coûts ne peuvent pas être négatifs.", "Analyser le brouillon et créer un retour", "Connectez-vous pour accéder au registre privé."],
+    ["es", "Convierte una idea en un plan de negocio, presupuesto y pasos de implementación.", "PILOTO · ACCESO DE ADMINISTRADOR", "Idea / sector empresarial", "Crear plan de negocio", "Dr.Vas Books — Registro de ingresos y gastos", "Flujo de caja — informe por período", "Comprueba las hipótesis: el precio debe ser superior al coste variable y los costes no pueden ser negativos.", "Analizar el borrador y generar comentarios", "Inicia sesión para acceder al registro privado."],
+    ["ru", "Превратите идею в бизнес-план, бюджет и этапы реализации.", "ПИЛОТ · ДОСТУП АДМИНИСТРАТОРА", "Бизнес-идея / сфера деятельности", "Создать бизнес-план", "Dr.Vas Books — Учёт доходов и расходов", "Денежный поток — отчёт за период", "Проверьте исходные данные: цена должна быть выше переменных затрат, а расходы не могут быть отрицательными.", "Проанализировать черновик и подготовить отзыв", "Войдите, чтобы открыть личный журнал."]
+  ];
+
+  for (const [language, description, pilot, ideaLabel, planAction, cashbookTitle, cashflowTitle, breakEvenError, studentAction, ledgerStatus] of cases) {
+    await page.evaluate(code => chooseLanguage(code), language);
+
+    await expect(page.locator("#businessWorkspace .studio-workspace-head > div > p")).toHaveText(description);
+    await expect(page.locator("#businessWorkspace .studio-workspace-head > .studio-beta-label")).toHaveText(pilot);
+    await expect(page.locator("#businessIdea").locator("xpath=..")).toContainText(ideaLabel);
+    await expect(page.locator('#businessWorkspace button[onclick="buildBusinessPrompt()"]')).toHaveText(planAction);
+    await expect(page.locator("#businessCashbookTitle")).toContainText(cashbookTitle);
+    await expect(page.locator("#businessCashflowTitle")).toContainText(cashflowTitle);
+    await expect(page.locator('#businessWorkspace button[onclick="buildStudentAssessmentPrompt()"]')).toHaveText(studentAction);
+
+    await page.evaluate(() => {
+      document.getElementById("businessUnitPrice").value = "10";
+      document.getElementById("businessVariableCost").value = "10";
+      calculateBusinessBreakEven();
+      businessLedgerStatus("Conectează-te pentru a accesa registrul privat.", true);
+    });
+    await expect(page.locator("#businessBreakEvenStatus")).toHaveText(breakEvenError);
+    await expect(page.locator("#businessLedgerStatus")).toHaveText(ledgerStatus);
+  }
+});
