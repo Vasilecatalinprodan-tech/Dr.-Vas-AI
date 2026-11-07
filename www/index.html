@@ -2700,7 +2700,7 @@ function clearRememberedModule(userId){
 }
 
 function setChatNavigationDisabled(disabled){
-  document.querySelectorAll(".new-chat-button,.delete-history-button,.conversation-item")
+  document.querySelectorAll(".new-chat-button,.delete-history-button,.conversation-item,.drvas-feature-navigation button")
     .forEach(button=>{button.disabled=disabled;});
 }
 
@@ -2943,9 +2943,9 @@ function selectModule(moduleName,userInitiated=false,suppressConversationRestore
       if(moduleName==="free"||moduleName==="health")el("question")?.focus({preventScroll:true});
       else{const chat=el("chat");if(chat)chat.scrollTop=chat.scrollHeight;}
     });
-    if(previousModule!==moduleName&&!suppressConversationRestore){
-      if(moduleConversationToRestore)openConversation(moduleConversationToRestore,moduleName).catch(error=>console.warn("Could not restore module conversation:",error));
-      else loadConversationList().catch(error=>console.warn("Could not refresh module history:",error));
+    if(previousModule!==moduleName&&!suppressConversationRestore&&moduleName==="free"){
+      if(moduleConversationToRestore)openConversation(moduleConversationToRestore,"free","").catch(error=>console.warn("Could not restore Free conversation:",error));
+      else loadConversationList().catch(error=>console.warn("Could not refresh Free history:",error));
     }
   }
   if(currentUser&&(moduleName==="free"||moduleName==="health"||isDrvasAdmin)){
@@ -4613,6 +4613,7 @@ async function showUser(user){
   if(currentUser && currentUser.id!==user.id){
     isDrvasAdmin=false;
     activeModule="free";
+    activeFeatureKey="";
     currentConversationId=null;
     conversationSaved=false;
     pendingMessages=[];
@@ -5429,7 +5430,7 @@ function readLocalConversationContext(){
 }
 
 function drvasSetFeatureContext(moduleName,featureKey){
- if(!currentUser||moduleName!==activeModule||!["health","studio","academy","commerce","business"].includes(moduleName))return;
+ if(!currentUser||loadingConversation||isSendingMessage||moduleName!==activeModule||!["health","studio","academy","commerce","business"].includes(moduleName))return;
  const nextFeature=String(featureKey||"").trim();
  if(nextFeature&&!/^[a-z0-9-]{1,100}$/i.test(nextFeature))return;
  if(activeFeatureKey===nextFeature)return;
@@ -5483,11 +5484,15 @@ async function getConversationIds(){
  }
  return conversations;
 }
+let conversationListRequestId=0;
 async function loadConversationList(){
+ const requestId=++conversationListRequestId;
  const list=el("conversationList");list.innerHTML="";
  const filter=el("historyFilterButton");if(filter)setLocalizedText(filter,showArchivedConversations?"Vezi conversațiile active":"Vezi conversațiile arhivate");
  try{
-  const all=await getConversationIds(),scoped=all.filter(x=>(x.module===activeModule&&(x.feature_key||"")===activeFeatureKey)||(!x.module&&activeModule==="free"&&!activeFeatureKey)),items=scoped.filter(x=>showArchivedConversations?Boolean(x.archived_at):!x.archived_at);
+  const all=await getConversationIds();
+  if(requestId!==conversationListRequestId)return all;
+  const scoped=all.filter(x=>(x.module===activeModule&&(x.feature_key||"")===activeFeatureKey)||(!x.module&&activeModule==="free"&&!activeFeatureKey)),items=scoped.filter(x=>showArchivedConversations?Boolean(x.archived_at):!x.archived_at);
   if(!items.length){const empty=document.createElement("p");setLocalizedText(empty,showArchivedConversations?"Nu ai conversații arhivate.":"Nu ai încă discuții salvate.");empty.style.cssText="font-size:12px;color:#7fa4b5;line-height:1.5";list.appendChild(empty);return all;}
   items.forEach((conversation,index)=>{
    const row=document.createElement("div");row.className="conversation-row";
@@ -5583,6 +5588,7 @@ async function openConversation(conversationId,conversationModule=activeModule,c
   if(conversationModule&&conversationModule!==activeModule)return;
   if((conversationFeature||"")!==activeFeatureKey)return;
   loadingConversation = true;
+  setChatNavigationDisabled(true);
   currentConversationId = conversationId;
   currentConversationIsLegacy=!conversationModule;
   if(["free","health","studio","academy","commerce","business"].includes(activeModule))openFreeNavView("chat",false);
@@ -5625,6 +5631,7 @@ async function openConversation(conversationId,conversationModule=activeModule,c
     appendMessage("assistant",tr("Nu am putut încărca această conversație: ") + error.message);
   }finally{
     loadingConversation = false;
+    setChatNavigationDisabled(false);
   }
 }
 
