@@ -1630,6 +1630,7 @@ export default {
       const token = body.access_token;
       const conversationId = body.conversation_id || null;
       const moduleName = body.module || "free";
+      const featureKey = body.feature_key || null;
       const assistantId = typeof body.assistant === "string" ? body.assistant : "drvas";
       const requestedLanguage = typeof body.language === "string" ? body.language : "";
 
@@ -1647,6 +1648,9 @@ export default {
 
       if (typeof moduleName !== "string" || !allowedModules.has(moduleName)) {
         return json({ error: "Modul Dr.Vas invalid." }, 400);
+      }
+      if (featureKey !== null && (typeof featureKey !== "string" || !/^[a-z0-9-]{1,100}$/i.test(featureKey))) {
+        return json({ error: "Spațiu de lucru invalid." }, 400);
       }
       const allowedAssistants = new Set(["drvas", "jan", "aurora"]);
       if (!allowedAssistants.has(assistantId)) {
@@ -1926,6 +1930,9 @@ export default {
         }
         if (context.module !== moduleName) {
           return json({ error: "Conversația aparține altui modul. Deschide conversația din modulul ei pentru a păstra istoricul separat." }, 409);
+        }
+        if ((context.feature_key || null) !== featureKey) {
+          return json({ error: "Conversația aparține altei funcții din acest modul. Deschide firul corespunzător pentru a păstra contextul separat." }, 409);
         }
       }
 

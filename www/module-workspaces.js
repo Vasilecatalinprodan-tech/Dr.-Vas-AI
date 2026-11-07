@@ -39,6 +39,7 @@
  function makeNav(root,items){
   const nav=document.createElement("nav");nav.className="drvas-feature-navigation";nav.setAttribute("aria-label","Funcții și spații de lucru");
   const pages=document.createElement("div");pages.className="drvas-feature-pages";
+  if(!items.some(item=>item.id==="general"))items.push({id:"general",label:"Chat general",title:"Conversație generală",description:"Aici găsești discuțiile generale ale acestui modul și istoricul mai vechi care nu avea o funcție atribuită. Conversațiile vechi rămân neclasificate până când alegi explicit să începi un fir nou.",conversationKey:""});
   const pageMap=new Map(),savedSharedState=new Map();
   function readSharedState(item){
    const state={};
@@ -88,6 +89,9 @@
    if(item.deliverable&&byId(item.deliverable[0]))byId(item.deliverable[0]).value=item.deliverable[1];
    if(item.mode)window[item.mode[0]]=item.mode[1];
    root.dataset.activeFeature=id;
+   const moduleName=String(root.id||"").replace(/Workspace$/,"").toLowerCase();
+   const conversationFeature=Object.prototype.hasOwnProperty.call(item,"conversationKey")?item.conversationKey:id;
+   window.drvasSetFeatureContext?.(moduleName,conversationFeature);
   }
   open(items[0].id);
   return {open,pageMap};
@@ -262,6 +266,7 @@
    init(moduleName);
    const back=byId("globalBackToModules"),chat=byId("chatSection"),workspace=byId(moduleName+"Workspace");
    mountModuleVoice(moduleName,workspace);
+   if(workspace?.dataset.activeFeature)window.drvasSetFeatureContext?.(moduleName,workspace.dataset.activeFeature);
    const active=["free","health"].includes(moduleName)
     ?document.body.classList.contains("free-module-mode")&&chat&&!chat.classList.contains("hidden")
     :document.body.classList.contains("module-workspace-mode")&&workspace&&!workspace.classList.contains("hidden");

@@ -181,3 +181,21 @@ test("Frontend establishes conversation module metadata before persisting or sen
   expect(sendBody.indexOf("await ensureConversationMetadata")).toBeLessThan(sendBody.indexOf('await saveMessage("user"'));
   expect(sendBody).not.toMatch(/ensureConversationMetadata\([^;]+catch\(metadataError\)/);
 });
+
+
+test("Conversation feature context is saved before chat writes and enforced by the Worker", async () => {
+  const html = fs.readFileSync(path.join(__dirname, "../../www/index.html"), "utf8");
+  const workspaces = fs.readFileSync(path.join(__dirname, "../../www/module-workspaces.js"), "utf8");
+  const worker = fs.readFileSync(path.join(__dirname, "../../worker/index.js"), "utf8");
+  expect(html).toContain("feature_key:featureKey||null");
+  expect(html).toContain("activeFeatureKey");
+  expect(html).toContain("feature_assistant");
+  expect(workspaces).toContain("window.drvasSetFeatureContext?.(moduleName,conversationFeature)");
+  expect(worker).toContain("body.feature_key || null");
+  expect(worker).toContain("context.module !== moduleName");
+  expect(worker).toContain("(context.feature_key || null) !== featureKey");
+  expect(html).toContain("liveConversationId=currentConversationId");
+  expect(html).toContain("const conversationId=liveConversationId||currentConversationId");
+  expect(html).toContain("await saveMessage(\"user\",userText,conversationId)");
+  expect(html).toContain("setChatNavigationDisabled(true)");
+});

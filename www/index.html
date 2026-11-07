@@ -2699,22 +2699,23 @@ function clearRememberedModule(userId){
   try{localStorage.removeItem(ACTIVE_MODULE_PREFIX+userId)}catch{}
 }
 
-function setChatNavigationDisabled(disabled){
-  document.querySelectorAll(".new-chat-button,.delete-history-button,.conversation-item")
+function setChatNavigationDisabled(disabled,lockViews=false){
+  document.querySelectorAll(".new-chat-button,.delete-history-button,.conversation-item,.drvas-feature-navigation button,.module-card,.chat-module-rail [data-chat-module],#globalBackToModules")
     .forEach(button=>{button.disabled=disabled;});
+  if(lockViews)document.querySelectorAll("[data-free-nav]").forEach(button=>{button.disabled=disabled;});
 }
 
-function conversationStorageKey(userId,moduleId=activeModule){return ACTIVE_CONVERSATION_PREFIX+userId+":"+moduleId;}
-function rememberActiveConversation(conversationId,moduleId=activeModule){
+function conversationStorageKey(userId,moduleId=activeModule,featureKey=activeFeatureKey){return ACTIVE_CONVERSATION_PREFIX+userId+":"+moduleId+(featureKey?":feature:"+featureKey:"");}
+function rememberActiveConversation(conversationId,moduleId=activeModule,featureKey=activeFeatureKey){
   if(!currentUser || !conversationId) return;
   try{
-   localStorage.setItem(conversationStorageKey(currentUser.id,moduleId),conversationId);
-   if(moduleId==="free")localStorage.setItem(ACTIVE_CONVERSATION_PREFIX+currentUser.id,conversationId);
+   localStorage.setItem(conversationStorageKey(currentUser.id,moduleId,featureKey),conversationId);
+   if(moduleId==="free"&&!featureKey)localStorage.setItem(ACTIVE_CONVERSATION_PREFIX+currentUser.id,conversationId);
   }catch(error){console.warn("Active conversation storage unavailable:",error)}
 }
-function getRememberedConversation(moduleId=activeModule){
+function getRememberedConversation(moduleId=activeModule,featureKey=activeFeatureKey){
   if(!currentUser) return null;
-  try{return localStorage.getItem(conversationStorageKey(currentUser.id,moduleId))||(moduleId==="free"?localStorage.getItem(ACTIVE_CONVERSATION_PREFIX+currentUser.id):null)}catch{return null}
+  try{return localStorage.getItem(conversationStorageKey(currentUser.id,moduleId,featureKey))||(!featureKey&&moduleId==="free"?localStorage.getItem(ACTIVE_CONVERSATION_PREFIX+currentUser.id):null)}catch{return null}
 }
 
 function scrollPageToChat(){
@@ -2744,6 +2745,7 @@ function scrollToLatestMessage(target,force=false){
   });
 }
 let activeModule = "free";
+let activeFeatureKey = "";
 let activeAssistant = "drvas";
 const ASSISTANTS = {
  drvas:{name:"Dr.Vas",icon:"✦",intro:"Asistentul principal: analiză, răspunsuri clare și ajutor practic.",welcome:"Bun venit! Sunt Dr.Vas. Spune-mi cu ce te pot ajuta."},
@@ -2795,6 +2797,7 @@ function selectAssistant(assistantId){
  try{if(currentUser)localStorage.setItem("drvas_assistant_"+currentUser.id,assistantId)}catch{}
 }
 function selectModule(moduleName,userInitiated=false,suppressConversationRestore=false){
+  if(liveSocket||liveStream)return;
   const modules={
     free:{icon:"✦",name:"Dr.Vas Free — Asistent general",description:"Modulul general este selectat. Poți începe conversația."},
     health:{icon:"✚",name:"Dr.Vas Health — Informații generale",description:"Informații despre sănătate, explicații și pregătirea consultațiilor. Nu înlocuiește medicul."},
@@ -2856,6 +2859,7 @@ function selectModule(moduleName,userInitiated=false,suppressConversationRestore
   let moduleConversationToRestore=null;
   if(previousModule!==moduleName)clearPendingChatFiles();
   activeModule=moduleName;
+  activeFeatureKey="";
   const sidebarBrand=el("freeSidebarBrand");
   const sidebarNames={free:"✦ Dr.Vas Free",health:"✚ Dr.Vas Health",studio:"🎬 Dr.Vas Studio",academy:"🎓 Dr.Vas Academy",commerce:"🛒 Dr.Vas Commerce",business:"📊 Dr.Vas Business"};
   if(sidebarBrand)sidebarBrand.textContent=sidebarNames[moduleName]||"✦ Dr.Vas";
@@ -2867,8 +2871,8 @@ function selectModule(moduleName,userInitiated=false,suppressConversationRestore
     conversationSaved=Boolean(rememberedForModule);
     pendingMessages=[];
     rememberActiveConversation(currentConversationId,moduleName);
-    if(!rememberedForModule){
-      ensureConversationMetadata(currentConversationId,moduleName,"").catch(error=>console.warn("Conversation context metadata will be saved with the first message:",error));
+    if(!rememberedForModule&&moduleName==="free"){
+      ensureConversationMetadata(currentConversationId,moduleName,"","").catch(error=>console.warn("Conversation context metadata will be saved with the first message:",error));
       renderWelcome();
     }
   }
@@ -2941,9 +2945,9 @@ function selectModule(moduleName,userInitiated=false,suppressConversationRestore
       if(moduleName==="free"||moduleName==="health")el("question")?.focus({preventScroll:true});
       else{const chat=el("chat");if(chat)chat.scrollTop=chat.scrollHeight;}
     });
-    if(previousModule!==moduleName&&!suppressConversationRestore){
-      if(moduleConversationToRestore)openConversation(moduleConversationToRestore,moduleName).catch(error=>console.warn("Could not restore module conversation:",error));
-      else loadConversationList().catch(error=>console.warn("Could not refresh module history:",error));
+    if(previousModule!==moduleName&&!suppressConversationRestore&&moduleName==="free"){
+      if(moduleConversationToRestore)openConversation(moduleConversationToRestore,"free","").catch(error=>console.warn("Could not restore Free conversation:",error));
+      else loadConversationList().catch(error=>console.warn("Could not refresh Free history:",error));
     }
   }
   if(currentUser&&(moduleName==="free"||moduleName==="health"||isDrvasAdmin)){
@@ -2971,6 +2975,9 @@ let livePlaybackNextTime = 0;
 let liveActiveSources = new Set();
 let liveUserTranscript = "";
 let liveAssistantTranscript = "";
+let liveConversationId = null;
+let liveConversationModule = null;
+let liveConversationFeatureKey = null;
 let liveTurnSaveTimer = null;
 let liveConnectTimer = null;
 
@@ -3381,12 +3388,13 @@ function queueLiveAudio(base64Data){
  }catch(error){console.warn("Live audio playback:",error);}
 }
 async function sendLiveHistory(){
- if(!currentUser||!currentConversationId||!liveSocket||liveSocket.readyState!==WebSocket.OPEN)return;
+ const conversationId=liveConversationId||currentConversationId;
+ if(!currentUser||!conversationId||!liveSocket||liveSocket.readyState!==WebSocket.OPEN)return;
  try{
   const {data,error}=await supabaseClient.from("chat_messages")
    .select("role,content")
    .eq("user_id",currentUser.id)
-   .eq("conversation_id",currentConversationId)
+   .eq("conversation_id",conversationId)
    .order("created_at",{ascending:false}).limit(16);
   if(error)throw error;
   const turns=(data||[]).reverse().filter(item=>["user","assistant"].includes(item.role))
@@ -3411,14 +3419,16 @@ async function saveLiveTurn(){
  liveAssistantTranscript="";
  if(!userText&&!assistantText)return;
  try{
+  const conversationId=liveConversationId||currentConversationId;
+  if(!conversationId)throw new Error("Live conversation context is unavailable.");
   if(userText){
    appendMessage("user",userText);
-   await saveMessage("user",userText);
+   await saveMessage("user",userText,conversationId);
   }
   if(assistantText){
    appendMessage("assistant",assistantText);
    lastSpokenAnswer=assistantText;
-   await saveMessage("assistant",assistantText);
+   await saveMessage("assistant",assistantText,conversationId);
   }
   conversationSaved=true;
   pendingMessages=[];
@@ -3464,9 +3474,12 @@ async function stopLiveVoice(){
  }
  await stopLiveMedia();
  updateLiveVoiceStage("closed");
- if(liveTurnSaveTimer){clearTimeout(liveTurnSaveTimer);liveTurnSaveTimer=null;await saveLiveTurn();}
+ if(liveTurnSaveTimer){clearTimeout(liveTurnSaveTimer);liveTurnSaveTimer=null;}
+ await saveLiveTurn();
  liveStopRequested=false;
  if(hadLiveSession&&currentUser)await logClientEvent("voice_live_session_ended");
+ liveConversationId=null;liveConversationModule=null;liveConversationFeatureKey=null;
+ setChatNavigationDisabled(false);
  refreshVoiceUi();
  const status=el("voiceStatus");
  if(status)status.textContent=liveFailureMessage ? (liveLabel("error")+" "+liveFailureMessage) : liveLabel("stopped");
@@ -3514,6 +3527,15 @@ async function startLiveVoice(){
   const status=el("voiceStatus");if(status)status.textContent=liveLabel("error");
   return;
  }
+ if(currentConversationIsLegacy){const status=el("voiceStatus");if(status)status.textContent="Deschide New chat pentru a începe o conversație vocală nouă; istoricul vechi rămâne doar pentru citire.";return;}
+ if(isSendingMessage||loadingConversation){const status=el("voiceStatus");if(status)status.textContent="Așteaptă finalizarea mesajului sau încărcarea conversației înainte de Live.";return;}
+ if(!currentConversationId)currentConversationId=makeId();
+ liveConversationId=currentConversationId;
+ liveConversationModule=activeModule;
+ liveConversationFeatureKey=activeFeatureKey;
+ rememberActiveConversation(liveConversationId,liveConversationModule,liveConversationFeatureKey);
+ setChatNavigationDisabled(true,true);
+ if(el("sendButton"))el("sendButton").disabled=true;
  const status=el("voiceStatus");
  if(status)status.textContent=liveLabel("connecting");
  try{
@@ -3544,6 +3566,7 @@ async function startLiveVoice(){
   const accessToken=sessionData.session?.access_token;
   if(!accessToken)throw new Error("Sesiunea a expirat. Conectează-te din nou.");
   if(!liveStream)return;
+  await ensureConversationMetadata(liveConversationId,liveConversationModule,"",liveConversationFeatureKey);
 
   const tokenResponse=await fetch(API_URL,{
    method:"POST",headers:{"Content-Type":"application/json"},
@@ -3637,6 +3660,10 @@ async function startLiveVoice(){
      liveFailureMessage=`Serverul a închis conexiunea înainte de activare (cod ${event.code}${event.reason ? ", "+event.reason : ""}).`;
     }
     await stopLiveMedia();
+    await saveLiveTurn();
+    liveConversationId=null;liveConversationModule=null;liveConversationFeatureKey=null;
+    setChatNavigationDisabled(false,true);
+    if(el("sendButton"))el("sendButton").disabled=currentConversationIsLegacy;
     refreshVoiceUi();
     if(status)status.textContent=liveFailureMessage ? (liveLabel("error")+" "+liveFailureMessage) : liveLabel("stopped");
    }
@@ -4611,6 +4638,7 @@ async function showUser(user){
   if(currentUser && currentUser.id!==user.id){
     isDrvasAdmin=false;
     activeModule="free";
+    activeFeatureKey="";
     currentConversationId=null;
     conversationSaved=false;
     pendingMessages=[];
@@ -5349,18 +5377,17 @@ async function showChat(user,displayName){
   // the module buttons appear unresponsive or strand the user on the login screen.
   try{
     const conversations=await loadConversationList();
-    const scopedConversations=conversations.filter(item=>item.module===activeModule||(!item.module&&activeModule==="free"));
-    const rememberedId=getRememberedConversation(activeModule);
-    const resumeId=scopedConversations.some(item=>item.id===rememberedId)
-      ? rememberedId
-      : (scopedConversations[0]?.id || null);
-    if(resumeId){
-      await openConversation(resumeId);
+    const scopedConversations=conversations.filter(item=>(item.module===activeModule&&(item.feature_key||"")===activeFeatureKey)||(!item.module&&activeModule==="free"&&!activeFeatureKey));
+    const rememberedId=getRememberedConversation(activeModule,activeFeatureKey);
+    const resumeConversation=scopedConversations.find(item=>item.id===rememberedId)||scopedConversations[0]||null;
+    if(resumeConversation){
+      await openConversation(resumeConversation.id,resumeConversation.module||null,resumeConversation.feature_key||"");
     }else{
-      currentConversationId=makeId();
+      const hadActiveConversation=Boolean(currentConversationId);
+      if(!currentConversationId)currentConversationId=makeId();
       currentConversationIsLegacy=false;
-      rememberActiveConversation(currentConversationId,activeModule);
-      ensureConversationMetadata(currentConversationId,activeModule,"").catch(error=>console.warn("Conversation context metadata pending first message:",error));
+      rememberActiveConversation(currentConversationId,activeModule,activeFeatureKey);
+      if(!hadActiveConversation)ensureConversationMetadata(currentConversationId,activeModule,"",activeFeatureKey).catch(error=>console.warn("Conversation context metadata pending first message:",error));
       logClientEvent("conversation_created");
       conversationSaved=false;
       pendingMessages=[];
@@ -5413,11 +5440,11 @@ let showArchivedConversations = false;
 let currentConversationIsLegacy = false;
 let freeNavCurrentView = "chat";
 function localConversationContextKey(){return "drvas_conversation_context:"+currentUser.id;}
-function rememberLocalConversationContext(conversationId,moduleId,title=""){
+function rememberLocalConversationContext(conversationId,moduleId,title="",featureKey=activeFeatureKey){
  if(!currentUser||!conversationId)return;
  try{
   const key=localConversationContextKey(),saved=JSON.parse(localStorage.getItem(key)||"{}");
-  saved[conversationId]={module:moduleId,conversation_kind:moduleId==="free"?"general":"module_assistant",title:String(title||"").slice(0,120),updated_at:new Date().toISOString()};
+  saved[conversationId]={module:moduleId,conversation_kind:featureKey?"feature_assistant":(moduleId==="free"?"general":"module_assistant"),feature_key:featureKey||null,title:String(title||"").slice(0,120),updated_at:new Date().toISOString()};
   localStorage.setItem(key,JSON.stringify(saved));
  }catch(error){console.warn("Local conversation context unavailable:",error);}
 }
@@ -5425,13 +5452,35 @@ function readLocalConversationContext(){
  if(!currentUser)return {};
  try{return JSON.parse(localStorage.getItem(localConversationContextKey())||"{}")}catch{return {}}
 }
-async function ensureConversationMetadata(conversationId,moduleId=activeModule,title=""){
+
+function drvasSetFeatureContext(moduleName,featureKey){
+ if(!currentUser||loadingConversation||isSendingMessage||liveSocket||liveStream||moduleName!==activeModule||!["health","studio","academy","commerce","business"].includes(moduleName))return;
+ const nextFeature=String(featureKey||"").trim();
+ if(nextFeature&&!/^[a-z0-9-]{1,100}$/i.test(nextFeature))return;
+ if(activeFeatureKey===nextFeature)return;
+ activeFeatureKey=nextFeature;
+ clearPendingChatFiles();
+ const remembered=getRememberedConversation(moduleName,nextFeature);
+ currentConversationId=remembered||makeId();
+ currentConversationIsLegacy=false;
+ conversationSaved=Boolean(remembered);
+ pendingMessages=[];
+ rememberActiveConversation(currentConversationId,moduleName,nextFeature);
+ if(!remembered)ensureConversationMetadata(currentConversationId,moduleName,"",nextFeature).catch(error=>console.warn("Feature conversation context will be saved with the first message:",error));
+ el("conversationAttachments")?.replaceChildren();
+ renderWelcome();
+ updateSaveButton();
+ loadConversationList().catch(error=>console.warn("Could not refresh feature conversation history:",error));
+}
+window.drvasSetFeatureContext=drvasSetFeatureContext;
+
+async function ensureConversationMetadata(conversationId,moduleId=activeModule,title="",featureKey=activeFeatureKey){
  if(!currentUser||!conversationId)return;
  const cleanTitle=String(title||"").replace(/\\s+/g," ").trim().slice(0,120);
- rememberLocalConversationContext(conversationId,moduleId,cleanTitle);
+ rememberLocalConversationContext(conversationId,moduleId,cleanTitle,featureKey);
  const {data:existing,error:readError}=await supabaseClient.from("drvas_conversation_metadata").select("title").eq("user_id",currentUser.id).eq("conversation_id",conversationId).maybeSingle();
  if(readError)throw readError;
- const payload={user_id:currentUser.id,conversation_id:conversationId,module:moduleId,conversation_kind:moduleId==="free"?"general":"module_assistant",title:existing?.title||cleanTitle,updated_at:new Date().toISOString()};
+ const payload={user_id:currentUser.id,conversation_id:conversationId,module:moduleId,conversation_kind:featureKey?"feature_assistant":(moduleId==="free"?"general":"module_assistant"),feature_key:featureKey||null,title:existing?.title||cleanTitle,updated_at:new Date().toISOString()};
  const {error}=await supabaseClient.from("drvas_conversation_metadata").upsert(payload,{onConflict:"user_id,conversation_id"});
  if(error)throw error;
 }
@@ -5454,16 +5503,20 @@ async function getConversationIds(){
   const localContext=readLocalConversationContext();
   if(metadata.error){console.warn("Conversation metadata unavailable:",metadata.error.message);}
   else {const byId=new Map((metadata.data||[]).map(x=>[x.conversation_id,x]));conversations.forEach(item=>{const saved=byId.get(item.id);if(saved){item.archived_at=saved.archived_at;if(saved.title)item.title=saved.title;item.module=saved.module||null;item.conversation_kind=saved.conversation_kind||null;item.feature_key=saved.feature_key||null;}});}
-  conversations.forEach(item=>{const local=localContext[item.id];if(!item.module&&local?.module)item.module=local.module;if(!item.title&&local?.title)item.title=local.title;});
+  conversations.forEach(item=>{const local=localContext[item.id];if(!item.module&&local?.module)item.module=local.module;if(!item.conversation_kind&&local?.conversation_kind)item.conversation_kind=local.conversation_kind;if(!item.feature_key&&local?.feature_key)item.feature_key=local.feature_key;if(!item.title&&local?.title)item.title=local.title;});
 
  }
  return conversations;
 }
+let conversationListRequestId=0;
 async function loadConversationList(){
+ const requestId=++conversationListRequestId;
  const list=el("conversationList");list.innerHTML="";
  const filter=el("historyFilterButton");if(filter)setLocalizedText(filter,showArchivedConversations?"Vezi conversațiile active":"Vezi conversațiile arhivate");
  try{
-  const all=await getConversationIds(),scoped=all.filter(x=>x.module===activeModule||(!x.module&&activeModule==="free")),items=scoped.filter(x=>showArchivedConversations?Boolean(x.archived_at):!x.archived_at);
+  const all=await getConversationIds();
+  if(requestId!==conversationListRequestId)return all;
+  const scoped=all.filter(x=>(x.module===activeModule&&(x.feature_key||"")===activeFeatureKey)||(!x.module&&activeModule==="free"&&!activeFeatureKey)),items=scoped.filter(x=>showArchivedConversations?Boolean(x.archived_at):!x.archived_at);
   if(!items.length){const empty=document.createElement("p");setLocalizedText(empty,showArchivedConversations?"Nu ai conversații arhivate.":"Nu ai încă discuții salvate.");empty.style.cssText="font-size:12px;color:#7fa4b5;line-height:1.5";list.appendChild(empty);return all;}
   items.forEach((conversation,index)=>{
    const row=document.createElement("div");row.className="conversation-row";
@@ -5473,7 +5526,7 @@ async function loadConversationList(){
    const date=document.createElement("small");date.textContent=new Date(conversation.date).toLocaleString(currentLanguage||"ro",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"});
    button.append(title,date);
    if(!conversation.module){const legacy=document.createElement("small");legacy.className="conversation-legacy-label";legacy.textContent="Istoric vechi · modul neclasificat";button.appendChild(legacy);}
-   button.addEventListener("click",()=>openConversation(conversation.id,conversation.module||null));
+   button.addEventListener("click",()=>openConversation(conversation.id,conversation.module||null,conversation.feature_key||""));
    const actions=document.createElement("div");actions.className="conversation-actions";
    const addAction=(label,handler)=>{const b=document.createElement("button");b.type="button";b.textContent=label;b.addEventListener("click",event=>{event.stopPropagation();handler();});actions.appendChild(b);};
    addAction("Redenumește",()=>renameConversation(conversation));
@@ -5482,7 +5535,7 @@ async function loadConversationList(){
    row.append(button,actions);list.appendChild(row);
   });
   updateActiveConversation();return all;
- }catch(error){console.error("Conversation list:",error);setLocalizedText(list,"Nu am putut încărca istoricul. Verifică migrarea pentru administrarea conversațiilor.");return [];}
+ }catch(error){if(requestId!==conversationListRequestId)return [];console.error("Conversation list:",error);setLocalizedText(list,"Nu am putut încărca istoricul. Verifică migrarea pentru administrarea conversațiilor.");return [];}
 }
 function toggleArchivedConversations(){showArchivedConversations=!showArchivedConversations;loadConversationList();}
 async function renameConversation(conversation){
@@ -5554,10 +5607,12 @@ async function deleteAllConversations(){
   }
 }
 
-async function openConversation(conversationId,conversationModule=activeModule){
-  if(!currentUser || loadingConversation || isSendingMessage) return;
+async function openConversation(conversationId,conversationModule=activeModule,conversationFeature=activeFeatureKey){
+  if(!currentUser || loadingConversation || isSendingMessage || liveSocket || liveStream) return;
   if(conversationModule&&conversationModule!==activeModule)return;
+  if((conversationFeature||"")!==activeFeatureKey)return;
   loadingConversation = true;
+  setChatNavigationDisabled(true);
   currentConversationId = conversationId;
   currentConversationIsLegacy=!conversationModule;
   if(["free","health","studio","academy","commerce","business"].includes(activeModule))openFreeNavView("chat",false);
@@ -5600,17 +5655,18 @@ async function openConversation(conversationId,conversationModule=activeModule){
     appendMessage("assistant",tr("Nu am putut încărca această conversație: ") + error.message);
   }finally{
     loadingConversation = false;
+    setChatNavigationDisabled(false);
   }
 }
 
 function newConversation(){
-  if(!currentUser || isSendingMessage) return;
+  if(!currentUser || isSendingMessage || loadingConversation || liveSocket || liveStream) return;
   currentConversationId = makeId();
   currentConversationIsLegacy=false;
   if(["free","health","studio","academy","commerce","business"].includes(activeModule))openFreeNavView("chat",false);
   if(el("question"))el("question").disabled=false;
   if(el("sendButton"))el("sendButton").disabled=false;
-  ensureConversationMetadata(currentConversationId,activeModule,"").then(()=>loadConversationList()).catch(error=>console.warn("Conversation context metadata will be saved with the first message:",error));
+  ensureConversationMetadata(currentConversationId,activeModule,"",activeFeatureKey).then(()=>loadConversationList()).catch(error=>console.warn("Conversation context metadata will be saved with the first message:",error));
   clearPendingChatFiles();
   el("conversationAttachments")?.replaceChildren();
   rememberActiveConversation(currentConversationId);
@@ -6213,6 +6269,7 @@ function openFreeNavView(view="chat",render=true){
 async function send(){
  const input=el("question"),button=el("sendButton");
  const typedMessage=input.value.trim();
+ if(liveSocket||liveStream){window.alert("Închide conversația vocală Live înainte de a trimite un mesaj text.");return;}
  if(currentConversationIsLegacy){window.alert("Acest chat vechi nu are modul identificat. Apasă New chat pentru a continua într-o conversație separată.");return;}
  const filesToUpload=[...pendingChatFiles];
  const existingAttachments=[...pendingUploadedAttachments];
@@ -6222,7 +6279,7 @@ async function send(){
  if(hasAttachments&&(!el("fileProcessingConsent")?.checked||(activeModule==="health"&&!el("healthDataProcessingConsent")?.checked))){window.alert(activeModule==="health"?"Bifează acordul general și acordul pentru date medicale înainte de trimitere.":"Bifează acordul pentru procesarea fișierelor înainte de trimitere.");return;}
  const message=typedMessage||(activeModule==="health"?"Te rog să explici și să analizezi documentele medicale atașate, fără a stabili un diagnostic.":"Te rog să analizezi fișierele atașate și să explici informațiile relevante.");
  if(!currentConversationId)currentConversationId=makeId();
- const conversationId=currentConversationId,moduleId=activeModule,language=currentLanguage;
+ const conversationId=currentConversationId,moduleId=activeModule,featureKey=activeFeatureKey,language=currentLanguage;
  rememberActiveConversation(conversationId);
  isSendingMessage=true;setChatNavigationDisabled(true);button.disabled=true;input.value="";resizeQuestionInput();
  const userBubble=appendMessage("user",message);
@@ -6233,7 +6290,7 @@ async function send(){
   const accessToken=sessionData.session?.access_token;
   if(!accessToken)throw new Error("Sesiunea a expirat. Conectează-te din nou.");
   // The Worker refuses unclassified or cross-module threads, so establish the owner/module context first.
-  await ensureConversationMetadata(conversationId,moduleId,message.slice(0,120));
+  await ensureConversationMetadata(conversationId,moduleId,message.slice(0,120),featureKey);
   await saveMessage("user",message,conversationId);
   conversationSaved=true;pendingMessages=[];setLocalizedText(el("saveMessage"),"Mesajul tău este salvat automat în cont.");updateSaveButton();
 
@@ -6255,7 +6312,7 @@ async function send(){
    method:"POST",headers:{"Content-Type":"application/json"},
    body:JSON.stringify({
     message,module:moduleId,assistant:activeAssistant,language,
-    conversation_id:conversationId,access_token:accessToken,
+    conversation_id:conversationId,feature_key:featureKey||null,access_token:accessToken,
     attachment_ids:attachments.map(file=>file.id)
    })
   });

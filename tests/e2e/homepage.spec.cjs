@@ -2384,7 +2384,7 @@ test("Free and Health remember separate conversation IDs for the same user", asy
     selectModule("health", true);
     const healthId = currentConversationId;
     selectModule("free", true);
-    return { healthId, restoredFreeId: currentConversationId, freeStored: getRememberedConversation("free"), healthStored: getRememberedConversation("health") };
+    return { healthId, restoredFreeId: currentConversationId, freeStored: getRememberedConversation("free"), healthStored: getRememberedConversation("health","health-brief") };
   });
   expect(ids.healthId).not.toBe("free-thread-1");
   expect(ids.restoredFreeId).toBe("free-thread-1");
@@ -2697,9 +2697,13 @@ test("all six module chats share the same sidebar destinations and attachment co
     showModuleSelection();
   });
   const expected = ["＋New chat","▧Images","◷Scheduled","▤Library","⌘Plugins","✧Explore","▣Projects","View all"];
+  const defaultFeatures = { free:"", health:"health-brief", studio:"video", academy:"course", commerce:"research", business:"plan" };
   for (const moduleName of ["free","health","studio","academy","commerce","business"]) {
     await page.evaluate(name => selectModule(name, true), moduleName);
+    const activeFeature = await page.evaluate(() => activeFeatureKey);
+    expect(activeFeature, moduleName + " default feature context").toBe(defaultFeatures[moduleName]);
     await expect(page.locator("#chatSection .history-panel"), moduleName + " sidebar").toBeVisible();
+    if (moduleName !== "free") await expect(page.locator("#" + moduleName + "Workspace [data-feature='general']"), moduleName + " general history tab").toBeVisible();
     const shellModes = await page.evaluate(() => ({ free: document.body.classList.contains("free-module-mode"), health: document.body.classList.contains("health-module-mode"), shared: document.body.classList.contains("shared-chat-sidebar-mode") }));
     if (moduleName === "free") expect(shellModes.free).toBe(true);
     else if (moduleName === "health") { expect(shellModes.free).toBe(true); expect(shellModes.health).toBe(true); await expect(page.locator("#healthWorkspace")).toBeVisible(); }
@@ -2862,6 +2866,7 @@ test("all six modules keep independent conversation IDs and restore their own th
     isDrvasAdmin = true;
     ensureConversationMetadata = async () => {};
     loadConversationList = async () => [];
+    openConversation = async () => {};
     activeModule = "free";
     currentConversationId = "thread-free";
     rememberActiveConversation(currentConversationId, "free");
@@ -2882,4 +2887,69 @@ test("all six modules keep independent conversation IDs and restore their own th
   for (const moduleName of ["free", "health", "studio", "academy", "commerce", "business"]) {
     expect(state.restored[moduleName], moduleName + " restores only its own thread").toBe(state.firstPass[moduleName]);
   }
+});
+
+
+test("feature workspaces keep separate chat threads within each module", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(() => {
+    currentUser = { id: "e2e-feature-thread-isolation", email: "features@example.invalid" };
+    ensureConversationMetadata = async () => {};
+    loadConversationList = async () => [];
+    const contexts = [
+      ["studio", "book"], ["studio", "translation"], ["studio", "video"],
+      ["academy", "course"], ["academy", "lessons"],
+      ["commerce", "research"], ["commerce", "suppliers"],
+      ["business", "cashbook"], ["business", "cashflow"], ["business", "break-even"],
+      ["health", "health-brief"]
+    ];
+    const first = {};
+    for (const [moduleName, featureKey] of contexts) {
+      activeModule = moduleName;
+      drvasSetFeatureContext(moduleName, featureKey);
+      first[moduleName + ":" + featureKey] = currentConversationId;
+    }
+    const restored = {};
+    for (const [moduleName, featureKey] of contexts) {
+      activeModule = moduleName;
+      drvasSetFeatureContext(moduleName, "");
+      drvasSetFeatureContext(moduleName, featureKey);
+      restored[moduleName + ":" + featureKey] = currentConversationId;
+    }
+    return { first, restored, ids: Object.values(first) };
+  });
+  expect(new Set(result.ids).size).toBe(11);
+  for (const key of Object.keys(result.first)) expect(result.restored[key], key + " restores its own feature thread").toBe(result.first[key]);
+});
+
+
+test("sidebar history is filtered by both module and feature without hiding general legacy module threads", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(async () => {
+    currentUser = { id: "e2e-feature-history-filter", email: "history@example.invalid" };
+    getConversationIds = async () => [
+      { id:"studio-book", module:"studio", feature_key:"book", title:"Book", date:new Date().toISOString() },
+      { id:"studio-translation", module:"studio", feature_key:"translation", title:"Translation", date:new Date().toISOString() },
+      { id:"studio-general", module:"studio", feature_key:null, title:"General", date:new Date().toISOString() },
+      { id:"health-brief", module:"health", feature_key:"health-brief", title:"Health", date:new Date().toISOString() },
+      { id:"legacy-unknown", module:null, feature_key:null, title:"Legacy", date:new Date().toISOString() }
+    ];
+    activeModule="studio"; activeFeatureKey="book";
+    await loadConversationList();
+    const book=[...document.querySelectorAll("#conversationList .conversation-item")].map(node=>node.dataset.id);
+    activeFeatureKey="";
+    await loadConversationList();
+    const general=[...document.querySelectorAll("#conversationList .conversation-item")].map(node=>node.dataset.id);
+    activeModule="health"; activeFeatureKey="health-brief";
+    await loadConversationList();
+    const health=[...document.querySelectorAll("#conversationList .conversation-item")].map(node=>node.dataset.id);
+    activeModule="free"; activeFeatureKey="";
+    await loadConversationList();
+    const free=[...document.querySelectorAll("#conversationList .conversation-item")].map(node=>node.dataset.id);
+    return {book,general,health,free};
+  });
+  expect(result.book).toEqual(["studio-book"]);
+  expect(result.general).toEqual(["studio-general"]);
+  expect(result.health).toEqual(["health-brief"]);
+  expect(result.free).toEqual(["legacy-unknown"]);
 });
