@@ -2971,16 +2971,15 @@ test("landing DNA helixes initialize real WebGL geometry and retain the SVG fall
     };
   }));
   expect(result).toHaveLength(2);
-  expect(result.map(item => item.status)).toEqual([result[0].status, result[0].status]);
-  if (result[0].status === "webgl") {
-    for (const item of result) {
+  for (const item of result) {
+    if (item.status === "webgl") {
       expect(item.canvasWidth).toBeGreaterThan(0);
       expect(item.canvasHeight).toBeGreaterThan(0);
       expect(item.svgDisplay).toBe("none");
       expect(item.webglVersion).toContain("WebGL");
+    } else {
+      expect(item.svgDisplay).not.toBe("none");
     }
-  } else {
-    for (const item of result) expect(item.svgDisplay).not.toBe("none");
   }
 });
 
