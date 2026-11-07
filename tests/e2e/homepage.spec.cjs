@@ -2953,3 +2953,47 @@ test("sidebar history is filtered by both module and feature without hiding gene
   expect(result.health).toEqual(["health-brief"]);
   expect(result.free).toEqual(["legacy-unknown"]);
 });
+
+
+test("landing DNA helixes initialize real WebGL geometry and retain the SVG fallback", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.waitForFunction(() => [...document.querySelectorAll("#heroSection .dna-helix-visual")].length === 2 &&
+    [...document.querySelectorAll("#heroSection .dna-helix-visual")].every(host => ["webgl","fallback"].includes(host.dataset.dna3dStatus)));
+  const result = await page.evaluate(() => [...document.querySelectorAll("#heroSection .dna-helix-visual")].map(host => {
+    const canvas = host.querySelector("canvas.dna-helix-webgl");
+    const svg = host.querySelector("svg");
+    return {
+      status: host.dataset.dna3dStatus,
+      canvasWidth: canvas?.width || 0,
+      canvasHeight: canvas?.height || 0,
+      svgDisplay: svg ? getComputedStyle(svg).display : "missing",
+      webglVersion: canvas?.getContext("webgl")?.getParameter(canvas.getContext("webgl").VERSION) || ""
+    };
+  }));
+  expect(result).toHaveLength(2);
+  expect(result.map(item => item.status)).toEqual([result[0].status, result[0].status]);
+  if (result[0].status === "webgl") {
+    for (const item of result) {
+      expect(item.canvasWidth).toBeGreaterThan(0);
+      expect(item.canvasHeight).toBeGreaterThan(0);
+      expect(item.svgDisplay).toBe("none");
+      expect(item.webglVersion).toContain("WebGL");
+    }
+  } else {
+    for (const item of result) expect(item.svgDisplay).not.toBe("none");
+  }
+});
+
+test("DNA helixes preserve their SVG artwork when WebGL is unavailable", async ({ page }) => {
+  await page.addInitScript(() => {
+    const original = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function(type, ...args) {
+      if (type === "webgl" || type === "experimental-webgl") return null;
+      return original.call(this, type, ...args);
+    };
+  });
+  await openApp(page, "ro");
+  await page.waitForFunction(() => [...document.querySelectorAll("#heroSection .dna-helix-visual")].every(host => host.dataset.dna3dStatus === "fallback"));
+  const visible = await page.locator("#heroSection .dna-helix-visual svg").evaluateAll(nodes => nodes.every(node => getComputedStyle(node).display !== "none"));
+  expect(visible).toBe(true);
+});
