@@ -3126,7 +3126,7 @@ test("shared navigation and presentation controls localize across all supported 
     ["en", "Language", "Talk to Dr.Vas", "Open presentation", "TALK TO DR.VAS"],
     ["it", "Lingua", "Parla con Dr.Vas", "Apri la presentazione", "PARLA CON DR.VAS"],
     ["tr", "Dil", "Dr.Vas ile konuş", "Tanıtımı aç", "DR.VAS İLE KONUŞ"],
-    ["de", "Sprache", "Mit Dr.Vas sprechen", "Präsentation öffnen", "MIT DR.VAS SPRECHEN"],
+    ["de", "Sprache", "Sprich mit Dr.Vas", "Präsentation öffnen", "MIT DR.VAS SPRECHEN"],
     ["fr", "Langue", "Parler à Dr.Vas", "Ouvrir la présentation", "PARLER À DR.VAS"],
     ["es", "Idioma", "Habla con Dr.Vas", "Abrir presentación", "HABLA CON DR.VAS"],
     ["ru", "Язык", "Поговорить с Dr.Vas", "Открыть презентацию", "ПОГОВОРИТЬ С DR.VAS"]
