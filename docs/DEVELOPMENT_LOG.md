@@ -864,3 +864,12 @@ User's request (verbatim):
 - Important scope note: existing user/assistant conversation history is intentionally preserved verbatim and is not translated retroactively. New AI responses already receive the selected language in the request and the Worker system instruction requires the whole answer to use that language. Other UI copy still needs a systematic coverage pass; do not claim every label/button in every module is fully translated until that broader audit and regression matrix are complete.
 - Separately, the WebGL DNA PR #64 is merged in main at `85061bc0a257676fbbcd01f7ef4067d62274e536`. Main deploy run `42378450806` and browser regression run `42378450832` both completed successfully. Production deployment/smoke test is confirmed. Stage 2 still awaits the founder's visual acceptance of both helices on desktop and mobile before stage 3 proceeds.
 - This checkpoint preserves the founder's exact request and implementation details as a structured project/chat archive, not a literal export of the complete ChatGPT UI transcript.
+
+## 2026-11-07 — PR #65 language test follow-up
+
+- Checked browser E2E run `42378875017` for PR #65 head `d0af22105711064f2323b0488bf6cc5cd51aadef`: 133 passed, 1 failed.
+- Failure was isolated to the newly added selected-language welcome UI test: `#chat .msg.bot` was absent after selecting English. Existing 133 tests, including module, scroll, DNA/WebGL and assistant controls, passed.
+- Root cause of the test failure: the test uses a synthetic `currentUser`, while the production `chooseLanguage()` calls `checkSession()` and can trigger the stubbed auth lifecycle to clear that synthetic chat. This is test isolation, not evidence that the production welcome localization failed.
+- Added a focused test-only `checkSession = () => {}` override within that one test. Dedicated session restoration tests remain unchanged and continue to exercise authentication behavior.
+- Follow-up branch: `test/fix-language-welcome-e2e-2026-11-07`, based on PR #65 head. Await fresh CI before merge. No merge or deployment claimed yet.
+- User instruction for this continuation: “hai sa continuam.....salveaza tot inclusiv chatul”. Full translation audit across all buttons, labels and dynamic messages is still outstanding; do not represent localization as complete.
