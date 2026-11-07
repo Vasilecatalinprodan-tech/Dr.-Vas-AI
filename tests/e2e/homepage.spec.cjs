@@ -3195,3 +3195,40 @@ test("Dr.Vas Studio production workspace localizes its core controls in all supp
     await expect(page.locator("#studioRenderCreateButton")).toContainText(render);
   }
 });
+
+
+test("Academy and Commerce workspaces localize their core controls in all supported languages", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => { checkSession = () => {}; });
+
+  const cases = [
+    ["en", "Build courses and learning paths with lessons, exercises and practical projects.", "PILOT · ADMIN ACCESS", "Course subject", "Beginner", "5-lesson mini-course", "Romanian", "Build course", "Analyse products, suppliers, costs and margins before investing money.", "United Kingdom", "Dropshipping", "Shopify", "Analyse opportunity", "Currency", "Product cost / unit"],
+    ["it", "Crea corsi e percorsi di apprendimento con lezioni, esercizi e progetti pratici.", "PILOTA · ACCESSO AMMINISTRATORE", "Argomento del corso", "Principiante", "Mini-corso di 5 lezioni", "Rumeno", "Crea il corso", "Analizza prodotti, fornitori, costi e margini prima di investire denaro.", "Regno Unito", "Dropshipping", "Shopify", "Analizza l'opportunità", "Valuta", "Costo prodotto / unità"],
+    ["tr", "Dersler, alıştırmalar ve uygulamalı projelerle kurslar ve öğrenme yolları oluşturun.", "PİLOT · YÖNETİCİ ERİŞİMİ", "Kurs konusu", "Başlangıç", "5 derslik mini kurs", "Romence", "Kursu oluştur", "Para yatırmadan önce ürünleri, tedarikçileri, maliyetleri ve kâr marjlarını analiz edin.", "Birleşik Krallık", "Dropshipping", "Shopify", "Fırsatı analiz et", "Para birimi", "Ürün maliyeti / birim"],
+    ["de", "Erstelle Kurse und Lernpfade mit Lektionen, Übungen und praktischen Projekten.", "PILOT · ADMIN-ZUGANG", "Kursthema", "Anfänger", "Mini-Kurs mit 5 Lektionen", "Rumänisch", "Kurs erstellen", "Analysiere Produkte, Lieferanten, Kosten und Margen, bevor du Geld investierst.", "Vereinigtes Königreich", "Dropshipping", "Shopify", "Möglichkeit analysieren", "Währung", "Produktkosten / Stück"],
+    ["fr", "Créez des cours et des parcours d’apprentissage avec des leçons, des exercices et des projets pratiques.", "PILOTE · ACCÈS ADMINISTRATEUR", "Sujet du cours", "Débutant", "Mini-cours de 5 leçons", "Roumain", "Créer le cours", "Analysez les produits, fournisseurs, coûts et marges avant d’investir de l’argent.", "Royaume-Uni", "Dropshipping", "Shopify", "Analyser l’opportunité", "Devise", "Coût du produit / unité"],
+    ["es", "Crea cursos y rutas de aprendizaje con lecciones, ejercicios y proyectos prácticos.", "PILOTO · ACCESO DE ADMINISTRADOR", "Tema del curso", "Principiante", "Minicurso de 5 lecciones", "Rumano", "Crear curso", "Analiza productos, proveedores, costes y márgenes antes de invertir dinero.", "Reino Unido", "Dropshipping", "Shopify", "Analizar oportunidad", "Moneda", "Coste del producto / unidad"],
+    ["ru", "Создавайте курсы и учебные программы с уроками, упражнениями и практическими проектами.", "ПИЛОТ · ДОСТУП АДМИНИСТРАТОРА", "Тема курса", "Начальный", "Мини-курс из 5 уроков", "Румынский", "Создать курс", "Анализируйте товары, поставщиков, расходы и маржу до вложения денег.", "Великобритания", "Дропшиппинг", "Shopify", "Анализировать возможность", "Валюта", "Стоимость товара / единица"]
+  ];
+  for (const [language, academyDescription, pilotLabel, subject, level, format, courseLanguage, academyAction, commerceDescription, market, model, channel, commerceAction, currency, unitCost] of cases) {
+    await page.evaluate(code => chooseLanguage(code), language);
+
+    await expect(page.locator("#academyWorkspace .studio-workspace-head > div > p")).toHaveText(academyDescription);
+    await expect(page.locator("#academyWorkspace .studio-workspace-head > .studio-beta-label")).toHaveText(pilotLabel);
+    await expect(page.locator("#academySubject").locator("xpath=..")).toContainText(subject);
+    await expect(page.locator("#academyLevel option").first()).toHaveText(level);
+    await expect(page.locator("#academyFormat option").first()).toHaveText(format);
+    await expect(page.locator("#academyLanguage option").first()).toHaveText(courseLanguage);
+    await expect(page.locator('#academyWorkspace button[onclick="buildAcademyPrompt()"]')).toContainText(academyAction);
+
+    await expect(page.locator("#commerceWorkspace .studio-workspace-head > div > p")).toHaveText(commerceDescription);
+    await expect(page.locator("#commerceWorkspace .studio-workspace-head > .studio-beta-label")).toHaveText(pilotLabel);
+    await expect(page.locator("#commerceMarket option").first()).toHaveText(market);
+    await expect(page.locator("#commerceModel option").first()).toHaveText(model);
+    await expect(page.locator("#commerceChannel option").first()).toHaveText(channel);
+    await expect(page.locator("#commerceWorkspace .crypto-calculator h5")).toContainText("Commerce");
+    await expect(page.locator("#commerceCurrency").locator("xpath=..")).toContainText(currency);
+    await expect(page.locator("#commerceUnitCost").locator("xpath=..")).toContainText(unitCost);
+    await expect(page.locator('#commerceWorkspace button[onclick="buildCommercePrompt()"]')).toContainText(commerceAction);
+  }
+});
