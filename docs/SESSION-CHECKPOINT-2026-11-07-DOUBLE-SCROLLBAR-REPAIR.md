@@ -1,49 +1,38 @@
-# Session checkpoint — restore the page scrollbar and keep chat scrolling independent
+# Session checkpoint — independent page and transcript scrolling
 **Date:** 7 November 2026  
-**Repository:** `Vasilecatalinprodan-tech/Dr.-Vas-AI`  
-**Branch:** `fix/independent-document-and-chat-scroll-2026-11-07`
+**Repository:** `Vasilecatalinprodan-tech/Dr.-Vas-AI`
 
-## User's exact clarification
-The user explicitly requires two independent vertical scroll areas at the same time:
-1. The conversation transcript itself has its own scrollbar and can be scrolled without moving the page.
-2. The whole page/document has a separate scrollbar at the far right and can be scrolled down to the bottom controls, attachment area and remaining content.
-The desktop left history/sidebar must remain visible. On mobile it may be an accessible history drawer. The user said the previous repair did not solve this and asked to stop other development until this is fixed. The user also asked to preserve all progress, including this chat.
+## User's exact requirement
+Two independent vertical scroll areas must work at the same time:
+1. The conversation transcript has its own scrollbar; scrolling messages must not move the page.
+2. The entire document/page has its own scrollbar at the far right; scrolling it must reach the bottom controls, attachments and composer without moving the transcript.
+Desktop left history/sidebar remains visible. On mobile, history can be an accessible drawer.
 
-## Root cause found in current main
-- Free and Health both enter `free-module-mode`; the selector also adds `html.drvas-free-shell`.
-- Earlier CSS sets `html.drvas-free-shell`, `body.free-module-mode`, `main`, `#appMain`, `#chatSection`, `.chat-main` and other ancestors to fixed viewport heights and/or `overflow:hidden`.
-- Health-specific rules attempted to re-enable page scroll, but Free and Health share the fitted-shell classes. Multiple later rules compete, so the page-level scrollbar is still not reliably available.
-- The previous regression only simulated generic `chat-focus-mode + module-workspace-mode` and did not exercise the actual state entered by `selectModule("free")` and `selectModule("health")`. This explains why CI passed while the founder still experienced the bug.
+## Root cause
+Free and Health shared `free-module-mode` / `drvas-free-shell`. Earlier fixed-height and `overflow:hidden` rules on document/body/main/app/chat ancestors conflicted with document scrolling. A legacy `max-height:none!important` selector also overrode the transcript height cap. Older E2E assertions still encoded the previous fixed viewport behaviour.
 
-## Changes in this branch
-- Added a final, high-specificity CSS scroll contract at the end of the inline stylesheet in `www/index.html`.
-- For both Free and Health it restores natural document/body height and vertical overflow, lets the main/app/chat section grow naturally, keeps the desktop history sidebar visible, and makes the transcript its own bounded `overflow-y:auto` scroll container.
-- The composer, attachment list, file toolbar and voice toolbar remain in normal page flow and are reachable by scrolling the page.
-- The mobile history panel remains a drawer, with page scrolling still enabled and the transcript separately scrollable.
-- Existing unrelated modules and the SVG/WebGL DNA implementation are not changed.
+## Merged implementation — PR #61
+- `www/index.html`: natural document flow and vertical scrolling for Free and Health; bounded transcript with independent `overflow-y:auto`; desktop sidebar retained; mobile drawer retained; composer and attachments remain in normal page flow.
+- `tests/e2e/homepage.spec.cjs`: desktop and mobile regression tests verify both scroll ranges, independent scroll positions and composer reachability; obsolete fixed-shell assertions corrected.
+- Conversation archive: `docs/CHAT-ARCHIVE-2026-11-07-DOUBLE-SCROLLBAR.md`.
 
-## New regression coverage
-- Desktop: enter the actual Free and Health modes via `selectModule`; assert a real document scroll range, transcript overflow, visible desktop sidebar, and prove that moving the document does not move the transcript and moving the transcript does not move the document.
-- Mobile: enter actual Free and Health modes; assert document and transcript both scroll and the history drawer opens.
+## Final verification
+- Run #615: 127 passed / 5 failed; discovered legacy assumptions and CSS specificity conflict.
+- Run #619: 129 passed / 3 failed; discovered remaining fixed-viewport assumptions and strict body overflow expectation.
+- Final run #622 / ID `42373164712`, tested commit `2f5b70371c58966f3e05d6768e3afa42f158e7d7`: **132 passed, 0 failed**.
+- PR #61 merged to main. Merge commit: `dbbc241700d5fba413d5d2658f85e638800147e5`.
 
-## Verification and release gate
-- Source and regression test changes committed on this branch.
-- Pull request and GitHub Actions browser tests are the next gate.
-- Do not merge or claim fixed until the new tests pass.
-- After merge, verify production deployment and run production smoke checks. Founder must then test actual scrolling in their browser, including the far-right page scrollbar, the chat's internal scrollbar, sidebar and attachment composer.
-- Do not resume other module development until the user confirms the scroll behavior is corrected.
+## Deployment gate
+The merge triggers the main deploy workflow. Workflow order: static/browser validation, Supabase migration application and rate-limit diagnostic, Cloudflare Worker deploy, production smoke test and SBOM upload. Current workflow needs GitHub Actions secrets `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_URL`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`. A prior deploy run failed at missing Supabase credentials; verify the current run and do not bypass migrations. No production deployment is claimed until the latest run is green end-to-end.
 
-## Conversation preservation
-This file captures the user's explicit requirement and the technical decision from this chat. It is a durable engineering checkpoint, not a verbatim transcript export. The original chat remains in ChatGPT history.
+## Acceptance checks after deployment
+Founder should test the actual site:
+- far-right page scrollbar reaches composer and attachments;
+- transcript scrollbar moves messages without moving the page;
+- page scrollbar moves the page without moving transcript;
+- desktop sidebar visible;
+- mobile history drawer opens;
+- composer/attachment/Send remain reachable.
 
-
-## First CI run — findings and corrective follow-up
-- Workflow run #615, ID `42372651549`, on code commit `e4b91050b8c4d5d91eb0e08d91717662bc5987d9`: **127 passed, 5 failed**.
-- Static JavaScript/Worker/migration checks, Chromium installation and server startup passed.
-- Three legacy tests still asserted that Free's page overflow must be `hidden`; these expectations contradicted the founder's new explicit requirement and have been updated to assert page-level scrolling.
-- The new desktop test exposed a specificity collision: an older `body.free-module-mode #chatSection .chat-main #freeChatView>#chat` rule set `max-height:none!important`, defeating the initial transcript cap. Added a higher-specificity final rule that explicitly sets a bounded transcript height and its own vertical overflow.
-- The final desktop/mobile independent-scroll tests remain in the suite. No merge or production deployment has occurred.
-- Corrective code/test commits after the first CI attempt:
-  - `7aa1961722e55e9a0f0b03d6506201f33ed41030` — enforce bounded transcript height against legacy workspace rules.
-  - `fdd95c90658b3b95f5a4bef8813ef175288b71b5` — update legacy regression expectations to the new independent page-scroll contract.
-- A fresh browser workflow for the updated PR head is required. Do not merge until the complete suite passes.
+## Work sequencing
+Do not resume unrelated feature development until the production deployment is verified and the founder confirms the scrolling experience. Then continue the integrated six-module platform and the real 3D DNA/WebGL polish. Preserve all changes and update this checkpoint and the chat archive at each meaningful stage.
