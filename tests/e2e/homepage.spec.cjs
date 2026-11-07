@@ -3140,3 +3140,31 @@ test("shared navigation and presentation controls localize across all supported 
     await expect(page.locator("#headerChatCta")).toContainText(headerLabel);
   }
 });
+
+
+test("Dr.Vas Free navigation and Health workspace localize in all supported languages", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => { checkSession = () => {}; });
+
+  const cases = [
+    ["en", "Images", "New chat", "GENERAL INFORMATION", "Informational support, not a diagnosis.", "Understanding a medical test result", "Understand the terms and explanations", "Chat with Dr.Vas Health"],
+    ["it", "Immagini", "Nuova chat", "INFORMAZIONI GENERALI", "Un supporto informativo, non una diagnosi.", "Spiegazione di un risultato medico", "Comprendere i termini e le spiegazioni", "Chatta con Dr.Vas Health"],
+    ["tr", "Görseller", "Yeni sohbet", "GENEL BİLGİLER", "Bilgilendirici destek; teşhis değildir.", "Tıbbi test sonucunu açıklama", "Terimleri ve açıklamaları anlamak", "Dr.Vas Health ile sohbet et"],
+    ["de", "Bilder", "Neuer Chat", "ALLGEMEINE INFORMATIONEN", "Informative Unterstützung, keine Diagnose.", "Einen medizinischen Befund erklären", "Begriffe und Erklärungen verstehen", "Mit Dr.Vas Health chatten"],
+    ["fr", "Images", "Nouvelle discussion", "INFORMATIONS GÉNÉRALES", "Un soutien informatif, pas un diagnostic.", "Comprendre un résultat médical", "Comprendre les termes et les explications", "Discuter avec Dr.Vas Health"],
+    ["es", "Imágenes", "Nuevo chat", "INFORMACIÓN GENERAL", "Apoyo informativo, no un diagnóstico.", "Explicar un resultado médico", "Entender los términos y las explicaciones", "Chatear con Dr.Vas Health"],
+    ["ru", "Изображения", "Новый чат", "ОБЩАЯ ИНФОРМАЦИЯ", "Информационная помощь, а не диагноз.", "Объяснение результата медицинского анализа", "Понять термины и объяснения", "Обсудить с Dr.Vas Health"]
+  ];
+
+  for (const [language, images, newChat, healthTag, disclaimer, topic, goal, action] of cases) {
+    await page.evaluate(code => chooseLanguage(code), language);
+    await expect(page.locator('[data-free-nav="images"]')).toContainText(images);
+    await expect(page.locator('[data-free-nav="chat"]')).toContainText(newChat);
+    await expect(page.locator("#healthWorkspace .studio-workspace-head .tag")).toHaveText(/.*/);
+    await expect(page.locator("#healthWorkspace .studio-workspace-head .tag")).toContainText(healthTag);
+    await expect(page.locator("#healthWorkspace .studio-production-standard strong")).toHaveText(disclaimer);
+    await expect(page.locator("#healthTopic option").first()).toHaveText(topic);
+    await expect(page.locator("#healthGoal option").first()).toHaveText(goal);
+    await expect(page.locator("#healthWorkspace button").first()).toContainText(action);
+  }
+});
