@@ -43,3 +43,24 @@ body.shared-chat-sidebar-mode.module-workspace-mode #chatSection .chat-main #fre
 body.module-workspace-mode #globalBackToModules{display:inline-flex!important}
 #globalBackToModules:hover{background:#174455;border-color:#55cfc5}
 @media(max-width:600px){#globalBackToModules{padding:6px 8px;font-size:10px}}
+
+/* Dedicated creative and income stations inside the Studio feature navigator. */
+.studio-station-card{padding:16px;border:1px solid #315c70;border-radius:14px;background:linear-gradient(145deg,#0b2535,#091827)}
+.studio-station-card h4{margin:0 0 6px;color:#e6fffb;font-size:17px}
+.studio-station-card>p{margin:0 0 14px;color:#a8c3cf;font-size:12px;line-height:1.6}
+.studio-station-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.studio-station-grid label{display:flex;flex-direction:column;gap:6px;color:#c6dbe4;font-size:12px;font-weight:650;min-width:0}
+.studio-station-grid input,.studio-station-grid select,.studio-station-grid textarea{width:100%;min-width:0;padding:11px;border:1px solid #35576d;border-radius:9px;background:#071827;color:#f0f8fa;font:inherit;font-weight:400}
+.studio-station-grid textarea{resize:vertical;line-height:1.55}
+.studio-station-grid label:has(textarea){grid-column:1/-1}
+.studio-station-submit{margin-top:14px;min-height:44px;padding:11px 16px;border:1px solid #55d6cb;border-radius:10px;background:#14535b;color:#f0fffd;font-weight:750;cursor:pointer}
+.studio-station-submit:hover{background:#1b6870}
+.studio-station-status{margin:10px 0 0;color:#9fe5ce;font-size:12px;line-height:1.55}
+.drvas-module-voice-access{margin:14px 0 20px;padding:16px;border:1px solid #34727b;border-radius:15px;background:linear-gradient(145deg,#0b2635,#0a1826);box-shadow:0 8px 26px #02091555}
+.drvas-module-voice-access h3{margin:0 0 6px;color:#e6fffb;font-size:16px}
+.drvas-module-voice-access>p{margin:0 0 10px;color:#a8c3cf;font-size:12px;line-height:1.6}
+.drvas-module-voice-access .voice-toolbar{display:flex;max-height:none;overflow:visible;gap:9px;margin:8px 0 0;padding:0}
+.drvas-module-voice-access .voice-toolbar button{min-height:42px}
+.drvas-module-voice-access .voice-toolbar #voiceStatus{flex-basis:100%;padding-top:4px}
+.drvas-module-voice-access .voice-privacy{font-size:11px;line-height:1.5}
+@media(max-width:650px){.studio-station-grid{grid-template-columns:minmax(0,1fr)}}
