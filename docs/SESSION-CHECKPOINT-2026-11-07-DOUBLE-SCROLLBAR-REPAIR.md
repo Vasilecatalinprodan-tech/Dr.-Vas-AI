@@ -220,3 +220,14 @@ User's latest instruction: “salveaza tot inclusiv chatul si continua”. Follo
 - PR #69 closed as superseded due dirty merge state after the squash merge and a test selector issue. Phase-2 changes were carried forward to replacement PR #71.
 - PR #71 branch feat/localize-free-health-phase2-rebased-2026-11-07; head b9f775728ff1de4bb166b211569fff90bb60da6f; E2E run 42408117217 in progress.
 - Continue only after PR #71 latest E2E passes; then merge and verify production deployment. Full localization is still incomplete.
+
+
+## Session checkpoint — 2026-11-07, Studio phase 3 merged
+
+- PR #72 E2E run 42408952472: SUCCESS, 137 passed (1.6m).
+- PR #72 merged as 5326a9c817e1008e99276e83e7ab4b09bff5620c.
+- Main deploy 42409211625 and main browser regression 42409211689 were queued at checkpoint; verify before calling Studio production-live.
+- Studio core UI and main creative brief controls now have seven-language mappings. Deeper Studio income/social/dynamic content remains.
+- Academy and Commerce next; Business after them. Full localization is still incomplete.
+- PR #73 docs archive was superseded due to a stale base after main advanced; archive is being reissued from current main.
+- Latest user message: “ok hai sa continuam si tot asa salvam tot”.

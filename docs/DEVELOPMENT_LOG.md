@@ -915,3 +915,14 @@ User's request (verbatim):
 - Original stacked PR #69 had a dirty merge state after PR #68 was squash-merged and its latest E2E identified an overly broad test selector (the first Health workspace button is a feature-navigation control, not the primary Health action). PR #69 was closed as superseded, not discarded.
 - Replacement PR #71 is based directly on the new main commit and carries the phase-2 Free/Health localization code and tests. Branch feat/localize-free-health-phase2-rebased-2026-11-07; head b9f775728ff1de4bb166b211569fff90bb60da6f; latest E2E run 42408117217 in progress at checkpoint. Its Health action test now targets the button with onclick window.buildHealthPrompt().
 - PR #70 remains the archive PR for this session; its branch documentation is being updated to reflect the PR #69 → #71 replacement.
+
+
+## 2026-11-07 — Studio phase 3 merged; production verification pending
+
+- PR #72 Studio core localization passed the corrected browser regression run 42408952472: 137 passed (1.6m).
+- PR #72 was squash-merged into main as 5326a9c817e1008e99276e83e7ab4b09bff5620c.
+- Main post-merge deploy workflow 42409211625 and browser regression workflow 42409211689 were queued at this checkpoint. Confirm both before claiming Studio phase 3 is live.
+- Studio phase 3 translates the core production workspace, production/VPC standard, render panel, scene timeline, deliverable/platform/style/audience/duration/aspect options across EN/IT/TR/DE/FR/ES/RU. It does not complete the income tracker, social integrations, every dynamic status/error, or all long-form Studio copy.
+- PR #73 archive branch was created before the PR #70 docs merge and became dirty after main advanced. The archive work is being carried onto a new branch based on the current main commit; no application code was affected.
+- Next localization stage: Academy and Commerce, then Business and remaining Studio dynamic copy. Keep APK last. Full localization remains incomplete.
+- Latest user instruction: “ok hai sa continuam si tot asa salvam tot”.
