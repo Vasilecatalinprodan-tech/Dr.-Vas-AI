@@ -33,3 +33,21 @@ The founder asked for the following before continuing broader platform work:
 4. Test Sarah in Romanian, English, Italian, Turkish, German, French, Spanish and Russian on actual devices with native-language feminine voices installed. Verify the dedicated Worker voice only if the owner's server-side secret is configured.
 5. Test speaking animation for all three presenters in the landing presentation and Live voice stage.
 6. Merge only after green checks; then verify Worker deploy and production smoke tests. Do not claim completion before those checks pass.
+
+
+## Verified integration and production checkpoint — 7 November 2026, 10:18 UTC
+
+- PR #43 merged into `main`: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/43
+- Merge commit: `dd996b6e9693be1b2aed07c2c728403698747a94`
+- Final PR-head browser regression: workflow `42363106544` — **117 passed, 0 failed**.
+- Main browser regression: workflow `42363228667` — success.
+- Main production deployment: workflow `42363228726` — success, including the pre-deploy browser suite, Supabase Session Pooler migration check, Worker deployment and production smoke test.
+- The rate-limit RPC, RLS and `service_role` grants were verified successfully. Production health returned `status: online`, `worker: ok`, and `assets`, `ai`, `database`, and `studio_renderer` configured. File analysis remains intentionally disabled. The public homepage and all six module cards were verified; unauthenticated `admin_status` was rejected with HTTP 401.
+- Production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/
+- Android APK workflow `42363228686` — success. Artifact `DrVas-APK`, artifact ID `13570735813`, expires 5 February 2027. Download: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42363228686/artifacts/13570735813
+- APK compilation succeeded, but no physical Samsung/Android device installation or audio playback test has been performed in this workflow.
+- The deployed Sarah browser voice policy now selects only a feminine voice whose native locale matches the chosen language, preferring Romanian Alina where available. A studio-quality Sarah voice still depends on the configured dedicated Worker provider voice and actual audio testing; do not claim this is confirmed from browser tests alone.
+- Presenter portrait movement and speaking halo are deployed. They are visible reactions, not phoneme-accurate lip-sync or a fully rigged 3D face.
+- The left/right DNA visuals, module workspace scrollbar, Sarah voice-selection policy and presenter motion are deployed on the production Worker. The DNA remains an enhanced SVG/CSS scientific render rather than a photorealistic 3D asset; inspect the page visually on desktop and mobile with the founder before treating the art direction as finally approved.
+
+The ChatGPT conversation itself remains in ChatGPT history. This repository checkpoint records the technical implementation and verified deployment state, not a verbatim export of the private conversation.
