@@ -221,3 +221,18 @@ Localization audit finding:
 - Full localization remains unfinished. Next implementation should proceed in testable phases: shared navigation/language/auth controls; Dr.Vas Free and Health; then Studio, Academy, Commerce and Business. Existing chat history must remain in its original language.
 
 This file is a structured project/chat archive, not a literal export of the complete ChatGPT UI transcript.
+
+## Continuation — localization phases 1–2 (2026-11-07)
+
+Exact latest user instruction: “ok hai sa continuam si tot asa salvam tot”.
+
+Archive update:
+- PR #67 production-verification/localization-audit documentation was merged into main as 09b18c44e02935856ff5ee8e828bb38ed48d53a0 after browser regression run 42406814599 passed.
+- PR #68 (shared navigation/language/presentation controls in seven languages) is open. Branch: feat/localize-shared-controls-phase1-2026-11-07; current head ad9dd93049950fbe2ae189813ca51d461e2207e7; latest browser run 42407769955 was in progress at the time of this note.
+- PR #69 (Dr.Vas Free navigation and Health public information workspace in seven languages) is open and stacked on PR #68. Branch: feat/localize-free-health-phase2-2026-11-07; current head e12148e052be0ac8e200ac7510cbe254b862fb69; latest browser run 42407777860 was in progress at the time of this note.
+- The new translations include shared nav/presentation controls, Free sidebar labels, assistant switcher, Health safety disclaimer, labels, select options, primary action and privacy placeholder/accessibility text. Prior chat messages remain in their original language.
+- Several earlier test attempts failed only because assertions expected different but valid rendered wording or selected the wrong Health badge element. Corrections are committed to the latest branch heads. Do not treat the earlier failed runs as passing; use the latest run IDs above.
+- Static inventory: 791 distinct body text-node strings; accumulated UI dictionary scan approximately 191 EN, 191 IT, 220 TR, and 180 DE/FR/ES/RU keys. This is an approximate inventory, not full coverage.
+- Merge order: PR #68 first, then PR #69, only after the latest E2E checks pass; then confirm main deployment and smoke test. Continue with Studio, Academy, Commerce and Business localization.
+
+This archive preserves project decisions and exact user instructions; it is a structured archive, not a literal export of the complete ChatGPT UI transcript.
