@@ -3272,3 +3272,64 @@ test("Business workspace localizes its plan, cashbook, cashflow, break-even and 
     await expect(page.locator("#businessLedgerStatus")).toHaveText(ledgerStatus);
   }
 });
+
+test("all module feature-navigation labels, headings and descriptions localize in every supported language", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    checkSession = () => {};
+    currentUser = { id: "e2e-feature-navigation-i18n", email: "admin@example.invalid" };
+    isDrvasAdmin = true;
+    for (const moduleName of ["health", "studio", "academy", "commerce", "business"]) {
+      selectModule(moduleName, true);
+    }
+  });
+
+  for (const moduleName of ["health", "studio", "academy", "commerce", "business"]) {
+    await expect(page.locator(`#${moduleName}Workspace .drvas-feature-navigation`)).toBeVisible();
+    await expect(page.locator(`#${moduleName}Workspace .drvas-feature-page-heading`).first()).toBeVisible();
+  }
+
+  const languages = ["en", "it", "tr", "de", "fr", "es", "ru"];
+  const unchangedRomanianWithoutDiacritics = [
+    "Plan de afaceri",
+    "Contabilitate / registru",
+    "Raport Cashflow",
+    "Prag de rentabilitate",
+    "Calculator Business",
+    "Proiectele mele",
+    "Proiecte Studio",
+    "Scrie serial / scenariu",
+    "Venituri online & produse",
+    "Cursurile mele",
+    "Constructor de cursuri",
+    "Scrie lecțiile",
+    "Atelier de lecții",
+    "Traseu de învățare",
+    "Proiectele mele Academy",
+    "Cercetează produsul",
+    "Compară furnizorii",
+    "Verificarea furnizorilor",
+    "Plan de lansare magazin",
+    "Calculează prețul și marja",
+    "Calculator de preț și profitabilitate",
+    "Analizele mele",
+    "Proiecte Commerce salvate"
+  ];
+
+  for (const language of languages) {
+    await page.evaluate(code => chooseLanguage(code), language);
+    const copy = await page.evaluate(() => {
+      const roots = ["health", "studio", "academy", "commerce", "business"]
+        .map(name => document.getElementById(name + "Workspace"))
+        .filter(Boolean);
+      return roots.flatMap(root => [
+        ...root.querySelectorAll(".drvas-feature-navigation button"),
+        ...root.querySelectorAll(".drvas-feature-page-heading h3, .drvas-feature-page-heading p")
+      ]).map(node => node.textContent.trim()).filter(Boolean);
+    });
+    const untranslatedRomanian = copy.filter(value => /[ăâîșțĂÂÎȘȚ]/.test(value));
+    expect(untranslatedRomanian, `Romanian navigation copy remains in ${language}: ${untranslatedRomanian.join(" | ")}`).toEqual([]);
+    const unchangedLabels = copy.filter(value => unchangedRomanianWithoutDiacritics.includes(value));
+    expect(unchangedLabels, `Romanian labels remain in ${language}: ${unchangedLabels.join(" | ")}`).toEqual([]);
+  }
+});
