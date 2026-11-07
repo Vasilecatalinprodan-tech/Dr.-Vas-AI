@@ -889,7 +889,7 @@ body.presentation-open{overflow:hidden!important}
 .dna-helix-right .dna-strand-a{stroke:url(#dnaStrandA-right);color:#5ce4d8}
 .dna-helix-right .dna-strand-b{stroke:url(#dnaStrandB-right);color:#8e9cff;animation-delay:-1.4s}
 .dna-rungs{fill:none;stroke:#e5fff9;stroke-width:3.2;stroke-linecap:round;opacity:.88;filter:drop-shadow(0 1px 2px #020817) drop-shadow(0 0 5px #8df8e7);animation:dnaRungPulse 2.2s ease-in-out infinite alternate}
-@keyframes dnaHelixTurn{0%{transform:rotateY(0deg) rotateZ(-2deg)}50%{transform:rotateY(180deg) rotateZ(2deg)}100%{transform:rotateY(360deg) rotateZ(-2deg)}}
+@keyframes dnaHelixTurn{0%{transform:rotateY(-10deg) rotateZ(-2deg) scaleY(1)}50%{transform:rotateY(170deg) rotateZ(2deg) scaleY(1.015)}100%{transform:rotateY(350deg) rotateZ(-2deg) scaleY(1)}}
 @keyframes dnaStrandFlow{to{stroke-dashoffset:-64}}
 @keyframes dnaRungPulse{from{opacity:.3}to{opacity:1}}
 @media(max-width:700px){.dna-helix-visual{width:clamp(54px,13vw,82px);opacity:.48}.dna-helix-left{left:0}.dna-helix-right{right:0}.hero-content{max-width:100%;padding-left:64px;padding-right:64px}}
@@ -1048,17 +1048,18 @@ body.module-workspace-mode:not(.free-module-mode){overflow-y:scroll;scrollbar-gu
 
 
 /* Scientific double helix: shaded molecular rails, reflective tube edges and spherical base-pair joints. */
-.dna-helix-visual{width:clamp(142px,16vw,220px);opacity:1;filter:drop-shadow(0 12px 24px #020711dd) drop-shadow(0 0 22px #55e6db66)}
-.dna-helix-visual svg{transform:rotateY(-18deg) rotateZ(-1deg);transform-style:preserve-3d;filter:contrast(1.2) saturate(1.32)}
-.dna-helix-core{transform-origin:90px 320px;transform-box:fill-box;transform-style:preserve-3d;animation:dnaHelixTurn 18s ease-in-out infinite}
-.dna-strand-shadow{fill:none;stroke:#020b18;stroke-width:22;stroke-linecap:round;opacity:.9;filter:blur(3px)}
-.dna-strand{fill:none;stroke-width:14;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 2px 2px #020817) drop-shadow(0 0 8px currentColor)}
+.dna-helix-visual{width:clamp(150px,17vw,238px);opacity:1;filter:drop-shadow(0 16px 28px #020711ee) drop-shadow(0 0 28px #55e6db88)}
+.dna-helix-visual:after{content:"";position:absolute;inset:4% 14%;border-radius:50%;background:radial-gradient(ellipse at 50% 50%,#9bfff51c 0%,#6c8cff12 36%,transparent 72%);filter:blur(18px);pointer-events:none}
+.dna-helix-visual svg{transform:perspective(850px) rotateY(-24deg) rotateX(3deg) rotateZ(-1deg);transform-style:preserve-3d;filter:contrast(1.24) saturate(1.38)}
+.dna-helix-core{transform-origin:90px 320px;transform-box:fill-box;transform-style:preserve-3d;animation:dnaHelixTurn 22s linear infinite}
+.dna-strand-shadow{fill:none;stroke:#020b18;stroke-width:27;stroke-linecap:round;opacity:.96;filter:blur(4px)}
+.dna-strand{fill:none;stroke-width:16;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 3px 3px #020817) drop-shadow(0 0 10px currentColor)}
 .dna-helix-left .dna-strand-a,.dna-helix-right .dna-strand-a{stroke:url(#dnaRailA-left)}
 .dna-helix-left .dna-strand-b,.dna-helix-right .dna-strand-b{stroke:url(#dnaRailB-left)}
 .dna-strand-highlight{fill:none;stroke:#f4fffc;stroke-width:2.5;stroke-linecap:round;opacity:.72;stroke-dasharray:34 42;filter:drop-shadow(0 0 5px #dfffff);animation:dnaStrandFlow 7s linear infinite}
-.dna-rungs{fill:none;stroke-width:5;stroke-linecap:round;opacity:.96;filter:drop-shadow(0 2px 3px #061323) drop-shadow(0 0 5px #8df8e7)}
-.dna-base-pair{stroke:inherit;stroke-width:5;stroke-linecap:round}
-.dna-base-pair-bead{fill:#8ff6e7;stroke:#eaffff;stroke-width:1.3;filter:drop-shadow(0 0 4px #6ee8df)}
+.dna-rungs{fill:none;stroke-width:6;stroke-linecap:round;opacity:.98;filter:drop-shadow(0 3px 4px #061323) drop-shadow(0 0 7px #8df8e7)}
+.dna-base-pair{stroke:inherit;stroke-width:6;stroke-linecap:round;filter:drop-shadow(0 1px 2px #071322)}
+.dna-base-pair-bead{fill:#8ff6e7;stroke:#eaffff;stroke-width:1.5;filter:drop-shadow(0 0 5px #6ee8df)}
 .dna-helix-right svg{transform:rotateY(18deg) rotateZ(1deg) scaleX(-1)}
 @media(max-width:700px){.dna-helix-visual{width:clamp(68px,16vw,96px);opacity:.88}.dna-helix-left{left:0}.dna-helix-right{right:0}.hero-content{padding-left:76px;padding-right:76px}}
 @media(prefers-reduced-motion:reduce){.dna-helix-core,.dna-strand,.dna-strand-highlight{animation:none!important}}
@@ -1148,7 +1149,7 @@ body.module-workspace-mode:not(.free-module-mode){overflow-y:scroll;scrollbar-gu
 </section>
 
 <section id="drvasPresentation" class="drvas-presentation hidden" role="dialog" aria-modal="true" aria-labelledby="drvasPresentationTitle" aria-describedby="presentationSpeakingCopy">
-    <div class="drvas-presentation-head"><div><span class="tag" id="drvasPresentationEyebrow">O SINGURĂ PLATFORMĂ · ȘASE MODULE</span><h2 id="drvasPresentationTitle">Prezentarea Dr.Vas</h2><p id="drvasPresentationIntro">Un ecosistem AI integrat, conceput pentru a sprijini oamenii, ideile și afacerile într-un singur loc.</p></div><button type="button" class="presentation-close-button" id="presentationCloseButton" onclick="finishDrvasPresentation()" aria-label="Închide prezentarea">✕</button></div>
+    <div class="drvas-presentation-head"><div><span class="tag" id="drvasPresentationEyebrow">O SINGURĂ PLATFORMĂ · ȘASE MODULE</span><h2 id="drvasPresentationTitle">Prezentarea Dr.Vas</h2><p id="drvasPresentationIntro">Un ecosistem AI integrat, conceput pentru a sprijini oamenii, ideile și afacerile într-un singur loc.</p></div><button type="button" class="presentation-close-button" id="presentationCloseButton" onclick="closeDrvasPresentation()" aria-label="Închide prezentarea">✕</button></div>
     <div class="presentation-progress" aria-label="Progresul prezentării"><span id="presentationStepLabel">1 / 3</span><div class="presentation-progress-track"><span id="presentationProgressBar"></span></div></div>
     <div class="presentation-scene" id="presentationScene">
      <div class="presentation-presenter" id="presentationPresenter">
@@ -2293,7 +2294,8 @@ function getDrvasPresentationVoiceProfile(voices,locale){
  // never silently inherit a masculine/default voice.
  const pool=local.length?local:voices;
  const voice=pool.find(v=>v.default)||pool[0]||null;
- const femaleVoices=local.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
+ const localFemale=local.filter(isFemaleSpeechVoice);
+  const femaleVoices=(localFemale.length?localFemale:voices.filter(isFemaleSpeechVoice)).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
  // Sarah uses a feminine voice native to the selected language. If none is
  // installed, report it instead of speaking with a foreign-language accent.
  const sarah=femaleVoices[0]||null;
@@ -2343,8 +2345,9 @@ async function speakDrvasPresentation(){
   if(run!==drvasPresentationRun)return;
   if(drvasPresentationIndex>=drvasPresentationQueue.length){
    const status=el("presentationAudioStatus");
-   if(status)status.textContent=voiceProfile.sarah?data.speaking:"Vocea feminină Sarah nu este disponibilă pe acest dispozitiv. Verifică vocile text-to-speech ale sistemului.";
-   window.setTimeout(()=>{if(run===drvasPresentationRun)finishDrvasPresentation()},900);return;
+   if(status)status.textContent=voiceProfile.sarah?"Prezentarea s-a încheiat. Apasă «Continuă la conectare» când ești pregătit.":"Sarah nu are o voce feminină disponibilă pe acest dispozitiv. Prezentarea a rămas deschisă; poți instala o voce feminină sau continua manual.";
+   el("presentationContinueButton")?.classList.remove("hidden");
+   return;
   }
   const index=drvasPresentationIndex,key=["drvas","jan","sarah"][index],speaker=DRVAS_PRESENTERS[key];
   updateDrvasPresentationScene(index);
@@ -2973,7 +2976,8 @@ function chooseSpeechVoice(lang,assistantId=activeAssistant){
  if(assistantId==="aurora"){
   // Sarah must use a feminine voice native to the selected language.
   // A foreign-language voice distorts Romanian and other local pronunciation.
-  const femaleVoices=matching.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
+  const localFemale=matching.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
+  const femaleVoices=localFemale.length?localFemale:voices.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
   if(selected){const chosen=femaleVoices.find(v=>v.voiceURI===selected);if(chosen)return chosen;}
   return femaleVoices[0]||null;
  }
