@@ -84,13 +84,17 @@ jobs:
           if (migration < 0 || healthCheck < migration || deploy < healthCheck) {
             throw new Error('Supabase migrations and Health rate-limit verification must both pass before Cloudflare Worker deployment.');
           }
-          if (!android.includes('workflow_dispatch:') || /^  push:/m.test(android)) {
-            throw new Error('Android APK builds must remain manual until the founder explicitly moves to the final APK stage.');
+          const androidPush = android.match(/^  push:\\n([\\s\\S]*?)(?=^\\S|$)/m)?.[1] || '';
+          if (!android.includes('workflow_dispatch:') || !androidPush.includes('branches: [main]') || !androidPush.includes('paths:')) {
+            throw new Error('Android APK workflow must retain manual dispatch and restrict automatic builds to filtered pushes on main.');
+          }
+          for (const path of ["'www/**'", "'android/**'", "'capacitor.config.json'", "'package.json'", "'package-lock.json'"]) {
+            if (!androidPush.includes(path)) throw new Error('Android APK automatic build path filter is missing: ' + path);
           }
           if (!android.includes('node --check www/module-workspaces.js') || !android.includes('./gradlew assembleDebug') || !android.includes('name: DrVas-APK')) {
             throw new Error('Final Android APK workflow must validate module workspaces and upload the APK artifact.');
           }
-          console.log('Verified: migrations and Health rate-limit RPC checks gate Worker deployment; APK builds are manual-only until final release.');
+          console.log('Verified: migrations and Health rate-limit RPC checks gate Worker deployment; Android builds retain manual dispatch and use main-only path filters.');
           NODE
 
       - name: Install browser test runner
