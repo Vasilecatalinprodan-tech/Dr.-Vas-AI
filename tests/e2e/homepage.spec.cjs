@@ -2745,3 +2745,32 @@ test("Studio exposes dedicated Book, Translation, Crypto and Online Income works
   await expect(page.locator("#founderDigitalTitle")).toHaveCount(1);
   await expect(page.locator("#founderBookTitle")).toHaveCount(1);
 });
+
+
+test("voice replies remain replayable when auto-read is off and replay with their original assistant voice", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(async () => {
+    currentUser = { id: "e2e-voice-replay-owner" };
+    voiceAutoRead = false;
+    activeAssistant = "jan";
+    await speakDrVas("Acesta este răspunsul scris de Dr.Jan.");
+    const storedText = lastSpokenAnswer;
+    const storedSpeaker = lastSpokenAssistant;
+    window.__replaySpeaker = "";
+    window.playAssistantVoice = async (_text, _force, speaker) => {
+      window.__replaySpeaker = speaker;
+      return true;
+    };
+    activeAssistant = "aurora";
+    replayLastAnswer();
+    voiceAutoRead = false;
+    currentUser = { id: "e2e-voice-preference-owner" };
+    toggleVoiceOutput();
+    const preference = localStorage.getItem("drvas_voice_auto_read_e2e-voice-preference-owner");
+    return { storedText, storedSpeaker, replaySpeaker: window.__replaySpeaker, preference };
+  });
+  expect(result.storedText).toContain("Dr.Jan");
+  expect(result.storedSpeaker).toBe("jan");
+  expect(result.replaySpeaker).toBe("jan");
+  expect(result.preference).toBe("true");
+});
