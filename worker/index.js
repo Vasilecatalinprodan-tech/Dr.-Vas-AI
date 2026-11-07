@@ -1699,6 +1699,9 @@ export default {
       const conversationId = body.conversation_id || null;
       const moduleName = body.module || "free";
       const featureKey = body.feature_key || null;
+      if (body.feature_key !== undefined && body.feature_key !== null && typeof body.feature_key !== "string") {
+        return json({ error: "Spațiu de lucru invalid." }, 400);
+      }
       const assistantId = typeof body.assistant === "string" ? body.assistant : "drvas";
       const requestedLanguage = typeof body.language === "string" ? body.language : "";
 
