@@ -3272,3 +3272,70 @@ test("Business workspace localizes its plan, cashbook, cashflow, break-even and 
     await expect(page.locator("#businessLedgerStatus")).toHaveText(ledgerStatus);
   }
 });
+
+test("all module feature-navigation labels, headings and descriptions localize in every supported language", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    checkSession = () => {};
+    currentUser = { id: "e2e-feature-navigation-i18n", email: "admin@example.invalid" };
+    isDrvasAdmin = true;
+  });
+  for (const moduleName of ["health", "studio", "academy", "commerce", "business"]) {
+    await page.evaluate(name => selectModule(name, true), moduleName);
+  }
+
+  for (const moduleName of ["health", "studio", "academy", "commerce", "business"]) {
+    await expect(page.locator(`#${moduleName}Workspace .drvas-feature-navigation`)).toHaveCount(1);
+    await expect(page.locator(`#${moduleName}Workspace .drvas-feature-page-heading`).first()).toHaveCount(1);
+  }
+
+  const languages = ["en", "it", "tr", "de", "fr", "es", "ru"];
+  const unchangedRomanianWithoutDiacritics = [
+    "Plan de afaceri",
+    "Contabilitate / registru",
+    "Raport Cashflow",
+    "Prag de rentabilitate",
+    "Calculator Business",
+    "Proiectele mele",
+    "Proiecte Studio",
+    "Scrie serial / scenariu",
+    "Venituri online & produse",
+    "Cursurile mele",
+    "Constructor de cursuri",
+    "Scrie lecțiile",
+    "Atelier de lecții",
+    "Traseu de învățare",
+    "Proiectele mele Academy",
+    "Cercetează produsul",
+    "Compară furnizorii",
+    "Verificarea furnizorilor",
+    "Plan de lansare magazin",
+    "Calculează prețul și marja",
+    "Calculator de preț și profitabilitate",
+    "Analizele mele",
+    "Proiecte Commerce salvate",
+    "Lucrează separat la episoade, personaje, dialog și continuitatea poveștii.",
+    "Acces rapid la atelierul privat de cărți, produse digitale, publicare, muzică și evaluare AI.",
+    "Analiză, compatibilitate, rentabilitate și registru de dispozitive. Minarea reală rămâne dezactivată până la instalarea și autorizarea agentului local securizat.",
+    "Organizează conținutul și verifică starea integrărilor oficiale.",
+    "Calculator de preț și profitabilitate"
+  ];
+
+  for (const language of languages) {
+    await page.evaluate(code => chooseLanguage(code), language);
+    const copy = await page.evaluate(() => {
+      const roots = ["health", "studio", "academy", "commerce", "business"]
+        .map(name => document.getElementById(name + "Workspace"))
+        .filter(Boolean);
+      return roots.flatMap(root => [
+        ...root.querySelectorAll(".drvas-feature-navigation button"),
+        ...root.querySelectorAll(".drvas-feature-page-heading h3, .drvas-feature-page-heading p")
+      ]).map(node => node.textContent.trim()).filter(Boolean);
+    });
+    // Check exact Romanian source strings rather than Romanian diacritics:
+    // Turkish legitimately uses â/î/ş/ç/ğ/ü, so a character-based heuristic
+    // incorrectly rejects valid Turkish translations.
+    const unchangedRomanianCopy = copy.filter(value => unchangedRomanianWithoutDiacritics.includes(value));
+    expect(unchangedRomanianCopy, `Romanian navigation copy remains in ${language}: ${unchangedRomanianCopy.join(" | ")}`).toEqual([]);
+  }
+});
