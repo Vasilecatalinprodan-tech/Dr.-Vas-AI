@@ -1197,6 +1197,209 @@ body.health-module-mode.module-workspace-mode #freeChatView .voice-toolbar{
   body.health-module-mode.module-workspace-mode #freeChatView>#chat{min-height:300px!important;max-height:55vh!important}
   body.health-module-mode.module-workspace-mode #freeChatView .input-area{position:relative!important;left:auto!important;right:auto!important;bottom:auto!important}
 }
+
+/* FINAL SCROLL CONTRACT — the document and transcript are separate, real scroll containers.
+   The old fitted-shell rules above are intentionally overridden for both Free and Health. */
+html:has(body.free-module-mode),
+html:has(body.health-module-mode){
+  height:auto!important;
+  min-height:100%!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  scroll-behavior:auto;
+  scrollbar-gutter:stable;
+}
+html:has(body.free-module-mode) body,
+html:has(body.health-module-mode) body{
+  height:auto!important;
+  min-height:100vh!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior-y:auto!important;
+}
+body.free-module-mode,
+body.health-module-mode{
+  height:auto!important;
+  min-height:100vh!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+}
+body.free-module-mode header,
+body.health-module-mode header{position:relative!important}
+body.free-module-mode footer,
+body.health-module-mode footer{
+  position:relative!important;
+  inset:auto!important;
+  height:auto!important;
+  min-height:42px!important;
+  max-height:none!important;
+  margin-top:18px!important;
+}
+body.free-module-mode main,
+body.health-module-mode main{
+  display:block!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:calc(100dvh - 75px)!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:10px 12px 44px!important;
+  overflow:visible!important;
+}
+body.free-module-mode #appMain,
+body.health-module-mode #appMain{
+  height:auto!important;
+  min-height:calc(100dvh - 75px)!important;
+  overflow:visible!important;
+}
+body.free-module-mode #chatSection,
+body.health-module-mode #chatSection{
+  display:flex!important;
+  flex-direction:column!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:calc(100dvh - 150px)!important;
+  max-width:none!important;
+  margin:0!important;
+  overflow:visible!important;
+}
+body.free-module-mode #chatSection>.chat-layout,
+body.health-module-mode #chatSection>.chat-layout{
+  display:grid!important;
+  grid-template-columns:248px minmax(0,1fr)!important;
+  grid-template-rows:minmax(0,1fr)!important;
+  align-items:stretch!important;
+  gap:12px!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:calc(100dvh - 190px)!important;
+  flex:0 0 auto!important;
+  margin:0!important;
+  overflow:visible!important;
+}
+body.free-module-mode #chatSection .history-panel,
+body.health-module-mode #chatSection .history-panel{
+  display:flex!important;
+  position:relative!important;
+  inset:auto!important;
+  flex-direction:column!important;
+  align-self:stretch!important;
+  width:auto!important;
+  height:auto!important;
+  min-height:calc(100dvh - 210px)!important;
+  max-height:none!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain;
+}
+body.free-module-mode #chatSection .chat-main,
+body.health-module-mode #chatSection .chat-main{
+  display:flex!important;
+  flex-direction:column!important;
+  align-self:stretch!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:calc(100dvh - 190px)!important;
+  max-height:none!important;
+  overflow:visible!important;
+}
+body.free-module-mode #freeChatView,
+body.health-module-mode #freeChatView{
+  display:flex!important;
+  flex:1 1 auto!important;
+  flex-direction:column!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow:visible!important;
+}
+body.free-module-mode #freeChatView>#chat,
+body.health-module-mode #freeChatView>#chat{
+  display:block!important;
+  flex:0 1 auto!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:280px!important;
+  max-height:55vh!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior:contain!important;
+  scrollbar-gutter:stable;
+  -webkit-overflow-scrolling:touch;
+}
+body.free-module-mode #freeChatView .input-area,
+body.health-module-mode #freeChatView .input-area{
+  position:relative!important;
+  inset:auto!important;
+  flex:0 0 auto!important;
+  width:100%!important;
+  margin:10px 0 0!important;
+  z-index:5!important;
+}
+body.free-module-mode #freeChatView .pending-chat-files,
+body.free-module-mode #freeChatView .conversation-attachments,
+body.free-module-mode #freeChatView .chat-file-toolbar,
+body.free-module-mode #freeChatView .voice-toolbar,
+body.health-module-mode #freeChatView .pending-chat-files,
+body.health-module-mode #freeChatView .conversation-attachments,
+body.health-module-mode #freeChatView .chat-file-toolbar,
+body.health-module-mode #freeChatView .voice-toolbar{
+  flex:0 0 auto!important;
+  max-height:none!important;
+  overflow:visible!important;
+}
+body.free-module-mode #freeNavWorkspace,
+body.health-module-mode #freeNavWorkspace{
+  flex:0 0 auto!important;
+  height:auto!important;
+  min-height:0!important;
+  max-height:none!important;
+  overflow:visible!important;
+}
+@media(max-width:760px){
+  body.free-module-mode main,
+  body.health-module-mode main{padding:8px 8px 38px!important}
+  body.free-module-mode #chatSection>.chat-layout,
+  body.health-module-mode #chatSection>.chat-layout{
+    grid-template-columns:minmax(0,1fr)!important;
+    min-height:calc(100dvh - 145px)!important;
+  }
+  body.free-module-mode #chatSection .history-panel,
+  body.health-module-mode #chatSection .history-panel{
+    display:none!important;
+    position:fixed!important;
+    z-index:110!important;
+    left:8px!important;
+    top:72px!important;
+    bottom:8px!important;
+    width:min(86vw,310px)!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    overflow-y:auto!important;
+    background:#091827!important;
+    box-shadow:0 18px 55px #0009!important;
+  }
+  body.free-module-mode.history-open #chatSection .history-panel,
+  body.health-module-mode.history-open #chatSection .history-panel{display:flex!important}
+  body.free-module-mode #chatSection .chat-main,
+  body.health-module-mode #chatSection .chat-main{min-height:calc(100dvh - 145px)!important}
+  body.free-module-mode #freeChatView>#chat,
+  body.health-module-mode #freeChatView>#chat{min-height:260px!important;max-height:52vh!important}
+  body.free-module-mode #freeChatView .input-area,
+  body.health-module-mode #freeChatView .input-area{
+    position:relative!important;
+    left:auto!important;
+    right:auto!important;
+    bottom:auto!important;
+  }
+}
+@media(prefers-reduced-motion:reduce){
+  html:has(body.free-module-mode),
+  html:has(body.health-module-mode){scroll-behavior:auto!important}
+}
+
 </style>
 <link rel="stylesheet" href="/module-workspaces.css">
 </head>
