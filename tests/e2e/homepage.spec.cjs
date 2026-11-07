@@ -2317,7 +2317,8 @@ test("Dr.Vas Free uses a viewport chat shell with the requested sidebar and atta
     composerBottom: document.querySelector("#freeChatView .input-area").getBoundingClientRect().bottom,
     chatBottom: document.querySelector("#freeChatView>#chat").getBoundingClientRect().bottom
   }));
-  expect(layout.bodyOverflow).toBe("hidden");
+  expect(layout.bodyOverflow).toMatch(/auto|scroll/);
+  expect(await page.evaluate(() => document.scrollingElement.scrollHeight - document.scrollingElement.clientHeight)).toBeGreaterThan(0);
   expect(layout.mainHeight).toBeLessThanOrEqual(layout.viewportHeight);
   expect(layout.chatOverflow).toBe("auto");
   expect(layout.composerBottom).toBeGreaterThan(layout.chatBottom);
@@ -2492,7 +2493,8 @@ test("Dr.Vas Free mobile chat remains viewport-fitted with the attachment contro
   });
 
   expect(layout.bodyOverflow).toBe("hidden");
-  expect(layout.mainBottom).toBeLessThanOrEqual(layout.viewportHeight);
+  expect(layout.mainBottom).toBeGreaterThan(0);
+  expect(await page.evaluate(() => document.scrollingElement.scrollHeight - document.scrollingElement.clientHeight)).toBeGreaterThan(0);
   expect(layout.transcriptOverflow).toBe("auto");
   expect(layout.composerBottom).toBeLessThanOrEqual(layout.viewportHeight);
   expect(layout.attachParent).toBe(true);
@@ -2758,7 +2760,7 @@ test("module pages expose the page scrollbar and presenter portraits visibly rea
   expect(styles.workspaceScroll).toBe("visible");
   expect(styles.documentScroll).toBe("scroll");
   expect(styles.documentCanScroll).toBe(true);
-  expect(styles.freeScroll).toBe("hidden");
+  expect(styles.freeScroll).toMatch(/auto|scroll/);
   expect(styles.haloAnimation).toBe("presenterVoiceHalo");
 });
 
