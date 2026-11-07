@@ -2166,7 +2166,7 @@ function setDrvasPresenterPortrait(key,avatar){
   avatar.insertBefore(photo,art||avatar.firstChild);
  }
  const labels={drvas:"Dr.Vas — fotografia fondatorului",jan:"Dr.Jan — personaj AI fictiv",sarah:"Sarah — portret profesional adult"};
- photo.alt=labels[key]||"Portretul asistentului";
+ photo.setAttribute("alt",labels[key]||"Portretul asistentului");photo.dataset.presenter=key;
  photo.onload=()=>{photo.style.display="block";if(art)art.classList.add("is-hidden")};
  photo.onerror=()=>{photo.style.display="none";if(art)art.classList.remove("is-hidden")};
  const source=DRVAS_PRESENTER_PORTRAITS[key];
@@ -2243,7 +2243,7 @@ function updateDrvasPresentationScene(index){
  const key=["drvas","jan","sarah"][index],speaker=DRVAS_PRESENTERS[key],data=DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro;
  const presenter=el("presentationPresenter"),avatar=el("presentationAvatar"),grid=el("presentationModuleGrid");
  if(presenter){presenter.classList.remove("is-speaking","is-animated","scene-enter");void presenter.offsetWidth;presenter.classList.add("scene-enter");}
- if(avatar){avatar.className="presentation-avatar presentation-avatar-"+key;avatar.dataset.presenter=key;setDrvasPresenterPortrait(key,avatar);const photo=avatar.querySelector(".presentation-photo");if(photo)photo.alt=({drvas:"Dr.Vas — fotografia fondatorului",jan:"Dr.Jan — personaj AI fictiv",sarah:"Sarah — portret profesional adult"})[key]||"Portretul asistentului";}
+ if(avatar){avatar.className="presentation-avatar presentation-avatar-"+key;avatar.dataset.presenter=key;setDrvasPresenterPortrait(key,avatar);const photo=avatar.querySelector(".presentation-photo");if(photo){photo.setAttribute("alt",({drvas:"Dr.Vas — fotografia fondatorului",jan:"Dr.Jan — personaj AI fictiv",sarah:"Sarah — portret profesional adult"})[key]||"Portretul asistentului");photo.dataset.presenter=key;}}
  const set=(id,value)=>{const node=el(id);if(node)node.textContent=value};
  set("presentationSpeakerName",speaker.name);set("presentationSpeakerRole",speaker.role[currentLanguage]||speaker.role.ro);
  const moduleNames=["Dr.Vas Free","Dr.Vas Health","Dr.Vas Studio","Dr.Vas Academy","Dr.Vas Commerce","Dr.Vas Business"];
