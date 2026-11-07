@@ -2520,7 +2520,7 @@ test("Dr.Vas Health uses the same chat shell, sidebar destinations and attachmen
     transcriptOverflow: getComputedStyle(document.querySelector("#freeChatView>#chat")).overflowY
   }));
   expect(healthScroll.documentOverflow).toBe("scroll");
-  expect(healthScroll.bodyOverflow).not.toBe("hidden");
+  expect(healthScroll.bodyOverflow).toBe("visible");
   expect(healthScroll.documentHeight).toBeGreaterThan(healthScroll.viewportHeight);
   expect(healthScroll.transcriptOverflow).toBe("auto");
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
@@ -2555,7 +2555,7 @@ test("Dr.Vas Health uses the same chat shell, sidebar destinations and attachmen
     transcriptOverflow: getComputedStyle(document.querySelector("#freeChatView>#chat")).overflowY
   }));
   expect(layout.shellEnabled).toBe(true);
-  expect(layout.bodyOverflow).not.toBe("hidden");
+  expect(layout.bodyOverflow).toBe("visible");
   expect(layout.documentOverflow).toBe("scroll");
   expect(layout.transcriptOverflow).toBe("auto");
 });
