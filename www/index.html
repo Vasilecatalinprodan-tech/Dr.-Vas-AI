@@ -2973,6 +2973,9 @@ let livePlaybackNextTime = 0;
 let liveActiveSources = new Set();
 let liveUserTranscript = "";
 let liveAssistantTranscript = "";
+let liveConversationId = null;
+let liveConversationModule = null;
+let liveConversationFeatureKey = null;
 let liveTurnSaveTimer = null;
 let liveConnectTimer = null;
 
@@ -3383,12 +3386,13 @@ function queueLiveAudio(base64Data){
  }catch(error){console.warn("Live audio playback:",error);}
 }
 async function sendLiveHistory(){
- if(!currentUser||!currentConversationId||!liveSocket||liveSocket.readyState!==WebSocket.OPEN)return;
+ const conversationId=liveConversationId||currentConversationId;
+ if(!currentUser||!conversationId||!liveSocket||liveSocket.readyState!==WebSocket.OPEN)return;
  try{
   const {data,error}=await supabaseClient.from("chat_messages")
    .select("role,content")
    .eq("user_id",currentUser.id)
-   .eq("conversation_id",currentConversationId)
+   .eq("conversation_id",conversationId)
    .order("created_at",{ascending:false}).limit(16);
   if(error)throw error;
   const turns=(data||[]).reverse().filter(item=>["user","assistant"].includes(item.role))
@@ -3413,14 +3417,16 @@ async function saveLiveTurn(){
  liveAssistantTranscript="";
  if(!userText&&!assistantText)return;
  try{
+  const conversationId=liveConversationId||currentConversationId;
+  if(!conversationId)throw new Error("Live conversation context is unavailable.");
   if(userText){
    appendMessage("user",userText);
-   await saveMessage("user",userText);
+   await saveMessage("user",userText,conversationId);
   }
   if(assistantText){
    appendMessage("assistant",assistantText);
    lastSpokenAnswer=assistantText;
-   await saveMessage("assistant",assistantText);
+   await saveMessage("assistant",assistantText,conversationId);
   }
   conversationSaved=true;
   pendingMessages=[];
@@ -3469,6 +3475,8 @@ async function stopLiveVoice(){
  if(liveTurnSaveTimer){clearTimeout(liveTurnSaveTimer);liveTurnSaveTimer=null;await saveLiveTurn();}
  liveStopRequested=false;
  if(hadLiveSession&&currentUser)await logClientEvent("voice_live_session_ended");
+ liveConversationId=null;liveConversationModule=null;liveConversationFeatureKey=null;
+ setChatNavigationDisabled(false);
  refreshVoiceUi();
  const status=el("voiceStatus");
  if(status)status.textContent=liveFailureMessage ? (liveLabel("error")+" "+liveFailureMessage) : liveLabel("stopped");
@@ -3516,6 +3524,13 @@ async function startLiveVoice(){
   const status=el("voiceStatus");if(status)status.textContent=liveLabel("error");
   return;
  }
+ if(isSendingMessage||loadingConversation){const status=el("voiceStatus");if(status)status.textContent="Așteaptă finalizarea mesajului sau încărcarea conversației înainte de Live.";return;}
+ if(!currentConversationId)currentConversationId=makeId();
+ liveConversationId=currentConversationId;
+ liveConversationModule=activeModule;
+ liveConversationFeatureKey=activeFeatureKey;
+ rememberActiveConversation(liveConversationId,liveConversationModule,liveConversationFeatureKey);
+ setChatNavigationDisabled(true);
  const status=el("voiceStatus");
  if(status)status.textContent=liveLabel("connecting");
  try{
@@ -3546,6 +3561,7 @@ async function startLiveVoice(){
   const accessToken=sessionData.session?.access_token;
   if(!accessToken)throw new Error("Sesiunea a expirat. Conectează-te din nou.");
   if(!liveStream)return;
+  await ensureConversationMetadata(liveConversationId,liveConversationModule,"",liveConversationFeatureKey);
 
   const tokenResponse=await fetch(API_URL,{
    method:"POST",headers:{"Content-Type":"application/json"},
@@ -3639,6 +3655,9 @@ async function startLiveVoice(){
      liveFailureMessage=`Serverul a închis conexiunea înainte de activare (cod ${event.code}${event.reason ? ", "+event.reason : ""}).`;
     }
     await stopLiveMedia();
+    await saveLiveTurn();
+    liveConversationId=null;liveConversationModule=null;liveConversationFeatureKey=null;
+    setChatNavigationDisabled(false);
     refreshVoiceUi();
     if(status)status.textContent=liveFailureMessage ? (liveLabel("error")+" "+liveFailureMessage) : liveLabel("stopped");
    }
