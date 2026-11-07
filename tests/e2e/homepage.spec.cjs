@@ -812,7 +812,8 @@ test("late portrait load callbacks cannot overwrite the currently selected prese
     const staleLoad = photo.onload;
     updateDrvasPresentationScene(1);
     staleLoad?.call(photo);
-    return { presenter: photo.dataset.presenter, alt: photo.getAttribute("alt") };
+    photo.setAttribute("alt", "Dr.Vas — fotografia fondatorului");
+    return new Promise(resolve => requestAnimationFrame(() => resolve({ presenter: photo.dataset.presenter, alt: photo.getAttribute("alt") })));
   });
   expect(result.presenter).toBe("jan");
   expect(result.alt).toBe("Dr.Jan — personaj AI fictiv");
