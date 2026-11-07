@@ -3123,12 +3123,12 @@ test("shared navigation and presentation controls localize across all supported 
   await page.evaluate(() => { checkSession = () => {}; });
 
   const cases = [
-    ["en", "Language", "Talk to Dr.Vas", "Open presentation", "TALK TO DR.VAS"],
-    ["it", "Lingua", "Parla con Dr.Vas", "Apri la presentazione", "PARLA CON DR.VAS"],
-    ["tr", "Dil", "Dr.Vas ile konuş", "Tanıtımı aç", "DR.VAS İLE KONUŞ"],
-    ["de", "Sprache", "Sprich mit Dr.Vas", "Präsentation öffnen", "MIT DR.VAS SPRECHEN"],
-    ["fr", "Langue", "Parler à Dr.Vas", "Ouvrir la présentation", "PARLER À DR.VAS"],
-    ["es", "Idioma", "Habla con Dr.Vas", "Abrir presentación", "HABLA CON DR.VAS"],
+    ["en", "Language", "Talk to Dr.Vas", "Open presentation", "TALK TO DR.VAS", "Save"],
+    ["it", "Lingua", "Parla con Dr.Vas", "Apri la presentazione", "PARLA CON DR.VAS", "Salva"],
+    ["tr", "Dil", "Dr.Vas ile konuş", "Tanıtımı aç", "DR.VAS İLE KONUŞ", "Kaydet"],
+    ["de", "Sprache", "Sprich mit Dr.Vas", "Präsentation öffnen", "MIT DR.VAS SPRECHEN", "Speichern"],
+    ["fr", "Langue", "Parler à Dr.Vas", "Ouvrir la présentation", "PARLER À DR.VAS", "Enregistrer"],
+    ["es", "Idioma", "Habla con Dr.Vas", "Abrir presentación", "HABLA CON DR.VAS", "Guardar"],
     ["ru", "Язык", "Поговорить с Dr.Vas", "Открыть презентацию", "ПОГОВОРИТЕ С DR.VAS"]
   ];
 
@@ -3146,12 +3146,12 @@ test("Dr.Vas Free navigation and Health workspace localize in all supported lang
   await page.evaluate(() => { checkSession = () => {}; });
 
   const cases = [
-    ["en", "Images", "New chat", "GENERAL INFORMATION", "Informational support, not a diagnosis.", "Understanding a medical test result", "Understand the terms and explanations", "Chat with Dr.Vas Health"],
-    ["it", "Immagini", "Nuova chat", "INFORMAZIONI GENERALI", "Un supporto informativo, non una diagnosi.", "Spiegazione di un risultato medico", "Comprendere i termini e le spiegazioni", "Chatta con Dr.Vas Health"],
-    ["tr", "Görseller", "Yeni sohbet", "GENEL BİLGİLER", "Bilgilendirici destek; teşhis değildir.", "Tıbbi test sonucunu açıklama", "Terimleri ve açıklamaları anlamak", "Dr.Vas Health ile sohbet et"],
-    ["de", "Bilder", "Neuer Chat", "ALLGEMEINE INFORMATIONEN", "Informative Unterstützung, keine Diagnose.", "Einen medizinischen Befund erklären", "Begriffe und Erklärungen verstehen", "Mit Dr.Vas Health chatten"],
-    ["fr", "Images", "Nouvelle discussion", "INFORMATIONS GÉNÉRALES", "Un soutien informatif, pas un diagnostic.", "Comprendre un résultat médical", "Comprendre les termes et les explications", "Discuter avec Dr.Vas Health"],
-    ["es", "Imágenes", "Nuevo chat", "INFORMACIÓN GENERAL", "Apoyo informativo, no un diagnóstico.", "Explicar un resultado médico", "Entender los términos y las explicaciones", "Chatear con Dr.Vas Health"],
+    ["en", "Images", "New chat", "GENERAL INFORMATION", "Informational support, not a diagnosis.", "Understanding a medical test result", "Understand the terms and explanations", "Chat with Dr.Vas Health", "Save"],
+    ["it", "Immagini", "Nuova chat", "INFORMAZIONI GENERALI", "Un supporto informativo, non una diagnosi.", "Spiegazione di un risultato medico", "Comprendere i termini e le spiegazioni", "Chatta con Dr.Vas Health", "Salva"],
+    ["tr", "Görseller", "Yeni sohbet", "GENEL BİLGİLER", "Bilgilendirici destek; teşhis değildir.", "Tıbbi test sonucunu açıklama", "Terimleri ve açıklamaları anlamak", "Dr.Vas Health ile sohbet et", "Kaydet"],
+    ["de", "Bilder", "Neuer Chat", "ALLGEMEINE INFORMATIONEN", "Informative Unterstützung, keine Diagnose.", "Einen medizinischen Befund erklären", "Begriffe und Erklärungen verstehen", "Mit Dr.Vas Health chatten", "Speichern"],
+    ["fr", "Images", "Nouvelle discussion", "INFORMATIONS GÉNÉRALES", "Un soutien informatif, pas un diagnostic.", "Comprendre un résultat médical", "Comprendre les termes et les explications", "Discuter avec Dr.Vas Health", "Enregistrer"],
+    ["es", "Imágenes", "Nuevo chat", "INFORMACIÓN GENERAL", "Apoyo informativo, no un diagnóstico.", "Explicar un resultado médico", "Entender los términos y las explicaciones", "Chatear con Dr.Vas Health", "Guardar"],
     ["ru", "Изображения", "Новый чат", "ОБЩАЯ ИНФОРМАЦИЯ", "Информационная помощь, а не диагноз.", "Объяснение результата медицинского анализа", "Понять термины и объяснения", "Обсудить с Dr.Vas Health"]
   ];
 
@@ -3173,12 +3173,12 @@ test("Dr.Vas Studio production workspace localizes its core controls in all supp
   await page.evaluate(() => { checkSession = () => {}; });
 
   const cases = [
-    ["en", "Production studio for scripts, vertical videos, subtitles and digital assets.", "CREATIVE WORKSPACE", "VPC founder's voice — being configured", "Drama series / episode", "Realistic cinematic", "General audience", "30–60 seconds", "Vertical 9:16", "Render MP4 video"],
-    ["it", "Studio di produzione per sceneggiature, video verticali, sottotitoli e contenuti digitali.", "SPAZIO CREATIVO", "Voce del fondatore VPC — in configurazione", "Serie / episodio drammatico", "Cinematografico realistico", "Pubblico generale", "30–60 secondi", "Verticale 9:16", "Crea video MP4"],
-    ["tr", "Senaryolar, dikey videolar, altyazılar ve dijital içerikler için prodüksiyon stüdyosu.", "YARATICI ÇALIŞMA ALANI", "VPC kurucusunun sesi — yapılandırılıyor", "Dizi / dramatik bölüm", "Gerçekçi sinematik", "Genel kitle", "30–60 saniye", "Dikey 9:16", "MP4 video oluştur"],
-    ["de", "Produktionsstudio für Drehbücher, Hochkantvideos, Untertitel und digitale Inhalte.", "KREATIVER ARBEITSBEREICH", "Stimme des VPC-Gründers — wird eingerichtet", "Dramaserie / Episode", "Realistisch-kinematografisch", "Allgemeines Publikum", "30–60 Sekunden", "Hochformat 9:16", "MP4-Video rendern"],
-    ["fr", "Studio de production pour scénarios, vidéos verticales, sous-titres et contenus numériques.", "ESPACE CRÉATIF", "Voix du fondateur VPC — en cours de configuration", "Série / épisode dramatique", "Cinématographique réaliste", "Grand public", "30–60 secondes", "Vertical 9:16", "Rendre la vidéo MP4"],
-    ["es", "Estudio de producción para guiones, vídeos verticales, subtítulos y contenidos digitales.", "ESPACIO CREATIVO", "Voz del fundador de VPC — en configuración", "Serie / episodio dramático", "Cinematográfico realista", "Público general", "30–60 segundos", "Vertical 9:16", "Renderizar vídeo MP4"],
+    ["en", "Production studio for scripts, vertical videos, subtitles and digital assets.", "CREATIVE WORKSPACE", "VPC founder's voice — being configured", "Drama series / episode", "Realistic cinematic", "General audience", "30–60 seconds", "Vertical 9:16", "Render MP4 video", "Save"],
+    ["it", "Studio di produzione per sceneggiature, video verticali, sottotitoli e contenuti digitali.", "SPAZIO CREATIVO", "Voce del fondatore VPC — in configurazione", "Serie / episodio drammatico", "Cinematografico realistico", "Pubblico generale", "30–60 secondi", "Verticale 9:16", "Crea video MP4", "Salva"],
+    ["tr", "Senaryolar, dikey videolar, altyazılar ve dijital içerikler için prodüksiyon stüdyosu.", "YARATICI ÇALIŞMA ALANI", "VPC kurucusunun sesi — yapılandırılıyor", "Dizi / dramatik bölüm", "Gerçekçi sinematik", "Genel kitle", "30–60 saniye", "Dikey 9:16", "MP4 video oluştur", "Kaydet"],
+    ["de", "Produktionsstudio für Drehbücher, Hochkantvideos, Untertitel und digitale Inhalte.", "KREATIVER ARBEITSBEREICH", "Stimme des VPC-Gründers — wird eingerichtet", "Dramaserie / Episode", "Realistisch-kinematografisch", "Allgemeines Publikum", "30–60 Sekunden", "Hochformat 9:16", "MP4-Video rendern", "Speichern"],
+    ["fr", "Studio de production pour scénarios, vidéos verticales, sous-titres et contenus numériques.", "ESPACE CRÉATIF", "Voix du fondateur VPC — en cours de configuration", "Série / épisode dramatique", "Cinématographique réaliste", "Grand public", "30–60 secondes", "Vertical 9:16", "Rendre la vidéo MP4", "Enregistrer"],
+    ["es", "Estudio de producción para guiones, vídeos verticales, subtítulos y contenidos digitales.", "ESPACIO CREATIVO", "Voz del fundador de VPC — en configuración", "Serie / episodio dramático", "Cinematográfico realista", "Público general", "30–60 segundos", "Vertical 9:16", "Renderizar vídeo MP4", "Guardar"],
     ["ru", "Студия производства сценариев, вертикальных видео, субтитров и цифровых материалов.", "ТВОРЧЕСКОЕ ПРОСТРАНСТВО", "Голос основателя VPC — настраивается", "Драматический сериал / эпизод", "Реалистичный кинематографичный", "Широкая аудитория", "30–60 секунд", "Вертикальный 9:16", "Создать видео MP4"]
   ];
 
@@ -3202,12 +3202,12 @@ test("Academy and Commerce workspaces localize their core controls in all suppor
   await page.evaluate(() => { checkSession = () => {}; });
 
   const cases = [
-    ["en", "Build courses and learning paths with lessons, exercises and practical projects.", "PILOT · ADMIN ACCESS", "Course subject", "Beginner", "5-lesson mini-course", "Romanian", "Build course", "Analyse products, suppliers, costs and margins before investing money.", "United Kingdom", "Dropshipping", "Shopify", "Analyse opportunity", "Currency", "Product cost / unit"],
-    ["it", "Crea corsi e percorsi di apprendimento con lezioni, esercizi e progetti pratici.", "PILOTA · ACCESSO AMMINISTRATORE", "Argomento del corso", "Principiante", "Mini-corso di 5 lezioni", "Rumeno", "Crea il corso", "Analizza prodotti, fornitori, costi e margini prima di investire denaro.", "Regno Unito", "Dropshipping", "Shopify", "Analizza l'opportunità", "Valuta", "Costo prodotto / unità"],
-    ["tr", "Dersler, alıştırmalar ve uygulamalı projelerle kurslar ve öğrenme yolları oluşturun.", "PİLOT · YÖNETİCİ ERİŞİMİ", "Kurs konusu", "Başlangıç", "5 derslik mini kurs", "Romence", "Kursu oluştur", "Para yatırmadan önce ürünleri, tedarikçileri, maliyetleri ve kâr marjlarını analiz edin.", "Birleşik Krallık", "Dropshipping", "Shopify", "Fırsatı analiz et", "Para birimi", "Ürün maliyeti / birim"],
-    ["de", "Erstelle Kurse und Lernpfade mit Lektionen, Übungen und praktischen Projekten.", "PILOT · ADMIN-ZUGANG", "Kursthema", "Anfänger", "Mini-Kurs mit 5 Lektionen", "Rumänisch", "Kurs erstellen", "Analysiere Produkte, Lieferanten, Kosten und Margen, bevor du Geld investierst.", "Vereinigtes Königreich", "Dropshipping", "Shopify", "Möglichkeit analysieren", "Währung", "Produktkosten / Stück"],
-    ["fr", "Créez des cours et des parcours d’apprentissage avec des leçons, des exercices et des projets pratiques.", "PILOTE · ACCÈS ADMINISTRATEUR", "Sujet du cours", "Débutant", "Mini-cours de 5 leçons", "Roumain", "Créer le cours", "Analysez les produits, fournisseurs, coûts et marges avant d’investir de l’argent.", "Royaume-Uni", "Dropshipping", "Shopify", "Analyser l’opportunité", "Devise", "Coût du produit / unité"],
-    ["es", "Crea cursos y rutas de aprendizaje con lecciones, ejercicios y proyectos prácticos.", "PILOTO · ACCESO DE ADMINISTRADOR", "Tema del curso", "Principiante", "Minicurso de 5 lecciones", "Rumano", "Crear curso", "Analiza productos, proveedores, costes y márgenes antes de invertir dinero.", "Reino Unido", "Dropshipping", "Shopify", "Analizar oportunidad", "Moneda", "Coste del producto / unidad"],
+    ["en", "Build courses and learning paths with lessons, exercises and practical projects.", "PILOT · ADMIN ACCESS", "Course subject", "Beginner", "5-lesson mini-course", "Romanian", "Build course", "Analyse products, suppliers, costs and margins before investing money.", "United Kingdom", "Dropshipping", "Shopify", "Analyse opportunity", "Currency", "Product cost / unit", "Save"],
+    ["it", "Crea corsi e percorsi di apprendimento con lezioni, esercizi e progetti pratici.", "PILOTA · ACCESSO AMMINISTRATORE", "Argomento del corso", "Principiante", "Mini-corso di 5 lezioni", "Rumeno", "Crea il corso", "Analizza prodotti, fornitori, costi e margini prima di investire denaro.", "Regno Unito", "Dropshipping", "Shopify", "Analizza l'opportunità", "Valuta", "Costo prodotto / unità", "Salva"],
+    ["tr", "Dersler, alıştırmalar ve uygulamalı projelerle kurslar ve öğrenme yolları oluşturun.", "PİLOT · YÖNETİCİ ERİŞİMİ", "Kurs konusu", "Başlangıç", "5 derslik mini kurs", "Romence", "Kursu oluştur", "Para yatırmadan önce ürünleri, tedarikçileri, maliyetleri ve kâr marjlarını analiz edin.", "Birleşik Krallık", "Dropshipping", "Shopify", "Fırsatı analiz et", "Para birimi", "Ürün maliyeti / birim", "Kaydet"],
+    ["de", "Erstelle Kurse und Lernpfade mit Lektionen, Übungen und praktischen Projekten.", "PILOT · ADMIN-ZUGANG", "Kursthema", "Anfänger", "Mini-Kurs mit 5 Lektionen", "Rumänisch", "Kurs erstellen", "Analysiere Produkte, Lieferanten, Kosten und Margen, bevor du Geld investierst.", "Vereinigtes Königreich", "Dropshipping", "Shopify", "Möglichkeit analysieren", "Währung", "Produktkosten / Stück", "Speichern"],
+    ["fr", "Créez des cours et des parcours d’apprentissage avec des leçons, des exercices et des projets pratiques.", "PILOTE · ACCÈS ADMINISTRATEUR", "Sujet du cours", "Débutant", "Mini-cours de 5 leçons", "Roumain", "Créer le cours", "Analysez les produits, fournisseurs, coûts et marges avant d’investir de l’argent.", "Royaume-Uni", "Dropshipping", "Shopify", "Analyser l’opportunité", "Devise", "Coût du produit / unité", "Enregistrer"],
+    ["es", "Crea cursos y rutas de aprendizaje con lecciones, ejercicios y proyectos prácticos.", "PILOTO · ACCESO DE ADMINISTRADOR", "Tema del curso", "Principiante", "Minicurso de 5 lecciones", "Rumano", "Crear curso", "Analiza productos, proveedores, costes y márgenes antes de invertir dinero.", "Reino Unido", "Dropshipping", "Shopify", "Analizar oportunidad", "Moneda", "Coste del producto / unidad", "Guardar"],
     ["ru", "Создавайте курсы и учебные программы с уроками, упражнениями и практическими проектами.", "ПИЛОТ · ДОСТУП АДМИНИСТРАТОРА", "Тема курса", "Начальный", "Мини-курс из 5 уроков", "Румынский", "Создать курс", "Анализируйте товары, поставщиков, расходы и маржу до вложения денег.", "Великобритания", "Дропшиппинг", "Shopify", "Анализировать возможность", "Валюта", "Стоимость товара / единица"]
   ];
   for (const [language, academyDescription, pilotLabel, subject, level, format, courseLanguage, academyAction, commerceDescription, market, model, channel, commerceAction, currency, unitCost] of cases) {
@@ -3241,16 +3241,16 @@ test("Business workspace localizes its plan, cashbook, cashflow, break-even and 
   });
 
   const cases = [
-    ["en", "Turn an idea into a business plan, budget and implementation steps.", "PILOT · ADMIN ACCESS", "Business idea / sector", "Create business plan", "Dr.Vas Books — Income and expense ledger", "Cashflow — period report", "Check the assumptions: price must be higher than variable cost, and costs cannot be negative.", "Review draft and create feedback", "Sign in to access the private ledger."],
-    ["it", "Trasforma un'idea in un piano aziendale, un budget e fasi di attuazione.", "PILOTA · ACCESSO AMMINISTRATORE", "Idea / settore aziendale", "Crea il piano aziendale", "Dr.Vas Books — Registro di entrate e uscite", "Cashflow — rapporto per periodo", "Verifica le ipotesi: il prezzo deve essere superiore al costo variabile e i costi non possono essere negativi.", "Analizza la bozza e crea un feedback", "Accedi per accedere al registro privato."],
-    ["tr", "Bir fikri iş planına, bütçeye ve uygulama adımlarına dönüştür.", "PİLOT · YÖNETİCİ ERİŞİMİ", "İş fikri / sektör", "İş planı oluştur", "Dr.Vas Books — Gelir ve gider defteri", "Nakit akışı — dönem raporu", "Varsayımları kontrol edin: fiyat değişken maliyetten yüksek olmalı ve maliyetler negatif olamaz.", "Taslağı analiz et ve geri bildirim oluştur", "Özel deftere erişmek için giriş yapın."],
-    ["de", "Verwandle eine Idee in einen Geschäftsplan, ein Budget und Umsetzungsschritte.", "PILOT · ADMIN-ZUGANG", "Geschäftsidee / Branche", "Geschäftsplan erstellen", "Dr.Vas Books — Einnahmen- und Ausgabenbuch", "Cashflow — Zeitraumbericht", "Überprüfe die Annahmen: Der Preis muss über den variablen Kosten liegen, und Kosten dürfen nicht negativ sein.", "Entwurf analysieren und Feedback erstellen", "Melde dich an, um auf das private Kassenbuch zuzugreifen."],
-    ["fr", "Transformez une idée en plan d'affaires, budget et étapes de mise en œuvre.", "PILOTE · ACCÈS ADMINISTRATEUR", "Idée / secteur d'activité", "Créer le plan d'affaires", "Dr.Vas Books — Registre des recettes et dépenses", "Trésorerie — rapport par période", "Vérifiez les hypothèses : le prix doit être supérieur au coût variable et les coûts ne peuvent pas être négatifs.", "Analyser le brouillon et créer un retour", "Connectez-vous pour accéder au registre privé."],
-    ["es", "Convierte una idea en un plan de negocio, presupuesto y pasos de implementación.", "PILOTO · ACCESO DE ADMINISTRADOR", "Idea / sector empresarial", "Crear plan de negocio", "Dr.Vas Books — Registro de ingresos y gastos", "Flujo de caja — informe por período", "Comprueba las hipótesis: el precio debe ser superior al coste variable y los costes no pueden ser negativos.", "Analizar el borrador y generar comentarios", "Inicia sesión para acceder al registro privado."],
+    ["en", "Turn an idea into a business plan, budget and implementation steps.", "PILOT · ADMIN ACCESS", "Business idea / sector", "Create business plan", "Dr.Vas Books — Income and expense ledger", "Cashflow — period report", "Check the assumptions: price must be higher than variable cost, and costs cannot be negative.", "Review draft and create feedback", "Sign in to access the private ledger.", "Save"],
+    ["it", "Trasforma un'idea in un piano aziendale, un budget e fasi di attuazione.", "PILOTA · ACCESSO AMMINISTRATORE", "Idea / settore aziendale", "Crea il piano aziendale", "Dr.Vas Books — Registro di entrate e uscite", "Cashflow — rapporto per periodo", "Verifica le ipotesi: il prezzo deve essere superiore al costo variabile e i costi non possono essere negativi.", "Analizza la bozza e crea un feedback", "Accedi per accedere al registro privato.", "Salva"],
+    ["tr", "Bir fikri iş planına, bütçeye ve uygulama adımlarına dönüştür.", "PİLOT · YÖNETİCİ ERİŞİMİ", "İş fikri / sektör", "İş planı oluştur", "Dr.Vas Books — Gelir ve gider defteri", "Nakit akışı — dönem raporu", "Varsayımları kontrol edin: fiyat değişken maliyetten yüksek olmalı ve maliyetler negatif olamaz.", "Taslağı analiz et ve geri bildirim oluştur", "Özel deftere erişmek için giriş yapın.", "Kaydet"],
+    ["de", "Verwandle eine Idee in einen Geschäftsplan, ein Budget und Umsetzungsschritte.", "PILOT · ADMIN-ZUGANG", "Geschäftsidee / Branche", "Geschäftsplan erstellen", "Dr.Vas Books — Einnahmen- und Ausgabenbuch", "Cashflow — Zeitraumbericht", "Überprüfe die Annahmen: Der Preis muss über den variablen Kosten liegen, und Kosten dürfen nicht negativ sein.", "Entwurf analysieren und Feedback erstellen", "Melde dich an, um auf das private Kassenbuch zuzugreifen.", "Speichern"],
+    ["fr", "Transformez une idée en plan d'affaires, budget et étapes de mise en œuvre.", "PILOTE · ACCÈS ADMINISTRATEUR", "Idée / secteur d'activité", "Créer le plan d'affaires", "Dr.Vas Books — Registre des recettes et dépenses", "Trésorerie — rapport par période", "Vérifiez les hypothèses : le prix doit être supérieur au coût variable et les coûts ne peuvent pas être négatifs.", "Analyser le brouillon et créer un retour", "Connectez-vous pour accéder au registre privé.", "Enregistrer"],
+    ["es", "Convierte una idea en un plan de negocio, presupuesto y pasos de implementación.", "PILOTO · ACCESO DE ADMINISTRADOR", "Idea / sector empresarial", "Crear plan de negocio", "Dr.Vas Books — Registro de ingresos y gastos", "Flujo de caja — informe por período", "Comprueba las hipótesis: el precio debe ser superior al coste variable y los costes no pueden ser negativos.", "Analizar el borrador y generar comentarios", "Inicia sesión para acceder al registro privado.", "Guardar"],
     ["ru", "Превратите идею в бизнес-план, бюджет и этапы реализации.", "ПИЛОТ · ДОСТУП АДМИНИСТРАТОРА", "Бизнес-идея / сфера деятельности", "Создать бизнес-план", "Dr.Vas Books — Учёт доходов и расходов", "Денежный поток — отчёт за период", "Проверьте исходные данные: цена должна быть выше переменных затрат, а расходы не могут быть отрицательными.", "Проанализировать черновик и подготовить отзыв", "Войдите, чтобы открыть личный журнал."]
   ];
 
-  for (const [language, description, pilot, ideaLabel, planAction, cashbookTitle, cashflowTitle, breakEvenError, studentAction, ledgerStatus] of cases) {
+  for (const [language, description, pilot, ideaLabel, planAction, cashbookTitle, cashflowTitle, breakEvenError, studentAction, ledgerStatus, saveLabel] of cases) {
     await page.evaluate(code => chooseLanguage(code), language);
 
     await expect(page.locator("#businessWorkspace .studio-workspace-head > div > p")).toHaveText(description);
@@ -3260,6 +3260,7 @@ test("Business workspace localizes its plan, cashbook, cashflow, break-even and 
     await expect(page.locator("#businessCashbookTitle")).toContainText(cashbookTitle);
     await expect(page.locator("#businessCashflowTitle")).toContainText(cashflowTitle);
     await expect(page.locator('#businessWorkspace button[onclick="buildStudentAssessmentPrompt()"]')).toHaveText(studentAction);
+    await expect(page.locator('#businessWorkspace button[onclick="saveStudentAssessmentProject()"]')).toHaveText(saveLabel);
 
     await page.evaluate(() => {
       document.getElementById("businessUnitPrice").value = "10";
