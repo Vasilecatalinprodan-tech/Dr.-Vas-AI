@@ -770,6 +770,7 @@ test("Sarah always selects a feminine device voice and never silently falls back
     const voices = [
       { name: "Microsoft Andrei", lang: "ro-RO", voiceURI: "andrei-ro", default: true },
       { name: "Microsoft Zira", lang: "ro-RO", voiceURI: "zira-ro" },
+      { name: "Microsoft Alina", lang: "ro-RO", voiceURI: "alina-ro" },
       { name: "Google UK English Female", lang: "en-GB", voiceURI: "google-female" }
     ];
     Object.defineProperty(window, "speechSynthesis", { configurable: true, value: { getVoices: () => voices } });
@@ -794,13 +795,13 @@ test("Sarah always selects a feminine device voice and never silently falls back
       crossLanguageVoiceLanguage: crossLanguagePresentation.sarah?.lang || null
     };
   });
-  expect(result.chatVoice).toBe("zira-ro");
-  expect(result.presentationSarah).toBe("zira-ro");
+  expect(result.chatVoice).toBe("alina-ro");
+  expect(result.presentationSarah).toBe("alina-ro");
   expect(result.presentationHasFemale).toBe(true);
   expect(result.noFemaleSarah).toBeNull();
-  expect(result.crossLanguageChatVoice).toBe("google-female");
-  expect(result.crossLanguagePresentationSarah).toBe("google-female");
-  expect(result.crossLanguageVoiceLanguage).toBe("en-GB");
+  expect(result.crossLanguageChatVoice).toBeNull();
+  expect(result.crossLanguagePresentationSarah).toBeNull();
+  expect(result.crossLanguageVoiceLanguage).toBeNull();
 });
 
 test("live voice room shows the selected assistant avatar and speaking animation for all three characters", async ({ page }) => {
@@ -1893,6 +1894,9 @@ test("landing hero renders two animated DNA strands and emergency stop latches l
   await expect(page.locator("#heroSection .dna-helix-left")).toBeVisible();
   await expect(page.locator("#heroSection .dna-helix-right")).toBeVisible();
   await expect(page.locator("#heroSection .dna-strand")).toHaveCount(4);
+  await expect(page.locator("#heroSection .dna-strand-highlight")).toHaveCount(4);
+  const strandFinish = await page.locator("#heroSection .dna-strand-highlight").first().evaluate(node => getComputedStyle(node).strokeWidth);
+  expect(strandFinish).toBe("1.7px");
   const dnaLayout = await page.locator("#heroSection").evaluate(hero => {
     const heroHeight = hero.getBoundingClientRect().height;
     const rails = [...hero.querySelectorAll(".dna-helix-visual")].map(node => ({
@@ -2645,4 +2649,24 @@ test("all six module chats share the same sidebar destinations and attachment co
   await page.locator("#globalBackToModules").click();
   await expect(page.locator("#globalBackToModules")).toBeHidden();
   await expect(page.locator("#moduleSelectionShell")).toBeVisible();
+});
+
+test("module pages expose the page scrollbar and presenter portraits visibly react while speaking", async ({ page }) => {
+  await openApp(page, "ro");
+  const styles = await page.evaluate(() => {
+    const body = getComputedStyle(document.body);
+    const root = getComputedStyle(document.documentElement);
+    const avatar = document.querySelector("#presentationAvatar");
+    const presenter = document.querySelector("#presentationPresenter");
+    presenter?.classList.add("is-speaking");
+    return {
+      pageScrollbar: root.scrollbarWidth,
+      scrollbarColor: root.scrollbarColor,
+      haloAnimation: getComputedStyle(avatar, "::after").animationName,
+      photoMotion: getComputedStyle(avatar.querySelector(".presentation-photo") || avatar, "img").animationName
+    };
+  });
+  expect(styles.pageScrollbar).toBe("thin");
+  expect(styles.scrollbarColor).toContain("#4d8795");
+  expect(styles.haloAnimation).toBe("presenterVoiceHalo");
 });
