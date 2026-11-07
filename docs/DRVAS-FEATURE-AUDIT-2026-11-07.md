@@ -117,3 +117,17 @@ The ChatGPT conversation remains in the user's ChatGPT history. This document pr
 - Recheck context isolation and legacy conversation safety across module, feature and user boundaries.
 - Verify live Supabase RLS/storage and two-owner access for conversations, attachments, reminders, Library and Projects.
 - Continue real end-to-end feature/provider verification; do not equate visible UI with a finished provider integration.
+
+
+## Release update — 7 November 2026, 12:03 UTC
+
+The founder confirmed that the priority is full web-platform and module functionality, professional merge/deploy verification, saving all progress/chat decisions, and leaving APK until the end. The Android workflow is manual-only.
+
+- PR #51 merged: Health page-level scrolling and attachment reachability. Production deploy and browser checks succeeded.
+- PR #52 merged: regression test for independent conversation IDs across all six modules.
+- PR #53 merged: Worker verifies conversation owner/module metadata before loading chat history; frontend establishes metadata before persisting/sending a first message. Missing/unclassified or cross-module threads are rejected. Legacy threads are not guessed or backfilled.
+- PR #54 merged at `772c31e8029893b8bb8c068b38d61953011ac21f`: separate conversation history by user + module + feature. Every feature workspace has its own thread; each module also has a Chat general tab so prior module-level conversations (`feature_key = NULL`) remain accessible. Worker verifies both module and feature. Session restoration and sidebar history are scoped accordingly. Live voice snapshots the originating conversation and locks navigation while active; legacy threads cannot start Live.
+- Final PR #54 browser regression run [42370566100](https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42370566100): 129/129 passed.
+- Post-merge browser run [42370725561](https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42370725561) and production deploy [42370725489](https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42370725489) were still pending at the time of this note. Verify before claiming the feature-context release is live.
+
+See `docs/SESSION-CHECKPOINT-2026-11-07-ALL-MODULE-CHAT-ISOLATION.md` for the full actionable checkpoint and next priorities. The checkpoint summarizes the current chat and is not a verbatim transcript; the original chat remains in ChatGPT history.
