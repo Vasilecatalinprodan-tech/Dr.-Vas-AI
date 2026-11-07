@@ -3480,6 +3480,15 @@ for (const [source, translations] of Object.entries(BUSINESS_LAST_LABEL_TRANSLAT
   }
 }
 
+
+const BUSINESS_STUDENT_COPY_TRANSLATIONS = {"Instrument pentru profesori și studenți: analiză pe rubrică, feedback, structură, argumentare și citare. Susține munca proprie a studentului; nu ascunde utilizarea AI și nu fabrică surse. Elimină numele, numărul de student și orice date personale înainte de a lipi materialul.":["Tool for teachers and students: rubric-based analysis, feedback, structure, argumentation and citations. Supports the student's own work; it does not conceal AI use or fabricate sources. Remove names, student numbers and any personal data before pasting material.","Strumento per docenti e studenti: analisi basata sulla rubrica, feedback, struttura, argomentazione e citazioni. Sostiene il lavoro autonomo dello studente; non nasconde l'uso dell'IA né inventa fonti. Rimuovi nomi, numeri di studente e qualsiasi dato personale prima di incollare il materiale.","Öğretmenler ve öğrenciler için araç: rubriğe dayalı analiz, geri bildirim, yapı, argümantasyon ve atıflar. Öğrencinin kendi çalışmasını destekler; yapay zekâ kullanımını gizlemez veya kaynak uydurmaz. Materyali yapıştırmadan önce adları, öğrenci numaralarını ve tüm kişisel verileri kaldırın.","Werkzeug für Lehrkräfte und Studierende: Bewertung anhand eines Rasters, Feedback, Struktur, Argumentation und Zitate. Unterstützt die eigenständige Arbeit der Studierenden; verschleiert weder den KI-Einsatz noch erfindet es Quellen. Entferne Namen, Matrikelnummern und persönliche Daten vor dem Einfügen.","Outil pour enseignants et étudiants : analyse selon une grille, retours, structure, argumentation et citations. Soutient le travail personnel de l'étudiant ; ne dissimule pas l'utilisation de l'IA et n'invente pas de sources. Supprimez les noms, numéros d'étudiant et toutes données personnelles avant de coller le contenu.","Herramienta para docentes y estudiantes: análisis según rúbrica, comentarios, estructura, argumentación y citas. Apoya el trabajo propio del estudiante; no oculta el uso de IA ni inventa fuentes. Elimina nombres, números de estudiante y cualquier dato personal antes de pegar el material.","Инструмент для преподавателей и студентов: анализ по критериям, обратная связь, структура, аргументация и цитирование. Поддерживает самостоятельную работу студента; не скрывает использование ИИ и не выдумывает источники. Удалите имена, номера студентов и любые персональные данные перед вставкой материала."],"Salvează":["Save","Salva","Kaydet","Speichern","Enregistrer","Guardar","Сохранить"]};
+for (const [source, translations] of Object.entries(BUSINESS_STUDENT_COPY_TRANSLATIONS)) {
+  for (let i = 0; i < ["en","it","tr","de","fr","es","ru"].length; i++) {
+    const language = ["en","it","tr","de","fr","es","ru"][i];
+    if (UI[language]) UI[language][source] = translations[i];
+  }
+}
+
 function localizeInterfaceCopy(source){return (ASSISTANT_UI_TRANSLATIONS[currentLanguage]||{})[source]||(UI[currentLanguage]||{})[source]||source}
 function tr(s){return localizeInterfaceCopy(s)}
 function setLocalizedText(target,source){
