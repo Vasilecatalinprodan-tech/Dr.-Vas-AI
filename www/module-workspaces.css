@@ -64,3 +64,8 @@ body.module-workspace-mode #globalBackToModules{display:inline-flex!important}
 .drvas-module-voice-access .voice-toolbar #voiceStatus{flex-basis:100%;padding-top:4px}
 .drvas-module-voice-access .voice-privacy{font-size:11px;line-height:1.5}
 @media(max-width:650px){.studio-station-grid{grid-template-columns:minmax(0,1fr)}}
+
+.studio-founder-shortcut{padding:18px;border:1px solid #3b6878;border-radius:14px;background:linear-gradient(145deg,#102d3e,#091827)}
+.studio-founder-shortcut h4{margin:0 0 8px;color:#e6fffb;font-size:16px}
+.studio-founder-shortcut p{margin:0 0 14px;color:#a8c3cf;font-size:12px;line-height:1.6}
+.studio-founder-shortcut button{min-height:44px;padding:10px 15px;border:1px solid #55d6cb;border-radius:10px;background:#14535b;color:#f0fffd;font-weight:750;cursor:pointer}
