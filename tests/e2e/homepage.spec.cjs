@@ -2677,22 +2677,32 @@ test("module pages expose the page scrollbar and presenter portraits visibly rea
     const avatar = document.querySelector("#presentationAvatar");
     const presenter = document.querySelector("#presentationPresenter");
     presenter?.classList.add("is-speaking");
-    document.body.classList.add("module-workspace-mode");
+    // Reproduce the legacy fitted-chat document lock together with an open module page.
+    document.documentElement.classList.add("chat-focus-document");
+    document.body.classList.add("chat-focus-mode", "module-workspace-mode");
     const workspaceScroll = getComputedStyle(document.body).overflowY;
-    document.body.classList.remove("module-workspace-mode");
+    const documentScroll = getComputedStyle(document.documentElement).overflowY;
+    const documentHeight = document.documentElement.scrollHeight;
+    const viewportHeight = document.documentElement.clientHeight;
+    document.body.classList.remove("chat-focus-mode", "module-workspace-mode");
+    document.documentElement.classList.remove("chat-focus-document");
     document.body.classList.add("free-module-mode");
     const freeScroll = getComputedStyle(document.body).overflowY;
     return {
       pageScrollbar: root.scrollbarWidth,
       scrollbarColor: root.scrollbarColor,
       workspaceScroll,
+      documentScroll,
+      documentCanScroll: documentHeight > viewportHeight,
       freeScroll,
       haloAnimation: getComputedStyle(avatar, "::after").animationName
     };
   });
   expect(styles.pageScrollbar).toBe("thin");
   expect(styles.scrollbarColor).toContain("77, 135, 149");
-  expect(styles.workspaceScroll).toBe("scroll");
+  expect(styles.workspaceScroll).toBe("visible");
+  expect(styles.documentScroll).toBe("scroll");
+  expect(styles.documentCanScroll).toBe(true);
   expect(styles.freeScroll).toBe("hidden");
   expect(styles.haloAnimation).toBe("presenterVoiceHalo");
 });
