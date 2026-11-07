@@ -5352,18 +5352,16 @@ async function showChat(user,displayName){
   // the module buttons appear unresponsive or strand the user on the login screen.
   try{
     const conversations=await loadConversationList();
-    const scopedConversations=conversations.filter(item=>item.module===activeModule||(!item.module&&activeModule==="free"));
-    const rememberedId=getRememberedConversation(activeModule);
-    const resumeId=scopedConversations.some(item=>item.id===rememberedId)
-      ? rememberedId
-      : (scopedConversations[0]?.id || null);
-    if(resumeId){
-      await openConversation(resumeId);
+    const scopedConversations=conversations.filter(item=>(item.module===activeModule&&(item.feature_key||"")===activeFeatureKey)||(!item.module&&activeModule==="free"&&!activeFeatureKey));
+    const rememberedId=getRememberedConversation(activeModule,activeFeatureKey);
+    const resumeConversation=scopedConversations.find(item=>item.id===rememberedId)||scopedConversations[0]||null;
+    if(resumeConversation){
+      await openConversation(resumeConversation.id,resumeConversation.module||null,resumeConversation.feature_key||"");
     }else{
       currentConversationId=makeId();
       currentConversationIsLegacy=false;
-      rememberActiveConversation(currentConversationId,activeModule);
-      ensureConversationMetadata(currentConversationId,activeModule,"").catch(error=>console.warn("Conversation context metadata pending first message:",error));
+      rememberActiveConversation(currentConversationId,activeModule,activeFeatureKey);
+      ensureConversationMetadata(currentConversationId,activeModule,"",activeFeatureKey).catch(error=>console.warn("Conversation context metadata pending first message:",error));
       logClientEvent("conversation_created");
       conversationSaved=false;
       pendingMessages=[];
