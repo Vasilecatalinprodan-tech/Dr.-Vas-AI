@@ -67,9 +67,18 @@ This audit consolidates the currently available project scope record, dated chec
 ## Verification status for this branch
 
 - Code changes are committed on the branch listed above.
-- Automated browser regression, PR review, production deployment and physical device testing are pending.
-- Do not merge or claim the new changes are live until the relevant checks pass.
-- Update this document with exact test run IDs, merge SHA, deployment result and APK artifact only after verification.
+- PR #44 merged into main at commit `042dacf96405c729212f7db9485825ee625e93c8`.
+- PR #45 updated deployment workflow assertions and merged at commit `ad353a225b9cbefa1e558510a73d5e87ec2f55a5`.
+- Browser regression on the final feature branch: run `42365009027` — 121 passed, 0 failed.
+- Browser regression on main: run `42365149473` — 121 passed, 0 failed.
+- Deployment workflow: run `42365376932` — success. Static validation, browser suite, Supabase migration verification over IPv4 Session Pooler, Worker deployment and production smoke test all passed.
+- Production smoke test confirmed homepage delivery and all six module cards; unauthenticated `admin_status` returned HTTP 401; `/health` returned `status: online`, with Worker, assets, AI, database and Studio renderer configured. File analysis remains intentionally disabled.
+- Production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/
+- Android build: run `42365149469` — success. Artifact `DrVas-APK`, ID `13571711193`, link https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42365149469/artifacts/13571711193, expires 5 February 2027.
+- APK compiled successfully; physical installation, microphone, Live audio, TTS pronunciation and desktop/mobile visual inspection remain to be checked by the founder.
+- Real crypto mining remains disabled pending a signed native local agent, explicit device enrollment, power/temperature limits, audit logging and emergency-stop verification. The Crypto page is an analysis/calculator/device-registry workflow, not a running miner.
+- A separate recorded-audio attachment/voice-note upload is not implemented. Existing dictation submits recognized text; Live streams microphone audio.
+- Do not claim professional Sarah pronunciation, phoneme-accurate lip-sync, photorealistic 3D DNA, EPUB/PDF typesetting or marketplace publishing until those capabilities are separately implemented and verified.
 
 ## Conversation preservation
 
