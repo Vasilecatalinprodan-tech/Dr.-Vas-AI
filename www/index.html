@@ -2991,6 +2991,39 @@ const FREE_HEALTH_COPY={
 };
 for (const language of Object.keys(FREE_HEALTH_COPY)) Object.assign(UI[language],FREE_HEALTH_COPY[language]);
 
+/* Phase 2 attribute localization for the public Free/Health workspaces. */
+const FREE_HEALTH_ATTRIBUTES={
+ en:{
+  "Scrie doar informațiile pe care dorești să le discuți. Nu include nume, adresă sau alte date de identificare.":"Only write the information you want to discuss. Do not include names, addresses or other identifying details.",
+  "Navigare Dr.Vas Free":"Dr.Vas Free navigation","Navigare principală":"Main navigation","Conversații recente":"Recent conversations","Conversația cu Dr.Vas":"Conversation with Dr.Vas","Alege asistentul":"Choose assistant"
+ },
+ it:{
+  "Scrie doar informațiile pe care dorești să le discuți. Nu include nume, adresă sau alte date de identificare.":"Scrivi solo le informazioni che desideri discutere. Non includere nomi, indirizzi o altri dati identificativi.",
+  "Navigare Dr.Vas Free":"Navigazione Dr.Vas Free","Navigare principală":"Navigazione principale","Conversații recente":"Conversazioni recenti","Conversația cu Dr.Vas":"Conversazione con Dr.Vas","Alege asistentul":"Scegli assistente"
+ },
+ tr:{
+  "Scrie doar informațiile pe care dorești să le discuți. Nu include nume, adresă sau alte date de identificare.":"Yalnızca görüşmek istediğiniz bilgileri yazın. İsim, adres veya kimliğinizi belirleyebilecek başka bilgiler eklemeyin.",
+  "Navigare Dr.Vas Free":"Dr.Vas Free gezinme","Navigare principală":"Ana gezinme","Conversații recente":"Son konuşmalar","Conversația cu Dr.Vas":"Dr.Vas ile konuşma","Alege asistentul":"Asistanı seç"
+ },
+ de:{
+  "Scrie doar informațiile pe care dorești să le discuți. Nu include nume, adresă sau alte date de identificare.":"Schreibe nur die Informationen, die du besprechen möchtest. Gib keine Namen, Adressen oder andere identifizierende Angaben an.",
+  "Navigare Dr.Vas Free":"Dr.Vas-Free-Navigation","Navigare principală":"Hauptnavigation","Conversații recente":"Letzte Gespräche","Conversația cu Dr.Vas":"Gespräch mit Dr.Vas","Alege asistentul":"Assistent auswählen"
+ },
+ fr:{
+  "Scrie doar informațiile pe care dorești să le discuți. Nu include nume, adresă sau alte date de identificare.":"N’écrivez que les informations que vous souhaitez aborder. N’incluez ni nom, ni adresse, ni autre donnée permettant de vous identifier.",
+  "Navigare Dr.Vas Free":"Navigation Dr.Vas Free","Navigare principală":"Navigation principale","Conversații recente":"Conversations récentes","Conversația cu Dr.Vas":"Conversation avec Dr.Vas","Alege asistentul":"Choisir l’assistant"
+ },
+ es:{
+  "Scrie doar informațiile pe care dorești să le discuți. Nu include nume, adresă sau alte date de identificare.":"Escribe solo la información que quieras comentar. No incluyas nombres, direcciones ni otros datos que permitan identificarte.",
+  "Navigare Dr.Vas Free":"Navegación de Dr.Vas Free","Navigare principală":"Navegación principal","Conversații recente":"Conversaciones recientes","Conversația cu Dr.Vas":"Conversación con Dr.Vas","Alege asistentul":"Elegir asistente"
+ },
+ ru:{
+  "Scrie doar informațiile pe care dorești să le discuți. Nu include nume, adresă sau alte date de identificare.":"Укажите только информацию, которую хотите обсудить. Не указывайте имена, адреса и другие идентифицирующие данные.",
+  "Navigare Dr.Vas Free":"Навигация Dr.Vas Free","Navigare principală":"Основная навигация","Conversații recente":"Недавние беседы","Conversația cu Dr.Vas":"Беседа с Dr.Vas","Alege asistentul":"Выбрать помощника"
+ }
+};
+for (const language of Object.keys(FREE_HEALTH_ATTRIBUTES)) Object.assign(UI[language],FREE_HEALTH_ATTRIBUTES[language]);
+
 /* Complete localization for assistant-generated interface copy that lives inside #chat.
    Conversation history remains untouched; only the fresh welcome and assistant controls are re-rendered. */
 const ASSISTANT_UI_TRANSLATIONS={
