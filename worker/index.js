@@ -1165,7 +1165,7 @@ export default {
             limit: "1"
           });
           const liveContextResponse = await fetch(
-            `${env.SUPABASE_URL.replace(/\\/+$/, "")}/rest/v1/drvas_conversation_metadata?${liveContextParams.toString()}`,
+            `${env.SUPABASE_URL.replace(/\/+$/, "")}/rest/v1/drvas_conversation_metadata?${liveContextParams.toString()}`,
             { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${liveAccessToken}` } }
           );
           if (!liveContextResponse.ok) return json({ error: "Nu am putut verifica spațiul de lucru al conversației vocale." }, 503);
