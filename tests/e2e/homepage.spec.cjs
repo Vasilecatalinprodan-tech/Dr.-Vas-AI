@@ -804,6 +804,20 @@ test("Sarah always selects a feminine device voice and never silently falls back
   expect(result.crossLanguageVoiceLanguage).toBe("en-GB");
 });
 
+test("late portrait load callbacks cannot overwrite the currently selected presenter label", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(() => {
+    updateDrvasPresentationScene(0);
+    const photo = document.querySelector("#presentationAvatar .presentation-photo");
+    const staleLoad = photo.onload;
+    updateDrvasPresentationScene(1);
+    staleLoad?.call(photo);
+    return { presenter: photo.dataset.presenter, alt: photo.getAttribute("alt") };
+  });
+  expect(result.presenter).toBe("jan");
+  expect(result.alt).toBe("Dr.Jan — personaj AI fictiv");
+});
+
 test("live voice room shows the selected assistant avatar and speaking animation for all three characters", async ({ page }) => {
   await openApp(page, "ro");
   const states = await page.evaluate(() => {
