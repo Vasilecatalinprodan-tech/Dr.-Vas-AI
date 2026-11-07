@@ -3094,7 +3094,7 @@ test("changing the selected language localizes the Dr.Vas, Dr.Jan and Sarah welc
   await page.locator("#languageSwitch").click();
   await page.getByRole("button", { name: /English/ }).click();
 
-  await expect(page.locator("#heroChatCta")).toContainText("TALK TO DR.VAS");
+  await expect(page.locator("#heroChatCta")).toContainText("Talk to Dr.Vas");
   await expect(page.locator("#assistantIntro")).toHaveText("Main assistant for analysis, clear answers and practical help.");
   await expect(page.locator("#chat .msg.bot").first()).toContainText("Welcome! I'm Dr.Vas.");
   await expect(page.locator("#chat .msg.bot").first()).toContainText("New messages and replies are saved automatically to your account.");
