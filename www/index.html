@@ -3572,7 +3572,7 @@ async function startLiveVoice(){
    method:"POST",headers:{"Content-Type":"application/json"},
    body:JSON.stringify({
     action:"live_voice_token",access_token:accessToken,
-    module:activeModule,assistant:activeAssistant,language:currentLanguage
+    module:liveConversationModule,feature_key:liveConversationFeatureKey||null,assistant:activeAssistant,language:currentLanguage
    })
   });
   const tokenData=await tokenResponse.json();
