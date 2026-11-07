@@ -2677,3 +2677,39 @@ test("module pages expose the page scrollbar and presenter portraits visibly rea
   expect(styles.freeScroll).toBe("hidden");
   expect(styles.haloAnimation).toBe("presenterVoiceHalo");
 });
+
+
+test("voice accessibility controls remain available in Health and every module workspace", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-module-voice-access", email: "owner@example.invalid" };
+    isDrvasAdmin = true;
+    showModuleSelection();
+  });
+  for (const moduleName of ["health", "studio", "academy", "commerce", "business"]) {
+    await page.evaluate(name => selectModule(name, true), moduleName);
+    await expect(page.locator("#" + moduleName + "Workspace .drvas-module-voice-access"), moduleName + " voice access panel").toBeVisible();
+    await expect(page.locator("#" + moduleName + "Workspace .drvas-module-voice-access #voiceMicButton")).toBeVisible();
+    await expect(page.locator("#" + moduleName + "Workspace .drvas-module-voice-access #voiceAutoButton")).toBeVisible();
+    await expect(page.locator("#" + moduleName + "Workspace .drvas-module-voice-access #liveVoiceButton")).toBeVisible();
+    await expect(page.locator(".voice-toolbar")).toHaveCount(1);
+  }
+  await page.evaluate(() => selectModule("free", true));
+  await expect(page.locator("#chatSection .voice-toolbar #voiceMicButton")).toBeVisible();
+  await expect(page.locator(".drvas-module-voice-access")).toHaveCount(0);
+  await expect(page.locator(".voice-toolbar")).toHaveCount(1);
+});
+
+test("both landing DNA helices use shaded molecular rails and detailed base pairs", async ({ page }) => {
+  await openApp(page, "ro");
+  const helices = page.locator("#heroSection .dna-helix-visual");
+  await expect(helices).toHaveCount(2);
+  for (let index = 0; index < 2; index++) {
+    const helix = helices.nth(index);
+    await expect(helix.locator(".dna-strand-shadow")).toHaveCount(2);
+    await expect(helix.locator(".dna-strand-highlight")).toHaveCount(2);
+    await expect(helix.locator(".dna-base-pair")).toHaveCount(19);
+    await expect(helix.locator(".dna-base-pair-bead")).toHaveCount(38);
+  }
+});
