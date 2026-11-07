@@ -2713,3 +2713,30 @@ test("both landing DNA helices use shaded molecular rails and detailed base pair
     await expect(helix.locator(".dna-base-pair-bead")).toHaveCount(38);
   }
 });
+
+
+test("Studio exposes dedicated Book, Translation, Crypto and Online Income workspaces", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-studio-special-workspaces", email: "owner@example.invalid" };
+    isDrvasAdmin = true;
+    showModuleSelection();
+    selectModule("studio", true);
+  });
+  for (const feature of ["book", "translation", "crypto", "income-lab"]) {
+    await expect(page.locator('#studioWorkspace [data-feature="' + feature + '"]')).toBeVisible();
+  }
+  await page.locator('#studioWorkspace [data-feature="book"]').click();
+  await expect(page.locator("#drvasBookStationConcept")).toBeVisible();
+  await expect(page.locator(".studio-station-submit")).toContainText("Creează și salvează");
+  await page.locator('#studioWorkspace [data-feature="translation"]').click();
+  await expect(page.locator("#drvasTranslationText")).toBeVisible();
+  await expect(page.locator("#drvasTranslationTarget")).toBeVisible();
+  await page.locator('#studioWorkspace [data-feature="crypto"]').click();
+  await expect(page.locator("#cryptoEngineStatus")).toContainText("Mining-ul real rămâne oprit");
+  await expect(page.locator("#cryptoEngineScanButton")).toBeVisible();
+  await page.locator('#studioWorkspace [data-feature="income-lab"]').click();
+  await expect(page.locator("#founderDigitalTitle")).toBeVisible();
+  await expect(page.locator("#founderBookTitle")).toBeVisible();
+});
