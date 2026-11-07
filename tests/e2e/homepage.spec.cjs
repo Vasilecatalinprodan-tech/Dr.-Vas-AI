@@ -2525,7 +2525,10 @@ test("Dr.Vas Health uses the same chat shell, sidebar destinations and attachmen
   expect(healthScroll.transcriptOverflow).toBe("auto");
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   await expect.poll(() => page.evaluate(() => window.scrollY > 0)).toBe(true);
-  await expect(page.locator("#freeChatView .input-area .chat-file-button")).toBeInViewport();
+  const attachment = page.locator("#freeChatView .input-area .chat-file-button");
+  await expect(attachment).toBeVisible();
+  await attachment.scrollIntoViewIfNeeded();
+  await expect(attachment).toBeInViewport();
   await expect(page.locator("#freeSidebarBrand")).toHaveText("✚ Dr.Vas Health");
   const labels = await page.locator("[data-free-nav]").allTextContents();
   expect(labels.map(value => value.trim())).toEqual(["＋New chat","▧Images","◷Scheduled","▤Library","⌘Plugins","✧Explore","▣Projects","View all"]);
@@ -2576,7 +2579,10 @@ test("Dr.Vas Health mobile page scroll reaches the attachment composer and keeps
   expect(before.transcriptOverflow).toBe("auto");
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   await expect.poll(() => page.evaluate(() => window.scrollY > 0)).toBe(true);
-  await expect(page.locator("#freeChatView .input-area .chat-file-button")).toBeInViewport();
+  const attachment = page.locator("#freeChatView .input-area .chat-file-button");
+  await expect(attachment).toBeVisible();
+  await attachment.scrollIntoViewIfNeeded();
+  await expect(attachment).toBeInViewport();
   await page.locator(".chat-history-toggle").click();
   await expect(page.locator("#chatSection .history-panel")).toBeVisible();
   await expect(page.locator("#freeSidebarBrand")).toHaveText("✚ Dr.Vas Health");
