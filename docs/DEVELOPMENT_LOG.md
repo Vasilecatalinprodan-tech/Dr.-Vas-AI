@@ -965,3 +965,9 @@ User reiterated: “ok hai sa continuam si tot asa salvam tot”. Continue the i
 - Android build `42413149982` succeeded (build #365); artifact `DrVas-APK`, ID `13590002519`, expiry 2026-12-07. APK `app-debug.apk`, package `com.drvas.ai`, size 6,896,773 bytes, SHA-256 `41a4f4d5d858b07afe22f19063b91e36e43d3963fedc7ed7fd71e5bd875779ed`. Extracted APK independently identified and archive integrity checked.
 - This APK is a debug/test build, not a Play Store-signed release. User device installation has not yet been performed.
 - Remaining: Book Studio/Translation Station field/options/placeholders/status/prompt localization; remaining dynamic UI copy; Free/Health follow-up audit; Sarah/Dr.Jan/voice; security/performance. Any later app-code changes trigger another APK build.
+
+## 2026-11-07 — Studio station localization follow-up
+- Opened PR #82 (`feat/localize-studio-stations-2026-11-07`) for seven-language Book Studio and Translation Station field, option, placeholder, validation, save-status and generated-brief localization.
+- Added Playwright coverage for EN/IT/TR/DE/FR/ES/RU; CI result remains pending verification and PR is not merged.
+- Archived the user instruction and complete checkpoint, APK facts, implementation notes, test caveats and next steps in `docs/SESSION-CHECKPOINT-2026-11-07-STUDIO-LOCALIZATION.md`.
+- Previous debug APK remains verified, but user download/device installation is not confirmed. A new APK must be verified after any merged app-code changes.
