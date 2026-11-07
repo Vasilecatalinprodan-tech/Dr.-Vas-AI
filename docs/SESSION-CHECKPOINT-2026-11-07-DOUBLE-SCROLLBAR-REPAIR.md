@@ -72,3 +72,14 @@ Do not resume unrelated feature development until the production deployment is v
 - After PR #63 passes and is merged, verify the main deploy workflow through Supabase migration, Cloudflare deploy, and production smoke test. Then request user confirmation of both independent scrollbars and visible composer/attachments on the live site.
 - Keep the APK explicitly deferred until all web modules, presenters/voice, security and performance work is complete. Do not start APK build now.
 - Conversation archive note: this repository record captures the material project decisions, technical findings, test outcomes and next steps; it is not a literal export of the complete ChatGPT transcript.
+
+
+## Follow-up checkpoint — 2026-11-07 (PR #63 merged; production deploy #529)
+
+- User explicitly asked to merge and continue autonomously, preserve all progress, and retain the realistic 3D DNA helix requirement. Standing project order is unchanged: close Health/scroll deployment and live UX confirmation first; then implement the DNA helices as genuine depth-rich, rotating 3D visuals (not static images), then continue Free/Health, Studio, Academy, Commerce, Business, Sarah/Dr.Jan/voice, security/performance; Android APK remains the final deliverable only after web/platform work is complete.
+- PR #63 browser regression run #626 (`42374561670`) completed successfully. All browser E2E tests passed after fixing the Health CTA mobile handoff.
+- PR #63 was squash-merged successfully into `main`. Merge commit: `477873604c01d1b16ae49ddfad727697cc726930`. Change: expose `buildHealthPrompt` on `window` and have the Health CTA invoke `window.buildHealthPrompt()` so its structured prompt is transferred into the chat composer.
+- Main workflows triggered for merge commit `477873604c01d1b16ae49ddfad727697cc726930`: deploy run #529 (`42374769942`) and browser regression run #627 (`42374769927`). At checkpoint time both were in progress. Deploy run #529 had completed setup/checkout/Node and was installing dependencies; no Supabase migration, Cloudflare deployment or production smoke-test success had yet been confirmed.
+- PR #63 browser test success is confirmed; production release is not yet confirmed. Keep checking deploy #529 through migration gates, Cloudflare deploy and smoke test. Do not tell the user production is live until the run and smoke test succeed.
+- Scroll-related Playwright checks passed in the earlier #528 run, but the user still needs to verify on the live site: page scrollbar at far right, independent transcript scrollbar, ability to move them independently, and composer/attachments visible at document bottom. Do not mark live UX accepted without user confirmation.
+- This checkpoint records the material instructions and outcomes from the current conversation; it is a technical archive, not a verbatim export of the complete ChatGPT transcript.
