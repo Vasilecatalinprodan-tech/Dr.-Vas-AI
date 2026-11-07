@@ -3123,12 +3123,12 @@ test("shared navigation and presentation controls localize across all supported 
   await page.evaluate(() => { checkSession = () => {}; });
 
   const cases = [
-    ["en", "Language", "Talk to Dr.Vas", "Open presentation", "TALK TO DR.VAS", "Save"],
-    ["it", "Lingua", "Parla con Dr.Vas", "Apri la presentazione", "PARLA CON DR.VAS", "Salva"],
-    ["tr", "Dil", "Dr.Vas ile konuş", "Tanıtımı aç", "DR.VAS İLE KONUŞ", "Kaydet"],
-    ["de", "Sprache", "Sprich mit Dr.Vas", "Präsentation öffnen", "MIT DR.VAS SPRECHEN", "Speichern"],
-    ["fr", "Langue", "Parler à Dr.Vas", "Ouvrir la présentation", "PARLER À DR.VAS", "Enregistrer"],
-    ["es", "Idioma", "Habla con Dr.Vas", "Abrir presentación", "HABLA CON DR.VAS", "Guardar"],
+    ["en", "Language", "Talk to Dr.Vas", "Open presentation", "TALK TO DR.VAS"],
+    ["it", "Lingua", "Parla con Dr.Vas", "Apri la presentazione", "PARLA CON DR.VAS"],
+    ["tr", "Dil", "Dr.Vas ile konuş", "Tanıtımı aç", "DR.VAS İLE KONUŞ"],
+    ["de", "Sprache", "Sprich mit Dr.Vas", "Präsentation öffnen", "MIT DR.VAS SPRECHEN"],
+    ["fr", "Langue", "Parler à Dr.Vas", "Ouvrir la présentation", "PARLER À DR.VAS"],
+    ["es", "Idioma", "Habla con Dr.Vas", "Abrir presentación", "HABLA CON DR.VAS"],
     ["ru", "Язык", "Поговорить с Dr.Vas", "Открыть презентацию", "ПОГОВОРИТЕ С DR.VAS"]
   ];
 
@@ -3146,12 +3146,12 @@ test("Dr.Vas Free navigation and Health workspace localize in all supported lang
   await page.evaluate(() => { checkSession = () => {}; });
 
   const cases = [
-    ["en", "Images", "New chat", "GENERAL INFORMATION", "Informational support, not a diagnosis.", "Understanding a medical test result", "Understand the terms and explanations", "Chat with Dr.Vas Health", "Save"],
-    ["it", "Immagini", "Nuova chat", "INFORMAZIONI GENERALI", "Un supporto informativo, non una diagnosi.", "Spiegazione di un risultato medico", "Comprendere i termini e le spiegazioni", "Chatta con Dr.Vas Health", "Salva"],
-    ["tr", "Görseller", "Yeni sohbet", "GENEL BİLGİLER", "Bilgilendirici destek; teşhis değildir.", "Tıbbi test sonucunu açıklama", "Terimleri ve açıklamaları anlamak", "Dr.Vas Health ile sohbet et", "Kaydet"],
-    ["de", "Bilder", "Neuer Chat", "ALLGEMEINE INFORMATIONEN", "Informative Unterstützung, keine Diagnose.", "Einen medizinischen Befund erklären", "Begriffe und Erklärungen verstehen", "Mit Dr.Vas Health chatten", "Speichern"],
-    ["fr", "Images", "Nouvelle discussion", "INFORMATIONS GÉNÉRALES", "Un soutien informatif, pas un diagnostic.", "Comprendre un résultat médical", "Comprendre les termes et les explications", "Discuter avec Dr.Vas Health", "Enregistrer"],
-    ["es", "Imágenes", "Nuevo chat", "INFORMACIÓN GENERAL", "Apoyo informativo, no un diagnóstico.", "Explicar un resultado médico", "Entender los términos y las explicaciones", "Chatear con Dr.Vas Health", "Guardar"],
+    ["en", "Images", "New chat", "GENERAL INFORMATION", "Informational support, not a diagnosis.", "Understanding a medical test result", "Understand the terms and explanations", "Chat with Dr.Vas Health"],
+    ["it", "Immagini", "Nuova chat", "INFORMAZIONI GENERALI", "Un supporto informativo, non una diagnosi.", "Spiegazione di un risultato medico", "Comprendere i termini e le spiegazioni", "Chatta con Dr.Vas Health"],
+    ["tr", "Görseller", "Yeni sohbet", "GENEL BİLGİLER", "Bilgilendirici destek; teşhis değildir.", "Tıbbi test sonucunu açıklama", "Terimleri ve açıklamaları anlamak", "Dr.Vas Health ile sohbet et"],
+    ["de", "Bilder", "Neuer Chat", "ALLGEMEINE INFORMATIONEN", "Informative Unterstützung, keine Diagnose.", "Einen medizinischen Befund erklären", "Begriffe und Erklärungen verstehen", "Mit Dr.Vas Health chatten"],
+    ["fr", "Images", "Nouvelle discussion", "INFORMATIONS GÉNÉRALES", "Un soutien informatif, pas un diagnostic.", "Comprendre un résultat médical", "Comprendre les termes et les explications", "Discuter avec Dr.Vas Health"],
+    ["es", "Imágenes", "Nuevo chat", "INFORMACIÓN GENERAL", "Apoyo informativo, no un diagnóstico.", "Explicar un resultado médico", "Entender los términos y las explicaciones", "Chatear con Dr.Vas Health"],
     ["ru", "Изображения", "Новый чат", "ОБЩАЯ ИНФОРМАЦИЯ", "Информационная помощь, а не диагноз.", "Объяснение результата медицинского анализа", "Понять термины и объяснения", "Обсудить с Dr.Vas Health"]
   ];
 
@@ -3173,12 +3173,12 @@ test("Dr.Vas Studio production workspace localizes its core controls in all supp
   await page.evaluate(() => { checkSession = () => {}; });
 
   const cases = [
-    ["en", "Production studio for scripts, vertical videos, subtitles and digital assets.", "CREATIVE WORKSPACE", "VPC founder's voice — being configured", "Drama series / episode", "Realistic cinematic", "General audience", "30–60 seconds", "Vertical 9:16", "Render MP4 video", "Save"],
-    ["it", "Studio di produzione per sceneggiature, video verticali, sottotitoli e contenuti digitali.", "SPAZIO CREATIVO", "Voce del fondatore VPC — in configurazione", "Serie / episodio drammatico", "Cinematografico realistico", "Pubblico generale", "30–60 secondi", "Verticale 9:16", "Crea video MP4", "Salva"],
-    ["tr", "Senaryolar, dikey videolar, altyazılar ve dijital içerikler için prodüksiyon stüdyosu.", "YARATICI ÇALIŞMA ALANI", "VPC kurucusunun sesi — yapılandırılıyor", "Dizi / dramatik bölüm", "Gerçekçi sinematik", "Genel kitle", "30–60 saniye", "Dikey 9:16", "MP4 video oluştur", "Kaydet"],
-    ["de", "Produktionsstudio für Drehbücher, Hochkantvideos, Untertitel und digitale Inhalte.", "KREATIVER ARBEITSBEREICH", "Stimme des VPC-Gründers — wird eingerichtet", "Dramaserie / Episode", "Realistisch-kinematografisch", "Allgemeines Publikum", "30–60 Sekunden", "Hochformat 9:16", "MP4-Video rendern", "Speichern"],
-    ["fr", "Studio de production pour scénarios, vidéos verticales, sous-titres et contenus numériques.", "ESPACE CRÉATIF", "Voix du fondateur VPC — en cours de configuration", "Série / épisode dramatique", "Cinématographique réaliste", "Grand public", "30–60 secondes", "Vertical 9:16", "Rendre la vidéo MP4", "Enregistrer"],
-    ["es", "Estudio de producción para guiones, vídeos verticales, subtítulos y contenidos digitales.", "ESPACIO CREATIVO", "Voz del fundador de VPC — en configuración", "Serie / episodio dramático", "Cinematográfico realista", "Público general", "30–60 segundos", "Vertical 9:16", "Renderizar vídeo MP4", "Guardar"],
+    ["en", "Production studio for scripts, vertical videos, subtitles and digital assets.", "CREATIVE WORKSPACE", "VPC founder's voice — being configured", "Drama series / episode", "Realistic cinematic", "General audience", "30–60 seconds", "Vertical 9:16", "Render MP4 video"],
+    ["it", "Studio di produzione per sceneggiature, video verticali, sottotitoli e contenuti digitali.", "SPAZIO CREATIVO", "Voce del fondatore VPC — in configurazione", "Serie / episodio drammatico", "Cinematografico realistico", "Pubblico generale", "30–60 secondi", "Verticale 9:16", "Crea video MP4"],
+    ["tr", "Senaryolar, dikey videolar, altyazılar ve dijital içerikler için prodüksiyon stüdyosu.", "YARATICI ÇALIŞMA ALANI", "VPC kurucusunun sesi — yapılandırılıyor", "Dizi / dramatik bölüm", "Gerçekçi sinematik", "Genel kitle", "30–60 saniye", "Dikey 9:16", "MP4 video oluştur"],
+    ["de", "Produktionsstudio für Drehbücher, Hochkantvideos, Untertitel und digitale Inhalte.", "KREATIVER ARBEITSBEREICH", "Stimme des VPC-Gründers — wird eingerichtet", "Dramaserie / Episode", "Realistisch-kinematografisch", "Allgemeines Publikum", "30–60 Sekunden", "Hochformat 9:16", "MP4-Video rendern"],
+    ["fr", "Studio de production pour scénarios, vidéos verticales, sous-titres et contenus numériques.", "ESPACE CRÉATIF", "Voix du fondateur VPC — en cours de configuration", "Série / épisode dramatique", "Cinématographique réaliste", "Grand public", "30–60 secondes", "Vertical 9:16", "Rendre la vidéo MP4"],
+    ["es", "Estudio de producción para guiones, vídeos verticales, subtítulos y contenidos digitales.", "ESPACIO CREATIVO", "Voz del fundador de VPC — en configuración", "Serie / episodio dramático", "Cinematográfico realista", "Público general", "30–60 segundos", "Vertical 9:16", "Renderizar vídeo MP4"],
     ["ru", "Студия производства сценариев, вертикальных видео, субтитров и цифровых материалов.", "ТВОРЧЕСКОЕ ПРОСТРАНСТВО", "Голос основателя VPC — настраивается", "Драматический сериал / эпизод", "Реалистичный кинематографичный", "Широкая аудитория", "30–60 секунд", "Вертикальный 9:16", "Создать видео MP4"]
   ];
 
