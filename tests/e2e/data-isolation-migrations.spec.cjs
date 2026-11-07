@@ -190,7 +190,7 @@ test("Conversation feature context is saved before chat writes and enforced by t
   expect(html).toContain("feature_key:featureKey||null");
   expect(html).toContain("activeFeatureKey");
   expect(html).toContain("feature_assistant");
-  expect(workspaces).toContain("window.drvasSetFeatureContext?.(moduleName,id)");
+  expect(workspaces).toContain("window.drvasSetFeatureContext?.(moduleName,conversationFeature)");
   expect(worker).toContain("body.feature_key || null");
   expect(worker).toContain("context.module !== moduleName");
   expect(worker).toContain("(context.feature_key || null) !== featureKey");
