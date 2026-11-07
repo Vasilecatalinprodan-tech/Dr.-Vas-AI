@@ -3558,6 +3558,8 @@ for(const [source,values] of Object.entries(STUDIO_STATION_TRANSLATIONS)){
  }
 }
 
+const STUDIO_SOURCE_LANGUAGE_TRANSLATIONS=["Source language","Lingua di origine","Kaynak dil","Ausgangssprache","Langue source","Idioma de origen","Исходный язык"];
+for(let i=0;i<["en","it","tr","de","fr","es","ru"].length;i++){const language=["en","it","tr","de","fr","es","ru"][i];if(UI[language])UI[language]["Limba sursă"]=STUDIO_SOURCE_LANGUAGE_TRANSLATIONS[i];}
 function localizeInterfaceCopy(source){return (ASSISTANT_UI_TRANSLATIONS[currentLanguage]||{})[source]||(UI[currentLanguage]||{})[source]||source}
 function tr(s){return localizeInterfaceCopy(s)}
 function setLocalizedText(target,source){
