@@ -1,19 +1,9 @@
 name: Build DrVas APK
 
-# Build a fresh debug APK automatically whenever merged web/app assets change.
-# Manual dispatch remains available for an owner-requested rebuild.
+# APK builds are deliberately deferred until the web platform and modules are stable.
+# An owner explicitly starts the final Android build through workflow_dispatch.
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - 'www/**'
-      - 'android/**'
-      - 'capacitor.config.*'
-      - 'package.json'
-      - 'package-lock.json'
-      - '.github/workflows/android.yml'
 
 concurrency:
   group: drvas-android-${{ github.ref }}
