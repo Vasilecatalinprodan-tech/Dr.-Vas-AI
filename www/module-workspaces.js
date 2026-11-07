@@ -3,6 +3,36 @@
 (function(){
  "use strict";
  const built=new WeakSet();
+ const voiceToolbar=()=>document.querySelector("#chatSection .voice-toolbar");
+ let voiceHome=null;
+ function mountModuleVoice(moduleName,workspace){
+  const toolbar=voiceToolbar();
+  if(!toolbar)return;
+  if(!voiceHome){
+   voiceHome=document.createComment("Dr.Vas voice toolbar home");
+   toolbar.parentNode?.insertBefore(voiceHome,toolbar);
+  }
+  document.querySelectorAll(".drvas-module-voice-access").forEach(node=>node.remove());
+  const isModule=["studio","academy","commerce","business"].includes(moduleName);
+  const activeWorkspace=isModule&&workspace&&!workspace.classList.contains("hidden")&&document.body.classList.contains("module-workspace-mode");
+  if(!activeWorkspace){
+   if(voiceHome.parentNode)voiceHome.parentNode.insertBefore(toolbar,voiceHome.nextSibling);
+   toolbar.setAttribute("aria-label","Controale vocale Dr.Vas");
+   return;
+  }
+  const section=document.createElement("section");
+  section.className="drvas-module-voice-access";
+  section.setAttribute("aria-labelledby","drvasModuleVoiceHeading");
+  const heading=document.createElement("h3");
+  heading.id="drvasModuleVoiceHeading";
+  heading.textContent="🎧 Acces vocal și accesibilitate";
+  const description=document.createElement("p");
+  description.textContent="Ascultă răspunsurile asistentului, dictează și trimite întrebări fără să tastezi sau începe o conversație vocală Live. Microfonul pornește numai când apeși un buton.";
+  section.append(heading,description,toolbar);
+  const navigation=workspace.querySelector(".drvas-feature-navigation");
+  workspace.insertBefore(section,navigation||workspace.firstChild);
+  toolbar.setAttribute("aria-label","Controale vocale pentru acest modul");
+ }
  const direct=(root,selector)=>{const normalized=selector.replace(/^:scope\s*>\s*/,"");return Array.from(root.children).find(node=>node.matches(normalized))||null;};
  const byId=id=>document.getElementById(id);
  function makeNav(root,items){
@@ -144,6 +174,7 @@
    const result=original.call(this,moduleName,...rest);
    init(moduleName);
    const back=byId("globalBackToModules"),chat=byId("chatSection"),workspace=byId(moduleName+"Workspace");
+   mountModuleVoice(moduleName,workspace);
    const active=["free","health"].includes(moduleName)
     ?document.body.classList.contains("free-module-mode")&&chat&&!chat.classList.contains("hidden")
     :document.body.classList.contains("module-workspace-mode")&&workspace&&!workspace.classList.contains("hidden");
@@ -152,5 +183,5 @@
   };
  }
  document.addEventListener("DOMContentLoaded",()=>["health","studio","academy","commerce","business"].forEach(init));
- window.DrVasFeatureWorkspaces={init};
+ window.DrVasFeatureWorkspaces={init,mountModuleVoice};
 })();
