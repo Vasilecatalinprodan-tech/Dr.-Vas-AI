@@ -1046,6 +1046,23 @@ body::-webkit-scrollbar-track,html::-webkit-scrollbar-track{background:#091827;b
 body::-webkit-scrollbar-thumb,html::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#54d8cf,#315c78);border:2px solid #091827;border-radius:10px}
 body.module-workspace-mode:not(.free-module-mode){overflow-y:scroll;scrollbar-gutter:stable}
 
+/* A legacy fitted-chat class can leave the document root locked even after a module workspace opens.
+   Restore the document-level scrollbar for full module pages; the transcript keeps its own scroll area. */
+html:has(body.module-workspace-mode:not(.free-module-mode)){
+  height:auto!important;
+  min-height:100%!important;
+  overflow-x:hidden!important;
+  overflow-y:scroll!important;
+  scrollbar-gutter:stable;
+}
+html:has(body.module-workspace-mode:not(.free-module-mode)) body.module-workspace-mode:not(.free-module-mode){
+  height:auto!important;
+  min-height:100vh!important;
+  overflow-x:visible!important;
+  overflow-y:visible!important;
+  overscroll-behavior-y:auto!important;
+}
+
 
 /* Scientific double helix: shaded molecular rails, reflective tube edges and spherical base-pair joints. */
 .dna-helix-visual{width:clamp(150px,17vw,238px);opacity:1;filter:drop-shadow(0 16px 28px #020711ee) drop-shadow(0 0 28px #55e6db88)}
