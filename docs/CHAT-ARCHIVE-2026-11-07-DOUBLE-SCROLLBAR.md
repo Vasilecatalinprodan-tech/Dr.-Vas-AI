@@ -59,3 +59,34 @@ Do not continue with other module development until:
 ## Continuity note
 
 The user specifically asked to save this chat. This file preserves the exact user requests and the key assistant commitments, diagnosis, implementation and release state. The original conversation remains in ChatGPT conversation history; this file is the repository's durable engineering record for resuming in a new chat.
+
+
+## Assistant replies — visible conversation text
+
+### First clarification
+> Am înțeles acum exact problema. Trebuie să existe **două bare de derulare independente, simultan**, nu una în locul celeilalte.
+>
+> 1. **Bara chatului:** derulează mesajele conversației în sus și în jos, fără să miște pagina.
+> 2. **Bara paginii:** derulează întreaga pagină, inclusiv zona de jos, unde se află atașamentele, câmpul de scriere și celelalte controale.
+>
+> Vreau să reparăm problema la nivelul structurii paginii, nu să ascundem o bară sau să aplicăm un truc vizual. Nu continuăm celelalte module până nu verificăm această remediere.
+
+### Root-cause explanation
+> Am găsit problema în cod: versiunea Free și Health păstrează încă o structură de tip ecran fix, cu `overflow:hidden` pe document și pe containerele principale. Asta intră în conflict cu bara paginii, chiar dacă bara interioară a conversației există.
+>
+> De aceea, o simplă modificare de culoare sau de lățime a barei nu rezolvă problema.
+
+### Implementation update
+> ## 6. Remedierea este pregătită pentru testare
+>
+> PR #61 creat.
+>
+> Am modificat:
+> - `www/index.html` – structura și regulile de derulare;
+> - `tests/e2e/homepage.spec.cjs` – teste noi pentru ambele bare;
+> - documentația de continuitate.
+>
+> Testele verifică acum Free și Health atât pe desktop, cât și pe mobil. Verifică inclusiv că poți mișca pagina fără să miști conversația și invers.
+>
+> Verificarea automată a început. Nu voi declara problema rezolvată și nu voi publica modificarea înainte să treacă testele.
+
