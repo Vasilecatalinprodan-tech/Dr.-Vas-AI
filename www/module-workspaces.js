@@ -39,6 +39,7 @@
  function makeNav(root,items){
   const nav=document.createElement("nav");nav.className="drvas-feature-navigation";nav.setAttribute("aria-label","Funcții și spații de lucru");
   const pages=document.createElement("div");pages.className="drvas-feature-pages";
+  if(!items.some(item=>item.id==="general"))items.push({id:"general",label:"Chat general",title:"Conversație generală",description:"Aici găsești discuțiile generale ale acestui modul și istoricul mai vechi care nu avea o funcție atribuită. Conversațiile vechi rămân neclasificate până când alegi explicit să începi un fir nou.",conversationKey:""});
   const pageMap=new Map(),savedSharedState=new Map();
   function readSharedState(item){
    const state={};
@@ -89,7 +90,8 @@
    if(item.mode)window[item.mode[0]]=item.mode[1];
    root.dataset.activeFeature=id;
    const moduleName=String(root.id||"").replace(/Workspace$/,"").toLowerCase();
-   window.drvasSetFeatureContext?.(moduleName,id);
+   const conversationFeature=Object.prototype.hasOwnProperty.call(item,"conversationKey")?item.conversationKey:id;
+   window.drvasSetFeatureContext?.(moduleName,conversationFeature);
   }
   open(items[0].id);
   return {open,pageMap};
