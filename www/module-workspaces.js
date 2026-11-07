@@ -14,7 +14,7 @@
    toolbar.parentNode?.insertBefore(voiceHome,toolbar);
   }
   document.querySelectorAll(".drvas-module-voice-access").forEach(node=>node.remove());
-  const isModule=["studio","academy","commerce","business"].includes(moduleName);
+  const isModule=["health","studio","academy","commerce","business"].includes(moduleName);
   const activeWorkspace=isModule&&workspace&&!workspace.classList.contains("hidden")&&document.body.classList.contains("module-workspace-mode");
   if(!activeWorkspace){
    if(voiceHome.parentNode)voiceHome.parentNode.insertBefore(toolbar,voiceHome.nextSibling);
