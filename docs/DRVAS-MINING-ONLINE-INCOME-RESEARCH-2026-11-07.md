@@ -33,7 +33,7 @@ Sursa: https://support.google.com/googleplay/android-developer/answer/13607354
 - Dacă Dr.Vas ar începe să tranzacționeze, să păstreze active pentru clienți sau să ofere servicii de tranzacționare/custodie, ar fi necesară o analiză FCA separată. Nu vom construi astfel de servicii în această etapă.
 
 Surse:
-- https://www.gov.uk/hmrc-internal-manuals/cryptoassets-manual/crypto40200
+- https://www.gov.uk/hmrc-internal-manuals/cryptoassets-manual/crypto22150
 - https://www.gov.uk/guidance/check-if-you-need-to-pay-tax-when-you-receive-cryptoassets
 - https://www.gov.uk/hmrc-internal-manuals/cryptoassets-manual/crypto20050
 - https://www.fca.org.uk/publications/policy-statements/ps26-18-cryptoasset-perimeter-guidance
