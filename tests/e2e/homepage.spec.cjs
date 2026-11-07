@@ -3090,6 +3090,7 @@ test("changing the selected language localizes the Dr.Vas, Dr.Jan and Sarah welc
     selectAssistant("drvas");
   });
 
+  await page.locator("#languageGate").evaluate(node => node.classList.add("hidden"));
   await page.locator("#languageSwitch").click();
   await page.getByRole("button", { name: /English/ }).click();
 
