@@ -134,11 +134,12 @@
   button.type="button";button.className="studio-station-submit";button.textContent=kind==="book"?"Creează și salvează proiectul de carte":"Pregătește traducerea și salvează proiectul";
   button.addEventListener("click",async()=>{
    const value=id=>byId(id)?.value?.trim()||"";
+   const localized=source=>typeof window.tr==="function"?window.tr(source):source;
    if(kind==="book"){
     const concept=value("drvasBookStationConcept");
     if(!concept){status.textContent=window.tr?window.tr("Descrie ideea cărții înainte de a continua."):"Descrie ideea cărții înainte de a continua.";byId("drvasBookStationConcept")?.focus();return;}
     const bookTitle=value("drvasBookStationTitle")||"Carte nouă";
-    const idea=["TITLU: "+bookTitle,"GEN: "+value("drvasBookStationGenre"),"LIMBA: "+value("drvasBookStationLanguage"),"PUBLIC: "+value("drvasBookStationAudience"),"DIMENSIUNE: "+value("drvasBookStationLength"),"CONCEPT ȘI CERINȚE:",concept].join("\n");
+    const idea=[localized("TITLU: ")+bookTitle,localized("GEN: ")+value("drvasBookStationGenre"),localized("LIMBA: ")+value("drvasBookStationLanguage"),localized("PUBLIC: ")+value("drvasBookStationAudience"),localized("DIMENSIUNE: ")+value("drvasBookStationLength"),localized("CONCEPT ȘI CERINȚE:"),concept].join("\n");
     window.newStudioProject?.();
     if(byId("studioDeliverable"))byId("studioDeliverable").value="book";
     if(byId("studioProjectTitle"))byId("studioProjectTitle").value=bookTitle;
@@ -149,7 +150,7 @@
     if(!source){status.textContent=window.tr?window.tr("Adaugă textul care trebuie tradus."):"Adaugă textul care trebuie tradus.";byId("drvasTranslationText")?.focus();return;}
     if(!target){status.textContent=window.tr?window.tr("Alege limba țintă."):"Alege limba țintă.";byId("drvasTranslationTarget")?.focus();return;}
     const title="Traducere "+value("drvasTranslationSource")+" → "+target;
-    const idea=["STIL: "+value("drvasTranslationStyle"),"FORMAT: "+value("drvasTranslationFormat"),"GLOSAR:",value("drvasTranslationGlossary")||"Nu a fost furnizat.","TEXT SURSĂ:",source].join("\n");
+    const idea=[localized("STIL: ")+value("drvasTranslationStyle"),localized("FORMAT: ")+value("drvasTranslationFormat"),localized("GLOSAR:"),value("drvasTranslationGlossary")||localized("Nu a fost furnizat."),localized("TEXT SURSĂ:"),source].join("\n");
     window.newStudioProject?.();
     if(byId("studioDeliverable"))byId("studioDeliverable").value="translation";
     if(byId("studioProjectTitle"))byId("studioProjectTitle").value=title;
