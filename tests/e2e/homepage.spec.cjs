@@ -799,9 +799,9 @@ test("Sarah always selects a feminine device voice and never silently falls back
   expect(result.presentationSarah).toBe("alina-ro");
   expect(result.presentationHasFemale).toBe(true);
   expect(result.noFemaleSarah).toBeNull();
-  expect(result.crossLanguageChatVoice).toBeNull();
-  expect(result.crossLanguagePresentationSarah).toBeNull();
-  expect(result.crossLanguageVoiceLanguage).toBeNull();
+  expect(result.crossLanguageChatVoice).toBe("google-female");
+  expect(result.crossLanguagePresentationSarah).toBe("google-female");
+  expect(result.crossLanguageVoiceLanguage).toBe("en-GB");
 });
 
 test("live voice room shows the selected assistant avatar and speaking animation for all three characters", async ({ page }) => {
@@ -1400,6 +1400,9 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
   expect(sarah.speech).toContain("Doctor Vas Commerce");
   await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].onend());
   await page.waitForTimeout(1450);
+  await expect(page.locator("#drvasPresentation")).toBeVisible();
+  expect(await page.evaluate(() => window.__drvasStartCount)).toBe(0);
+  await page.locator("#presentationContinueButton").click();
   await expect(page.locator("#drvasPresentation")).toBeHidden();
   expect(await page.evaluate(() => window.__drvasStartCount)).toBe(1);
 });
