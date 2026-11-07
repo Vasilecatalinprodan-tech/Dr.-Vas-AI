@@ -159,3 +159,25 @@ test("Standalone Projects migration enforces owner-scoped CRUD and module contex
   expect(sql).toMatch(/grant\s+select\s*,\s*insert\s*,\s*update\s*,\s*delete\s+on\s+(?:table\s+)?public\.drvas_projects\s+to\s+authenticated/i);
   expect(sql).toMatch(/notes text not null default ''/i);
 });
+
+
+test("Worker rejects missing or cross-module conversation context before loading chat history", async () => {
+  const worker = fs.readFileSync(path.join(__dirname, "../../worker/index.js"), "utf8");
+  const contextGuard = worker.indexOf('"drvas_conversation_metadata"');
+  const historyRead = worker.indexOf('"chat_messages"', contextGuard);
+  expect(contextGuard).toBeGreaterThan(-1);
+  expect(historyRead).toBeGreaterThan(contextGuard);
+  expect(worker).toContain('context.module !== moduleName');
+  expect(worker).toContain('context.module');
+  expect(worker).toContain('}, 409)');
+});
+
+test("Frontend establishes conversation module metadata before persisting or sending the first user message", async () => {
+  const html = fs.readFileSync(path.join(__dirname, "../../www/index.html"), "utf8");
+  const sendStart = html.indexOf("async function send(){");
+  const sendEnd = html.indexOf("\nfunction resizeQuestionInput()", sendStart);
+  const sendBody = html.slice(sendStart, sendEnd);
+  expect(sendBody.indexOf("await ensureConversationMetadata")).toBeGreaterThan(-1);
+  expect(sendBody.indexOf("await ensureConversationMetadata")).toBeLessThan(sendBody.indexOf('await saveMessage("user"'));
+  expect(sendBody).not.toMatch(/ensureConversationMetadata\([^;]+catch\(metadataError\)/);
+});
