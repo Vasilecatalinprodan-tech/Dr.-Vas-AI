@@ -2881,7 +2881,8 @@ function localizedAssistantCopy(assistantId,field){
  return (ASSISTANT_UI_TRANSLATIONS[currentLanguage]||{})[source]||tr(source);
 }
 
-function tr(s){return (UI[currentLanguage]||{})[s]||s}
+function localizeInterfaceCopy(source){return (ASSISTANT_UI_TRANSLATIONS[currentLanguage]||{})[source]||(UI[currentLanguage]||{})[source]||source}
+function tr(s){return localizeInterfaceCopy(s)}
 function setLocalizedText(target,source){
  if(!target)return;
  target.textContent=source;
@@ -2929,7 +2930,7 @@ function chooseLanguage(code){
  currentLanguage=code;languageReady=true;localStorage.setItem(LANGUAGE_KEY,code);
  refreshSpeechVoiceOptions();
  el("appMain").classList.remove("language-pending");el("languageGate").classList.remove("hidden");
- translatePage();renderDrvasPresentation();refreshVoiceUi(voiceAutoRead?"ready":"off");checkSession();
+ translatePage();selectAssistant(activeAssistant);if(el("chat")?.querySelectorAll(".msg").length<=1)renderWelcome();renderDrvasPresentation();refreshVoiceUi(voiceAutoRead?"ready":"off");checkSession();
 }
 function showLanguageGate(){el("languageGate").classList.toggle("hidden");if(languageReady)translatePage(el("languageGate"))}
 function initLanguage(){
@@ -3099,9 +3100,9 @@ function selectAssistant(assistantId){
  });
  const assistant=ASSISTANTS[assistantId];
  const intro=el("assistantIntro");
- if(intro)intro.textContent=assistant.intro;
+ if(intro)intro.textContent=localizedAssistantCopy(assistantId,"intro");
  const label=el("chatModuleLabel");
- if(label)label.textContent=assistant.icon+" "+assistant.name+" · "+(activeModule==="free"?"Asistent general":activeModule==="health"?"Health":activeModule.charAt(0).toUpperCase()+activeModule.slice(1));
+ if(label)label.textContent=assistant.icon+" "+assistant.name+" · "+(activeModule==="free"?localizeInterfaceCopy("Asistent general"):activeModule==="health"?"Health":activeModule.charAt(0).toUpperCase()+activeModule.slice(1));
  if(window.speechSynthesis){
   window.speechSynthesis.cancel();
   refreshSpeechVoiceOptions();
@@ -5745,7 +5746,7 @@ function renderWelcome(){
   const welcome = document.createElement("div");
   welcome.className = "msg bot";
   const assistant=ASSISTANTS[activeAssistant]||ASSISTANTS.drvas;
-  welcome.textContent=assistant.welcome+" Mesajele și răspunsurile noi se salvează automat în contul tău.";
+  welcome.textContent=localizedAssistantCopy(activeAssistant,"welcome")+" "+localizeInterfaceCopy("Mesajele și răspunsurile noi se salvează automat în contul tău.");
   el("chat").appendChild(welcome);
   updateActiveConversation();
 }
