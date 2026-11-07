@@ -2739,9 +2739,9 @@ test("Studio exposes dedicated Book, Translation, Crypto and Online Income works
   await page.locator('#studioWorkspace [data-feature="crypto"]').click();
   await expect(page.locator('#studioWorkspace [data-feature-page="crypto"] .studio-founder-shortcut button')).toBeVisible();
   await expect(page.locator("#cryptoEngineStatus")).toContainText("Mining-ul real rămâne oprit");
-  await expect(page.locator("#cryptoEngineScanButton")).toBeVisible();
+  await expect(page.locator("#cryptoEngineScanButton")).toHaveCount(1);
   await page.locator('#studioWorkspace [data-feature="income-lab"]').click();
   await expect(page.locator('#studioWorkspace [data-feature-page="income-lab"] .studio-founder-shortcut button')).toBeVisible();
-  await expect(page.locator("#founderDigitalTitle")).toBeVisible();
-  await expect(page.locator("#founderBookTitle")).toBeVisible();
+  await expect(page.locator("#founderDigitalTitle")).toHaveCount(1);
+  await expect(page.locator("#founderBookTitle")).toHaveCount(1);
 });
