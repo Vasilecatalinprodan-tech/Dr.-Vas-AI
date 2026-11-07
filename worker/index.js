@@ -1154,22 +1154,26 @@ export default {
         const liveUser = await liveAuth.json();
         if (!liveUser?.id) return json({ error: "Utilizator neautentificat." }, 401);
 
-        if (!liveConversationId) return json({ error: "Conversația vocală nu are un ID verificat." }, 400);
-        const liveContextParams = new URLSearchParams({
-          select: "module,feature_key",
-          user_id: `eq.${liveUser.id}`,
-          conversation_id: `eq.${liveConversationId}`,
-          limit: "1"
-        });
-        const liveContextResponse = await fetch(
-          `${env.SUPABASE_URL.replace(/\\/+$/, "")}/rest/v1/drvas_conversation_metadata?${liveContextParams.toString()}`,
-          { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${liveAccessToken}` } }
-        );
-        if (!liveContextResponse.ok) return json({ error: "Nu am putut verifica spațiul de lucru al conversației vocale." }, 503);
-        const liveContextRows = await liveContextResponse.json();
-        const liveContext = Array.isArray(liveContextRows) ? liveContextRows[0] : null;
-        if (!liveContext || liveContext.module !== liveModule || (liveContext.feature_key || null) !== liveFeatureKey) {
-          return json({ error: "Conversația vocală nu aparține modulului și funcției selectate." }, 409);
+        // Older installed APKs do not send a conversation ID for Live tokens. Preserve their
+        // module-level general voice mode, but require a verified ID for every feature-specific Live session.
+        if (!liveConversationId && liveFeatureKey) return json({ error: "Conversația vocală nu are un ID verificat pentru funcția selectată." }, 400);
+        if (liveConversationId) {
+          const liveContextParams = new URLSearchParams({
+            select: "module,feature_key",
+            user_id: `eq.${liveUser.id}`,
+            conversation_id: `eq.${liveConversationId}`,
+            limit: "1"
+          });
+          const liveContextResponse = await fetch(
+            `${env.SUPABASE_URL.replace(/\\/+$/, "")}/rest/v1/drvas_conversation_metadata?${liveContextParams.toString()}`,
+            { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${liveAccessToken}` } }
+          );
+          if (!liveContextResponse.ok) return json({ error: "Nu am putut verifica spațiul de lucru al conversației vocale." }, 503);
+          const liveContextRows = await liveContextResponse.json();
+          const liveContext = Array.isArray(liveContextRows) ? liveContextRows[0] : null;
+          if (!liveContext || liveContext.module !== liveModule || (liveContext.feature_key || null) !== liveFeatureKey) {
+            return json({ error: "Conversația vocală nu aparține modulului și funcției selectate." }, 409);
+          }
         }
 
         const allowedAdminEmails = (env.ADMIN_EMAILS || "")
