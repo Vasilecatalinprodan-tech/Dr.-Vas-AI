@@ -1,0 +1,76 @@
+# Dr.Vas AI — consolidated feature audit and recovery plan
+**Date:** 7 November 2026  
+**Repository:** https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI  
+**Branch:** `fix/accessibility-voice-dna-creative-income-audit-2026-11-07`  
+**Production Worker:** https://dr--vas-ai.vasilecatalinprodan.workers.dev/
+
+This audit consolidates the currently available project scope record, dated checkpoints, and prior conversation requirements retrieved for this session. It is a technical continuity summary, not a verbatim export of every ChatGPT conversation.
+
+## Founder requirements recovered from prior discussions
+
+- One integrated Dr.Vas platform and Android app, with six main modules: Free, Health, Studio, Academy, Commerce and Business.
+- Preserve accounts, authentication, per-user/per-module conversation history, user-owned project data, Supabase RLS, Cloudflare Worker authorization, existing branding and APK compatibility.
+- Voice accessibility is required across every module: users must be able to speak instead of typing, hear Dr.Vas/Dr.Jan/Sarah responses, replay speech, stop speech and use real-time voice interaction. This is especially important for blind users and people who cannot write.
+- Presenters should visibly react while speaking. Existing movement is CSS/portrait animation, not phoneme-accurate lip-sync.
+- Dr.Vas voice cloning using the founder's voice was discussed; it remains dependent on a longer clean recording, consent and provider configuration. Do not claim it is complete.
+- Studio must support books/e-books, translations/localization, original music and lyrics, scripts/series, video/social content, publishing preparation and digital products.
+- Online-income tools include freelance/service offers, book/e-book products, translation services, music, digital products, publishing, income tracking and monetization planning.
+- Crypto/mining is a founder-only capability. The user requested legal local mining with explicit START/STOP controls and a mining instruction/PDF workflow. Earlier product scope explicitly forbids hidden mining, visitor-device mining, remote mining without device consent, automatic spending, and running before safe device enrollment, power/temperature limits, audit logging and emergency stop are verified.
+- Crypto trading must remain read-only or simulated until separate explicit approval; no withdrawal permissions, no automatic budget increases, no uncontrolled trading.
+- Academy, Commerce and Business remain founder-only until paid/public release is explicitly approved. Health remains general information, not diagnosis or clinician replacement.
+- The user asked for two visible DNA helices, left and right, with realistic scientific/molecular depth rather than cartoon-like line art.
+
+## Current implementation audit (verified by source inspection)
+
+| Area | Source status before this branch | What is actually implemented | Remaining gap |
+|---|---|---|---|
+| Free chat | Implemented | General chat, history, attachments, assistant selection | Continue regression testing |
+| Voice output | Implemented in shared chat | TTS endpoint `voice_tts`, browser fallback, assistant-specific voice IDs, replay/stop and auto-read toggle | Real device/audio-quality verification still required |
+| Voice input | Implemented in shared chat | Browser speech recognition dictation submits recognized text; Live mode streams microphone audio | Separate recorded audio-file message/upload is not implemented; test Live on physical Android |
+| Voice in module pages | Missing/hidden in workspaces | This branch mounts the shared, ID-stable voice toolbar into Health, Studio, Academy, Commerce and Business; restores it to the chat composer in Free | Playwright and manual screen-reader/device checks pending |
+| Sarah voice | Partially implemented | Selects feminine device voice matching selected language; server TTS route supports Sarah identity | Professional pronunciation cannot be certified without a configured voice and actual listening tests in each language |
+| Presenter motion | Partially implemented | Portrait speaking animation and voice halo | Not true lip-sync; user photo/portrait final approval and device test remain |
+| DNA hero | Previous code was flat SVG curves; left side had duplicate highlight strokes and right side lacked matching highlight paths | This branch replaces both sides with shaded tubular rails, specular edges, base-pair bars, spherical molecular joints and stronger 3D shading | Visual review on desktop/mobile is still required; SVG is dimensional vector artwork, not a photorealistic 3D render |
+| Studio books | Partially implemented | Generic Studio prompt supports book/e-book outline, chapter and continuity work; private project save/open/export/delete exists | Dedicated Book Studio form added in this branch; full typeset EPUB/PDF production and marketplace publishing are not verified |
+| Translation | Partially implemented | Generic Studio translation prompt, source/target language selectors and file text ingestion | Dedicated Translation Station form added in this branch; professional/legal/medical certification and large-document translation pipeline are not implemented |
+| Music / lyrics | Partially implemented | Prompt workflow for original compositions, lyrics and production briefs | Actual audio/music generation and distribution are not verified |
+| Video / social | Partially implemented | Studio renderer endpoint, timeline, media upload and render-status workflow | Provider availability/credits, full production quality and automatic social publishing are not verified |
+| Online Income | Partially implemented | Income tracker, Creator & Online Income Lab, digital-product builder, publishing/music/book/evaluation prompts | No guaranteed income; public payment/subscription and marketplace integrations are not complete |
+| Crypto analysis | Partially implemented | CoinGecko PoW discovery, hardware compatibility list, profitability calculator, scenarios and device registry | Live mining metrics, complete network/pool difficulty data and native agent are not implemented |
+| Real local mining | Not implemented | UI clearly states mining remains disabled; device registry is server-controlled | Native local agent, signed enrollment, explicit START/STOP, power/temperature caps, watchdog, audit trail and uninstall/revocation workflow must be built and verified before any mining |
+| Crypto wallet/trading | Not implemented by design | No wallet custody, withdrawals or trades | Keep read-only/paper trading until separately authorized and risk controls are complete |
+| Academy | Partially implemented | Course/lesson/exercise/learning-plan workspaces and private project data | Full course publishing, paid access and student workflows need end-to-end verification |
+| Commerce | Partially implemented | Product research, suppliers, pricing/margin calculations and project workspaces | Supplier/marketplace integrations, storefront checkout and paid order flows not verified |
+| Business | Partially implemented | Business plan, ledger, cashflow, break-even and Student Desk workspaces | Accountant-reviewed tax outputs and production integrations need verification |
+| Health | Partially implemented | General health information and navigation support | Clinical integrations and file analysis remain disabled; no diagnosis or replacement for clinicians |
+| Payments/subscriptions/Google Play | Not complete | Product access boundaries and Android build workflow exist | Payment provider, subscription entitlements, Play Store compliance and public launch remain open |
+
+## Changes in this branch
+
+1. Restores the existing accessible voice toolbar inside each module workspace without duplicating element IDs or creating competing voice states. Free retains its original composer placement.
+2. Keeps the existing Live microphone experience, dictation, auto-read, replay and stop controls available in every module.
+3. Replaces both landing DNA helix SVGs with more dimensional shaded rails and consistent molecular base-pair details on both sides.
+4. Adds dedicated Book Studio and Translation Station pages with their own inputs, language/style/glossary fields, project saving and existing Studio prompt pipeline.
+5. Adds separate Studio navigation destinations for Crypto & Mining and Creator & Online Income Lab, surfacing the existing founder-only tools without making them public modules.
+6. Adds regression tests for voice controls in each module, the two DNA helixes, and the new Studio destinations.
+
+## Safety, privacy and release boundaries
+
+- Do not activate any mining process in a browser, Cloudflare Worker, or on a visitor's device.
+- Real mining requires a separately installed, signed native agent on a device the owner controls, explicit enrollment and start consent, configurable power/temperature limits, an emergency stop, audit logs and a verified stop/revocation path.
+- Do not collect private keys, wallet seed phrases, exchange withdrawal credentials or passwords.
+- Do not publish, spend, order, trade, subscribe, or change account access without explicit authorization.
+- Do not weaken Worker authorization, RLS, ownership isolation or the admin allowlist to make founder-only tools appear available.
+- Keep Health educational/informational until appropriately licensed clinicians, organizations, privacy and regulatory requirements are in place.
+- A successful CI build does not prove physical Android installation, audio playback or visual quality on the founder's phone.
+
+## Verification status for this branch
+
+- Code changes are committed on the branch listed above.
+- Automated browser regression, PR review, production deployment and physical device testing are pending.
+- Do not merge or claim the new changes are live until the relevant checks pass.
+- Update this document with exact test run IDs, merge SHA, deployment result and APK artifact only after verification.
+
+## Conversation preservation
+
+The ChatGPT conversation remains in the user's ChatGPT history. This document preserves the relevant project decisions and technical state for continuity; it is not a verbatim copy of the entire private conversation.
