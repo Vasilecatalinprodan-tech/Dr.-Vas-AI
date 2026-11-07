@@ -48,3 +48,13 @@ Do not resume unrelated feature development until the production deployment is v
 - Fix branch: fix/worker-live-context-regex-deploy-2026-11-07; code commit: 08e13d6605db5eb7aa47b6399187c825cdbd1e22.
 - Do not claim production is updated yet. Complete branch validation, merge, Cloudflare deploy and production smoke tests first.
 - APK explicitly deferred. No APK build/release is part of this work.
+
+
+## Merge and production release status — 7 November 2026
+
+- PR #62 merged successfully to main; merge commit c74e97ddf71635d588e9631b223a8e59c3742d27.
+- Corrected the malformed Live conversation metadata URL regex that prevented Wrangler from bundling the Worker.
+- Production deploy workflow run #528 / 42374244509 is in progress. Worker/browser JavaScript validation passed; Playwright homepage/session tests are running. Supabase migration verification, Cloudflare Worker deployment and production smoke test remain pending.
+- Do not report the production site as updated until the workflow is fully green.
+- Founder must then test the far-right page scrollbar and inner transcript scrollbar independently, plus bottom composer/attachments and desktop/mobile history access.
+- Android APK remains deferred until the final stage; no APK workflow was triggered.
