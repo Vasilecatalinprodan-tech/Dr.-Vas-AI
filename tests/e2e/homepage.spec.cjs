@@ -3083,6 +3083,9 @@ test("changing the selected language localizes the Dr.Vas, Dr.Jan and Sarah welc
   await openApp(page, "ro");
   await page.evaluate(() => {
     currentUser = { id: "e2e-language-user" };
+    // Keep the synthetic E2E user stable while testing language changes; the
+    // auth lifecycle is covered by dedicated session-restoration tests.
+    checkSession = () => {};
     activeModule = "free";
     activeAssistant = "drvas";
     document.querySelector("#chatSection").classList.remove("hidden");
