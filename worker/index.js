@@ -1907,6 +1907,28 @@ export default {
         });
       }
 
+      // Enforce the conversation's server-owned module context before reading any prior messages.
+      // Legacy rows with NULL context remain read-only in the client and are never guessed here.
+      if (typeof conversationId === "string") {
+        const contextParams = new URLSearchParams({
+          select: "module,conversation_kind,feature_key",
+          user_id: `eq.${user.id}`,
+          conversation_id: `eq.${conversationId}`,
+          limit: "1"
+        });
+        const contextRows = await supabaseRequest(
+          "drvas_conversation_metadata",
+          `?${contextParams.toString()}`
+        );
+        const context = Array.isArray(contextRows) ? contextRows[0] : null;
+        if (!context || !context.module) {
+          return json({ error: "Această conversație nu are un modul verificat. Deschide New chat pentru a continua în siguranță." }, 409);
+        }
+        if (context.module !== moduleName) {
+          return json({ error: "Conversația aparține altui modul. Deschide conversația din modulul ei pentru a păstra istoricul separat." }, 409);
+        }
+      }
+
       // Încărcăm memoria și istoricul în paralel pentru a reduce timpul de așteptare.
       const historyPromise = (async () => {
         let history = [];
