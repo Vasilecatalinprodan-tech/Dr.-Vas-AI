@@ -926,3 +926,31 @@ User's request (verbatim):
 - PR #73 archive branch was created before the PR #70 docs merge and became dirty after main advanced. The archive work is being carried onto a new branch based on the current main commit; no application code was affected.
 - Next localization stage: Academy and Commerce, then Business and remaining Studio dynamic copy. Keep APK last. Full localization remains incomplete.
 - Latest user instruction: “ok hai sa continuam si tot asa salvam tot”.
+
+## 2026-11-07 — Business localization merged/deployed; feature-navigation localization continues
+
+User reiterated: “ok hai sa continuam si tot asa salvam tot”. Continue the integrated Dr.Vas project and archive each meaningful milestone.
+
+### Business localization PR #76
+- Squash merge: `998a03caee6a3ffbbcb03e328d0cf088df597981`.
+- Final PR browser E2E `42411511521`: SUCCESS.
+- Post-merge main browser regression `42411798576`: SUCCESS.
+- Production deploy `42411798555`: SUCCESS.
+- Supabase migration gates/migrations, Cloudflare Worker deployment and production smoke test all passed.
+- Localized Business plan builder, cashbook, cashflow, break-even calculator, Student Desk, navigation, status/error feedback, table/CSV labels and selected-locale money/date formatting for EN/IT/TR/DE/FR/ES/RU.
+- Isolated locale-aware Business formatting in `businessWorkspaceMoney`; retained the original `businessMoney` formatter used by Commerce.
+- Renamed local table row variables to `tableRow` so they no longer shadow the global `tr()` translation function.
+- Added Playwright checks for the Business workspace in all seven supported languages and adapted existing numeric assertions to accept localized grouping separators.
+- Audited Business static text and the dynamic calculation/ledger segment; the only static source-language exception is “Română”, intentionally retained as a language name.
+
+### PR #77 feature-navigation localization
+- Open PR: `feat(i18n): localize all module feature navigation`.
+- Branch `feat/localize-feature-navigation-2026-11-07`, head `db562f8f5af7f86db921a8d82ef4d82b5ae245b8`.
+- Translates dynamic feature-navigation labels, headings and descriptions for Health, Studio, Academy and Commerce; includes a seven-language cross-module E2E audit.
+- PR run `42412054163` must be checked before merge.
+
+### Remaining work
+- Audit/translate Book Studio and Translation Station fields, option labels, placeholders, dynamic status messages and user-visible prompt briefs.
+- Continue the remaining voice/accessibility and other dynamic UI localization.
+- User visual acceptance of the deployed WebGL DNA helices is still pending; page scrolling is already accepted.
+- Maintain the confirmed order: remaining localization, Sarah/Dr.Jan/voice, security/performance, Android APK last.

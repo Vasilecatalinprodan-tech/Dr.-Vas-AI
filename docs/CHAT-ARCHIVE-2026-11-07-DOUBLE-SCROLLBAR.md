@@ -257,3 +257,45 @@ This archive preserves project decisions and exact user instructions; it is a st
 - Academy and Commerce are next; Business follows. Do not claim full localization yet.
 - PR #73 archive branch became dirty after main advanced; its archive changes are being carried to a new docs branch based on the latest main commit. No application code changes were lost.
 - Exact latest user instruction: “ok hai sa continuam si tot asa salvam tot”.
+
+## Conversation continuation — 7 November 2026, 20:40 UTC
+
+**Latest user instruction (verbatim):** “ok hai sa continuam si tot asa salvam tot”.
+
+The user reaffirmed that Dr.Vas development should continue in the same autonomous sequence and that all meaningful work and this conversation checkpoint must be saved in the repository. This archive is a structured project/chat record, not a literal export of the complete ChatGPT UI transcript.
+
+### Verified progress since the previous checkpoint
+
+- PR #75 integrated Academy and Commerce localization into `main` at `4deb23dff58e1c068e72ab886a06e58607ca35fc`.
+  - Main deployment run `42409995989`: SUCCESS.
+  - Main browser regression run `42409996824`: SUCCESS.
+  - Supabase migration gate, migrations, Cloudflare Worker deployment and production smoke test passed.
+- PR #76 integrated Business localization into `main` at `998a03caee6a3ffbbcb03e328d0cf088df597981`.
+  - PR final-head browser E2E run `42411511521`: SUCCESS.
+  - Post-merge main browser regression run `42411798576`: SUCCESS.
+  - Main deployment run `42411798555`: SUCCESS, including pending Supabase migrations, IPv4 session-pooler migration, Cloudflare Worker deploy and production smoke test.
+  - Business localization now covers the business-plan builder, private cashbook, cashflow report, break-even calculator, Student Desk, navigation labels, status messages, table/CSV labels and locale-aware number/date formatting in EN/IT/TR/DE/FR/ES/RU. Romanian remains the source language.
+  - Commerce currency formatting was kept on its original shared formatter; locale-aware formatting is isolated to Business. The Business ledger row variable was renamed to avoid shadowing the global translation helper.
+  - Static Business workspace audit found only “Română” intentionally unchanged as the name of a language. The Business dynamic-message audit found no remaining unmapped Romanian literals in the audited Business calculation/ledger segment.
+- PR #77 opened: `feat(i18n): localize all module feature navigation`.
+  - Branch: `feat/localize-feature-navigation-2026-11-07`.
+  - Head: `db562f8f5af7f86db921a8d82ef4d82b5ae245b8`.
+  - Adds translations for dynamic feature navigation labels, headings and descriptions in Health, Studio, Academy and Commerce, plus a cross-module seven-language Playwright audit.
+  - PR E2E run `42412054163` was started; verify its final result before merging.
+- The dynamic Studio Book Studio and Translation Station form fields, option labels, placeholders, generated prompts and some voice/accessibility copy remain a separate localization audit. Do not claim the entire platform is fully translated yet.
+
+### Important test findings and corrections in PR #76
+
+- Early intermediate E2E runs exposed a local table-row variable named `tr` shadowing the global translation function; the cashflow and ledger row variables were renamed to `tableRow`.
+- Locale-aware Business currency formatting initially affected Commerce because both modules shared `businessMoney`; this was corrected by preserving the Commerce formatter and introducing a Business-only locale-aware formatter.
+- Existing Business arithmetic tests were updated to accept localized thousands separators rather than hard-code English formatting.
+- Heading translations include the original emoji prefix so the exact source text node is translated without dropping the icon.
+- The final PR #76 E2E and post-merge main regression passed.
+
+### Current production and project sequence
+
+- Production site: https://dr--vas-ai.vasilecatalinprodan.workers.dev
+- The user previously confirmed that the page-level scrolling repair works; do not ask them to retest scrolling.
+- Real WebGL DNA helices are merged and deployed; visual acceptance by the user remains pending.
+- Continue the remaining dynamic localization audit and the Studio station copy; then proceed to Sarah, Dr.Jan and voice, followed by security/performance.
+- Android APK remains the final stage only, after web-platform work is stable.
