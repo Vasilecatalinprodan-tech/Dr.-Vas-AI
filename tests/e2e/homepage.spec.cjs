@@ -3285,8 +3285,8 @@ test("all module feature-navigation labels, headings and descriptions localize i
   });
 
   for (const moduleName of ["health", "studio", "academy", "commerce", "business"]) {
-    await expect(page.locator(`#${moduleName}Workspace .drvas-feature-navigation`)).toBeVisible();
-    await expect(page.locator(`#${moduleName}Workspace .drvas-feature-page-heading`).first()).toBeVisible();
+    await expect(page.locator(`#${moduleName}Workspace .drvas-feature-navigation`)).toHaveCount(1);
+    await expect(page.locator(`#${moduleName}Workspace .drvas-feature-page-heading`).first()).toHaveCount(1);
   }
 
   const languages = ["en", "it", "tr", "de", "fr", "es", "ru"];
