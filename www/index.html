@@ -5128,6 +5128,10 @@ function buildCommercePrompt(){
 const businessLedgerState={rows:[],currency:"GBP"};
 const studentAssessmentState={id:null};
 function businessMoney(value,currency){
+ try{return new Intl.NumberFormat(undefined,{style:"currency",currency,maximumFractionDigits:2}).format(Number(value)||0);}
+ catch{return currency+" "+(Number(value)||0).toFixed(2);}
+}
+function businessWorkspaceMoney(value,currency){
  try{return new Intl.NumberFormat(currentLanguage||undefined,{style:"currency",currency,maximumFractionDigits:2}).format(Number(value)||0);}
  catch{return currency+" "+(Number(value)||0).toFixed(2);}
 }
@@ -5149,9 +5153,9 @@ function calculateBusinessBreakEven(){
  const margin=contribution/price*100;
  const expectedProfit=contribution*expected-fixed;
  if(el("businessBreakEvenUnits"))el("businessBreakEvenUnits").textContent=breakEvenUnits.toLocaleString(currentLanguage||undefined)+" "+tr("unități");
- if(el("businessBreakEvenRevenue"))el("businessBreakEvenRevenue").textContent=businessMoney(breakEvenRevenue,currency);
+ if(el("businessBreakEvenRevenue"))el("businessBreakEvenRevenue").textContent=businessWorkspaceMoney(breakEvenRevenue,currency);
  if(el("businessContributionMargin"))el("businessContributionMargin").textContent=margin.toFixed(1)+"%";
- if(el("businessExpectedProfit"))el("businessExpectedProfit").textContent=businessMoney(expectedProfit,currency);
+ if(el("businessExpectedProfit"))el("businessExpectedProfit").textContent=businessWorkspaceMoney(expectedProfit,currency);
  if(status)status.textContent=tr("Calcul orientativ înainte de impozite, dobânzi și alte costuri care nu au fost introduse. Monedă: ")+currency+".";
 }
 function localizeBusinessDynamicMessage(message){
@@ -5188,7 +5192,7 @@ function renderBusinessCashflow(){
  const income=rows.filter(row=>row.entry_type==="income").reduce((sum,row)=>sum+Number(row.amount||0),0);
  const expenses=rows.filter(row=>row.entry_type==="expense").reduce((sum,row)=>sum+Number(row.amount||0),0);
  const net=income-expenses,months=Math.max(1,days/30.4375);
- [["businessCashflowIncome",income],["businessCashflowExpenses",expenses],["businessCashflowNet",net],["businessCashflowAverage",net/months]].forEach(([id,value])=>{const node=el(id);if(node)node.textContent=businessMoney(value,currency);});
+ [["businessCashflowIncome",income],["businessCashflowExpenses",expenses],["businessCashflowNet",net],["businessCashflowAverage",net/months]].forEach(([id,value])=>{const node=el(id);if(node)node.textContent=businessWorkspaceMoney(value,currency);});
  const host=el("businessCashflowRows");if(!host)return;host.replaceChildren();
  if(!rows.length){const empty=document.createElement("p");empty.textContent=localizeBusinessDynamicMessage("Nu există tranzacții în perioada selectată pentru "+currency+".");host.append(empty);return;}
  const monthsByKey=new Map();
@@ -5200,7 +5204,7 @@ function renderBusinessCashflow(){
  [...monthsByKey.entries()].sort((a,b)=>b[0].localeCompare(a[0])).forEach(([key,item])=>{
   const [year,month]=key.split("-").map(Number),tr=document.createElement("tr"),label=document.createElement("td");
   label.className="business-cashflow-month";label.textContent=new Date(year,month-1,1).toLocaleDateString(currentLanguage||undefined,{month:"long",year:"numeric"});tr.append(label);
-  [item.income,item.expenses,item.income-item.expenses].forEach(value=>{const td=document.createElement("td");td.textContent=businessMoney(value,currency);tr.append(td);});body.append(tr);
+  [item.income,item.expenses,item.income-item.expenses].forEach(value=>{const td=document.createElement("td");td.textContent=businessWorkspaceMoney(value,currency);tr.append(td);});body.append(tr);
  });
  table.append(body);host.append(table);
 }
@@ -5220,7 +5224,7 @@ function renderBusinessLedger(){
  ["Data","Tip","Descriere","Categorie","Sumă","TVA estimată",""].forEach(label=>{const th=document.createElement("th");th.textContent=label;hr.append(th);});head.append(hr);table.append(head);
  const body=document.createElement("tbody");
  rows.forEach(row=>{const tr=document.createElement("tr");
-  [row.transaction_date,row.entry_type==="income"?"Încasare":"Cheltuială",row.description,row.category,businessMoney(row.amount,currency),businessMoney(businessVatAmount(row),currency)].forEach(value=>{const td=document.createElement("td");td.textContent=value;tr.append(td);});
+  [row.transaction_date,row.entry_type==="income"?"Încasare":"Cheltuială",row.description,row.category,businessWorkspaceMoney(row.amount,currency),businessWorkspaceMoney(businessVatAmount(row),currency)].forEach(value=>{const td=document.createElement("td");td.textContent=value;tr.append(td);});
   const action=document.createElement("td"),button=document.createElement("button");button.type="button";button.textContent=tr("Șterge");button.setAttribute("aria-label",tr("Șterge")+" "+row.description);button.addEventListener("click",()=>deleteBusinessTransaction(row.id));action.append(button);tr.append(action);body.append(tr);
  });table.append(body);host.append(table);
 }
