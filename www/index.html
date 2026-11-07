@@ -2797,6 +2797,7 @@ function selectAssistant(assistantId){
  try{if(currentUser)localStorage.setItem("drvas_assistant_"+currentUser.id,assistantId)}catch{}
 }
 function selectModule(moduleName,userInitiated=false,suppressConversationRestore=false){
+  if(liveSocket||liveStream)return;
   const modules={
     free:{icon:"✦",name:"Dr.Vas Free — Asistent general",description:"Modulul general este selectat. Poți începe conversația."},
     health:{icon:"✚",name:"Dr.Vas Health — Informații generale",description:"Informații despre sănătate, explicații și pregătirea consultațiilor. Nu înlocuiește medicul."},
@@ -5450,7 +5451,7 @@ function readLocalConversationContext(){
 }
 
 function drvasSetFeatureContext(moduleName,featureKey){
- if(!currentUser||loadingConversation||isSendingMessage||moduleName!==activeModule||!["health","studio","academy","commerce","business"].includes(moduleName))return;
+ if(!currentUser||loadingConversation||isSendingMessage||liveSocket||liveStream||moduleName!==activeModule||!["health","studio","academy","commerce","business"].includes(moduleName))return;
  const nextFeature=String(featureKey||"").trim();
  if(nextFeature&&!/^[a-z0-9-]{1,100}$/i.test(nextFeature))return;
  if(activeFeatureKey===nextFeature)return;
@@ -5604,7 +5605,7 @@ async function deleteAllConversations(){
 }
 
 async function openConversation(conversationId,conversationModule=activeModule,conversationFeature=activeFeatureKey){
-  if(!currentUser || loadingConversation || isSendingMessage) return;
+  if(!currentUser || loadingConversation || isSendingMessage || liveSocket || liveStream) return;
   if(conversationModule&&conversationModule!==activeModule)return;
   if((conversationFeature||"")!==activeFeatureKey)return;
   loadingConversation = true;
@@ -5656,7 +5657,7 @@ async function openConversation(conversationId,conversationModule=activeModule,c
 }
 
 function newConversation(){
-  if(!currentUser || isSendingMessage || loadingConversation) return;
+  if(!currentUser || isSendingMessage || loadingConversation || liveSocket || liveStream) return;
   currentConversationId = makeId();
   currentConversationIsLegacy=false;
   if(["free","health","studio","academy","commerce","business"].includes(activeModule))openFreeNavView("chat",false);
