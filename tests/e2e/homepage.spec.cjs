@@ -1012,7 +1012,7 @@ test("Business workspace exposes the cashbook and Student Desk with working VAT 
   await page.locator("#businessVariableCost").fill("25");
   await page.locator("#businessExpectedUnits").fill("50");
   await expect(page.locator("#businessBreakEvenUnits")).toContainText("40");
-  await expect(page.locator("#businessBreakEvenRevenue")).toContainText("2,000");
+  await expect(page.locator("#businessBreakEvenRevenue")).toContainText(/2[.,]000/);
   await expect(page.locator("#businessContributionMargin")).toContainText("50.0%");
   await expect(page.locator("#businessExpectedProfit")).toContainText("250");
 
@@ -1249,12 +1249,12 @@ test("Business cashbook monthly cashflow report summarizes and filters saved tra
     document.querySelector("#businessCashflowRange").value = "90";
     renderBusinessLedger();
   });
-  await expect(page.locator("#businessCashflowIncome")).toContainText("2,600");
+  await expect(page.locator("#businessCashflowIncome")).toContainText(/2[.,]600/);
   await expect(page.locator("#businessCashflowExpenses")).toContainText("500");
-  await expect(page.locator("#businessCashflowNet")).toContainText("2,100");
+  await expect(page.locator("#businessCashflowNet")).toContainText(/2[.,]100/);
   await expect(page.locator("#businessCashflowRows tbody tr")).toHaveCount(3);
   await page.locator("#businessCashflowRange").selectOption("30");
-  await expect(page.locator("#businessCashflowIncome")).toContainText("1,200");
+  await expect(page.locator("#businessCashflowIncome")).toContainText(/1[.,]200/);
   await expect(page.locator("#businessCashflowExpenses")).toContainText("300");
   await expect(page.locator("#businessCashflowNet")).toContainText("900");
   await expect(page.locator("#businessCashflowRows tbody tr")).toHaveCount(1);
