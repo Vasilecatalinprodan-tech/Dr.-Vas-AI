@@ -5358,10 +5358,11 @@ async function showChat(user,displayName){
     if(resumeConversation){
       await openConversation(resumeConversation.id,resumeConversation.module||null,resumeConversation.feature_key||"");
     }else{
-      currentConversationId=makeId();
+      const hadActiveConversation=Boolean(currentConversationId);
+      if(!currentConversationId)currentConversationId=makeId();
       currentConversationIsLegacy=false;
       rememberActiveConversation(currentConversationId,activeModule,activeFeatureKey);
-      ensureConversationMetadata(currentConversationId,activeModule,"",activeFeatureKey).catch(error=>console.warn("Conversation context metadata pending first message:",error));
+      if(!hadActiveConversation)ensureConversationMetadata(currentConversationId,activeModule,"",activeFeatureKey).catch(error=>console.warn("Conversation context metadata pending first message:",error));
       logClientEvent("conversation_created");
       conversationSaved=false;
       pendingMessages=[];
