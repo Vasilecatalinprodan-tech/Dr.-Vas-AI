@@ -896,3 +896,22 @@ User's request (verbatim):
 - This confirms that PR #65 fixed the reported assistant welcome/description issue and selected global controls, but did not complete the founder's requirement that every button and all interface text follow the selected language.
 - Next work: implement localization in controlled phases, beginning with shared navigation, language/auth controls, Dr.Vas Free and Dr.Vas Health, then Studio, Academy, Commerce and Business; add regression tests for language switching in each area. Preserve conversation history in its original language; do not silently translate prior user/assistant messages.
 - Latest user instruction: “ok hai sa continuam si tot asa salvam tot”. Continue the agreed roadmap; APK remains the final stage.
+
+## 2026-11-07 — localization phases 1–2 in progress
+
+- User instruction (exact): “ok hai sa continuam si tot asa salvam tot”.
+- PR #67 (documentation archive of production verification and initial localization audit) passed browser regression run 42406814599 and was squash-merged into main as 09b18c44e02935856ff5ee8e828bb38ed48d53a0.
+- PR #68: shared controls localization phase 1. Branch feat/localize-shared-controls-phase1-2026-11-07; current head ad9dd93049950fbe2ae189813ca51d461e2207e7. Adds selected navigation, language, presentation and high-frequency action translations in EN/IT/TR/DE/FR/ES/RU, with an all-language Playwright test. Latest browser regression run 42407769955 was still in progress at this checkpoint. PR preview Workers Builds checks have historically failed independently; main deployment remains authoritative.
+- PR #69: Dr.Vas Free and Health phase 2, stacked on PR #68. Branch feat/localize-free-health-phase2-2026-11-07; current head e12148e052be0ac8e200ac7510cbe254b862fb69. Adds Free navigation, assistant switcher copy, Health workspace safety text, form labels/options, action and accessibility/placeholder strings in EN/IT/TR/DE/FR/ES/RU, plus Playwright checks. Latest browser regression run 42407777860 was still in progress at this checkpoint. Merge only after PR #68 and #69 latest browser checks pass, in that order.
+- Test corrections made during the phases: align assertions with existing rendered presentation wording and uppercase CTA wording; Russian polite CTA is “ПОГОВОРИТЕ С DR.VAS”; the Health “INFORMAȚII GENERALE” badge is the studio-beta-label element, not the workspace tag. These were test expectation/selector corrections, not production runtime defects.
+- The broader static localization inventory contains 791 distinct text-node strings. A scan of the accumulated UI dictionaries on the phase-2 branch found approximately 191 EN, 191 IT, 220 TR, and 180 each DE/FR/ES/RU keys. This is only a rough key inventory; it is not complete coverage. Many static and dynamic strings remain unmapped.
+- Next: confirm the two latest Playwright runs, merge PR #68 then PR #69 if green, deploy through main workflow, and continue with Studio, Academy, Commerce and Business localization. Preserve existing conversation history without retroactively translating it. Do not claim full localization yet.
+
+
+## 2026-11-07 — PR #68 merged; phase-2 PR rebased
+
+- PR #68 passed latest browser regression run 42407769955 and was squash-merged into main as 87e72105ab4778be236b9e1e93fde7f98276086c.
+- Main deployment run 42408000932 and main browser regression run 42408000955 were in progress at this checkpoint; confirm both before claiming production deployment.
+- Original stacked PR #69 had a dirty merge state after PR #68 was squash-merged and its latest E2E identified an overly broad test selector (the first Health workspace button is a feature-navigation control, not the primary Health action). PR #69 was closed as superseded, not discarded.
+- Replacement PR #71 is based directly on the new main commit and carries the phase-2 Free/Health localization code and tests. Branch feat/localize-free-health-phase2-rebased-2026-11-07; head b9f775728ff1de4bb166b211569fff90bb60da6f; latest E2E run 42408117217 in progress at checkpoint. Its Health action test now targets the button with onclick window.buildHealthPrompt().
+- PR #70 remains the archive PR for this session; its branch documentation is being updated to reflect the PR #69 → #71 replacement.
