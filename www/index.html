@@ -5215,7 +5215,7 @@ function renderBusinessLedger(){
  const expenses=rows.filter(row=>row.entry_type==="expense").reduce((sum,row)=>sum+Number(row.amount),0);
  const outputVat=rows.filter(row=>row.entry_type==="income").reduce((sum,row)=>sum+businessVatAmount(row),0);
  const inputVat=rows.filter(row=>row.entry_type==="expense").reduce((sum,row)=>sum+businessVatAmount(row),0);
- [["businessLedgerIncome",income],["businessLedgerExpenses",expenses],["businessLedgerNet",income-expenses],["businessLedgerVat",outputVat-inputVat]].forEach(([id,value])=>{const node=el(id);if(node)node.textContent=businessMoney(value,currency);});
+ [["businessLedgerIncome",income],["businessLedgerExpenses",expenses],["businessLedgerNet",income-expenses],["businessLedgerVat",outputVat-inputVat]].forEach(([id,value])=>{const node=el(id);if(node)node.textContent=businessWorkspaceMoney(value,currency);});
  renderBusinessCashflow();
  const host=el("businessLedgerRows");if(!host)return;host.replaceChildren();
  if(!rows.length){const empty=document.createElement("p");empty.textContent=tr("Nu există încă înregistrări pentru această monedă.");host.append(empty);return;}
