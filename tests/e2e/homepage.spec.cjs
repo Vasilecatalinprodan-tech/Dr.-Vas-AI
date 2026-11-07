@@ -2953,3 +2953,94 @@ test("sidebar history is filtered by both module and feature without hiding gene
   expect(result.health).toEqual(["health-brief"]);
   expect(result.free).toEqual(["legacy-unknown"]);
 });
+
+
+test("Free and Health provide independent document and transcript scrollbars with a persistent desktop sidebar", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openApp(page, "ro");
+  for (const moduleName of ["free", "health"]) {
+    await page.evaluate(name => {
+      currentUser = { id: "e2e-independent-scroll-" + name, email: "scroll@example.invalid" };
+      isDrvasAdmin = true;
+      showModuleSelection();
+      selectModule(name, true);
+      const transcript = document.querySelector("#freeChatView>#chat");
+      transcript.innerHTML = Array.from({ length: 24 }, (_, index) =>
+        '<div class="msg assistant" style="min-height:74px;margin:10px 0;padding:12px">Independent transcript scroll test ' + index + '</div>'
+      ).join("");
+      window.scrollTo(0, 0);
+      transcript.scrollTop = 0;
+    }, moduleName);
+
+    const initial = await page.evaluate(() => {
+      const root = document.documentElement;
+      const body = document.body;
+      const transcript = document.querySelector("#freeChatView>#chat");
+      const sidebar = document.querySelector("#chatSection .history-panel");
+      return {
+        rootOverflowY: getComputedStyle(root).overflowY,
+        bodyOverflowY: getComputedStyle(body).overflowY,
+        rootHeight: root.scrollHeight,
+        rootClient: root.clientHeight,
+        pageMax: document.scrollingElement.scrollHeight - document.scrollingElement.clientHeight,
+        transcriptOverflowY: getComputedStyle(transcript).overflowY,
+        transcriptHeight: transcript.clientHeight,
+        transcriptScrollHeight: transcript.scrollHeight,
+        sidebarDisplay: getComputedStyle(sidebar).display,
+        sidebarWidth: sidebar.getBoundingClientRect().width
+      };
+    });
+    expect(initial.rootOverflowY, moduleName + " document root overflow").toMatch(/auto|scroll/);
+    expect(initial.bodyOverflowY, moduleName + " body overflow").toMatch(/auto|scroll/);
+    expect(initial.pageMax, moduleName + " page must have a real scroll range").toBeGreaterThan(0);
+    expect(initial.transcriptOverflowY, moduleName + " transcript overflow").toMatch(/auto|scroll/);
+    expect(initial.transcriptScrollHeight, moduleName + " transcript must overflow independently").toBeGreaterThan(initial.transcriptHeight);
+    expect(initial.sidebarDisplay, moduleName + " desktop sidebar display").not.toBe("none");
+    expect(initial.sidebarWidth, moduleName + " desktop sidebar width").toBeGreaterThan(180);
+
+    const independent = await page.evaluate(() => {
+      const transcript = document.querySelector("#freeChatView>#chat");
+      const scroller = document.scrollingElement;
+      const beforeChat = transcript.scrollTop;
+      scroller.scrollTop = Math.min(120, scroller.scrollHeight - scroller.clientHeight);
+      const pageMovedWithoutChat = scroller.scrollTop > 0 && transcript.scrollTop === beforeChat;
+      const beforePage = scroller.scrollTop;
+      transcript.scrollTop = Math.min(120, transcript.scrollHeight - transcript.clientHeight);
+      return {
+        pageMovedWithoutChat,
+        chatMovedWithoutPage: transcript.scrollTop > 0 && scroller.scrollTop === beforePage
+      };
+    });
+    expect(independent.pageMovedWithoutChat, moduleName + " page scrolling must not move chat").toBe(true);
+    expect(independent.chatMovedWithoutPage, moduleName + " chat scrolling must not move page").toBe(true);
+  }
+});
+
+test("mobile Free and Health retain page scrolling and expose history in the sidebar drawer", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openApp(page, "ro");
+  for (const moduleName of ["free", "health"]) {
+    await page.evaluate(name => {
+      currentUser = { id: "e2e-mobile-independent-scroll-" + name, email: "mobile-scroll@example.invalid" };
+      isDrvasAdmin = true;
+      showModuleSelection();
+      selectModule(name, true);
+      const transcript = document.querySelector("#freeChatView>#chat");
+      transcript.innerHTML = Array.from({ length: 18 }, (_, index) =>
+        '<div class="msg assistant" style="min-height:70px;margin:8px 0;padding:10px">Mobile transcript scroll test ' + index + '</div>'
+      ).join("");
+      window.scrollTo(0, 0);
+    }, moduleName);
+    const state = await page.evaluate(() => ({
+      pageRange: document.scrollingElement.scrollHeight - document.scrollingElement.clientHeight,
+      transcriptOverflow: document.querySelector("#freeChatView>#chat").scrollHeight >
+        document.querySelector("#freeChatView>#chat").clientHeight,
+      sidebarInitiallyHidden: getComputedStyle(document.querySelector("#chatSection .history-panel")).display === "none"
+    }));
+    expect(state.pageRange, moduleName + " mobile page scroll range").toBeGreaterThan(0);
+    expect(state.transcriptOverflow, moduleName + " mobile transcript scroll").toBe(true);
+    expect(state.sidebarInitiallyHidden, moduleName + " mobile history starts as a drawer").toBe(true);
+    await page.evaluate(() => document.body.classList.add("history-open"));
+    await expect(page.locator("#chatSection .history-panel")).toBeVisible();
+  }
+});
