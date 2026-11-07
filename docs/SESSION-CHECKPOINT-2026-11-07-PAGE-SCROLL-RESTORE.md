@@ -41,24 +41,41 @@ The user was understandably frustrated and explicitly said the current behavior 
 5. Update this checkpoint with merge/deploy/test results and preserve the user's requirement not to remove page-level scrolling again.
 
 
-## Founder operating directive — 7 November 2026
+## Post-merge verification — 7 November 2026
 
-The founder explicitly reiterated that Dr.Vas work must be implementation-led, not conversation-only. Continue to make actual repository changes, run checks, merge passing changes into `main`, deploy the web/Worker production release, and verify the live result. Do not stop after proposing plans or creating PRs.
+- PR #49 merged into `main` at `6d9416131f5ce88add7b611251f9dee7969a8d17`.
+- Main browser regression run `42367806621` completed successfully: **122/122 Playwright tests passed**, including the regression that combines the legacy `chat-focus-document` lock with module workspace mode and asserts that the document root can scroll.
+- Production deployment run `42367806541` completed successfully. The workflow passed browser/session tests, the Supabase migration gate and IPv4 session-pooler migration step, deployed the Worker, and passed the production smoke test.
+- Android build run `42367806532` completed successfully. Artifact `DrVas-APK`, ID `13572527555`, size 6,377,504 bytes, expires 5 February 2027: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42367806532/artifacts/13572527555
+- The Cloudflare GitHub App's pull-request build check reported a failure on the PR head, but the canonical post-merge GitHub deployment workflow completed successfully and passed the production smoke test. Do not confuse the PR preview check with the final production deployment.
+- Automated browser verification is complete; a physical desktop/mobile visual inspection and the founder's Samsung Android install/audio test remain separate manual checks. The new APK is an artifact and was not installed over the existing app.
 
-### Release order
+## Continuation requirements recovered from prior conversations
 
-1. Implement and stabilize the web platform and all modules.
-2. Run browser, unit/static, persistence, security/RLS and provider integration tests.
-3. Merge suitable passing PRs into `main`.
-4. Deploy the website/Worker and run production smoke checks; record the deployed commit and result.
-5. Verify module functionality, responsive layout, accessibility, attachments, history and voice using browser and manual device checks where required.
-6. **Defer Android APK builds/rebuilds until the platform is stable and the founder explicitly moves the work to the final APK stage.** Do not spend time rebuilding APKs for every web iteration.
+- Continue the single integrated product with six customer modules: Free, Health, Studio, Academy, Commerce and Business. Crypto/mining remains a hidden founder-only workbench, not a seventh public module.
+- Free and Health are free/public for general assistance; Studio, Academy, Commerce and Business remain founder-only until paid access, subscriptions, compliance and entitlements are fully implemented and the founder authorizes launch.
+- Every chat must have the same professional shell: persistent desktop left navigation/history, mobile drawer, New chat, Images, Scheduled, Library, Plugins, Explore, Projects and Recents, attachment control beside Send, anchored composer, transcript-only scrolling, and clear navigation/back/logout controls.
+- Every conversation must remain isolated by user, module, conversation kind and feature. Preserve all legacy messages and attachments; leave unknown legacy context unclassified. Never reuse another module's thread.
+- Every multi-function module must use dedicated feature pages/workspaces, not one crowded page. Preserve existing working visual identity and functions.
+- Studio scope: scripts/series/video, books/eBooks, translations, original music/lyrics, social content, project continuity and income/monetization tools. Do not claim media render, professional translation, publishing or music distribution without real provider verification.
+- Academy: courses, lessons, exercises/quizzes, learning plans, saved projects and learner progress; do not imply accreditation.
+- Commerce: product research, suppliers, unit economics, pricing/margins, budgets and saved analyses; no fabricated live prices or sales.
+- Business: separate cashbook/accounting support, Self Assessment preparation, invoices/expenses, cashflow, business plan, compliance checklist, reports/exports and Business Assistant. Label calculations as estimates and not statutory/accountant advice.
+- Health: informational support only until clinicians, clinical governance, privacy and regulatory approvals are in place.
+- Voice/accessibility: speech input/output, replay/stop and Live interaction across modules; physical Android playback and Sarah's actual Romanian pronunciation still need human device testing.
+- Crypto: analysis/calculator/device registry only. No real mining, wallet custody, withdrawal or live trading until explicit device enrollment, consent, safe limits, audit trail, emergency stop and separately approved risk controls exist.
+- Do not spend money, purchase credits, publish content, connect external accounts, or expose secrets without explicit approval. Never weaken RLS, Worker authorization or admin allowlists.
 
-### Working expectations
+## Prioritized next implementation sequence
 
-- Preserve the integrated product and all existing working features; no destructive shortcuts or cosmetic-only fixes.
-- Treat every user-reported defect as a reproducible issue: inspect the current implementation, add a regression test, fix, run tests, merge, deploy, verify.
-- Keep all six public/future module workspaces coherent and usable, with independent conversation history and attachment controls. Founder-only premium modules remain gated until entitlements/compliance are ready.
-- Keep Crypto/mining hidden and founder-only with real device and safety controls not yet enabled.
-- Maintain a durable checkpoint after each meaningful implementation/release: user requirements, branches/PRs/commits, test results, deployment status, known gaps and next concrete task.
-- The ChatGPT conversation remains in the account's chat history. Repository checkpoints preserve actionable decisions and progress but are not a verbatim export of the full conversation. Do not claim a verbatim chat archive unless one is actually created and verified.
+1. Perform physical desktop and mobile review of the newly deployed right-hand page scrollbar, transcript scrollbar, attachment controls and Health workspace.
+2. Audit the exact desktop/mobile sidebar visibility and behaviour in all six chats; preserve the existing passing all-six-shell test and strengthen it to assert visual usability, not only shared markup.
+3. Audit conversation isolation end-to-end across user/module/kind/feature, including message persistence, attachment metadata and reopening old threads. Keep legacy threads read-only/unclassified unless the owner can safely classify them.
+4. Verify the four Supabase migrations introduced for conversation context, reminders, Library and Projects against the live database/RLS, including two-owner isolation tests; deployment workflow passed its migration gate on this release.
+5. Continue dedicated feature workspace quality and complete provider/storage integrations module by module, without adding placeholder controls.
+6. Re-test voice and attachments on physical Samsung Android, then issue a new APK only after any required app-source changes.
+7. Keep Google Play launch, subscriptions and public premium access gated until legal, privacy, billing, entitlement and store compliance are verified.
+
+## Conversation preservation note
+
+The original conversation remains in ChatGPT conversation history. This checkpoint captures the actionable requirements and verified engineering state; it is not a verbatim export of the full chat.
