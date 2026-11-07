@@ -2800,7 +2800,98 @@ Object.assign(UI.ru,{
  "Fișiere din această conversație":"Файлы в этом разговоре","Atașează din nou":"Прикрепить снова","Șterge":"Удалить"
 });
 
-function tr(s){return (UI[currentLanguage]||{})[s]||s}
+
+/* Complete localization for assistant-generated interface copy that lives inside #chat.
+   Conversation history remains untouched; only the fresh welcome and assistant controls are re-rendered. */
+const ASSISTANT_UI_TRANSLATIONS={
+ en:{
+  "Asistentul principal: analiză, răspunsuri clare și ajutor practic.":"Main assistant for analysis, clear answers and practical help.",
+  "Ghid strategic: explică pașii, organizează sarcinile și te ajută să rezolvi probleme.":"Strategic guide: explains steps, organises tasks and helps solve problems.",
+  "Asistentă dedicată fiicei fondatorului pentru învățare, creativitate și organizarea ideilor, cu explicații clare și încurajatoare.":"A dedicated learning assistant for the founder's daughter, supporting creativity and ideas with clear, encouraging explanations.",
+  "Bun venit! Sunt Dr.Vas. Spune-mi cu ce te pot ajuta.":"Welcome! I'm Dr.Vas. Tell me how I can help.",
+  "Salut! Sunt Dr.Jan. Îți voi explica lucrurile clar, pas cu pas, și verificăm împreună fiecare etapă.":"Hello! I'm Dr.Jan. I'll explain things clearly, step by step, and we'll check each stage together.",
+  "Bun venit! Sunt Sarah. Hai să explorăm ideile tale și să le transformăm în pași simpli și realizabili.":"Welcome! I'm Sarah. Let's explore your ideas and turn them into simple, achievable steps.",
+  "Mesajele și răspunsurile noi se salvează automat în contul tău.":"New messages and replies are saved automatically to your account.",
+  "Asistent general":"General assistant"
+ },
+ it:{
+  "Asistentul principal: analiză, răspunsuri clare și ajutor practic.":"Assistente principale per analisi, risposte chiare e aiuto pratico.",
+  "Ghid strategic: explică pașii, organizează sarcinile și te ajută să rezolvi probleme.":"Guida strategica: spiega i passaggi, organizza le attività e aiuta a risolvere i problemi.",
+  "Asistentă dedicată fiicei fondatorului pentru învățare, creativitate și organizarea ideilor, cu explicații clare și încurajatoare.":"Assistente dedicata all'apprendimento e alla creatività, con spiegazioni chiare e incoraggianti.",
+  "Bun venit! Sunt Dr.Vas. Spune-mi cu ce te pot ajuta.":"Benvenuto! Sono Dr.Vas. Dimmi come posso aiutarti.",
+  "Salut! Sunt Dr.Jan. Îți voi explica lucrurile clar, pas cu pas, și verificăm împreună fiecare etapă.":"Ciao! Sono Dr.Jan. Ti spiegherò tutto chiaramente, passo dopo passo, e verificheremo insieme ogni fase.",
+  "Bun venit! Sunt Sarah. Hai să explorăm ideile tale și să le transformăm în pași simpli și realizabili.":"Benvenuto! Sono Sarah. Esploriamo le tue idee e trasformiamole in passi semplici e realizzabili.",
+  "Mesajele și răspunsurile noi se salvează automat în contul tău.":"I nuovi messaggi e le risposte vengono salvati automaticamente nel tuo account.",
+  "Asistent general":"Assistente generale"
+ },
+ tr:{
+  "Asistentul principal: analiză, răspunsuri clare și ajutor practic.":"Analiz, net yanıtlar ve pratik yardım için ana asistan.",
+  "Ghid strategic: explică pașii, organizează sarcinile și te ajută să rezolvi probleme.":"Adımları açıklayan, görevleri düzenleyen ve sorunları çözmeye yardımcı olan stratejik rehber.",
+  "Asistentă dedicată fiicei fondatorului pentru învățare, creativitate și organizarea ideilor, cu explicații clare și încurajatoare.":"Öğrenme, yaratıcılık ve fikirleri düzenleme için açık ve teşvik edici açıklamalar sunan özel asistan.",
+  "Bun venit! Sunt Dr.Vas. Spune-mi cu ce te pot ajuta.":"Hoş geldin! Ben Dr.Vas. Sana nasıl yardımcı olabilirim?",
+  "Salut! Sunt Dr.Jan. Îți voi explica lucrurile clar, pas cu pas, și verificăm împreună fiecare etapă.":"Merhaba! Ben Dr.Jan. Her şeyi adım adım açıklayacağım ve her aşamayı birlikte kontrol edeceğiz.",
+  "Bun venit! Sunt Sarah. Hai să explorăm ideile tale și să le transformăm în pași simpli și realizabili.":"Hoş geldin! Ben Sarah. Fikirlerini keşfedelim ve onları basit, uygulanabilir adımlara dönüştürelim.",
+  "Mesajele și răspunsurile noi se salvează automat în contul tău.":"Yeni mesajlar ve yanıtlar hesabına otomatik olarak kaydedilir.",
+  "Asistent general":"Genel asistan"
+ },
+ de:{
+  "Asistentul principal: analiză, răspunsuri clare și ajutor practic.":"Hauptassistent für Analysen, klare Antworten und praktische Hilfe.",
+  "Ghid strategic: explică pașii, organizează sarcinile și te ajută să rezolvi probleme.":"Strategischer Leitfaden: erklärt Schritte, organisiert Aufgaben und hilft bei der Problemlösung.",
+  "Asistentă dedicată fiicei fondatorului pentru învățare, creativitate și organizarea ideilor, cu explicații clare și încurajatoare.":"Ein Lernassistent für Kreativität und Ideenorganisation mit klaren und ermutigenden Erklärungen.",
+  "Bun venit! Sunt Dr.Vas. Spune-mi cu ce te pot ajuta.":"Willkommen! Ich bin Dr.Vas. Wie kann ich dir helfen?",
+  "Salut! Sunt Dr.Jan. Îți voi explica lucrurile clar, pas cu pas, și verificăm împreună fiecare etapă.":"Hallo! Ich bin Dr.Jan. Ich erkläre alles klar und Schritt für Schritt; wir prüfen jede Phase gemeinsam.",
+  "Bun venit! Sunt Sarah. Hai să explorăm ideile tale și să le transformăm în pași simpli și realizabili.":"Willkommen! Ich bin Sarah. Lass uns deine Ideen erkunden und in einfache, erreichbare Schritte umwandeln.",
+  "Mesajele și răspunsurile noi se salvează automat în contul tău.":"Neue Nachrichten und Antworten werden automatisch in deinem Konto gespeichert.",
+  "Asistent general":"Allgemeiner Assistent"
+ },
+ fr:{
+  "Asistentul principal: analiză, răspunsuri clare și ajutor practic.":"Assistant principal pour l'analyse, les réponses claires et l'aide pratique.",
+  "Ghid strategic: explică pașii, organizează sarcinile și te ajută să rezolvi probleme.":"Guide stratégique : explique les étapes, organise les tâches et aide à résoudre les problèmes.",
+  "Asistentă dedicată fiicei fondatorului pentru învățare, creativitate și organizarea ideilor, cu explicații clare și încurajatoare.":"Assistante dédiée à l'apprentissage, à la créativité et à l'organisation des idées, avec des explications claires et encourageantes.",
+  "Bun venit! Sunt Dr.Vas. Spune-mi cu ce te pot ajuta.":"Bienvenue ! Je suis Dr.Vas. Dites-moi comment je peux vous aider.",
+  "Salut! Sunt Dr.Jan. Îți voi explica lucrurile clar, pas cu pas, și verificăm împreună fiecare etapă.":"Bonjour ! Je suis Dr.Jan. Je vais tout expliquer clairement, étape par étape, et nous vérifierons chaque étape ensemble.",
+  "Bun venit! Sunt Sarah. Hai să explorăm ideile tale și să le transformăm în pași simpli și realizabili.":"Bienvenue ! Je suis Sarah. Explorons vos idées et transformons-les en étapes simples et réalisables.",
+  "Mesajele și răspunsurile noi se salvează automat în contul tău.":"Les nouveaux messages et les réponses sont automatiquement enregistrés dans votre compte.",
+  "Asistent general":"Assistant général"
+ },
+ es:{
+  "Asistentul principal: analiză, răspunsuri clare și ajutor practic.":"Asistente principal para análisis, respuestas claras y ayuda práctica.",
+  "Ghid strategic: explică pașii, organizează sarcinile și te ajută să rezolvi probleme.":"Guía estratégica: explica los pasos, organiza las tareas y ayuda a resolver problemas.",
+  "Asistentă dedicată fiicei fondatorului pentru învățare, creativitate și organizarea ideilor, cu explicații clare și încurajatoare.":"Asistente dedicada al aprendizaje, la creatividad y la organización de ideas, con explicaciones claras y alentadoras.",
+  "Bun venit! Sunt Dr.Vas. Spune-mi cu ce te pot ajuta.":"¡Bienvenido! Soy Dr.Vas. Dime cómo puedo ayudarte.",
+  "Salut! Sunt Dr.Jan. Îți voi explica lucrurile clar, pas cu pas, și verificăm împreună fiecare etapă.":"¡Hola! Soy Dr.Jan. Te explicaré todo claramente, paso a paso, y revisaremos juntos cada etapa.",
+  "Bun venit! Sunt Sarah. Hai să explorăm ideile tale și să le transformăm în pași simpli și realizabili.":"¡Bienvenido! Soy Sarah. Exploremos tus ideas y convirtámoslas en pasos sencillos y alcanzables.",
+  "Mesajele și răspunsurile noi se salvează automat în contul tău.":"Los mensajes y las nuevas respuestas se guardan automáticamente en tu cuenta.",
+  "Asistent general":"Asistente general"
+ },
+ ru:{
+  "Asistentul principal: analiză, răspunsuri clare și ajutor practic.":"Основной помощник для анализа, понятных ответов и практической помощи.",
+  "Ghid strategic: explică pașii, organizează sarcinile și te ajută să rezolvi probleme.":"Стратегический помощник: объясняет шаги, организует задачи и помогает решать проблемы.",
+  "Asistentă dedicată fiicei fondatorului pentru învățare, creativitate și organizarea ideilor, cu explicații clare și încurajatoare.":"Помощник для обучения, творчества и организации идей с понятными и поддерживающими объяснениями.",
+  "Bun venit! Sunt Dr.Vas. Spune-mi cu ce te pot ajuta.":"Добро пожаловать! Я Dr.Vas. Чем могу помочь?",
+  "Salut! Sunt Dr.Jan. Îți voi explica lucrurile clar, pas cu pas, și verificăm împreună fiecare etapă.":"Здравствуйте! Я Dr.Jan. Я буду ясно объяснять всё шаг за шагом, и мы вместе проверим каждый этап.",
+  "Bun venit! Sunt Sarah. Hai să explorăm ideile tale și să le transformăm în pași simpli și realizabili.":"Добро пожаловать! Я Sarah. Давайте изучим ваши идеи и превратим их в простые и выполнимые шаги.",
+  "Mesajele și răspunsurile noi se salvează automat în contul tău.":"Новые сообщения и ответы автоматически сохраняются в вашей учетной записи.",
+  "Asistent general":"Общий помощник"
+ }
+};
+function localizedAssistantCopy(assistantId,field){
+ const assistant=ASSISTANTS[assistantId]||ASSISTANTS.drvas;
+ const source=assistant[field]||"";
+ return (ASSISTANT_UI_TRANSLATIONS[currentLanguage]||{})[source]||tr(source);
+}
+
+
+Object.assign(UI.en,{"Vorbește cu Dr.Vas":"Talk to Dr.Vas","● AI ASSISTANT ONLINE":"● AI ASSISTANT ONLINE","VORBEȘTE CU DR.VAS":"TALK TO DR.VAS","YOUR LANGUAGE · YOUR DR.VAS":"YOUR LANGUAGE · YOUR DR.VAS","Select your language":"Select your language","Choose the language you want to use throughout Dr.Vas.":"Choose the language you want to use throughout Dr.Vas.","← Înapoi la module":"← Back to modules"});
+Object.assign(UI.it,{"Vorbește cu Dr.Vas":"Parla con Dr.Vas","● AI ASSISTANT ONLINE":"● ASSISTENTE AI ONLINE","VORBEȘTE CU DR.VAS":"PARLA CON DR.VAS","YOUR LANGUAGE · YOUR DR.VAS":"LA TUA LINGUA · IL TUO DR.VAS","Select your language":"Seleziona la lingua","Choose the language you want to use throughout Dr.Vas.":"Scegli la lingua da utilizzare in tutta la piattaforma Dr.Vas.","← Înapoi la module":"← Torna ai moduli"});
+Object.assign(UI.tr,{"Vorbește cu Dr.Vas":"Dr.Vas ile konuş","● AI ASSISTANT ONLINE":"● YAPAY ZEKÂ ASİSTANI ÇEVRİM İÇİ","VORBEȘTE CU DR.VAS":"DR.VAS İLE KONUŞ","YOUR LANGUAGE · YOUR DR.VAS":"SENİN DİLİN · SENİN DR.VAS'IN","Select your language":"Dilini seç","Choose the language you want to use throughout Dr.Vas.":"Dr.Vas boyunca kullanmak istediğin dili seç.","← Înapoi la module":"← Modüllere dön"});
+Object.assign(UI.de,{"Vorbește cu Dr.Vas":"Sprich mit Dr.Vas","● AI ASSISTANT ONLINE":"● KI-ASSISTENT ONLINE","VORBEȘTE CU DR.VAS":"MIT DR.VAS SPRECHEN","YOUR LANGUAGE · YOUR DR.VAS":"DEINE SPRACHE · DEIN DR.VAS","Select your language":"Sprache auswählen","Choose the language you want to use throughout Dr.Vas.":"Wähle die Sprache für die gesamte Dr.Vas-Plattform.","← Înapoi la module":"← Zurück zu den Modulen"});
+Object.assign(UI.fr,{"Vorbește cu Dr.Vas":"Parler à Dr.Vas","● AI ASSISTANT ONLINE":"● ASSISTANT IA EN LIGNE","VORBEȘTE CU DR.VAS":"PARLER À DR.VAS","YOUR LANGUAGE · YOUR DR.VAS":"VOTRE LANGUE · VOTRE DR.VAS","Select your language":"Choisissez votre langue","Choose the language you want to use throughout Dr.Vas.":"Choisissez la langue à utiliser dans toute la plateforme Dr.Vas.","← Înapoi la module":"← Retour aux modules"});
+Object.assign(UI.es,{"Vorbește cu Dr.Vas":"Habla con Dr.Vas","● AI ASSISTANT ONLINE":"● ASISTENTE IA EN LÍNEA","VORBEȘTE CU DR.VAS":"HABLA CON DR.VAS","YOUR LANGUAGE · YOUR DR.VAS":"TU IDIOMA · TU DR.VAS","Select your language":"Selecciona tu idioma","Choose the language you want to use throughout Dr.Vas.":"Elige el idioma que quieres utilizar en toda la plataforma Dr.Vas.","← Înapoi la module":"← Volver a los módulos"});
+Object.assign(UI.ru,{"Vorbește cu Dr.Vas":"Поговорить с Dr.Vas","● AI ASSISTANT ONLINE":"● ИИ-АССИСТЕНТ В СЕТИ","VORBEȘTE CU DR.VAS":"ПОГОВОРИТЕ С DR.VAS","YOUR LANGUAGE · YOUR DR.VAS":"ВАШ ЯЗЫК · ВАШ DR.VAS","Select your language":"Выберите язык","Choose the language you want to use throughout Dr.Vas.":"Выберите язык для всей платформы Dr.Vas.","← Înapoi la module":"← К модулям"});
+
+function localizeInterfaceCopy(source){return (ASSISTANT_UI_TRANSLATIONS[currentLanguage]||{})[source]||(UI[currentLanguage]||{})[source]||source}
+function tr(s){return localizeInterfaceCopy(s)}
 function setLocalizedText(target,source){
  if(!target)return;
  target.textContent=source;
@@ -2848,7 +2939,7 @@ function chooseLanguage(code){
  currentLanguage=code;languageReady=true;localStorage.setItem(LANGUAGE_KEY,code);
  refreshSpeechVoiceOptions();
  el("appMain").classList.remove("language-pending");el("languageGate").classList.remove("hidden");
- translatePage();renderDrvasPresentation();refreshVoiceUi(voiceAutoRead?"ready":"off");checkSession();
+ translatePage();selectAssistant(activeAssistant);if(el("chat")?.querySelectorAll(".msg").length<=1)renderWelcome();renderDrvasPresentation();refreshVoiceUi(voiceAutoRead?"ready":"off");checkSession();
 }
 function showLanguageGate(){el("languageGate").classList.toggle("hidden");if(languageReady)translatePage(el("languageGate"))}
 function initLanguage(){
@@ -3018,9 +3109,9 @@ function selectAssistant(assistantId){
  });
  const assistant=ASSISTANTS[assistantId];
  const intro=el("assistantIntro");
- if(intro)intro.textContent=assistant.intro;
+ if(intro)intro.textContent=localizedAssistantCopy(assistantId,"intro");
  const label=el("chatModuleLabel");
- if(label)label.textContent=assistant.icon+" "+assistant.name+" · "+(activeModule==="free"?"Asistent general":activeModule==="health"?"Health":activeModule.charAt(0).toUpperCase()+activeModule.slice(1));
+ if(label)label.textContent=assistant.icon+" "+assistant.name+" · "+(activeModule==="free"?localizeInterfaceCopy("Asistent general"):activeModule==="health"?"Health":activeModule.charAt(0).toUpperCase()+activeModule.slice(1));
  if(window.speechSynthesis){
   window.speechSynthesis.cancel();
   refreshSpeechVoiceOptions();
@@ -5664,7 +5755,7 @@ function renderWelcome(){
   const welcome = document.createElement("div");
   welcome.className = "msg bot";
   const assistant=ASSISTANTS[activeAssistant]||ASSISTANTS.drvas;
-  welcome.textContent=assistant.welcome+" Mesajele și răspunsurile noi se salvează automat în contul tău.";
+  welcome.textContent=localizedAssistantCopy(activeAssistant,"welcome")+" "+localizeInterfaceCopy("Mesajele și răspunsurile noi se salvează automat în contul tău.");
   el("chat").appendChild(welcome);
   updateActiveConversation();
 }
