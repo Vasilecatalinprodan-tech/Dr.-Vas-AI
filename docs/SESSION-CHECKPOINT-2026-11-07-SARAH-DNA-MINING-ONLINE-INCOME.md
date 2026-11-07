@@ -29,13 +29,14 @@
 - Link artifact: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42366110421/artifacts/13571708061
 - Separat, workflow-ul E2E pornit pe merge commit a eșuat într-un test de etichetă de portret: la schimbarea Dr.Vas → Dr.Jan, un callback întârziat a restaurat alt text-ul Dr.Vas. Nu este o problemă de autentificare sau de voce; a fost deschis PR #47 pentru corecție și test dedicat.
 
-## Remediere integrată — PR #47
-- PR: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/47
-- Merge commit: e05e5296faffe6e6870495d505f1c41716ee0925
-- Callback-urile vechi de încărcare/eroare verifică acum prezentatorul activ înainte de a modifica imaginea sau alt text-ul; un callback Dr.Vas întârziat nu mai poate rescrie eticheta Dr.Jan.
-- Test nou: capturează callback-ul Dr.Vas, schimbă la Dr.Jan, apelează callback-ul vechi și verifică faptul că eticheta rămâne Dr.Jan.
-- Browser E2E run pentru PR #47: 42366366924 — **122 passed**.
-- Deploy și APK build pentru commit-ul final e05e5296faffe6e6870495d505f1c41716ee0925 sunt în coadă la momentul actualizării.
+## Remedieri integrate — PR #47 și PR #48
+- PR #47: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/47 — merge commit e05e5296faffe6e6870495d505f1c41716ee0925.
+- PR #48: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/48 — merge commit 5dd20125b3ce6a849a0114762b88b74e483f5a82.
+- PR #47 a introdus verificarea prezentatorului activ în callback-urile de imagine și un test pentru callback-ul Dr.Vas întârziat.
+- PR #48 a adăugat MutationObserver care menține alt text-ul portretului sincronizat cu prezentatorul activ, chiar dacă un callback vechi rescrie o etichetă greșită.
+- Browser E2E PR #47: run 42366366924 — **122 passed**.
+- Browser E2E PR #48: run 42366744678 — **122 passed**.
+- Deploy, browser regression și APK build pentru commit-ul final 5dd20125b3ce6a849a0114762b88b74e483f5a82 sunt în coadă la momentul actualizării.
 
 ## Cercetare salvată
 - Document: docs/DRVAS-MINING-ONLINE-INCOME-RESEARCH-2026-11-07.md
