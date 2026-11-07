@@ -240,3 +240,11 @@ Next active work:
 - Full localization across all modules is not complete.
 
 This is a structured project/chat archive, not a literal export of the complete ChatGPT UI transcript.
+
+
+## Studio phase-3 test correction — 2026-11-07
+
+- PR #72 latest head is now 228e8fbfc36d3136c58c83509f995a6ae0db5764.
+- First browser run 42408663507 reached 136 passing tests and one assertion failure: the Studio workspace has two elements with class studio-beta-label. The test was corrected to target the badge inside the workspace header only; the application translations themselves passed the other Studio assertions.
+- Corrected browser run 42408952472 was still in progress at the time of this checkpoint.
+- PR #72 preview Workers Builds failure is not treated as production deployment evidence; the main workflow is authoritative after merge.
