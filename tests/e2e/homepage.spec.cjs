@@ -2672,7 +2672,7 @@ test("module pages expose the page scrollbar and presenter portraits visibly rea
     };
   });
   expect(styles.pageScrollbar).toBe("thin");
-  expect(styles.scrollbarColor).toContain("#4d8795");
+  expect(styles.scrollbarColor).toContain("77, 135, 149");
   expect(styles.workspaceScroll).toBe("scroll");
   expect(styles.freeScroll).toBe("scroll");
   expect(styles.haloAnimation).toBe("presenterVoiceHalo");
