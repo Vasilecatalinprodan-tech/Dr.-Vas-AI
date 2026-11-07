@@ -733,3 +733,12 @@ Expanded implementation now on PR #38:
 - Fix branch: fix/worker-live-context-regex-deploy-2026-11-07; first code commit 08e13d6605db5eb7aa47b6399187c825cdbd1e22.
 - Chat archive and session checkpoint updated with the founder's latest instructions, exact deployment failure and repair details.
 - Status at this entry: fix is committed on a branch; branch CI, merge, production deploy and smoke test remain pending. Do not describe production as deployed until the full workflow succeeds. Actual founder verification of both scrollbars remains required.
+
+
+## 2026-11-07 — Worker syntax correction merged; production verification pending
+
+- PR #62 merged into main as c74e97ddf71635d588e9631b223a8e59c3742d27.
+- Corrected the doubled-backslash regex in the Live conversation metadata URL; the previous production deploy had failed at Wrangler bundling.
+- Production deploy workflow run #528 / 42374244509 is active. Worker and browser JavaScript validation passed. Playwright homepage/session-restoration tests are still running; Supabase migration/diagnostic, Cloudflare deployment and production smoke tests are not yet confirmed.
+- The founder's actual page-scroll acceptance remains open until the production workflow passes and both scrollbars are tested in the live browser.
+- APK is explicitly deferred to the end; no APK build was triggered.
