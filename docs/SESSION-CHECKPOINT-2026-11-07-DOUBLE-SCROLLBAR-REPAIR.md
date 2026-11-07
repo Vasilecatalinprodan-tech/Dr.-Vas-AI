@@ -125,3 +125,12 @@ Archive scope: preserve the material conversation content, exact user instructio
 - Added Playwright coverage for both WebGL canvases, renderer initialization, nonzero canvas sizing, 3D geometry construction primitives and SVG fallback behavior. Existing SVG molecular structure remains in DOM for legacy regression coverage and fallback.
 - Current status at this checkpoint: implementation committed on feature branch; CI/browser verification and visual review remain pending. Do not merge or claim stage 2 complete until checks pass and desktop/mobile visual behavior is reviewed. If CI reveals issues, fix them before merge.
 - The founder's confirmation and this continuation request are preserved here as material chat content. The archive is a structured project record, not a literal export of the entire ChatGPT interface history.
+
+
+### CI correction — WebGL helper syntax — 7 November 2026
+
+- First run on the initial WebGL PR head failed during inline-script syntax validation because a matrix-helper insertion contained a literal escaped newline. This was a code-generation formatting defect; no production deployment occurred.
+- Corrected the line break and retained the responsive camera framing / SVG fallback. Fix commit: `c96c2339cc90cf37aed9e877dfb8ecdb767ed8af`.
+- The validation step on the corrected head passed in workflow run #630 / `42375495159`; the Playwright homepage/session suite is currently running. The earlier run #629 failure belongs to the superseded intermediate commit and must not be mistaken for the current head's final result.
+- PR #64 current head: `c96c2339cc90cf37aed9e877dfb8ecdb767ed8af`. PR URL: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/64.
+- Do not merge/deploy until run #630 and any subsequent checks on the current PR head pass. Then verify production deployment and founder visual acceptance of both desktop and mobile helices before closing stage 2.
