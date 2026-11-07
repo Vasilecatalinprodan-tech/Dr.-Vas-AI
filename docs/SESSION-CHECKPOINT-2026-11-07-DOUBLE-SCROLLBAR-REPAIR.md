@@ -212,3 +212,11 @@ User's latest instruction: “salveaza tot inclusiv chatul si continua”. Follo
 - PR #72 Studio localization phase 3 is open; branch feat/localize-studio-phase3-2026-11-07; head 0ddb493750397972644a564c8d1ea95deb7ed4f7. E2E check pending at checkpoint.
 - Next: validate and merge PR #72 if green; continue remaining Studio copy, then Academy, Commerce and Business. Full localization remains incomplete.
 - Latest user instruction: “ok hai sa continuam si tot asa salvam tot”.
+
+
+## Studio phase-3 test correction — 2026-11-07
+
+- PR #72 latest head is now 228e8fbfc36d3136c58c83509f995a6ae0db5764.
+- First browser run 42408663507 reached 136 passing tests and one assertion failure: the Studio workspace has two elements with class studio-beta-label. The test was corrected to target the badge inside the workspace header only; the application translations themselves passed the other Studio assertions.
+- Corrected browser run 42408952472 was still in progress at the time of this checkpoint.
+- PR #72 preview Workers Builds failure is not treated as production deployment evidence; the main workflow is authoritative after merge.
