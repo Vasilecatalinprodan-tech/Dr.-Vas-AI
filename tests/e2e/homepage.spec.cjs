@@ -1370,6 +1370,7 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
   expect(jan.speaker).toBe("Dr.Jan");
   await expect(page.locator("#presentationAvatar")).toHaveClass(/presentation-avatar-jan/);
   await expect(page.locator("#presentationAvatar .presentation-photo")).toBeVisible();
+  await expect(page.locator("#presentationAvatar .presentation-photo")).toHaveAttribute("data-presenter", "jan");
   await expect(page.locator("#presentationAvatar .presentation-photo")).toHaveAttribute("alt", "Dr.Jan — personaj AI fictiv");
   await expect.poll(() => page.locator("#presentationAvatar .presentation-photo").evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
   expect(await page.locator("#presentationAvatar .character-glasses").evaluate(node => getComputedStyle(node).display)).toBe("block");
@@ -1896,7 +1897,7 @@ test("landing hero renders two animated DNA strands and emergency stop latches l
   await expect(page.locator("#heroSection .dna-strand")).toHaveCount(4);
   await expect(page.locator("#heroSection .dna-strand-highlight")).toHaveCount(4);
   const strandFinish = await page.locator("#heroSection .dna-strand-highlight").first().evaluate(node => getComputedStyle(node).strokeWidth);
-  expect(strandFinish).toBe("1.7px");
+  expect(strandFinish).toBe("2.5px");
   const dnaLayout = await page.locator("#heroSection").evaluate(hero => {
     const heroHeight = hero.getBoundingClientRect().height;
     const rails = [...hero.querySelectorAll(".dna-helix-visual")].map(node => ({
@@ -2534,14 +2535,14 @@ test("module capabilities open dedicated feature pages instead of one crowded wo
   await expect(page.locator("#studioWorkspace .drvas-feature-navigation")).toBeVisible();
   await page.locator('#studioWorkspace [data-feature="book"]').click();
   await expect(page.locator('#studioWorkspace [data-feature-page="book"]')).toBeVisible();
-  await expect(page.locator('#studioWorkspace [data-feature-page="book"] h3')).toHaveText("Cărți și eBookuri");
+  await expect(page.locator('#studioWorkspace [data-feature-page="book"] h3')).toHaveText("Atelier de cărți și eBookuri");
   await expect(page.locator("#studioDeliverable")).toHaveValue("book");
-  await page.locator("#studioIdea").fill("Book-only draft");
+  await page.locator("#drvasBookStationConcept").fill("Book-only draft");
   await page.locator('#studioWorkspace [data-feature="series"]').click();
   await expect(page.locator("#studioIdea")).not.toHaveValue("Book-only draft");
   await page.locator("#studioIdea").fill("Series-only draft");
   await page.locator('#studioWorkspace [data-feature="book"]').click();
-  await expect(page.locator("#studioIdea")).toHaveValue("Book-only draft");
+  await expect(page.locator("#drvasBookStationConcept")).toHaveValue("Book-only draft");
   await page.locator('#studioWorkspace [data-feature="video"]').click();
   await expect(page.locator('#studioWorkspace [data-feature-page="video"] #studioRenderCreateButton')).toBeVisible();
   await page.locator('#studioWorkspace [data-feature="projects"]').click();
@@ -2676,4 +2677,100 @@ test("module pages expose the page scrollbar and presenter portraits visibly rea
   expect(styles.workspaceScroll).toBe("scroll");
   expect(styles.freeScroll).toBe("hidden");
   expect(styles.haloAnimation).toBe("presenterVoiceHalo");
+});
+
+
+test("voice accessibility controls remain available in Health and every module workspace", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-module-voice-access", email: "owner@example.invalid" };
+    isDrvasAdmin = true;
+    showModuleSelection();
+  });
+  for (const moduleName of ["health", "studio", "academy", "commerce", "business"]) {
+    await page.evaluate(name => selectModule(name, true), moduleName);
+    await expect(page.locator("#" + moduleName + "Workspace .drvas-module-voice-access"), moduleName + " voice access panel").toBeVisible();
+    await expect(page.locator("#" + moduleName + "Workspace .drvas-module-voice-access #voiceMicButton")).toBeVisible();
+    await expect(page.locator("#" + moduleName + "Workspace .drvas-module-voice-access #voiceAutoButton")).toBeVisible();
+    await expect(page.locator("#" + moduleName + "Workspace .drvas-module-voice-access #liveVoiceButton")).toBeVisible();
+    await expect(page.locator(".voice-toolbar")).toHaveCount(1);
+  }
+  await page.evaluate(() => selectModule("free", true));
+  await expect(page.locator("#chatSection .voice-toolbar #voiceMicButton")).toBeVisible();
+  await expect(page.locator(".drvas-module-voice-access")).toHaveCount(0);
+  await expect(page.locator(".voice-toolbar")).toHaveCount(1);
+});
+
+test("both landing DNA helices use shaded molecular rails and detailed base pairs", async ({ page }) => {
+  await openApp(page, "ro");
+  const helices = page.locator("#heroSection .dna-helix-visual");
+  await expect(helices).toHaveCount(2);
+  for (let index = 0; index < 2; index++) {
+    const helix = helices.nth(index);
+    await expect(helix.locator(".dna-strand-shadow")).toHaveCount(2);
+    await expect(helix.locator(".dna-strand-highlight")).toHaveCount(2);
+    await expect(helix.locator(".dna-base-pair")).toHaveCount(19);
+    await expect(helix.locator(".dna-base-pair-bead")).toHaveCount(38);
+  }
+});
+
+
+test("Studio exposes dedicated Book, Translation, Crypto and Online Income workspaces", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-studio-special-workspaces", email: "owner@example.invalid" };
+    isDrvasAdmin = true;
+    showModuleSelection();
+    selectModule("studio", true);
+    const adminPanel = document.getElementById("adminPanel");
+    if (adminPanel) { adminPanel.classList.remove("hidden"); adminPanel.hidden = false; }
+  });
+  for (const feature of ["book", "translation", "crypto", "income-lab"]) {
+    await expect(page.locator('#studioWorkspace [data-feature="' + feature + '"]')).toBeVisible();
+  }
+  await page.locator('#studioWorkspace [data-feature="book"]').click();
+  await expect(page.locator("#drvasBookStationConcept")).toBeVisible();
+  await expect(page.locator('#studioWorkspace [data-feature-page="book"] .studio-station-submit')).toContainText("Creează și salvează");
+  await page.locator('#studioWorkspace [data-feature="translation"]').click();
+  await expect(page.locator("#drvasTranslationText")).toBeVisible();
+  await expect(page.locator("#drvasTranslationTarget")).toBeVisible();
+  await page.locator('#studioWorkspace [data-feature="crypto"]').click();
+  await expect(page.locator('#studioWorkspace [data-feature-page="crypto"] .studio-founder-shortcut button')).toBeVisible();
+  await expect(page.locator("#cryptoEngineStatus")).toContainText("Mining-ul real rămâne oprit");
+  await expect(page.locator("#cryptoEngineScanButton")).toHaveCount(1);
+  await page.locator('#studioWorkspace [data-feature="income-lab"]').click();
+  await expect(page.locator('#studioWorkspace [data-feature-page="income-lab"] .studio-founder-shortcut button')).toBeVisible();
+  await expect(page.locator("#founderDigitalTitle")).toHaveCount(1);
+  await expect(page.locator("#founderBookTitle")).toHaveCount(1);
+});
+
+
+test("voice replies remain replayable when auto-read is off and replay with their original assistant voice", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(async () => {
+    currentUser = { id: "e2e-voice-replay-owner" };
+    voiceAutoRead = false;
+    activeAssistant = "jan";
+    await speakDrVas("Acesta este răspunsul scris de Dr.Jan.");
+    const storedText = lastSpokenAnswer;
+    const storedSpeaker = lastSpokenAssistant;
+    window.__replaySpeaker = "";
+    window.playAssistantVoice = async (_text, _force, speaker) => {
+      window.__replaySpeaker = speaker;
+      return true;
+    };
+    activeAssistant = "aurora";
+    replayLastAnswer();
+    voiceAutoRead = false;
+    currentUser = { id: "e2e-voice-preference-owner" };
+    toggleVoiceOutput();
+    const preference = localStorage.getItem("drvas_voice_auto_read_e2e-voice-preference-owner");
+    return { storedText, storedSpeaker, replaySpeaker: window.__replaySpeaker, preference };
+  });
+  expect(result.storedText).toContain("Dr.Jan");
+  expect(result.storedSpeaker).toBe("jan");
+  expect(result.replaySpeaker).toBe("jan");
+  expect(result.preference).toBe("true");
 });

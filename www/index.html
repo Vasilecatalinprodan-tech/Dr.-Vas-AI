@@ -1046,6 +1046,24 @@ body::-webkit-scrollbar-track,html::-webkit-scrollbar-track{background:#091827;b
 body::-webkit-scrollbar-thumb,html::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#54d8cf,#315c78);border:2px solid #091827;border-radius:10px}
 body.module-workspace-mode:not(.free-module-mode){overflow-y:scroll;scrollbar-gutter:stable}
 
+
+/* Scientific double helix: shaded molecular rails, reflective tube edges and spherical base-pair joints. */
+.dna-helix-visual{width:clamp(142px,16vw,220px);opacity:1;filter:drop-shadow(0 12px 24px #020711dd) drop-shadow(0 0 22px #55e6db66)}
+.dna-helix-visual svg{transform:rotateY(-18deg) rotateZ(-1deg);transform-style:preserve-3d;filter:contrast(1.2) saturate(1.32)}
+.dna-helix-core{transform-origin:90px 320px;transform-box:fill-box;transform-style:preserve-3d;animation:dnaHelixTurn 18s ease-in-out infinite}
+.dna-strand-shadow{fill:none;stroke:#020b18;stroke-width:22;stroke-linecap:round;opacity:.9;filter:blur(3px)}
+.dna-strand{fill:none;stroke-width:14;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 2px 2px #020817) drop-shadow(0 0 8px currentColor)}
+.dna-helix-left .dna-strand-a,.dna-helix-right .dna-strand-a{stroke:url(#dnaRailA-left)}
+.dna-helix-left .dna-strand-b,.dna-helix-right .dna-strand-b{stroke:url(#dnaRailB-left)}
+.dna-strand-highlight{fill:none;stroke:#f4fffc;stroke-width:2.5;stroke-linecap:round;opacity:.72;stroke-dasharray:34 42;filter:drop-shadow(0 0 5px #dfffff);animation:dnaStrandFlow 7s linear infinite}
+.dna-rungs{fill:none;stroke-width:5;stroke-linecap:round;opacity:.96;filter:drop-shadow(0 2px 3px #061323) drop-shadow(0 0 5px #8df8e7)}
+.dna-base-pair{stroke:inherit;stroke-width:5;stroke-linecap:round}
+.dna-base-pair-bead{fill:#8ff6e7;stroke:#eaffff;stroke-width:1.3;filter:drop-shadow(0 0 4px #6ee8df)}
+.dna-helix-right svg{transform:rotateY(18deg) rotateZ(1deg) scaleX(-1)}
+@media(max-width:700px){.dna-helix-visual{width:clamp(68px,16vw,96px);opacity:.88}.dna-helix-left{left:0}.dna-helix-right{right:0}.hero-content{padding-left:76px;padding-right:76px}}
+@media(prefers-reduced-motion:reduce){.dna-helix-core,.dna-strand,.dna-strand-highlight{animation:none!important}}
+
+
 </style>
 <link rel="stylesheet" href="/module-workspaces.css">
 </head>
@@ -1073,25 +1091,37 @@ body.module-workspace-mode:not(.free-module-mode){overflow-y:scroll;scrollbar-gu
 </section>
 <section id="heroSection" class="hero">
  <div class="dna-helix-visual dna-helix-left" aria-hidden="true"><svg viewBox="0 0 180 640" role="presentation" focusable="false">
-    <defs><linearGradient id="dnaStrandA-left" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#d5fff7"/><stop offset=".38" stop-color="#54e2d5"/><stop offset="1" stop-color="#167b91"/></linearGradient><linearGradient id="dnaStrandB-left" x1="1" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#d8ddff"/><stop offset=".5" stop-color="#8999ff"/><stop offset="1" stop-color="#4955a8"/></linearGradient></defs>
-    <g class="dna-helix-core">
-     <path class="dna-strand dna-strand-a" d="M28 8 C152 42 28 78 152 112 S28 182 152 216 S28 286 152 320 S28 390 152 424 S28 494 152 528 S28 598 152 632"/>
-     <path class="dna-strand-highlight" d="M28 8 C152 42 28 78 152 112 S28 182 152 216 S28 286 152 320 S28 390 152 424 S28 494 152 528 S28 598 152 632"/>
-     <path class="dna-strand-highlight" d="M28 8 C152 42 28 78 152 112 S28 182 152 216 S28 286 152 320 S28 390 152 424 S28 494 152 528 S28 598 152 632"/>
-     <path class="dna-strand dna-strand-b" d="M152 8 C28 42 152 78 28 112 S152 182 28 216 S152 286 28 320 S152 390 28 424 S152 494 28 528 S152 598 28 632"/>
-     <path class="dna-strand-highlight" d="M152 8 C28 42 152 78 28 112 S152 182 28 216 S152 286 28 320 S152 390 28 424 S152 494 28 528 S152 598 28 632"/>
-     <path class="dna-strand-highlight" d="M152 8 C28 42 152 78 28 112 S152 182 28 216 S152 286 28 320 S152 390 28 424 S152 494 28 528 S152 598 28 632"/>
-     <g class="dna-rungs"><path d="M43 25 L137 25 M67 57 L113 57 M43 89 L137 89 M67 121 L113 121 M43 153 L137 153 M67 185 L113 185 M43 217 L137 217 M67 249 L113 249 M43 281 L137 281 M67 313 L113 313 M43 345 L137 345 M67 377 L113 377 M43 409 L137 409 M67 441 L113 441 M43 473 L137 473 M67 505 L113 505 M43 537 L137 537 M67 569 L113 569 M43 601 L137 601"/></g>
-    </g>
-   </svg></div>
-  <div class="dna-helix-visual dna-helix-right" aria-hidden="true"><svg viewBox="0 0 180 640" role="presentation" focusable="false">
-    <defs><linearGradient id="dnaStrandA-right" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#d5fff7"/><stop offset=".38" stop-color="#54e2d5"/><stop offset="1" stop-color="#167b91"/></linearGradient><linearGradient id="dnaStrandB-right" x1="1" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#d8ddff"/><stop offset=".5" stop-color="#8999ff"/><stop offset="1" stop-color="#4955a8"/></linearGradient></defs>
-    <g class="dna-helix-core">
-     <path class="dna-strand dna-strand-a" d="M28 8 C152 42 28 78 152 112 S28 182 152 216 S28 286 152 320 S28 390 152 424 S28 494 152 528 S28 598 152 632"/>
-     <path class="dna-strand dna-strand-b" d="M152 8 C28 42 152 78 28 112 S152 182 28 216 S152 286 28 320 S152 390 28 424 S152 494 28 528 S152 598 28 632"/>
-     <g class="dna-rungs"><path d="M43 25 L137 25 M67 57 L113 57 M43 89 L137 89 M67 121 L113 121 M43 153 L137 153 M67 185 L113 185 M43 217 L137 217 M67 249 L113 249 M43 281 L137 281 M67 313 L113 313 M43 345 L137 345 M67 377 L113 377 M43 409 L137 409 M67 441 L113 441 M43 473 L137 473 M67 505 L113 505 M43 537 L137 537 M67 569 L113 569 M43 601 L137 601"/></g>
-    </g>
-   </svg></div>
+  <defs>
+   <linearGradient id="dnaRailA-left" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#092c43"/><stop offset=".18" stop-color="#167b91"/><stop offset=".42" stop-color="#6df4e5"/><stop offset=".56" stop-color="#e7fff9"/><stop offset=".72" stop-color="#4ac9d1"/><stop offset="1" stop-color="#103e63"/></linearGradient>
+   <linearGradient id="dnaRailB-left" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#101c52"/><stop offset=".2" stop-color="#4b62ba"/><stop offset=".46" stop-color="#aabaff"/><stop offset=".58" stop-color="#f0f2ff"/><stop offset=".8" stop-color="#6c81df"/><stop offset="1" stop-color="#1c2c65"/></linearGradient>
+   <linearGradient id="dnaPair-left" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f5fffb"/><stop offset=".35" stop-color="#78e9dc"/><stop offset=".7" stop-color="#397c9d"/><stop offset="1" stop-color="#142f56"/></linearGradient>
+   <radialGradient id="dnaBead-left" cx=".32" cy=".24" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".25" stop-color="#a9fff1"/><stop offset=".7" stop-color="#36aab7"/><stop offset="1" stop-color="#12334d"/></radialGradient>
+   <filter id="dnaShadow-left" x="-40%" y="-20%" width="180%" height="140%"><feGaussianBlur stdDeviation="5" result="blur"/><feOffset dy="5"/><feComponentTransfer><feFuncA type="linear" slope=".65"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <g class="dna-helix-core" filter="url(#dnaShadow-left)">
+   <path class="dna-strand-shadow" d="M28 8 C152 42 28 78 152 112 S28 182 152 216 S28 286 152 320 S28 390 152 424 S28 494 152 528 S28 598 152 632"/><path class="dna-strand-shadow" d="M152 8 C28 42 152 78 28 112 S152 182 28 216 S152 286 28 320 S152 390 28 424 S152 494 28 528 S152 598 28 632"/>
+   <path class="dna-strand dna-strand-a" d="M28 8 C152 42 28 78 152 112 S28 182 152 216 S28 286 152 320 S28 390 152 424 S28 494 152 528 S28 598 152 632" style="stroke:url(#dnaRailA-left)"/>
+   <path class="dna-strand dna-strand-b" d="M152 8 C28 42 152 78 28 112 S152 182 28 216 S152 286 28 320 S152 390 28 424 S152 494 28 528 S152 598 28 632" style="stroke:url(#dnaRailB-left)"/>
+   <path class="dna-strand-highlight" d="M28 8 C152 42 28 78 152 112 S28 182 152 216 S28 286 152 320 S28 390 152 424 S28 494 152 528 S28 598 152 632"/><path class="dna-strand-highlight" d="M152 8 C28 42 152 78 28 112 S152 182 28 216 S152 286 28 320 S152 390 28 424 S152 494 28 528 S152 598 28 632"/>
+   <g class="dna-rungs" style="stroke:url(#dnaPair-left)"><path d="M43 25 L137 25" class="dna-base-pair"/><circle cx="43" cy="25" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><circle cx="137" cy="25" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><path d="M67 57 L113 57" class="dna-base-pair"/><circle cx="67" cy="57" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><circle cx="113" cy="57" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><path d="M43 89 L137 89" class="dna-base-pair"/><circle cx="43" cy="89" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><circle cx="137" cy="89" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><path d="M67 121 L113 121" class="dna-base-pair"/><circle cx="67" cy="121" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><circle cx="113" cy="121" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><path d="M43 153 L137 153" class="dna-base-pair"/><circle cx="43" cy="153" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><circle cx="137" cy="153" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><path d="M67 185 L113 185" class="dna-base-pair"/><circle cx="67" cy="185" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><circle cx="113" cy="185" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><path d="M43 217 L137 217" class="dna-base-pair"/><circle cx="43" cy="217" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><circle cx="137" cy="217" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><path d="M67 249 L113 249" class="dna-base-pair"/><circle cx="67" cy="249" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><circle cx="113" cy="249" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><path d="M43 281 L137 281" class="dna-base-pair"/><circle cx="43" cy="281" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><circle cx="137" cy="281" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><path d="M67 313 L113 313" class="dna-base-pair"/><circle cx="67" cy="313" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><circle cx="113" cy="313" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><path d="M43 345 L137 345" class="dna-base-pair"/><circle cx="43" cy="345" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><circle cx="137" cy="345" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><path d="M67 377 L113 377" class="dna-base-pair"/><circle cx="67" cy="377" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><circle cx="113" cy="377" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><path d="M43 409 L137 409" class="dna-base-pair"/><circle cx="43" cy="409" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><circle cx="137" cy="409" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><path d="M67 441 L113 441" class="dna-base-pair"/><circle cx="67" cy="441" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><circle cx="113" cy="441" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><path d="M43 473 L137 473" class="dna-base-pair"/><circle cx="43" cy="473" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><circle cx="137" cy="473" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><path d="M67 505 L113 505" class="dna-base-pair"/><circle cx="67" cy="505" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><circle cx="113" cy="505" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><path d="M43 537 L137 537" class="dna-base-pair"/><circle cx="43" cy="537" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><circle cx="137" cy="537" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><path d="M67 569 L113 569" class="dna-base-pair"/><circle cx="67" cy="569" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><circle cx="113" cy="569" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><path d="M43 601 L137 601" class="dna-base-pair"/><circle cx="43" cy="601" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/><circle cx="137" cy="601" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-left)"/></g>
+  </g>
+ </svg></div>
+ <div class="dna-helix-visual dna-helix-right" aria-hidden="true"><svg viewBox="0 0 180 640" role="presentation" focusable="false">
+  <defs>
+   <linearGradient id="dnaRailA-right" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#092c43"/><stop offset=".18" stop-color="#167b91"/><stop offset=".42" stop-color="#6df4e5"/><stop offset=".56" stop-color="#e7fff9"/><stop offset=".72" stop-color="#4ac9d1"/><stop offset="1" stop-color="#103e63"/></linearGradient>
+   <linearGradient id="dnaRailB-right" x1="1" y1="0" x2="0" y2="0"><stop offset="0" stop-color="#101c52"/><stop offset=".2" stop-color="#4b62ba"/><stop offset=".46" stop-color="#aabaff"/><stop offset=".58" stop-color="#f0f2ff"/><stop offset=".8" stop-color="#6c81df"/><stop offset="1" stop-color="#1c2c65"/></linearGradient>
+   <linearGradient id="dnaPair-right" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f5fffb"/><stop offset=".35" stop-color="#78e9dc"/><stop offset=".7" stop-color="#397c9d"/><stop offset="1" stop-color="#142f56"/></linearGradient>
+   <radialGradient id="dnaBead-right" cx=".32" cy=".24" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".25" stop-color="#a9fff1"/><stop offset=".7" stop-color="#36aab7"/><stop offset="1" stop-color="#12334d"/></radialGradient>
+   <filter id="dnaShadow-right" x="-40%" y="-20%" width="180%" height="140%"><feGaussianBlur stdDeviation="5" result="blur"/><feOffset dy="5"/><feComponentTransfer><feFuncA type="linear" slope=".65"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <g class="dna-helix-core" filter="url(#dnaShadow-right)">
+   <path class="dna-strand-shadow" d="M28 8 C152 42 28 78 152 112 S28 182 152 216 S28 286 152 320 S28 390 152 424 S28 494 152 528 S28 598 152 632"/><path class="dna-strand-shadow" d="M152 8 C28 42 152 78 28 112 S152 182 28 216 S152 286 28 320 S152 390 28 424 S152 494 28 528 S152 598 28 632"/>
+   <path class="dna-strand dna-strand-a" d="M28 8 C152 42 28 78 152 112 S28 182 152 216 S28 286 152 320 S28 390 152 424 S28 494 152 528 S28 598 152 632" style="stroke:url(#dnaRailA-right)"/>
+   <path class="dna-strand dna-strand-b" d="M152 8 C28 42 152 78 28 112 S152 182 28 216 S152 286 28 320 S152 390 28 424 S152 494 28 528 S152 598 28 632" style="stroke:url(#dnaRailB-right)"/>
+   <path class="dna-strand-highlight" d="M28 8 C152 42 28 78 152 112 S28 182 152 216 S28 286 152 320 S28 390 152 424 S28 494 152 528 S28 598 152 632"/><path class="dna-strand-highlight" d="M152 8 C28 42 152 78 28 112 S152 182 28 216 S152 286 28 320 S152 390 28 424 S152 494 28 528 S152 598 28 632"/>
+   <g class="dna-rungs" style="stroke:url(#dnaPair-right)"><path d="M43 25 L137 25" class="dna-base-pair"/><circle cx="43" cy="25" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><circle cx="137" cy="25" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><path d="M67 57 L113 57" class="dna-base-pair"/><circle cx="67" cy="57" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><circle cx="113" cy="57" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><path d="M43 89 L137 89" class="dna-base-pair"/><circle cx="43" cy="89" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><circle cx="137" cy="89" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><path d="M67 121 L113 121" class="dna-base-pair"/><circle cx="67" cy="121" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><circle cx="113" cy="121" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><path d="M43 153 L137 153" class="dna-base-pair"/><circle cx="43" cy="153" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><circle cx="137" cy="153" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><path d="M67 185 L113 185" class="dna-base-pair"/><circle cx="67" cy="185" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><circle cx="113" cy="185" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><path d="M43 217 L137 217" class="dna-base-pair"/><circle cx="43" cy="217" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><circle cx="137" cy="217" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><path d="M67 249 L113 249" class="dna-base-pair"/><circle cx="67" cy="249" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><circle cx="113" cy="249" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><path d="M43 281 L137 281" class="dna-base-pair"/><circle cx="43" cy="281" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><circle cx="137" cy="281" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><path d="M67 313 L113 313" class="dna-base-pair"/><circle cx="67" cy="313" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><circle cx="113" cy="313" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><path d="M43 345 L137 345" class="dna-base-pair"/><circle cx="43" cy="345" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><circle cx="137" cy="345" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><path d="M67 377 L113 377" class="dna-base-pair"/><circle cx="67" cy="377" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><circle cx="113" cy="377" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><path d="M43 409 L137 409" class="dna-base-pair"/><circle cx="43" cy="409" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><circle cx="137" cy="409" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><path d="M67 441 L113 441" class="dna-base-pair"/><circle cx="67" cy="441" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><circle cx="113" cy="441" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><path d="M43 473 L137 473" class="dna-base-pair"/><circle cx="43" cy="473" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><circle cx="137" cy="473" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><path d="M67 505 L113 505" class="dna-base-pair"/><circle cx="67" cy="505" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><circle cx="113" cy="505" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><path d="M43 537 L137 537" class="dna-base-pair"/><circle cx="43" cy="537" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><circle cx="137" cy="537" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><path d="M67 569 L113 569" class="dna-base-pair"/><circle cx="67" cy="569" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><circle cx="113" cy="569" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><path d="M43 601 L137 601" class="dna-base-pair"/><circle cx="43" cy="601" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/><circle cx="137" cy="601" r="4.4" class="dna-base-pair-bead" style="fill:url(#dnaBead-right)"/></g>
+  </g>
+ </svg></div>
  <div class="hero-content">
   <div class="tag">INTELLIGENCE WITHOUT LIMITS</div>
   <button type="button" class="presentation-open-button hero-presentation-button" id="heroPresentationOpenButton" onclick="openDrvasPresentation()">▶ Deschide prezentarea</button>
@@ -2136,9 +2166,11 @@ function setDrvasPresenterPortrait(key,avatar){
   avatar.insertBefore(photo,art||avatar.firstChild);
  }
  const labels={drvas:"Dr.Vas — fotografia fondatorului",jan:"Dr.Jan — personaj AI fictiv",sarah:"Sarah — portret profesional adult"};
- photo.alt=labels[key]||"Portretul asistentului";
- photo.onload=()=>{photo.style.display="block";if(art)art.classList.add("is-hidden")};
- photo.onerror=()=>{photo.style.display="none";if(art)art.classList.remove("is-hidden")};
+ photo.setAttribute("alt",labels[key]||"Portretul asistentului");photo.dataset.presenter=key;
+ const syncPortraitAlt=()=>photo.setAttribute("alt",labels[photo.dataset.presenter]||"Portretul asistentului");
+ syncPortraitAlt();
+ photo.onload=()=>{syncPortraitAlt();photo.style.display="block";if(art)art.classList.add("is-hidden")};
+ photo.onerror=()=>{syncPortraitAlt();photo.style.display="none";if(art)art.classList.remove("is-hidden")};
  const source=DRVAS_PRESENTER_PORTRAITS[key];
  if(source&&photo.getAttribute("src")!==source){if(art)art.classList.remove("is-hidden");photo.src=source}
  else if(photo.complete&&photo.naturalWidth>0&&art)art.classList.add("is-hidden");
@@ -2213,7 +2245,7 @@ function updateDrvasPresentationScene(index){
  const key=["drvas","jan","sarah"][index],speaker=DRVAS_PRESENTERS[key],data=DRVAS_PRESENTATION[currentLanguage]||DRVAS_PRESENTATION.ro;
  const presenter=el("presentationPresenter"),avatar=el("presentationAvatar"),grid=el("presentationModuleGrid");
  if(presenter){presenter.classList.remove("is-speaking","is-animated","scene-enter");void presenter.offsetWidth;presenter.classList.add("scene-enter");}
- if(avatar){avatar.className="presentation-avatar presentation-avatar-"+key;avatar.dataset.presenter=key;setDrvasPresenterPortrait(key,avatar);const photo=avatar.querySelector(".presentation-photo");if(photo)photo.alt=({drvas:"Dr.Vas — fotografia fondatorului",jan:"Dr.Jan — personaj AI fictiv",sarah:"Sarah — portret profesional adult"})[key]||"Portretul asistentului";}
+ if(avatar){avatar.className="presentation-avatar presentation-avatar-"+key;avatar.dataset.presenter=key;setDrvasPresenterPortrait(key,avatar);const photo=avatar.querySelector(".presentation-photo");if(photo){photo.setAttribute("alt",({drvas:"Dr.Vas — fotografia fondatorului",jan:"Dr.Jan — personaj AI fictiv",sarah:"Sarah — portret profesional adult"})[key]||"Portretul asistentului");photo.dataset.presenter=key;}}
  const set=(id,value)=>{const node=el(id);if(node)node.textContent=value};
  set("presentationSpeakerName",speaker.name);set("presentationSpeakerRole",speaker.role[currentLanguage]||speaker.role.ro);
  const moduleNames=["Dr.Vas Free","Dr.Vas Health","Dr.Vas Studio","Dr.Vas Academy","Dr.Vas Commerce","Dr.Vas Business"];
@@ -2789,6 +2821,7 @@ let voiceListening = false;
 let voiceErrorKey = "";
 let voiceAutoRead = false;
 let lastSpokenAnswer = "";
+let lastSpokenAssistant = "drvas";
 let voiceTranscript = "";
 let liveSocket = null;
 let liveStream = null;
@@ -2895,7 +2928,7 @@ function refreshVoiceUi(statusKey){
 function speechLanguage(){
  return ({ro:"ro-RO",en:"en-GB",it:"it-IT",tr:"tr-TR",de:"de-DE",fr:"fr-FR",es:"es-ES",ru:"ru-RU"})[currentLanguage]||"ro-RO";
 }
-function speechVoiceStorageKey(){return "drvas_speech_voice_"+activeAssistant+"_"+currentLanguage;}
+function speechVoiceStorageKey(assistantId=activeAssistant){return "drvas_speech_voice_"+assistantId+"_"+currentLanguage;}
 function refreshSpeechVoiceOptions(){
  const select=el("speechVoiceSelect");
  if(!select||!window.speechSynthesis)return;
@@ -2917,7 +2950,7 @@ function saveSpeechVoiceChoice(){
  if(!select)return;
  if(select.value)localStorage.setItem(speechVoiceStorageKey(),select.value);
  else localStorage.removeItem(speechVoiceStorageKey());
- if(voiceAutoRead&&lastSpokenAnswer)speakDrVas(lastSpokenAnswer);
+ if(voiceAutoRead&&lastSpokenAnswer)speakDrVas(lastSpokenAnswer,true,lastSpokenAssistant);
 }
 function selectedSpeechRate(){const rate=Number(el("speechRateSelect")?.value||0.92);return Number.isFinite(rate)?Math.min(1.2,Math.max(0.75,rate)):0.92;}
 function isFemaleSpeechVoice(voice){
@@ -2931,13 +2964,13 @@ function rankFemaleSpeechVoice(voice){
  if(voice?.default)return 2;
  return 1;
 }
-function chooseSpeechVoice(lang){
+function chooseSpeechVoice(lang,assistantId=activeAssistant){
  if(!window.speechSynthesis)return null;
  const voices=(window.speechSynthesis.getVoices()||[]).filter(v=>v&&v.voiceURI);
  const language=lang.slice(0,2).toLowerCase();
  const matching=voices.filter(v=>v.lang&&v.lang.toLowerCase().startsWith(language));
- const selected=el("speechVoiceSelect")?.value;
- if(activeAssistant==="aurora"){
+ const selected=assistantId===activeAssistant?el("speechVoiceSelect")?.value:(localStorage.getItem(speechVoiceStorageKey(assistantId))||"");
+ if(assistantId==="aurora"){
   // Sarah must use a feminine voice native to the selected language.
   // A foreign-language voice distorts Romanian and other local pronunciation.
   const femaleVoices=matching.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
@@ -2990,9 +3023,10 @@ function waitForSpeechVoices(){
 let founderSpeechAudio=null;
 let founderSpeechObjectUrl=null;
 let founderSpeechRequestId=0;
-async function playAssistantVoice(text,forcePlayback=false){
+async function playAssistantVoice(text,forcePlayback=false,assistantOverride=""){
  const requestId=++founderSpeechRequestId;
- const assistantId=activeAssistant;
+ const assistantId=assistantOverride||activeAssistant;
+ const preserveSpeaker=Boolean(assistantOverride);
  if(!["drvas","jan","aurora"].includes(assistantId)||!currentUser||!text)return false;
  try{
   const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
@@ -3003,7 +3037,7 @@ async function playAssistantVoice(text,forcePlayback=false){
   });
   if(!response.ok)return false;
   const audioBlob=await response.blob();
-  if(requestId!==founderSpeechRequestId||(!voiceAutoRead&&!forcePlayback)||activeAssistant!==assistantId)return true;
+  if(requestId!==founderSpeechRequestId||(!voiceAutoRead&&!forcePlayback)||(!preserveSpeaker&&activeAssistant!==assistantId))return true;
   if(!audioBlob.size)return false;
   if(founderSpeechAudio){founderSpeechAudio.pause();founderSpeechAudio.src="";}
   if(founderSpeechObjectUrl)URL.revokeObjectURL(founderSpeechObjectUrl);
@@ -3019,21 +3053,23 @@ async function playAssistantVoice(text,forcePlayback=false){
   return false;
  }
 }
-async function speakDrVas(text,forcePlayback=false){
- if((!voiceAutoRead&&!forcePlayback)||!text)return;
+async function speakDrVas(text,forcePlayback=false,assistantOverride=""){
+ if(!text)return;
+ const speakerId=assistantOverride||activeAssistant;
+ lastSpokenAnswer=text;lastSpokenAssistant=speakerId;
+ if(!voiceAutoRead&&!forcePlayback)return;
  const spokenText=prepareSpeechText(text);
  if(!spokenText)return;
- lastSpokenAnswer=text;
  // Prefer the authenticated server-side voice provider even on browsers without Web Speech synthesis.
- const dedicatedVoicePlayed=await playAssistantVoice(spokenText,forcePlayback);
+ const dedicatedVoicePlayed=await playAssistantVoice(spokenText,forcePlayback,speakerId);
  if(dedicatedVoicePlayed)return;
  if(!window.speechSynthesis){refreshVoiceUi("voiceUnavailable");return;}
  const lang=speechLanguage();
- let voice=chooseSpeechVoice(lang);
+ let voice=chooseSpeechVoice(lang,speakerId);
  if(!voice){
   await waitForSpeechVoices();
   refreshSpeechVoiceOptions();
-  voice=chooseSpeechVoice(lang);
+  voice=chooseSpeechVoice(lang,speakerId);
  }
  if(!voice){
   refreshVoiceUi("voiceUnavailable");
@@ -3047,7 +3083,7 @@ async function speakDrVas(text,forcePlayback=false){
  utterance.lang=voice.lang||lang;
  utterance.voice=voice;
  utterance.rate=selectedSpeechRate();
- utterance.pitch=activeAssistant==="aurora"?1.08:activeAssistant==="jan"?0.90:0.98;
+ utterance.pitch=speakerId==="aurora"?1.08:speakerId==="jan"?0.90:0.98;
  utterance.onstart=()=>{document.body.classList.add("assistant-speaking");refreshVoiceUi("speaking")};
  utterance.onend=()=>{document.body.classList.remove("assistant-speaking");refreshVoiceUi("ready")};
  utterance.onerror=event=>{
@@ -3062,7 +3098,7 @@ function replayLastAnswer(){
  if(!lastSpokenAnswer)return;
  const wasEnabled=voiceAutoRead;
  voiceAutoRead=true;
- speakDrVas(lastSpokenAnswer,true);
+ speakDrVas(lastSpokenAnswer,true,lastSpokenAssistant);
  voiceAutoRead=wasEnabled;
  refreshVoiceUi("speaking");
 }
@@ -3079,9 +3115,10 @@ function toggleVoiceOutput(){
   return;
  }
  voiceAutoRead=!voiceAutoRead;
+ try{if(currentUser?.id)localStorage.setItem("drvas_voice_auto_read_"+currentUser.id,String(voiceAutoRead));}catch{}
  logClientEvent(voiceAutoRead?"voice_output_enabled":"voice_output_disabled");
  if(!voiceAutoRead)stopVoiceOutput();
- else if(lastSpokenAnswer)speakDrVas(lastSpokenAnswer);
+ else if(lastSpokenAnswer)speakDrVas(lastSpokenAnswer,true,lastSpokenAssistant);
  refreshVoiceUi(voiceAutoRead?"ready":"off");
 }
 function toggleVoiceInput(){
@@ -5132,6 +5169,7 @@ function changeAdminLogPage(delta){
 async function showChat(user,displayName){
   if(!user) return;
   currentUser = user;
+  try{voiceAutoRead=localStorage.getItem("drvas_voice_auto_read_"+user.id)==="true";}catch{voiceAutoRead=false;}
   try{const savedAssistant=localStorage.getItem("drvas_assistant_"+user.id);if(savedAssistant&&ASSISTANTS[savedAssistant])activeAssistant=savedAssistant;}catch{}
   selectAssistant(activeAssistant);
   ["authSection","profileSection","chatSection"].forEach(id=>el(id)?.classList.add("hidden"));
@@ -6097,7 +6135,7 @@ async function send(){
    // Keep the latest answer in an already saved project; unsaved drafts remain under the user's control.
    if(moduleProjectState[moduleId])await saveModuleProject(moduleId);
   }
-  refreshVoiceUi(voiceAutoRead?"ready":"off");if(voiceAutoRead)speakDrVas(displayedReply);
+  refreshVoiceUi(voiceAutoRead?"ready":"off");speakDrVas(displayedReply);
   if(data.action!=="conversations_deleted")await saveMessage("assistant",displayedReply,conversationId);
   conversationSaved=true;pendingMessages=[];setLocalizedText(el("saveMessage"),"Conversația este salvată automat.");updateSaveButton();
   if(data.action==="conversations_deleted"){
