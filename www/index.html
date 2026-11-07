@@ -2699,9 +2699,10 @@ function clearRememberedModule(userId){
   try{localStorage.removeItem(ACTIVE_MODULE_PREFIX+userId)}catch{}
 }
 
-function setChatNavigationDisabled(disabled){
-  document.querySelectorAll(".new-chat-button,.delete-history-button,.conversation-item,.drvas-feature-navigation button,[data-free-nav],.module-card,.chat-module-rail [data-chat-module],#globalBackToModules")
+function setChatNavigationDisabled(disabled,lockViews=false){
+  document.querySelectorAll(".new-chat-button,.delete-history-button,.conversation-item,.drvas-feature-navigation button,.module-card,.chat-module-rail [data-chat-module],#globalBackToModules,#sendButton")
     .forEach(button=>{button.disabled=disabled;});
+  if(lockViews)document.querySelectorAll("[data-free-nav]").forEach(button=>{button.disabled=disabled;});
 }
 
 function conversationStorageKey(userId,moduleId=activeModule,featureKey=activeFeatureKey){return ACTIVE_CONVERSATION_PREFIX+userId+":"+moduleId+(featureKey?":feature:"+featureKey:"");}
@@ -3531,7 +3532,7 @@ async function startLiveVoice(){
  liveConversationModule=activeModule;
  liveConversationFeatureKey=activeFeatureKey;
  rememberActiveConversation(liveConversationId,liveConversationModule,liveConversationFeatureKey);
- setChatNavigationDisabled(true);
+ setChatNavigationDisabled(true,true);
  const status=el("voiceStatus");
  if(status)status.textContent=liveLabel("connecting");
  try{
@@ -3658,7 +3659,7 @@ async function startLiveVoice(){
     await stopLiveMedia();
     await saveLiveTurn();
     liveConversationId=null;liveConversationModule=null;liveConversationFeatureKey=null;
-    setChatNavigationDisabled(false);
+    setChatNavigationDisabled(false,true);
     refreshVoiceUi();
     if(status)status.textContent=liveFailureMessage ? (liveLabel("error")+" "+liveFailureMessage) : liveLabel("stopped");
    }
@@ -6264,6 +6265,7 @@ function openFreeNavView(view="chat",render=true){
 async function send(){
  const input=el("question"),button=el("sendButton");
  const typedMessage=input.value.trim();
+ if(liveSocket||liveStream){window.alert("Închide conversația vocală Live înainte de a trimite un mesaj text.");return;}
  if(currentConversationIsLegacy){window.alert("Acest chat vechi nu are modul identificat. Apasă New chat pentru a continua într-o conversație separată.");return;}
  const filesToUpload=[...pendingChatFiles];
  const existingAttachments=[...pendingUploadedAttachments];
