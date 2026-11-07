@@ -3077,3 +3077,38 @@ test("mobile Free and Health retain page scrolling and expose history in the sid
     await expect(page.locator("#chatSection .history-panel")).toBeVisible();
   }
 });
+
+
+test("changing the selected language localizes the Dr.Vas, Dr.Jan and Sarah welcome UI", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-language-user" };
+    activeModule = "free";
+    activeAssistant = "drvas";
+    document.querySelector("#chatSection").classList.remove("hidden");
+    renderWelcome();
+    selectAssistant("drvas");
+  });
+
+  await page.locator("#languageSwitch").click();
+  await page.getByRole("button", { name: /English/ }).click();
+
+  await expect(page.locator("#heroChatCta")).toContainText("TALK TO DR.VAS");
+  await expect(page.locator("#assistantIntro")).toHaveText("Main assistant for analysis, clear answers and practical help.");
+  await expect(page.locator("#chat .msg.bot").first()).toContainText("Welcome! I'm Dr.Vas.");
+  await expect(page.locator("#chat .msg.bot").first()).toContainText("New messages and replies are saved automatically to your account.");
+  await expect(page.locator("#languageSwitch")).toContainText("Language");
+
+  const localized = await page.evaluate(() => {
+    const result = {};
+    for (const assistant of ["drvas", "jan", "aurora"]) {
+      activeAssistant = assistant;
+      renderWelcome();
+      result[assistant] = document.querySelector("#chat .msg.bot")?.textContent || "";
+    }
+    return result;
+  });
+  expect(localized.drvas).toContain("Welcome! I'm Dr.Vas.");
+  expect(localized.jan).toContain("Hello! I'm Dr.Jan.");
+  expect(localized.aurora).toContain("Welcome! I'm Sarah.");
+});
