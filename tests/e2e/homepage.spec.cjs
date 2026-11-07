@@ -2920,3 +2920,35 @@ test("feature workspaces keep separate chat threads within each module", async (
   expect(new Set(result.ids).size).toBe(11);
   for (const key of Object.keys(result.first)) expect(result.restored[key], key + " restores its own feature thread").toBe(result.first[key]);
 });
+
+
+test("sidebar history is filtered by both module and feature without hiding general legacy module threads", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(async () => {
+    currentUser = { id: "e2e-feature-history-filter", email: "history@example.invalid" };
+    getConversationIds = async () => [
+      { id:"studio-book", module:"studio", feature_key:"book", title:"Book", date:new Date().toISOString() },
+      { id:"studio-translation", module:"studio", feature_key:"translation", title:"Translation", date:new Date().toISOString() },
+      { id:"studio-general", module:"studio", feature_key:null, title:"General", date:new Date().toISOString() },
+      { id:"health-brief", module:"health", feature_key:"health-brief", title:"Health", date:new Date().toISOString() },
+      { id:"legacy-unknown", module:null, feature_key:null, title:"Legacy", date:new Date().toISOString() }
+    ];
+    activeModule="studio"; activeFeatureKey="book";
+    await loadConversationList();
+    const book=[...document.querySelectorAll("#conversationList .conversation-item")].map(node=>node.dataset.id);
+    activeFeatureKey="";
+    await loadConversationList();
+    const general=[...document.querySelectorAll("#conversationList .conversation-item")].map(node=>node.dataset.id);
+    activeModule="health"; activeFeatureKey="health-brief";
+    await loadConversationList();
+    const health=[...document.querySelectorAll("#conversationList .conversation-item")].map(node=>node.dataset.id);
+    activeModule="free"; activeFeatureKey="";
+    await loadConversationList();
+    const free=[...document.querySelectorAll("#conversationList .conversation-item")].map(node=>node.dataset.id);
+    return {book,general,health,free};
+  });
+  expect(result.book).toEqual(["studio-book"]);
+  expect(result.general).toEqual(["studio-general"]);
+  expect(result.health).toEqual(["health-brief"]);
+  expect(result.free).toEqual(["legacy-unknown"]);
+});
