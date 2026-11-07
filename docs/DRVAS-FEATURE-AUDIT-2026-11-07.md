@@ -48,7 +48,7 @@ This audit consolidates the currently available project scope record, dated chec
 ## Changes in this branch
 
 1. Restores the existing accessible voice toolbar inside each module workspace without duplicating element IDs or creating competing voice states. Free retains its original composer placement.
-2. Keeps the existing Live microphone experience, dictation, auto-read, replay and stop controls available in every module.
+2. Keeps the existing Live microphone experience, dictation, auto-read, replay and stop controls available in every module. Every assistant reply is now retained for manual replay even when auto-read is off; replay uses the assistant identity that originally wrote the reply, and the auto-read preference is saved per account.
 3. Replaces both landing DNA helix SVGs with more dimensional shaded rails and consistent molecular base-pair details on both sides.
 4. Adds dedicated Book Studio and Translation Station pages with their own inputs, language/style/glossary fields, project saving and existing Studio prompt pipeline.
 5. Adds separate Studio navigation destinations for Crypto & Mining and Creator & Online Income Lab, surfacing the existing founder-only tools without making them public modules.
