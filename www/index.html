@@ -3453,6 +3453,15 @@ for (const [source, translations] of Object.entries(BUSINESS_NAV_AND_FIELD_TRANS
   }
 }
 
+
+const BUSINESS_EMOJI_HEADING_TRANSLATIONS = {"📒 Dr.Vas Books — Registru de încasări și cheltuieli":["📒 Dr.Vas Books — Income and expense ledger","📒 Dr.Vas Books — Registro di entrate e uscite","📒 Dr.Vas Books — Gelir ve gider defteri","📒 Dr.Vas Books — Einnahmen- und Ausgabenbuch","📒 Dr.Vas Books — Registre des recettes et dépenses","📒 Dr.Vas Books — Registro de ingresos y gastos","📒 Dr.Vas Books — Учёт доходов и расходов"],"📈 Cashflow — raport pe perioadă":["📈 Cashflow — period report","📈 Cashflow — rapporto per periodo","📈 Nakit akışı — dönem raporu","📈 Cashflow — Zeitraumbericht","📈 Trésorerie — rapport par période","📈 Flujo de caja — informe por período","📈 Денежный поток — отчёт за период"],"📊 Business Planner — Prag de rentabilitate":["📊 Business Planner — Break-even point","📊 Business Planner — Punto di pareggio","📊 Business Planner — Başabaş noktası","📊 Business Planner — Break-even-Punkt","📊 Business Planner — Seuil de rentabilité","📊 Business Planner — Punto de equilibrio","📊 Business Planner — Точка безубыточности"],"🎓 Dr.Vas Student Desk — Evaluare și îndrumare academică":["🎓 Dr.Vas Student Desk — Academic review and guidance","🎓 Dr.Vas Student Desk — Valutazione e orientamento accademico","🎓 Dr.Vas Student Desk — Akademik değerlendirme ve rehberlik","🎓 Dr.Vas Student Desk — Akademische Bewertung und Orientierung","🎓 Dr.Vas Student Desk — Évaluation et accompagnement académique","🎓 Dr.Vas Student Desk — Evaluación y orientación académica","🎓 Dr.Vas Student Desk — Академическая оценка и рекомендации"]};
+for (const [source, translations] of Object.entries(BUSINESS_EMOJI_HEADING_TRANSLATIONS)) {
+  for (let i = 0; i < ["en","it","tr","de","fr","es","ru"].length; i++) {
+    const language = ["en","it","tr","de","fr","es","ru"][i];
+    if (UI[language]) UI[language][source] = translations[i];
+  }
+}
+
 function localizeInterfaceCopy(source){return (ASSISTANT_UI_TRANSLATIONS[currentLanguage]||{})[source]||(UI[currentLanguage]||{})[source]||source}
 function tr(s){return localizeInterfaceCopy(s)}
 function setLocalizedText(target,source){
