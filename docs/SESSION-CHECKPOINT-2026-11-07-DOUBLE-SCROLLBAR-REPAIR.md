@@ -201,3 +201,13 @@ User's latest instruction: “salveaza tot inclusiv chatul si continua”. Follo
 - Preliminary static inventory: 791 distinct text-node strings in the static body of `www/index.html`; exact-string dictionaries currently contain about 32 EN, 30 IT, 30 TR, and 15 each DE/FR/ES/RU entries. Dynamic content and attributes require a separate runtime audit.
 - Next: implement and test localization in phases, starting with shared shell controls, Dr.Vas Free and Dr.Vas Health, followed by the remaining four modules. Preserve previous chat messages verbatim.
 - User's latest instruction: “ok hai sa continuam si tot asa salvam tot”. Keep documenting every meaningful change, test, merge and deployment. Android APK stays last.
+
+## Session checkpoint — 2026-11-07, localization phases 1–2
+
+- PR #67 docs archive is merged to main: 09b18c44e02935856ff5ee8e828bb38ed48d53a0 (branch E2E 42406814599 succeeded).
+- PR #68 shared controls phase 1 is open; head ad9dd93049950fbe2ae189813ca51d461e2207e7; latest E2E 42407769955 in progress at checkpoint.
+- PR #69 Free/Health phase 2 is open and stacked on PR #68; head e12148e052be0ac8e200ac7510cbe254b862fb69; latest E2E 42407777860 in progress at checkpoint.
+- Test assertion corrections: Turkish presentation copy follows DRVAS_PRESENTATION; German hero CTA follows existing rendered copy; Russian header CTA is polite imperative “ПОГОВОРИТЕ С DR.VAS”; Health general-information badge uses the studio-beta-label element.
+- The static page contains 791 distinct text-node strings. Current accumulated translation dictionaries contain roughly 191 EN, 191 IT, 220 TR and 180 each DE/FR/ES/RU keys; many strings remain untranslated, so do not claim complete localization.
+- Continue in strict merge order #68 then #69, verify main deployment after both, then localize Studio, Academy, Commerce and Business. Preserve chat history verbatim.
+- Latest user message: “ok hai sa continuam si tot asa salvam tot”.
