@@ -57,3 +57,11 @@ Do not use direct connection (IPv6 restriction) or Transaction Pooler (port 6543
 - Studio, Academy, Commerce and Business are future commercial modules; do not imply subscriptions or full paid workflows are already implemented unless verified.
 - “Dr.” is a brand nickname, not the founder's medical qualification. Do not describe the founder as a doctor.
 - Never expose private health/family details in public-facing project materials.
+
+
+## User confirmation and visual requirement — 2026-11-07 10:05 UTC
+- User will inspect the live Dr.Vas page before continuing development.
+- Preserve this conversation in ChatGPT history; this repository checkpoint records technical decisions and progress, not a verbatim transcript of the chat.
+- Reaffirmed visual requirement: realistic/scientific 3D DNA double-helix spirals on BOTH the left and right sides of the page; avoid cartoon/anime/illustrated DNA. Use convincing molecular structure, depth, lighting, material detail and restrained motion; keep text and controls readable and ensure responsive/mobile layout.
+- Do not mark this visual requirement implemented until the deployed page and responsive layouts have been inspected.
+- Next: verify the latest production deployment and visually inspect the page; compare every requested item from the previous session against actual behavior, then implement any missing items.
