@@ -2853,3 +2853,33 @@ test("voice replies remain replayable when auto-read is off and replay with thei
   expect(result.replaySpeaker).toBe("jan");
   expect(result.preference).toBe("true");
 });
+
+
+test("all six modules keep independent conversation IDs and restore their own thread", async ({ page }) => {
+  await openApp(page, "ro");
+  const state = await page.evaluate(() => {
+    currentUser = { id: "e2e-six-module-thread-isolation", email: "threads@example.invalid" };
+    isDrvasAdmin = true;
+    ensureConversationMetadata = async () => {};
+    loadConversationList = async () => [];
+    activeModule = "free";
+    currentConversationId = "thread-free";
+    rememberActiveConversation(currentConversationId, "free");
+    const modules = ["free", "health", "studio", "academy", "commerce", "business"];
+    const firstPass = { free: currentConversationId };
+    for (const moduleName of modules.slice(1)) {
+      selectModule(moduleName, true);
+      firstPass[moduleName] = currentConversationId;
+    }
+    const restored = {};
+    for (const moduleName of modules) {
+      selectModule(moduleName, true);
+      restored[moduleName] = currentConversationId;
+    }
+    return { firstPass, restored, ids: Object.values(firstPass) };
+  });
+  expect(new Set(state.ids).size).toBe(6);
+  for (const moduleName of ["free", "health", "studio", "academy", "commerce", "business"]) {
+    expect(state.restored[moduleName], moduleName + " restores only its own thread").toBe(state.firstPass[moduleName]);
+  }
+});
