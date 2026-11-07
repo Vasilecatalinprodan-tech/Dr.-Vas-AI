@@ -1594,7 +1594,7 @@ body.health-module-mode #chatSection .chat-main #freeChatView>#chat{
      <label>Ce vrei să obții?<select id="healthGoal"><option>Să înțeleg termenii și explicațiile</option><option>Să pregătesc întrebări pentru medic</option><option>Să organizez informațiile pe care le am</option><option>Să înțeleg ce informații lipsesc</option></select></label>
      <label class="studio-idea-label">Întrebarea sau informațiile pe care vrei să le discutăm<textarea id="healthBrief" rows="7" maxlength="7000" placeholder="Scrie doar informațiile pe care dorești să le discuți. Nu include nume, adresă sau alte date de identificare."></textarea></label>
     </div>
-    <div class="studio-actions"><button type="button" onclick="buildHealthPrompt()">Discută cu Dr.Vas Health</button><span>Mesajul va fi transferat în chatul Health pentru explicații generale și pași de clarificare.</span></div>
+    <div class="studio-actions"><button type="button" onclick="window.buildHealthPrompt()">Discută cu Dr.Vas Health</button><span>Mesajul va fi transferat în chatul Health pentru explicații generale și pași de clarificare.</span></div>
    </section>
    <section id="studioWorkspace" class="studio-workspace hidden" aria-labelledby="studioWorkspaceTitle">
     <div class="studio-workspace-head">
@@ -4360,6 +4360,7 @@ function buildHealthPrompt(){
  const prompt="DR.VAS HEALTH — SPRIJIN INFORMATIV\nSUBIECT: "+topic+"\nOBIECTIV: "+goal+"\nINFORMAȚII FURNIZATE:\n"+details+"\n\nRăspunde prudent și clar. Explică termenii, separă faptele de incertitudini, nu formula diagnostic și nu recomanda modificarea tratamentelor. Spune ce întrebări ar fi utile pentru medic și când este necesară evaluarea urgentă. Nu inventa rezultate sau informații lipsă.";
  submitModuleBrief(prompt,"Contextul Health este pregătit în chat. Verifică mesajul și apasă Trimite.");
 }
+window.buildHealthPrompt=buildHealthPrompt;
 function buildAcademyPrompt(){
  const v=id=>el(id)?.value?.trim()||"";
  if(!v("academySubject")){el("academySubject").focus();return;}
