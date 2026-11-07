@@ -75,10 +75,10 @@ jobs:
           const fs = require('fs');
           const workflow = fs.readFileSync('.github/workflows/deploy-worker.yml', 'utf8');
           const android = fs.readFileSync('.github/workflows/android.yml', 'utf8');
-          const migration = workflow.indexOf('Link and apply pending Supabase migrations');
+          const migration = workflow.indexOf('Apply pending Supabase migrations over IPv4 session pooler');
           const healthCheck = workflow.indexOf('Verifying the Health rate-limit RPC and its security grants:');
           const deploy = workflow.indexOf('Deploy Worker');
-          for (const marker of ['SUPABASE_ACCESS_TOKEN', 'SUPABASE_DB_PASSWORD', 'supabase db push --linked --yes', 'supabase/diagnostics/VERIFY_RATE_LIMITS.sql', 'rate_limit_setup_ok']) {
+          for (const marker of ['SUPABASE_ACCESS_TOKEN', 'SUPABASE_DB_URL', 'supabase migration list --db-url', 'supabase db push --db-url', 'supabase db query --db-url', 'supabase/diagnostics/VERIFY_RATE_LIMITS.sql', 'rate_limit_setup_ok']) {
             if (!workflow.includes(marker)) throw new Error('Production migration/Health verification gate is missing: ' + marker);
           }
           if (migration < 0 || healthCheck < migration || deploy < healthCheck) {
