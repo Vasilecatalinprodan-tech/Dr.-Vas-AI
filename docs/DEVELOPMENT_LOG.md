@@ -797,3 +797,15 @@ Release verification: production deploy workflow #529 / run 42374769942 for main
 Next action is to ask founder to hard-refresh the live Dr.Vas site and verify: (a) far-right document scrollbar reaches bottom composer/attachments; (b) inner transcript scrollbar moves messages independently; (c) page scrollbar moves page without moving transcript; (d) desktop sidebar and mobile history drawer remain accessible. Keep stage 1 open until founder confirms. Do not start stage 2 before this confirmation. APK remains explicitly prohibited until stage 7.
 
 Archive scope: preserve the material conversation content, exact user instruction above, decisions, technical work, test/deploy outcomes, commit/run identifiers and next steps. This is a structured project/chat archive, not a literal export of the complete ChatGPT UI transcript.
+
+
+## Founder acceptance and real WebGL DNA implementation — 7 November 2026
+
+- Founder explicitly confirmed the production page scroll repair: “raspunsul este da functioneaza ,mergem mai departe dar si salvam”. Stage 1 (deployment + independent document/transcript scrolling) is now accepted by the founder and closed.
+- The founder reaffirmed this mandatory order: (1) deployment/scroll, (2) 3D DNA helices, (3) Dr.Vas Free and Health, (4) Studio/Academy/Commerce/Business, (5) Sarah/Dr.Jan/voice, (6) security/performance, (7) Android APK only at the end. Do not reorder; do not trigger APK early.
+- Stage 2 started on branch `feat/webgl-real-3d-dna-helices-2026-11-07`.
+- Inspection confirmed the previously deployed landing helix was still SVG/CSS geometry (shaded paths and animated CSS perspective), not true 3D geometry. Preserve it as a graceful fallback and accessibility/compatibility layer.
+- New implementation adds a dependency-free WebGL renderer for both hero DNA rails: generated 3D tubular strand meshes, base-pair cylinders, spherical molecular joints, vertex normals, diffuse/specular/rim lighting, depth buffering, perspective projection, independent animation phases, responsive canvas sizing, reduced-motion support, and automatic SVG fallback if WebGL is unavailable or its context is lost. No external paid API or new dependency is used.
+- Added Playwright coverage for both WebGL canvases, renderer initialization, nonzero canvas sizing, 3D geometry construction primitives and SVG fallback behavior. Existing SVG molecular structure remains in DOM for legacy regression coverage and fallback.
+- Current status at this checkpoint: implementation committed on feature branch; CI/browser verification and visual review remain pending. Do not merge or claim stage 2 complete until checks pass and desktop/mobile visual behavior is reviewed. If CI reveals issues, fix them before merge.
+- The founder's confirmation and this continuation request are preserved here as material chat content. The archive is a structured project record, not a literal export of the entire ChatGPT interface history.
