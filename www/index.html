@@ -170,9 +170,13 @@ button:disabled{opacity:.5;cursor:not-allowed}
 @keyframes liveAvatarTalk{from{transform:scale(1)}to{transform:scale(1.045)}}
 body.assistant-speaking .assistant-choice[aria-pressed="true"] .assistant-avatar{animation:liveAvatarTalk .38s ease-in-out infinite alternate;box-shadow:0 0 0 4px #54d8cf30}
 .live-voice-stage.is-speaking .live-stage-avatar img{animation:presenterPhotoTalk .38s ease-in-out infinite alternate;filter:brightness(1.06) saturate(1.04)}
-.presentation-presenter.is-speaking .presentation-photo{animation:presenterPhotoTalk .42s ease-in-out infinite alternate;filter:brightness(1.05) saturate(1.04)}
+.presentation-presenter.is-speaking .presentation-photo{animation:presenterPhotoTalk .34s ease-in-out infinite alternate;filter:brightness(1.12) saturate(1.12) contrast(1.04)}
+.presentation-avatar:after{content:"";position:absolute;z-index:0;inset:-7px;border:1px solid #7cece0aa;border-radius:50%;opacity:0;transform:scale(.94);pointer-events:none}
+.presentation-presenter.is-speaking .presentation-avatar:after{opacity:1;animation:presenterVoiceHalo .72s ease-out infinite}
+.presentation-presenter.is-speaking .presentation-avatar{box-shadow:0 0 0 8px #54d8cf22,0 0 32px #54d8cf88}
+@keyframes presenterVoiceHalo{0%{transform:scale(.94);opacity:.85}100%{transform:scale(1.18);opacity:0}}
 body.assistant-speaking .assistant-choice[aria-pressed="true"] .assistant-avatar{filter:brightness(1.07) saturate(1.06)}
-@keyframes presenterPhotoTalk{from{transform:translateY(0) scale(1)}to{transform:translateY(-1px) scale(1.018)}}
+@keyframes presenterPhotoTalk{0%{transform:translateY(0) scale(1) rotate(0)}35%{transform:translateY(-2px) scale(1.035) rotate(-.45deg)}70%{transform:translateY(1px) scale(1.018) rotate(.35deg)}100%{transform:translateY(-1px) scale(1.03) rotate(0)}}
 .live-voice-stage.is-speaking .live-stage-avatar .assistant-avatar-symbol svg{animation:avatarTalk .22s ease-in-out infinite alternate}
 .live-voice-stage.is-speaking .live-stage-avatar .assistant-avatar-symbol svg path[d^="M52 76"],.live-voice-stage.is-speaking .live-stage-avatar .assistant-avatar-symbol svg path[d^="M51 79"]{animation:avatarMouth .18s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}
 
@@ -873,21 +877,24 @@ body.presentation-open{overflow:hidden!important}
 #heroSection{position:relative;overflow:hidden}
 #heroSection .hero-content{position:relative;z-index:2;margin:0 auto}
 .hero{min-height:calc(100svh - 75px);min-height:calc(100vh - 75px)}
-.dna-helix-visual{position:absolute;z-index:1;top:0;bottom:0;width:clamp(112px,14vw,190px);opacity:.88;pointer-events:none;filter:drop-shadow(0 0 18px #58d8cf66);display:flex;align-items:stretch}
+.dna-helix-visual{position:absolute;z-index:1;top:0;bottom:0;width:clamp(126px,15vw,205px);opacity:.96;pointer-events:none;display:flex;align-items:stretch;perspective:1100px;isolation:isolate;filter:drop-shadow(0 10px 20px #020915aa) drop-shadow(0 0 18px #58d8cf66)}
+.dna-helix-visual:before{content:"";position:absolute;inset:2% 8%;border-radius:50%;background:radial-gradient(ellipse at 50% 50%,#42e5dc18 0%,#294f8b12 42%,transparent 72%);filter:blur(12px);transform:translateZ(-28px)}
 .dna-helix-left{left:1.5%;right:auto}.dna-helix-right{right:1.5%;left:auto}
-.dna-helix-visual svg{width:100%;height:100%;overflow:visible;perspective:900px}
-.dna-helix-core{transform-origin:90px 320px;transform-box:fill-box;animation:dnaHelixTurn 13s linear infinite}
-.dna-strand{fill:none;stroke-width:7;stroke-linecap:round;stroke-dasharray:10 6;animation:dnaStrandFlow 2.8s linear infinite;filter:drop-shadow(0 0 5px currentColor)}
+.dna-helix-visual svg{position:relative;width:100%;height:100%;overflow:visible;perspective:1100px;transform:rotateY(-12deg);filter:contrast(1.12) saturate(1.18)}
+.dna-helix-core{transform-origin:90px 320px;transform-box:fill-box;transform-style:preserve-3d;animation:dnaHelixTurn 13s linear infinite}
+.dna-strand{fill:none;stroke-width:9;stroke-linecap:round;stroke-dasharray:none;animation:dnaStrandFlow 8s linear infinite;filter:drop-shadow(0 2px 2px #020817aa) drop-shadow(0 0 7px currentColor)}
+.dna-strand-highlight{fill:none;stroke:#efffffee;stroke-width:1.7;stroke-linecap:round;opacity:.48;stroke-dasharray:22 30;animation:dnaStrandFlow 5.5s linear infinite;filter:drop-shadow(0 0 3px #dfffff)}
 .dna-helix-left .dna-strand-a{stroke:url(#dnaStrandA-left);color:#5ce4d8}
 .dna-helix-left .dna-strand-b{stroke:url(#dnaStrandB-left);color:#8e9cff;animation-delay:-1.4s}
 .dna-helix-right .dna-strand-a{stroke:url(#dnaStrandA-right);color:#5ce4d8}
 .dna-helix-right .dna-strand-b{stroke:url(#dnaStrandB-right);color:#8e9cff;animation-delay:-1.4s}
-.dna-rungs{fill:none;stroke:#e5fff9;stroke-width:2.6;stroke-linecap:round;opacity:.8;filter:drop-shadow(0 0 4px #8df8e7);animation:dnaRungPulse 2.2s ease-in-out infinite alternate}
+.dna-rungs{fill:none;stroke:#e5fff9;stroke-width:3.2;stroke-linecap:round;opacity:.88;filter:drop-shadow(0 1px 2px #020817) drop-shadow(0 0 5px #8df8e7);animation:dnaRungPulse 2.2s ease-in-out infinite alternate}
 @keyframes dnaHelixTurn{0%{transform:rotateY(0deg) rotateZ(-2deg)}50%{transform:rotateY(180deg) rotateZ(2deg)}100%{transform:rotateY(360deg) rotateZ(-2deg)}}
 @keyframes dnaStrandFlow{to{stroke-dashoffset:-64}}
 @keyframes dnaRungPulse{from{opacity:.3}to{opacity:1}}
-@media(max-width:700px){.dna-helix-visual{width:clamp(48px,12vw,78px);opacity:.34}.dna-helix-left{left:0}.dna-helix-right{right:0}.hero-content{max-width:100%;padding-left:58px;padding-right:58px}}
-@media(prefers-reduced-motion:reduce){.dna-helix-core,.dna-strand,.dna-rungs{animation:none!important}}
+@media(max-width:700px){.dna-helix-visual{width:clamp(54px,13vw,82px);opacity:.48}.dna-helix-left{left:0}.dna-helix-right{right:0}.hero-content{max-width:100%;padding-left:64px;padding-right:64px}}
+@media(prefers-reduced-motion:reduce){.dna-helix-core,.dna-strand,.dna-strand-highlight,.dna-rungs{animation:none!important}}
+
 /* HIGH-VISIBILITY FOUNDER EMERGENCY CONTROL */
 .crypto-engine-panel{margin-top:18px;padding:16px;border:1px solid #4b6073;border-radius:14px;background:linear-gradient(145deg,#101f30,#091522)}
 .crypto-engine-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0}
@@ -1030,6 +1037,15 @@ body.free-module-mode #chatSection>.chat-view-nav .chat-history-toggle{display:i
  body.free-module-mode main,body.free-module-mode #appMain,body.free-module-mode #chatSection,body.free-module-mode #chatSection .chat-main,body.free-module-mode #freeChatView{transform:none!important}
  body.free-module-mode #freeChatView>#chat{padding-bottom:170px!important}
 }
+
+
+/* Right-hand page scrollbar for module workspaces; preserve the fitted Free/Health chat viewport. */
+html,body{scrollbar-width:thin;scrollbar-color:#4d8795 #091827}
+body::-webkit-scrollbar,html::-webkit-scrollbar{width:11px;height:11px}
+body::-webkit-scrollbar-track,html::-webkit-scrollbar-track{background:#091827;border-radius:10px}
+body::-webkit-scrollbar-thumb,html::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#54d8cf,#315c78);border:2px solid #091827;border-radius:10px}
+body.module-workspace-mode:not(.free-module-mode){overflow-y:scroll;scrollbar-gutter:stable}
+
 </style>
 <link rel="stylesheet" href="/module-workspaces.css">
 </head>
@@ -1060,7 +1076,11 @@ body.free-module-mode #chatSection>.chat-view-nav .chat-history-toggle{display:i
     <defs><linearGradient id="dnaStrandA-left" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#d5fff7"/><stop offset=".38" stop-color="#54e2d5"/><stop offset="1" stop-color="#167b91"/></linearGradient><linearGradient id="dnaStrandB-left" x1="1" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#d8ddff"/><stop offset=".5" stop-color="#8999ff"/><stop offset="1" stop-color="#4955a8"/></linearGradient></defs>
     <g class="dna-helix-core">
      <path class="dna-strand dna-strand-a" d="M28 8 C152 42 28 78 152 112 S28 182 152 216 S28 286 152 320 S28 390 152 424 S28 494 152 528 S28 598 152 632"/>
+     <path class="dna-strand-highlight" d="M28 8 C152 42 28 78 152 112 S28 182 152 216 S28 286 152 320 S28 390 152 424 S28 494 152 528 S28 598 152 632"/>
+     <path class="dna-strand-highlight" d="M28 8 C152 42 28 78 152 112 S28 182 152 216 S28 286 152 320 S28 390 152 424 S28 494 152 528 S28 598 152 632"/>
      <path class="dna-strand dna-strand-b" d="M152 8 C28 42 152 78 28 112 S152 182 28 216 S152 286 28 320 S152 390 28 424 S152 494 28 528 S152 598 28 632"/>
+     <path class="dna-strand-highlight" d="M152 8 C28 42 152 78 28 112 S152 182 28 216 S152 286 28 320 S152 390 28 424 S152 494 28 528 S152 598 28 632"/>
+     <path class="dna-strand-highlight" d="M152 8 C28 42 152 78 28 112 S152 182 28 216 S152 286 28 320 S152 390 28 424 S152 494 28 528 S152 598 28 632"/>
      <g class="dna-rungs"><path d="M43 25 L137 25 M67 57 L113 57 M43 89 L137 89 M67 121 L113 121 M43 153 L137 153 M67 185 L113 185 M43 217 L137 217 M67 249 L113 249 M43 281 L137 281 M67 313 L113 313 M43 345 L137 345 M67 377 L113 377 M43 409 L137 409 M67 441 L113 441 M43 473 L137 473 M67 505 L113 505 M43 537 L137 537 M67 569 L113 569 M43 601 L137 601"/></g>
     </g>
    </svg></div>
@@ -2241,11 +2261,10 @@ function getDrvasPresentationVoiceProfile(voices,locale){
  // never silently inherit a masculine/default voice.
  const pool=local.length?local:voices;
  const voice=pool.find(v=>v.default)||pool[0]||null;
- const localFemaleVoices=local.filter(isFemaleSpeechVoice);
- // Prefer a female voice in the selected language, but do not silence Sarah
- // when the device only has a female voice in another installed language.
- const femaleVoices=localFemaleVoices.length?localFemaleVoices:voices.filter(isFemaleSpeechVoice);
- const sarah=femaleVoices.find(v=>v.default)||femaleVoices[0]||null;
+ const femaleVoices=local.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
+ // Sarah uses a feminine voice native to the selected language. If none is
+ // installed, report it instead of speaking with a foreign-language accent.
+ const sarah=femaleVoices[0]||null;
  return {drvas:voice,jan:voice,sarah,hasFemale:!!sarah,hasAllDistinct:!!(voice&&sarah&&voice.voiceURI!==sarah.voiceURI),hasFallback:!!voice};
 }
 function getDrvasPresentationVoices(){
@@ -2308,9 +2327,8 @@ async function speakDrvasPresentation(){
    return;
   }
   if(voiceForSpeaker)utterance.voice=voiceForSpeaker;
-  // Sarah is skipped rather than played with a masculine default if no female voice exists.
-  // If Sarah has to use a cross-language feminine fallback, use that voice's
-  // own locale so the browser does not reject or mis-route the selected voice.
+  // Every presenter uses a voice native to the selected language; Sarah is never
+  // routed to a foreign-language voice that would distort Romanian pronunciation.
   utterance.lang=(key==="sarah"&&voiceForSpeaker?.lang)||lang;utterance.rate=index===2?0.94:0.96;utterance.pitch=speaker.pitch;
   utterance.onstart=()=>{
    if(run!==drvasPresentationRun)return;
@@ -2906,6 +2924,13 @@ function isFemaleSpeechVoice(voice){
  const identity=[voice?.name,voice?.voiceURI].filter(Boolean).join(" ").toLowerCase();
  return String(voice?.gender||"").toLowerCase()==="female"||/female|woman|zira|susan|hazel|aria|jenny|samantha|victoria|karen|moira|tessa|ava|serena|libby|sonia|helena|eva|alina|andreea|ioana|carmen|maria|elena|irina|mihaela|sofia|olivia|emma|salli|joanna|kendra|kimberly|nicole|fiona|lucia|monica|google.*female|microsoft.*(zira|hazel|aria|jenny)/i.test(identity);
 }
+function rankFemaleSpeechVoice(voice){
+ const identity=[voice?.name,voice?.voiceURI].filter(Boolean).join(" ").toLowerCase();
+ if(/microsoft.*alina|google.*ro.*female|romanian.*female|andreea|ioana|carmen|maria|elena|irina|mihaela/.test(identity))return 4;
+ if(/microsoft.*(zira|hazel|aria|jenny)|google.*female/.test(identity))return 3;
+ if(voice?.default)return 2;
+ return 1;
+}
 function chooseSpeechVoice(lang){
  if(!window.speechSynthesis)return null;
  const voices=(window.speechSynthesis.getVoices()||[]).filter(v=>v&&v.voiceURI);
@@ -2913,12 +2938,11 @@ function chooseSpeechVoice(lang){
  const matching=voices.filter(v=>v.lang&&v.lang.toLowerCase().startsWith(language));
  const selected=el("speechVoiceSelect")?.value;
  if(activeAssistant==="aurora"){
-  const localFemaleVoices=matching.filter(isFemaleSpeechVoice);
-  // Prefer a voice matching the selected language; otherwise use another
-  // installed feminine voice rather than silently muting Sarah.
-  const femaleVoices=localFemaleVoices.length?localFemaleVoices:voices.filter(isFemaleSpeechVoice);
+  // Sarah must use a feminine voice native to the selected language.
+  // A foreign-language voice distorts Romanian and other local pronunciation.
+  const femaleVoices=matching.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
   if(selected){const chosen=femaleVoices.find(v=>v.voiceURI===selected);if(chosen)return chosen;}
-  return femaleVoices.find(v=>v.default)||femaleVoices[0]||null;
+  return femaleVoices[0]||null;
  }
  if(selected){const chosen=voices.find(v=>v.voiceURI===selected);if(chosen)return chosen;}
  return matching[0]||voices.find(v=>v.default)||voices[0]||null;
