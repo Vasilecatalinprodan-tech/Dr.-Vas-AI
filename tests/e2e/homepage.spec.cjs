@@ -2384,7 +2384,7 @@ test("Free and Health remember separate conversation IDs for the same user", asy
     selectModule("health", true);
     const healthId = currentConversationId;
     selectModule("free", true);
-    return { healthId, restoredFreeId: currentConversationId, freeStored: getRememberedConversation("free"), healthStored: getRememberedConversation("health") };
+    return { healthId, restoredFreeId: currentConversationId, freeStored: getRememberedConversation("free"), healthStored: getRememberedConversation("health","health-brief") };
   });
   expect(ids.healthId).not.toBe("free-thread-1");
   expect(ids.restoredFreeId).toBe("free-thread-1");
@@ -2866,6 +2866,7 @@ test("all six modules keep independent conversation IDs and restore their own th
     isDrvasAdmin = true;
     ensureConversationMetadata = async () => {};
     loadConversationList = async () => [];
+    openConversation = async () => {};
     activeModule = "free";
     currentConversationId = "thread-free";
     rememberActiveConversation(currentConversationId, "free");
