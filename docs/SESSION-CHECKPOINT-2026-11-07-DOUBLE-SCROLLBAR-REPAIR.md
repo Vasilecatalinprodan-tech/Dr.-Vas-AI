@@ -83,3 +83,33 @@ Do not resume unrelated feature development until the production deployment is v
 - PR #63 browser test success is confirmed; production release is not yet confirmed. Keep checking deploy #529 through migration gates, Cloudflare deploy and smoke test. Do not tell the user production is live until the run and smoke test succeed.
 - Scroll-related Playwright checks passed in the earlier #528 run, but the user still needs to verify on the live site: page scrollbar at far right, independent transcript scrollbar, ability to move them independently, and composer/attachments visible at document bottom. Do not mark live UX accepted without user confirmation.
 - This checkpoint records the material instructions and outcomes from the current conversation; it is a technical archive, not a verbatim export of the complete ChatGPT transcript.
+
+
+## Confirmed release and fixed work order — 7 November 2026
+
+Founder restated the mandatory sequence and requested that this conversation and all progress be archived. This sequence is authoritative; do not reorder or skip stages:
+1. Finish deployment and obtain founder's live-browser confirmation of independent page and transcript scrolling.
+2. Build the DNA helices as convincing, real 3D visuals with depth, perspective, rotation, lighting, shadows/reflections and dimensional structure; do not substitute a flat/static illustration.
+3. Complete and verify Dr.Vas Free and Dr.Vas Health.
+4. Complete Studio, Academy, Commerce and Business.
+5. Complete Sarah, Dr.Jan and the voice system.
+6. Complete security and performance hardening and verification.
+7. Build/package the Android APK only at the very end, after all preceding work is complete.
+
+User instruction (verbatim, 7 Nov 2026):
+> ### Ordinea de lucru rămâne
+> 1. Închiderea deploy-ului și verificarea scroll-ului.
+> 2. Spiralele ADN 3D.
+> 3. Dr.Vas Free și Health.
+> 4. Studio, Academy, Commerce și Business.
+> 5. Sarah, Dr.Jan și sistemul vocal.
+> 6. Securitate și performanță.
+> 7. APK Android numai la final. asta ai de facut....salveaza tot inclusiv chatul
+
+> Fii atent, ordinea asta ai de facut....salveaza tot inclusiv chatul.
+
+Release verification: production deploy workflow #529 / run 42374769942 for main commit 477873604c01d1b16ae49ddfad727697cc726930 completed SUCCESS. Verified steps all successful: homepage/persisted-session browser tests; pending Supabase migrations; IPv4 session-pooler migration step; Cloudflare Worker deployment; production Worker smoke test; SBOM upload. Main browser regression workflow #627 / run 42374769927 also completed SUCCESS. This confirms deployment and automated regression gates are green. It does NOT replace founder's live visual/interaction acceptance of the two scrollbars.
+
+Next action is to ask founder to hard-refresh the live Dr.Vas site and verify: (a) far-right document scrollbar reaches bottom composer/attachments; (b) inner transcript scrollbar moves messages independently; (c) page scrollbar moves page without moving transcript; (d) desktop sidebar and mobile history drawer remain accessible. Keep stage 1 open until founder confirms. Do not start stage 2 before this confirmation. APK remains explicitly prohibited until stage 7.
+
+Archive scope: preserve the material conversation content, exact user instruction above, decisions, technical work, test/deploy outcomes, commit/run identifiers and next steps. This is a structured project/chat archive, not a literal export of the complete ChatGPT UI transcript.
