@@ -3221,7 +3221,9 @@ test("Academy and Commerce workspaces localize their core controls in all suppor
     await expect(page.locator("#academyLanguage option").first()).toHaveText(courseLanguage);
     await expect(page.locator('#academyWorkspace button[onclick="buildAcademyPrompt()"]')).toContainText(academyAction);
 
-    await expect(page.locator("#commerceWorkspace .studio-workspace-head > div > p")).toHaveText(commerceDescription);\n    await expect(page.locator("#commerceWorkspace .studio-workspace-head > .studio-beta-label")).toHaveText(pilotLabel);\n    await expect(page.locator("#commerceMarket option").first()).toHaveText(market);
+    await expect(page.locator("#commerceWorkspace .studio-workspace-head > div > p")).toHaveText(commerceDescription);
+    await expect(page.locator("#commerceWorkspace .studio-workspace-head > .studio-beta-label")).toHaveText(pilotLabel);
+    await expect(page.locator("#commerceMarket option").first()).toHaveText(market);
     await expect(page.locator("#commerceModel option").first()).toHaveText(model);
     await expect(page.locator("#commerceChannel option").first()).toHaveText(channel);
     await expect(page.locator("#commerceWorkspace .crypto-calculator h5")).toContainText("Commerce");
