@@ -36,10 +36,15 @@ The founder asked that all progress and decisions be saved, including a useful r
 - Final browser regression run: [42370566100](https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42370566100) — **129/129 passed**.
 - Static validation of Worker, inline browser JavaScript and migration/deploy ordering passed.
 
-## Current production rollout after PR #54
-- Browser regression run: [42370725561](https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42370725561) — pending at checkpoint creation.
-- Cloudflare Worker deployment run: [42370725489](https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42370725489) — pending at checkpoint creation.
-- Do not mark PR #54 live in production until deployment and production smoke test complete successfully.
+## Production rollout after PR #54 — verified successful
+- Main code commit deployed: `772c31e8029893b8bb8c068b38d61953011ac21f`.
+- Post-merge browser regression run: [42370725561](https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42370725561) — **129/129 passed**.
+- Production deployment run: [42370725489](https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42370725489) — **success**.
+- The deployment gate verified the Health rate-limit RPC, RLS and service-role grants; applied pending Supabase migrations over the IPv4 session pooler; deployed the Cloudflare Worker; and passed the production smoke test.
+- Smoke checks confirmed the Worker health status `online`, `worker: ok`, all six module markers on the homepage, and unauthenticated admin-status requests rejected with HTTP 401.
+- Production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/
+- SBOM artifact uploaded by the deploy workflow: [DrVas-SBOM](https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42370725489/artifacts/13572908863).
+- No APK was built. The Android workflow remains manual-only for the final release stage.
 
 ## Android policy
 - `.github/workflows/android.yml` is manual-dispatch only.
