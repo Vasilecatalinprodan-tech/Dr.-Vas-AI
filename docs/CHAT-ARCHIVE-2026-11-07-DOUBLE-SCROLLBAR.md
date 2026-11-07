@@ -221,3 +221,22 @@ Localization audit finding:
 - Full localization remains unfinished. Next implementation should proceed in testable phases: shared navigation/language/auth controls; Dr.Vas Free and Health; then Studio, Academy, Commerce and Business. Existing chat history must remain in its original language.
 
 This file is a structured project/chat archive, not a literal export of the complete ChatGPT UI transcript.
+
+
+## Continuation — Free/Health production and Studio phase 3 (2026-11-07)
+
+Exact user instruction: “ok hai sa continuam si tot asa salvam tot”.
+
+Verified:
+- PR #71 Free/Health localization merged into main as c7581d09f57c05f1b798a0fd4597cdedc564009c after E2E run 42408117217 passed.
+- Main post-merge browser regression run 42408335139 passed.
+- Main production deploy run 42408335171 passed. Supabase migrations, Cloudflare Worker deployment and production smoke test succeeded.
+- PR #70 archive docs merged as 9ba0c5ff76e565bfd205158dc26dc91d82ad9b66.
+
+Next active work:
+- PR #72 Studio phase 3: feat/localize-studio-phase3-2026-11-07, head 0ddb493750397972644a564c8d1ea95deb7ed4f7. It covers the core Studio production workspace, VPC standard, render panel, scene timeline and main creative brief options in seven languages. Playwright test added; await latest branch check before merge.
+- Studio income tracker, social integrations, deeper dynamic statuses/errors and remaining long-form content still need localization. Academy, Commerce and Business are next after Studio.
+- Preserve prior chat history in its original language; do not silently translate old conversation messages.
+- Full localization across all modules is not complete.
+
+This is a structured project/chat archive, not a literal export of the complete ChatGPT UI transcript.
