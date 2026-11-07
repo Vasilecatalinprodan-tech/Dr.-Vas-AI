@@ -1012,7 +1012,7 @@ test("Business workspace exposes the cashbook and Student Desk with working VAT 
   await page.locator("#businessVariableCost").fill("25");
   await page.locator("#businessExpectedUnits").fill("50");
   await expect(page.locator("#businessBreakEvenUnits")).toContainText("40");
-  await expect(page.locator("#businessBreakEvenRevenue")).toContainText("2,000");
+  await expect(page.locator("#businessBreakEvenRevenue")).toContainText(/2[.,]000/);
   await expect(page.locator("#businessContributionMargin")).toContainText("50.0%");
   await expect(page.locator("#businessExpectedProfit")).toContainText("250");
 
@@ -1249,12 +1249,12 @@ test("Business cashbook monthly cashflow report summarizes and filters saved tra
     document.querySelector("#businessCashflowRange").value = "90";
     renderBusinessLedger();
   });
-  await expect(page.locator("#businessCashflowIncome")).toContainText("2,600");
+  await expect(page.locator("#businessCashflowIncome")).toContainText(/2[.,]600/);
   await expect(page.locator("#businessCashflowExpenses")).toContainText("500");
-  await expect(page.locator("#businessCashflowNet")).toContainText("2,100");
+  await expect(page.locator("#businessCashflowNet")).toContainText(/2[.,]100/);
   await expect(page.locator("#businessCashflowRows tbody tr")).toHaveCount(3);
   await page.locator("#businessCashflowRange").selectOption("30");
-  await expect(page.locator("#businessCashflowIncome")).toContainText("1,200");
+  await expect(page.locator("#businessCashflowIncome")).toContainText(/1[.,]200/);
   await expect(page.locator("#businessCashflowExpenses")).toContainText("300");
   await expect(page.locator("#businessCashflowNet")).toContainText("900");
   await expect(page.locator("#businessCashflowRows tbody tr")).toHaveCount(1);
@@ -3230,5 +3230,45 @@ test("Academy and Commerce workspaces localize their core controls in all suppor
     await expect(page.locator("#commerceCurrency").locator("xpath=..")).toContainText(currency);
     await expect(page.locator("#commerceUnitCost").locator("xpath=..")).toContainText(unitCost);
     await expect(page.locator('#commerceWorkspace button[onclick="buildCommercePrompt()"]')).toContainText(commerceAction);
+  }
+});
+
+test("Business workspace localizes its plan, cashbook, cashflow, break-even and Student Desk in all supported languages", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    checkSession = () => {};
+    selectModule("business", true);
+  });
+
+  const cases = [
+    ["en", "Turn an idea into a business plan, budget and implementation steps.", "PILOT · ADMIN ACCESS", "Business idea / sector", "Create business plan", "Dr.Vas Books — Income and expense ledger", "Cashflow — period report", "Check the assumptions: price must be higher than variable cost, and costs cannot be negative.", "Review draft and create feedback", "Sign in to access the private ledger.", "Save"],
+    ["it", "Trasforma un'idea in un piano aziendale, un budget e fasi di attuazione.", "PILOTA · ACCESSO AMMINISTRATORE", "Idea / settore aziendale", "Crea il piano aziendale", "Dr.Vas Books — Registro di entrate e uscite", "Cashflow — rapporto per periodo", "Verifica le ipotesi: il prezzo deve essere superiore al costo variabile e i costi non possono essere negativi.", "Analizza la bozza e crea un feedback", "Accedi per accedere al registro privato.", "Salva"],
+    ["tr", "Bir fikri iş planına, bütçeye ve uygulama adımlarına dönüştür.", "PİLOT · YÖNETİCİ ERİŞİMİ", "İş fikri / sektör", "İş planı oluştur", "Dr.Vas Books — Gelir ve gider defteri", "Nakit akışı — dönem raporu", "Varsayımları kontrol edin: fiyat değişken maliyetten yüksek olmalı ve maliyetler negatif olamaz.", "Taslağı analiz et ve geri bildirim oluştur", "Özel deftere erişmek için giriş yapın.", "Kaydet"],
+    ["de", "Verwandle eine Idee in einen Geschäftsplan, ein Budget und Umsetzungsschritte.", "PILOT · ADMIN-ZUGANG", "Geschäftsidee / Branche", "Geschäftsplan erstellen", "Dr.Vas Books — Einnahmen- und Ausgabenbuch", "Cashflow — Zeitraumbericht", "Überprüfe die Annahmen: Der Preis muss über den variablen Kosten liegen, und Kosten dürfen nicht negativ sein.", "Entwurf analysieren und Feedback erstellen", "Melde dich an, um auf das private Kassenbuch zuzugreifen.", "Speichern"],
+    ["fr", "Transformez une idée en plan d'affaires, budget et étapes de mise en œuvre.", "PILOTE · ACCÈS ADMINISTRATEUR", "Idée / secteur d'activité", "Créer le plan d'affaires", "Dr.Vas Books — Registre des recettes et dépenses", "Trésorerie — rapport par période", "Vérifiez les hypothèses : le prix doit être supérieur au coût variable et les coûts ne peuvent pas être négatifs.", "Analyser le brouillon et créer un retour", "Connectez-vous pour accéder au registre privé.", "Enregistrer"],
+    ["es", "Convierte una idea en un plan de negocio, presupuesto y pasos de implementación.", "PILOTO · ACCESO DE ADMINISTRADOR", "Idea / sector empresarial", "Crear plan de negocio", "Dr.Vas Books — Registro de ingresos y gastos", "Flujo de caja — informe por período", "Comprueba las hipótesis: el precio debe ser superior al coste variable y los costes no pueden ser negativos.", "Analizar el borrador y generar comentarios", "Inicia sesión para acceder al registro privado.", "Guardar"],
+    ["ru", "Превратите идею в бизнес-план, бюджет и этапы реализации.", "ПИЛОТ · ДОСТУП АДМИНИСТРАТОРА", "Бизнес-идея / сфера деятельности", "Создать бизнес-план", "Dr.Vas Books — Учёт доходов и расходов", "Денежный поток — отчёт за период", "Проверьте исходные данные: цена должна быть выше переменных затрат, а расходы не могут быть отрицательными.", "Проанализировать черновик и подготовить отзыв", "Войдите, чтобы открыть личный журнал.", "Сохранить"]
+  ];
+
+  for (const [language, description, pilot, ideaLabel, planAction, cashbookTitle, cashflowTitle, breakEvenError, studentAction, ledgerStatus, saveLabel] of cases) {
+    await page.evaluate(code => chooseLanguage(code), language);
+
+    await expect(page.locator("#businessWorkspace .studio-workspace-head > div > p")).toHaveText(description);
+    await expect(page.locator("#businessWorkspace .studio-workspace-head > .studio-beta-label")).toHaveText(pilot);
+    await expect(page.locator("#businessIdea").locator("xpath=..")).toContainText(ideaLabel);
+    await expect(page.locator('#businessWorkspace button[onclick="buildBusinessPrompt()"]')).toHaveText(planAction);
+    await expect(page.locator("#businessCashbookTitle")).toContainText(cashbookTitle);
+    await expect(page.locator("#businessCashflowTitle")).toContainText(cashflowTitle);
+    await expect(page.locator('#businessWorkspace button[onclick="buildStudentAssessmentPrompt()"]')).toHaveText(studentAction);
+    await expect(page.locator('#businessWorkspace button[onclick="saveStudentAssessmentProject()"]')).toHaveText(saveLabel);
+
+    await page.evaluate(() => {
+      document.getElementById("businessUnitPrice").value = "10";
+      document.getElementById("businessVariableCost").value = "10";
+      calculateBusinessBreakEven();
+      businessLedgerStatus("Conectează-te pentru a accesa registrul privat.", true);
+    });
+    await expect(page.locator("#businessBreakEvenStatus")).toHaveText(breakEvenError);
+    await expect(page.locator("#businessLedgerStatus")).toHaveText(ledgerStatus);
   }
 });
