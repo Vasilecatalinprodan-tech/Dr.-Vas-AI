@@ -2819,6 +2819,7 @@ let voiceListening = false;
 let voiceErrorKey = "";
 let voiceAutoRead = false;
 let lastSpokenAnswer = "";
+let lastSpokenAssistant = "drvas";
 let voiceTranscript = "";
 let liveSocket = null;
 let liveStream = null;
@@ -2925,7 +2926,7 @@ function refreshVoiceUi(statusKey){
 function speechLanguage(){
  return ({ro:"ro-RO",en:"en-GB",it:"it-IT",tr:"tr-TR",de:"de-DE",fr:"fr-FR",es:"es-ES",ru:"ru-RU"})[currentLanguage]||"ro-RO";
 }
-function speechVoiceStorageKey(){return "drvas_speech_voice_"+activeAssistant+"_"+currentLanguage;}
+function speechVoiceStorageKey(assistantId=activeAssistant){return "drvas_speech_voice_"+assistantId+"_"+currentLanguage;}
 function refreshSpeechVoiceOptions(){
  const select=el("speechVoiceSelect");
  if(!select||!window.speechSynthesis)return;
@@ -2947,7 +2948,7 @@ function saveSpeechVoiceChoice(){
  if(!select)return;
  if(select.value)localStorage.setItem(speechVoiceStorageKey(),select.value);
  else localStorage.removeItem(speechVoiceStorageKey());
- if(voiceAutoRead&&lastSpokenAnswer)speakDrVas(lastSpokenAnswer);
+ if(voiceAutoRead&&lastSpokenAnswer)speakDrVas(lastSpokenAnswer,true,lastSpokenAssistant);
 }
 function selectedSpeechRate(){const rate=Number(el("speechRateSelect")?.value||0.92);return Number.isFinite(rate)?Math.min(1.2,Math.max(0.75,rate)):0.92;}
 function isFemaleSpeechVoice(voice){
@@ -2961,13 +2962,13 @@ function rankFemaleSpeechVoice(voice){
  if(voice?.default)return 2;
  return 1;
 }
-function chooseSpeechVoice(lang){
+function chooseSpeechVoice(lang,assistantId=activeAssistant){
  if(!window.speechSynthesis)return null;
  const voices=(window.speechSynthesis.getVoices()||[]).filter(v=>v&&v.voiceURI);
  const language=lang.slice(0,2).toLowerCase();
  const matching=voices.filter(v=>v.lang&&v.lang.toLowerCase().startsWith(language));
- const selected=el("speechVoiceSelect")?.value;
- if(activeAssistant==="aurora"){
+ const selected=assistantId===activeAssistant?el("speechVoiceSelect")?.value:(localStorage.getItem(speechVoiceStorageKey(assistantId))||"");
+ if(assistantId==="aurora"){
   // Sarah must use a feminine voice native to the selected language.
   // A foreign-language voice distorts Romanian and other local pronunciation.
   const femaleVoices=matching.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
@@ -3020,9 +3021,10 @@ function waitForSpeechVoices(){
 let founderSpeechAudio=null;
 let founderSpeechObjectUrl=null;
 let founderSpeechRequestId=0;
-async function playAssistantVoice(text,forcePlayback=false){
+async function playAssistantVoice(text,forcePlayback=false,assistantOverride=""){
  const requestId=++founderSpeechRequestId;
- const assistantId=activeAssistant;
+ const assistantId=assistantOverride||activeAssistant;
+ const preserveSpeaker=Boolean(assistantOverride);
  if(!["drvas","jan","aurora"].includes(assistantId)||!currentUser||!text)return false;
  try{
   const {data:sessionData,error:sessionError}=await supabaseClient.auth.getSession();
@@ -3033,7 +3035,7 @@ async function playAssistantVoice(text,forcePlayback=false){
   });
   if(!response.ok)return false;
   const audioBlob=await response.blob();
-  if(requestId!==founderSpeechRequestId||(!voiceAutoRead&&!forcePlayback)||activeAssistant!==assistantId)return true;
+  if(requestId!==founderSpeechRequestId||(!voiceAutoRead&&!forcePlayback)||(!preserveSpeaker&&activeAssistant!==assistantId))return true;
   if(!audioBlob.size)return false;
   if(founderSpeechAudio){founderSpeechAudio.pause();founderSpeechAudio.src="";}
   if(founderSpeechObjectUrl)URL.revokeObjectURL(founderSpeechObjectUrl);
@@ -3049,21 +3051,23 @@ async function playAssistantVoice(text,forcePlayback=false){
   return false;
  }
 }
-async function speakDrVas(text,forcePlayback=false){
- if((!voiceAutoRead&&!forcePlayback)||!text)return;
+async function speakDrVas(text,forcePlayback=false,assistantOverride=""){
+ if(!text)return;
+ const speakerId=assistantOverride||activeAssistant;
+ lastSpokenAnswer=text;lastSpokenAssistant=speakerId;
+ if(!voiceAutoRead&&!forcePlayback)return;
  const spokenText=prepareSpeechText(text);
  if(!spokenText)return;
- lastSpokenAnswer=text;
  // Prefer the authenticated server-side voice provider even on browsers without Web Speech synthesis.
- const dedicatedVoicePlayed=await playAssistantVoice(spokenText,forcePlayback);
+ const dedicatedVoicePlayed=await playAssistantVoice(spokenText,forcePlayback,speakerId);
  if(dedicatedVoicePlayed)return;
  if(!window.speechSynthesis){refreshVoiceUi("voiceUnavailable");return;}
  const lang=speechLanguage();
- let voice=chooseSpeechVoice(lang);
+ let voice=chooseSpeechVoice(lang,speakerId);
  if(!voice){
   await waitForSpeechVoices();
   refreshSpeechVoiceOptions();
-  voice=chooseSpeechVoice(lang);
+  voice=chooseSpeechVoice(lang,speakerId);
  }
  if(!voice){
   refreshVoiceUi("voiceUnavailable");
@@ -3077,7 +3081,7 @@ async function speakDrVas(text,forcePlayback=false){
  utterance.lang=voice.lang||lang;
  utterance.voice=voice;
  utterance.rate=selectedSpeechRate();
- utterance.pitch=activeAssistant==="aurora"?1.08:activeAssistant==="jan"?0.90:0.98;
+ utterance.pitch=speakerId==="aurora"?1.08:speakerId==="jan"?0.90:0.98;
  utterance.onstart=()=>{document.body.classList.add("assistant-speaking");refreshVoiceUi("speaking")};
  utterance.onend=()=>{document.body.classList.remove("assistant-speaking");refreshVoiceUi("ready")};
  utterance.onerror=event=>{
@@ -3092,7 +3096,7 @@ function replayLastAnswer(){
  if(!lastSpokenAnswer)return;
  const wasEnabled=voiceAutoRead;
  voiceAutoRead=true;
- speakDrVas(lastSpokenAnswer,true);
+ speakDrVas(lastSpokenAnswer,true,lastSpokenAssistant);
  voiceAutoRead=wasEnabled;
  refreshVoiceUi("speaking");
 }
@@ -3109,9 +3113,10 @@ function toggleVoiceOutput(){
   return;
  }
  voiceAutoRead=!voiceAutoRead;
+ try{if(currentUser?.id)localStorage.setItem("drvas_voice_auto_read_"+currentUser.id,String(voiceAutoRead));}catch{}
  logClientEvent(voiceAutoRead?"voice_output_enabled":"voice_output_disabled");
  if(!voiceAutoRead)stopVoiceOutput();
- else if(lastSpokenAnswer)speakDrVas(lastSpokenAnswer);
+ else if(lastSpokenAnswer)speakDrVas(lastSpokenAnswer,true,lastSpokenAssistant);
  refreshVoiceUi(voiceAutoRead?"ready":"off");
 }
 function toggleVoiceInput(){
@@ -5162,6 +5167,7 @@ function changeAdminLogPage(delta){
 async function showChat(user,displayName){
   if(!user) return;
   currentUser = user;
+  try{voiceAutoRead=localStorage.getItem("drvas_voice_auto_read_"+user.id)==="true";}catch{voiceAutoRead=false;}
   try{const savedAssistant=localStorage.getItem("drvas_assistant_"+user.id);if(savedAssistant&&ASSISTANTS[savedAssistant])activeAssistant=savedAssistant;}catch{}
   selectAssistant(activeAssistant);
   ["authSection","profileSection","chatSection"].forEach(id=>el(id)?.classList.add("hidden"));
@@ -6127,7 +6133,7 @@ async function send(){
    // Keep the latest answer in an already saved project; unsaved drafts remain under the user's control.
    if(moduleProjectState[moduleId])await saveModuleProject(moduleId);
   }
-  refreshVoiceUi(voiceAutoRead?"ready":"off");if(voiceAutoRead)speakDrVas(displayedReply);
+  refreshVoiceUi(voiceAutoRead?"ready":"off");speakDrVas(displayedReply);
   if(data.action!=="conversations_deleted")await saveMessage("assistant",displayedReply,conversationId);
   conversationSaved=true;pendingMessages=[];setLocalizedText(el("saveMessage"),"Conversația este salvată automat.");updateSaveButton();
   if(data.action==="conversations_deleted"){
