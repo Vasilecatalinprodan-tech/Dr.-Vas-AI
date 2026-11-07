@@ -170,7 +170,7 @@
   const actions=Array.from(root.children).find(n=>n.matches(".studio-actions"));
   const projects=Array.from(root.children).find(n=>n.matches(".studio-project-manager:not(.studio-render-panel)"));
   const income=direct(root,".income-tracker"),capabilities=direct(root,".studio-capabilities"),social=direct(root,".studio-social");
-  const cryptoAdmin=document.querySelector(".crypto-admin-card"),cryptoEngine=document.querySelector(".crypto-engine-panel"),founderWorkbench=document.querySelector(".founder-workbench");
+  const cryptoAdmin=document.querySelector("#cryptoAdminHeading")?.closest(".crypto-admin-card"),cryptoEngine=document.querySelector(".crypto-engine-panel"),founderWorkbench=document.querySelector(".founder-workbench"),founderProvenance=document.querySelector("[aria-labelledby=\"founderProvenanceHeading\"]");
   const bookStation=createStudioStation("book"),translationStation=createStudioStation("translation");
   const items=[
    {id:"video",label:"Lucrează la videoclip",title:"Video & Reels",description:"Pregătește scenariul și producția video. Randarea MP4 rămâne disponibilă numai când serviciul este configurat și verificat.",nodes:[production,render],shared:[brief,actions],deliverable:["studioDeliverable","short"]},
@@ -180,7 +180,7 @@
    {id:"music",label:"Creează muzică / versuri",title:"Muzică și versuri originale",description:"Pregătește compoziții, structuri, versuri și materiale originale.",shared:[brief,actions],deliverable:["studioDeliverable","music"]},
    {id:"projects",label:"Proiectele mele",title:"Proiecte Studio",description:"Deschide, salvează, exportă sau șterge proiecte private.",nodes:[projects]},
    {id:"income",label:"Urmărește veniturile",title:"Oportunități și venituri",description:"Ține evidența oportunităților, etapelor și încasărilor.",nodes:[income]},
-   {id:"income-lab",label:"Venituri online & produse",title:"Creator & Online Income Lab",description:"Cărți, produse digitale, publicare, muzică, AI Evaluation și planuri de monetizare — instrumente private pentru fondator.",nodes:[founderWorkbench]},
+   {id:"income-lab",label:"Venituri online & produse",title:"Creator & Online Income Lab",description:"Cărți, produse digitale, publicare, muzică, AI Evaluation și dovada criptografică a originii — instrumente private pentru fondator.",nodes:[founderWorkbench,founderProvenance]},
    {id:"crypto",label:"Crypto & Mining",title:"Crypto & Mining — centru privat",description:"Analiză, compatibilitate, rentabilitate și registru de dispozitive. Minarea reală rămâne dezactivată până la instalarea și autorizarea agentului local securizat.",nodes:[cryptoAdmin,cryptoEngine]},
    {id:"social",label:"Social media",title:"Social media și distribuție",description:"Organizează conținutul și verifică starea integrărilor oficiale.",nodes:[capabilities,social]}
   ];
