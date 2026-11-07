@@ -3129,7 +3129,7 @@ test("shared navigation and presentation controls localize across all supported 
     ["de", "Sprache", "Sprich mit Dr.Vas", "Präsentation öffnen", "MIT DR.VAS SPRECHEN"],
     ["fr", "Langue", "Parler à Dr.Vas", "Ouvrir la présentation", "PARLER À DR.VAS"],
     ["es", "Idioma", "Habla con Dr.Vas", "Abrir presentación", "HABLA CON DR.VAS"],
-    ["ru", "Язык", "Поговорить с Dr.Vas", "Открыть презентацию", "ПОГОВОРИТЬ С DR.VAS"]
+    ["ru", "Язык", "Поговорить с Dr.Vas", "Открыть презентацию", "ПОГОВОРИТЕ С DR.VAS"]
   ];
 
   for (const [language, languageLabel, chatLabel, presentationLabel, headerLabel] of cases) {
@@ -3160,7 +3160,7 @@ test("Dr.Vas Free navigation and Health workspace localize in all supported lang
     await page.evaluate(code => chooseLanguage(code), language);
     await expect(page.locator('[data-free-nav="images"]')).toContainText(images);
     await expect(page.locator('[data-free-nav="chat"]')).toContainText(newChat);
-    await expect(page.locator("#healthWorkspace .studio-workspace-head .tag")).toContainText(healthTag);
+    await expect(page.locator("#healthWorkspace .studio-beta-label")).toContainText(healthTag);
     await expect(page.locator("#healthWorkspace .studio-production-standard strong")).toHaveText(disclaimer);
     await expect(page.locator("#healthTopic option").first()).toHaveText(topic);
     await expect(page.locator("#healthGoal option").first()).toHaveText(goal);
