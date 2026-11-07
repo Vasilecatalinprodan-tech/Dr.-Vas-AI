@@ -245,3 +245,15 @@ This archive preserves project decisions and exact user instructions; it is a st
 - PR #69 was closed as superseded because its branch was stacked on the pre-squash PR #68 branch and became dirty after PR #68 merged. The latest PR #69 E2E also exposed an overly broad test selector for the Health action button.
 - No phase-2 application work was lost. Replacement PR #71 rebases the Free/Health localization code directly onto the new main commit and corrects the selector to the explicit Health action button. Branch feat/localize-free-health-phase2-rebased-2026-11-07; head b9f775728ff1de4bb166b211569fff90bb60da6f; latest E2E run 42408117217 in progress at this checkpoint.
 - Merge PR #71 only after its latest E2E succeeds, then verify main deploy and smoke test.
+
+
+## Studio phase 3 — verified and merged (2026-11-07)
+
+- PR #72 passed browser regression run 42408952472 with 137 passed (1.6m).
+- PR #72 merged into main as 5326a9c817e1008e99276e83e7ab4b09bff5620c.
+- Main post-merge deployment run 42409211625 and browser regression run 42409211689 were queued at this checkpoint.
+- Phase 3 adds translations for the core Studio production workspace, VPC standard, render panel, timeline, main deliverables, platforms, styles, target audiences, durations and aspect ratios in seven supported languages.
+- Remaining Studio areas: income tracker, social integrations, additional long-form content and dynamic status/error messages.
+- Academy and Commerce are next; Business follows. Do not claim full localization yet.
+- PR #73 archive branch became dirty after main advanced; its archive changes are being carried to a new docs branch based on the latest main commit. No application code changes were lost.
+- Exact latest user instruction: “ok hai sa continuam si tot asa salvam tot”.
