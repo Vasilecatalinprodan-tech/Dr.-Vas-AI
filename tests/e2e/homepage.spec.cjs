@@ -3116,3 +3116,27 @@ test("changing the selected language localizes the Dr.Vas, Dr.Jan and Sarah welc
   expect(localized.jan).toContain("Hello! I'm Dr.Jan.");
   expect(localized.aurora).toContain("Welcome! I'm Sarah.");
 });
+
+
+test("shared navigation and presentation controls localize across all supported languages", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => { checkSession = () => {}; });
+
+  const cases = [
+    ["en", "Language", "Talk to Dr.Vas", "Open presentation"],
+    ["it", "Lingua", "Parla con Dr.Vas", "Apri la presentazione"],
+    ["tr", "Dil", "Dr.Vas ile konuş", "Sunumu aç"],
+    ["de", "Sprache", "Mit Dr.Vas sprechen", "Präsentation öffnen"],
+    ["fr", "Langue", "Parler à Dr.Vas", "Ouvrir la présentation"],
+    ["es", "Idioma", "Habla con Dr.Vas", "Abrir presentación"],
+    ["ru", "Язык", "Поговорить с Dr.Vas", "Открыть презентацию"]
+  ];
+
+  for (const [language, languageLabel, chatLabel, presentationLabel] of cases) {
+    await page.evaluate(code => chooseLanguage(code), language);
+    await expect(page.locator("#languageSwitch")).toContainText(languageLabel);
+    await expect(page.locator("#heroChatCta")).toContainText(chatLabel);
+    await expect(page.locator("#heroPresentationOpenButton")).toContainText(presentationLabel);
+    await expect(page.locator("#headerChatCta")).toContainText(chatLabel);
+  }
+});
