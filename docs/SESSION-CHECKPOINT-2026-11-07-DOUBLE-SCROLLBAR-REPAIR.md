@@ -201,3 +201,14 @@ User's latest instruction: “salveaza tot inclusiv chatul si continua”. Follo
 - Preliminary static inventory: 791 distinct text-node strings in the static body of `www/index.html`; exact-string dictionaries currently contain about 32 EN, 30 IT, 30 TR, and 15 each DE/FR/ES/RU entries. Dynamic content and attributes require a separate runtime audit.
 - Next: implement and test localization in phases, starting with shared shell controls, Dr.Vas Free and Dr.Vas Health, followed by the remaining four modules. Preserve previous chat messages verbatim.
 - User's latest instruction: “ok hai sa continuam si tot asa salvam tot”. Keep documenting every meaningful change, test, merge and deployment. Android APK stays last.
+
+
+## Session checkpoint — 2026-11-07, Free/Health live and Studio phase 3
+
+- PR #71 merged to main as c7581d09f57c05f1b798a0fd4597cdedc564009c.
+- Main browser regression 42408335139: SUCCESS.
+- Main deploy 42408335171: SUCCESS, including Supabase migrations, Cloudflare Worker deployment and production smoke test.
+- PR #70 docs archive merged as 9ba0c5ff76e565bfd205158dc26dc91d82ad9b66.
+- PR #72 Studio localization phase 3 is open; branch feat/localize-studio-phase3-2026-11-07; head 0ddb493750397972644a564c8d1ea95deb7ed4f7. E2E check pending at checkpoint.
+- Next: validate and merge PR #72 if green; continue remaining Studio copy, then Academy, Commerce and Business. Full localization remains incomplete.
+- Latest user instruction: “ok hai sa continuam si tot asa salvam tot”.
