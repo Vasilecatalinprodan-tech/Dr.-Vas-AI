@@ -2167,8 +2167,10 @@ function setDrvasPresenterPortrait(key,avatar){
  }
  const labels={drvas:"Dr.Vas — fotografia fondatorului",jan:"Dr.Jan — personaj AI fictiv",sarah:"Sarah — portret profesional adult"};
  photo.setAttribute("alt",labels[key]||"Portretul asistentului");photo.dataset.presenter=key;
- photo.onload=()=>{photo.style.display="block";if(art)art.classList.add("is-hidden")};
- photo.onerror=()=>{photo.style.display="none";if(art)art.classList.remove("is-hidden")};
+ const syncPortraitAlt=()=>photo.setAttribute("alt",labels[photo.dataset.presenter]||"Portretul asistentului");
+ syncPortraitAlt();
+ photo.onload=()=>{syncPortraitAlt();photo.style.display="block";if(art)art.classList.add("is-hidden")};
+ photo.onerror=()=>{syncPortraitAlt();photo.style.display="none";if(art)art.classList.remove("is-hidden")};
  const source=DRVAS_PRESENTER_PORTRAITS[key];
  if(source&&photo.getAttribute("src")!==source){if(art)art.classList.remove("is-hidden");photo.src=source}
  else if(photo.complete&&photo.naturalWidth>0&&art)art.classList.add("is-hidden");
