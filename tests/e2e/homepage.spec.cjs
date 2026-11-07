@@ -3279,10 +3279,10 @@ test("all module feature-navigation labels, headings and descriptions localize i
     checkSession = () => {};
     currentUser = { id: "e2e-feature-navigation-i18n", email: "admin@example.invalid" };
     isDrvasAdmin = true;
-    for (const moduleName of ["health", "studio", "academy", "commerce", "business"]) {
-      selectModule(moduleName, true);
-    }
   });
+  for (const moduleName of ["health", "studio", "academy", "commerce", "business"]) {
+    await page.evaluate(name => selectModule(name, true), moduleName);
+  }
 
   for (const moduleName of ["health", "studio", "academy", "commerce", "business"]) {
     await expect(page.locator(`#${moduleName}Workspace .drvas-feature-navigation`)).toHaveCount(1);
