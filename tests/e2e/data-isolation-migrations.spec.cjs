@@ -199,3 +199,27 @@ test("Conversation feature context is saved before chat writes and enforced by t
   expect(html).toContain("await saveMessage(\"user\",userText,conversationId)");
   expect(html).toContain("setChatNavigationDisabled(true)");
 });
+
+
+test("Worker applies the selected feature workspace guidance and verifies Live context", async () => {
+  const worker = fs.readFileSync(path.join(__dirname, "../../worker/index.js"), "utf8");
+  const workspaces = fs.readFileSync(path.join(__dirname, "../../www/module-workspaces.js"), "utf8");
+  const html = fs.readFileSync(path.join(__dirname, "../../www/index.html"), "utf8");
+  const featureKeys = [
+    "health-brief", "video", "series", "book", "translation", "music", "projects", "income", "income-lab", "crypto", "social",
+    "course", "lessons", "exercises", "learning-plan", "courses", "research", "suppliers", "launch", "pricing",
+    "plan", "cashbook", "cashflow", "break-even", "student"
+  ];
+  expect(worker).toContain("MODULE_FEATURE_INSTRUCTIONS");
+  expect(worker).toContain("getModuleFeatureInstruction(moduleName, featureKey)");
+  expect(worker).toContain("getModuleFeatureInstruction(liveModule, liveFeatureKey)");
+  expect(worker).toContain("${featureSpecificInstruction}");
+  expect(worker).toContain("liveFeatureInstruction");
+  expect(worker).toContain("liveContext.module !== liveModule");
+  expect(worker).toContain("(liveContext.feature_key || null) !== liveFeatureKey");
+  expect(html).toContain("feature_key:liveConversationFeatureKey||null,conversation_id:liveConversationId");
+  for (const featureKey of featureKeys) {
+    expect(worker, "Worker feature guidance: " + featureKey).toContain(featureKey);
+    expect(workspaces, "workspace feature id: " + featureKey).toContain(featureKey);
+  }
+});
