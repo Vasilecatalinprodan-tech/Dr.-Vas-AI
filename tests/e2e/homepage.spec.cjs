@@ -1370,6 +1370,7 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
   expect(jan.speaker).toBe("Dr.Jan");
   await expect(page.locator("#presentationAvatar")).toHaveClass(/presentation-avatar-jan/);
   await expect(page.locator("#presentationAvatar .presentation-photo")).toBeVisible();
+  await expect(page.locator("#presentationAvatar .presentation-photo")).toHaveAttribute("data-presenter", "jan");
   await expect(page.locator("#presentationAvatar .presentation-photo")).toHaveAttribute("alt", "Dr.Jan — personaj AI fictiv");
   await expect.poll(() => page.locator("#presentationAvatar .presentation-photo").evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
   expect(await page.locator("#presentationAvatar .character-glasses").evaluate(node => getComputedStyle(node).display)).toBe("block");
@@ -2723,6 +2724,8 @@ test("Studio exposes dedicated Book, Translation, Crypto and Online Income works
     isDrvasAdmin = true;
     showModuleSelection();
     selectModule("studio", true);
+    const adminPanel = document.getElementById("adminPanel");
+    if (adminPanel) { adminPanel.classList.remove("hidden"); adminPanel.hidden = false; }
   });
   for (const feature of ["book", "translation", "crypto", "income-lab"]) {
     await expect(page.locator('#studioWorkspace [data-feature="' + feature + '"]')).toBeVisible();
