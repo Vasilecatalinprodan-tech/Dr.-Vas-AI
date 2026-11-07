@@ -906,3 +906,12 @@ User's request (verbatim):
 - Test corrections made during the phases: align assertions with existing rendered presentation wording and uppercase CTA wording; Russian polite CTA is “ПОГОВОРИТЕ С DR.VAS”; the Health “INFORMAȚII GENERALE” badge is the studio-beta-label element, not the workspace tag. These were test expectation/selector corrections, not production runtime defects.
 - The broader static localization inventory contains 791 distinct text-node strings. A scan of the accumulated UI dictionaries on the phase-2 branch found approximately 191 EN, 191 IT, 220 TR, and 180 each DE/FR/ES/RU keys. This is only a rough key inventory; it is not complete coverage. Many static and dynamic strings remain unmapped.
 - Next: confirm the two latest Playwright runs, merge PR #68 then PR #69 if green, deploy through main workflow, and continue with Studio, Academy, Commerce and Business localization. Preserve existing conversation history without retroactively translating it. Do not claim full localization yet.
+
+
+## 2026-11-07 — PR #68 merged; phase-2 PR rebased
+
+- PR #68 passed latest browser regression run 42407769955 and was squash-merged into main as 87e72105ab4778be236b9e1e93fde7f98276086c.
+- Main deployment run 42408000932 and main browser regression run 42408000955 were in progress at this checkpoint; confirm both before claiming production deployment.
+- Original stacked PR #69 had a dirty merge state after PR #68 was squash-merged and its latest E2E identified an overly broad test selector (the first Health workspace button is a feature-navigation control, not the primary Health action). PR #69 was closed as superseded, not discarded.
+- Replacement PR #71 is based directly on the new main commit and carries the phase-2 Free/Health localization code and tests. Branch feat/localize-free-health-phase2-rebased-2026-11-07; head b9f775728ff1de4bb166b211569fff90bb60da6f; latest E2E run 42408117217 in progress at checkpoint. Its Health action test now targets the button with onclick window.buildHealthPrompt().
+- PR #70 remains the archive PR for this session; its branch documentation is being updated to reflect the PR #69 → #71 replacement.
