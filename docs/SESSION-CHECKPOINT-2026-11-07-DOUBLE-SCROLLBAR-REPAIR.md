@@ -36,3 +36,15 @@ Founder should test the actual site:
 
 ## Work sequencing
 Do not resume unrelated feature development until the production deployment is verified and the founder confirms the scrolling experience. Then continue the integrated six-module platform and the real 3D DNA/WebGL polish. Preserve all changes and update this checkpoint and the chat archive at each meaningful stage.
+
+
+## Follow-up checkpoint — deploy blocked by Worker syntax, 7 November 2026
+
+- Founder repeated that the page scrollbar is still not usable and explicitly said: do not work on/build the Android APK yet; leave APK until last.
+- User requires the full document scrollbar to reach the bottom of the page while retaining the separate transcript scrollbar. This is not accepted as resolved until the founder verifies it in the live browser.
+- Investigated main deploy run #527 / 42373307232 for merge commit dbbc241700d5fba413d5d2658f85e638800147e5.
+- Browser regression step passed; Supabase migration application and rate-limit diagnostic passed. Cloudflare deploy failed at Wrangler bundling: worker/index.js:1168:47 Unexpected comma.
+- Root cause: doubled backslash in the regex used in the live conversation metadata REST URL. Fixed to the same trailing-slash normalization expression used in the authenticated-user REST URL.
+- Fix branch: fix/worker-live-context-regex-deploy-2026-11-07; code commit: 08e13d6605db5eb7aa47b6399187c825cdbd1e22.
+- Do not claim production is updated yet. Complete branch validation, merge, Cloudflare deploy and production smoke tests first.
+- APK explicitly deferred. No APK build/release is part of this work.
