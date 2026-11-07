@@ -722,3 +722,14 @@ Expanded implementation now on PR #38:
 - Root fix: restore natural document flow/scrolling for Free and Health, preserve a bounded independently scrollable transcript, keep sidebar/drawer, and keep composer/attachments in page flow. Regression tests explicitly prove the page and transcript scroll positions move independently and the mobile page reaches the composer.
 - Earlier failed runs were used to correct real CSS specificity and obsolete test expectations; final run is green.
 - Main-branch deployment must still be verified separately: Supabase migration and diagnostic gate, Cloudflare Worker deploy and production smoke test. Current workflow expects GitHub Actions secrets `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_URL`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`. Do not claim production deployment until all release steps pass.
+
+
+## 2026-11-07 — Deploy failure diagnosis and correction in progress
+
+- Founder reiterated the requirement for a usable full-page vertical scrollbar in addition to the independently scrollable chat transcript. Founder explicitly deferred APK work until the final project stage; do not trigger Android build/release during this repair.
+- Inspected GitHub Actions run #527 / 42373307232 for merge commit dbbc241700d5fba413d5d2658f85e638800147e5.
+- Browser regression tests passed; Supabase migration application and rate-limit diagnostic passed. Cloudflare Worker deploy failed during Wrangler bundling with worker/index.js:1168:47 Unexpected comma.
+- Root cause: the live conversation metadata REST URL used a malformed slash-trimming regex with a doubled literal backslash. Corrected it to match the valid URL-normalization expression used immediately above.
+- Fix branch: fix/worker-live-context-regex-deploy-2026-11-07; first code commit 08e13d6605db5eb7aa47b6399187c825cdbd1e22.
+- Chat archive and session checkpoint updated with the founder's latest instructions, exact deployment failure and repair details.
+- Status at this entry: fix is committed on a branch; branch CI, merge, production deploy and smoke test remain pending. Do not describe production as deployed until the full workflow succeeds. Actual founder verification of both scrollbars remains required.
