@@ -1082,6 +1082,121 @@ html:has(body.module-workspace-mode:not(.free-module-mode)) body.module-workspac
 @media(prefers-reduced-motion:reduce){.dna-helix-core,.dna-strand,.dna-strand-highlight{animation:none!important}}
 
 
+
+
+/* Health keeps the transcript's own scrollbar, but the full page must also scroll independently.
+   The fitted Free shell remains unchanged; Health includes its information desk, consent and attachment controls. */
+html:has(body.module-workspace-mode.health-module-mode){
+  height:auto!important;
+  min-height:100%!important;
+  overflow-x:hidden!important;
+  overflow-y:scroll!important;
+  scrollbar-gutter:stable;
+}
+html:has(body.module-workspace-mode.health-module-mode) body.health-module-mode{
+  height:auto!important;
+  min-height:100vh!important;
+  overflow-x:hidden!important;
+  overflow-y:visible!important;
+}
+body.health-module-mode.module-workspace-mode main{
+  height:auto!important;
+  min-height:calc(100vh - 75px)!important;
+  overflow:visible!important;
+  padding-bottom:40px!important;
+}
+body.health-module-mode.module-workspace-mode #appMain{
+  height:auto!important;
+  min-height:calc(100vh - 75px)!important;
+  overflow:visible!important;
+}
+body.health-module-mode.module-workspace-mode #chatSection{
+  display:flex!important;
+  flex-direction:column!important;
+  height:auto!important;
+  min-height:calc(100dvh + 140px)!important;
+  overflow:visible!important;
+}
+body.health-module-mode.module-workspace-mode #chatSection>.chat-layout{
+  display:grid!important;
+  grid-template-columns:248px minmax(0,1fr)!important;
+  height:auto!important;
+  min-height:calc(100dvh + 80px)!important;
+  flex:0 0 auto!important;
+  overflow:visible!important;
+  align-items:stretch!important;
+}
+body.health-module-mode.module-workspace-mode #chatSection .history-panel{
+  display:flex!important;
+  flex-direction:column!important;
+  height:auto!important;
+  min-height:calc(100dvh + 20px)!important;
+  max-height:none!important;
+  overflow-y:auto!important;
+}
+body.health-module-mode.module-workspace-mode #chatSection .chat-main{
+  display:flex!important;
+  flex-direction:column!important;
+  height:auto!important;
+  min-height:calc(100dvh + 80px)!important;
+  max-height:none!important;
+  overflow:visible!important;
+}
+body.health-module-mode.module-workspace-mode #freeChatView{
+  display:flex!important;
+  flex:1 1 auto!important;
+  flex-direction:column!important;
+  height:auto!important;
+  min-height:calc(100dvh + 60px)!important;
+  max-height:none!important;
+  overflow:visible!important;
+}
+body.health-module-mode.module-workspace-mode #freeChatView[hidden]{display:none!important}
+body.health-module-mode.module-workspace-mode #freeChatView>#chat{
+  flex:1 1 auto!important;
+  height:auto!important;
+  min-height:320px!important;
+  max-height:55vh!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain;
+}
+body.health-module-mode.module-workspace-mode #freeChatView .input-area{
+  position:sticky!important;
+  bottom:0!important;
+  z-index:5!important;
+  flex:0 0 auto!important;
+  background:#10283a!important;
+}
+body.health-module-mode.module-workspace-mode #freeChatView .chat-file-toolbar,
+body.health-module-mode.module-workspace-mode #freeChatView .voice-toolbar{
+  flex:0 0 auto!important;
+  max-height:none!important;
+  overflow:visible!important;
+}
+@media(max-width:760px){
+  body.health-module-mode.module-workspace-mode #chatSection>.chat-layout{
+    grid-template-columns:minmax(0,1fr)!important;
+    min-height:calc(100dvh + 150px)!important;
+  }
+  body.health-module-mode.module-workspace-mode #chatSection .history-panel{
+    display:none!important;
+    position:fixed!important;
+    z-index:110!important;
+    left:8px!important;
+    top:72px!important;
+    bottom:8px!important;
+    width:min(86vw,310px)!important;
+    height:auto!important;
+    min-height:0!important;
+    max-height:none!important;
+    box-shadow:0 18px 55px #0009;
+  }
+  body.health-module-mode.module-workspace-mode.history-open #chatSection .history-panel{display:flex!important}
+  body.health-module-mode.module-workspace-mode #chatSection .chat-main{min-height:calc(100dvh + 150px)!important}
+  body.health-module-mode.module-workspace-mode #freeChatView{min-height:calc(100dvh + 120px)!important}
+  body.health-module-mode.module-workspace-mode #freeChatView>#chat{min-height:300px!important;max-height:55vh!important}
+  body.health-module-mode.module-workspace-mode #freeChatView .input-area{position:sticky!important;left:auto!important;right:auto!important;bottom:0!important}
+}
 </style>
 <link rel="stylesheet" href="/module-workspaces.css">
 </head>
