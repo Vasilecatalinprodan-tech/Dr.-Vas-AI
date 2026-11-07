@@ -1,9 +1,18 @@
 name: Build DrVas APK
 
-# APK builds are deliberately deferred until the web platform and modules are stable.
-# An owner explicitly starts the final Android build through workflow_dispatch.
+# The founder has explicitly authorised the final APK stage.
+# Keep manual dispatch available and rebuild when app/Android inputs change on main.
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'www/**'
+      - 'android/**'
+      - 'capacitor.config.json'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/android.yml'
 
 concurrency:
   group: drvas-android-${{ github.ref }}
@@ -44,7 +53,14 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDebug
 
+      - name: Verify APK and calculate checksum
+        run: |
+          test -s android/app/build/outputs/apk/debug/app-debug.apk
+          sha256sum android/app/build/outputs/apk/debug/app-debug.apk
+
       - uses: actions/upload-artifact@v4
         with:
           name: DrVas-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 30
