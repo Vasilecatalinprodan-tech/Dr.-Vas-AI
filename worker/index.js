@@ -1118,6 +1118,7 @@ export default {
       if (body.action === "live_voice_token") {
         const liveAccessToken = body.access_token;
         const liveModule = typeof body.module === "string" ? body.module : "free";
+        const liveConversationId = typeof body.conversation_id === "string" ? body.conversation_id : "";
         const liveFeatureKey = typeof body.feature_key === "string" && body.feature_key.trim() ? body.feature_key.trim() : null;
         const liveLanguage = typeof body.language === "string" ? body.language : "ro";
         const liveAssistant = typeof body.assistant === "string" ? body.assistant : "drvas";
@@ -1152,6 +1153,24 @@ export default {
         if (!liveAuth.ok) return json({ error: "Sesiune invalidă." }, 401);
         const liveUser = await liveAuth.json();
         if (!liveUser?.id) return json({ error: "Utilizator neautentificat." }, 401);
+
+        if (!liveConversationId) return json({ error: "Conversația vocală nu are un ID verificat." }, 400);
+        const liveContextParams = new URLSearchParams({
+          select: "module,feature_key",
+          user_id: `eq.${liveUser.id}`,
+          conversation_id: `eq.${liveConversationId}`,
+          limit: "1"
+        });
+        const liveContextResponse = await fetch(
+          `${env.SUPABASE_URL.replace(/\\/+$/, "")}/rest/v1/drvas_conversation_metadata?${liveContextParams.toString()}`,
+          { headers: { apikey: env.SUPABASE_KEY, Authorization: `Bearer ${liveAccessToken}` } }
+        );
+        if (!liveContextResponse.ok) return json({ error: "Nu am putut verifica spațiul de lucru al conversației vocale." }, 503);
+        const liveContextRows = await liveContextResponse.json();
+        const liveContext = Array.isArray(liveContextRows) ? liveContextRows[0] : null;
+        if (!liveContext || liveContext.module !== liveModule || (liveContext.feature_key || null) !== liveFeatureKey) {
+          return json({ error: "Conversația vocală nu aparține modulului și funcției selectate." }, 409);
+        }
 
         const allowedAdminEmails = (env.ADMIN_EMAILS || "")
           .split(",").map(email => email.trim().toLowerCase()).filter(Boolean);
