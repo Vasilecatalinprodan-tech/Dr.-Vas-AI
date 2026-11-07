@@ -61,3 +61,13 @@ This file preserves the exact user requirements and key assistant commitments, t
 - User explicitly deferred Android APK work until the very end. No APK workflow should be triggered as part of this repair.
 - Scrollbar acceptance remains unresolved until the founder confirms the actual production page and transcript scrollbars both work independently. Passing automated tests alone is not founder-side visual confirmation.
 - Next release gate: run syntax checks and browser regression on the fix branch, merge only after checks pass, then confirm Worker deployment and production smoke test. Do not bypass the Supabase migration gate.
+
+
+## Merge update — 7 November 2026
+
+- PR #62 was squash-merged into main. Merge commit: c74e97ddf71635d588e9631b223a8e59c3742d27.
+- Main production deploy workflow run #528 / 42374244509 started from that merge. Worker source syntax validation passed; the run is currently executing the homepage/persisted-session Playwright suite. Supabase migration, Cloudflare deployment and production smoke test have not yet completed at this checkpoint.
+- Main browser regression workflow run 42374244452 is also queued/running. The earlier PR browser workflow run 42374123926 had not yet reported a final conclusion at this checkpoint.
+- The separate Cloudflare GitHub App Workers Builds check on the PR reported failure; this is not the authoritative production release workflow. The production deploy workflow's Wrangler deploy and smoke test are the release gates.
+- Do not claim deployment or live scrollbar acceptance until run #528 is fully successful and founder confirms both scrollbars in the live site.
+- APK remains explicitly deferred; no Android build was triggered.
