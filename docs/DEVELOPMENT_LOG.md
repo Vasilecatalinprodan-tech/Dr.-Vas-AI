@@ -971,3 +971,5 @@ User reiterated: “ok hai sa continuam si tot asa salvam tot”. Continue the i
 - Added Playwright coverage for EN/IT/TR/DE/FR/ES/RU; CI result remains pending verification and PR is not merged.
 - Archived the user instruction and complete checkpoint, APK facts, implementation notes, test caveats and next steps in `docs/SESSION-CHECKPOINT-2026-11-07-STUDIO-LOCALIZATION.md`.
 - Previous debug APK remains verified, but user download/device installation is not confirmed. A new APK must be verified after any merged app-code changes.
+
+- CI run `42418512974` exposed a stale policy assertion in `.github/workflows/browser-e2e.yml`: it required manual-only Android builds even though the approved Android workflow now has manual dispatch plus main-only path-filtered rebuilds. The guard was updated to verify the current restricted trigger policy; a first regex escaping error was corrected in commit `0ebfd9bb0b7daf78c87d1f2f921952a822a17a92`. Latest rerun still needs verification.
