@@ -3462,6 +3462,15 @@ for (const [source, translations] of Object.entries(BUSINESS_EMOJI_HEADING_TRANS
   }
 }
 
+
+const BUSINESS_REMAINING_LABEL_TRANSLATIONS = {"Flux net":["Net cashflow","Flusso netto","Net nakit akışı","Netto-Cashflow","Flux net","Flujo neto","Чистый денежный поток"],"Amount":["Amount","Importo","Tutar","Betrag","Montant","Importe","Сумма"],"Currency":["Currency","Valuta","Para birimi","Währung","Devise","Moneda","Валюта"],"VAT rate":["VAT rate","Aliquota IVA","KDV oranı","Umsatzsteuersatz","Taux de TVA","Tipo de IVA","Ставка НДС"],"VAT included":["VAT included","IVA inclusa","KDV dahil","Umsatzsteuer enthalten","TVA incluse","IVA incluido","НДС включён"],"Estimated VAT":["Estimated VAT","IVA stimata","Tahmini KDV","Geschätzte USt.","TVA estimée","IVA estimado","Расчётный НДС"],"College / Further Education":["College / Further Education","College / formazione ulteriore","Kolej / ileri eğitim","College / Weiterbildung","Formation collégiale / formation continue","Formación profesional / educación superior","Колледж / дополнительное образование"],"University undergraduate":["University undergraduate","Laurea triennale","Lisans eğitimi","Bachelorstudium","Premier cycle universitaire","Grado universitario","Бакалавриат"],"Postgraduate":["Postgraduate","Post-laurea","Lisansüstü","Postgraduiertenstudium","Études de troisième cycle","Posgrado","Послевузовское образование"],"Professional qualification":["Professional qualification","Qualifica professionale","Mesleki yeterlilik","Berufsqualifikation","Qualification professionnelle","Cualificación profesional","Профессиональная квалификация"],"Alt nivel":["Other level","Altro livello","Diğer seviye","Andere Stufe","Autre niveau","Otro nivel","Другой уровень"],"Ex.: Business Management":["E.g. Business Management","Es.: Business Management","Örn. İşletme Yönetimi","Z. B. Unternehmensführung","Ex. : gestion d'entreprise","Ej.: Dirección de empresas","Напр.: управление бизнесом"]};
+for (const [source, translations] of Object.entries(BUSINESS_REMAINING_LABEL_TRANSLATIONS)) {
+  for (let i = 0; i < ["en","it","tr","de","fr","es","ru"].length; i++) {
+    const language = ["en","it","tr","de","fr","es","ru"][i];
+    if (UI[language]) UI[language][source] = translations[i];
+  }
+}
+
 function localizeInterfaceCopy(source){return (ASSISTANT_UI_TRANSLATIONS[currentLanguage]||{})[source]||(UI[currentLanguage]||{})[source]||source}
 function tr(s){return localizeInterfaceCopy(s)}
 function setLocalizedText(target,source){
