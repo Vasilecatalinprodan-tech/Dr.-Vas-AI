@@ -217,6 +217,8 @@ test("Worker applies the selected feature workspace guidance and verifies Live c
   expect(worker).toContain("liveFeatureInstruction");
   expect(worker).toContain("liveContext.module !== liveModule");
   expect(worker).toContain("(liveContext.feature_key || null) !== liveFeatureKey");
+  expect(worker).toContain("Older installed APKs do not send a conversation ID for Live tokens");
+  expect(worker).toContain("if (!liveConversationId && liveFeatureKey)");
   expect(html).toContain("feature_key:liveConversationFeatureKey||null,conversation_id:liveConversationId");
   for (const featureKey of featureKeys) {
     expect(worker, "Worker feature guidance: " + featureKey).toContain(featureKey);
