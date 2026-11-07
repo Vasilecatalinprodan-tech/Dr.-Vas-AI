@@ -832,3 +832,18 @@ User message (verbatim):
 - Cloudflare GitHub App preview build check `Workers Builds: dr--vas-ai` failed on the PR head, and prior PR commits also showed preview-build failures. The PR preview build is separate from the repository's authoritative main-branch production deploy workflow; nevertheless, record it as unresolved and do not claim a preview deployment exists. After browser checks pass and PR is merged, the production deployment workflow must independently pass its Supabase migration/diagnostic gates, Worker deploy and production smoke test.
 - PR #64 remains OPEN and unmerged; no production deployment of the WebGL changes has occurred. Do not merge until required current-head checks are green. After merge/deploy, founder must visually inspect both DNA rails on desktop and mobile before stage 2 can be closed.
 - This user continuation request and the material technical findings above are archived. Archive scope remains a structured record of decisions, conversation excerpts, code/test/deploy outcomes and next actions, not a literal export of the full ChatGPT UI transcript.
+
+
+## Continuation checkpoint — 7 November 2026, latest PR #64 status
+
+User continuation request (verbatim):
+> ok sa continuam...sa terminat celalalt chat si continua de unde ai ramas....salveaza tot
+
+- Continued from the prior session without changing the founder's mandatory project order. Stage 1 remains accepted and closed. Stage 2 (real WebGL DNA) remains the active stage; APK remains deferred to stage 7.
+- Rechecked GitHub Actions browser regression on the current PR #64 head `4b045fdbcf981e09c8ecfaa0e6bc9dc413921885`: workflow run `42377124268` completed successfully. The latest browser check is green.
+- The earlier browser runs #630 / `42375495159`, #631 / `42375586489`, and #632 / `42375593156` also completed successfully on their respective earlier PR heads. These are not a substitute for the latest-head run, which is separately green above.
+- PR #64 remains OPEN and unmerged. Current PR head is `4b045fdbcf981e09c8ecfaa0e6bc9dc413921885`; GitHub reports mergeable=true but mergeable_state=unstable.
+- A separate Cloudflare GitHub App check named `Workers Builds: dr--vas-ai` failed on the current head (check run ID `128417008256`, build ID `ac68f5eb-70c0-4b46-8dad-251439e388dd`). The Cloudflare dashboard build-log URL could not be accessed from the available session, so the precise cause is not yet verified. Do not describe this as a successful preview build, and do not merge/declare stage 2 complete until the failure is understood or the authoritative production deployment path is verified after a permitted merge.
+- The repository's earlier main production deploy workflow #529 / `42374769942` passed before the WebGL change; it does not prove that this new WebGL revision has been deployed. No production deployment of PR #64 has been confirmed.
+- Current code changes in PR #64 include the two WebGL hero canvases, generated 3D strand/base-pair/joint geometry and lighting/perspective renderer, SVG fallback, responsive sizing/reduced-motion handling, and Playwright regression coverage. Current browser test is green; visual review of both rails on desktop and mobile is still required after production deployment.
+- User's exact continuation request and this status checkpoint are preserved in this project archive. Archive scope is a structured record of material conversation, decisions, technical changes and verification—not a literal export of the complete ChatGPT interface transcript.
