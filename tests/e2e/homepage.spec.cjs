@@ -2790,6 +2790,34 @@ test("voice accessibility controls remain available in Health and every module w
   await expect(page.locator(".voice-toolbar")).toHaveCount(1);
 });
 
+
+test("landing DNA rails mount independent WebGL 3D geometry with graceful SVG fallback", async ({ page }) => {
+  await openApp(page, "ro");
+  const rails = page.locator("#heroSection .dna-helix-visual");
+  await expect(rails).toHaveCount(2);
+  await expect(page.locator("#heroSection .dna-webgl-canvas")).toHaveCount(2);
+  await page.waitForFunction(() => [...document.querySelectorAll("#heroSection .dna-helix-visual")]
+    .every(node => ["webgl2-or-webgl", "svg-fallback"].includes(node.dataset.dnaRenderer)), null, { timeout: 5000 });
+  const state = await rails.evaluateAll(nodes => nodes.map(node => ({
+    renderer: node.dataset.dnaRenderer,
+    canvasWidth: node.querySelector("canvas").width,
+    canvasHeight: node.querySelector("canvas").height,
+    fallbackVisible: getComputedStyle(node.querySelector("svg")).visibility !== "hidden"
+  })));
+  expect(state).toHaveLength(2);
+  for (const rail of state) {
+    expect(rail.canvasWidth).toBeGreaterThan(0);
+    expect(rail.canvasHeight).toBeGreaterThan(0);
+    if (rail.renderer === "webgl2-or-webgl") expect(rail.fallbackVisible).toBe(false);
+    else expect(rail.fallbackVisible).toBe(true);
+  }
+  const engine = await page.locator("#drvas-dna-webgl-engine").textContent();
+  expect(engine).toContain("drawArrays");
+  expect(engine).toContain("createBuffer");
+  expect(engine).toContain("cylinder");
+  expect(engine).toContain("sphere");
+});
+
 test("both landing DNA helices use shaded molecular rails and detailed base pairs", async ({ page }) => {
   await openApp(page, "ro");
   const helices = page.locator("#heroSection .dna-helix-visual");
