@@ -2436,6 +2436,41 @@ test("Dr.Vas Free mobile sidebar opens as a drawer and remains usable", async ({
 });
 
 
+test("all six module chats keep a usable mobile history drawer and shared composer", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-all-six-mobile-shells", email: "mobile-shells@example.invalid" };
+    isDrvasAdmin = true;
+    freeNavLoadScheduled = async () => {
+      const host = freeNavPage("Scheduled", "In-app reminders");
+      host.append("Scheduled reminders");
+    };
+    showModuleSelection();
+  });
+
+  const modules = ["free", "health", "studio", "academy", "commerce", "business"];
+  for (const moduleName of modules) {
+    await page.evaluate(name => selectModule(name, true), moduleName);
+    await expect(page.locator("#freeChatView .input-area .chat-file-button"), moduleName + " attachment control").toBeVisible();
+    await expect(page.locator("#sendButton"), moduleName + " send control").toBeVisible();
+    await expect(page.locator("#chatSection .history-panel"), moduleName + " mobile history starts in drawer").toBeHidden();
+    await expect(page.locator(".chat-history-toggle"), moduleName + " history drawer toggle").toBeVisible();
+
+    await page.locator(".chat-history-toggle").click();
+    await expect(page.locator("#chatSection .history-panel"), moduleName + " history drawer opens").toBeVisible();
+    await expect(page.locator("#conversationList"), moduleName + " conversation list remains available").toBeVisible();
+
+    await page.locator('[data-free-nav="scheduled"]').click();
+    await expect(page.locator("#freeNavWorkspace h2"), moduleName + " Scheduled destination").toHaveText("Scheduled");
+    await expect(page.locator("#chatSection .history-panel"), moduleName + " drawer closes when leaving chat").toBeHidden();
+
+    await page.locator('[data-free-nav="chat"]').click();
+    await expect(page.locator("#freeChatView"), moduleName + " chat returns").toBeVisible();
+    await expect(page.locator("#freeChatView .input-area .chat-file-button"), moduleName + " attachment remains reachable").toBeVisible();
+  }
+});
+
 test("Explore reflects account access and Images states that AI generation is not yet connected", async ({ page }) => {
   await openApp(page, "ro");
   await page.evaluate(() => {
