@@ -124,8 +124,9 @@
     `);
     const program=gl.createProgram();gl.attachShader(program,vs);gl.attachShader(program,fs);gl.linkProgram(program);
     if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(program)||"program link failed");
-    const data=[...positions,...normals,...colors],vertexCount=positions.length/3;
-    const buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array(data),gl.STATIC_DRAW);
+    const vertexCount=positions.length/3,data=new Float32Array(vertexCount*9);
+    for(let i=0;i<vertexCount;i++){const p=i*3,d=i*9;data[d]=positions[p];data[d+1]=positions[p+1];data[d+2]=positions[p+2];data[d+3]=normals[p];data[d+4]=normals[p+1];data[d+5]=normals[p+2];data[d+6]=colors[p];data[d+7]=colors[p+1];data[d+8]=colors[p+2];}
+    const buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);
     const stride=9*4;
     gl.useProgram(program);
     const attrs=[["aPosition",0],["aNormal",3],["aColor",6]];
