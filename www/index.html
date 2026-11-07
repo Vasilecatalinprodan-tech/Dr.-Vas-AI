@@ -3435,6 +3435,15 @@ for (const [source, translations] of Object.entries(BUSINESS_UI_TRANSLATIONS)) {
   }
 }
 
+
+const BUSINESS_STATUS_TRANSLATIONS = {"unități":["units","unità","birim","Einheiten","unités","unidades","единиц"],"Calcul orientativ înainte de impozite, dobânzi și alte costuri care nu au fost introduse. Monedă: ":["Indicative calculation before taxes, interest and other costs not entered. Currency: ","Calcolo indicativo prima di imposte, interessi e altri costi non inseriti. Valuta: ","Girilmeyen vergi, faiz ve diğer maliyetlerden önceki yaklaşık hesaplama. Para birimi: ","Orientierungsrechnung vor Steuern, Zinsen und weiteren nicht eingegebenen Kosten. Währung: ","Calcul indicatif avant impôts, intérêts et autres coûts non saisis. Devise : ","Cálculo orientativo antes de impuestos, intereses y otros costes no introducidos. Moneda: ","Ориентировочный расчёт до налогов, процентов и других неуказанных расходов. Валюта: "],"Tabelul registrului nu este activ. Aplică migrarea 202611040003_business_cashbook.sql în Supabase.":["The ledger table is not active. Apply migration 202611040003_business_cashbook.sql in Supabase.","La tabella del registro non è attiva. Applica la migrazione 202611040003_business_cashbook.sql in Supabase.","Defter tablosu etkin değil. Supabase üzerinde 202611040003_business_cashbook.sql geçişini uygulayın.","Die Kassenbuchtabelle ist nicht aktiv. Wende die Migration 202611040003_business_cashbook.sql in Supabase an.","La table du registre n'est pas active. Appliquez la migration 202611040003_business_cashbook.sql dans Supabase.","La tabla del registro no está activa. Aplica la migración 202611040003_business_cashbook.sql en Supabase.","Таблица журнала не активна. Примените миграцию 202611040003_business_cashbook.sql в Supabase."],"Aplică migrarea 202611040003_business_cashbook.sql pentru a activa registrul.":["Apply migration 202611040003_business_cashbook.sql to enable the ledger.","Applica la migrazione 202611040003_business_cashbook.sql per attivare il registro.","Defteri etkinleştirmek için 202611040003_business_cashbook.sql geçişini uygulayın.","Wende die Migration 202611040003_business_cashbook.sql an, um das Kassenbuch zu aktivieren.","Appliquez la migration 202611040003_business_cashbook.sql pour activer le registre.","Aplica la migración 202611040003_business_cashbook.sql para activar el registro.","Примените миграцию 202611040003_business_cashbook.sql, чтобы включить журнал."],"Pentru evaluare completează disciplina, cerința și draftul studentului.":["To review, complete the subject, assignment brief and student's draft.","Per la valutazione, completa la materia, la traccia e la bozza dello studente.","Değerlendirme için dersi, ödev açıklamasını ve öğrencinin taslağını doldurun.","Für die Bewertung müssen Fach, Aufgabenstellung und Entwurf des Studierenden ausgefüllt werden.","Pour l'évaluation, renseignez la matière, les consignes et le brouillon de l'étudiant.","Para evaluar, completa la asignatura, las instrucciones y el borrador del estudiante.","Для проверки заполните предмет, задание и черновик студента."],"Student Desk: analiza este pregătită. Verifică brief-ul în chat și apasă Trimite.":["Student Desk: the review is ready. Check the brief in chat and press Send.","Student Desk: l'analisi è pronta. Controlla il brief nella chat e premi Invia.","Student Desk: analiz hazır. Sohbetteki açıklamayı kontrol edin ve Gönder'e basın.","Student Desk: Die Analyse ist vorbereitet. Prüfe den Auftrag im Chat und klicke auf Senden.","Student Desk : l'analyse est prête. Vérifiez le brief dans le chat et cliquez sur Envoyer.","Student Desk: el análisis está listo. Revisa el encargo en el chat y pulsa Enviar.","Student Desk: анализ подготовлен. Проверьте задание в чате и нажмите «Отправить»."],"Conectează-te pentru a salva.":["Sign in to save.","Accedi per salvare.","Kaydetmek için giriş yapın.","Melde dich zum Speichern an.","Connectez-vous pour enregistrer.","Inicia sesión para guardar.","Войдите, чтобы сохранить."],"Completează disciplina și cerința evaluării.":["Complete the subject and assessment brief.","Completa la materia e la traccia della valutazione.","Ders ve değerlendirme açıklamasını doldurun.","Fach und Aufgabenstellung ausfüllen.","Renseignez la matière et les consignes d'évaluation.","Completa la asignatura y las instrucciones de evaluación.","Заполните предмет и задание для оценки."],"Evaluarea a fost salvată privat.":["Assessment saved privately.","Valutazione salvata in privato.","Değerlendirme gizli olarak kaydedildi.","Bewertung wurde privat gespeichert.","Évaluation enregistrée en privé.","Evaluación guardada de forma privada.","Оценка сохранена конфиденциально."],"Evaluarea a fost încărcată.":["Assessment loaded.","Valutazione caricata.","Değerlendirme yüklendi.","Bewertung geladen.","Évaluation chargée.","Evaluación cargada.","Оценка загружена."],"Evaluarea a fost ștearsă.":["Assessment deleted.","Valutazione eliminata.","Değerlendirme silindi.","Bewertung gelöscht.","Évaluation supprimée.","Evaluación eliminada.","Оценка удалена."]};
+for (const [source, translations] of Object.entries(BUSINESS_STATUS_TRANSLATIONS)) {
+  for (let i = 0; i < ["en","it","tr","de","fr","es","ru"].length; i++) {
+    const language = ["en","it","tr","de","fr","es","ru"][i];
+    if (UI[language]) UI[language][source] = translations[i];
+  }
+}
+
 function localizeInterfaceCopy(source){return (ASSISTANT_UI_TRANSLATIONS[currentLanguage]||{})[source]||(UI[currentLanguage]||{})[source]||source}
 function tr(s){return localizeInterfaceCopy(s)}
 function setLocalizedText(target,source){
@@ -5112,14 +5121,14 @@ function calculateBusinessBreakEven(){
 function localizeBusinessDynamicMessage(message){
  const direct=tr(message);if(direct!==message)return direct;
  const patterns=[
-  [/^Registru încărcat: (\\d+) înregistrări pentru (.+)\\.$/,(_,count,currency)=>tr("Registru încărcat: ")+count+tr(" înregistrări pentru ")+currency+"."],
+  [/^Registru încărcat: (\d+) înregistrări pentru (.+)\.$/,(_,count,currency)=>tr("Registru încărcat: ")+count+tr(" înregistrări pentru ")+currency+"."],
   [/^Nu am putut încărca registrul: (.+)$/,(_,detail)=>tr("Nu am putut încărca registrul: ")+detail],
   [/^Nu am putut salva înregistrarea: (.+)$/,(_,detail)=>tr("Nu am putut salva înregistrarea: ")+detail],
   [/^Nu am putut șterge înregistrarea: (.+)$/,(_,detail)=>tr("Nu am putut șterge înregistrarea: ")+detail],
   [/^Nu am putut salva: (.+)$/,(_,detail)=>tr("Nu am putut salva: ")+detail],
   [/^Nu am putut deschide: (.+)$/,(_,detail)=>tr("Nu am putut deschide: ")+detail],
   [/^Nu am putut șterge: (.+)$/,(_,detail)=>tr("Nu am putut șterge: ")+detail],
-  [/^Nu există tranzacții în perioada selectată pentru (.+)\\.$/,(_,currency)=>tr("Nu există tranzacții în perioada selectată pentru ")+currency+"."]
+  [/^Nu există tranzacții în perioada selectată pentru (.+)\.$/,(_,currency)=>tr("Nu există tranzacții în perioada selectată pentru ")+currency+"."]
  ];
  for(const [pattern,format] of patterns){const match=String(message).match(pattern);if(match)return format(...match);}
  return message;
@@ -5223,9 +5232,9 @@ function exportBusinessLedger(){
 }
 function buildStudentAssessmentPrompt(){
  const v=id=>el(id)?.value?.trim()||"",subject=v("studentAssessmentSubject"),brief=v("studentAssessmentBrief"),draft=v("studentAssessmentDraft");
- if(!subject||!brief||!draft){const status=el("studentAssessmentProjectStatus");if(status)status.textContent="Pentru evaluare completează disciplina, cerința și draftul studentului.";return;}
+ if(!subject||!brief||!draft){const status=el("studentAssessmentProjectStatus");if(status)status.textContent=tr("Pentru evaluare completează disciplina, cerința și draftul studentului.");return;}
  const prompt="DR.VAS STUDENT DESK — FEEDBACK ACADEMIC ȘI EVALUARE FORMATIVĂ\nDISCIPLINA: "+subject+"\nNIVEL: "+v("studentAssessmentLevel")+"\nLIMBA: "+v("studentAssessmentLanguage")+"\nCERINȚA OFICIALĂ: "+brief+"\nRUBRICA: "+(v("studentAssessmentRubric")||"Nu a fost furnizată; propune criterii provizorii și marchează-le ca atare.")+"\nDRAFTUL STUDENTULUI: \n"+draft+"\n\nSARCINĂ: Evaluează formativ draftul, nu pretinde că ești evaluatorul oficial și nu inventa nota sau cerințe. Creează: (1) rezumatul cerinței, (2) tabel criteriu/evidență/lacună/sugestie, (3) punctele tari, (4) probleme de argumentare, structură, claritate și gramatică, (5) verificarea citărilor fără a inventa surse, (6) întrebări concrete care îl ajută pe student să-și dezvolte singur ideile, (7) plan de revizuire prioritizat și (8) estimare orientativă numai dacă rubrica permite, cu incertitudini explicite. Păstrează vocea studentului; nu fabrica experiențe, date sau referințe și nu rescrie integral lucrarea pentru a fi predată ca muncă independentă. Dacă oferi un exemplu de paragraf, etichetează-l clar ca exemplu de învățare și explică ce trebuie adaptat de student.";
- submitModuleBrief(prompt,"Student Desk: analiza este pregătită. Verifică brief-ul în chat și apasă Trimite.");
+ submitModuleBrief(prompt,tr("Student Desk: analiza este pregătită. Verifică brief-ul în chat și apasă Trimite."));
 }
 function studentAssessmentBriefData(){
  return {subject:el("studentAssessmentSubject")?.value||"",level:el("studentAssessmentLevel")?.value||"",language:el("studentAssessmentLanguage")?.value||"",assignment:el("studentAssessmentBrief")?.value||"",rubric:el("studentAssessmentRubric")?.value||"",draft:el("studentAssessmentDraft")?.value||""};
@@ -5239,16 +5248,16 @@ async function loadStudentAssessmentProjects(selectedId=""){
  if(selectedId)select.value=selectedId;
 }
 async function saveStudentAssessmentProject(){
- if(!currentUser){el("studentAssessmentProjectStatus").textContent="Conectează-te pentru a salva.";return;}
- const brief=studentAssessmentBriefData();if(!brief.subject||!brief.assignment){el("studentAssessmentProjectStatus").textContent="Completează disciplina și cerința evaluării.";return;}
+ if(!currentUser){el("studentAssessmentProjectStatus").textContent=tr("Conectează-te pentru a salva.");return;}
+ const brief=studentAssessmentBriefData();if(!brief.subject||!brief.assignment){el("studentAssessmentProjectStatus").textContent=tr("Completează disciplina și cerința evaluării.");return;}
  const title=el("studentAssessmentProjectTitle")?.value?.trim()||brief.subject+" — evaluare";
  try{
   const payload={user_id:currentUser.id,module:"business",project_type:"student_assessment_coach",title,brief,updated_at:new Date().toISOString()};
   const result=studentAssessmentState.id
    ?await supabaseClient.from("drvas_module_projects").update(payload).eq("id",studentAssessmentState.id).eq("user_id",currentUser.id).eq("module","business").select("id").single()
    :await supabaseClient.from("drvas_module_projects").insert(payload).select("id").single();
-  if(result.error)throw result.error;studentAssessmentState.id=result.data.id;await loadStudentAssessmentProjects(result.data.id);el("studentAssessmentProjectStatus").textContent="Evaluarea a fost salvată privat.";
- }catch(error){el("studentAssessmentProjectStatus").textContent="Nu am putut salva: "+error.message;}
+  if(result.error)throw result.error;studentAssessmentState.id=result.data.id;await loadStudentAssessmentProjects(result.data.id);el("studentAssessmentProjectStatus").textContent=tr("Evaluarea a fost salvată privat.");
+ }catch(error){el("studentAssessmentProjectStatus").textContent=localizeBusinessDynamicMessage("Nu am putut salva: "+error.message);}
 }
 async function openStudentAssessmentProject(){
  const id=el("studentAssessmentProjectList")?.value;if(!id)return;
@@ -5256,15 +5265,15 @@ async function openStudentAssessmentProject(){
   studentAssessmentState.id=data.id;el("studentAssessmentProjectTitle").value=data.title||"";
   const map={subject:"studentAssessmentSubject",level:"studentAssessmentLevel",language:"studentAssessmentLanguage",assignment:"studentAssessmentBrief",rubric:"studentAssessmentRubric",draft:"studentAssessmentDraft"};
   Object.entries(map).forEach(([key,id])=>{if(data.brief?.[key]!==undefined)el(id).value=data.brief[key];});
-  el("studentAssessmentProjectStatus").textContent="Evaluarea a fost încărcată.";
- }catch(error){el("studentAssessmentProjectStatus").textContent="Nu am putut deschide: "+error.message;}
+  el("studentAssessmentProjectStatus").textContent=tr("Evaluarea a fost încărcată.");
+ }catch(error){el("studentAssessmentProjectStatus").textContent=localizeBusinessDynamicMessage("Nu am putut deschide: "+error.message);}
 }
 async function deleteStudentAssessmentProject(){
  const id=el("studentAssessmentProjectList")?.value||studentAssessmentState.id;if(!id||!currentUser)return;
  if(!window.confirm("Ștergi definitiv această evaluare salvată?"))return;
  try{const {error}=await supabaseClient.from("drvas_module_projects").delete().eq("id",id).eq("user_id",currentUser.id).eq("module","business").eq("project_type","student_assessment_coach");if(error)throw error;
-  if(studentAssessmentState.id===id)studentAssessmentState.id=null;await loadStudentAssessmentProjects();el("studentAssessmentProjectStatus").textContent="Evaluarea a fost ștearsă.";
- }catch(error){el("studentAssessmentProjectStatus").textContent="Nu am putut șterge: "+error.message;}
+  if(studentAssessmentState.id===id)studentAssessmentState.id=null;await loadStudentAssessmentProjects();el("studentAssessmentProjectStatus").textContent=tr("Evaluarea a fost ștearsă.");
+ }catch(error){el("studentAssessmentProjectStatus").textContent=localizeBusinessDynamicMessage("Nu am putut șterge: "+error.message);}
 }
 
 function buildBusinessPrompt(){
