@@ -161,6 +161,19 @@
   section.append(title,description,grid,button,status);
   return section;
  }
+ function founderShortcut(title,description,targetId,buttonText){
+  const section=document.createElement("section");section.className="studio-founder-shortcut";
+  const heading=document.createElement("h4");heading.textContent=title;
+  const copy=document.createElement("p");copy.textContent=description;
+  const button=document.createElement("button");button.type="button";button.textContent=buttonText;
+  button.addEventListener("click",()=>{
+   const target=byId(targetId);
+   if(!target){const message=byId("adminAccessNotice");if(message){message.textContent="Panoul privat nu este disponibil în sesiunea curentă.";message.classList.remove("hidden");}return;}
+   target.scrollIntoView({behavior:"smooth",block:"start"});
+   target.setAttribute("tabindex","-1");target.focus({preventScroll:true});
+  });
+  section.append(heading,copy,button);return section;
+ }
  function studio(root){
   if(built.has(root))return;built.add(root);
   const header=direct(root,".studio-workspace-head");
@@ -170,18 +183,18 @@
   const actions=Array.from(root.children).find(n=>n.matches(".studio-actions"));
   const projects=Array.from(root.children).find(n=>n.matches(".studio-project-manager:not(.studio-render-panel)"));
   const income=direct(root,".income-tracker"),capabilities=direct(root,".studio-capabilities"),social=direct(root,".studio-social");
-  const cryptoAdmin=document.querySelector("#cryptoAdminHeading")?.closest(".crypto-admin-card"),cryptoEngine=document.querySelector(".crypto-engine-panel"),founderWorkbench=document.querySelector(".founder-workbench"),founderProvenance=document.querySelector("[aria-labelledby=\"founderProvenanceHeading\"]");
+  const cryptoShortcut=founderShortcut("₿ Crypto & Mining","Analiză PoW, calculator de rentabilitate, registru de dispozitive și limite de siguranță. Minarea reală este dezactivată până la instalarea agentului local securizat.","cryptoEngineHeading","Deschide panoul Crypto & Mining"),incomeShortcut=founderShortcut("✍️ Creator & Online Income Lab","Cărți, traduceri, muzică, produse digitale, publicare, AI Evaluation și urmărirea oportunităților de venit.","founderProductionHeading","Deschide Creator & Online Income Lab");
   const bookStation=createStudioStation("book"),translationStation=createStudioStation("translation");
   const items=[
    {id:"video",label:"Lucrează la videoclip",title:"Video & Reels",description:"Pregătește scenariul și producția video. Randarea MP4 rămâne disponibilă numai când serviciul este configurat și verificat.",nodes:[production,render],shared:[brief,actions],deliverable:["studioDeliverable","short"]},
    {id:"series",label:"Scrie serial / scenariu",title:"Seriale și scenarii",description:"Lucrează separat la episoade, personaje, dialog și continuitatea poveștii.",shared:[brief,actions],deliverable:["studioDeliverable","series"]},
-   {id:"book",label:"Book Studio",title:"Atelier de cărți și eBookuri",description:"Formular dedicat pentru proiect editorial, structură, capitole și continuitate.",nodes:[bookStation]},
-   {id:"translation",label:"Translation Station",title:"Stație de traducere și localizare",description:"Formular dedicat pentru limbi, stil, glosar și traducere integrală.",nodes:[translationStation]},
+   {id:"book",label:"Book Studio",title:"Atelier de cărți și eBookuri",description:"Formular dedicat pentru proiect editorial, structură, capitole și continuitate.",nodes:[bookStation],deliverable:["studioDeliverable","book"]},
+   {id:"translation",label:"Translation Station",title:"Stație de traducere și localizare",description:"Formular dedicat pentru limbi, stil, glosar și traducere integrală.",nodes:[translationStation],deliverable:["studioDeliverable","translation"]},
    {id:"music",label:"Creează muzică / versuri",title:"Muzică și versuri originale",description:"Pregătește compoziții, structuri, versuri și materiale originale.",shared:[brief,actions],deliverable:["studioDeliverable","music"]},
    {id:"projects",label:"Proiectele mele",title:"Proiecte Studio",description:"Deschide, salvează, exportă sau șterge proiecte private.",nodes:[projects]},
    {id:"income",label:"Urmărește veniturile",title:"Oportunități și venituri",description:"Ține evidența oportunităților, etapelor și încasărilor.",nodes:[income]},
-   {id:"income-lab",label:"Venituri online & produse",title:"Creator & Online Income Lab",description:"Cărți, produse digitale, publicare, muzică, AI Evaluation și dovada criptografică a originii — instrumente private pentru fondator.",nodes:[founderWorkbench,founderProvenance]},
-   {id:"crypto",label:"Crypto & Mining",title:"Crypto & Mining — centru privat",description:"Analiză, compatibilitate, rentabilitate și registru de dispozitive. Minarea reală rămâne dezactivată până la instalarea și autorizarea agentului local securizat.",nodes:[cryptoAdmin,cryptoEngine]},
+   {id:"income-lab",label:"Venituri online & produse",title:"Creator & Online Income Lab",description:"Acces rapid la atelierul privat de cărți, produse digitale, publicare, muzică și evaluare AI.",nodes:[incomeShortcut]},
+   {id:"crypto",label:"Crypto & Mining",title:"Crypto & Mining — centru privat",description:"Analiză, compatibilitate, rentabilitate și registru de dispozitive. Minarea reală rămâne dezactivată până la instalarea și autorizarea agentului local securizat.",nodes:[cryptoShortcut]},
    {id:"social",label:"Social media",title:"Social media și distribuție",description:"Organizează conținutul și verifică starea integrărilor oficiale.",nodes:[capabilities,social]}
   ];
   const usable=items.filter(item=>(item.nodes||[]).some(Boolean)||(item.shared||[]).some(Boolean));
