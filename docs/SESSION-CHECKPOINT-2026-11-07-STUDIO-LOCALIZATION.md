@@ -34,7 +34,10 @@ The 2026-11-07 debug APK was successfully built from main commit `4cfd2399217b74
   - `www/module-workspaces.js`: dynamic validation/save messages use the selected interface language; generated Book and Translation brief headings are localized.
   - `tests/e2e/homepage.spec.cjs`: Playwright regression test iterating EN/IT/TR/DE/FR/ES/RU for Book and Translation station labels and options.
 - Supported UI languages: Romanian (source), English, Italian, Turkish, German, French, Spanish and Russian.
-- Initial workflow lookup for the PR head returned no workflow runs; check PR checks/status again before merge. Do not assume tests passed.
+- First browser regression run: `42418512974` failed before browser tests at the existing Android workflow policy assertion; the failure was not in the new localization code.
+- Root cause: `.github/workflows/browser-e2e.yml` still asserted that Android builds must be manual-only, contradicting the already-approved `.github/workflows/android.yml` workflow (manual dispatch plus main-only path-filtered automatic rebuilds).
+- Updated the guard to require manual dispatch and main-only filtered push triggers with the expected app/Android path filters. The initial correction had an escaping bug in the regex and was corrected in commit `0ebfd9bb0b7daf78c87d1f2f921952a822a17a92`.
+- A new browser workflow run for the latest correction has not yet been confirmed; check PR checks/status again before merge. Do not assume tests passed.
 - PR description explicitly says platform-wide localization is not yet complete.
 
 ## Implementation findings
