@@ -2512,6 +2512,20 @@ test("Dr.Vas Health uses the same chat shell, sidebar destinations and attachmen
   });
 
   await expect(page.locator("#chatSection .history-panel")).toBeVisible();
+  const healthScroll = await page.evaluate(() => ({
+    documentOverflow: getComputedStyle(document.documentElement).overflowY,
+    bodyOverflow: getComputedStyle(document.body).overflowY,
+    documentHeight: document.documentElement.scrollHeight,
+    viewportHeight: document.documentElement.clientHeight,
+    transcriptOverflow: getComputedStyle(document.querySelector("#freeChatView>#chat")).overflowY
+  }));
+  expect(healthScroll.documentOverflow).toBe("scroll");
+  expect(healthScroll.bodyOverflow).toBe("visible");
+  expect(healthScroll.documentHeight).toBeGreaterThan(healthScroll.viewportHeight);
+  expect(healthScroll.transcriptOverflow).toBe("auto");
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await expect.poll(() => page.evaluate(() => window.scrollY > 0)).toBe(true);
+  await expect(page.locator("#freeChatView .input-area .chat-file-button")).toBeInViewport();
   await expect(page.locator("#freeSidebarBrand")).toHaveText("✚ Dr.Vas Health");
   const labels = await page.locator("[data-free-nav]").allTextContents();
   expect(labels.map(value => value.trim())).toEqual(["＋New chat","▧Images","◷Scheduled","▤Library","⌘Plugins","✧Explore","▣Projects","View all"]);
@@ -2538,6 +2552,34 @@ test("Dr.Vas Health uses the same chat shell, sidebar destinations and attachmen
   expect(layout.bodyOverflow).toBe("hidden");
   expect(layout.transcriptOverflow).toBe("auto");
   expect(layout.composerBottom).toBeLessThanOrEqual(layout.viewportHeight);
+});
+
+
+test("Dr.Vas Health mobile page scroll reaches the attachment composer and keeps history in a drawer", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-health-mobile-scroll", email: "health-mobile@example.invalid" };
+    isDrvasAdmin = false;
+    showModuleSelection();
+    selectModule("health", true);
+  });
+  await expect(page.locator(".chat-history-toggle")).toBeVisible();
+  const before = await page.evaluate(() => ({
+    rootOverflow: getComputedStyle(document.documentElement).overflowY,
+    pageHeight: document.documentElement.scrollHeight,
+    viewportHeight: document.documentElement.clientHeight,
+    transcriptOverflow: getComputedStyle(document.querySelector("#freeChatView>#chat")).overflowY
+  }));
+  expect(before.rootOverflow).toBe("scroll");
+  expect(before.pageHeight).toBeGreaterThan(before.viewportHeight);
+  expect(before.transcriptOverflow).toBe("auto");
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await expect.poll(() => page.evaluate(() => window.scrollY > 0)).toBe(true);
+  await expect(page.locator("#freeChatView .input-area .chat-file-button")).toBeInViewport();
+  await page.locator(".chat-history-toggle").click();
+  await expect(page.locator("#chatSection .history-panel")).toBeVisible();
+  await expect(page.locator("#freeSidebarBrand")).toHaveText("✚ Dr.Vas Health");
 });
 
 
