@@ -35,3 +35,15 @@ The desktop left history/sidebar must remain visible. On mobile it may be an acc
 
 ## Conversation preservation
 This file captures the user's explicit requirement and the technical decision from this chat. It is a durable engineering checkpoint, not a verbatim transcript export. The original chat remains in ChatGPT history.
+
+
+## First CI run — findings and corrective follow-up
+- Workflow run #615, ID `42372651549`, on code commit `e4b91050b8c4d5d91eb0e08d91717662bc5987d9`: **127 passed, 5 failed**.
+- Static JavaScript/Worker/migration checks, Chromium installation and server startup passed.
+- Three legacy tests still asserted that Free's page overflow must be `hidden`; these expectations contradicted the founder's new explicit requirement and have been updated to assert page-level scrolling.
+- The new desktop test exposed a specificity collision: an older `body.free-module-mode #chatSection .chat-main #freeChatView>#chat` rule set `max-height:none!important`, defeating the initial transcript cap. Added a higher-specificity final rule that explicitly sets a bounded transcript height and its own vertical overflow.
+- The final desktop/mobile independent-scroll tests remain in the suite. No merge or production deployment has occurred.
+- Corrective code/test commits after the first CI attempt:
+  - `7aa1961722e55e9a0f0b03d6506201f33ed41030` — enforce bounded transcript height against legacy workspace rules.
+  - `fdd95c90658b3b95f5a4bef8813ef175288b71b5` — update legacy regression expectations to the new independent page-scroll contract.
+- A fresh browser workflow for the updated PR head is required. Do not merge until the complete suite passes.
