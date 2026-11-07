@@ -2700,7 +2700,7 @@ function clearRememberedModule(userId){
 }
 
 function setChatNavigationDisabled(disabled,lockViews=false){
-  document.querySelectorAll(".new-chat-button,.delete-history-button,.conversation-item,.drvas-feature-navigation button,.module-card,.chat-module-rail [data-chat-module],#globalBackToModules,#sendButton")
+  document.querySelectorAll(".new-chat-button,.delete-history-button,.conversation-item,.drvas-feature-navigation button,.module-card,.chat-module-rail [data-chat-module],#globalBackToModules")
     .forEach(button=>{button.disabled=disabled;});
   if(lockViews)document.querySelectorAll("[data-free-nav]").forEach(button=>{button.disabled=disabled;});
 }
@@ -3527,6 +3527,7 @@ async function startLiveVoice(){
   const status=el("voiceStatus");if(status)status.textContent=liveLabel("error");
   return;
  }
+ if(currentConversationIsLegacy){const status=el("voiceStatus");if(status)status.textContent="Deschide New chat pentru a începe o conversație vocală nouă; istoricul vechi rămâne doar pentru citire.";return;}
  if(isSendingMessage||loadingConversation){const status=el("voiceStatus");if(status)status.textContent="Așteaptă finalizarea mesajului sau încărcarea conversației înainte de Live.";return;}
  if(!currentConversationId)currentConversationId=makeId();
  liveConversationId=currentConversationId;
@@ -3534,6 +3535,7 @@ async function startLiveVoice(){
  liveConversationFeatureKey=activeFeatureKey;
  rememberActiveConversation(liveConversationId,liveConversationModule,liveConversationFeatureKey);
  setChatNavigationDisabled(true,true);
+ if(el("sendButton"))el("sendButton").disabled=true;
  const status=el("voiceStatus");
  if(status)status.textContent=liveLabel("connecting");
  try{
@@ -3661,6 +3663,7 @@ async function startLiveVoice(){
     await saveLiveTurn();
     liveConversationId=null;liveConversationModule=null;liveConversationFeatureKey=null;
     setChatNavigationDisabled(false,true);
+    if(el("sendButton"))el("sendButton").disabled=currentConversationIsLegacy;
     refreshVoiceUi();
     if(status)status.textContent=liveFailureMessage ? (liveLabel("error")+" "+liveFailureMessage) : liveLabel("stopped");
    }
