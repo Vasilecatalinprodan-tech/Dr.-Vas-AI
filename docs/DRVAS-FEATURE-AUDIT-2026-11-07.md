@@ -99,3 +99,21 @@ The ChatGPT conversation remains in the user's ChatGPT history. This document pr
 - Mining and sustainable online-income research saved in `docs/DRVAS-MINING-ONLINE-INCOME-RESEARCH-2026-11-07.md`. Google Play does not allow apps to mine cryptocurrency on users' devices; remote mining management is permitted. Real mining remains disabled until a separate owned device/agent, measured electricity tariff, safe limits and explicit start/stop controls are validated.
 - Session checkpoint: `docs/SESSION-CHECKPOINT-2026-11-07-SARAH-DNA-MINING-ONLINE-INCOME.md`.
 
+
+
+## Scroll restoration release — 7 November 2026
+
+- PR #49 merged into main: `6d9416131f5ce88add7b611251f9dee7969a8d17`.
+- Browser E2E run `42367806621`: 122/122 passed.
+- Deployment run `42367806541`: success, including Supabase migration gate/IPv4 migration step, Cloudflare Worker deployment and production smoke test.
+- Android build run `42367806532`: success; APK artifact ID `13572527555`, expires 5 February 2027.
+- Added a root-document scrollbar override for isolated module workspaces when the legacy fitted-chat lock is present; preserved the chat transcript's independent scrollbar and Free's fitted viewport.
+- Full details and the remaining manual verification are recorded in `docs/SESSION-CHECKPOINT-2026-11-07-PAGE-SCROLL-RESTORE.md`.
+
+## Next cross-module quality priorities
+
+- Physically inspect page-level scroll and attachment reachability on desktop/mobile; automated tests passed but cannot replace the founder's real-device visual check.
+- Strengthen all-six-module chat-shell tests to assert the sidebar is genuinely visible/usable at desktop and accessible as a drawer on mobile, and verify the same for attachment/composer placement.
+- Recheck context isolation and legacy conversation safety across module, feature and user boundaries.
+- Verify live Supabase RLS/storage and two-owner access for conversations, attachments, reminders, Library and Projects.
+- Continue real end-to-end feature/provider verification; do not equate visible UI with a finished provider integration.
