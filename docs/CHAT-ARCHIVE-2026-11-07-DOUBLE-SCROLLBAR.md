@@ -236,3 +236,12 @@ Archive update:
 - Merge order: PR #68 first, then PR #69, only after the latest E2E checks pass; then confirm main deployment and smoke test. Continue with Studio, Academy, Commerce and Business localization.
 
 This archive preserves project decisions and exact user instructions; it is a structured archive, not a literal export of the complete ChatGPT UI transcript.
+
+
+## Correction — PR #68 merge and phase-2 rebase
+
+- PR #68 shared-controls phase 1 passed latest browser regression run 42407769955 and merged to main as 87e72105ab4778be236b9e1e93fde7f98276086c.
+- Main deploy run 42408000932 and main browser regression run 42408000955 were pending at this checkpoint.
+- PR #69 was closed as superseded because its branch was stacked on the pre-squash PR #68 branch and became dirty after PR #68 merged. The latest PR #69 E2E also exposed an overly broad test selector for the Health action button.
+- No phase-2 application work was lost. Replacement PR #71 rebases the Free/Health localization code directly onto the new main commit and corrects the selector to the explicit Health action button. Branch feat/localize-free-health-phase2-rebased-2026-11-07; head b9f775728ff1de4bb166b211569fff90bb60da6f; latest E2E run 42408117217 in progress at this checkpoint.
+- Merge PR #71 only after its latest E2E succeeds, then verify main deploy and smoke test.
