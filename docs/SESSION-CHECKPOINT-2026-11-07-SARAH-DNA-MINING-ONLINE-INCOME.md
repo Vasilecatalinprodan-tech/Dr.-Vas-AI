@@ -36,7 +36,10 @@
 - PR #48 a adăugat MutationObserver care menține alt text-ul portretului sincronizat cu prezentatorul activ, chiar dacă un callback vechi rescrie o etichetă greșită.
 - Browser E2E PR #47: run 42366366924 — **122 passed**.
 - Browser E2E PR #48: run 42366744678 — **122 passed**.
-- Deploy, browser regression și APK build pentru commit-ul final 5dd20125b3ce6a849a0114762b88b74e483f5a82 sunt în coadă la momentul actualizării.
+- Deploy final pentru commit-ul 5dd20125b3ce6a849a0114762b88b74e483f5a82: run 42366871063 — **success**; browser tests 122 passed, Supabase migrations/verification passed, Worker deployed, production smoke test passed; /health a raportat status online.
+- Browser E2E main: run 42366871010 — **122 passed**.
+- APK final: run 42366871058 — **success**; artifact DrVas-APK ID 13571329196, 6,377,389 bytes, expiră la 5 februarie 2027.
+- Link APK: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42366871058/artifacts/13571329196.
 
 ## Cercetare salvată
 - Document: docs/DRVAS-MINING-ONLINE-INCOME-RESEARCH-2026-11-07.md
