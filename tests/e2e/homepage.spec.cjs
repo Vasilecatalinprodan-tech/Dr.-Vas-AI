@@ -2654,19 +2654,26 @@ test("all six module chats share the same sidebar destinations and attachment co
 test("module pages expose the page scrollbar and presenter portraits visibly react while speaking", async ({ page }) => {
   await openApp(page, "ro");
   const styles = await page.evaluate(() => {
-    const body = getComputedStyle(document.body);
     const root = getComputedStyle(document.documentElement);
     const avatar = document.querySelector("#presentationAvatar");
     const presenter = document.querySelector("#presentationPresenter");
     presenter?.classList.add("is-speaking");
+    document.body.classList.add("module-workspace-mode");
+    const workspaceScroll = getComputedStyle(document.querySelector("main")).overflowY;
+    document.body.classList.remove("module-workspace-mode");
+    document.body.classList.add("free-module-mode");
+    const freeScroll = getComputedStyle(document.querySelector("main")).overflowY;
     return {
       pageScrollbar: root.scrollbarWidth,
       scrollbarColor: root.scrollbarColor,
-      haloAnimation: getComputedStyle(avatar, "::after").animationName,
-      photoMotion: getComputedStyle(avatar.querySelector(".presentation-photo") || avatar, "img").animationName
+      workspaceScroll,
+      freeScroll,
+      haloAnimation: getComputedStyle(avatar, "::after").animationName
     };
   });
   expect(styles.pageScrollbar).toBe("thin");
   expect(styles.scrollbarColor).toContain("#4d8795");
+  expect(styles.workspaceScroll).toBe("scroll");
+  expect(styles.freeScroll).toBe("scroll");
   expect(styles.haloAnimation).toBe("presenterVoiceHalo");
 });
