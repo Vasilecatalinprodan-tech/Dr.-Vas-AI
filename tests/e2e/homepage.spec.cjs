@@ -2697,8 +2697,11 @@ test("all six module chats share the same sidebar destinations and attachment co
     showModuleSelection();
   });
   const expected = ["＋New chat","▧Images","◷Scheduled","▤Library","⌘Plugins","✧Explore","▣Projects","View all"];
+  const defaultFeatures = { free:"", health:"health-brief", studio:"video", academy:"course", commerce:"research", business:"plan" };
   for (const moduleName of ["free","health","studio","academy","commerce","business"]) {
     await page.evaluate(name => selectModule(name, true), moduleName);
+    const activeFeature = await page.evaluate(() => activeFeatureKey);
+    expect(activeFeature, moduleName + " default feature context").toBe(defaultFeatures[moduleName]);
     await expect(page.locator("#chatSection .history-panel"), moduleName + " sidebar").toBeVisible();
     const shellModes = await page.evaluate(() => ({ free: document.body.classList.contains("free-module-mode"), health: document.body.classList.contains("health-module-mode"), shared: document.body.classList.contains("shared-chat-sidebar-mode") }));
     if (moduleName === "free") expect(shellModes.free).toBe(true);
