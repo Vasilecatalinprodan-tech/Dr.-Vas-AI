@@ -6749,13 +6749,13 @@ initLanguage();
  };
  const multiply=(a,b)=>{const o=new Float32Array(16);for(let c=0;c<4;c++)for(let r=0;r<4;r++)o[c*4+r]=a[r]*b[c*4]+a[4+r]*b[c*4+1]+a[8+r]*b[c*4+2]+a[12+r]*b[c*4+3];return o};
  const perspective=(fov,aspect,near,far)=>{const f=1/Math.tan(fov/2),nf=1/(near-far),o=new Float32Array(16);o[0]=f/aspect;o[5]=f;o[10]=(far+near)*nf;o[11]=-1;o[14]=2*far*near*nf;return o};
- const translation=(z)=>{const m=new Float32Array(16);m[0]=m[5]=m[10]=m[15]=1;m[14]=z;return m};
+ const translation=(z)=>{const m=new Float32Array(16);m[0]=m[5]=m[10]=m[15]=1;m[14]=z;return m};\n const scaling=(x,y,z)=>{const m=new Float32Array(16);m[0]=x;m[5]=y;m[10]=z;m[15]=1;return m};
  const rotation=(y,x)=>{const cy=Math.cos(y),sy=Math.sin(y),cx=Math.cos(x),sx=Math.sin(x);const ry=new Float32Array([cy,0,-sy,0,0,1,0,0,sy,0,cy,0,0,0,0,1]);const rx=new Float32Array([1,0,0,0,0,cx,sx,0,0,-sx,cx,0,0,0,0,1]);return multiply(ry,rx)};
  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
  wrappers.forEach((wrapper,index)=>{
   const canvas=wrapper.querySelector('.dna-webgl-canvas');if(!canvas)return;
   let gl;try{gl=canvas.getContext('webgl',{alpha:true,antialias:true,depth:true,powerPreference:'low-power'})||canvas.getContext('experimental-webgl')}catch(_){}
-  if(!gl)return;
+  if(!gl){wrapper.dataset.dnaRenderer='svg-fallback';return;}
   try{
    const program=programFor(gl),mesh=geometry();gl.useProgram(program);
    const bind=(name,data,size)=>{const b=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.bufferData(gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);const loc=gl.getAttribLocation(program,name);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,size,gl.FLOAT,false,0,0)};
@@ -6765,7 +6765,7 @@ initLanguage();
    const start=performance.now()+index*1600;let frame=0,observer;
    const resize=()=>{const rect=wrapper.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,1.65);const w=Math.max(1,Math.round(rect.width*dpr)),h=Math.max(1,Math.round(rect.height*dpr));if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;gl.viewport(0,0,w,h)}};
    observer=new ResizeObserver(resize);observer.observe(wrapper);resize();
-   const draw=now=>{if(!canvas.isConnected){observer.disconnect();return}resize();gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);const elapsed=reduced?0:(now-start)/1000;const model=rotation(elapsed*.42+index*.4,.12+Math.sin(elapsed*.22)*.08);const proj=perspective(.52,canvas.width/canvas.height,.1,60);const mvp=multiply(proj,multiply(translation(-10.8),model));gl.uniformMatrix4fv(mvpLoc,false,mvp);gl.uniformMatrix4fv(modelLoc,false,model);gl.drawArrays(gl.TRIANGLES,0,mesh.count);if(!frame++){wrapper.classList.add('dna-webgl-active');wrapper.dataset.dnaRenderer='webgl2-or-webgl'}if(!reduced)requestAnimationFrame(draw)};
+   const draw=now=>{if(!canvas.isConnected){observer.disconnect();return}resize();gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);const elapsed=reduced?0:(now-start)/1000;const aspect=canvas.width/canvas.height;const model=multiply(rotation(elapsed*.42+index*.4,.12+Math.sin(elapsed*.22)*.08),scaling(Math.min(1,aspect/.30),1,1));const proj=perspective(.52,aspect,.1,60);const mvp=multiply(proj,multiply(translation(-15.5),model));gl.uniformMatrix4fv(mvpLoc,false,mvp);gl.uniformMatrix4fv(modelLoc,false,model);gl.drawArrays(gl.TRIANGLES,0,mesh.count);if(!frame++){wrapper.classList.add('dna-webgl-active');wrapper.dataset.dnaRenderer='webgl2-or-webgl'}if(!reduced)requestAnimationFrame(draw)};
    requestAnimationFrame(draw);
    canvas.addEventListener('webglcontextlost',()=>{wrapper.classList.remove('dna-webgl-active');wrapper.dataset.dnaRenderer='svg-fallback';observer.disconnect()},{once:true});
   }catch(error){wrapper.dataset.dnaRenderer='svg-fallback';console.warn('Dr.Vas DNA WebGL fallback:',error)}
