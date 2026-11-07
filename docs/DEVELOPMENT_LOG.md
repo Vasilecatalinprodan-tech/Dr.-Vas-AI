@@ -873,3 +873,14 @@ User's request (verbatim):
 - Added a focused test-only `checkSession = () => {}` override within that one test. Dedicated session restoration tests remain unchanged and continue to exercise authentication behavior.
 - Follow-up branch: `test/fix-language-welcome-e2e-2026-11-07`, based on PR #65 head. Await fresh CI before merge. No merge or deployment claimed yet.
 - User instruction for this continuation: “hai sa continuam.....salveaza tot inclusiv chatul”. Full translation audit across all buttons, labels and dynamic messages is still outstanding; do not represent localization as complete.
+
+
+## 2026-11-07 — PR #65 merged; main verification pending
+
+- Corrected language UI browser E2E run 42400984726 completed successfully (head c96238d6ae002a7873e7141a9e8a154dd15e4fff).
+- PR #65 (fix: localize assistant welcome and language controls) squash-merged successfully into main.
+- Merge commit: b2d704d0629f6180dc2a5386202c254efea5632a.
+- PR preview check Workers Builds: dr--vas-ai failed; the critical browser E2E check passed. Production deployment is separately handled by main workflow.
+- Main deploy run 42404191719 and main browser regression run 42404191767 were triggered and queued at this checkpoint. Await both before reporting production status.
+- Next implementation scope: systematic audit and translation of all static/dynamic module controls, labels, placeholders and messages for all supported languages. Current PR is not full localization completion.
+- Latest user instruction: “salveaza tot inclusiv chatul si continua”. Preserved in this archive. APK remains final stage of the founder's roadmap.
