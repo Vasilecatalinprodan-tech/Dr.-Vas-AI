@@ -5511,7 +5511,7 @@ async function loadConversationList(){
    row.append(button,actions);list.appendChild(row);
   });
   updateActiveConversation();return all;
- }catch(error){console.error("Conversation list:",error);setLocalizedText(list,"Nu am putut încărca istoricul. Verifică migrarea pentru administrarea conversațiilor.");return [];}
+ }catch(error){if(requestId!==conversationListRequestId)return [];console.error("Conversation list:",error);setLocalizedText(list,"Nu am putut încărca istoricul. Verifică migrarea pentru administrarea conversațiilor.");return [];}
 }
 function toggleArchivedConversations(){showArchivedConversations=!showArchivedConversations;loadConversationList();}
 async function renameConversation(conversation){
