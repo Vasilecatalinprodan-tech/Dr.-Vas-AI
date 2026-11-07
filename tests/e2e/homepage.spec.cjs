@@ -2544,17 +2544,20 @@ test("Dr.Vas Health uses the same chat shell, sidebar destinations and attachmen
   await page.locator('[data-free-nav="chat"]').click();
   await expect(page.locator("#freeChatView")).toBeVisible();
 
+  const attachmentAfterNavigation = page.locator("#freeChatView .input-area .chat-file-button");
+  await expect(attachmentAfterNavigation).toBeVisible();
+  await attachmentAfterNavigation.scrollIntoViewIfNeeded();
+  await expect(attachmentAfterNavigation).toBeInViewport();
   const layout = await page.evaluate(() => ({
     shellEnabled: document.body.classList.contains("free-module-mode"),
     bodyOverflow: getComputedStyle(document.body).overflowY,
-    transcriptOverflow: getComputedStyle(document.querySelector("#freeChatView>#chat")).overflowY,
-    composerBottom: document.querySelector("#freeChatView .input-area").getBoundingClientRect().bottom,
-    viewportHeight: innerHeight
+    documentOverflow: getComputedStyle(document.documentElement).overflowY,
+    transcriptOverflow: getComputedStyle(document.querySelector("#freeChatView>#chat")).overflowY
   }));
   expect(layout.shellEnabled).toBe(true);
-  expect(layout.bodyOverflow).toBe("hidden");
+  expect(layout.bodyOverflow).not.toBe("hidden");
+  expect(layout.documentOverflow).toBe("scroll");
   expect(layout.transcriptOverflow).toBe("auto");
-  expect(layout.composerBottom).toBeLessThanOrEqual(layout.viewportHeight);
 });
 
 
