@@ -2700,7 +2700,7 @@ function clearRememberedModule(userId){
 }
 
 function setChatNavigationDisabled(disabled){
-  document.querySelectorAll(".new-chat-button,.delete-history-button,.conversation-item,.drvas-feature-navigation button")
+  document.querySelectorAll(".new-chat-button,.delete-history-button,.conversation-item,.drvas-feature-navigation button,.module-card,.chat-module-rail [data-chat-module],#globalBackToModules")
     .forEach(button=>{button.disabled=disabled;});
 }
 
@@ -5636,7 +5636,7 @@ async function openConversation(conversationId,conversationModule=activeModule,c
 }
 
 function newConversation(){
-  if(!currentUser || isSendingMessage) return;
+  if(!currentUser || isSendingMessage || loadingConversation) return;
   currentConversationId = makeId();
   currentConversationIsLegacy=false;
   if(["free","health","studio","academy","commerce","business"].includes(activeModule))openFreeNavView("chat",false);
