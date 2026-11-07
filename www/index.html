@@ -2881,6 +2881,15 @@ function localizedAssistantCopy(assistantId,field){
  return (ASSISTANT_UI_TRANSLATIONS[currentLanguage]||{})[source]||tr(source);
 }
 
+
+Object.assign(UI.en,{"● AI ASSISTANT ONLINE":"● AI ASSISTANT ONLINE","VORBEȘTE CU DR.VAS":"TALK TO DR.VAS","YOUR LANGUAGE · YOUR DR.VAS":"YOUR LANGUAGE · YOUR DR.VAS","Select your language":"Select your language","Choose the language you want to use throughout Dr.Vas.":"Choose the language you want to use throughout Dr.Vas.","← Înapoi la module":"← Back to modules"});
+Object.assign(UI.it,{"● AI ASSISTANT ONLINE":"● ASSISTENTE AI ONLINE","VORBEȘTE CU DR.VAS":"PARLA CON DR.VAS","YOUR LANGUAGE · YOUR DR.VAS":"LA TUA LINGUA · IL TUO DR.VAS","Select your language":"Seleziona la lingua","Choose the language you want to use throughout Dr.Vas.":"Scegli la lingua da utilizzare in tutta la piattaforma Dr.Vas.","← Înapoi la module":"← Torna ai moduli"});
+Object.assign(UI.tr,{"● AI ASSISTANT ONLINE":"● YAPAY ZEKÂ ASİSTANI ÇEVRİM İÇİ","VORBEȘTE CU DR.VAS":"DR.VAS İLE KONUŞ","YOUR LANGUAGE · YOUR DR.VAS":"SENİN DİLİN · SENİN DR.VAS'IN","Select your language":"Dilini seç","Choose the language you want to use throughout Dr.Vas.":"Dr.Vas boyunca kullanmak istediğin dili seç.","← Înapoi la module":"← Modüllere dön"});
+Object.assign(UI.de,{"● AI ASSISTANT ONLINE":"● KI-ASSISTENT ONLINE","VORBEȘTE CU DR.VAS":"MIT DR.VAS SPRECHEN","YOUR LANGUAGE · YOUR DR.VAS":"DEINE SPRACHE · DEIN DR.VAS","Select your language":"Sprache auswählen","Choose the language you want to use throughout Dr.Vas.":"Wähle die Sprache für die gesamte Dr.Vas-Plattform.","← Înapoi la module":"← Zurück zu den Modulen"});
+Object.assign(UI.fr,{"● AI ASSISTANT ONLINE":"● ASSISTANT IA EN LIGNE","VORBEȘTE CU DR.VAS":"PARLER À DR.VAS","YOUR LANGUAGE · YOUR DR.VAS":"VOTRE LANGUE · VOTRE DR.VAS","Select your language":"Choisissez votre langue","Choose the language you want to use throughout Dr.Vas.":"Choisissez la langue à utiliser dans toute la plateforme Dr.Vas.","← Înapoi la module":"← Retour aux modules"});
+Object.assign(UI.es,{"● AI ASSISTANT ONLINE":"● ASISTENTE IA EN LÍNEA","VORBEȘTE CU DR.VAS":"HABLA CON DR.VAS","YOUR LANGUAGE · YOUR DR.VAS":"TU IDIOMA · TU DR.VAS","Select your language":"Selecciona tu idioma","Choose the language you want to use throughout Dr.Vas.":"Elige el idioma que quieres utilizar en toda la plataforma Dr.Vas.","← Înapoi la module":"← Volver a los módulos"});
+Object.assign(UI.ru,{"● AI ASSISTANT ONLINE":"● ИИ-АССИСТЕНТ В СЕТИ","VORBEȘTE CU DR.VAS":"ПОГОВОРИТЕ С DR.VAS","YOUR LANGUAGE · YOUR DR.VAS":"ВАШ ЯЗЫК · ВАШ DR.VAS","Select your language":"Выберите язык","Choose the language you want to use throughout Dr.Vas.":"Выберите язык для всей платформы Dr.Vas.","← Înapoi la module":"← К модулям"});
+
 function localizeInterfaceCopy(source){return (ASSISTANT_UI_TRANSLATIONS[currentLanguage]||{})[source]||(UI[currentLanguage]||{})[source]||source}
 function tr(s){return localizeInterfaceCopy(s)}
 function setLocalizedText(target,source){
