@@ -92,6 +92,75 @@
   open(items[0].id);
   return {open,pageMap};
  }
+ function stationField(labelText,id,tag="input",attributes={}){
+  const label=document.createElement("label");label.textContent=labelText;
+  const field=document.createElement(tag);
+  field.id=id;field.name=id;
+  Object.entries(attributes).forEach(([key,value])=>{
+   if(key==="options")return;
+   field.setAttribute(key,String(value));
+  });
+  if(attributes.options)attributes.options.forEach(option=>{
+   const item=document.createElement("option");item.value=option.value;item.textContent=option.label;field.appendChild(item);
+  });
+  label.appendChild(field);return {label,field};
+ }
+ function createStudioStation(kind){
+  const section=document.createElement("section");section.className="studio-station-card";
+  const title=document.createElement("h4"),description=document.createElement("p"),grid=document.createElement("div"),status=document.createElement("p"),button=document.createElement("button");
+  grid.className="studio-station-grid";status.className="studio-station-status";status.setAttribute("role","status");status.setAttribute("aria-live","polite");
+  const fields=kind==="book"?[
+   stationField("Titlul cărții","drvasBookStationTitle","input",{maxlength:140,placeholder:"Titlul provizoriu"}),
+   stationField("Genul editorial","drvasBookStationGenre","select",{options:[{value:"Roman dramatic",label:"Roman dramatic"},{value:"Thriller / mister",label:"Thriller / mister"},{value:"Dezvoltare personală",label:"Dezvoltare personală"},{value:"Business și antreprenoriat",label:"Business și antreprenoriat"},{value:"Memorii / autobiografie",label:"Memorii / autobiografie"},{value:"Carte educațională",label:"Carte educațională"},{value:"Copii și familie",label:"Copii și familie"}]}),
+   stationField("Limba cărții","drvasBookStationLanguage","select",{options:[{value:"Română",label:"Română"},{value:"Engleză",label:"Engleză"},{value:"Italiană",label:"Italiană"},{value:"Turcă",label:"Turcă"},{value:"Germană",label:"Germană"},{value:"Franceză",label:"Franceză"},{value:"Spaniolă",label:"Spaniolă"}]}),
+   stationField("Public-țintă","drvasBookStationAudience","input",{maxlength:180,placeholder:"Cui i se adresează cartea?"}),
+   stationField("Dimensiune","drvasBookStationLength","select",{options:[{value:"Ghid scurt · 8–12 capitole",label:"Ghid scurt · 8–12 capitole"},{value:"Carte medie · 12–18 capitole",label:"Carte medie · 12–18 capitole"},{value:"Roman amplu · 20–30 capitole",label:"Roman amplu · 20–30 capitole"}]}),
+   stationField("Ideea, mesajul și conținutul dorit","drvasBookStationConcept","textarea",{rows:6,maxlength:4500,placeholder:"Descrie ideea, personajele, mesajul, evenimentele și ce vrei să obțină cititorul."})
+  ]:[
+   stationField("Limba sursă","drvasTranslationSource","select",{options:[{value:"auto",label:"Detectare automată"},{value:"ro",label:"Română"},{value:"en",label:"Engleză"},{value:"it",label:"Italiană"},{value:"tr",label:"Turcă"},{value:"fr",label:"Franceză"},{value:"de",label:"Germană"},{value:"es",label:"Spaniolă"},{value:"pt",label:"Portugheză"},{value:"nl",label:"Olandeză"},{value:"pl",label:"Poloneză"},{value:"uk",label:"Ucraineană"},{value:"ru",label:"Rusă"},{value:"ar",label:"Arabă"},{value:"zh",label:"Chineză"},{value:"ja",label:"Japoneză"}]}),
+   stationField("Limba țintă","drvasTranslationTarget","select",{options:[{value:"",label:"Alege limba țintă"},{value:"ro",label:"Română"},{value:"en",label:"Engleză"},{value:"it",label:"Italiană"},{value:"tr",label:"Turcă"},{value:"fr",label:"Franceză"},{value:"de",label:"Germană"},{value:"es",label:"Spaniolă"},{value:"pt",label:"Portugheză"},{value:"nl",label:"Olandeză"},{value:"pl",label:"Poloneză"},{value:"uk",label:"Ucraineană"},{value:"ru",label:"Rusă"},{value:"ar",label:"Arabă"},{value:"zh",label:"Chineză"},{value:"ja",label:"Japoneză"}]}),
+   stationField("Stilul traducerii","drvasTranslationStyle","select",{options:[{value:"Fidelă și naturală",label:"Fidelă și naturală"},{value:"Formală / profesională",label:"Formală / profesională"},{value:"Juridică — cu verificare umană",label:"Juridică — cu verificare umană"},{value:"Tehnică — cu glosar",label:"Tehnică — cu glosar"},{value:"Literară / creativă",label:"Literară / creativă"},{value:"Marketing / localizare",label:"Marketing / localizare"}]}),
+   stationField("Format","drvasTranslationFormat","select",{options:[{value:"Text simplu, păstrează paragrafele",label:"Text simplu, păstrează paragrafele"},{value:"SRT / VTT, păstrează timpii",label:"SRT / VTT, păstrează timpii"},{value:"Document cu tabel sursă–traducere",label:"Document cu tabel sursă–traducere"}]}),
+   stationField("Glosar / termeni care trebuie păstrați","drvasTranslationGlossary","textarea",{rows:3,maxlength:1500,placeholder:"Termen original = traducere preferată"}),
+   stationField("Textul de tradus","drvasTranslationText","textarea",{rows:8,maxlength:4500,placeholder:"Lipește textul aici. Pentru documente mari, folosește încărcarea fișierului în Studio."})
+  ];
+  title.textContent=kind==="book"?"📚 Book Studio — atelier de carte și eBook":"🌍 Translation Station — stație de traducere";
+  description.textContent=kind==="book"?"Construiește proiectul editorial etapizat: sinopsis, structură, capitole, continuitate, editare și pregătire pentru export.":"Tradu integral și localizează texte în mai multe limbi, păstrând terminologia, formatarea și marcajele temporale.";
+  fields.forEach(field=>grid.appendChild(field.label));
+  button.type="button";button.className="studio-station-submit";button.textContent=kind==="book"?"Creează și salvează proiectul de carte":"Pregătește traducerea și salvează proiectul";
+  button.addEventListener("click",async()=>{
+   const value=id=>byId(id)?.value?.trim()||"";
+   if(kind==="book"){
+    const concept=value("drvasBookStationConcept");
+    if(!concept){status.textContent="Descrie ideea cărții înainte de a continua.";byId("drvasBookStationConcept")?.focus();return;}
+    const bookTitle=value("drvasBookStationTitle")||"Carte nouă";
+    const idea=["TITLU: "+bookTitle,"GEN: "+value("drvasBookStationGenre"),"LIMBA: "+value("drvasBookStationLanguage"),"PUBLIC: "+value("drvasBookStationAudience"),"DIMENSIUNE: "+value("drvasBookStationLength"),"CONCEPT ȘI CERINȚE:",concept].join("\n");
+    window.newStudioProject?.();
+    if(byId("studioDeliverable"))byId("studioDeliverable").value="book";
+    if(byId("studioProjectTitle"))byId("studioProjectTitle").value=bookTitle;
+    if(byId("studioIdea"))byId("studioIdea").value=idea.slice(0,5000);
+    if(byId("studioMonetization"))byId("studioMonetization").value="ebook";
+   }else{
+    const source=value("drvasTranslationText"),target=value("drvasTranslationTarget");
+    if(!source){status.textContent="Adaugă textul care trebuie tradus.";byId("drvasTranslationText")?.focus();return;}
+    if(!target){status.textContent="Alege limba țintă.";byId("drvasTranslationTarget")?.focus();return;}
+    const title="Traducere "+value("drvasTranslationSource")+" → "+target;
+    const idea=["STIL: "+value("drvasTranslationStyle"),"FORMAT: "+value("drvasTranslationFormat"),"GLOSAR:",value("drvasTranslationGlossary")||"Nu a fost furnizat.","TEXT SURSĂ:",source].join("\n");
+    window.newStudioProject?.();
+    if(byId("studioDeliverable"))byId("studioDeliverable").value="translation";
+    if(byId("studioProjectTitle"))byId("studioProjectTitle").value=title;
+    if(byId("studioSourceLanguage"))byId("studioSourceLanguage").value=value("drvasTranslationSource")||"auto";
+    if(byId("studioTargetLanguage"))byId("studioTargetLanguage").value=target;
+    if(byId("studioIdea"))byId("studioIdea").value=idea.slice(0,5000);
+    if(byId("studioMonetization"))byId("studioMonetization").value="freelance";
+   }
+   const saved=await window.saveStudioProject?.();
+   window.buildStudioPrompt?.();
+   status.textContent=saved?"Proiect salvat privat. Brief-ul este pregătit în conversație; verifică-l și apasă Trimite.":"Brief pregătit. Salvarea nu a fost confirmată; verifică statusul proiectelor și apasă Trimite după revizuire.";
+  });
+  section.append(title,description,grid,button,status);
+  return section;
+ }
  function studio(root){
   if(built.has(root))return;built.add(root);
   const header=direct(root,".studio-workspace-head");
@@ -101,14 +170,18 @@
   const actions=Array.from(root.children).find(n=>n.matches(".studio-actions"));
   const projects=Array.from(root.children).find(n=>n.matches(".studio-project-manager:not(.studio-render-panel)"));
   const income=direct(root,".income-tracker"),capabilities=direct(root,".studio-capabilities"),social=direct(root,".studio-social");
+  const cryptoAdmin=document.querySelector(".crypto-admin-card"),cryptoEngine=document.querySelector(".crypto-engine-panel"),founderWorkbench=document.querySelector(".founder-workbench");
+  const bookStation=createStudioStation("book"),translationStation=createStudioStation("translation");
   const items=[
    {id:"video",label:"Lucrează la videoclip",title:"Video & Reels",description:"Pregătește scenariul și producția video. Randarea MP4 rămâne disponibilă numai când serviciul este configurat și verificat.",nodes:[production,render],shared:[brief,actions],deliverable:["studioDeliverable","short"]},
    {id:"series",label:"Scrie serial / scenariu",title:"Seriale și scenarii",description:"Lucrează separat la episoade, personaje, dialog și continuitatea poveștii.",shared:[brief,actions],deliverable:["studioDeliverable","series"]},
-   {id:"book",label:"Scrie o carte",title:"Cărți și eBookuri",description:"Spațiu dedicat pentru concept, structură, capitole și manuscris.",shared:[brief,actions],deliverable:["studioDeliverable","book"]},
+   {id:"book",label:"Book Studio",title:"Atelier de cărți și eBookuri",description:"Formular dedicat pentru proiect editorial, structură, capitole și continuitate.",nodes:[bookStation]},
+   {id:"translation",label:"Translation Station",title:"Stație de traducere și localizare",description:"Formular dedicat pentru limbi, stil, glosar și traducere integrală.",nodes:[translationStation]},
    {id:"music",label:"Creează muzică / versuri",title:"Muzică și versuri originale",description:"Pregătește compoziții, structuri, versuri și materiale originale.",shared:[brief,actions],deliverable:["studioDeliverable","music"]},
-   {id:"translation",label:"Lucrează la traducere",title:"Traduceri și localizare",description:"Păstrează sensul, terminologia și formatarea materialului sursă.",shared:[brief,actions],deliverable:["studioDeliverable","translation"]},
    {id:"projects",label:"Proiectele mele",title:"Proiecte Studio",description:"Deschide, salvează, exportă sau șterge proiecte private.",nodes:[projects]},
    {id:"income",label:"Urmărește veniturile",title:"Oportunități și venituri",description:"Ține evidența oportunităților, etapelor și încasărilor.",nodes:[income]},
+   {id:"income-lab",label:"Venituri online & produse",title:"Creator & Online Income Lab",description:"Cărți, produse digitale, publicare, muzică, AI Evaluation și planuri de monetizare — instrumente private pentru fondator.",nodes:[founderWorkbench]},
+   {id:"crypto",label:"Crypto & Mining",title:"Crypto & Mining — centru privat",description:"Analiză, compatibilitate, rentabilitate și registru de dispozitive. Minarea reală rămâne dezactivată până la instalarea și autorizarea agentului local securizat.",nodes:[cryptoAdmin,cryptoEngine]},
    {id:"social",label:"Social media",title:"Social media și distribuție",description:"Organizează conținutul și verifică starea integrărilor oficiale.",nodes:[capabilities,social]}
   ];
   const usable=items.filter(item=>(item.nodes||[]).some(Boolean)||(item.shared||[]).some(Boolean));
