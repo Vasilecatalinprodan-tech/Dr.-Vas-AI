@@ -83,3 +83,19 @@ This audit consolidates the currently available project scope record, dated chec
 ## Conversation preservation
 
 The ChatGPT conversation remains in the user's ChatGPT history. This document preserves the relevant project decisions and technical state for continuity; it is not a verbatim copy of the entire private conversation.
+
+
+## Follow-up verification — Sarah voice, presentation flow, DNA and monetization research (7 Nov 2026)
+
+- PR #46 merged at `a7c03e170712623e139739ed74b8f532155c9e61`: Sarah's voice selection now falls back to an installed feminine voice in another locale if no local-language feminine voice exists; presentation no longer auto-redirects to Login at the end or when Sarah's voice is unavailable; the close control only closes the presentation; DNA helix shading, depth, strand thickness and rotation were refined.
+- PR #47 merged at `e05e5296faffe6e6870495d505f1c41716ee0925`: stale presenter image callbacks are guarded against changing the active speaker label.
+- PR #48 merged at `5dd20125b3ce6a849a0114762b88b74e483f5a82`: a MutationObserver keeps presenter alt text synchronized with the active speaker if a delayed callback tries to restore an old label.
+- PR #47 browser E2E: run `42366366924` — 122 passed.
+- PR #48 browser E2E: run `42366744678` — 122 passed.
+- Main browser E2E: run `42366871010` — 122 passed.
+- Final deployment: run `42366871063` — success. Browser suite 122 passed, Supabase migration and verification passed, Worker deployed, production smoke test passed and `/health` returned `status: online`.
+- Final Android build: run `42366871058` — success. Artifact `DrVas-APK`, ID `13571329196`, available until 5 February 2027: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42366871058/artifacts/13571329196
+- Sarah's dedicated server-side voice still depends on the Worker secret `ELEVENLABS_SARAH_VOICE_ID`; its value was not read or changed. Browser fallback can use a feminine voice from another locale, so actual Romanian pronunciation must be listened to on the founder's device.
+- Mining and sustainable online-income research saved in `docs/DRVAS-MINING-ONLINE-INCOME-RESEARCH-2026-11-07.md`. Google Play does not allow apps to mine cryptocurrency on users' devices; remote mining management is permitted. Real mining remains disabled until a separate owned device/agent, measured electricity tariff, safe limits and explicit start/stop controls are validated.
+- Session checkpoint: `docs/SESSION-CHECKPOINT-2026-11-07-SARAH-DNA-MINING-ONLINE-INCOME.md`.
+
