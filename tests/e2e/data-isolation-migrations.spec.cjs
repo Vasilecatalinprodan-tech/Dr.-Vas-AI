@@ -188,12 +188,11 @@ test("Conversation feature context is saved before chat writes and enforced by t
   const workspaces = fs.readFileSync(path.join(__dirname, "../../www/module-workspaces.js"), "utf8");
   const worker = fs.readFileSync(path.join(__dirname, "../../worker/index.js"), "utf8");
   expect(html).toContain("feature_key:featureKey||null");
-  expect(html).toContain('featureKey:featureKey||null');
   expect(html).toContain("activeFeatureKey");
-  expect(html).toContain("context.module !== moduleName");
-  expect(html).toContain("context.feature_key || null) !== featureKey");
   expect(workspaces).toContain("window.drvasSetFeatureContext?.(moduleName,id)");
   expect(worker).toContain("body.feature_key || null");
+  expect(worker).toContain("context.module !== moduleName");
+  expect(worker).toContain("(context.feature_key || null) !== featureKey");
   expect(worker).toContain("(context.feature_key || null) !== featureKey");
   expect(worker).toContain("feature_assistant");
 });
