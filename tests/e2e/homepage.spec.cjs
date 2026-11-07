@@ -1896,7 +1896,7 @@ test("landing hero renders two animated DNA strands and emergency stop latches l
   await expect(page.locator("#heroSection .dna-strand")).toHaveCount(4);
   await expect(page.locator("#heroSection .dna-strand-highlight")).toHaveCount(4);
   const strandFinish = await page.locator("#heroSection .dna-strand-highlight").first().evaluate(node => getComputedStyle(node).strokeWidth);
-  expect(strandFinish).toBe("1.7px");
+  expect(strandFinish).toBe("2.5px");
   const dnaLayout = await page.locator("#heroSection").evaluate(hero => {
     const heroHeight = hero.getBoundingClientRect().height;
     const rails = [...hero.querySelectorAll(".dna-helix-visual")].map(node => ({
@@ -2534,14 +2534,14 @@ test("module capabilities open dedicated feature pages instead of one crowded wo
   await expect(page.locator("#studioWorkspace .drvas-feature-navigation")).toBeVisible();
   await page.locator('#studioWorkspace [data-feature="book"]').click();
   await expect(page.locator('#studioWorkspace [data-feature-page="book"]')).toBeVisible();
-  await expect(page.locator('#studioWorkspace [data-feature-page="book"] h3')).toHaveText("Cărți și eBookuri");
+  await expect(page.locator('#studioWorkspace [data-feature-page="book"] h3')).toHaveText("Atelier de cărți și eBookuri");
   await expect(page.locator("#studioDeliverable")).toHaveValue("book");
-  await page.locator("#studioIdea").fill("Book-only draft");
+  await page.locator("#drvasBookStationConcept").fill("Book-only draft");
   await page.locator('#studioWorkspace [data-feature="series"]').click();
   await expect(page.locator("#studioIdea")).not.toHaveValue("Book-only draft");
   await page.locator("#studioIdea").fill("Series-only draft");
   await page.locator('#studioWorkspace [data-feature="book"]').click();
-  await expect(page.locator("#studioIdea")).toHaveValue("Book-only draft");
+  await expect(page.locator("#drvasBookStationConcept")).toHaveValue("Book-only draft");
   await page.locator('#studioWorkspace [data-feature="video"]').click();
   await expect(page.locator('#studioWorkspace [data-feature-page="video"] #studioRenderCreateButton')).toBeVisible();
   await page.locator('#studioWorkspace [data-feature="projects"]').click();
@@ -2729,14 +2729,16 @@ test("Studio exposes dedicated Book, Translation, Crypto and Online Income works
   }
   await page.locator('#studioWorkspace [data-feature="book"]').click();
   await expect(page.locator("#drvasBookStationConcept")).toBeVisible();
-  await expect(page.locator(".studio-station-submit")).toContainText("Creează și salvează");
+  await expect(page.locator('#studioWorkspace [data-feature-page="book"] .studio-station-submit')).toContainText("Creează și salvează");
   await page.locator('#studioWorkspace [data-feature="translation"]').click();
   await expect(page.locator("#drvasTranslationText")).toBeVisible();
   await expect(page.locator("#drvasTranslationTarget")).toBeVisible();
   await page.locator('#studioWorkspace [data-feature="crypto"]').click();
+  await expect(page.locator('#studioWorkspace [data-feature-page="crypto"] .studio-founder-shortcut button')).toBeVisible();
   await expect(page.locator("#cryptoEngineStatus")).toContainText("Mining-ul real rămâne oprit");
   await expect(page.locator("#cryptoEngineScanButton")).toBeVisible();
   await page.locator('#studioWorkspace [data-feature="income-lab"]').click();
+  await expect(page.locator('#studioWorkspace [data-feature-page="income-lab"] .studio-founder-shortcut button')).toBeVisible();
   await expect(page.locator("#founderDigitalTitle")).toBeVisible();
   await expect(page.locator("#founderBookTitle")).toBeVisible();
 });
