@@ -47,3 +47,17 @@ Free and Health share `free-module-mode` and `drvas-free-shell`. Earlier fixed-h
 
 ## Continuity
 This file preserves the exact user requirements and key assistant commitments, technical diagnosis, changes, test results, merge SHA and deployment gate. The original chat remains in ChatGPT history; this repository file is the durable engineering record for resuming in a new chat.
+
+
+## Follow-up request — 7 November 2026, deploy failure and insistence on page scrolling
+
+> nu continua cu apk .....fa bara aia ca nu ai facuto si apk lasam la sfarsit...nu pot da in josul paginii si trebuie sa pot da ....salveaza tot inclusiv chatul si nu lasa operatiuni neterminate,da deploy si merge
+
+## Deploy investigation and corrective change — 7 November 2026
+
+- The main-branch deploy run for PR #61 merge commit dbbc241700d5fba413d5d2658f85e638800147e5 is run #527 / 42373307232; it failed after successful browser tests and successful Supabase migration/diagnostic steps.
+- Exact Wrangler failure: worker/index.js:1168:47 Unexpected comma. Root cause: the regular expression used to trim trailing slashes from SUPABASE_URL had two literal backslashes instead of the intended escaped slash in the live conversation metadata URL.
+- Corrected only that malformed regex on branch fix/worker-live-context-regex-deploy-2026-11-07; commit 08e13d6605db5eb7aa47b6399187c825cdbd1e22. This matches the valid URL normalization expression immediately above it.
+- User explicitly deferred Android APK work until the very end. No APK workflow should be triggered as part of this repair.
+- Scrollbar acceptance remains unresolved until the founder confirms the actual production page and transcript scrollbars both work independently. Passing automated tests alone is not founder-side visual confirmation.
+- Next release gate: run syntax checks and browser regression on the fix branch, merge only after checks pass, then confirm Worker deployment and production smoke test. Do not bypass the Supabase migration gate.
