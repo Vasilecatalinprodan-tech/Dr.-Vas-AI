@@ -310,6 +310,49 @@ async function processDrVasScheduledReminders(env) {
   return (tasks || []).length;
 }
 
+const MODULE_FEATURE_INSTRUCTIONS = Object.freeze({
+  health: {
+    "health-brief": "HEALTH INFORMATION DESK: Help the user organise a concise, factual summary of the concern, timeline, relevant observations and questions for a qualified clinician. Provide general education only; do not diagnose, prescribe or replace clinical assessment."
+  },
+  studio: {
+    video: "VIDEO WORKSPACE: Turn the user's brief into a practical video deliverable: concept, audience, hook, script, scene-by-scene storyboard, shot list, captions, editing notes and production checklist. Never claim a rendered file exists unless the renderer confirms it.",
+    series: "SERIES WORKSPACE: Maintain a series bible, character motivations, timeline, episode continuity, scene structure, dialogue and cliffhangers. Produce original material and keep unresolved plot threads consistent.",
+    book: "BOOK STUDIO: Work as an editor and manuscript partner. Establish audience, purpose, genre, outline, chapter structure, voice, continuity and revision plan. Draft requested sections in full; do not claim professional typesetting, ISBN registration or marketplace publication unless verified.",
+    translation: "TRANSLATION STATION: Translate and localise supplied text while preserving meaning, names, numbers, tone and formatting. Identify source and target languages, maintain a glossary and flag ambiguity. Never claim sworn, certified or legally valid translation.",
+    music: "MUSIC WORKSPACE: Create original lyrics, song structures, arrangement and production briefs. Do not imitate an existing song or claim to render audio unless an audio-generation tool completes it.",
+    projects: "STUDIO PROJECTS: Help organise, revise and continue saved creative projects. Distinguish a drafted response from a project actually saved by the application.",
+    income: "CREATOR INCOME TRACKER: Help record opportunities, deliverables, costs, dates and received income. Separate forecast from actual income and never imply guaranteed earnings.",
+    "income-lab": "CREATOR AND ONLINE INCOME LAB: Develop realistic digital products, publishing plans, creator workflows and small-budget experiments. Show costs, risks, platform rules and validation steps; never promise passive income or sales.",
+    crypto: "CRYPTO ANALYSIS WORKSPACE: Provide read-only market and hardware analysis, transparent assumptions and risk calculations. Real mining is disabled; do not instruct the user to start a miner, request wallet secrets or imply trading/custody is available.",
+    social: "SOCIAL MEDIA WORKSPACE: Prepare original platform-specific content calendars, scripts, captions and compliance checklists. Do not claim accounts are connected or publish/schedule content without an approved integration and explicit user approval."
+  },
+  academy: {
+    course: "COURSE BUILDER: Design a structured curriculum with target learner, prerequisites, measurable outcomes, modules, lessons, assessment criteria and practical deliverables. Do not claim accreditation or recognised qualifications without a verified awarding body.",
+    lessons: "LESSON WORKSHOP: Write a complete teachable lesson with objectives, explanations, worked examples, recap, practical task and knowledge check. Match the learner's level and avoid unsupported claims.",
+    exercises: "EXERCISES AND QUIZZES: Create varied exercises and fair quizzes with clear instructions, scoring rubrics and explanations. When useful, let the learner attempt questions before revealing model answers; support learning rather than cheating.",
+    "learning-plan": "LEARNING PLAN: Create a realistic weekly learning path with time estimates, milestones, practice, review and progress checks. Adapt the plan to the learner's available time and demonstrated understanding.",
+    courses: "MY COURSES: Help the learner review and continue saved Academy projects. Never claim progress or a course was saved unless the application confirms it."
+  },
+  commerce: {
+    research: "PRODUCT RESEARCH: Assess customer problem, demand signals, competition, differentiation, pricing and validation tests. Distinguish sourced current facts from assumptions; do not invent market size or sales data.",
+    suppliers: "SUPPLIER DUE DILIGENCE: Compare identity, samples, quality, landed cost, shipping, returns, warranties, stock reliability and independent evidence. Flag unverified claims and never tell the user a supplier is vetted without evidence.",
+    launch: "STORE LAUNCH: Build a staged launch plan covering offer, listings, fulfilment, customer support, returns, product safety, privacy and jurisdiction-specific consumer obligations. Do not place orders or publish a store without explicit approval.",
+    pricing: "PRICING AND UNIT ECONOMICS: Calculate landed cost, fees, fulfilment, returns, advertising assumptions, gross margin and break-even. Show formulas and separate estimates from verified costs.",
+    projects: "COMMERCE PROJECTS: Help organise and continue saved product and store analyses. Distinguish a drafted analysis from a project actually saved by the application."
+  },
+  business: {
+    plan: "BUSINESS PLAN: Build a practical business plan with customer, value proposition, operations, sales, costs, cash requirements, milestones, risks and transparent financial assumptions.",
+    cashbook: "CASHBOOK: Help categorise and explain income and expense records, reconcile totals and prepare a bookkeeping review. Do not claim statutory double-entry accounts, audit, VAT return or tax filing.",
+    cashflow: "CASHFLOW: Analyse actual and forecast inflows/outflows, opening and closing balances, timing gaps and scenarios. Label forecasts and assumptions clearly; do not fabricate transactions.",
+    "break-even": "BREAK-EVEN: Calculate contribution per unit, fixed costs, break-even volume/revenue and sensitivity scenarios. Show the formula, units and assumptions, and flag missing inputs.",
+    student: "STUDENT DESK: Give formative feedback against the supplied brief and rubric, focusing on reasoning, structure, evidence, referencing and improvement. Do not fabricate citations or help misrepresent authorship."
+  }
+});
+function getModuleFeatureInstruction(moduleName, featureKey) {
+  if (!featureKey) return "";
+  return MODULE_FEATURE_INSTRUCTIONS[moduleName]?.[featureKey] || null;
+}
+
 export default {
   async scheduled(controller, env, ctx) {
     const run = processDrVasScheduledReminders(env).catch(error => {
@@ -1075,6 +1118,7 @@ export default {
       if (body.action === "live_voice_token") {
         const liveAccessToken = body.access_token;
         const liveModule = typeof body.module === "string" ? body.module : "free";
+        const liveFeatureKey = typeof body.feature_key === "string" && body.feature_key.trim() ? body.feature_key.trim() : null;
         const liveLanguage = typeof body.language === "string" ? body.language : "ro";
         const liveAssistant = typeof body.assistant === "string" ? body.assistant : "drvas";
         const liveAssistants = new Set(["drvas", "jan", "aurora"]);
@@ -1089,6 +1133,9 @@ export default {
         };
 
         if (!liveModules.has(liveModule)) return json({ error: "Modul Dr.Vas invalid." }, 400);
+        if (body.feature_key !== undefined && body.feature_key !== null && typeof body.feature_key !== "string") return json({ error: "Spațiu de lucru invalid." }, 400);
+        const liveFeatureInstruction = liveFeatureKey ? getModuleFeatureInstruction(liveModule, liveFeatureKey) : "";
+        if (liveFeatureKey && !liveFeatureInstruction) return json({ error: "Funcția selectată nu aparține acestui modul." }, 400);
         if (!liveAssistants.has(liveAssistant)) return json({ error: "Asistent Dr.Vas invalid." }, 400);
         if (!liveLanguages[liveLanguage]) return json({ error: "Limba Dr.Vas invalidă." }, 400);
         if (typeof liveAccessToken !== "string" || !liveAccessToken.trim()) {
@@ -1153,7 +1200,9 @@ export default {
           "Use short, plain sentences. Explain medical and technical terms in everyday language. Ask one question at a time. When information is important, repeat it clearly and ask the listener to confirm that they understood.",
           "When translating or switching languages, preserve the source meaning, nuance, numbers, names and negations. Use natural idiomatic grammar in the target language; never translate word-for-word or invent missing context.",
           `The selected Dr.Vas module is: ${liveModule}.`,
+          `The selected workspace is: ${liveFeatureKey || "general"}.`,
           moduleInstruction,
+          liveFeatureInstruction,
           "Be concise for simple questions and detailed when asked. Admit uncertainty. Do not invent facts.",
           "Use the conversation history supplied at the start of this Live session; do not claim access to other saved memories or private systems.",
           "Protect privacy. Do not ask for passwords, access tokens or unnecessary sensitive information.",
@@ -1651,6 +1700,9 @@ export default {
       }
       if (featureKey !== null && (typeof featureKey !== "string" || !/^[a-z0-9-]{1,100}$/i.test(featureKey))) {
         return json({ error: "Spațiu de lucru invalid." }, 400);
+      }
+      if (featureKey !== null && !getModuleFeatureInstruction(moduleName, featureKey)) {
+        return json({ error: "Funcția selectată nu aparține acestui modul." }, 400);
       }
       const allowedAssistants = new Set(["drvas", "jan", "aurora"]);
       if (!allowedAssistants.has(assistantId)) {
@@ -2325,6 +2377,8 @@ DEFAULT DELIVERABLE:
 Executive summary, business model, market assumptions, operating plan, transparent financial assumptions, bookkeeping explanations where requested, rubric-based student feedback where requested, risk register, milestones and immediate next actions.
 ` : "";
 
+      const featureSpecificInstruction = featureKey ? getModuleFeatureInstruction(moduleName, featureKey) : "";
+
       const assistantSpecificInstruction = assistantId === "jan" ? `
 SELECTED ASSISTANT PERSONA — DR.JAN:
 You are Dr.Jan, the project's distinct AI guide and virtual development collaborator. You are not Dr.Vas and not a human. Your defining strengths are rigorous reasoning, exceptional clarity, structured problem-solving, anticipation of risks and patient step-by-step guidance. Be warm, calm, confident, intellectually curious and precise. When a user is trying to complete a task, first establish the goal, then give one manageable next step at a time, explain where to go and what to expect, and check the result before advancing. Never claim to see the user's screen, click buttons, access accounts or change files unless the system actually provided that capability and the action succeeded. Explain uncertainty and correct mistakes openly. Do not flatter or pretend certainty.
@@ -2377,10 +2431,13 @@ Be transparent: distinguish features that are currently available from those sti
 
 MODULE CONTEXT:
 Current selected module: ${moduleName}
+Selected workspace: ${featureKey || "general"}
 
 If a module is selected, adapt your answer to its purpose while remaining honest about available functionality.
 
 ${moduleSpecificInstruction}
+
+${featureSpecificInstruction}
 
 LANGUAGE:
 - The selected interface language is: ${{ro:"Romanian",en:"English",it:"Italian",tr:"Turkish",de:"German",fr:"French",es:"Spanish",ru:"Russian"}[requestedLanguage] || "not specified"}.
