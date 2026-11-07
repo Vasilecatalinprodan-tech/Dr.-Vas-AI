@@ -2703,6 +2703,7 @@ test("all six module chats share the same sidebar destinations and attachment co
     const activeFeature = await page.evaluate(() => activeFeatureKey);
     expect(activeFeature, moduleName + " default feature context").toBe(defaultFeatures[moduleName]);
     await expect(page.locator("#chatSection .history-panel"), moduleName + " sidebar").toBeVisible();
+    if (moduleName !== "free") await expect(page.locator("#" + moduleName + "Workspace [data-feature='general']"), moduleName + " general history tab").toBeVisible();
     const shellModes = await page.evaluate(() => ({ free: document.body.classList.contains("free-module-mode"), health: document.body.classList.contains("health-module-mode"), shared: document.body.classList.contains("shared-chat-sidebar-mode") }));
     if (moduleName === "free") expect(shellModes.free).toBe(true);
     else if (moduleName === "health") { expect(shellModes.free).toBe(true); expect(shellModes.health).toBe(true); await expect(page.locator("#healthWorkspace")).toBeVisible(); }
