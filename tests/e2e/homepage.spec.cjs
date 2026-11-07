@@ -3185,7 +3185,7 @@ test("Dr.Vas Studio production workspace localizes its core controls in all supp
   for (const [language, description, workspace, voice, deliverable, style, audience, duration, aspect, render] of cases) {
     await page.evaluate(code => chooseLanguage(code), language);
     await expect(page.locator("#studioWorkspace .studio-workspace-head p")).toHaveText(description);
-    await expect(page.locator("#studioWorkspace .studio-beta-label")).toHaveText(workspace);
+    await expect(page.locator("#studioWorkspace > .studio-workspace-head .studio-beta-label")).toHaveText(workspace);
     await expect(page.locator("#studioNarration option").first()).toHaveText(voice);
     await expect(page.locator("#studioDeliverable option").first()).toHaveText(deliverable);
     await expect(page.locator("#studioTone option").first()).toHaveText(style);
