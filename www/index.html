@@ -1400,6 +1400,25 @@ body.health-module-mode #freeNavWorkspace{
   html:has(body.health-module-mode){scroll-behavior:auto!important}
 }
 
+
+/* Highest-specificity transcript constraint: beat legacy module-workspace #chat max-height:none rules. */
+body.free-module-mode #chatSection .chat-main #freeChatView>#chat,
+body.health-module-mode #chatSection .chat-main #freeChatView>#chat{
+  flex:0 0 auto!important;
+  height:55vh!important;
+  min-height:280px!important;
+  max-height:55vh!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+}
+@media(max-width:760px){
+  body.free-module-mode #chatSection .chat-main #freeChatView>#chat,
+  body.health-module-mode #chatSection .chat-main #freeChatView>#chat{
+    height:52vh!important;
+    min-height:260px!important;
+    max-height:52vh!important;
+  }
+}
 </style>
 <link rel="stylesheet" href="/module-workspaces.css">
 </head>
