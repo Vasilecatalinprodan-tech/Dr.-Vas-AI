@@ -3498,6 +3498,15 @@ for (const [source, translations] of Object.entries(BUSINESS_FEATURE_NAV_TRANSLA
   }
 }
 
+
+const MODULE_FEATURE_NAV_TRANSLATIONS = {"Funcții și spații de lucru":["Features and workspaces","Funzioni e spazi di lavoro","Özellikler ve çalışma alanları","Funktionen und Arbeitsbereiche","Fonctions et espaces de travail","Funciones y espacios de trabajo","Функции и рабочие области"],"Chat general":["General chat","Chat generale","Genel sohbet","Allgemeiner Chat","Chat général","Chat general","Общий чат"],"Conversație generală":["General conversation","Conversazione generale","Genel konuşma","Allgemeines Gespräch","Conversation générale","Conversación general","Общий разговор"],"Aici găsești discuțiile generale ale acestui modul și istoricul mai vechi care nu avea o funcție atribuită. Conversațiile vechi rămân neclasificate până când alegi explicit să începi un fir nou.":["Here you can find general discussions for this module and older history that was not assigned to a feature. Older conversations remain unclassified until you explicitly choose to start a new thread.","Qui trovi le discussioni generali di questo modulo e la cronologia precedente che non era associata a una funzione. Le conversazioni precedenti restano non classificate finché non scegli esplicitamente di iniziare una nuova conversazione.","Burada bu modülün genel konuşmalarını ve bir özelliğe atanmamış eski geçmişi bulabilirsiniz. Yeni bir sohbet başlatmayı açıkça seçene kadar eski konuşmalar sınıflandırılmamış olarak kalır.","Hier findest du allgemeine Gespräche dieses Moduls und ältere Verläufe, die keiner Funktion zugeordnet waren. Ältere Gespräche bleiben unklassifiziert, bis du ausdrücklich einen neuen Chat startest.","Vous trouverez ici les discussions générales de ce module ainsi que l'ancien historique qui n'était associé à aucune fonction. Les anciennes conversations restent non classées jusqu'à ce que vous choisissiez explicitement de démarrer un nouveau fil.","Aquí encontrarás conversaciones generales de este módulo y el historial anterior que no estaba asignado a ninguna función. Las conversaciones antiguas seguirán sin clasificar hasta que elijas explícitamente iniciar un nuevo hilo.","Здесь находятся общие обсуждения этого модуля и более старая история, не связанная с конкретной функцией. Старые беседы останутся неклассифицированными, пока вы явно не начнёте новую беседу."]};
+for (const [source, translations] of Object.entries(MODULE_FEATURE_NAV_TRANSLATIONS)) {
+  for (let i = 0; i < ["en","it","tr","de","fr","es","ru"].length; i++) {
+    const language = ["en","it","tr","de","fr","es","ru"][i];
+    if (UI[language]) UI[language][source] = translations[i];
+  }
+}
+
 function localizeInterfaceCopy(source){return (ASSISTANT_UI_TRANSLATIONS[currentLanguage]||{})[source]||(UI[currentLanguage]||{})[source]||source}
 function tr(s){return localizeInterfaceCopy(s)}
 function setLocalizedText(target,source){
