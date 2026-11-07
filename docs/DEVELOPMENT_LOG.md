@@ -896,3 +896,13 @@ User's request (verbatim):
 - This confirms that PR #65 fixed the reported assistant welcome/description issue and selected global controls, but did not complete the founder's requirement that every button and all interface text follow the selected language.
 - Next work: implement localization in controlled phases, beginning with shared navigation, language/auth controls, Dr.Vas Free and Dr.Vas Health, then Studio, Academy, Commerce and Business; add regression tests for language switching in each area. Preserve conversation history in its original language; do not silently translate prior user/assistant messages.
 - Latest user instruction: “ok hai sa continuam si tot asa salvam tot”. Continue the agreed roadmap; APK remains the final stage.
+
+
+## 2026-11-07 — Free/Health production deployment and Studio phase 3
+
+- PR #71 (Dr.Vas Free and Health localization) passed browser regression run 42408117217 and was squash-merged into main as c7581d09f57c05f1b798a0fd4597cdedc564009c.
+- Post-merge main browser regression run 42408335139: SUCCESS.
+- Post-merge main deploy run 42408335171: SUCCESS. Confirmed homepage/persisted-session browser tests, Supabase migrations (standard and IPv4 session pooler), Cloudflare Worker deploy, and production smoke test.
+- PR #70 documentation archive merged into main as 9ba0c5ff76e565bfd205158dc26dc91d82ad9b66.
+- PR #72 begins Studio localization phase 3. Branch feat/localize-studio-phase3-2026-11-07; head 0ddb493750397972644a564c8d1ea95deb7ed4f7. It translates the core production workspace, VPC brand standard, render panel, scene timeline, main deliverable/platform/style/audience/duration/aspect options, plus a seven-language Playwright test. PR checks are pending/starting at this checkpoint; do not merge until the latest E2E passes.
+- The current user instruction remains: “ok hai sa continuam si tot asa salvam tot”. Preserve this checkpoint and the project archive. Continue next with remaining Studio copy/income/social controls, then Academy, Commerce and Business. Full localization is still not complete.
