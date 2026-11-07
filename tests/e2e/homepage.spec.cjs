@@ -3166,3 +3166,32 @@ test("Dr.Vas Free navigation and Health workspace localize in all supported lang
     await expect(page.locator('#healthWorkspace button[onclick="window.buildHealthPrompt()"]')).toContainText(action);
   }
 });
+
+
+test("Dr.Vas Studio production workspace localizes its core controls in all supported languages", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => { checkSession = () => {}; });
+
+  const cases = [
+    ["en", "Production studio for scripts, vertical videos, subtitles and digital assets.", "CREATIVE WORKSPACE", "VPC founder's voice — being configured", "Drama series / episode", "Realistic cinematic", "General audience", "30–60 seconds", "Vertical 9:16", "Render MP4 video"],
+    ["it", "Studio di produzione per sceneggiature, video verticali, sottotitoli e contenuti digitali.", "SPAZIO CREATIVO", "Voce del fondatore VPC — in configurazione", "Serie / episodio drammatico", "Cinematografico realistico", "Pubblico generale", "30–60 secondi", "Verticale 9:16", "Crea video MP4"],
+    ["tr", "Senaryolar, dikey videolar, altyazılar ve dijital içerikler için prodüksiyon stüdyosu.", "YARATICI ÇALIŞMA ALANI", "VPC kurucusunun sesi — yapılandırılıyor", "Dizi / dramatik bölüm", "Gerçekçi sinematik", "Genel kitle", "30–60 saniye", "Dikey 9:16", "MP4 video oluştur"],
+    ["de", "Produktionsstudio für Drehbücher, Hochkantvideos, Untertitel und digitale Inhalte.", "KREATIVER ARBEITSBEREICH", "Stimme des VPC-Gründers — wird eingerichtet", "Dramaserie / Episode", "Realistisch-kinematografisch", "Allgemeines Publikum", "30–60 Sekunden", "Hochformat 9:16", "MP4-Video rendern"],
+    ["fr", "Studio de production pour scénarios, vidéos verticales, sous-titres et contenus numériques.", "ESPACE CRÉATIF", "Voix du fondateur VPC — en cours de configuration", "Série / épisode dramatique", "Cinématographique réaliste", "Grand public", "30–60 secondes", "Vertical 9:16", "Rendre la vidéo MP4"],
+    ["es", "Estudio de producción para guiones, vídeos verticales, subtítulos y contenidos digitales.", "ESPACIO CREATIVO", "Voz del fundador de VPC — en configuración", "Serie / episodio dramático", "Cinematográfico realista", "Público general", "30–60 segundos", "Vertical 9:16", "Renderizar vídeo MP4"],
+    ["ru", "Студия производства сценариев, вертикальных видео, субтитров и цифровых материалов.", "ТВОРЧЕСКОЕ ПРОСТРАНСТВО", "Голос основателя VPC — настраивается", "Драматический сериал / эпизод", "Реалистичный кинематографичный", "Широкая аудитория", "30–60 секунд", "Вертикальный 9:16", "Создать видео MP4"]
+  ];
+
+  for (const [language, description, workspace, voice, deliverable, style, audience, duration, aspect, render] of cases) {
+    await page.evaluate(code => chooseLanguage(code), language);
+    await expect(page.locator("#studioWorkspace .studio-workspace-head p")).toHaveText(description);
+    await expect(page.locator("#studioWorkspace > .studio-workspace-head .studio-beta-label")).toHaveText(workspace);
+    await expect(page.locator("#studioNarration option").first()).toHaveText(voice);
+    await expect(page.locator("#studioDeliverable option").first()).toHaveText(deliverable);
+    await expect(page.locator("#studioTone option").first()).toHaveText(style);
+    await expect(page.locator("#studioAudience option").first()).toHaveText(audience);
+    await expect(page.locator("#studioDuration option").first()).toHaveText(duration);
+    await expect(page.locator("#studioAspect option").first()).toHaveText(aspect);
+    await expect(page.locator("#studioRenderCreateButton")).toContainText(render);
+  }
+});
