@@ -3425,6 +3425,74 @@ const BUSINESS_COPY={
 };
 for(const language of Object.keys(BUSINESS_COPY)) Object.assign(UI[language],BUSINESS_COPY[language]);
 
+/* Phase 5 attribute localization for Business and Student Desk forms. */
+const BUSINESS_ATTRIBUTES={
+ en:{
+  "Ex.: Firmă de curățenie și evacuare locuințe":"e.g. Cleaning and house-clearance company",
+  "Experiență, echipamente, personal, concurență, costuri și orice alte detalii.":"Experience, equipment, staff, competition, costs and any other details.",
+  "Titlul planului":"Plan title","Planuri salvate":"Saved plans",
+  "Ex.: Factura client 001":"e.g. Customer invoice 001","Ex.: Transport, chirie, vânzări":"e.g. Transport, rent, sales",
+  "Ex.: Business Management":"e.g. Business Management","Lipește cerința, criteriile și limita de cuvinte. Elimină datele personale.":"Paste the brief, criteria and word limit. Remove personal data.",
+  "Criterii, ponderi și nivelurile de performanță, dacă există.":"Criteria, weightings and performance levels, if available.",
+  "Studentul își introduce propriul draft pentru feedback.":"The student enters their own draft for feedback."
+ },
+ it:{
+  "Ex.: Firmă de curățenie și evacuare locuințe":"Es.: Impresa di pulizie e sgombero abitazioni",
+  "Experiență, echipamente, personal, concurență, costuri și orice alte detalii.":"Esperienza, attrezzature, personale, concorrenza, costi e altri dettagli.",
+  "Titlul planului":"Titolo del piano","Planuri salvate":"Piani salvati",
+  "Ex.: Factura client 001":"Es.: Fattura cliente 001","Ex.: Transport, chirie, vânzări":"Es.: Trasporto, affitto, vendite",
+  "Ex.: Business Management":"Es.: Gestione aziendale","Lipește cerința, criteriile și limita de cuvinte. Elimină datele personale.":"Incolla la consegna, i criteri e il limite di parole. Rimuovi i dati personali.",
+  "Criterii, ponderi și nivelurile de performanță, dacă există.":"Criteri, pesi e livelli di prestazione, se disponibili.",
+  "Studentul își introduce propriul draft pentru feedback.":"Lo studente inserisce la propria bozza per ricevere feedback."
+ },
+ tr:{
+  "Ex.: Firmă de curățenie și evacuare locuințe":"Örn.: Temizlik ve ev boşaltma şirketi",
+  "Experiență, echipamente, personal, concurență, costuri și orice alte detalii.":"Deneyim, ekipman, personel, rekabet, maliyetler ve diğer ayrıntılar.",
+  "Titlul planului":"Plan başlığı","Planuri salvate":"Kayıtlı planlar",
+  "Ex.: Factura client 001":"Örn.: Müşteri faturası 001","Ex.: Transport, chirie, vânzări":"Örn.: Nakliye, kira, satışlar",
+  "Ex.: Business Management":"Örn.: İşletme yönetimi","Lipește cerința, criteriile și limita de cuvinte. Elimină datele personale.":"Ödev açıklamasını, ölçütleri ve kelime sınırını yapıştırın. Kişisel verileri kaldırın.",
+  "Criterii, ponderi și nivelurile de performanță, dacă există.":"Varsa ölçütleri, ağırlıkları ve performans düzeylerini belirtin.",
+  "Studentul își introduce propriul draft pentru feedback.":"Öğrenci geri bildirim için kendi taslağını girer."
+ },
+ de:{
+  "Ex.: Firmă de curățenie și evacuare locuințe":"z. B. Reinigungs- und Haushaltsauflösungsunternehmen",
+  "Experiență, echipamente, personal, concurență, costuri și orice alte detalii.":"Erfahrung, Ausrüstung, Personal, Wettbewerb, Kosten und weitere Angaben.",
+  "Titlul planului":"Plantitel","Planuri salvate":"Gespeicherte Pläne",
+  "Ex.: Factura client 001":"z. B. Kundenrechnung 001","Ex.: Transport, chirie, vânzări":"z. B. Transport, Miete, Verkäufe",
+  "Ex.: Business Management":"z. B. Unternehmensführung","Lipește cerința, criteriile și limita de cuvinte. Elimină datele personale.":"Füge Aufgabenstellung, Kriterien und Wortlimit ein. Entferne persönliche Daten.",
+  "Criterii, ponderi și nivelurile de performanță, dacă există.":"Kriterien, Gewichtungen und Leistungsstufen, falls vorhanden.",
+  "Studentul își introduce propriul draft pentru feedback.":"Studierende fügen ihren eigenen Entwurf für Feedback ein."
+ },
+ fr:{
+  "Ex.: Firmă de curățenie și evacuare locuințe":"Ex. : Entreprise de nettoyage et de débarras de logements",
+  "Experiență, echipamente, personal, concurență, costuri și orice alte detalii.":"Expérience, équipement, personnel, concurrence, coûts et autres détails.",
+  "Titlul planului":"Titre du plan","Planuri salvate":"Plans enregistrés",
+  "Ex.: Factura client 001":"Ex. : Facture client 001","Ex.: Transport, chirie, vânzări":"Ex. : Transport, loyer, ventes",
+  "Ex.: Business Management":"Ex. : Gestion d’entreprise","Lipește cerința, criteriile și limita de cuvinte. Elimină datele personale.":"Collez la consigne, les critères et la limite de mots. Retirez les données personnelles.",
+  "Criterii, ponderi și nivelurile de performanță, dacă există.":"Critères, pondérations et niveaux de performance, le cas échéant.",
+  "Studentul își introduce propriul draft pentru feedback.":"L’étudiant saisit son propre brouillon pour obtenir un retour."
+ },
+ es:{
+  "Ex.: Firmă de curățenie și evacuare locuințe":"Ej.: Empresa de limpieza y vaciado de viviendas",
+  "Experiență, echipamente, personal, concurență, costuri și orice alte detalii.":"Experiencia, equipos, personal, competencia, costes y otros detalles.",
+  "Titlul planului":"Título del plan","Planuri salvate":"Planes guardados",
+  "Ex.: Factura client 001":"Ej.: Factura de cliente 001","Ex.: Transport, chirie, vânzări":"Ej.: Transporte, alquiler, ventas",
+  "Ex.: Business Management":"Ej.: Gestión empresarial","Lipește cerința, criteriile și limita de cuvinte. Elimină datele personale.":"Pega las instrucciones, los criterios y el límite de palabras. Elimina los datos personales.",
+  "Criterii, ponderi și nivelurile de performanță, dacă există.":"Criterios, ponderaciones y niveles de rendimiento, si están disponibles.",
+  "Studentul își introduce propriul draft pentru feedback.":"El estudiante introduce su propio borrador para recibir comentarios."
+ },
+ ru:{
+  "Ex.: Firmă de curățenie și evacuare locuințe":"Напр.: Компания по уборке и освобождению жилья",
+  "Experiență, echipamente, personal, concurență, costuri și orice alte detalii.":"Опыт, оборудование, персонал, конкуренты, расходы и другие сведения.",
+  "Titlul planului":"Название плана","Planuri salvate":"Сохранённые планы",
+  "Ex.: Factura client 001":"Напр.: Счёт клиенту 001","Ex.: Transport, chirie, vânzări":"Напр.: Транспорт, аренда, продажи",
+  "Ex.: Business Management":"Напр.: Управление бизнесом","Lipește cerința, criteriile și limita de cuvinte. Elimină datele personale.":"Вставьте задание, критерии и ограничение по количеству слов. Удалите личные данные.",
+  "Criterii, ponderi și nivelurile de performanță, dacă există.":"Критерии, весовые коэффициенты и уровни выполнения, если они есть.",
+  "Studentul își introduce propriul draft pentru feedback.":"Студент вводит собственный черновик для получения отзыва."
+ }
+};
+for(const language of Object.keys(BUSINESS_ATTRIBUTES)) Object.assign(UI[language],BUSINESS_ATTRIBUTES[language]);
+
 /* Complete localization for assistant-generated interface copy that lives inside #chat.
    Conversation history remains untouched; only the fresh welcome and assistant controls are re-rendered. */
 const ASSISTANT_UI_TRANSLATIONS={
