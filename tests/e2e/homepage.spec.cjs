@@ -2883,3 +2883,36 @@ test("all six modules keep independent conversation IDs and restore their own th
     expect(state.restored[moduleName], moduleName + " restores only its own thread").toBe(state.firstPass[moduleName]);
   }
 });
+
+
+test("feature workspaces keep separate chat threads within each module", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(() => {
+    currentUser = { id: "e2e-feature-thread-isolation", email: "features@example.invalid" };
+    ensureConversationMetadata = async () => {};
+    loadConversationList = async () => [];
+    const contexts = [
+      ["studio", "book"], ["studio", "translation"], ["studio", "video"],
+      ["academy", "course"], ["academy", "lessons"],
+      ["commerce", "research"], ["commerce", "suppliers"],
+      ["business", "cashbook"], ["business", "cashflow"], ["business", "break-even"],
+      ["health", "health-brief"]
+    ];
+    const first = {};
+    for (const [moduleName, featureKey] of contexts) {
+      activeModule = moduleName;
+      drvasSetFeatureContext(moduleName, featureKey);
+      first[moduleName + ":" + featureKey] = currentConversationId;
+    }
+    const restored = {};
+    for (const [moduleName, featureKey] of contexts) {
+      activeModule = moduleName;
+      drvasSetFeatureContext(moduleName, "");
+      drvasSetFeatureContext(moduleName, featureKey);
+      restored[moduleName + ":" + featureKey] = currentConversationId;
+    }
+    return { first, restored, ids: Object.values(first) };
+  });
+  expect(new Set(result.ids).size).toBe(11);
+  for (const key of Object.keys(result.first)) expect(result.restored[key], key + " restores its own feature thread").toBe(result.first[key]);
+});
