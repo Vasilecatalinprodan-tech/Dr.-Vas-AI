@@ -3489,6 +3489,15 @@ for (const [source, translations] of Object.entries(BUSINESS_STUDENT_COPY_TRANSL
   }
 }
 
+
+const BUSINESS_FEATURE_NAV_TRANSLATIONS = {"Registru de încasări și cheltuieli":["Income and expense ledger","Registro di entrate e uscite","Gelir ve gider defteri","Einnahmen- und Ausgabenbuch","Registre des recettes et dépenses","Registro de ingresos y gastos","Журнал доходов и расходов"],"Feedback pe rubrică și structură, cu respectarea integrității academice.":["Rubric- and structure-based feedback that respects academic integrity.","Feedback basato su rubriche e struttura, nel rispetto dell'integrità accademica.","Akademik dürüstlüğe uygun, rubrik ve yapı odaklı geri bildirim.","Feedback zu Bewertungsraster und Struktur unter Wahrung der akademischen Integrität.","Retour fondé sur une grille et la structure, dans le respect de l'intégrité académique.","Comentarios basados en rúbricas y estructura, respetando la integridad académica.","Обратная связь по критериям и структуре с соблюдением академической честности."]};
+for (const [source, translations] of Object.entries(BUSINESS_FEATURE_NAV_TRANSLATIONS)) {
+  for (let i = 0; i < ["en","it","tr","de","fr","es","ru"].length; i++) {
+    const language = ["en","it","tr","de","fr","es","ru"][i];
+    if (UI[language]) UI[language][source] = translations[i];
+  }
+}
+
 function localizeInterfaceCopy(source){return (ASSISTANT_UI_TRANSLATIONS[currentLanguage]||{})[source]||(UI[currentLanguage]||{})[source]||source}
 function tr(s){return localizeInterfaceCopy(s)}
 function setLocalizedText(target,source){
