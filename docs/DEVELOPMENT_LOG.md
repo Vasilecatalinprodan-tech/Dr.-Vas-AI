@@ -954,3 +954,14 @@ User reiterated: “ok hai sa continuam si tot asa salvam tot”. Continue the i
 - Continue the remaining voice/accessibility and other dynamic UI localization.
 - User visual acceptance of the deployed WebGL DNA helices is still pending; page scrolling is already accepted.
 - Maintain the confirmed order: remaining localization, Sarah/Dr.Jan/voice, security/performance, Android APK last.
+
+
+## 2026-11-07 — Dynamic feature navigation, production deployment and Android APK
+
+- PR #77 merged as `f03aa88078bbd74c101a33ab6f16a0aa08e6c834`; feature-navigation copy localized for Health, Studio, Academy and Commerce in EN/IT/TR/DE/FR/ES/RU.
+- Corrected the Turkish false-positive in the localization regression by checking exact Romanian source strings rather than Romanian diacritics; corrected PR run `42412864087` passed 140/140 tests.
+- PR #80 merged as `4cfd2399217b746b454ce6ecdd90ae71fb16804d`; Android workflow remains manually dispatchable and now auto-builds on relevant main app/Android changes, verifies APK existence/checksum and retains artifacts 30 days.
+- Main browser regression `42413116948` passed. Main deploy `42413116992` passed Supabase migrations, Cloudflare Worker deployment and production smoke test.
+- Android build `42413149982` succeeded (build #365); artifact `DrVas-APK`, ID `13590002519`, expiry 2026-12-07. APK `app-debug.apk`, package `com.drvas.ai`, size 6,896,773 bytes, SHA-256 `41a4f4d5d858b07afe22f19063b91e36e43d3963fedc7ed7fd71e5bd875779ed`. Extracted APK independently identified and archive integrity checked.
+- This APK is a debug/test build, not a Play Store-signed release. User device installation has not yet been performed.
+- Remaining: Book Studio/Translation Station field/options/placeholders/status/prompt localization; remaining dynamic UI copy; Free/Health follow-up audit; Sarah/Dr.Jan/voice; security/performance. Any later app-code changes trigger another APK build.
