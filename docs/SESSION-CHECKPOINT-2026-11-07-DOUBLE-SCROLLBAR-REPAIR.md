@@ -231,3 +231,39 @@ User's latest instruction: “salveaza tot inclusiv chatul si continua”. Follo
 - Academy and Commerce next; Business after them. Full localization is still incomplete.
 - PR #73 docs archive was superseded due to a stale base after main advanced; archive is being reissued from current main.
 - Latest user message: “ok hai sa continuam si tot asa salvam tot”.
+
+## Post-merge checkpoint — 7 November 2026, 20:40 UTC
+
+### User direction
+Latest exact user message: “ok hai sa continuam si tot asa salvam tot”. Continue autonomous Dr.Vas development and preserve meaningful changes, tests, decisions and this conversation checkpoint in repository documentation.
+
+### PR #76 — Business localization — MERGED AND DEPLOYED
+- PR #76: `feat(i18n): localize Dr.Vas Business workspace`.
+- Merge commit: `998a03caee6a3ffbbcb03e328d0cf088df597981`.
+- Final PR head: `8496c06ab1b9ce4fd6c3f3362ca0c78954a78f00`.
+- Final PR browser regression `42411511521`: SUCCESS.
+- Post-merge main browser regression `42411798576`: SUCCESS.
+- Main deploy `42411798555`: SUCCESS.
+  - Supabase pending migrations: SUCCESS.
+  - IPv4 session-pooler migration: SUCCESS.
+  - Cloudflare Worker deploy: SUCCESS.
+  - Production Worker smoke test: SUCCESS.
+- Business plan, cashbook, cashflow, break-even and Student Desk UI is localized for EN/IT/TR/DE/FR/ES/RU. Romanian is the source-language fallback.
+- Dynamic Business status/error strings, cashbook/cashflow table copy, CSV headers, form labels, navigation headings/descriptions, and Student Desk integrity guidance are included.
+- Business number/date formatting follows selected interface locale without changing Commerce's shared currency formatting.
+
+### PR #77 — dynamic feature navigation localization — OPEN
+- Branch: `feat/localize-feature-navigation-2026-11-07`.
+- Head: `db562f8f5af7f86db921a8d82ef4d82b5ae245b8`.
+- Covers dynamic Health, Studio, Academy and Commerce feature-navigation labels, headings and descriptions, plus a cross-module test across seven languages.
+- Workflow `42412054163` is pending/running at this checkpoint; verify the final result and inspect any failures before merging.
+
+### Remaining localization scope
+- The Studio Book Studio and Translation Station generated forms still need a separate audit for field labels, option text, placeholders, status messages and generated prompt copy.
+- Some voice/accessibility copy and other dynamic content still needs review.
+- Do not claim complete platform-wide localization until all module copy, dynamic states, placeholders, attributes and user-visible generated briefs have been audited.
+
+### Other gates
+- Scroll repair was explicitly accepted by the user earlier; do not request another scroll check.
+- Real WebGL DNA helices are deployed; user visual acceptance is still pending.
+- APK remains last in the confirmed implementation order.
