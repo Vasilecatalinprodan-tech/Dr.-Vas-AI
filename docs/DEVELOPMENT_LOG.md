@@ -713,3 +713,12 @@ Expanded implementation now on PR #38:
 - Added migration and browser-source tests for standalone project CRUD. Latest relevant E2E run `42287908611` was still running at the time of this note; the previous project-code run `42287773249` passed all 81 Playwright tests. Do not claim the newest added tests pass until run `42287908611` completes.
 - Four additive migrations now accompany PR #38: conversation context (`202611060001`), Scheduled reminders (`202611060002`), independent Library files (`202611060003`), and standalone Projects (`202611060004`). None are applied to live Supabase yet.
 - PR #38 remains open and mergeable; do not merge or deploy until the newest CI run passes and all four SQL migrations are applied and live RLS/Storage behavior is verified.
+
+
+## 2026-11-07 — independent page and transcript scrolling merged
+- Founder requirement: both the full page and the conversation transcript must have separate vertical scrollbars; the desktop sidebar stays visible and mobile history stays accessible as a drawer.
+- PR #61 merged to main at `dbbc241700d5fba413d5d2658f85e638800147e5`.
+- Final browser workflow #622 / run `42373164712` on exact tested head `2f5b70371c58966f3e05d6768e3afa42f158e7d7`: **132 Playwright tests passed, 0 failed**.
+- Root fix: restore natural document flow/scrolling for Free and Health, preserve a bounded independently scrollable transcript, keep sidebar/drawer, and keep composer/attachments in page flow. Regression tests explicitly prove the page and transcript scroll positions move independently and the mobile page reaches the composer.
+- Earlier failed runs were used to correct real CSS specificity and obsolete test expectations; final run is green.
+- Main-branch deployment must still be verified separately: Supabase migration and diagnostic gate, Cloudflare Worker deploy and production smoke test. Current workflow expects GitHub Actions secrets `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_URL`, `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`. Do not claim production deployment until all release steps pass.
