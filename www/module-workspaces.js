@@ -88,6 +88,8 @@
    if(item.deliverable&&byId(item.deliverable[0]))byId(item.deliverable[0]).value=item.deliverable[1];
    if(item.mode)window[item.mode[0]]=item.mode[1];
    root.dataset.activeFeature=id;
+   const moduleName=String(root.id||"").replace(/Workspace$/,"").toLowerCase();
+   window.drvasSetFeatureContext?.(moduleName,id);
   }
   open(items[0].id);
   return {open,pageMap};
@@ -262,6 +264,7 @@
    init(moduleName);
    const back=byId("globalBackToModules"),chat=byId("chatSection"),workspace=byId(moduleName+"Workspace");
    mountModuleVoice(moduleName,workspace);
+   if(workspace?.dataset.activeFeature)window.drvasSetFeatureContext?.(moduleName,workspace.dataset.activeFeature);
    const active=["free","health"].includes(moduleName)
     ?document.body.classList.contains("free-module-mode")&&chat&&!chat.classList.contains("hidden")
     :document.body.classList.contains("module-workspace-mode")&&workspace&&!workspace.classList.contains("hidden");
