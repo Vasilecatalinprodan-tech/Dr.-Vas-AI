@@ -206,7 +206,7 @@ jobs:
           echo "Remote migration history after push:"
           supabase migration list --db-url "$SUPABASE_DB_URL"
           echo "Verifying the Health rate-limit RPC and its security grants:"
-          supabase db query --db-url "$SUPABASE_DB_URL" --file supabase/diagnostics/VERIFY_RATE_LIMITS.sql --output json > /tmp/drvas-rate-limit-check.json
+          supabase db query --db-url "$SUPABASE_DB_URL" --file supabase/diagnostics/VERIFY_RATE_LIMITS.sql --read-only --output json > /tmp/drvas-rate-limit-check.json
           node <<'NODE'
           const fs = require("fs");
           const result = JSON.parse(fs.readFileSync("/tmp/drvas-rate-limit-check.json", "utf8"));
