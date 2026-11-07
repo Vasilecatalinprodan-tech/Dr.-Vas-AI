@@ -147,3 +147,17 @@ Archive scope: preserve the material conversation content, exact user instructio
 - The validation step on the corrected head passed in workflow run #630 / `42375495159`; the Playwright homepage/session suite is currently running. The earlier run #629 failure belongs to the superseded intermediate commit and must not be mistaken for the current head's final result.
 - PR #64 current head: `c96c2339cc90cf37aed9e877dfb8ecdb767ed8af`. PR URL: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/64.
 - Do not merge/deploy until run #630 and any subsequent checks on the current PR head pass. Then verify production deployment and founder visual acceptance of both desktop and mobile helices before closing stage 2.
+
+
+## Continuation checkpoint — 7 November 2026, PR #64 verification and archive
+
+User message (verbatim):
+> sa continuam mai departe....salvam tot inclusiv conversatia
+
+- Confirmed continuation in the previously agreed mandatory sequence. Stage 1 (deployment + independent page/transcript scrolling) remains closed and accepted by the founder. Current work remains stage 2: genuine WebGL 3D DNA helices. No APK work is permitted until stage 7.
+- Rechecked browser workflow runs #630 / `42375495159`, #631 / `42375586489`, and #632 / `42375593156`: all completed successfully on their respective PR branch heads. These runs include the WebGL implementation and 133-test suite on earlier tested revisions.
+- PR #64 head `18e55641388b3cad4907b46de8e9bb191d4a97de` subsequently received an additional browser workflow run #633 / `42375598648`. Attempt 1 failed with **132 passed, 1 failed**. The failure is the existing voice-routing assertion at `tests/e2e/homepage.spec.cjs:1624`: one or more captured TTS requests did not contain the expected `access_token`. The dedicated new WebGL regression passed, as did the page/transcript scrolling regressions. This is not evidence of a DNA renderer failure; it is an unrelated voice-path test failure/flaky condition that must be investigated or successfully retried before merge.
+- GitHub Actions failed job `128412412967` was explicitly re-run; attempt 2 is running as job `128416612510`. Do not claim current-head CI is green until this retry finishes successfully.
+- Cloudflare GitHub App preview build check `Workers Builds: dr--vas-ai` failed on the PR head, and prior PR commits also showed preview-build failures. The PR preview build is separate from the repository's authoritative main-branch production deploy workflow; nevertheless, record it as unresolved and do not claim a preview deployment exists. After browser checks pass and PR is merged, the production deployment workflow must independently pass its Supabase migration/diagnostic gates, Worker deploy and production smoke test.
+- PR #64 remains OPEN and unmerged; no production deployment of the WebGL changes has occurred. Do not merge until required current-head checks are green. After merge/deploy, founder must visually inspect both DNA rails on desktop and mobile before stage 2 can be closed.
+- This user continuation request and the material technical findings above are archived. Archive scope remains a structured record of decisions, conversation excerpts, code/test/deploy outcomes and next actions, not a literal export of the full ChatGPT UI transcript.
