@@ -211,3 +211,12 @@ User's latest instruction: “salveaza tot inclusiv chatul si continua”. Follo
 - The static page contains 791 distinct text-node strings. Current accumulated translation dictionaries contain roughly 191 EN, 191 IT, 220 TR and 180 each DE/FR/ES/RU keys; many strings remain untranslated, so do not claim complete localization.
 - Continue in strict merge order #68 then #69, verify main deployment after both, then localize Studio, Academy, Commerce and Business. Preserve chat history verbatim.
 - Latest user message: “ok hai sa continuam si tot asa salvam tot”.
+
+
+## Follow-up checkpoint — 2026-11-07, after PR #68 merge
+
+- PR #68 passed latest E2E run 42407769955 and merged to main as 87e72105ab4778be236b9e1e93fde7f98276086c.
+- Main deploy run 42408000932 and browser regression run 42408000955 were in progress.
+- PR #69 closed as superseded due dirty merge state after the squash merge and a test selector issue. Phase-2 changes were carried forward to replacement PR #71.
+- PR #71 branch feat/localize-free-health-phase2-rebased-2026-11-07; head b9f775728ff1de4bb166b211569fff90bb60da6f; E2E run 42408117217 in progress.
+- Continue only after PR #71 latest E2E passes; then merge and verify production deployment. Full localization is still incomplete.
