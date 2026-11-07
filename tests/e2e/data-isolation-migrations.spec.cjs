@@ -194,4 +194,8 @@ test("Conversation feature context is saved before chat writes and enforced by t
   expect(worker).toContain("body.feature_key || null");
   expect(worker).toContain("context.module !== moduleName");
   expect(worker).toContain("(context.feature_key || null) !== featureKey");
+  expect(html).toContain("liveConversationId=currentConversationId");
+  expect(html).toContain("const conversationId=liveConversationId||currentConversationId");
+  expect(html).toContain("await saveMessage(\"user\",userText,conversationId)");
+  expect(html).toContain("setChatNavigationDisabled(true)");
 });
