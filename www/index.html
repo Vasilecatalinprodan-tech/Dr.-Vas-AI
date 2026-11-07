@@ -2167,11 +2167,11 @@ function setDrvasPresenterPortrait(key,avatar){
   avatar.insertBefore(photo,art||avatar.firstChild);
  }
  const labels={drvas:"Dr.Vas — fotografia fondatorului",jan:"Dr.Jan — personaj AI fictiv",sarah:"Sarah — portret profesional adult"};
- photo.setAttribute("alt",labels[key]||"Portretul asistentului");photo.dataset.presenter=key;
- const syncPortraitAlt=()=>photo.setAttribute("alt",labels[photo.dataset.presenter]||"Portretul asistentului");
+ avatar.dataset.presenter=key;photo.dataset.presenter=key;photo.setAttribute("alt",labels[key]||"Portretul asistentului");
+ const syncPortraitAlt=()=>{const activeKey=avatar.dataset.presenter||photo.dataset.presenter||key;photo.dataset.presenter=activeKey;photo.setAttribute("alt",labels[activeKey]||"Portretul asistentului")};
  syncPortraitAlt();
- photo.onload=()=>{syncPortraitAlt();photo.style.display="block";if(art)art.classList.add("is-hidden")};
- photo.onerror=()=>{syncPortraitAlt();photo.style.display="none";if(art)art.classList.remove("is-hidden")};
+ photo.onload=()=>{if(avatar.dataset.presenter!==key)return;syncPortraitAlt();photo.style.display="block";if(art)art.classList.add("is-hidden")};
+ photo.onerror=()=>{if(avatar.dataset.presenter!==key)return;syncPortraitAlt();photo.style.display="none";if(art)art.classList.remove("is-hidden")};
  const source=DRVAS_PRESENTER_PORTRAITS[key];
  if(source&&photo.getAttribute("src")!==source){if(art)art.classList.remove("is-hidden");photo.src=source}
  else if(photo.complete&&photo.naturalWidth>0&&art)art.classList.add("is-hidden");
