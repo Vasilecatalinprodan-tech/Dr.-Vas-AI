@@ -3,7 +3,8 @@
 (function(){
  "use strict";
  const built=new WeakSet();
- const voiceToolbar=()=>document.querySelector("#chatSection .voice-toolbar");
+ let voiceToolbarNode=null;
+ const voiceToolbar=()=>voiceToolbarNode||(voiceToolbarNode=document.querySelector(".voice-toolbar"));
  let voiceHome=null;
  function mountModuleVoice(moduleName,workspace){
   const toolbar=voiceToolbar();
