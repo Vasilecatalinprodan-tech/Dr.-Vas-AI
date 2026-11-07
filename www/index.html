@@ -5202,9 +5202,9 @@ function renderBusinessCashflow(){
  ["Lună","Încasări","Cheltuieli","Flux net"].forEach(label=>{const th=document.createElement("th");th.textContent=label;header.append(th);});head.append(header);table.append(head);
  const body=document.createElement("tbody");
  [...monthsByKey.entries()].sort((a,b)=>b[0].localeCompare(a[0])).forEach(([key,item])=>{
-  const [year,month]=key.split("-").map(Number),tr=document.createElement("tr"),label=document.createElement("td");
-  label.className="business-cashflow-month";label.textContent=new Date(year,month-1,1).toLocaleDateString(currentLanguage||undefined,{month:"long",year:"numeric"});tr.append(label);
-  [item.income,item.expenses,item.income-item.expenses].forEach(value=>{const td=document.createElement("td");td.textContent=businessWorkspaceMoney(value,currency);tr.append(td);});body.append(tr);
+  const [year,month]=key.split("-").map(Number),tableRow=document.createElement("tr"),label=document.createElement("td");
+  label.className="business-cashflow-month";label.textContent=new Date(year,month-1,1).toLocaleDateString(currentLanguage||undefined,{month:"long",year:"numeric"});tableRow.append(label);
+  [item.income,item.expenses,item.income-item.expenses].forEach(value=>{const td=document.createElement("td");td.textContent=businessWorkspaceMoney(value,currency);tableRow.append(td);});body.append(tableRow);
  });
  table.append(body);host.append(table);
 }
@@ -5223,9 +5223,9 @@ function renderBusinessLedger(){
  const head=document.createElement("thead"),hr=document.createElement("tr");
  ["Data","Tip","Descriere","Categorie","Sumă","TVA estimată",""].forEach(label=>{const th=document.createElement("th");th.textContent=label;hr.append(th);});head.append(hr);table.append(head);
  const body=document.createElement("tbody");
- rows.forEach(row=>{const tr=document.createElement("tr");
-  [row.transaction_date,row.entry_type==="income"?"Încasare":"Cheltuială",row.description,row.category,businessWorkspaceMoney(row.amount,currency),businessWorkspaceMoney(businessVatAmount(row),currency)].forEach(value=>{const td=document.createElement("td");td.textContent=value;tr.append(td);});
-  const action=document.createElement("td"),button=document.createElement("button");button.type="button";button.textContent=tr("Șterge");button.setAttribute("aria-label",tr("Șterge")+" "+row.description);button.addEventListener("click",()=>deleteBusinessTransaction(row.id));action.append(button);tr.append(action);body.append(tr);
+ rows.forEach(row=>{const tableRow=document.createElement("tr");
+  [row.transaction_date,row.entry_type==="income"?"Încasare":"Cheltuială",row.description,row.category,businessWorkspaceMoney(row.amount,currency),businessWorkspaceMoney(businessVatAmount(row),currency)].forEach(value=>{const td=document.createElement("td");td.textContent=value;tableRow.append(td);});
+  const action=document.createElement("td"),button=document.createElement("button");button.type="button";button.textContent=tr("Șterge");button.setAttribute("aria-label",tr("Șterge")+" "+row.description);button.addEventListener("click",()=>deleteBusinessTransaction(row.id));action.append(button);tableRow.append(action);body.append(tableRow);
  });table.append(body);host.append(table);
 }
 async function loadBusinessLedger(){
