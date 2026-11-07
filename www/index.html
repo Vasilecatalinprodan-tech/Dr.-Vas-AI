@@ -3472,7 +3472,8 @@ async function stopLiveVoice(){
  }
  await stopLiveMedia();
  updateLiveVoiceStage("closed");
- if(liveTurnSaveTimer){clearTimeout(liveTurnSaveTimer);liveTurnSaveTimer=null;await saveLiveTurn();}
+ if(liveTurnSaveTimer){clearTimeout(liveTurnSaveTimer);liveTurnSaveTimer=null;}
+ await saveLiveTurn();
  liveStopRequested=false;
  if(hadLiveSession&&currentUser)await logClientEvent("voice_live_session_ended");
  liveConversationId=null;liveConversationModule=null;liveConversationFeatureKey=null;
