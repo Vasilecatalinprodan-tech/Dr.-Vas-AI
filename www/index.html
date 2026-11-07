@@ -1050,6 +1050,18 @@ body.free-module-mode #chatSection>.chat-view-nav .chat-history-toggle{display:i
  body.free-module-mode main,body.free-module-mode #appMain,body.free-module-mode #chatSection,body.free-module-mode #chatSection .chat-main,body.free-module-mode #freeChatView{transform:none!important}
  body.free-module-mode #freeChatView>#chat{padding-bottom:170px!important}
 }
+
+/* Final module viewport overrides: keep the right-hand page scrollbar available
+   while preserving the independent transcript scroll inside each chat. */
+html,body{scrollbar-width:thin;scrollbar-color:#4d8795 #091827}
+body.module-workspace-mode main{height:auto!important;min-height:calc(100vh - 75px)!important;overflow-x:hidden!important;overflow-y:scroll!important;scrollbar-gutter:stable}
+body.module-workspace-mode .module-selection-shell,body.module-workspace-mode #chatSection{overflow:visible!important}
+body.free-module-mode main{height:calc(100dvh - 113px)!important;max-height:none!important;overflow-x:hidden!important;overflow-y:scroll!important;scrollbar-gutter:stable}
+body.free-module-mode #appMain{height:auto!important;min-height:0!important;overflow:visible!important}
+body.free-module-mode #chatSection{height:auto!important;min-height:calc(100dvh - 145px)!important;overflow:visible!important}
+body.free-module-mode #chatSection>.chat-layout{height:auto!important;min-height:calc(100dvh - 210px)!important;overflow:visible!important}
+@media(max-width:850px){body.module-workspace-mode main{display:block!important;overflow-y:scroll!important}body.module-workspace-mode #chatSection{margin-top:16px}body.free-module-mode main{padding-bottom:30px!important}}
+
 </style>
 <link rel="stylesheet" href="/module-workspaces.css">
 </head>
