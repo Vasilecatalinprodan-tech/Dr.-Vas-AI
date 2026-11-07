@@ -6232,8 +6232,9 @@ async function send(){
   if(sessionError)throw sessionError;
   const accessToken=sessionData.session?.access_token;
   if(!accessToken)throw new Error("Sesiunea a expirat. Conectează-te din nou.");
+  // The Worker refuses unclassified or cross-module threads, so establish the owner/module context first.
+  await ensureConversationMetadata(conversationId,moduleId,message.slice(0,120));
   await saveMessage("user",message,conversationId);
-  try{await ensureConversationMetadata(conversationId,moduleId,message.slice(0,120));}catch(metadataError){console.warn("Conversation context metadata save failed:",metadataError);}
   conversationSaved=true;pendingMessages=[];setLocalizedText(el("saveMessage"),"Mesajul tău este salvat automat în cont.");updateSaveButton();
 
   if(filesToUpload.length){
