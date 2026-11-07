@@ -29,13 +29,13 @@
 - Link artifact: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/42366110421/artifacts/13571708061
 - Separat, workflow-ul E2E pornit pe merge commit a eșuat într-un test de etichetă de portret: la schimbarea Dr.Vas → Dr.Jan, un callback întârziat a restaurat alt text-ul Dr.Vas. Nu este o problemă de autentificare sau de voce; a fost deschis PR #47 pentru corecție și test dedicat.
 
-## Remediere în curs — PR #47
+## Remediere integrată — PR #47
 - PR: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/47
-- Branch: fix/presenter-portrait-stale-load-race-2026-11-07
-- Head: 2cefd5e3bbf3046afa9a3f480b2e36121a47a1b0
-- Callback-urile vechi de încărcare/eroare nu mai au voie să modifice starea sau alt text-ul după ce prezentatorul activ s-a schimbat.
+- Merge commit: e05e5296faffe6e6870495d505f1c41716ee0925
+- Callback-urile vechi de încărcare/eroare verifică acum prezentatorul activ înainte de a modifica imaginea sau alt text-ul; un callback Dr.Vas întârziat nu mai poate rescrie eticheta Dr.Jan.
 - Test nou: capturează callback-ul Dr.Vas, schimbă la Dr.Jan, apelează callback-ul vechi și verifică faptul că eticheta rămâne Dr.Jan.
-- Browser E2E run pentru PR #47: 42366366924 — în curs la momentul acestui checkpoint. Nu declara PR #47 gata până nu trece și nu este integrat.
+- Browser E2E run pentru PR #47: 42366366924 — **122 passed**.
+- Deploy și APK build pentru commit-ul final e05e5296faffe6e6870495d505f1c41716ee0925 sunt în coadă la momentul actualizării.
 
 ## Cercetare salvată
 - Document: docs/DRVAS-MINING-ONLINE-INCOME-RESEARCH-2026-11-07.md
