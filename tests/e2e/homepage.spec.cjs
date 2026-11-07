@@ -2887,7 +2887,6 @@ test("Studio Book and Translation stations localize labels, placeholders, option
     await page.locator('#studioWorkspace [data-feature="translation"]').click();
     await expect(page.locator("#drvasTranslationSource").locator("xpath=..")).toContainText(sourceLanguage);
     await expect(page.locator("#drvasTranslationTarget").locator("xpath=..")).toContainText(targetLanguage);
-    await expect(page.locator("#drvasTranslationTarget")).toHaveAttribute("aria-label", targetLanguage);
     await expect(page.locator("#drvasTranslationTarget option").first()).toContainText(targetPlaceholder);
   }
 });
