@@ -2659,10 +2659,10 @@ test("module pages expose the page scrollbar and presenter portraits visibly rea
     const presenter = document.querySelector("#presentationPresenter");
     presenter?.classList.add("is-speaking");
     document.body.classList.add("module-workspace-mode");
-    const workspaceScroll = getComputedStyle(document.querySelector("main")).overflowY;
+    const workspaceScroll = getComputedStyle(document.body).overflowY;
     document.body.classList.remove("module-workspace-mode");
     document.body.classList.add("free-module-mode");
-    const freeScroll = getComputedStyle(document.querySelector("main")).overflowY;
+    const freeScroll = getComputedStyle(document.body).overflowY;
     return {
       pageScrollbar: root.scrollbarWidth,
       scrollbarColor: root.scrollbarColor,
@@ -2674,6 +2674,6 @@ test("module pages expose the page scrollbar and presenter portraits visibly rea
   expect(styles.pageScrollbar).toBe("thin");
   expect(styles.scrollbarColor).toContain("77, 135, 149");
   expect(styles.workspaceScroll).toBe("scroll");
-  expect(styles.freeScroll).toBe("scroll");
+  expect(styles.freeScroll).toBe("hidden");
   expect(styles.haloAnimation).toBe("presenterVoiceHalo");
 });
