@@ -1221,16 +1221,18 @@ test("hashrate mining simulator estimates coin yield and net energy-adjusted res
 test("Bitcoin live network adapter validates hashrate and 144-block reward data before filling the simulator", async ({ page }) => {
   await openApp(page, "ro");
   const result = await page.evaluate(async () => {
+    const sourceTimestamp = Math.floor(Date.now() / 1000) - 60;
+    const priceTimestamp = new Date(Date.now() - 2 * 60 * 1000).toISOString();
     window.fetch = async url => {
       if (url.includes("/mining/hashrate/3d")) {
-        return { ok: true, json: async () => [{ timestamp: 1794240000, avgHashrate: 600000000000000000000, difficulty: 148360000000000 }] };
+        return { ok: true, json: async () => [{ timestamp: sourceTimestamp, avgHashrate: 600000000000000000000, difficulty: 148360000000000 }] };
       }
       if (url.includes("/mining/reward-stats/144")) {
         return { ok: true, json: async () => ({ totalReward: 45381000000, totalFee: 381000000 }) };
       }
       if (url.includes("coingecko.com")) {
         window.__DRVAS_MARKET_URL__ = url;
-        return { ok: true, json: async () => [{ id: "bitcoin", current_price: 90000 }] };
+        return { ok: true, json: async () => [{ id: "bitcoin", current_price: 90000, last_updated: priceTimestamp }] };
       }
       throw new Error("Unexpected test URL: " + url);
     };
@@ -1251,7 +1253,35 @@ test("Bitcoin live network adapter validates hashrate and 144-block reward data 
   expect(result.status).toContain("mempool.space");
   expect(result.status).toContain("CoinGecko");
   expect(result.status).toContain("hashrate folosit în calcul, derivat din dificultate");
+  expect(result.status).toContain("Ultimul eșantion hashrate:");
+  expect(result.status).toContain("ultima actualizare preț BTC:");
+  expect(result.status).not.toContain("ATENȚIE: cel puțin o sursă");
   expect(result.marketUrl).toContain("ids=bitcoin%2Cbitcoin-cash");
+});
+
+test("Bitcoin live adapter warns when network or market timestamps are stale", async ({ page }) => {
+  await openApp(page, "ro");
+  const status = await page.evaluate(async () => {
+    const staleNetworkTimestamp = Math.floor(Date.now() / 1000) - 3 * 60 * 60;
+    const stalePriceTimestamp = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+    window.fetch = async url => {
+      if (url.includes("/mining/hashrate/3d")) {
+        return { ok: true, json: async () => [{ timestamp: staleNetworkTimestamp, avgHashrate: 600000000000000000000, difficulty: 148360000000000 }] };
+      }
+      if (url.includes("/mining/reward-stats/144")) {
+        return { ok: true, json: async () => ({ totalReward: 45381000000, totalFee: 381000000 }) };
+      }
+      if (url.includes("coingecko.com")) {
+        return { ok: true, json: async () => [{ id: "bitcoin", current_price: 90000, last_updated: stalePriceTimestamp }] };
+      }
+      throw new Error("Unexpected test URL: " + url);
+    };
+    await loadBitcoinNetworkScenario();
+    return document.querySelector("#cryptoBitcoinLiveStatus").textContent;
+  });
+  expect(status).toContain("ATENȚIE: cel puțin o sursă depășește pragul de prospețime");
+  expect(status).toContain("Ultimul eșantion hashrate:");
+  expect(status).toContain("ultima actualizare preț BTC:");
 });
 
 test("founder content campaign planner builds a 30-day brief for the private Studio", async ({ page }) => {
