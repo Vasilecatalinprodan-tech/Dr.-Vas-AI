@@ -56,3 +56,14 @@ This file preserves the founder's exact instruction above and the verified techn
 - BTC live simulator now displays separate timestamps for network hashrate and CoinGecko market price, and warns if network sample age exceeds two hours or market price age exceeds one hour.
 - Added Playwright coverage for fresh and stale source timestamps. PR #94 is open, unmerged and undeployed; its browser CI result is not yet available in the current connector response.
 - Main remains unchanged by PR #94. No real mining, wallet, pool, trading, transfer, device execution, billing, paid service, database/RLS or production configuration was enabled.
+
+
+## Verified checkpoint after mobile regression merge
+- PR #91 mobile and voice regression was corrected and passed GitHub Actions run #750 (`42723504337`): **152 tests passed**. The initial failure was the test's ambiguous desktop/mobile attachment selector; the test now targets the visible responsive control and measures its visible width.
+- PR #91 was squash-merged to main at `dee5d221465ca0be822aecb4b43b51c879d9c2ea`.
+- PR #92 documentation continuity archive merged at `f0ced00b171c88ece1b0fa7192e6e9f710a95601`.
+- PR #93 chat archive merged at `876bd57ef1aca4464b18296c4bd3bb7a8133401b`.
+- PR #95 appended the mining freshness continuation to the chat archive and merged at `e030a8f45dd23f733ab14bea2329fb61cbeefecc`.
+- The first mining freshness PR #94 was superseded and closed because main advanced with the mobile regression merge. Its code was not merged.
+- Replacement PR #96 is based on the latest main and contains the Bitcoin freshness implementation. Browser workflow run #755 (`42723991277`) has started; it was still in progress at this checkpoint. Do not merge until it passes.
+- No production deployment has been performed in this continuation. The production website remains on the last deployed main build; PR #96 is not live.
