@@ -111,3 +111,5 @@ Implementation started on branch `feat/mining-efficiency-break-even-2026-11-09`:
 - APK download remains deferred; no new APK was generated in this slice.
 
 - Formula review before CI: corrected the test's break-even expected value to include the 2% pool fee (break-even = energy plus maintenance divided by uptime-adjusted BTC/day after pool fee). This is a test expectation correction, not a change to the model.
+
+- Continued the same PR #88 slice by wiring the Bitcoin-only J/TH, cooling-overhead and hardware-cost inputs into the admin mining simulator. The BTC scenario now displays estimated miner/facility watts, net daily/30-day result, break-even BTC price and simple payback; non-BTC scenarios clear these BTC-specific outputs. Added a Playwright UI regression using a deliberately loss-making example so the UI must not imply a positive payback. This remains unmerged and undeployed pending CI.
