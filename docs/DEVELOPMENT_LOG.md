@@ -1061,3 +1061,10 @@ User reiterated: “ok hai sa continuam si tot asa salvam tot”. Continue the i
   - Rejects missing, non-finite, negative or out-of-range inputs; clearly treats cooling as an estimate, not measured wall power.
 - Added a Playwright regression for power conversion, energy, revenue, pool fee, net profit, break-even price, payback and invalid efficiency.
 - No mining process, pool connection, wallet, device agent, paid API, deployment or production data change was started. This is a calculation core; the admin UI still needs to expose these additional hardware inputs and results.
+
+
+- Founder instruction in this continuation: “da continua si salvam tot inclusiv chatul”.
+- PR #88 opened: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/88, head `641cc9b33b66092985bbd1cf8b0dd2a3a82f5c2c`, based on the current `main` head `04016c6583e94e53aa4b4ac35ae9d4946ae0a251`.
+- Four-file implementation: Bitcoin calculation engine, Playwright test, development log and conversation archive. PR is open and not merged. Initial commit-workflow and combined-status queries returned no records; CI is pending/unverified. Do not merge or deploy until required checks complete.
+- The new helper is not yet connected to the admin calculator UI. Next: wire hardware hashrate, J/TH, electricity tariff, cooling overhead, pool fee, uptime, maintenance and purchase cost inputs to the helper; display source/freshness and explicit estimate labels. Then run full browser regression, review, merge and production deploy only after passing checks.
+- APK download remains deferred; no new APK was generated in this slice.
