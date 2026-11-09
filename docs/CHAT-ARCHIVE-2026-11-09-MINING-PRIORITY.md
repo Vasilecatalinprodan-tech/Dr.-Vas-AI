@@ -65,3 +65,27 @@ Branch: feat/mining-hashrate-profitability-core-2026-11-09
 
 ## Continuity note
 This archive records the founder's instruction and the engineering decisions/work completed in this session. It is not a literal export of the ChatGPT interface or every message. The original conversation remains in ChatGPT chat history; the repository archive is the durable project handoff.
+
+
+## 2026-11-09 — continuation instruction and delivery timeout
+
+Founder reiterated the working priorities:
+- Keep all modules moving in parallel, but Crypto & Mining is the highest priority and should be advanced before moving to unrelated discussion.
+- Preserve all progress and the conversation context.
+- Do not keep spending time on APK link delivery now; previous APK and ZIP links both failed for the user, so defer delivery troubleshooting.
+
+Work completed in this continuation:
+- PR #84 mining simulator and live BTC data support merged.
+- PR #87 improved expected BTC yield by deriving equivalent network hashrate from current difficulty; 3-day observed average remains visible as cross-check.
+- PR #85 Studio localization merged; PR #86 vertical WebGL DNA orientation merged.
+- Final main commit after mining correction: `2ef7d333cdca7afeb48cf014142554fe7a8399e8`.
+- Browser regression #726 passed.
+- Cloudflare Worker deployment #541 passed, including Supabase migration gates and production smoke test.
+- Android APK build #369 passed, including checksum verification.
+- Artifact `DrVas-APK` ID `13690709810`; SHA-256 `4bb6bbd90377a47ef49cb9f3676c6d9034e78cfde15cd68dc1939e83dcfe58b8`; expires 2026-12-09. Delivery/install remains unconfirmed and is deferred.
+
+The founder reported a ChatGPT "Message delivery timed out" notice. This was a response-delivery timeout, not a project build/deploy failure. The completed work and this checkpoint are saved in the repository. The original ChatGPT conversation remains in history; this file is a structured summary, not a full UI transcript.
+
+Next mining milestone: improve the profitability calculator to include electricity tariff, miner efficiency, pool fee, uptime, cooling/overhead, hardware cost, net daily/monthly profit, break-even BTC price and payback period. Show source/timestamp and stale-data states. Then proceed to safe native-agent support for explicitly selected user-owned hardware and OS. Never run mining in a browser or on visitors' devices, and never connect a wallet/pool or launch mining without explicit approval.
+
+Parallel workstreams remain Free/auth/history/attachments, Health, Studio/voice/presenter, Academy, Commerce, Business, Crypto & Mining, Online Income/Digital Products, and subscriptions/Google Play. Preserve separate module projects/conversations and consistent localization.
