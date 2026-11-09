@@ -186,12 +186,71 @@
     };
   }
 
+
+  function calculateBitcoinHardwareScenario({
+    expectedBtcPerDay,
+    btcPriceUsd,
+    minerHashrateThs,
+    efficiencyJPerTh,
+    electricityUsdPerKwh,
+    coolingOverheadPercent = 0,
+    poolFeePercent = 1,
+    uptimePercent = 95,
+    maintenanceUsdPerDay = 0,
+    hardwareCostUsd = 0
+  }) {
+    const values = [
+      expectedBtcPerDay, btcPriceUsd, minerHashrateThs, efficiencyJPerTh,
+      electricityUsdPerKwh, coolingOverheadPercent, poolFeePercent,
+      uptimePercent, maintenanceUsdPerDay, hardwareCostUsd
+    ].map(Number);
+    if (values.some(value => !Number.isFinite(value) || value < 0)) {
+      throw new RangeError("Parametri Bitcoin sau cost invalizi.");
+    }
+    const [btcPerDay, price, hashrate, efficiency, tariff, cooling, fee, uptime, maintenance, capex] = values;
+    if (btcPerDay <= 0 || price <= 0 || hashrate <= 0 || efficiency <= 0 ||
+        cooling > 500 || fee >= 100 || uptime <= 0 || uptime > 100) {
+      throw new RangeError("Verifică producția BTC, prețul, hashrate-ul, eficiența și procentele.");
+    }
+    // TH/s × J/TH = J/s = watts. Cooling overhead is modelled as
+    // additional facility load; this is an estimate, not measured wall power.
+    const minerPowerWatts = hashrate * efficiency;
+    const facilityPowerWatts = minerPowerWatts * (1 + cooling / 100);
+    const energyKwhPerDay = facilityPowerWatts / 1000 * 24;
+    const energyUsdPerDay = energyKwhPerDay * tariff;
+    const realisedBtcPerDay = btcPerDay * uptime / 100;
+    const grossUsdPerDay = realisedBtcPerDay * price;
+    const poolFeeUsdPerDay = grossUsdPerDay * fee / 100;
+    const netUsdPerDay = grossUsdPerDay - poolFeeUsdPerDay - energyUsdPerDay - maintenance;
+    const breakEvenBtcPriceUsd = realisedBtcPerDay > 0 && fee < 100
+      ? (energyUsdPerDay + maintenance) / (realisedBtcPerDay * (1 - fee / 100))
+      : null;
+    const paybackDays = netUsdPerDay > 0 && capex > 0 ? capex / netUsdPerDay : null;
+    return {
+      minerPowerWatts,
+      facilityPowerWatts,
+      energyKwhPerDay,
+      energyUsdPerDay,
+      realisedBtcPerDay,
+      grossUsdPerDay,
+      poolFeeUsdPerDay,
+      maintenanceUsdPerDay: maintenance,
+      netUsdPerDay,
+      netUsdPer30Days: netUsdPerDay * 30,
+      breakEvenBtcPriceUsd,
+      hardwareCostUsd: capex,
+      paybackDays,
+      profitableAtAssumptions: netUsdPerDay > 0
+    };
+  }
+
   root.DrVasCryptoEngine = Object.freeze({
     coins: COINS,
     hardware: HARDWARE,
     eligibleCoins,
     calculateNetDaily,
     calculateHashrateScenario,
+    calculateBitcoinHardwareScenario,
     fetchMarkets,
     fetchBitcoinNetworkStats
   });
