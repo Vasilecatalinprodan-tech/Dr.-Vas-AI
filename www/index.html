@@ -7543,16 +7543,20 @@ async function loadBitcoinNetworkScenario() {
       throw new Error("Prețul public BTC nu este disponibil momentan.");
     }
     document.getElementById("cryptoScenarioSymbol").value = "BTC";
-    document.getElementById("cryptoScenarioNetworkHashrate").value = (network.networkHashrateHs / 1e12).toPrecision(10);
+    const modelHashrateHs = network.networkHashrateForProfitabilityHs || network.networkHashrateHs;
+    document.getElementById("cryptoScenarioNetworkHashrate").value = (modelHashrateHs / 1e12).toPrecision(10);
     document.getElementById("cryptoScenarioBlockReward").value = network.averageBlockRewardBtc.toPrecision(10);
     document.getElementById("cryptoScenarioBlocksPerDay").value = String(network.blocksPerDay);
     document.getElementById("cryptoScenarioPriceUsd").value = String(bitcoin.current_price);
     const result = calculateCryptoHashrateScenario();
     if (!result) throw new Error("Scenariul nu a putut fi recalculat cu datele primite.");
     const stamp = new Date(network.fetchedAt).toLocaleString();
-    status.textContent = "Date încărcate: hashrate BTC și recompensă medie pentru " + network.rewardSampleBlocks +
-      " blocuri din " + network.source + "; preț BTC din CoinGecko. Actualizat: " + stamp +
-      (network.difficulty ? " · Dificultate: " + network.difficulty.toLocaleString("en-US") : "") +
+    const observedEhs = network.networkHashrateHs / 1e18;
+    const modelEhs = modelHashrateHs / 1e18;
+    status.textContent = "Date încărcate: dificultate și recompensă medie pentru " + network.rewardSampleBlocks +
+      " blocuri din " + network.source + "; preț BTC din CoinGecko. Hashrate mediu observat (3 zile): " +
+      observedEhs.toFixed(1) + " EH/s; hashrate folosit în calcul, derivat din dificultate: " +
+      modelEhs.toFixed(1) + " EH/s. Actualizat: " + stamp +
       ". Estimarea rămâne orientativă și nu execută mining.";
   } catch (error) {
     status.textContent = "Datele live nu au putut fi încărcate: " + (error?.message || "eroare necunoscută") +
