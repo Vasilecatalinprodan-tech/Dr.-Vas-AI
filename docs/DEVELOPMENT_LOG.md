@@ -994,3 +994,42 @@ User reiterated: “ok hai sa continuam si tot asa salvam tot”. Continue the i
 - The localization E2E test now changes language first and awaits the resulting `checkSession()` before seeding the founder fixture and selecting Studio. `chooseLanguage()` itself calls `checkSession()`; seeding the admin fixture before the language switch caused the test to lose its admin state and leave the Studio workspace hidden.
 - Rebased localization branch includes the seven-language Book/Translation dictionaries in `www/index.html`, dynamic validation/save-status localization in `www/module-workspaces.js`, isolated EN/IT/TR/DE/FR/ES/RU E2E cases, and the 2026-11-07 Studio session checkpoint archive.
 - New rebased Studio PR and CI status are pending at this log entry; do not merge until browser regression passes.
+
+
+## 2026-11-09 — final verified continuation checkpoint
+
+### Mining priority
+- PR #84 merged at `a4074907dcf7935d49c808c8a1a4024296bc22b1`.
+- Includes hashrate-share profitability model, editable founder-only scenario simulator, on-demand BTC network hashrate and 144-block average reward adapter, CoinGecko BTC price and supported-catalogue ID lookup.
+- Native local mining agent safety design is archived at `docs/CRYPTO_NATIVE_MINING_AGENT_DESIGN.md`. Actual mining is still disabled; no browser mining, no visitor-device mining, no wallet custody and no automatic pool connection.
+- Next real-mining implementation depends on the founder confirming exact ASIC/GPU model and target OS. No hardware model or pool has been selected in this checkpoint.
+
+### Studio localization
+- PR #85 merged at `a80c148f3aac6666b43b2b9c2c2b2fd901736f2a`.
+- Book Studio and Translation Station labels, placeholders, options, validation, save status and generated brief headings now include EN/IT/TR/DE/FR/ES/RU.
+- The test-order issue was resolved by changing language and awaiting its session refresh before seeding the founder fixture.
+- Original PR #82 was closed as superseded; its work was reapplied cleanly in PR #85.
+
+### Vertical DNA orientation
+- PR #86 merged at `67c8bc4b6fc2999670b2d145fdbd255cd334f6dc`.
+- Existing WebGL helix geometry is rotated 90 degrees around X so its long axis appears vertical, while preserving Y-axis animation, colors, lighting, reflections and fallback.
+- Original PR #83 was closed as superseded; its fix was reapplied on current main in PR #86.
+- Founder visual acceptance on desktop/mobile is still pending; automated regression passing is not the same as the founder visually confirming the live result.
+
+### Production and Android verification
+- After PR #85: browser run #722 passed; Worker deploy #539 passed including production smoke test; Android build #367 passed.
+- After PR #86: browser run #724 passed **149/149 tests**; Worker deploy #540 passed including production smoke test; Android build #368 passed.
+- Latest APK artifact: `DrVas-APK`, artifact ID `13689614009`, build run `42653577556`, main commit `67c8bc4b6fc2999670b2d145fdbd255cd334f6dc`, SHA-256 digest `2c57321ba34e4d53d247c31a36a7ed72900051d580b5d4e8e34aed3737aef8da`, expiry 2026-12-09.
+- The founder reported that previous sandbox links did not download. The artifact is built and verified by CI, but user download and installation on the phone are not confirmed. Defer link-delivery work and do not claim installation.
+
+### Conversation preservation
+- Founder instruction and mining-first roadmap: `docs/CHAT-ARCHIVE-2026-11-09-MINING-PRIORITY.md`.
+- Vertical DNA instruction and technical decision: `docs/CHAT-ARCHIVE-2026-11-09-DNA-VERTICAL.md`.
+- Native miner safety architecture: `docs/CRYPTO_NATIVE_MINING_AGENT_DESIGN.md`.
+- The original ChatGPT conversation remains in ChatGPT history; repository documents are structured checkpoints, not a literal export of the entire chat UI.
+
+### Remaining work
+1. Continue Crypto & Mining first: verify live data quality/freshness, expand the supported PoW catalogue carefully, then implement signed native agent and testnet/pool adapters only after hardware/OS confirmation.
+2. Continue parallel module audits and improvements across Free, Health, Studio, Academy, Commerce and Business; preserve per-module conversation/project isolation.
+3. Revisit Sarah/Dr.Jan presenter and voice tests, dynamic localization outside the completed Studio stations, security/performance and production smoke coverage.
+4. Resolve APK delivery through a different supported route later; the current debug artifact is not a Play Store-signed release.
