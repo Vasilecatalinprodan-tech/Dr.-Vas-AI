@@ -47,3 +47,12 @@ Purpose: preserve the founder's instruction and verified work from the 23:47 con
 
 ## Conversation preservation note
 This file preserves the founder's exact instruction above and the verified technical decisions, findings and actions from this continuation. It is a structured project archive, not a literal export of the entire ChatGPT UI transcript. The original conversation remains available in ChatGPT history.
+
+
+## Later continuation — mining data freshness feature branch
+- Founder repeated the instruction to continue all workstreams in parallel and preserve the chat; the original 23:47 request remains recorded above.
+- Created PR #94: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/94 — Bitcoin network and market source freshness.
+- New adapter metadata normalises the last Mempool hashrate sample timestamp and flags samples older than two hours.
+- BTC live simulator now displays separate timestamps for network hashrate and CoinGecko market price, and warns if network sample age exceeds two hours or market price age exceeds one hour.
+- Added Playwright coverage for fresh and stale source timestamps. PR #94 is open, unmerged and undeployed; its browser CI result is not yet available in the current connector response.
+- Main remains unchanged by PR #94. No real mining, wallet, pool, trading, transfer, device execution, billing, paid service, database/RLS or production configuration was enabled.
