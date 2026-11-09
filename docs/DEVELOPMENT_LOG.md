@@ -1074,3 +1074,12 @@ User reiterated: “ok hai sa continuam si tot asa salvam tot”. Continue the i
 - Continued the same PR #88 slice by wiring the Bitcoin-only J/TH, cooling-overhead and hardware-cost inputs into the admin mining simulator. The BTC scenario now displays estimated miner/facility watts, net daily/30-day result, break-even BTC price and simple payback; non-BTC scenarios clear these BTC-specific outputs. Added a Playwright UI regression using a deliberately loss-making example so the UI must not imply a positive payback. This remains unmerged and undeployed pending CI.
 
 - Validation refinement: if a BTC hardware assumption becomes invalid, the simulator now clears all derived hardware outputs instead of leaving stale previous estimates visible.
+
+
+## 2026-11-09 — mining source freshness and stale-data warnings
+- Added source-sample timestamp extraction to the Mempool.space Bitcoin network adapter. Unix seconds and millisecond timestamps are normalised to ISO 8601; missing source timestamps remain explicitly unknown.
+- The adapter flags a network hashrate sample as stale when it is older than two hours.
+- The founder-only BTC live loader now shows separate last-source timestamps for the hashrate sample and CoinGecko BTC price, plus browser retrieval time. It warns when network sample age exceeds two hours or market price age exceeds one hour.
+- Added Playwright coverage for fresh timestamps and a stale network/price warning. Data remains labelled as an estimate; this does not enable mining or connect a device, wallet or pool.
+- Reference contracts: Mempool REST API documents network hashrate and 144-block reward stats; CoinGecko market responses expose `last_updated`.
+- Branch: `feat/mining-source-freshness-2026-11-09`. Awaiting browser CI and review; not merged or deployed.
