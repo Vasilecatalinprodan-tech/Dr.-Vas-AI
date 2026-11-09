@@ -1033,3 +1033,18 @@ User reiterated: “ok hai sa continuam si tot asa salvam tot”. Continue the i
 2. Continue parallel module audits and improvements across Free, Health, Studio, Academy, Commerce and Business; preserve per-module conversation/project isolation.
 3. Revisit Sarah/Dr.Jan presenter and voice tests, dynamic localization outside the completed Studio stations, security/performance and production smoke coverage.
 4. Resolve APK delivery through a different supported route later; the current debug artifact is not a Play Store-signed release.
+
+
+## 2026-11-09 — PR #87 final production verification and delivery-timeout checkpoint
+
+- PR #87 merged into main at `2ef7d333cdca7afeb48cf014142554fe7a8399e8`.
+- Change: BTC expected-yield calculation uses the difficulty-implied network hashrate (difficulty × 2^32 × 144 ÷ 86,400), with the observed 3-day average hashrate retained as a diagnostic cross-check. Average BTC reward uses the latest 144-block reward sample; BTC market price is fetched on demand.
+- Browser regression run #726 (`42655328195`) completed successfully.
+- Cloudflare Worker deploy run #541 (`42655328076`) completed successfully: browser/session checks, Supabase migration gates, Worker deployment and production smoke test all passed.
+- Android build #369 (`42655328176`) completed successfully; privacy-default check, APK build, checksum verification and artifact upload all passed.
+- Latest APK artifact: `DrVas-APK`, ID `13690709810`, size 6,471,878 bytes, SHA-256 `4bb6bbd90377a47ef49cb9f3676c6d9034e78cfde15cd68dc1939e83dcfe58b8`, created 2026-11-09 16:31 UTC, expires 2026-12-09 16:31 UTC. Build commit is the main SHA above. User previously reported that both direct APK and ZIP sandbox links fail to download. Do not keep sending the same style of link; delivery troubleshooting is explicitly deferred. Build success does not mean user downloaded or installed the APK.
+- User reported the ChatGPT message "Message delivery timed out. Please try again." Explained that this is a response-delivery/platform timeout and does not indicate GitHub code or workflow failure. The work and this checkpoint are persisted in the repository.
+- User's instruction: save all and continue working, with mining as the top priority; parallel improvements across all modules are wanted, but do not switch to unrelated topics before mining is advanced.
+- Next mining-first work: review current mining calculator UX and assumptions; add cost model inputs for power tariff, miner efficiency (J/TH), pool fee, uptime, cooling/overhead and hardware cost; calculate daily/monthly net profit, break-even BTC price and payback period; show stale-data/error states and timestamp/source; keep calculations clearly estimates, no guaranteed profit. Then build safe native-agent architecture for explicitly selected user-owned ASIC/GPU hardware and OS. Do not run mining in browser or on visitor devices; do not connect wallets, pools or launch background mining without explicit user approval.
+- Parallel module roadmap remains: Free/auth/history/attachments; Health (medical file upload and safety); Studio/voice/presenter; Academy; Commerce; Business; Crypto & Mining; Online Income/Digital Products; subscriptions/Google Play. Preserve module-specific conversation/project isolation and localization consistency.
+- Conversation preservation: this development log plus `docs/CHAT-ARCHIVE-2026-11-09-MINING-PRIORITY.md`, `docs/CHAT-ARCHIVE-2026-11-09-DNA-VERTICAL.md` and `docs/CRYPTO_NATIVE_MINING_AGENT_DESIGN.md` are structured checkpoints. They are not a literal export of the ChatGPT UI conversation; the original conversation remains in ChatGPT history.
