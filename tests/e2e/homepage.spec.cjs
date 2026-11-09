@@ -1243,11 +1243,14 @@ test("Bitcoin live network adapter validates hashrate and 144-block reward data 
       marketUrl: window.__DRVAS_MARKET_URL__
     };
   });
-  expect(result.networkHashrate).toBeCloseTo(600000000, 2);
+  // Difficulty × 2^32 × 144 blocks/day ÷ 86,400 seconds gives the
+  // equivalent network hashrate used by the expected BTC yield model.
+  expect(result.networkHashrate).toBeCloseTo(1062002247, 0);
   expect(result.reward).toBeCloseTo(3.1514583333, 8);
   expect(result.price).toBe(90000);
   expect(result.status).toContain("mempool.space");
   expect(result.status).toContain("CoinGecko");
+  expect(result.status).toContain("hashrate folosit în calcul, derivat din dificultate");
   expect(result.marketUrl).toContain("ids=bitcoin%2Cbitcoin-cash");
 });
 
