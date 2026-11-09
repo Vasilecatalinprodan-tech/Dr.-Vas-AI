@@ -171,6 +171,16 @@
     const difficultyImpliedHashrateHs = validDifficulty
       ? validDifficulty * Math.pow(2, 32) * 144 / 86400
       : null;
+    const rawSampleTimestamp = Number(latestPoint?.timestamp ?? latestPoint?.time);
+    const sampleTimestampMs = Number.isFinite(rawSampleTimestamp) && rawSampleTimestamp > 0
+      ? (rawSampleTimestamp < 1e12 ? rawSampleTimestamp * 1000 : rawSampleTimestamp)
+      : null;
+    const hashrateSampleAt = sampleTimestampMs !== null && Number.isFinite(new Date(sampleTimestampMs).getTime())
+      ? new Date(sampleTimestampMs).toISOString()
+      : null;
+    const hashrateSampleAgeMs = hashrateSampleAt
+      ? Math.max(0, Date.now() - new Date(hashrateSampleAt).getTime())
+      : null;
     return {
       // Prefer the difficulty-derived network rate for expected BTC yield;
       // retain the observed 3-day average as a diagnostic cross-check.
@@ -181,6 +191,9 @@
       averageBlockRewardBtc: totalRewardSats / 144 / 100000000,
       blocksPerDay: 144,
       rewardSampleBlocks: 144,
+      hashrateSampleAt,
+      hashrateSampleAgeMs,
+      hashrateSampleStale: hashrateSampleAgeMs !== null && hashrateSampleAgeMs > 2 * 60 * 60 * 1000,
       source: "mempool.space",
       fetchedAt: new Date().toISOString()
     };
