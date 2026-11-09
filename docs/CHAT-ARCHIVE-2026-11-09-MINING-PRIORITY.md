@@ -89,3 +89,16 @@ The founder reported a ChatGPT "Message delivery timed out" notice. This was a r
 Next mining milestone: improve the profitability calculator to include electricity tariff, miner efficiency, pool fee, uptime, cooling/overhead, hardware cost, net daily/monthly profit, break-even BTC price and payback period. Show source/timestamp and stale-data states. Then proceed to safe native-agent support for explicitly selected user-owned hardware and OS. Never run mining in a browser or on visitors' devices, and never connect a wallet/pool or launch mining without explicit approval.
 
 Parallel workstreams remain Free/auth/history/attachments, Health, Studio/voice/presenter, Academy, Commerce, Business, Crypto & Mining, Online Income/Digital Products, and subscriptions/Google Play. Preserve separate module projects/conversations and consistent localization.
+
+
+## 2026-11-09 — next mining implementation slice: hardware efficiency and payback
+
+Founder instruction: continue the project and preserve all progress, including the conversation. Mining remains the first priority while the other Dr.Vas modules continue as parallel workstreams.
+
+Implementation started on branch `feat/mining-efficiency-break-even-2026-11-09`:
+- New Bitcoin hardware scenario calculation derives electrical load from TH/s × J/TH.
+- Cooling overhead is an explicit additional facility-load assumption.
+- Includes uptime-adjusted BTC yield, pool fee, electricity, maintenance, daily and 30-day net results, break-even BTC price and simple hardware payback.
+- Adds automated regression coverage for the formula and invalid inputs.
+- This slice is not yet merged or deployed. The calculator UI has not yet been wired to the new inputs/results.
+- Real mining remains disabled. No device, OS, miner binary, pool or wallet has been configured or authorised.
