@@ -149,3 +149,5 @@ Parallel work / safety:
 - APK delivery troubleshooting remains deferred. Do not repeat the previously failing sandbox links.
 
 Conversation preservation note: this repository file stores the founder's exact instruction plus the verified technical findings and actions from this turn. It is a structured continuity archive, not a verbatim export of the complete ChatGPT UI transcript. The original conversation remains in ChatGPT history.
+
+- Follow-up hardening of the same test: the geometry measurement now selects the visible responsive attachment label instead of the first DOM match, avoiding a false zero-width reading when the desktop label is hidden on mobile.
