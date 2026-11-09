@@ -102,3 +102,10 @@ Implementation started on branch `feat/mining-efficiency-break-even-2026-11-09`:
 - Adds automated regression coverage for the formula and invalid inputs.
 - This slice is not yet merged or deployed. The calculator UI has not yet been wired to the new inputs/results.
 - Real mining remains disabled. No device, OS, miner binary, pool or wallet has been configured or authorised.
+
+
+- Founder instruction in this continuation: “da continua si salvam tot inclusiv chatul”.
+- PR #88 opened: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/88, head `641cc9b33b66092985bbd1cf8b0dd2a3a82f5c2c`, based on the current `main` head `04016c6583e94e53aa4b4ac35ae9d4946ae0a251`.
+- Four-file implementation: Bitcoin calculation engine, Playwright test, development log and conversation archive. PR is open and not merged. Initial commit-workflow and combined-status queries returned no records; CI is pending/unverified. Do not merge or deploy until required checks complete.
+- The new helper is not yet connected to the admin calculator UI. Next: wire hardware hashrate, J/TH, electricity tariff, cooling overhead, pool fee, uptime, maintenance and purchase cost inputs to the helper; display source/freshness and explicit estimate labels. Then run full browser regression, review, merge and production deploy only after passing checks.
+- APK download remains deferred; no new APK was generated in this slice.
