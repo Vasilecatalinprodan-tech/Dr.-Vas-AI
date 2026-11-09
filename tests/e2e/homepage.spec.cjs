@@ -3461,7 +3461,7 @@ test("all six workspaces retain the shared mobile chat, attachments, send and ac
     const layout = await page.evaluate(() => ({
       viewportWidth: document.documentElement.clientWidth,
       documentWidth: document.documentElement.scrollWidth,
-      mainColumns: getComputedStyle(document.querySelector("main")).gridTemplateColumns.trim().split(/\\s+/).length,
+      mainColumns: getComputedStyle(document.querySelector("main")).gridTemplateColumns.trim().split(/\s+/).length,
       composerWidth: document.querySelector("#question").getBoundingClientRect().width,
       attachWidth: document.querySelector(".chat-file-button").getBoundingClientRect().width,
       sendWidth: document.querySelector("#sendButton").getBoundingClientRect().width
