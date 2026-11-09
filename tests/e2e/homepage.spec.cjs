@@ -1208,14 +1208,14 @@ test("hashrate mining simulator estimates coin yield and net energy-adjusted res
   expect(result.netUsdPerDay).toBeCloseTo(0.09675, 8);
   await expect(page.locator("#cryptoScenarioCoinsDay")).toContainText("BTC/zi");
   await expect(page.locator("#cryptoScenarioNetDay")).toContainText("$0.0968");
-  await expect(page.locator("#cryptoScenarioNotice")).toContainText("nu predicție");
+  await expect(page.locator("#cryptoHashrateScenarioNotice")).toContainText("nu predicție");
 
   const invalid = await page.evaluate(() => {
     document.querySelector("#cryptoScenarioMinerHashrate").value = "700000000";
     return calculateCryptoHashrateScenario();
   });
   expect(invalid).toBeNull();
-  await expect(page.locator("#cryptoScenarioNotice")).toContainText("Verifică hashrate-ul");
+  await expect(page.locator("#cryptoHashrateScenarioNotice")).toContainText("Verifică hashrate-ul");
 });
 
 test("founder content campaign planner builds a 30-day brief for the private Studio", async ({ page }) => {
