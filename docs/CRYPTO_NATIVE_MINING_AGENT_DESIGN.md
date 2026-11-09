@@ -86,3 +86,13 @@ Local emergency stop must terminate the supervised miner process even when inter
 - [ ] Only then consider a controlled, visible real-mining pilot.
 
 Until every gate passes, the Dr.Vas Crypto workspace remains a simulator/monitoring console and execution stays disabled.
+
+
+## Bitcoin-specific profitability calculation
+For Bitcoin, the live scenario uses the current network difficulty as the primary expected-yield basis. With 144 target blocks/day:
+- Difficulty-implied network hashrate (H/s) = difficulty × 2^32 × 144 ÷ 86,400.
+- Expected BTC/day = miner hashrate (H/s) × 86,400 × average BTC reward/block ÷ (difficulty × 2^32).
+- The implementation expresses miner and network hashrate in TH/s in the UI; the ratio-based scenario is mathematically equivalent to the difficulty formula when the network hashrate is derived as above.
+- Average BTC reward/block is totalReward from the latest 144-block mempool.space reward-stat window ÷ 144 ÷ 100,000,000 (satoshis per BTC). This includes subsidy and fees, so it is an observed average, not a guaranteed next-block payout.
+- The mempool.space observed 3-day average hashrate is retained in the response as a diagnostic cross-check; the difficulty-implied rate is the one used for the expected-yield estimate.
+- BTC price is fetched on demand from CoinGecko's markets endpoint for the explicit bitcoin ID. No polling loop or paid API key is enabled.
