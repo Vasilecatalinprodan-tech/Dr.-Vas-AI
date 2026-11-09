@@ -2090,6 +2090,10 @@ body.health-module-mode #chatSection .chat-main #freeChatView>#chat{
      <section class="crypto-scenario-panel" aria-labelledby="cryptoScenarioHeading">
       <h6 id="cryptoScenarioHeading">Simulator de hashrate și venit estimat</h6>
       <p>Introdu hashrate-ul minerului și al rețelei în aceeași unitate, plus recompensa și numărul de blocuri pe zi. Valorile inițiale sunt doar un exemplu demonstrativ; actualizează-le din surse de rețea verificate înainte de orice decizie.</p>
+      <div class="crypto-engine-toolbar">
+       <button type="button" class="crypto-engine-scan" id="cryptoBitcoinLiveButton" onclick="loadBitcoinNetworkScenario()">Încarcă datele live Bitcoin</button>
+       <span id="cryptoBitcoinLiveStatus" class="admin-footnote" role="status" aria-live="polite">Date demonstrative. Butonul va prelua hashrate-ul și recompensa rețelei BTC, plus prețul public.</span>
+      </div>
       <div class="crypto-scenario-grid">
        <label>Monedă / simbol<input id="cryptoScenarioSymbol" value="BTC" maxlength="10" oninput="calculateCryptoHashrateScenario()"></label>
        <label>Hashrate echipament (TH/s)<input id="cryptoScenarioMinerHashrate" type="number" min="0" step="any" value="200" oninput="calculateCryptoHashrateScenario()"></label>
@@ -7450,6 +7454,44 @@ function calculateCryptoHashrateScenario() {
     ["cryptoScenarioShare","cryptoScenarioCoinsDay","cryptoScenarioGrossDay","cryptoScenarioEnergyDay","cryptoScenarioNetDay","cryptoScenarioNetMonth"].forEach(id=>{const node=document.getElementById(id);if(node)node.textContent="—";});
     notice.textContent = error?.message || "Verifică valorile introduse.";
     return null;
+  }
+}
+async function loadBitcoinNetworkScenario() {
+  const button = document.getElementById("cryptoBitcoinLiveButton");
+  const status = document.getElementById("cryptoBitcoinLiveStatus");
+  if (!window.DrVasCryptoEngine || !button || !status) return;
+  if (drVasCryptoStopLatched) {
+    status.textContent = "STOP URGENȚĂ este armat; încărcarea scenariului este blocată.";
+    return;
+  }
+  button.disabled = true;
+  status.textContent = "Se preiau hashrate-ul rețelei și recompensa medie din ultimele 144 de blocuri…";
+  try {
+    const [network, markets] = await Promise.all([
+      window.DrVasCryptoEngine.fetchBitcoinNetworkStats(),
+      window.DrVasCryptoEngine.fetchMarkets()
+    ]);
+    const bitcoin = markets.find(coin => coin.id === "bitcoin");
+    if (!bitcoin || !Number.isFinite(Number(bitcoin.current_price)) || Number(bitcoin.current_price) <= 0) {
+      throw new Error("Prețul public BTC nu este disponibil momentan.");
+    }
+    document.getElementById("cryptoScenarioSymbol").value = "BTC";
+    document.getElementById("cryptoScenarioNetworkHashrate").value = (network.networkHashrateHs / 1e12).toPrecision(10);
+    document.getElementById("cryptoScenarioBlockReward").value = network.averageBlockRewardBtc.toPrecision(10);
+    document.getElementById("cryptoScenarioBlocksPerDay").value = String(network.blocksPerDay);
+    document.getElementById("cryptoScenarioPriceUsd").value = String(bitcoin.current_price);
+    const result = calculateCryptoHashrateScenario();
+    if (!result) throw new Error("Scenariul nu a putut fi recalculat cu datele primite.");
+    const stamp = new Date(network.fetchedAt).toLocaleString();
+    status.textContent = "Date încărcate: hashrate BTC și recompensă medie pentru " + network.rewardSampleBlocks +
+      " blocuri din " + network.source + "; preț BTC din CoinGecko. Actualizat: " + stamp +
+      (network.difficulty ? " · Dificultate: " + network.difficulty.toLocaleString("en-US") : "") +
+      ". Estimarea rămâne orientativă și nu execută mining.";
+  } catch (error) {
+    status.textContent = "Datele live nu au putut fi încărcate: " + (error?.message || "eroare necunoscută") +
+      ". Valorile introduse anterior au fost păstrate.";
+  } finally {
+    button.disabled = false;
   }
 }
 async function scanCryptoMiningCandidates() {
