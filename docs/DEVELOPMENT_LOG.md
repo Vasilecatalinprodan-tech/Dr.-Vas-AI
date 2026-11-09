@@ -980,3 +980,17 @@ User reiterated: “ok hai sa continuam si tot asa salvam tot”. Continue the i
 - PR #82 latest run `42644670118` failed because the seven-language Book/Translation Station test exceeded 60 seconds (test line 2866); the earlier diagnosis as a private-module test timeout was incorrect. Keep PR #82 open and fix the actual slow test before merge.
 - PR #83 latest run `42644738518` passed all browser/static checks. Vertical helix orientation remains subject to founder visual acceptance before merge.
 - Continue all six core modules and supporting founder workbenches as parallel workstreams; Crypto/Mining receives first engineering priority. Do not activate real mining until signed native-agent, device-authorisation, pool/network adapters, telemetry, energy/thermal/runtime limits and verified emergency stop have passed security review and the founder explicitly authorises execution.
+
+
+## 2026-11-09 — mining simulator deployed; Studio localization rebased
+
+- PR #84 merged into main at `a4074907dcf7935d49c808c8a1a4024296bc22b1`.
+- Main browser regression run #720 (`42651133426`) passed.
+- Cloudflare Worker deploy run #538 (`42651133093`) passed all steps, including persisted-session browser tests, Supabase migration gates, Worker deploy and production smoke test.
+- Android build #366 (`42651133152`) succeeded from the same main commit. Artifact `DrVas-APK`, ID `13688989131`, expires 2026-12-09. The founder previously reported that sandbox APK/ZIP links did not download; do not assume this artifact has been delivered to the device. APK link delivery remains deferred.
+- Mining implementation now includes the hashrate-share simulator, manual assumption inputs, live BTC hashrate and 144-block average reward adapter via mempool.space, BTC market price via CoinGecko, and explicit catalogue-ID market lookup. Browser regression run #718 (`42650517234`) passed all checks for this implementation before merge.
+- Public API facts used for the Bitcoin adapter: mempool.space documents network hashrate/difficulty and 144-block reward-stat endpoints; CoinGecko documents the `ids` parameter for bulk market lookup. Public CoinGecko API is rate-limited, so live fetch remains manual/on-demand rather than an automatic polling loop.
+- PR #82's branch was based on the old main commit and became conflicted after PR #84. A clean branch `feat/studio-localization-rebased-2026-11-09` was created from the new main and the localization changes were reapplied without reverting mining changes.
+- The localization E2E test now changes language first and awaits the resulting `checkSession()` before seeding the founder fixture and selecting Studio. `chooseLanguage()` itself calls `checkSession()`; seeding the admin fixture before the language switch caused the test to lose its admin state and leave the Studio workspace hidden.
+- Rebased localization branch includes the seven-language Book/Translation dictionaries in `www/index.html`, dynamic validation/save-status localization in `www/module-workspaces.js`, isolated EN/IT/TR/DE/FR/ES/RU E2E cases, and the 2026-11-07 Studio session checkpoint archive.
+- New rebased Studio PR and CI status are pending at this log entry; do not merge until browser regression passes.
