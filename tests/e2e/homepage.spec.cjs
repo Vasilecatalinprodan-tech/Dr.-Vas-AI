@@ -1223,7 +1223,7 @@ test("Bitcoin live network adapter validates hashrate and 144-block reward data 
   const result = await page.evaluate(async () => {
     window.fetch = async url => {
       if (url.includes("/mining/hashrate/3d")) {
-        return { ok: true, json: async () => ({ currentHashrate: 600000000000000000000, currentDifficulty: 148360000000000 }) };
+        return { ok: true, json: async () => [{ timestamp: 1794240000, avgHashrate: 600000000000000000000, difficulty: 148360000000000 }] };
       }
       if (url.includes("/mining/reward-stats/144")) {
         return { ok: true, json: async () => ({ totalReward: 45381000000, totalFee: 381000000 }) };
