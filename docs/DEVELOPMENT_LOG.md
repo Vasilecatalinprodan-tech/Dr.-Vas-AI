@@ -1074,3 +1074,10 @@ User reiterated: “ok hai sa continuam si tot asa salvam tot”. Continue the i
 - Continued the same PR #88 slice by wiring the Bitcoin-only J/TH, cooling-overhead and hardware-cost inputs into the admin mining simulator. The BTC scenario now displays estimated miner/facility watts, net daily/30-day result, break-even BTC price and simple payback; non-BTC scenarios clear these BTC-specific outputs. Added a Playwright UI regression using a deliberately loss-making example so the UI must not imply a positive payback. This remains unmerged and undeployed pending CI.
 
 - Validation refinement: if a BTC hardware assumption becomes invalid, the simulator now clears all derived hardware outputs instead of leaving stale previous estimates visible.
+
+
+## 2026-11-09 — all-module mobile and voice regression (fresh PR branch)
+- Added the 390×844 six-workspace regression to a fresh branch based on latest `main`, so CI starts against the exact final test content.
+- Covers chat composer, attachment picker, Send, back/logout controls, one-column layout, no horizontal overflow, microphone, auto-read and Live voice controls across Free, Health, Studio, Academy, Commerce and Business.
+- Branch: `test/all-modules-mobile-workspace-final-2026-11-09`. Test/documentation only; no production feature or access policy changed.
+- Production page link for founder visual review: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ . PR changes are not live until merge and production deployment.
