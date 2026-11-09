@@ -920,7 +920,7 @@ body.presentation-open{overflow:hidden!important}
 .crypto-scenario-results>div{padding:10px;background:#10283a;border:1px solid #29495e;border-radius:9px;min-width:0}
 .crypto-scenario-results small{display:block;color:#91aebf;font-size:10px}
 .crypto-scenario-results strong{display:block;margin-top:5px;color:#d8fff7;font-size:15px;overflow-wrap:anywhere}
-#cryptoScenarioNotice{display:block;margin-top:10px;color:#f0c879;font-size:11px;line-height:1.5}
+#cryptoHashrateScenarioNotice{display:block;margin-top:10px;color:#f0c879;font-size:11px;line-height:1.5}
 @media(max-width:760px){.crypto-scenario-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.crypto-scenario-results{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:420px){.crypto-scenario-grid,.crypto-scenario-results{grid-template-columns:1fr}}
 @media(max-width:620px){.crypto-engine-toolbar>*{width:100%}.crypto-engine-toolbar select{min-width:0}.crypto-emergency-stop{width:100%}}
@@ -2111,7 +2111,7 @@ body.health-module-mode #chatSection .chat-main #freeChatView>#chat{
        <div><small>Rezultat net / zi</small><strong id="cryptoScenarioNetDay">—</strong></div>
        <div><small>Rezultat net / 30 zile</small><strong id="cryptoScenarioNetMonth">—</strong></div>
       </div>
-      <span id="cryptoScenarioNotice" role="status" aria-live="polite">Exemplu demonstrativ. Modelul nu citește dificultatea sau recompensa live și nu pornește mining.</span>
+      <span id="cryptoHashrateScenarioNotice" role="status" aria-live="polite">Exemplu demonstrativ. Modelul nu citește dificultatea sau recompensa live și nu pornește mining.</span>
      </section>
      <div class="admin-table-wrap">
       <table class="crypto-engine-table">
@@ -2226,7 +2226,7 @@ body.health-module-mode #chatSection .chat-main #freeChatView>#chat{
        <div><small>Bază · net / zi</small><strong id="cryptoScenarioBase">—</strong></div>
        <div><small>Favorabil · net / zi</small><strong id="cryptoScenarioBull">—</strong></div>
       </div>
-      <p id="cryptoScenarioNotice" role="status">Scenariile nu sunt prognoze. Nu includ modificări automate ale dificultății rețelei sau recompense viitoare.</p>
+      <p id="cryptoHashrateScenarioNotice" role="status">Scenariile nu sunt prognoze. Nu includ modificări automate ale dificultății rețelei sau recompense viitoare.</p>
      </article>
      <article class="founder-tool">
       <h5>⚙️ Business Operations Planner · Fluxuri comerciale</h5><p>Transformă o activitate repetitivă într-un flux documentat, cu responsabil, aprobare, control și indicatori.</p>
@@ -6058,16 +6058,16 @@ function calculateFounderCommerceProfit(){
 function calculateCryptoMiningScenarios(){
  const read=id=>Number(el(id)?.value);
  const baseIds=["cryptoBtcPerDay","cryptoBtcPrice","cryptoPowerWatts","cryptoCoolingWatts","cryptoElectricityRate","cryptoPoolFee","cryptoMaintenanceMonthly","cryptoDowntime","cryptoTaxReserve","cryptoBearRevenue","cryptoBaseRevenue","cryptoBullRevenue","cryptoBearPower","cryptoBullPower"];
- if(baseIds.some(id=>!Number.isFinite(read(id))||read(id)<0)){el("cryptoScenarioNotice").textContent="Completează valori numerice pozitive pentru toate ipotezele.";return;}
+ if(baseIds.some(id=>!Number.isFinite(read(id))||read(id)<0)){el("cryptoHashrateScenarioNotice").textContent="Completează valori numerice pozitive pentru toate ipotezele.";return;}
  const fee=read("cryptoPoolFee"),down=read("cryptoDowntime"),tax=read("cryptoTaxReserve");
- if(fee>100||down>100||tax>100||read("cryptoBearRevenue")>300||read("cryptoBaseRevenue")>300||read("cryptoBullRevenue")>300||read("cryptoBearPower")>500||read("cryptoBullPower")>500){el("cryptoScenarioNotice").textContent="Procentele depășesc limitele acceptate.";return;}
+ if(fee>100||down>100||tax>100||read("cryptoBearRevenue")>300||read("cryptoBaseRevenue")>300||read("cryptoBullRevenue")>300||read("cryptoBearPower")>500||read("cryptoBullPower")>500){el("cryptoHashrateScenarioNotice").textContent="Procentele depășesc limitele acceptate.";return;}
  const baseBtc=read("cryptoBtcPerDay")*(1-down/100),basePrice=read("cryptoBtcPrice"),kw=((read("cryptoPowerWatts")+read("cryptoCoolingWatts"))/1000)*24,maintenance=read("cryptoMaintenanceMonthly")/30;
  const calc=(revenuePct,powerPct)=>{const gross=baseBtc*basePrice*revenuePct/100,energy=kw*read("cryptoElectricityRate")*powerPct/100,operating=gross*(1-fee/100)-energy-maintenance;return operating-Math.max(0,operating)*tax/100;};
  const fmt=n=>"£"+n.toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2});
  el("cryptoScenarioBear").textContent=fmt(calc(read("cryptoBearRevenue"),read("cryptoBearPower")));
  el("cryptoScenarioBase").textContent=fmt(calc(read("cryptoBaseRevenue"),100));
  el("cryptoScenarioBull").textContent=fmt(calc(read("cryptoBullRevenue"),read("cryptoBullPower")));
- el("cryptoScenarioNotice").textContent="Scenarii calculate cu producția, prețul și tariful electric ajustate conform ipotezelor tale. Nu sunt estimări de piață sau sfaturi de investiții.";
+ el("cryptoHashrateScenarioNotice").textContent="Scenarii calculate cu producția, prețul și tariful electric ajustate conform ipotezelor tale. Nu sunt estimări de piață sau sfaturi de investiții.";
 }
 function buildFounderOperationsPrompt(){
  const name=el("founderOpsName")?.value.trim()||"",outcome=el("founderOpsOutcome")?.value.trim()||"",volume=el("founderOpsVolume")?.value.trim()||"",resources=el("founderOpsResources")?.value.trim()||"Nespecificate";
@@ -7413,7 +7413,7 @@ function initCryptoMiningEngine() {
   ).join("");
 }
 function calculateCryptoHashrateScenario() {
-  const notice = document.getElementById("cryptoScenarioNotice");
+  const notice = document.getElementById("cryptoHashrateScenarioNotice");
   const ids = {
     minerHashrate: "cryptoScenarioMinerHashrate",
     networkHashrate: "cryptoScenarioNetworkHashrate",
