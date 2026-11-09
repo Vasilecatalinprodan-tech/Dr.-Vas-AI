@@ -3548,7 +3548,7 @@ test("all six workspaces retain the shared mobile chat, attachments, send and ac
       documentWidth: document.documentElement.scrollWidth,
       mainColumns: getComputedStyle(document.querySelector("main")).gridTemplateColumns.trim().split(/\s+/).length,
       composerWidth: document.querySelector("#question").getBoundingClientRect().width,
-      attachWidth: document.querySelector(".chat-file-button").getBoundingClientRect().width,
+      attachWidth: Array.from(document.querySelectorAll(".chat-file-button")).find(node => node.getClientRects().length > 0)?.getBoundingClientRect().width || 0,
       sendWidth: document.querySelector("#sendButton").getBoundingClientRect().width
     }));
     expect(layout.documentWidth, moduleName + " must not create horizontal page overflow").toBeLessThanOrEqual(layout.viewportWidth + 1);
