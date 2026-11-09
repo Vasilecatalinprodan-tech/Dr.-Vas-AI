@@ -62,6 +62,48 @@
     return { grossUsd: gross, poolFeeUsd: pool, energyUsd: energy, maintenanceUsd: maintenance, netUsd: gross - pool - energy - maintenance };
   }
 
+  function calculateHashrateScenario({
+    minerHashrate,
+    networkHashrate,
+    blockReward,
+    blocksPerDay,
+    priceUsd,
+    watts,
+    electricityUsdPerKwh,
+    poolFeePercent = 1,
+    uptimePercent = 95,
+    maintenanceUsdPerDay = 0
+  }) {
+    const values = [
+      minerHashrate, networkHashrate, blockReward, blocksPerDay, priceUsd,
+      watts, electricityUsdPerKwh, poolFeePercent, uptimePercent, maintenanceUsdPerDay
+    ].map(Number);
+    if (values.some(value => !Number.isFinite(value) || value < 0)) {
+      throw new RangeError("Parametri de hashrate sau cost invalizi.");
+    }
+    const [miner, network, reward, blocks, price, power, tariff, fee, uptime, maintenance] = values;
+    if (network <= 0 || blocks <= 0 || price <= 0 || miner > network || fee > 100 || uptime > 100) {
+      throw new RangeError("Verifică hashrate-ul rețelei, recompensa, prețul, comisionul și timpul de funcționare.");
+    }
+    const hashrateShare = miner / network;
+    const expectedCoinsPerDay = hashrateShare * blocks * reward * (uptime / 100);
+    const grossUsdPerDay = expectedCoinsPerDay * price;
+    const poolFeeUsdPerDay = grossUsdPerDay * (fee / 100);
+    const energyUsdPerDay = (power / 1000) * 24 * tariff;
+    const netUsdPerDay = grossUsdPerDay - poolFeeUsdPerDay - energyUsdPerDay - maintenance;
+    return {
+      hashrateShare,
+      expectedCoinsPerDay,
+      grossUsdPerDay,
+      poolFeeUsdPerDay,
+      energyUsdPerDay,
+      maintenanceUsdPerDay: maintenance,
+      netUsdPerDay,
+      netUsdPer30Days: netUsdPerDay * 30,
+      energyKwhPerDay: (power / 1000) * 24
+    };
+  }
+
   async function fetchMarkets(fetchImpl = root.fetch) {
     if (typeof fetchImpl !== "function") throw new Error("Browserul nu poate accesa sursa de cotații.");
     const url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1&sparkline=false";
@@ -88,6 +130,7 @@
     hardware: HARDWARE,
     eligibleCoins,
     calculateNetDaily,
+    calculateHashrateScenario,
     fetchMarkets
   });
 })(window);
