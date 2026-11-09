@@ -3532,6 +3532,17 @@ test("all six workspaces retain the shared mobile chat, attachments, send and ac
     await expect(page.locator("#globalLogoutTop")).toBeVisible();
     await expect(page.locator("#globalLogoutBottom")).toBeVisible();
     await expect(page.locator("#globalBackToModules")).toBeVisible();
+    if (moduleName === "free") {
+      await expect(page.locator("#chatSection .voice-toolbar #voiceMicButton")).toBeVisible();
+      await expect(page.locator("#chatSection .voice-toolbar #voiceAutoButton")).toBeVisible();
+      await expect(page.locator("#chatSection .voice-toolbar #liveVoiceButton")).toBeVisible();
+    } else {
+      await expect(page.locator("#" + moduleName + "Workspace .drvas-module-voice-access")).toBeVisible();
+      await expect(page.locator("#" + moduleName + "Workspace .drvas-module-voice-access #voiceMicButton")).toBeVisible();
+      await expect(page.locator("#" + moduleName + "Workspace .drvas-module-voice-access #voiceAutoButton")).toBeVisible();
+      await expect(page.locator("#" + moduleName + "Workspace .drvas-module-voice-access #liveVoiceButton")).toBeVisible();
+    }
+    await expect(page.locator(".voice-toolbar")).toHaveCount(1);
     const layout = await page.evaluate(() => ({
       viewportWidth: document.documentElement.clientWidth,
       documentWidth: document.documentElement.scrollWidth,
