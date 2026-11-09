@@ -3436,3 +3436,40 @@ test("all module feature-navigation labels, headings and descriptions localize i
     expect(unchangedRomanianCopy, `Romanian navigation copy remains in ${language}: ${unchangedRomanianCopy.join(" | ")}`).toEqual([]);
   }
 });
+
+
+test("all six workspaces retain the shared mobile chat, attachments, send and account controls", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openApp(page, "ro");
+  const modules = ["free", "health", "studio", "academy", "commerce", "business"];
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-six-module-mobile-owner", email: "owner@example.invalid" };
+    isDrvasAdmin = true;
+    showModuleSelection();
+  });
+
+  for (const moduleName of modules) {
+    await page.evaluate(name => selectModule(name, true), moduleName);
+    await expect(page.locator("#chatSection")).toBeVisible();
+    await expect(page.locator("#question")).toBeVisible();
+    await expect(page.locator("#chatFileInput")).toBeAttached();
+    await expect(page.locator(".chat-file-button")).toBeVisible();
+    await expect(page.locator("#sendButton")).toBeVisible();
+    await expect(page.locator("#globalLogoutTop")).toBeVisible();
+    await expect(page.locator("#globalLogoutBottom")).toBeVisible();
+    await expect(page.locator("#globalBackToModules")).toBeVisible();
+    const layout = await page.evaluate(() => ({
+      viewportWidth: document.documentElement.clientWidth,
+      documentWidth: document.documentElement.scrollWidth,
+      mainColumns: getComputedStyle(document.querySelector("main")).gridTemplateColumns.trim().split(/\\s+/).length,
+      composerWidth: document.querySelector("#question").getBoundingClientRect().width,
+      attachWidth: document.querySelector(".chat-file-button").getBoundingClientRect().width,
+      sendWidth: document.querySelector("#sendButton").getBoundingClientRect().width
+    }));
+    expect(layout.documentWidth, moduleName + " must not create horizontal page overflow").toBeLessThanOrEqual(layout.viewportWidth + 1);
+    expect(layout.mainColumns, moduleName + " must use a single mobile content column").toBe(1);
+    expect(layout.composerWidth, moduleName + " composer must remain visible").toBeGreaterThan(80);
+    expect(layout.attachWidth, moduleName + " attachment control must remain visible").toBeGreaterThan(0);
+    expect(layout.sendWidth, moduleName + " send control must remain visible").toBeGreaterThan(0);
+  }
+});
