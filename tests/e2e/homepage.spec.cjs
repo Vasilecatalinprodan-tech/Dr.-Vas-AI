@@ -2863,25 +2863,26 @@ test("Studio exposes dedicated Book, Translation, Crypto and Online Income works
 });
 
 
-test("Studio Book and Translation stations localize labels, placeholders, options and validation in all seven interface languages", async ({ page }) => {
-  test.setTimeout(60_000);
-  await openApp(page, "ro");
-  await page.evaluate(() => {
-    currentUser = { id: "e2e-studio-station-localization", email: "owner@example.invalid" };
-    isDrvasAdmin = true;
-    showModuleSelection();
-    selectModule("studio", true);
-  });
-  const cases = [
-    ["en", "Book title", "Source language", "Target language", "Choose target language"],
-    ["it", "Titolo del libro", "Lingua di origine", "Lingua di destinazione", "Scegli la lingua di destinazione"],
-    ["tr", "Kitap başlığı", "Kaynak dil", "Hedef dil", "Hedef dili seçin"],
-    ["de", "Buchtitel", "Ausgangssprache", "Zielsprache", "Zielsprache auswählen"],
-    ["fr", "Titre du livre", "Langue source", "Langue cible", "Choisir la langue cible"],
-    ["es", "Título del libro", "Idioma de origen", "Idioma de destino", "Elige el idioma de destino"],
-    ["ru", "Название книги", "Исходный язык", "Целевой язык", "Выберите целевой язык"]
-  ];
-  for (const [language, bookTitle, sourceLanguage, targetLanguage, targetPlaceholder] of cases) {
+const STUDIO_STATION_LOCALIZATION_CASES = [
+  ["en", "Book title", "Source language", "Target language", "Choose target language"],
+  ["it", "Titolo del libro", "Lingua di origine", "Lingua di destinazione", "Scegli la lingua di destinazione"],
+  ["tr", "Kitap başlığı", "Kaynak dil", "Hedef dil", "Hedef dili seçin"],
+  ["de", "Buchtitel", "Ausgangssprache", "Zielsprache", "Zielsprache auswählen"],
+  ["fr", "Titre du livre", "Langue source", "Langue cible", "Choisir la langue cible"],
+  ["es", "Título del libro", "Idioma de origen", "Idioma de destino", "Elige el idioma de destino"],
+  ["ru", "Название книги", "Исходный язык", "Целевой язык", "Выберите целевой язык"]
+];
+
+for (const [language, bookTitle, sourceLanguage, targetLanguage, targetPlaceholder] of STUDIO_STATION_LOCALIZATION_CASES) {
+  test(`Studio Book and Translation stations localize correctly in ${language}`, async ({ page }) => {
+    test.setTimeout(45_000);
+    await openApp(page, "ro");
+    await page.evaluate(() => {
+      currentUser = { id: "e2e-studio-station-localization", email: "owner@example.invalid" };
+      isDrvasAdmin = true;
+      showModuleSelection();
+      selectModule("studio", true);
+    });
     await page.evaluate(code => chooseLanguage(code), language);
     await page.locator('#studioWorkspace [data-feature="book"]').click();
     await expect(page.locator("#drvasBookStationTitle").locator("xpath=..")).toContainText(bookTitle);
@@ -2889,9 +2890,8 @@ test("Studio Book and Translation stations localize labels, placeholders, option
     await expect(page.locator("#drvasTranslationSource").locator("xpath=..")).toContainText(sourceLanguage);
     await expect(page.locator("#drvasTranslationTarget").locator("xpath=..")).toContainText(targetLanguage);
     await expect(page.locator("#drvasTranslationTarget option").first()).toContainText(targetPlaceholder);
-  }
-});
-
+  });
+}
 
 test("voice replies remain replayable when auto-read is off and replay with their original assistant voice", async ({ page }) => {
   await openApp(page, "ro");
