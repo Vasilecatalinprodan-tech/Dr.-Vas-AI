@@ -123,3 +123,5 @@ Implementation started on branch `feat/mining-efficiency-break-even-2026-11-09`:
 - Production homepage for founder visual review: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ . New PR changes are not live until merge and deployment.
 
 Founder instruction: continue all modules in parallel, preserve all work and provide the production page link for visual review. This request and the current implementation status are archived here.
+
+- Expanded the mobile six-module regression to verify voice access as well: Free retains its composer toolbar; Health, Studio, Academy, Commerce and Business expose the mounted module voice panel with microphone, auto-read and Live controls; exactly one `.voice-toolbar` remains mounted per workspace.
