@@ -159,7 +159,7 @@
     const latestDifficulty = [...difficultySeries].reverse().find(point => Number(point?.difficulty) > 0);
     const difficulty = Number(hashratePayload?.currentDifficulty) > 0
       ? Number(hashratePayload.currentDifficulty)
-      : Number(latestDifficulty?.difficulty);
+      : Number(latestDifficulty?.difficulty || latestPoint?.difficulty);
     const totalRewardSats = Number(rewardPayload?.totalReward);
     if (!Number.isFinite(networkHashrateHs) || networkHashrateHs <= 0) {
       throw new Error("Sursa Bitcoin nu a furnizat un hashrate de rețea valid.");
