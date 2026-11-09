@@ -3460,7 +3460,7 @@ test("Bitcoin hardware economics derives power from J/TH and reports break-even 
   expect(result.grossUsdPerDay).toBeCloseTo(18, 8);
   expect(result.poolFeeUsdPerDay).toBeCloseTo(0.36, 8);
   expect(result.netUsdPerDay).toBeCloseTo(7.64, 8);
-  expect(result.breakEvenBtcPriceUsd).toBeCloseTo(55555.5555556, 4);
+  expect(result.breakEvenBtcPriceUsd).toBeCloseTo(56689.3424036, 4);
   expect(result.paybackDays).toBeCloseTo(5000 / 7.64, 8);
   expect(result.profitableAtAssumptions).toBe(true);
   const invalid = await page.evaluate(() => {
