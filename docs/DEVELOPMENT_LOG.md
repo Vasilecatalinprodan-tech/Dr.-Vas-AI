@@ -965,3 +965,18 @@ User reiterated: “ok hai sa continuam si tot asa salvam tot”. Continue the i
 - Android build `42413149982` succeeded (build #365); artifact `DrVas-APK`, ID `13590002519`, expiry 2026-12-07. APK `app-debug.apk`, package `com.drvas.ai`, size 6,896,773 bytes, SHA-256 `41a4f4d5d858b07afe22f19063b91e36e43d3963fedc7ed7fd71e5bd875779ed`. Extracted APK independently identified and archive integrity checked.
 - This APK is a debug/test build, not a Play Store-signed release. User device installation has not yet been performed.
 - Remaining: Book Studio/Translation Station field/options/placeholders/status/prompt localization; remaining dynamic UI copy; Free/Health follow-up audit; Sarah/Dr.Jan/voice; security/performance. Any later app-code changes trigger another APK build.
+
+
+## 2026-11-09 — mining-first continuation and parallel module roadmap
+
+- Founder reported that neither the APK ZIP nor direct APK sandbox link could be downloaded. Recovered artifact #325 exists and the extracted APK is a valid Android package in the working session; this is a delivery-link/client issue, not a build failure. APK delivery is deferred and the same links must not be resent as if fixed.
+- Founder instruction: continue all modules in parallel, with Crypto & Mining as the highest priority; save the work and conversation.
+- Created branch `feat/mining-hashrate-profitability-core-2026-11-09` from main.
+- Added a hashrate-share mining economics function to `www/crypto-engine.js`. It estimates coin/day from miner hashrate ÷ network hashrate × blocks/day × block reward × uptime, then deducts pool fee, energy and maintenance.
+- Added an admin-only hashrate simulator to `www/index.html` with editable network/reward/price assumptions and transparent daily/monthly estimates. Defaults are illustrative, not live network values. It never runs CPU/GPU mining or connects to a pool.
+- Added Playwright coverage for coin yield, net economics and invalid hashrate assumptions.
+- Added `docs/CHAT-ARCHIVE-2026-11-09-MINING-PRIORITY.md` with the exact founder instruction, APK investigation, mining decisions, open PR status and ten parallel workstreams.
+- Branch commits: `06fcbb6a3d9ef43a6ec8fa5dea7fd8933f26e73e` (engine), `396b464f2474441a6d01b2645b4c881a8207fcf8` (UI), `c161ab531651b486b9e38d33e2b5adc261b84778` (test), `bb5d6e27571a286129968c2fca90ab60fe1b8e70` (conversation/project archive).
+- PR #82 latest run `42644670118` failed because the seven-language Book/Translation Station test exceeded 60 seconds (test line 2866); the earlier diagnosis as a private-module test timeout was incorrect. Keep PR #82 open and fix the actual slow test before merge.
+- PR #83 latest run `42644738518` passed all browser/static checks. Vertical helix orientation remains subject to founder visual acceptance before merge.
+- Continue all six core modules and supporting founder workbenches as parallel workstreams; Crypto/Mining receives first engineering priority. Do not activate real mining until signed native-agent, device-authorisation, pool/network adapters, telemetry, energy/thermal/runtime limits and verified emergency stop have passed security review and the founder explicitly authorises execution.

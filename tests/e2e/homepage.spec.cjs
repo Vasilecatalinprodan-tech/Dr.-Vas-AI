@@ -1194,6 +1194,63 @@ test("Bitcoin mining calculator estimates net result without starting mining", a
   await expect(page.locator("#cryptoCalcNotice")).toContainText("nu predicții");
 });
 
+test("hashrate mining simulator estimates coin yield and net energy-adjusted result without executing mining", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(() => {
+    const panel = document.querySelector("#adminPanel");
+    panel?.classList.remove("hidden");
+    isDrvasAdmin = true;
+    return calculateCryptoHashrateScenario();
+  });
+  expect(result.expectedCoinsPerDay).toBeCloseTo(0.0001425, 10);
+  expect(result.grossUsdPerDay).toBeCloseTo(12.825, 8);
+  expect(result.energyUsdPerDay).toBeCloseTo(12.6, 8);
+  expect(result.netUsdPerDay).toBeCloseTo(0.09675, 8);
+  await expect(page.locator("#cryptoScenarioCoinsDay")).toContainText("BTC/zi");
+  await expect(page.locator("#cryptoScenarioNetDay")).toContainText("$0.0968");
+  await expect(page.locator("#cryptoHashrateSimulatorNotice")).toContainText("nu predicție");
+
+  const invalid = await page.evaluate(() => {
+    document.querySelector("#cryptoScenarioMinerHashrate").value = "700000000";
+    return calculateCryptoHashrateScenario();
+  });
+  expect(invalid).toBeNull();
+  await expect(page.locator("#cryptoHashrateSimulatorNotice")).toContainText("Verifică hashrate-ul");
+});
+
+test("Bitcoin live network adapter validates hashrate and 144-block reward data before filling the simulator", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(async () => {
+    window.fetch = async url => {
+      if (url.includes("/mining/hashrate/3d")) {
+        return { ok: true, json: async () => [{ timestamp: 1794240000, avgHashrate: 600000000000000000000, difficulty: 148360000000000 }] };
+      }
+      if (url.includes("/mining/reward-stats/144")) {
+        return { ok: true, json: async () => ({ totalReward: 45381000000, totalFee: 381000000 }) };
+      }
+      if (url.includes("coingecko.com")) {
+        window.__DRVAS_MARKET_URL__ = url;
+        return { ok: true, json: async () => [{ id: "bitcoin", current_price: 90000 }] };
+      }
+      throw new Error("Unexpected test URL: " + url);
+    };
+    await loadBitcoinNetworkScenario();
+    return {
+      networkHashrate: Number(document.querySelector("#cryptoScenarioNetworkHashrate").value),
+      reward: Number(document.querySelector("#cryptoScenarioBlockReward").value),
+      price: Number(document.querySelector("#cryptoScenarioPriceUsd").value),
+      status: document.querySelector("#cryptoBitcoinLiveStatus").textContent,
+      marketUrl: window.__DRVAS_MARKET_URL__
+    };
+  });
+  expect(result.networkHashrate).toBeCloseTo(600000000, 2);
+  expect(result.reward).toBeCloseTo(3.1514583333, 8);
+  expect(result.price).toBe(90000);
+  expect(result.status).toContain("mempool.space");
+  expect(result.status).toContain("CoinGecko");
+  expect(result.marketUrl).toContain("ids=bitcoin%2Cbitcoin-cash");
+});
+
 test("founder content campaign planner builds a 30-day brief for the private Studio", async ({ page }) => {
   await openApp(page, "ro");
   await page.evaluate(() => {
