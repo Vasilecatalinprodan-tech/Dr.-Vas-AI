@@ -3511,3 +3511,50 @@ test("Bitcoin simulator UI exposes J/TH, cooling, hardware cost, break-even and 
   expect(result.payback).toContain("Nerecuperabil");
   expect(result.net).toContain("/zi");
 });
+
+test("all six workspaces retain the shared mobile chat, attachments, send and account controls", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openApp(page, "ro");
+  const modules = ["free", "health", "studio", "academy", "commerce", "business"];
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-six-module-mobile-owner", email: "owner@example.invalid" };
+    isDrvasAdmin = true;
+    showModuleSelection();
+  });
+
+  for (const moduleName of modules) {
+    await page.evaluate(name => selectModule(name, true), moduleName);
+    await expect(page.locator("#chatSection")).toBeVisible();
+    await expect(page.locator("#question")).toBeVisible();
+    await expect(page.locator("#chatFileInput")).toBeAttached();
+    await expect(page.locator(".chat-file-button:visible").first()).toBeVisible();
+    await expect(page.locator("#sendButton")).toBeVisible();
+    await expect(page.locator("#globalLogoutTop")).toBeVisible();
+    await expect(page.locator("#globalLogoutBottom")).toBeVisible();
+    await expect(page.locator("#globalBackToModules")).toBeVisible();
+    if (moduleName === "free") {
+      await expect(page.locator("#chatSection .voice-toolbar #voiceMicButton")).toBeVisible();
+      await expect(page.locator("#chatSection .voice-toolbar #voiceAutoButton")).toBeVisible();
+      await expect(page.locator("#chatSection .voice-toolbar #liveVoiceButton")).toBeVisible();
+    } else {
+      await expect(page.locator("#" + moduleName + "Workspace .drvas-module-voice-access")).toBeVisible();
+      await expect(page.locator("#" + moduleName + "Workspace .drvas-module-voice-access #voiceMicButton")).toBeVisible();
+      await expect(page.locator("#" + moduleName + "Workspace .drvas-module-voice-access #voiceAutoButton")).toBeVisible();
+      await expect(page.locator("#" + moduleName + "Workspace .drvas-module-voice-access #liveVoiceButton")).toBeVisible();
+    }
+    await expect(page.locator(".voice-toolbar")).toHaveCount(1);
+    const layout = await page.evaluate(() => ({
+      viewportWidth: document.documentElement.clientWidth,
+      documentWidth: document.documentElement.scrollWidth,
+      mainColumns: getComputedStyle(document.querySelector("main")).gridTemplateColumns.trim().split(/\s+/).length,
+      composerWidth: document.querySelector("#question").getBoundingClientRect().width,
+      attachWidth: Array.from(document.querySelectorAll(".chat-file-button")).find(node => node.getClientRects().length > 0)?.getBoundingClientRect().width || 0,
+      sendWidth: document.querySelector("#sendButton").getBoundingClientRect().width
+    }));
+    expect(layout.documentWidth, moduleName + " must not create horizontal page overflow").toBeLessThanOrEqual(layout.viewportWidth + 1);
+    expect(layout.mainColumns, moduleName + " must use a single mobile content column").toBe(1);
+    expect(layout.composerWidth, moduleName + " composer must remain visible").toBeGreaterThan(80);
+    expect(layout.attachWidth, moduleName + " attachment control must remain visible").toBeGreaterThan(0);
+    expect(layout.sendWidth, moduleName + " send control must remain visible").toBeGreaterThan(0);
+  }
+});
