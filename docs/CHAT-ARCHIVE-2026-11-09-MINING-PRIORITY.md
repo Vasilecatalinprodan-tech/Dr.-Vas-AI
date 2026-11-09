@@ -109,3 +109,5 @@ Implementation started on branch `feat/mining-efficiency-break-even-2026-11-09`:
 - Four-file implementation: Bitcoin calculation engine, Playwright test, development log and conversation archive. PR is open and not merged. Initial commit-workflow and combined-status queries returned no records; CI is pending/unverified. Do not merge or deploy until required checks complete.
 - The new helper is not yet connected to the admin calculator UI. Next: wire hardware hashrate, J/TH, electricity tariff, cooling overhead, pool fee, uptime, maintenance and purchase cost inputs to the helper; display source/freshness and explicit estimate labels. Then run full browser regression, review, merge and production deploy only after passing checks.
 - APK download remains deferred; no new APK was generated in this slice.
+
+- Formula review before CI: corrected the test's break-even expected value to include the 2% pool fee (break-even = energy plus maintenance divided by uptime-adjusted BTC/day after pool fee). This is a test expectation correction, not a change to the model.
