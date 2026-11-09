@@ -2877,16 +2877,16 @@ for (const [language, bookTitle, sourceLanguage, targetLanguage, targetPlacehold
   test(`Studio Book and Translation stations localize correctly in ${language}`, async ({ page }) => {
     test.setTimeout(45_000);
     await openApp(page, "ro");
-    await page.evaluate(async () => {
-      // Let the app's initial session/admin probe finish before seeding the founder fixture.
-      await refreshAdminPanel();
+    await page.evaluate(async code => {
+      // chooseLanguage() invokes checkSession(); let that async auth refresh finish before seeding the founder fixture.
+      chooseLanguage(code);
+      await checkSession();
       currentUser = { id: "e2e-studio-station-localization", email: "owner@example.invalid" };
       isDrvasAdmin = true;
       showModuleSelection();
       selectModule("studio", true);
-    });
+    }, language);
     await expect(page.locator("#studioWorkspace")).toBeVisible();
-    await page.evaluate(code => chooseLanguage(code), language);
     await page.locator('#studioWorkspace [data-feature="book"]').click();
     await expect(page.locator("#drvasBookStationTitle").locator("xpath=..")).toContainText(bookTitle);
     await page.locator('#studioWorkspace [data-feature="translation"]').click();
