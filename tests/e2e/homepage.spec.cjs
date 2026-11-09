@@ -3474,3 +3474,40 @@ test("Bitcoin hardware economics derives power from J/TH and reports break-even 
   });
   expect(invalid).toBe(true);
 });
+
+
+test("Bitcoin simulator UI exposes J/TH, cooling, hardware cost, break-even and payback", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(() => {
+    const values = {
+      cryptoScenarioSymbol: "BTC",
+      cryptoScenarioMinerHashrate: "200",
+      cryptoScenarioNetworkHashrate: "600000000",
+      cryptoScenarioBlockReward: "3.125",
+      cryptoScenarioBlocksPerDay: "144",
+      cryptoScenarioPriceUsd: "90000",
+      cryptoScenarioWatts: "3500",
+      cryptoScenarioElectricity: "0.15",
+      cryptoScenarioPoolFee: "1",
+      cryptoScenarioUptime: "95",
+      cryptoScenarioMaintenance: "0",
+      cryptoScenarioEfficiency: "20",
+      cryptoScenarioCooling: "15",
+      cryptoScenarioHardwareCost: "5000"
+    };
+    for (const [id, value] of Object.entries(values)) document.getElementById(id).value = value;
+    calculateCryptoHashrateScenario();
+    return {
+      minerPower: document.getElementById("cryptoScenarioPowerWatts").textContent,
+      facilityPower: document.getElementById("cryptoScenarioFacilityPower").textContent,
+      breakEven: document.getElementById("cryptoScenarioBreakEven").textContent,
+      payback: document.getElementById("cryptoScenarioPayback").textContent,
+      net: document.getElementById("cryptoScenarioHardwareNet").textContent
+    };
+  });
+  expect(result.minerPower).toBe("4000 W");
+  expect(result.facilityPower).toBe("4600 W");
+  expect(result.breakEven).not.toBe("—");
+  expect(result.payback).toContain("Nerecuperabil");
+  expect(result.net).toContain("/zi");
+});
