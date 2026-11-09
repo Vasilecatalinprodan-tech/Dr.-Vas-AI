@@ -1106,3 +1106,10 @@ Parallel work / safety:
 - APK delivery troubleshooting remains deferred. Do not repeat the previously failing sandbox links.
 
 Conversation preservation note: this repository file stores the founder's exact instruction plus the verified technical findings and actions from this turn. It is a structured continuity archive, not a verbatim export of the complete ChatGPT UI transcript. The original conversation remains in ChatGPT history.
+
+
+## 2026-11-09 — Bitcoin source freshness (rebased on latest main)
+- Reapplied the source timestamp and stale-data warning implementation on a fresh branch based on the latest main, preserving the six-module regression and merged chat archive updates.
+- The Mempool hashrate sample is timestamped and flagged stale after two hours; CoinGecko BTC price timestamp is shown separately and flagged stale after one hour.
+- Playwright covers current/fresh timestamps and stale network/market inputs.
+- Supersedes the original branch `feat/mining-source-freshness-2026-11-09` after main advanced; the new PR will be the review target. No mining execution or production configuration is enabled.
