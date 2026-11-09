@@ -84,7 +84,9 @@ jobs:
           if (migration < 0 || healthCheck < migration || deploy < healthCheck) {
             throw new Error('Supabase migrations and Health rate-limit verification must both pass before Cloudflare Worker deployment.');
           }
-          const androidPush = android.match(/^  push:\n([\s\S]*?)(?=^\S|$)/m)?.[1] || '';
+          const pushStart = android.indexOf('  push:');
+          const nextTopLevel = android.indexOf('\nconcurrency:', pushStart);
+          const androidPush = pushStart >= 0 && nextTopLevel > pushStart ? android.slice(pushStart, nextTopLevel) : '';
           if (!android.includes('workflow_dispatch:') || !androidPush.includes('branches: [main]') || !androidPush.includes('paths:')) {
             throw new Error('Android APK workflow must retain manual dispatch and restrict automatic builds to filtered pushes on main.');
           }
