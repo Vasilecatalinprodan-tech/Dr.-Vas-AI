@@ -346,3 +346,5 @@ See `docs/ADVERTISING_SPEC.md`. Prepare privacy-first direct sponsorship placeme
 - Carried the six-workspace 390×844 Playwright regression onto the latest `main` after the Bitcoin hardware-economics merge. It checks composer, attachment, Send, back/logout controls, one-column layout and horizontal overflow in Free, Health, Studio, Academy, Commerce and Business.
 - Rebased branch: `test/all-modules-mobile-workspace-rebased-2026-11-09`. This is test/documentation only; no production behavior or access rules changed.
 - Production homepage for founder visual review: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ . New PR changes are not live until merge and deployment.
+
+- Expanded the mobile six-module regression to verify voice access as well: Free retains its composer toolbar; Health, Studio, Academy, Commerce and Business expose the mounted module voice panel with microphone, auto-read and Live controls; exactly one `.voice-toolbar` remains mounted per workspace.
