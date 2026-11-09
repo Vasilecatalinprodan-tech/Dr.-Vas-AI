@@ -3527,7 +3527,7 @@ test("all six workspaces retain the shared mobile chat, attachments, send and ac
     await expect(page.locator("#chatSection")).toBeVisible();
     await expect(page.locator("#question")).toBeVisible();
     await expect(page.locator("#chatFileInput")).toBeAttached();
-    await expect(page.locator(".chat-file-button")).toBeVisible();
+    await expect(page.locator(".chat-file-button:visible").first()).toBeVisible();
     await expect(page.locator("#sendButton")).toBeVisible();
     await expect(page.locator("#globalLogoutTop")).toBeVisible();
     await expect(page.locator("#globalLogoutBottom")).toBeVisible();
