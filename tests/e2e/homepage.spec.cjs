@@ -1229,6 +1229,7 @@ test("Bitcoin live network adapter validates hashrate and 144-block reward data 
         return { ok: true, json: async () => ({ totalReward: 45381000000, totalFee: 381000000 }) };
       }
       if (url.includes("coingecko.com")) {
+        window.__DRVAS_MARKET_URL__ = url;
         return { ok: true, json: async () => [{ id: "bitcoin", current_price: 90000 }] };
       }
       throw new Error("Unexpected test URL: " + url);
@@ -1238,7 +1239,8 @@ test("Bitcoin live network adapter validates hashrate and 144-block reward data 
       networkHashrate: Number(document.querySelector("#cryptoScenarioNetworkHashrate").value),
       reward: Number(document.querySelector("#cryptoScenarioBlockReward").value),
       price: Number(document.querySelector("#cryptoScenarioPriceUsd").value),
-      status: document.querySelector("#cryptoBitcoinLiveStatus").textContent
+      status: document.querySelector("#cryptoBitcoinLiveStatus").textContent,
+      marketUrl: window.__DRVAS_MARKET_URL__
     };
   });
   expect(result.networkHashrate).toBeCloseTo(600000000, 2);
@@ -1246,6 +1248,7 @@ test("Bitcoin live network adapter validates hashrate and 144-block reward data 
   expect(result.price).toBe(90000);
   expect(result.status).toContain("mempool.space");
   expect(result.status).toContain("CoinGecko");
+  expect(result.marketUrl).toContain("ids=bitcoin%2Cbitcoin-cash");
 });
 
 test("founder content campaign planner builds a 30-day brief for the private Studio", async ({ page }) => {
