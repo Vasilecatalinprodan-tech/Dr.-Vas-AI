@@ -89,3 +89,13 @@ The founder reported a ChatGPT "Message delivery timed out" notice. This was a r
 Next mining milestone: improve the profitability calculator to include electricity tariff, miner efficiency, pool fee, uptime, cooling/overhead, hardware cost, net daily/monthly profit, break-even BTC price and payback period. Show source/timestamp and stale-data states. Then proceed to safe native-agent support for explicitly selected user-owned hardware and OS. Never run mining in a browser or on visitors' devices, and never connect a wallet/pool or launch mining without explicit approval.
 
 Parallel workstreams remain Free/auth/history/attachments, Health, Studio/voice/presenter, Academy, Commerce, Business, Crypto & Mining, Online Income/Digital Products, and subscriptions/Google Play. Preserve separate module projects/conversations and consistent localization.
+
+
+## 2026-11-09 — six-module mobile workspace regression
+
+- Added a Playwright regression that iterates Dr.Vas Free, Health, Studio, Academy, Commerce and Business at a 390×844 mobile viewport.
+- For every workspace it checks the shared message composer, attachment control, Send button, back-to-modules control, top/bottom logout controls, one-column layout and absence of horizontal page overflow.
+- This is a test-only change; it does not alter premium entitlements, health file processing, billing, database/RLS, Worker secrets, mining execution or production deployment.
+- Branch: `test/all-modules-mobile-workspace-2026-11-09`. CI has not yet been verified; do not call the test passing until the workflow reports a result.
+
+Founder request: continue all modules in parallel, preserve all work and make the live page easy to open. Production homepage reference retained at `https://dr--vas-ai.vasilecatalinprodan.workers.dev/`; live UI visual confirmation by the founder is still required.
