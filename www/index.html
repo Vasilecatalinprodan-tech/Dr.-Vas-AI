@@ -2106,6 +2106,9 @@ body.health-module-mode #chatSection .chat-main #freeChatView>#chat{
        <label>Comision pool (%)<input id="cryptoScenarioPoolFee" type="number" min="0" max="100" step="any" value="1" oninput="calculateCryptoHashrateScenario()"></label>
        <label>Disponibilitate (%)<input id="cryptoScenarioUptime" type="number" min="0" max="100" step="any" value="95" oninput="calculateCryptoHashrateScenario()"></label>
        <label>Mentenanță (USD/zi)<input id="cryptoScenarioMaintenance" type="number" min="0" step="any" value="0" oninput="calculateCryptoHashrateScenario()"></label>
+       <label>Eficiență miner (J/TH)<input id="cryptoScenarioEfficiency" type="number" min="0" step="any" value="20" oninput="calculateCryptoHashrateScenario()"></label>
+       <label>Supliment răcire / infrastructură (%)<input id="cryptoScenarioCooling" type="number" min="0" max="500" step="any" value="15" oninput="calculateCryptoHashrateScenario()"></label>
+       <label>Cost echipament (USD)<input id="cryptoScenarioHardwareCost" type="number" min="0" step="any" value="5000" oninput="calculateCryptoHashrateScenario()"></label>
       </div>
       <div class="crypto-scenario-results" aria-live="polite">
        <div><small>Proporția din hashrate-ul rețelei</small><strong id="cryptoScenarioShare">—</strong></div>
@@ -2114,6 +2117,11 @@ body.health-module-mode #chatSection .chat-main #freeChatView>#chat{
        <div><small>Energie / zi</small><strong id="cryptoScenarioEnergyDay">—</strong></div>
        <div><small>Rezultat net / zi</small><strong id="cryptoScenarioNetDay">—</strong></div>
        <div><small>Rezultat net / 30 zile</small><strong id="cryptoScenarioNetMonth">—</strong></div>
+       <div><small>Putere miner estimată</small><strong id="cryptoScenarioPowerWatts">—</strong></div>
+       <div><small>Putere cu răcire</small><strong id="cryptoScenarioFacilityPower">—</strong></div>
+       <div><small>Profit hardware / zi și 30 zile</small><strong id="cryptoScenarioHardwareNet">—</strong></div>
+       <div><small>Preț BTC prag rentabilitate</small><strong id="cryptoScenarioBreakEven">—</strong></div>
+       <div><small>Recuperare cost echipament</small><strong id="cryptoScenarioPayback">—</strong></div>
       </div>
       <span id="cryptoHashrateSimulatorNotice" role="status" aria-live="polite">Exemplu demonstrativ. Modelul nu citește dificultatea sau recompensa live și nu pornește mining.</span>
      </section>
@@ -7515,7 +7523,31 @@ function calculateCryptoHashrateScenario() {
     put("cryptoScenarioEnergyDay",money(result.energyUsdPerDay));
     put("cryptoScenarioNetDay",money(result.netUsdPerDay));
     put("cryptoScenarioNetMonth",money(result.netUsdPer30Days));
-    notice.textContent = "Estimare matematică pe baza ipotezelor introduse, nu predicție. Recompensa, blocurile/zi și hashrate-ul rețelei trebuie verificate pentru moneda aleasă.";
+    if (symbol === "BTC" && typeof window.DrVasCryptoEngine.calculateBitcoinHardwareScenario === "function") {
+      const efficiency = Number(document.getElementById("cryptoScenarioEfficiency")?.value);
+      const cooling = Number(document.getElementById("cryptoScenarioCooling")?.value);
+      const hardwareCost = Number(document.getElementById("cryptoScenarioHardwareCost")?.value);
+      const hardware = window.DrVasCryptoEngine.calculateBitcoinHardwareScenario({
+        expectedBtcPerDay: input.minerHashrate / input.networkHashrate * input.blocksPerDay * input.blockReward,
+        btcPriceUsd: input.priceUsd,
+        minerHashrateThs: input.minerHashrate,
+        efficiencyJPerTh: efficiency,
+        electricityUsdPerKwh: input.electricityUsdPerKwh,
+        coolingOverheadPercent: cooling,
+        poolFeePercent: input.poolFeePercent,
+        uptimePercent: input.uptimePercent,
+        maintenanceUsdPerDay: input.maintenanceUsdPerDay,
+        hardwareCostUsd: hardwareCost
+      });
+      put("cryptoScenarioPowerWatts",hardware.minerPowerWatts.toFixed(0)+" W");
+      put("cryptoScenarioFacilityPower",hardware.facilityPowerWatts.toFixed(0)+" W");
+      put("cryptoScenarioBreakEven",money(hardware.breakEvenBtcPriceUsd));
+      put("cryptoScenarioPayback",hardware.paybackDays === null ? "Nerecuperabil la ipotezele curente" : hardware.paybackDays.toFixed(1)+" zile");
+      put("cryptoScenarioHardwareNet",money(hardware.netUsdPerDay)+"/zi · "+money(hardware.netUsdPer30Days)+"/30 zile");
+    } else {
+      ["cryptoScenarioPowerWatts","cryptoScenarioFacilityPower","cryptoScenarioBreakEven","cryptoScenarioPayback","cryptoScenarioHardwareNet"].forEach(id=>put(id,"—"));
+    }
+    notice.textContent = "Estimare matematică, nu predicție. Pentru BTC, eficiența J/TH și răcirea estimează consumul; verifică tariful, dificultatea, recompensa și prețul la surse actuale. Nu se execută mining.";
     return result;
   } catch (error) {
     ["cryptoScenarioShare","cryptoScenarioCoinsDay","cryptoScenarioGrossDay","cryptoScenarioEnergyDay","cryptoScenarioNetDay","cryptoScenarioNetMonth"].forEach(id=>{const node=document.getElementById(id);if(node)node.textContent="—";});
