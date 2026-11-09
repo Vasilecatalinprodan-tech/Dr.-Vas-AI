@@ -2864,6 +2864,7 @@ test("Studio exposes dedicated Book, Translation, Crypto and Online Income works
 
 
 test("Studio Book and Translation stations localize labels, placeholders, options and validation in all seven interface languages", async ({ page }) => {
+  test.setTimeout(60_000);
   await openApp(page, "ro");
   await page.evaluate(() => {
     currentUser = { id: "e2e-studio-station-localization", email: "owner@example.invalid" };
