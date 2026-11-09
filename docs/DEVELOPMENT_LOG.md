@@ -1048,3 +1048,11 @@ User reiterated: “ok hai sa continuam si tot asa salvam tot”. Continue the i
 - Next mining-first work: review current mining calculator UX and assumptions; add cost model inputs for power tariff, miner efficiency (J/TH), pool fee, uptime, cooling/overhead and hardware cost; calculate daily/monthly net profit, break-even BTC price and payback period; show stale-data/error states and timestamp/source; keep calculations clearly estimates, no guaranteed profit. Then build safe native-agent architecture for explicitly selected user-owned ASIC/GPU hardware and OS. Do not run mining in browser or on visitor devices; do not connect wallets, pools or launch background mining without explicit user approval.
 - Parallel module roadmap remains: Free/auth/history/attachments; Health (medical file upload and safety); Studio/voice/presenter; Academy; Commerce; Business; Crypto & Mining; Online Income/Digital Products; subscriptions/Google Play. Preserve module-specific conversation/project isolation and localization consistency.
 - Conversation preservation: this development log plus `docs/CHAT-ARCHIVE-2026-11-09-MINING-PRIORITY.md`, `docs/CHAT-ARCHIVE-2026-11-09-DNA-VERTICAL.md` and `docs/CRYPTO_NATIVE_MINING_AGENT_DESIGN.md` are structured checkpoints. They are not a literal export of the ChatGPT UI conversation; the original conversation remains in ChatGPT history.
+
+
+## 2026-11-09 — six-module mobile workspace regression
+
+- Added a Playwright regression that iterates Dr.Vas Free, Health, Studio, Academy, Commerce and Business at a 390×844 mobile viewport.
+- For every workspace it checks the shared message composer, attachment control, Send button, back-to-modules control, top/bottom logout controls, one-column layout and absence of horizontal page overflow.
+- This is a test-only change; it does not alter premium entitlements, health file processing, billing, database/RLS, Worker secrets, mining execution or production deployment.
+- Branch: `test/all-modules-mobile-workspace-2026-11-09`. CI has not yet been verified; do not call the test passing until the workflow reports a result.
