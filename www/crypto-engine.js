@@ -167,9 +167,17 @@
     if (!Number.isFinite(totalRewardSats) || totalRewardSats <= 0) {
       throw new Error("Sursa Bitcoin nu a furnizat recompensa totală pentru ultimele 144 de blocuri.");
     }
+    const validDifficulty = Number.isFinite(difficulty) && difficulty > 0 ? difficulty : null;
+    const difficultyImpliedHashrateHs = validDifficulty
+      ? validDifficulty * Math.pow(2, 32) * 144 / 86400
+      : null;
     return {
+      // Prefer the difficulty-derived network rate for expected BTC yield;
+      // retain the observed 3-day average as a diagnostic cross-check.
       networkHashrateHs,
-      difficulty: Number.isFinite(difficulty) && difficulty > 0 ? difficulty : null,
+      difficultyImpliedHashrateHs,
+      networkHashrateForProfitabilityHs: difficultyImpliedHashrateHs || networkHashrateHs,
+      difficulty: validDifficulty,
       averageBlockRewardBtc: totalRewardSats / 144 / 100000000,
       blocksPerDay: 144,
       rewardSampleBlocks: 144,
