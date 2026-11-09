@@ -965,3 +965,37 @@ User reiterated: “ok hai sa continuam si tot asa salvam tot”. Continue the i
 - Android build `42413149982` succeeded (build #365); artifact `DrVas-APK`, ID `13590002519`, expiry 2026-12-07. APK `app-debug.apk`, package `com.drvas.ai`, size 6,896,773 bytes, SHA-256 `41a4f4d5d858b07afe22f19063b91e36e43d3963fedc7ed7fd71e5bd875779ed`. Extracted APK independently identified and archive integrity checked.
 - This APK is a debug/test build, not a Play Store-signed release. User device installation has not yet been performed.
 - Remaining: Book Studio/Translation Station field/options/placeholders/status/prompt localization; remaining dynamic UI copy; Free/Health follow-up audit; Sarah/Dr.Jan/voice; security/performance. Any later app-code changes trigger another APK build.
+
+
+## 2026-11-09 — Founder continuation, APK recovery and vertical WebGL DNA orientation
+
+Founder continuation request (material excerpt):
+> „spiralele sunt super numai ca trebuie invers puse adica ele acum se invart pe orizontala si as vrea aceleasi spirale dar pe verticala...separat nu merge linkul de descarcare...continua tot si salveaza tot inclusiv chatul”
+
+### APK #325 recovery
+- Verified GitHub Actions Android build #325, run ID `42100279473`, branch `universal-chat-attachments`, commit `4d989ea23037fcfea718ac358c919ce166a4f7a4`; completed successfully.
+- Verified artifact `DrVas-APK`, ID `13449567968`, 6,114,340 bytes, not expired, expiry 2027-02-03.
+- Downloaded the original artifact ZIP and inspected its contents: it contains `app-debug.apk` (6,540,592 bytes). The APK was extracted for direct delivery to the founder. This is the original 5 November build, not a newly generated APK.
+- The original GitHub artifact endpoint was therefore valid; a separately materialized direct file was provided because the user's ZIP download link was failing.
+
+### Vertical DNA orientation correction
+- Founder visually accepted the current double-helix appearance (geometry, color, molecular detailing and reflections) and requested only a change in orientation: the helix's long axis should be vertical, with continuous rotation around that vertical axis.
+- Root cause located in `www/index.html`, script `drvas-dna-webgl-engine`: the generated tube geometry is longitudinal along Z, but the animated model only applied a small X angle (`0.12 + wobble`), leaving the helix axis oriented into depth rather than vertically on screen.
+- On branch `fix/vertical-dna-helix-orientation-2026-11-09`, changed the X-axis model angle to a quarter-turn (`Math.PI/2 + wobble`) while preserving the existing animated Y-axis spin, mesh geometry, lighting, colors, reflections, canvas sizing, reduced-motion handling and SVG fallback.
+- Added a Playwright regression assertion that the WebGL engine applies the quarter-turn needed to orient its Z-generated helix vertically. Existing two-rail renderer and molecular detail tests remain in place.
+- Code commits: `135e3edf6eaa4461719855a812e73ff44a417214` (renderer orientation); `9d8eab433578d99f5d612d5028c6dd059681e3cc` (orientation regression test).
+- This change is on a feature branch only. It has not been merged or deployed; visual desktop/mobile verification and CI are still required before production.
+
+### Outstanding CI item — Studio station localization PR #82
+- PR #82 remains open against `main`; head `69e2ae32e77f02ddfa34d9e71543e0f5cd1b03bb`.
+- Latest browser regression run #702 / `42630323521` completed with 140 passed and one failure: the new seven-language Book Studio/Translation Station test timed out at 30 seconds. The other tests, including both WebGL DNA regressions, passed.
+- Do not merge PR #82 until the timeout is investigated and the current head's full CI/browser regression passes.
+
+### Next steps
+1. Run CI for the vertical-orientation branch; inspect all failed jobs and fix regressions.
+2. Verify the vertical orientation on desktop and mobile without changing the accepted visual styling.
+3. Create/review a focused PR and deploy only after required checks pass; then ask founder to visually accept the live result.
+4. Separately resolve PR #82's seven-language station test timeout; do not mix it into the DNA orientation change.
+5. Continue the remaining platform roadmap and keep the Android APK at the final release stage after app-code changes are complete.
+
+Archive scope: this is a structured record of the founder's material instruction, decisions, files, commits, tests and next actions; it is not a literal export of the entire ChatGPT UI transcript.
