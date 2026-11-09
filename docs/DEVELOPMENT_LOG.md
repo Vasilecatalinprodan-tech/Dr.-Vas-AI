@@ -1074,3 +1074,9 @@ User reiterated: “ok hai sa continuam si tot asa salvam tot”. Continue the i
 - Continued the same PR #88 slice by wiring the Bitcoin-only J/TH, cooling-overhead and hardware-cost inputs into the admin mining simulator. The BTC scenario now displays estimated miner/facility watts, net daily/30-day result, break-even BTC price and simple payback; non-BTC scenarios clear these BTC-specific outputs. Added a Playwright UI regression using a deliberately loss-making example so the UI must not imply a positive payback. This remains unmerged and undeployed pending CI.
 
 - Validation refinement: if a BTC hardware assumption becomes invalid, the simulator now clears all derived hardware outputs instead of leaving stale previous estimates visible.
+
+
+## 2026-11-09 — all-module mobile workspace regression (rebased)
+- Carried the six-workspace 390×844 Playwright regression onto the latest `main` after the Bitcoin hardware-economics merge. It checks composer, attachment, Send, back/logout controls, one-column layout and horizontal overflow in Free, Health, Studio, Academy, Commerce and Business.
+- Rebased branch: `test/all-modules-mobile-workspace-rebased-2026-11-09`. This is test/documentation only; no production behavior or access rules changed.
+- Production homepage for founder visual review: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ . New PR changes are not live until merge and deployment.
