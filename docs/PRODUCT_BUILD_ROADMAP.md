@@ -347,3 +347,28 @@ See `docs/ADVERTISING_SPEC.md`. Prepare privacy-first direct sponsorship placeme
 - Covers chat composer, attachment picker, Send, back/logout controls, one-column layout, no horizontal overflow, microphone, auto-read and Live voice controls across Free, Health, Studio, Academy, Commerce and Business.
 - Branch: `test/all-modules-mobile-workspace-final-2026-11-09`. Test/documentation only; no production feature or access policy changed.
 - Production page link for founder visual review: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ . PR changes are not live until merge and production deployment.
+
+
+## 2026-11-09 23:47 UTC — continuation, CI diagnosis and saved handoff
+
+Founder instruction in this chat (verbatim):
+> continua dezvoltarea in paralel la toate si salveaza tot inclusiv chatul
+
+Verified before continuing:
+- PR #91 is open, based on main `fe948d83daea32b43efe30e53113975c78f62c6e`, with head `cdec506bacb078022696e1f7befd3e43d1ca2477` before the latest correction.
+- The associated browser workflow run `42698249062` completed with 151 tests passed and one test failed. All code/Worker prechecks and migration/deploy-order gates passed.
+- The sole failure was a Playwright strict-mode selector: `.chat-file-button` matched both desktop and mobile attachment labels, while the test expected one locator. This is a test-selector ambiguity, not evidence that the attachment control is broken.
+
+Correction committed to the PR #91 branch:
+- Commit: `e6368ee5e1335eff66902b3f60bc5264275262a6`.
+- Changed the assertion to target the visible responsive control: `.chat-file-button:visible`.first().
+- PR #91 now points to this corrected head. A passing rerun has not yet been observed; do not merge or claim green until a new Actions run completes successfully.
+
+Parallel work / safety:
+- Continue Free, Health, Studio, Academy, Commerce, Business, Crypto & Mining, creator income, auth/security and release work in parallel, with mining profitability and safe infrastructure as priorities.
+- The current PR #91 is still test/documentation-only. No app code, production deployment, database/RLS, payment, secrets or premium access was changed in this correction.
+- Production visual review URL remains https://dr--vas-ai.vasilecatalinprodan.workers.dev/ ; this is main/live, not the unmerged PR branch.
+- PR #92 is a separate documentation-only continuity PR and remains open at the time of this note.
+- APK delivery troubleshooting remains deferred. Do not repeat the previously failing sandbox links.
+
+Conversation preservation note: this repository file stores the founder's exact instruction plus the verified technical findings and actions from this turn. It is a structured continuity archive, not a verbatim export of the complete ChatGPT UI transcript. The original conversation remains in ChatGPT history.
