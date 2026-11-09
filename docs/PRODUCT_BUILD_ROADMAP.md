@@ -340,3 +340,13 @@ See `docs/ADVERTISING_SPEC.md`. Prepare privacy-first direct sponsorship placeme
 - Workflow Android #336 / run `42199232414` a trecut build-ul APK. APK-ul nu a fost instalat sau verificat fizic în această etapă; redarea vocală pe Samsung rămâne test de dispozitiv.
 - Arhiva conversației a fost completată în `docs/CHAT-ARCHIVE-2026-11-06.md`, iar handoff/status/development log au primit același checkpoint. Este o arhivă structurată de continuitate, nu un export integral al UI ChatGPT.
 - Limitele de siguranță rămân: fără mining real, wallet-uri/tranzacții, Health document analysis în producție, schimbări Supabase/RLS, abonamente sau servicii plătite fără aprobările și controalele necesare.
+
+
+## 2026-11-09 — six-module mobile workspace regression
+
+- Added a Playwright regression that iterates Dr.Vas Free, Health, Studio, Academy, Commerce and Business at a 390×844 mobile viewport.
+- For every workspace it checks the shared message composer, attachment control, Send button, back-to-modules control, top/bottom logout controls, one-column layout and absence of horizontal page overflow.
+- This is a test-only change; it does not alter premium entitlements, health file processing, billing, database/RLS, Worker secrets, mining execution or production deployment.
+- Branch: `test/all-modules-mobile-workspace-2026-11-09`. CI has not yet been verified; do not call the test passing until the workflow reports a result.
+
+Founder instruction: continue every workspace in parallel and provide the live production homepage link for direct visual review. Keep public Free/Health access and server-side private gates for Studio/Academy/Commerce/Business; preserve Health file-analysis privacy gates and Crypto non-execution.
