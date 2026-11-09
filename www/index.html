@@ -3559,6 +3559,73 @@ for (const [source, translations] of Object.entries(MODULE_WORKSPACE_NAV_TRANSLA
   }
 }
 
+const STUDIO_STATION_TRANSLATIONS={
+"Titlul cărții":["Book title","Titolo del libro","Kitap başlığı","Buchtitel","Titre du livre","Título del libro","Название книги"],
+"Genul editorial":["Book genre","Genere editoriale","Kitap türü","Buchgenre","Genre éditorial","Género editorial","Жанр книги"],
+"Limba cărții":["Book language","Lingua del libro","Kitabın dili","Sprache des Buches","Langue du livre","Idioma del libro","Язык книги"],
+"Public-țintă":["Target audience","Pubblico di riferimento","Hedef kitle","Zielgruppe","Public cible","Público objetivo","Целевая аудитория"],
+"Dimensiune":["Length","Lunghezza","Uzunluk","Umfang","Longueur","Extensión","Объём"],
+"Ideea, mesajul și conținutul dorit":["Idea, message and desired content","Idea, messaggio e contenuto desiderato","Fikir, mesaj ve istenen içerik","Idee, Botschaft und gewünschter Inhalt","Idée, message et contenu souhaité","Idea, mensaje y contenido deseado","Идея, посыл и желаемое содержание"],
+"Limba sursă":["Source language","Lingua di origine","Kaynak dil","Ausgangssprache","Langue source","Idioma de origen","Исходный язык"],
+"Limba țintă":["Target language","Lingua di destinazione","Hedef dil","Zielsprache","Langue cible","Idioma de destino","Целевой язык"],
+"Stilul traducerii":["Translation style","Stile di traduzione","Çeviri stili","Übersetzungsstil","Style de traduction","Estilo de traducción","Стиль перевода"],
+"Format":["Format","Formato","Biçim","Format","Format","Formato","Формат"],
+"Glosar / termeni care trebuie păstrați":["Glossary / terms to preserve","Glossario / termini da mantenere","Sözlük / korunacak terimler","Glossar / beizubehaltende Begriffe","Glossaire / termes à conserver","Glosario / términos que deben conservarse","Глоссарий / термины для сохранения"],
+"Textul de tradus":["Text to translate","Testo da tradurre","Çevrilecek metin","Zu übersetzender Text","Texte à traduire","Texto que se va a traducir","Текст для перевода"],
+"Detectare automată":["Auto-detect","Rilevamento automatico","Otomatik algılama","Automatische Erkennung","Détection automatique","Detección automática","Автоопределение"],
+"Alege limba țintă":["Choose target language","Scegli la lingua di destinazione","Hedef dili seçin","Zielsprache auswählen","Choisir la langue cible","Elige el idioma de destino","Выберите целевой язык"],
+"Fidelă și naturală":["Faithful and natural","Fedele e naturale","Sadık ve doğal","Originalgetreu und natürlich","Fidèle et naturel","Fiel y natural","Точный и естественный"],
+"Formală / profesională":["Formal / professional","Formale / professionale","Resmî / profesyonel","Formal / professionell","Formel / professionnel","Formal / profesional","Официальный / профессиональный"],
+"Juridică — cu verificare umană":["Legal — requires human review","Giuridica — con revisione umana","Hukuki — insan incelemesi gerekir","Juristisch — menschliche Prüfung erforderlich","Juridique — vérification humaine requise","Jurídica — requiere revisión humana","Юридический — необходима проверка специалистом"],
+"Tehnică — cu glosar":["Technical — with glossary","Tecnica — con glossario","Teknik — sözlükle","Technisch — mit Glossar","Technique — avec glossaire","Técnica — con glosario","Технический — с глоссарием"],
+"Literară / creativă":["Literary / creative","Letteraria / creativa","Edebî / yaratıcı","Literarisch / kreativ","Littéraire / créatif","Literaria / creativa","Литературный / творческий"],
+"Marketing / localizare":["Marketing / localisation","Marketing / localizzazione","Pazarlama / yerelleştirme","Marketing / Lokalisierung","Marketing / localisation","Marketing / localización","Маркетинг / локализация"],
+"Text simplu, păstrează paragrafele":["Plain text, preserve paragraphs","Testo semplice, mantieni i paragrafi","Düz metin, paragrafları koru","Einfacher Text, Absätze beibehalten","Texte brut, conserver les paragraphes","Texto simple, conservar párrafos","Обычный текст, сохранить абзацы"],
+"SRT / VTT, păstrează timpii":["SRT / VTT, preserve timestamps","SRT / VTT, mantieni i tempi","SRT / VTT, zaman kodlarını koru","SRT / VTT, Zeitmarken beibehalten","SRT / VTT, conserver les horodatages","SRT / VTT, conservar tiempos","SRT / VTT, сохранить временные метки"],
+"Document cu tabel sursă–traducere":["Document with source–translation table","Documento con tabella originale–traduzione","Kaynak–çeviri tablosu içeren belge","Dokument mit Ausgangstext–Übersetzung-Tabelle","Document avec tableau source–traduction","Documento con tabla origen–traducción","Документ с таблицей оригинал–перевод"],
+"Termen original = traducere preferată":["Original term = preferred translation","Termine originale = traduzione preferita","Orijinal terim = tercih edilen çeviri","Originalbegriff = bevorzugte Übersetzung","Terme original = traduction préférée","Término original = traducción preferida","Оригинальный термин = предпочтительный перевод"],
+"Textul de tradus":["Text to translate","Testo da tradurre","Çevrilecek metin","Zu übersetzender Text","Texte à traduire","Texto que se va a traducir","Текст для перевода"],
+"Creează și salvează proiectul de carte":["Create and save book project","Crea e salva il progetto del libro","Kitap projesi oluştur ve kaydet","Buchprojekt erstellen und speichern","Créer et enregistrer le projet de livre","Crear y guardar el proyecto del libro","Создать и сохранить книжный проект"],
+"Pregătește traducerea și salvează proiectul":["Prepare translation and save project","Prepara la traduzione e salva il progetto","Çeviriyi hazırla ve projeyi kaydet","Übersetzung vorbereiten und Projekt speichern","Préparer la traduction et enregistrer le projet","Preparar la traducción y guardar el proyecto","Подготовить перевод и сохранить проект"],
+"Descrie ideea cărții înainte de a continua.":["Describe the book idea before continuing.","Descrivi l'idea del libro prima di continuare.","Devam etmeden önce kitap fikrini açıklayın.","Beschreibe zuerst die Buchidee.","Décrivez l’idée du livre avant de continuer.","Describe la idea del libro antes de continuar.","Опишите идею книги, прежде чем продолжить."],
+"Adaugă textul care trebuie tradus.":["Add the text to be translated.","Aggiungi il testo da tradurre.","Çevrilecek metni ekleyin.","Füge den zu übersetzenden Text hinzu.","Ajoutez le texte à traduire.","Añade el texto que se debe traducir.","Добавьте текст для перевода."],
+"Alege limba țintă.":["Choose a target language.","Scegli una lingua di destinazione.","Hedef dili seçin.","Wähle eine Zielsprache.","Choisissez une langue cible.","Elige un idioma de destino.","Выберите целевой язык."],
+"Proiect salvat privat. Brief-ul este pregătit în conversație; verifică-l și apasă Trimite.":["Project saved privately. The brief is ready in the conversation; review it and press Send.","Progetto salvato privatamente. Il brief è pronto nella conversazione; controllalo e premi Invia.","Proje özel olarak kaydedildi. Brief konuşmada hazır; inceleyip Gönder'e basın.","Projekt privat gespeichert. Das Briefing ist im Chat bereit; prüfe es und klicke auf Senden.","Projet enregistré en privé. Le brief est prêt dans la conversation ; vérifiez-le et appuyez sur Envoyer.","Proyecto guardado de forma privada. El brief está listo en la conversación; revísalo y pulsa Enviar.","Проект сохранён приватно. Бриф готов в чате; проверьте его и нажмите «Отправить»."],
+"Brief pregătit. Salvarea nu a fost confirmată; verifică statusul proiectelor și apasă Trimite după revizuire.":["Brief prepared. Saving was not confirmed; check the project status and press Send after reviewing.","Brief preparato. Il salvataggio non è stato confermato; controlla lo stato del progetto e premi Invia dopo la revisione.","Brief hazırlandı. Kaydetme doğrulanmadı; proje durumunu kontrol edin ve gözden geçirdikten sonra Gönder'e basın.","Briefing vorbereitet. Das Speichern wurde nicht bestätigt; prüfe den Projektstatus und klicke nach der Kontrolle auf Senden.","Brief préparé. L’enregistrement n’a pas été confirmé ; vérifiez l’état du projet et appuyez sur Envoyer après révision.","Brief preparado. No se confirmó el guardado; revisa el estado del proyecto y pulsa Enviar después de revisarlo.","Бриф подготовлен. Сохранение не подтверждено; проверьте статус проекта и нажмите «Отправить» после проверки."]
+};
+for(const [source,values] of Object.entries(STUDIO_STATION_TRANSLATIONS)){
+ for(let i=0;i<["en","it","tr","de","fr","es","ru"].length;i++){
+  const language=["en","it","tr","de","fr","es","ru"][i];
+  if(UI[language]) UI[language][source]=values[i];
+ }
+}
+
+const STUDIO_SOURCE_LANGUAGE_TRANSLATIONS=["Source language","Lingua di origine","Kaynak dil","Ausgangssprache","Langue source","Idioma de origen","Исходный язык"];
+for(let i=0;i<["en","it","tr","de","fr","es","ru"].length;i++){const language=["en","it","tr","de","fr","es","ru"][i];if(UI[language])UI[language]["Limba sursă"]=STUDIO_SOURCE_LANGUAGE_TRANSLATIONS[i];}
+const STUDIO_BRIEF_TRANSLATIONS={
+"TITLU: ":["TITLE: ","TITOLO: ","BAŞLIK: ","TITEL: ","TITRE : ","TÍTULO: ","ЗАГОЛОВОК: "],
+"GEN: ":["GENRE: ","GENERE: ","TÜR: ","GENRE: ","GENRE : ","GÉNERO: ","ЖАНР: "],
+"LIMBA: ":["LANGUAGE: ","LINGUA: ","DİL: ","SPRACHE: ","LANGUE : ","IDIOMA: ","ЯЗЫК: "],
+"PUBLIC: ":["AUDIENCE: ","PUBBLICO: ","HEDEF KİTLE: ","ZIELGRUPPE: ","PUBLIC : ","PÚBLICO: ","АУДИТОРИЯ: "],
+"DIMENSIUNE: ":["LENGTH: ","LUNGHEZZA: ","UZUNLUK: ","UMFANG: ","LONGUEUR : ","EXTENSIÓN: ","ОБЪЁМ: "],
+"CONCEPT ȘI CERINȚE:":["CONCEPT AND REQUIREMENTS:","CONCETTO E REQUISITI:","KONSEPT VE GEREKSİNİMLER:","KONZEPT UND ANFORDERUNGEN:","CONCEPT ET EXIGENCES :","CONCEPTO Y REQUISITOS:","КОНЦЕПЦИЯ И ТРЕБОВАНИЯ:"],
+"STIL: ":["STYLE: ","STILE: ","ÜSLUP: ","STIL: ","STYLE : ","ESTILO: ","СТИЛЬ: "],
+"FORMAT: ":["FORMAT: ","FORMATO: ","BİÇİM: ","FORMAT: ","FORMAT : ","FORMATO: ","ФОРМАТ: "],
+"GLOSAR:":["GLOSSARY:","GLOSSARIO:","SÖZLÜK:","GLOSSAR:","GLOSSAIRE :","GLOSARIO:","ГЛОССАРИЙ:"],
+"Nu a fost furnizat.":["Not provided.","Non fornito.","Belirtilmedi.","Nicht angegeben.","Non fourni.","No se ha proporcionado.","Не предоставлен."],
+"TEXT SURSĂ:":["SOURCE TEXT:","TESTO ORIGINALE:","KAYNAK METİN:","AUSGANGSTEXT:","TEXTE SOURCE :","TEXTO DE ORIGEN:","ИСХОДНЫЙ ТЕКСТ:"],
+"Titlul provizoriu":["Working title","Titolo provvisorio","Geçici başlık","Arbeitstitel","Titre provisoire","Título provisional","Рабочее название"],
+"Cui i se adresează cartea?":["Who is this book for?","A chi è destinato il libro?","Bu kitap kime hitap ediyor?","Für wen ist dieses Buch gedacht?","À qui s’adresse ce livre ?","¿A quién va dirigido este libro?","Для кого предназначена эта книга?"],
+"Descrie ideea, personajele, mesajul, evenimentele și ce vrei să obțină cititorul.":["Describe the idea, characters, message, events and what you want readers to gain.","Descrivi l’idea, i personaggi, il messaggio, gli eventi e cosa vuoi che il lettore ottenga.","Fikri, karakterleri, mesajı, olayları ve okuyucunun ne kazanmasını istediğinizi açıklayın.","Beschreibe die Idee, Figuren, Botschaft, Ereignisse und den gewünschten Nutzen für die Lesenden.","Décrivez l’idée, les personnages, le message, les événements et ce que le lectorat doit en retirer.","Describe la idea, los personajes, el mensaje, los acontecimientos y lo que quieres que obtenga el lector.","Опишите идею, персонажей, посыл, события и то, что читатель должен получить."],
+"Lipește textul aici. Pentru documente mari, folosește încărcarea fișierului în Studio.":["Paste the text here. For large documents, use the file upload in Studio.","Incolla qui il testo. Per documenti lunghi, usa il caricamento file in Studio.","Metni buraya yapıştırın. Büyük belgeler için Studio'daki dosya yükleme özelliğini kullanın.","Füge den Text hier ein. Für große Dokumente nutze den Datei-Upload in Studio.","Collez le texte ici. Pour les documents volumineux, utilisez le téléversement de fichiers dans Studio.","Pega aquí el texto. Para documentos grandes, utiliza la carga de archivos en Studio.","Вставьте текст сюда. Для больших документов используйте загрузку файлов в Studio."]
+};
+for(const [source,values] of Object.entries(STUDIO_BRIEF_TRANSLATIONS)){
+ for(let i=0;i<["en","it","tr","de","fr","es","ru"].length;i++){
+  const language=["en","it","tr","de","fr","es","ru"][i];
+  if(UI[language])UI[language][source]=values[i];
+ }
+}
+
 function localizeInterfaceCopy(source){return (ASSISTANT_UI_TRANSLATIONS[currentLanguage]||{})[source]||(UI[currentLanguage]||{})[source]||source}
 function tr(s){return localizeInterfaceCopy(s)}
 function setLocalizedText(target,source){
