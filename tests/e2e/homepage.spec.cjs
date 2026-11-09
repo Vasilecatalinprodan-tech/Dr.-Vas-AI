@@ -2816,6 +2816,9 @@ test("landing DNA rails mount independent WebGL 3D geometry with graceful SVG fa
   expect(engine).toContain("createBuffer");
   expect(engine).toContain("cylinder");
   expect(engine).toContain("sphere");
+  // The WebGL helix is generated along depth (Z); a quarter-turn around X
+  // places its long axis vertically before the continuous Y-axis rotation.
+  expect(engine).toContain("Math.PI/2");
 });
 
 test("both landing DNA helices use shaded molecular rails and detailed base pairs", async ({ page }) => {
