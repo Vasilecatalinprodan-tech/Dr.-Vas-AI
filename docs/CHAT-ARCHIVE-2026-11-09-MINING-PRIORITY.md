@@ -89,3 +89,29 @@ The founder reported a ChatGPT "Message delivery timed out" notice. This was a r
 Next mining milestone: improve the profitability calculator to include electricity tariff, miner efficiency, pool fee, uptime, cooling/overhead, hardware cost, net daily/monthly profit, break-even BTC price and payback period. Show source/timestamp and stale-data states. Then proceed to safe native-agent support for explicitly selected user-owned hardware and OS. Never run mining in a browser or on visitors' devices, and never connect a wallet/pool or launch mining without explicit approval.
 
 Parallel workstreams remain Free/auth/history/attachments, Health, Studio/voice/presenter, Academy, Commerce, Business, Crypto & Mining, Online Income/Digital Products, and subscriptions/Google Play. Preserve separate module projects/conversations and consistent localization.
+
+
+## 2026-11-09 — next mining implementation slice: hardware efficiency and payback
+
+Founder instruction: continue the project and preserve all progress, including the conversation. Mining remains the first priority while the other Dr.Vas modules continue as parallel workstreams.
+
+Implementation started on branch `feat/mining-efficiency-break-even-2026-11-09`:
+- New Bitcoin hardware scenario calculation derives electrical load from TH/s × J/TH.
+- Cooling overhead is an explicit additional facility-load assumption.
+- Includes uptime-adjusted BTC yield, pool fee, electricity, maintenance, daily and 30-day net results, break-even BTC price and simple hardware payback.
+- Adds automated regression coverage for the formula and invalid inputs.
+- This slice is not yet merged or deployed. The calculator UI has not yet been wired to the new inputs/results.
+- Real mining remains disabled. No device, OS, miner binary, pool or wallet has been configured or authorised.
+
+
+- Founder instruction in this continuation: “da continua si salvam tot inclusiv chatul”.
+- PR #88 opened: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/88, head `641cc9b33b66092985bbd1cf8b0dd2a3a82f5c2c`, based on the current `main` head `04016c6583e94e53aa4b4ac35ae9d4946ae0a251`.
+- Four-file implementation: Bitcoin calculation engine, Playwright test, development log and conversation archive. PR is open and not merged. Initial commit-workflow and combined-status queries returned no records; CI is pending/unverified. Do not merge or deploy until required checks complete.
+- The new helper is not yet connected to the admin calculator UI. Next: wire hardware hashrate, J/TH, electricity tariff, cooling overhead, pool fee, uptime, maintenance and purchase cost inputs to the helper; display source/freshness and explicit estimate labels. Then run full browser regression, review, merge and production deploy only after passing checks.
+- APK download remains deferred; no new APK was generated in this slice.
+
+- Formula review before CI: corrected the test's break-even expected value to include the 2% pool fee (break-even = energy plus maintenance divided by uptime-adjusted BTC/day after pool fee). This is a test expectation correction, not a change to the model.
+
+- Continued the same PR #88 slice by wiring the Bitcoin-only J/TH, cooling-overhead and hardware-cost inputs into the admin mining simulator. The BTC scenario now displays estimated miner/facility watts, net daily/30-day result, break-even BTC price and simple payback; non-BTC scenarios clear these BTC-specific outputs. Added a Playwright UI regression using a deliberately loss-making example so the UI must not imply a positive payback. This remains unmerged and undeployed pending CI.
+
+- Validation refinement: if a BTC hardware assumption becomes invalid, the simulator now clears all derived hardware outputs instead of leaving stale previous estimates visible.

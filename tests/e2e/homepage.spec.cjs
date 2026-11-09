@@ -3436,3 +3436,78 @@ test("all module feature-navigation labels, headings and descriptions localize i
     expect(unchangedRomanianCopy, `Romanian navigation copy remains in ${language}: ${unchangedRomanianCopy.join(" | ")}`).toEqual([]);
   }
 });
+
+
+test("Bitcoin hardware economics derives power from J/TH and reports break-even and payback", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(() => window.DrVasCryptoEngine.calculateBitcoinHardwareScenario({
+    expectedBtcPerDay: 0.0002,
+    btcPriceUsd: 100000,
+    minerHashrateThs: 100,
+    efficiencyJPerTh: 20,
+    electricityUsdPerKwh: 0.15,
+    coolingOverheadPercent: 25,
+    poolFeePercent: 2,
+    uptimePercent: 90,
+    maintenanceUsdPerDay: 1,
+    hardwareCostUsd: 5000
+  }));
+  expect(result.minerPowerWatts).toBe(2000);
+  expect(result.facilityPowerWatts).toBe(2500);
+  expect(result.energyKwhPerDay).toBe(60);
+  expect(result.energyUsdPerDay).toBe(9);
+  expect(result.realisedBtcPerDay).toBeCloseTo(0.00018, 10);
+  expect(result.grossUsdPerDay).toBeCloseTo(18, 8);
+  expect(result.poolFeeUsdPerDay).toBeCloseTo(0.36, 8);
+  expect(result.netUsdPerDay).toBeCloseTo(7.64, 8);
+  expect(result.breakEvenBtcPriceUsd).toBeCloseTo(56689.3424036, 4);
+  expect(result.paybackDays).toBeCloseTo(5000 / 7.64, 8);
+  expect(result.profitableAtAssumptions).toBe(true);
+  const invalid = await page.evaluate(() => {
+    try {
+      window.DrVasCryptoEngine.calculateBitcoinHardwareScenario({
+        expectedBtcPerDay: 0.0002, btcPriceUsd: 100000, minerHashrateThs: 100,
+        efficiencyJPerTh: 0, electricityUsdPerKwh: 0.15
+      });
+      return false;
+    } catch (error) { return error instanceof RangeError; }
+  });
+  expect(invalid).toBe(true);
+});
+
+
+test("Bitcoin simulator UI exposes J/TH, cooling, hardware cost, break-even and payback", async ({ page }) => {
+  await openApp(page, "ro");
+  const result = await page.evaluate(() => {
+    const values = {
+      cryptoScenarioSymbol: "BTC",
+      cryptoScenarioMinerHashrate: "200",
+      cryptoScenarioNetworkHashrate: "600000000",
+      cryptoScenarioBlockReward: "3.125",
+      cryptoScenarioBlocksPerDay: "144",
+      cryptoScenarioPriceUsd: "90000",
+      cryptoScenarioWatts: "3500",
+      cryptoScenarioElectricity: "0.15",
+      cryptoScenarioPoolFee: "1",
+      cryptoScenarioUptime: "95",
+      cryptoScenarioMaintenance: "0",
+      cryptoScenarioEfficiency: "20",
+      cryptoScenarioCooling: "15",
+      cryptoScenarioHardwareCost: "5000"
+    };
+    for (const [id, value] of Object.entries(values)) document.getElementById(id).value = value;
+    calculateCryptoHashrateScenario();
+    return {
+      minerPower: document.getElementById("cryptoScenarioPowerWatts").textContent,
+      facilityPower: document.getElementById("cryptoScenarioFacilityPower").textContent,
+      breakEven: document.getElementById("cryptoScenarioBreakEven").textContent,
+      payback: document.getElementById("cryptoScenarioPayback").textContent,
+      net: document.getElementById("cryptoScenarioHardwareNet").textContent
+    };
+  });
+  expect(result.minerPower).toBe("4000 W");
+  expect(result.facilityPower).toBe("4600 W");
+  expect(result.breakEven).not.toBe("—");
+  expect(result.payback).toContain("Nerecuperabil");
+  expect(result.net).toContain("/zi");
+});
