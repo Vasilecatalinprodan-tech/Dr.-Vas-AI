@@ -7550,7 +7550,7 @@ function calculateCryptoHashrateScenario() {
     notice.textContent = "Estimare matematică, nu predicție. Pentru BTC, eficiența J/TH și răcirea estimează consumul; verifică tariful, dificultatea, recompensa și prețul la surse actuale. Nu se execută mining.";
     return result;
   } catch (error) {
-    ["cryptoScenarioShare","cryptoScenarioCoinsDay","cryptoScenarioGrossDay","cryptoScenarioEnergyDay","cryptoScenarioNetDay","cryptoScenarioNetMonth"].forEach(id=>{const node=document.getElementById(id);if(node)node.textContent="—";});
+    ["cryptoScenarioShare","cryptoScenarioCoinsDay","cryptoScenarioGrossDay","cryptoScenarioEnergyDay","cryptoScenarioNetDay","cryptoScenarioNetMonth","cryptoScenarioPowerWatts","cryptoScenarioFacilityPower","cryptoScenarioBreakEven","cryptoScenarioPayback","cryptoScenarioHardwareNet"].forEach(id=>{const node=document.getElementById(id);if(node)node.textContent="—";});
     notice.textContent = error?.message || "Verifică valorile introduse.";
     return null;
   }
