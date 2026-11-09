@@ -910,6 +910,19 @@ body.presentation-open{overflow:hidden!important}
 .crypto-engine-table td{color:#d5e5ec}
 .crypto-price-positive{color:#80e0b2!important;font-weight:800}
 .crypto-engine-footnote{color:#9bb3c2;font-size:11px;line-height:1.6;margin:10px 0 0}
+.crypto-scenario-panel{margin:14px 0;padding:14px;border:1px solid #31566a;border-radius:12px;background:#0a1928}
+.crypto-scenario-panel h6{margin:0 0 6px;color:#7fe5dc;font-size:14px}
+.crypto-scenario-panel>p{margin:5px 0 12px;color:#a9bfce;font-size:11px;line-height:1.55}
+.crypto-scenario-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.crypto-scenario-grid label{display:flex;flex-direction:column;gap:5px;color:#b9d3df;font-size:11px}
+.crypto-scenario-grid input{width:100%;min-width:0;padding:10px;background:#071827;border:1px solid #34536a;border-radius:8px;color:#fff}
+.crypto-scenario-results{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.crypto-scenario-results>div{padding:10px;background:#10283a;border:1px solid #29495e;border-radius:9px;min-width:0}
+.crypto-scenario-results small{display:block;color:#91aebf;font-size:10px}
+.crypto-scenario-results strong{display:block;margin-top:5px;color:#d8fff7;font-size:15px;overflow-wrap:anywhere}
+#cryptoScenarioNotice{display:block;margin-top:10px;color:#f0c879;font-size:11px;line-height:1.5}
+@media(max-width:760px){.crypto-scenario-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.crypto-scenario-results{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:420px){.crypto-scenario-grid,.crypto-scenario-results{grid-template-columns:1fr}}
 @media(max-width:620px){.crypto-engine-toolbar>*{width:100%}.crypto-engine-toolbar select{min-width:0}.crypto-emergency-stop{width:100%}}
 
 
@@ -2074,6 +2087,32 @@ body.health-module-mode #chatSection .chat-main #freeChatView>#chat{
       <button type="button" class="crypto-emergency-stop" id="cryptoEmergencyStopButton" aria-pressed="false" onclick="activateCryptoEmergencyStop()">STOP URGENȚĂ</button>
      </div>
      <div id="cryptoEngineStatus" class="crypto-engine-status" role="status" aria-live="polite">Motor de analiză pregătit. Mining-ul real rămâne oprit până la conectarea unui agent nativ verificat și autorizarea echipamentului.</div>
+     <section class="crypto-scenario-panel" aria-labelledby="cryptoScenarioHeading">
+      <h6 id="cryptoScenarioHeading">Simulator de hashrate și venit estimat</h6>
+      <p>Introdu hashrate-ul minerului și al rețelei în aceeași unitate, plus recompensa și numărul de blocuri pe zi. Valorile inițiale sunt doar un exemplu demonstrativ; actualizează-le din surse de rețea verificate înainte de orice decizie.</p>
+      <div class="crypto-scenario-grid">
+       <label>Monedă / simbol<input id="cryptoScenarioSymbol" value="BTC" maxlength="10" oninput="calculateCryptoHashrateScenario()"></label>
+       <label>Hashrate echipament (TH/s)<input id="cryptoScenarioMinerHashrate" type="number" min="0" step="any" value="200" oninput="calculateCryptoHashrateScenario()"></label>
+       <label>Hashrate rețea (TH/s)<input id="cryptoScenarioNetworkHashrate" type="number" min="0" step="any" value="600000000" oninput="calculateCryptoHashrateScenario()"></label>
+       <label>Recompensă / bloc<input id="cryptoScenarioBlockReward" type="number" min="0" step="any" value="3.125" oninput="calculateCryptoHashrateScenario()"></label>
+       <label>Blocuri estimate / zi<input id="cryptoScenarioBlocksPerDay" type="number" min="0" step="any" value="144" oninput="calculateCryptoHashrateScenario()"></label>
+       <label>Preț monedă (USD)<input id="cryptoScenarioPriceUsd" type="number" min="0" step="any" value="90000" oninput="calculateCryptoHashrateScenario()"></label>
+       <label>Consum echipament (W)<input id="cryptoScenarioWatts" type="number" min="0" step="any" value="3500" oninput="calculateCryptoHashrateScenario()"></label>
+       <label>Electricitate (USD/kWh)<input id="cryptoScenarioElectricity" type="number" min="0" step="any" value="0.15" oninput="calculateCryptoHashrateScenario()"></label>
+       <label>Comision pool (%)<input id="cryptoScenarioPoolFee" type="number" min="0" max="100" step="any" value="1" oninput="calculateCryptoHashrateScenario()"></label>
+       <label>Disponibilitate (%)<input id="cryptoScenarioUptime" type="number" min="0" max="100" step="any" value="95" oninput="calculateCryptoHashrateScenario()"></label>
+       <label>Mentenanță (USD/zi)<input id="cryptoScenarioMaintenance" type="number" min="0" step="any" value="0" oninput="calculateCryptoHashrateScenario()"></label>
+      </div>
+      <div class="crypto-scenario-results" aria-live="polite">
+       <div><small>Proporția din hashrate-ul rețelei</small><strong id="cryptoScenarioShare">—</strong></div>
+       <div><small>Monede estimate / zi</small><strong id="cryptoScenarioCoinsDay">—</strong></div>
+       <div><small>Venit brut / zi</small><strong id="cryptoScenarioGrossDay">—</strong></div>
+       <div><small>Energie / zi</small><strong id="cryptoScenarioEnergyDay">—</strong></div>
+       <div><small>Rezultat net / zi</small><strong id="cryptoScenarioNetDay">—</strong></div>
+       <div><small>Rezultat net / 30 zile</small><strong id="cryptoScenarioNetMonth">—</strong></div>
+      </div>
+      <span id="cryptoScenarioNotice" role="status" aria-live="polite">Exemplu demonstrativ. Modelul nu citește dificultatea sau recompensa live și nu pornește mining.</span>
+     </section>
      <div class="admin-table-wrap">
       <table class="crypto-engine-table">
        <thead><tr><th>Monedă</th><th>Algoritm</th><th>Preț USD</th><th>Schimbare 24h</th><th>Compatibilitate</th></tr></thead>
@@ -7373,6 +7412,46 @@ function initCryptoMiningEngine() {
     '<option value="' + item.value + '">' + item.label + '</option>'
   ).join("");
 }
+function calculateCryptoHashrateScenario() {
+  const notice = document.getElementById("cryptoScenarioNotice");
+  const ids = {
+    minerHashrate: "cryptoScenarioMinerHashrate",
+    networkHashrate: "cryptoScenarioNetworkHashrate",
+    blockReward: "cryptoScenarioBlockReward",
+    blocksPerDay: "cryptoScenarioBlocksPerDay",
+    priceUsd: "cryptoScenarioPriceUsd",
+    watts: "cryptoScenarioWatts",
+    electricityUsdPerKwh: "cryptoScenarioElectricity",
+    poolFeePercent: "cryptoScenarioPoolFee",
+    uptimePercent: "cryptoScenarioUptime",
+    maintenanceUsdPerDay: "cryptoScenarioMaintenance"
+  };
+  if (!window.DrVasCryptoEngine || !notice) return null;
+  try {
+    const input = {};
+    for (const [key, id] of Object.entries(ids)) {
+      const field = document.getElementById(id);
+      if (!field) return null;
+      input[key] = Number(field.value);
+    }
+    const result = window.DrVasCryptoEngine.calculateHashrateScenario(input);
+    const symbol = (document.getElementById("cryptoScenarioSymbol")?.value || "COIN").trim().toUpperCase().slice(0,10);
+    const money = value => new Intl.NumberFormat("en-US", {style:"currency",currency:"USD",maximumFractionDigits:4}).format(value);
+    const put = (id,value) => { const node=document.getElementById(id); if(node)node.textContent=value; };
+    put("cryptoScenarioShare",(result.hashrateShare*100).toFixed(8)+"%");
+    put("cryptoScenarioCoinsDay",result.expectedCoinsPerDay.toFixed(10)+" "+symbol+"/zi");
+    put("cryptoScenarioGrossDay",money(result.grossUsdPerDay));
+    put("cryptoScenarioEnergyDay",money(result.energyUsdPerDay));
+    put("cryptoScenarioNetDay",money(result.netUsdPerDay));
+    put("cryptoScenarioNetMonth",money(result.netUsdPer30Days));
+    notice.textContent = "Estimare matematică pe baza ipotezelor introduse, nu predicție. Recompensa, blocurile/zi și hashrate-ul rețelei trebuie verificate pentru moneda aleasă.";
+    return result;
+  } catch (error) {
+    ["cryptoScenarioShare","cryptoScenarioCoinsDay","cryptoScenarioGrossDay","cryptoScenarioEnergyDay","cryptoScenarioNetDay","cryptoScenarioNetMonth"].forEach(id=>{const node=document.getElementById(id);if(node)node.textContent="—";});
+    notice.textContent = error?.message || "Verifică valorile introduse.";
+    return null;
+  }
+}
 async function scanCryptoMiningCandidates() {
   const status = document.getElementById("cryptoEngineStatus");
   const body = document.getElementById("cryptoEngineCoinsBody");
@@ -7441,6 +7520,7 @@ function activateCryptoEmergencyStop() {
 
 bindPresenterFallbacks();
 initCryptoMiningEngine();
+calculateCryptoHashrateScenario();
 calculateCommerceUnitEconomics();
 calculateCryptoMiningEconomics();
 initLanguage();
