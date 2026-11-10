@@ -387,3 +387,13 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Added failed project-open coverage proving the current unsaved Commerce draft is preserved and the error is surfaced.
 - No production application code, schema, RLS policy, secrets, provider settings, paid services or deployment configuration changed in this test-only work.
 - Branch: `test/module-project-privacy-roundtrip-2026-11-10`. Awaiting browser CI; not merged or deployed.
+
+
+## 2026-11-10 — Academy course progress tracker (rebased after PR #98)
+- Added an Academy progress panel for total lessons, completed lessons and learning notes.
+- The tracker calculates an accessible progress percentage and clamps completed lessons between zero and the configured total (1–100).
+- Progress and notes are saved in the existing owner-scoped Academy project brief and restored when reopening a saved course. No new schema or migration is required.
+- Added Playwright tests for calculation, bounds and save/reopen round-trip; included the test in browser and production deployment gates.
+- Course completion remains user-entered; no accreditation or certification is implied. No paid provider, billing, external service or public access policy was changed.
+- PR #98's module-project privacy/failure tests have passed and merged to main at `c7e91264c3c8e1935b5e57cb926b2aa4784dc8d2`.
+- Rebased feature branch: `feat/academy-course-progress-rebased-2026-11-10`. Await new CI; not merged or deployed.
