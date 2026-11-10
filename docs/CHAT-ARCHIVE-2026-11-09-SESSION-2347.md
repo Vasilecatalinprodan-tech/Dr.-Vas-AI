@@ -109,3 +109,11 @@ This file preserves the founder's exact instruction above and the verified techn
 - New exact-head browser workflow run #765 / `42927347795` is in progress at the homepage/session-restoration Playwright step. Do not reuse the previous PR #101 160/160 result as proof for PR #102; wait for its own run.
 - The archive, development log and roadmap are updated on main. This is a structured continuity archive, not a literal export of the full ChatGPT interface. The original chat remains in ChatGPT history.
 - No deployment, schema migration, RLS change, paid provider, secrets or APK build was performed in this continuation.
+
+
+## 2026-11-11 00:00 UTC — Final Studio PR handoff
+- The interim PR #102 was closed as superseded after the documentation checkpoint advanced main. Its Studio changes were carried onto a new branch based on the latest main.
+- Active Studio review target is PR #103: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/103.
+- PR #103 head `5a6665e616615907b400b0d3e5f493757947dc1f` is 5 commits ahead and 0 behind main; GitHub reports mergeable=true.
+- Exact-head browser CI run #766 / `42927733404` is in progress. No merge or production deployment yet.
+- Older PR #101 and #102 were closed as superseded, not merged. Their earlier passing 160/160 results do not replace PR #103's own CI.
