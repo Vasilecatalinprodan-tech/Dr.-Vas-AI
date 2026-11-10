@@ -77,3 +77,13 @@ This file preserves the founder's exact instruction above and the verified techn
 - Added the new test file to both browser regression and production deployment test gates. No new schema or migration is required; it reuses `drvas_module_projects`.
 - No course certification or automatic lesson completion is claimed. No production deployment or live database change has been performed by this branch.
 - Branch: `feat/academy-course-progress-2026-11-10`. Await CI; not merged or deployed.
+
+
+## Founder instruction — 2026-11-10 06:05 UTC (verbatim)
+> continua in paralel cu toate....salveaza tot
+
+## Continuation work status
+- PR #98: Academy/Commerce/Business saved-project privacy and failure-path regression tests; browser CI run #758 (`42766414327`) was in progress at last check.
+- PR #99: Academy course progress tracker, saved in the existing owner-scoped Academy project brief; browser CI run #759 (`42766629225`) was in progress at last check.
+- These are independent branches from main and are not yet merged or deployed. Keep both CI gates green before merge.
+- The old PR #58 and PR #60 were closed because newer verified work already superseded them; no stale code was merged.
