@@ -379,3 +379,13 @@ Conversation preservation note: this repository file stores the founder's exact 
 - The Mempool hashrate sample is timestamped and flagged stale after two hours; CoinGecko BTC price timestamp is shown separately and flagged stale after one hour.
 - Playwright covers current/fresh timestamps and stale network/market inputs.
 - Supersedes the original branch `feat/mining-source-freshness-2026-11-09` after main advanced; the new PR will be the review target. No mining execution or production configuration is enabled.
+
+
+## 2026-11-10 — Academy course progress tracker
+- Added an Academy course progress panel with total lessons, completed lessons, progress notes and an accessible percentage progress bar.
+- The tracker validates bounds (1–100 total lessons; completed lessons are clamped between zero and the total) and reports the percentage/accessible `aria-valuenow`.
+- Added the progress fields to the existing owner-scoped Academy project brief so progress and notes are persisted only when the user explicitly saves the course, then restored on reopen.
+- Added Playwright tests for percentage calculation, bounds and saved-project round-trip.
+- Added the new test file to both browser regression and production deployment test gates. No new schema or migration is required; it reuses `drvas_module_projects`.
+- No course certification or automatic lesson completion is claimed. No production deployment or live database change has been performed by this branch.
+- Branch: `feat/academy-course-progress-2026-11-10`. Await CI; not merged or deployed.
