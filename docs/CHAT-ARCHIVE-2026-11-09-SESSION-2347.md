@@ -100,3 +100,12 @@ This file preserves the founder's exact instruction above and the verified techn
 - PR #101 Studio Book and Translation station persistence passed its exact-head browser E2E run #763: 160/160 tests passed, including both station save/new/reopen cases. After the Academy merge, the Studio branch is one commit behind and GitHub reports mergeable=false; it must be reconciled and CI rerun before merge.
 - The exact current user request and the status above are preserved in this repository archive. The daily Dr.Vas monitoring automation was also created in ChatGPT, scheduled for daily delivery in Europe/London.
 - Continue work across Free, Health, Studio, Academy, Commerce, Business, Crypto/Mining and Online Income in small independently tested changes. No paid services, new secrets, live database/RLS changes, or unapproved production deploys.
+
+
+## 2026-11-10 23:57 UTC — Studio rebase and next all-module checkpoint
+- PR #101 was closed as superseded (not merged) because its base became divergent after Academy PR #100 merged.
+- Recreated the Studio Book/Translation persistence changes on clean branch `feat/studio-station-continuity-rebased-2026-11-10`, directly based on current main. New PR #102: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/102.
+- PR #102 head: `c203c60183997abe745636fe25b9545e0f524f52`; comparison confirms it is 5 commits ahead and 0 behind main. PR metadata now reports mergeable=true.
+- New exact-head browser workflow run #765 / `42927347795` is in progress at the homepage/session-restoration Playwright step. Do not reuse the previous PR #101 160/160 result as proof for PR #102; wait for its own run.
+- The archive, development log and roadmap are updated on main. This is a structured continuity archive, not a literal export of the full ChatGPT interface. The original chat remains in ChatGPT history.
+- No deployment, schema migration, RLS change, paid provider, secrets or APK build was performed in this continuation.
