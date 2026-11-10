@@ -403,3 +403,9 @@ Conversation preservation note: this repository file stores the founder's exact 
 - PR #100 passed browser E2E run #762 with 160/160 tests and was squash-merged to main at `1ede5c4bedc55509e6be2f282fff9ea88908b430`.
 - Academy lesson totals, completed count, progress percentage and notes persist in the existing owner-scoped project brief and restore when reopening a course. No schema migration was added.
 - This merge is not a production deployment confirmation.
+
+
+## 2026-11-10 23:57 UTC — Studio clean rebase
+- PR #101 closed as superseded; PR #102 now carries the Studio Book/Translation persistence implementation on current main.
+- PR #102 exact head `c203c60183997abe745636fe25b9545e0f524f52` is 5 commits ahead / 0 behind main and mergeable. Browser CI run #765 (`42927347795`) is in progress; no merge until this exact head passes.
+- No production deployment or database migration was performed.
