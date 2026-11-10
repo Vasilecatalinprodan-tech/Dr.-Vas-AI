@@ -77,3 +77,12 @@ This file preserves the founder's exact instruction above and the verified techn
 - Started test-only branch `test/module-project-privacy-roundtrip-2026-11-10`. Added tests for Academy/Commerce/Business project reopen filters (ID + user_id + module), failed-save honesty, and failed-open preservation of the user's unsaved draft. Await CI; no merge/deploy yet.
 - Production deployment after PR #96 was not confirmed by the PR-specific workflow query. Do not claim the live site includes PR #96 until the main push deployment and production smoke test are confirmed.
 - No paid services, credits, secrets, database/RLS changes, production access-policy changes, mining execution, wallet custody, trading or transfer capability were enabled.
+
+
+## 2026-11-10 — Studio Book and Translation station continuity
+- Book Studio now stores its dedicated station fields (title, genre, language, audience, length and concept) in the existing private Studio project brief.
+- Translation Station now stores source/target language, style, output format, glossary and source text in the same owner-scoped project record.
+- Opening a saved Studio project restores the matching station form; starting a new project clears station metadata so unrelated drafts cannot leak into one another.
+- Added Playwright save/new/reopen round-trip coverage for Book Studio and Translation Station. Included the test file in browser regression and production deployment gates.
+- No new database migration, RLS change, provider call, paid render, TTS operation, external publishing, billing or production deployment was performed.
+- Branch: `feat/studio-station-project-continuity-2026-11-10`. Await CI; not merged or deployed.
