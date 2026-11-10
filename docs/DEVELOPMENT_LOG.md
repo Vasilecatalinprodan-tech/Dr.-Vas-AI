@@ -1121,3 +1121,12 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Added failed project-open coverage proving the current unsaved Commerce draft is preserved and the error is surfaced.
 - No production application code, schema, RLS policy, secrets, provider settings, paid services or deployment configuration changed in this test-only work.
 - Branch: `test/module-project-privacy-roundtrip-2026-11-10`. Awaiting browser CI; not merged or deployed.
+
+
+## 2026-11-10 — Studio Book and Translation station continuity
+- Book Studio now stores its dedicated station fields (title, genre, language, audience, length and concept) in the existing private Studio project brief.
+- Translation Station now stores source/target language, style, output format, glossary and source text in the same owner-scoped project record.
+- Opening a saved Studio project restores the matching station form; starting a new project clears station metadata so unrelated drafts cannot leak into one another.
+- Added Playwright save/new/reopen round-trip coverage for Book Studio and Translation Station. Included the test file in browser regression and production deployment gates.
+- No new database migration, RLS change, provider call, paid render, TTS operation, external publishing, billing or production deployment was performed.
+- Branch: `feat/studio-station-project-continuity-2026-11-10`. Await CI; not merged or deployed.
