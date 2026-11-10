@@ -550,3 +550,98 @@ test("pending assistant TTS audio is discarded after switching assistants", asyn
   expect(result.activeAssistant).toBe("jan");
   expect(result.playCount).toBe(0);
 });
+
+
+// Opening a saved project must scope the lookup by its ID, authenticated owner and module.
+for (const scenario of [
+  { module: "academy", primary: "academySubject", value: "Curs privat", title: "Curs privat — salvat", briefKey: "academySubject" },
+  { module: "commerce", primary: "commerceProduct", value: "Produs privat", title: "Produs privat — salvat", briefKey: "commerceProduct" },
+  { module: "business", primary: "businessIdea", value: "Afacere privată", title: "Afacere privată — salvat", briefKey: "businessIdea" }
+]) {
+  test(`${scenario.module} opens a project only through owner-and-module scoped lookup`, async ({ page }) => {
+    await openApp(page);
+    const result = await page.evaluate(async ({ module, primary, value, title }) => {
+      const filters = [];
+      window.__DRVAS_OPEN_FILTERS__ = filters;
+      const projectId = "e2e-open-" + module;
+      const select = document.getElementById(module + "ProjectList");
+      select.add(new Option(title, projectId));
+      select.value = projectId;
+      supabaseClient.from = table => ({
+        select() { return this; },
+        eq(key, filterValue) { filters.push([key, filterValue]); return this; },
+        single: async () => ({
+          data: {
+            id: projectId,
+            module,
+            title,
+            brief: { [primary]: value, latest_output: "Rezultat privat restaurat" }
+          },
+          error: null
+        })
+      });
+      await openModuleProject(module);
+      return {
+        filters,
+        primaryValue: document.getElementById(primary).value,
+        titleValue: document.getElementById(module + "ProjectTitle").value,
+        output: moduleProjectOutputs[module],
+        status: document.getElementById(module + "ProjectStatus").textContent
+      };
+    }, scenario);
+    expect(result.filters).toEqual([
+      ["id", "e2e-open-" + scenario.module],
+      ["user_id", "e2e-module-owner"],
+      ["module", scenario.module]
+    ]);
+    expect(result.primaryValue).toBe(scenario.value);
+    expect(result.titleValue).toBe(scenario.title);
+    expect(result.output).toBe("Rezultat privat restaurat");
+    expect(result.status).toContain("Proiect încărcat");
+  });
+}
+
+test("a failed module project save never reports success or assigns a saved project ID", async ({ page }) => {
+  await openApp(page);
+  const result = await page.evaluate(async () => {
+    document.getElementById("academySubject").value = "Curs care nu poate fi salvat";
+    document.getElementById("academyProjectTitle").value = "Salvare eșuată";
+    supabaseClient.from = table => ({
+      insert() { return this; },
+      select() { return this; },
+      single: async () => ({ data: null, error: { message: "simulated database write failure" } })
+    });
+    const saved = await saveModuleProject("academy");
+    return {
+      saved,
+      id: moduleProjectState.academy,
+      status: document.getElementById("academyProjectStatus").textContent
+    };
+  });
+  expect(result.saved).toBe(false);
+  expect(result.id).toBeFalsy();
+  expect(result.status).toContain("Nu am putut salva proiectul");
+  expect(result.status).not.toContain("Proiect salvat privat");
+});
+
+test("a failed project lookup preserves the user's current draft and reports the error", async ({ page }) => {
+  await openApp(page);
+  const result = await page.evaluate(async () => {
+    document.getElementById("commerceProduct").value = "Draft local care trebuie păstrat";
+    const select = document.getElementById("commerceProjectList");
+    select.add(new Option("Proiect inaccesibil", "e2e-forbidden-project"));
+    select.value = "e2e-forbidden-project";
+    supabaseClient.from = () => ({
+      select() { return this; },
+      eq() { return this; },
+      single: async () => ({ data: null, error: { message: "row not found" } })
+    });
+    await openModuleProject("commerce");
+    return {
+      product: document.getElementById("commerceProduct").value,
+      status: document.getElementById("commerceProjectStatus").textContent
+    };
+  });
+  expect(result.product).toBe("Draft local care trebuie păstrat");
+  expect(result.status).toContain("Nu am putut deschide proiectul");
+});

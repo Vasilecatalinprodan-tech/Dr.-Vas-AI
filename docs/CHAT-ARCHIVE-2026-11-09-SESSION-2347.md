@@ -67,3 +67,13 @@ This file preserves the founder's exact instruction above and the verified techn
 - The first mining freshness PR #94 was superseded and closed because main advanced with the mobile regression merge. Its code was not merged.
 - Replacement PR #96 is based on the latest main and contains the Bitcoin freshness implementation. Browser workflow run #755 (`42723991277`) has started; it was still in progress at this checkpoint. Do not merge until it passes.
 - No production deployment has been performed in this continuation. The production website remains on the last deployed main build; PR #96 is not live.
+
+
+## 2026-11-10 06:05 UTC — continuation and parallel work checkpoint
+- Founder repeated: `continua in paralel cu toate....salveaza tot`.
+- PR #96 Bitcoin source freshness was rechecked. GitHub Actions browser regression run #755 (`42723991277`) completed SUCCESS; PR #96 was squash-merged to main at `d27aef8805a9f1c7fe7fb8dba04ebd08dbeafb0e`.
+- Bitcoin simulator now shows Mempool hashrate sample timestamp and staleness (2-hour threshold), CoinGecko BTC price timestamp and staleness (1-hour threshold), and a clear warning when data is stale. Real mining remains disabled.
+- Closed stale PR #58 (superseded by merged PR #91, 152/152 tests) and stale divergent PR #60 (superseded by the existing merged WebGL DNA implementation, PR #64 / commit `85061bc0a257676fbbcd01f7ef4067d62274e536`). Neither stale branch was merged; current main retains the already merged implementation.
+- Started test-only branch `test/module-project-privacy-roundtrip-2026-11-10`. Added tests for Academy/Commerce/Business project reopen filters (ID + user_id + module), failed-save honesty, and failed-open preservation of the user's unsaved draft. Await CI; no merge/deploy yet.
+- Production deployment after PR #96 was not confirmed by the PR-specific workflow query. Do not claim the live site includes PR #96 until the main push deployment and production smoke test are confirmed.
+- No paid services, credits, secrets, database/RLS changes, production access-policy changes, mining execution, wallet custody, trading or transfer capability were enabled.

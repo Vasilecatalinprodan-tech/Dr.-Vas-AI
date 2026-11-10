@@ -1113,3 +1113,11 @@ Conversation preservation note: this repository file stores the founder's exact 
 - The Mempool hashrate sample is timestamped and flagged stale after two hours; CoinGecko BTC price timestamp is shown separately and flagged stale after one hour.
 - Playwright covers current/fresh timestamps and stale network/market inputs.
 - Supersedes the original branch `feat/mining-source-freshness-2026-11-09` after main advanced; the new PR will be the review target. No mining execution or production configuration is enabled.
+
+
+## 2026-11-10 — module project privacy and failure-path regression
+- Extended `tests/e2e/module-persistence.spec.cjs` with owner-and-module scoped project reopen tests for Academy, Commerce and Business.
+- Added failure-path coverage proving a failed database write does not claim success or set a saved project ID.
+- Added failed project-open coverage proving the current unsaved Commerce draft is preserved and the error is surfaced.
+- No production application code, schema, RLS policy, secrets, provider settings, paid services or deployment configuration changed in this test-only work.
+- Branch: `test/module-project-privacy-roundtrip-2026-11-10`. Awaiting browser CI; not merged or deployed.
