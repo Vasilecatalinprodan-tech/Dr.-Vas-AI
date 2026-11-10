@@ -67,3 +67,13 @@ This file preserves the founder's exact instruction above and the verified techn
 - The first mining freshness PR #94 was superseded and closed because main advanced with the mobile regression merge. Its code was not merged.
 - Replacement PR #96 is based on the latest main and contains the Bitcoin freshness implementation. Browser workflow run #755 (`42723991277`) has started; it was still in progress at this checkpoint. Do not merge until it passes.
 - No production deployment has been performed in this continuation. The production website remains on the last deployed main build; PR #96 is not live.
+
+
+## 2026-11-10 — Academy course progress tracker
+- Added an Academy course progress panel with total lessons, completed lessons, progress notes and an accessible percentage progress bar.
+- The tracker validates bounds (1–100 total lessons; completed lessons are clamped between zero and the total) and reports the percentage/accessible `aria-valuenow`.
+- Added the progress fields to the existing owner-scoped Academy project brief so progress and notes are persisted only when the user explicitly saves the course, then restored on reopen.
+- Added Playwright tests for percentage calculation, bounds and saved-project round-trip.
+- Added the new test file to both browser regression and production deployment test gates. No new schema or migration is required; it reuses `drvas_module_projects`.
+- No course certification or automatic lesson completion is claimed. No production deployment or live database change has been performed by this branch.
+- Branch: `feat/academy-course-progress-2026-11-10`. Await CI; not merged or deployed.
