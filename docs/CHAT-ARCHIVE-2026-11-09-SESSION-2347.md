@@ -77,3 +77,18 @@ This file preserves the founder's exact instruction above and the verified techn
 - Started test-only branch `test/module-project-privacy-roundtrip-2026-11-10`. Added tests for Academy/Commerce/Business project reopen filters (ID + user_id + module), failed-save honesty, and failed-open preservation of the user's unsaved draft. Await CI; no merge/deploy yet.
 - Production deployment after PR #96 was not confirmed by the PR-specific workflow query. Do not claim the live site includes PR #96 until the main push deployment and production smoke test are confirmed.
 - No paid services, credits, secrets, database/RLS changes, production access-policy changes, mining execution, wallet custody, trading or transfer capability were enabled.
+
+
+## Founder instruction — 2026-11-10 06:05 UTC (verbatim)
+> continua in paralel cu toate....salveaza tot
+
+
+
+## 2026-11-10 — Academy course progress tracker (rebased after PR #98)
+- Added an Academy progress panel for total lessons, completed lessons and learning notes.
+- The tracker calculates an accessible progress percentage and clamps completed lessons between zero and the configured total (1–100).
+- Progress and notes are saved in the existing owner-scoped Academy project brief and restored when reopening a saved course. No new schema or migration is required.
+- Added Playwright tests for calculation, bounds and save/reopen round-trip; included the test in browser and production deployment gates.
+- Course completion remains user-entered; no accreditation or certification is implied. No paid provider, billing, external service or public access policy was changed.
+- PR #98's module-project privacy/failure tests have passed and merged to main at `c7e91264c3c8e1935b5e57cb926b2aa4784dc8d2`.
+- Rebased feature branch: `feat/academy-course-progress-rebased-2026-11-10`. Await new CI; not merged or deployed.
