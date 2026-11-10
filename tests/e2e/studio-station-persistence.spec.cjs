@@ -1,0 +1,137 @@
+const { test, expect } = require("@playwright/test");
+
+const SUPABASE_STUB = `
+window.supabase = {
+  createClient: () => ({
+    auth: {
+      getSession: async () => ({ data: { session: null }, error: null }),
+      onAuthStateChange: () => ({ data: { subscription: { unsubscribe() {} } } })
+    },
+    from() { return {}; }
+  })
+};
+`;
+
+async function openStudio(page) {
+  await page.route("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2", route =>
+    route.fulfill({ status: 200, contentType: "application/javascript", body: SUPABASE_STUB })
+  );
+  await page.addInitScript(() => localStorage.setItem("drvas_language", "ro"));
+  await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded" });
+  await page.waitForFunction(() => document.documentElement.lang === "ro" &&
+    !document.querySelector("#appMain")?.classList.contains("language-pending"));
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-studio-owner", email: "studio@example.invalid" };
+    isDrvasAdmin = true;
+    selectModule("studio", true);
+  });
+  await page.waitForFunction(() => document.querySelector("#studioWorkspace [data-feature='book']") &&
+    document.getElementById("drvasBookStationTitle"));
+}
+
+async function installProjectStore(page) {
+  await page.evaluate(() => {
+    let row = null;
+    window.__DRVAS_STUDIO_ROW__ = () => row;
+    supabaseClient.from = table => ({
+      select() { return this; },
+      eq() { return this; },
+      order() { return this; },
+      insert(payload) {
+        row = { ...payload, id: "e2e-studio-station-project" };
+        return this;
+      },
+      update(payload) {
+        row = { ...row, ...payload };
+        return this;
+      },
+      single: async () => ({ data: row, error: null }),
+      limit: async () => ({
+        data: row ? [{ id: row.id, title: row.title, project_type: row.project_type, updated_at: row.updated_at }] : [],
+        error: null
+      })
+    });
+  });
+}
+
+test("Book Studio station metadata survives save, new draft and reopen", async ({ page }) => {
+  await openStudio(page);
+  await installProjectStore(page);
+  await page.locator("#studioWorkspace [data-feature='book']").click();
+
+  await page.locator("#drvasBookStationTitle").fill("Povestea curajului");
+  await page.locator("#drvasBookStationGenre").selectOption("Thriller / mister");
+  await page.locator("#drvasBookStationLanguage").selectOption("Engleză");
+  await page.locator("#drvasBookStationAudience").fill("Adulți interesați de ficțiune");
+  await page.locator("#drvasBookStationLength").selectOption("Roman amplu · 20–30 capitole");
+  await page.locator("#drvasBookStationConcept").fill("O poveste originală despre curaj, familie și alegeri dificile.");
+
+  await page.locator("#studioWorkspace [data-feature-page='book'] .studio-station-card button").click();
+  await page.waitForFunction(() => document.getElementById("studioProjectStatus")?.textContent.includes("Proiect salvat"));
+  const saved = await page.evaluate(() => window.__DRVAS_STUDIO_ROW__());
+  expect(saved.project_type).toBe("book");
+  expect(saved.brief.station).toMatchObject({
+    kind: "book",
+    fields: {
+      title: "Povestea curajului",
+      genre: "Thriller / mister",
+      language: "Engleză",
+      audience: "Adulți interesați de ficțiune",
+      length: "Roman amplu · 20–30 capitole",
+      concept: "O poveste originală despre curaj, familie și alegeri dificile."
+    }
+  });
+
+  await page.evaluate(async () => {
+    newStudioProject();
+    document.getElementById("studioSavedProjects").value = "e2e-studio-station-project";
+    await openStudioProject();
+  });
+  await expect(page.locator("#drvasBookStationTitle")).toHaveValue("Povestea curajului");
+  await expect(page.locator("#drvasBookStationGenre")).toHaveValue("Thriller / mister");
+  await expect(page.locator("#drvasBookStationLanguage")).toHaveValue("Engleză");
+  await expect(page.locator("#drvasBookStationAudience")).toHaveValue("Adulți interesați de ficțiune");
+  await expect(page.locator("#drvasBookStationLength")).toHaveValue("Roman amplu · 20–30 capitole");
+  await expect(page.locator("#drvasBookStationConcept")).toHaveValue("O poveste originală despre curaj, familie și alegeri dificile.");
+});
+
+test("Translation Station glossary and source text survive save and reopen", async ({ page }) => {
+  await openStudio(page);
+  await installProjectStore(page);
+  await page.locator("#studioWorkspace [data-feature='translation']").click();
+
+  await page.locator("#drvasTranslationSource").selectOption("en");
+  await page.locator("#drvasTranslationTarget").selectOption("ro");
+  await page.locator("#drvasTranslationStyle").selectOption("Tehnică — cu glosar");
+  await page.locator("#drvasTranslationFormat").selectOption("Document cu tabel sursă–traducere");
+  await page.locator("#drvasTranslationGlossary").fill("patient pathway = traseul pacientului\ncare plan = plan de îngrijire");
+  await page.locator("#drvasTranslationText").fill("The patient pathway must preserve the original clinical meaning.");
+
+  await page.locator("#studioWorkspace [data-feature-page='translation'] .studio-station-card button").click();
+  await page.waitForFunction(() => document.getElementById("studioProjectStatus")?.textContent.includes("Proiect salvat"));
+  const saved = await page.evaluate(() => window.__DRVAS_STUDIO_ROW__());
+  expect(saved.project_type).toBe("translation");
+  expect(saved.brief.station).toMatchObject({
+    kind: "translation",
+    fields: {
+      source: "en",
+      target: "ro",
+      style: "Tehnică — cu glosar",
+      format: "Document cu tabel sursă–traducere",
+      glossary: "patient pathway = traseul pacientului\ncare plan = plan de îngrijire",
+      text: "The patient pathway must preserve the original clinical meaning."
+    }
+  });
+
+  await page.evaluate(async () => {
+    newStudioProject();
+    document.getElementById("studioSavedProjects").value = "e2e-studio-station-project";
+    await openStudioProject();
+  });
+  await expect(page.locator("#drvasTranslationSource")).toHaveValue("en");
+  await expect(page.locator("#drvasTranslationTarget")).toHaveValue("ro");
+  await expect(page.locator("#drvasTranslationStyle")).toHaveValue("Tehnică — cu glosar");
+  await expect(page.locator("#drvasTranslationFormat")).toHaveValue("Document cu tabel sursă–traducere");
+  await expect(page.locator("#drvasTranslationGlossary")).toHaveValue("patient pathway = traseul pacientului\ncare plan = plan de îngrijire");
+  await expect(page.locator("#drvasTranslationText")).toHaveValue("The patient pathway must preserve the original clinical meaning.");
+});
