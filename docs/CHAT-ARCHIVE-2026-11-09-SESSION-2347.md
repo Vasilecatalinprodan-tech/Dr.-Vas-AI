@@ -91,4 +91,12 @@ This file preserves the founder's exact instruction above and the verified techn
 - Added Playwright tests for calculation, bounds and save/reopen round-trip; included the test in browser and production deployment gates.
 - Course completion remains user-entered; no accreditation or certification is implied. No paid provider, billing, external service or public access policy was changed.
 - PR #98's module-project privacy/failure tests have passed and merged to main at `c7e91264c3c8e1935b5e57cb926b2aa4784dc8d2`.
-- Rebased feature branch: `feat/academy-course-progress-rebased-2026-11-10`. Await new CI; not merged or deployed.
+- PR #100 passed exact-head browser E2E run #762 with 160/160 tests and merged to main at `1ede5c4bedc55509e6be2f282fff9ea88908b430`. Production deployment is not confirmed.
+
+
+## 2026-11-10 — Continuation: Academy merge and Studio verification
+- Founder instruction in this conversation: “continua cu toate modulele si salveaza tot inclusiv chatul”.
+- PR #100 Academy course progress tracker passed its exact-head browser E2E run #762: 160/160 tests passed. Merged to main by squash at `1ede5c4bedc55509e6be2f282fff9ea88908b430`. This is a code merge, not proof of production deployment.
+- PR #101 Studio Book and Translation station persistence passed its exact-head browser E2E run #763: 160/160 tests passed, including both station save/new/reopen cases. After the Academy merge, the Studio branch is one commit behind and GitHub reports mergeable=false; it must be reconciled and CI rerun before merge.
+- The exact current user request and the status above are preserved in this repository archive. The daily Dr.Vas monitoring automation was also created in ChatGPT, scheduled for daily delivery in Europe/London.
+- Continue work across Free, Health, Studio, Academy, Commerce, Business, Crypto/Mining and Online Income in small independently tested changes. No paid services, new secrets, live database/RLS changes, or unapproved production deploys.
