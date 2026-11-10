@@ -7582,14 +7582,28 @@ async function loadBitcoinNetworkScenario() {
     document.getElementById("cryptoScenarioPriceUsd").value = String(bitcoin.current_price);
     const result = calculateCryptoHashrateScenario();
     if (!result) throw new Error("Scenariul nu a putut fi recalculat cu datele primite.");
-    const stamp = new Date(network.fetchedAt).toLocaleString();
+    const fetchedAt = new Date(network.fetchedAt).toLocaleString();
+    const networkSample = network.hashrateSampleAt
+      ? new Date(network.hashrateSampleAt).toLocaleString()
+      : "marcaj temporal indisponibil";
+    const priceSample = bitcoin.last_updated && Number.isFinite(new Date(bitcoin.last_updated).getTime())
+      ? new Date(bitcoin.last_updated).toLocaleString()
+      : null;
+    const priceAgeMs = priceSample ? Math.max(0, Date.now() - new Date(bitcoin.last_updated).getTime()) : null;
+    const priceStale = priceAgeMs !== null && priceAgeMs > 60 * 60 * 1000;
+    const networkStale = network.hashrateSampleStale === true;
     const observedEhs = network.networkHashrateHs / 1e18;
     const modelEhs = modelHashrateHs / 1e18;
+    const staleWarning = networkStale || priceStale
+      ? " ATENȚIE: cel puțin o sursă depășește pragul de prospețime; verifică datele înainte de orice decizie."
+      : "";
     status.textContent = "Date încărcate: dificultate și recompensă medie pentru " + network.rewardSampleBlocks +
       " blocuri din " + network.source + "; preț BTC din CoinGecko. Hashrate mediu observat (3 zile): " +
       observedEhs.toFixed(1) + " EH/s; hashrate folosit în calcul, derivat din dificultate: " +
-      modelEhs.toFixed(1) + " EH/s. Actualizat: " + stamp +
-      ". Estimarea rămâne orientativă și nu execută mining.";
+      modelEhs.toFixed(1) + " EH/s. Ultimul eșantion hashrate: " + networkSample +
+      "; ultima actualizare preț BTC: " + (priceSample || "marcaj temporal indisponibil") +
+      ". Date preluate în browser: " + fetchedAt + "." + staleWarning +
+      " Estimarea rămâne orientativă și nu execută mining.";
   } catch (error) {
     status.textContent = "Datele live nu au putut fi încărcate: " + (error?.message || "eroare necunoscută") +
       ". Valorile introduse anterior au fost păstrate.";
