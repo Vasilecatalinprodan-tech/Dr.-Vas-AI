@@ -4933,6 +4933,7 @@ async function checkStudioRenderStatus(){
 
 function newStudioProject(){
  stopStudioRenderPolling();
+ window.drvasRestoreStudioStation?.(null);
  currentStudioProjectId=null;currentStudioProjectOutput="";currentStudioRenderJobId=null;currentStudioRenderStoragePath="";
  ["studioProjectTitle","studioIdea","studioMarket"].forEach(id=>{if(el(id))el(id).value=id==="studioMarket"?"Regatul Unit":"";});if(el("studioSourceLanguage"))el("studioSourceLanguage").value="auto";if(el("studioTargetLanguage"))el("studioTargetLanguage").value="";if(el("studioRights"))el("studioRights").value="original_owned";if(el("studioMonetization"))el("studioMonetization").value="freelance";if(el("studioSourceFile"))el("studioSourceFile").value="";if(el("studioSubtitles"))el("studioSubtitles").checked=true;if(el("studioNarration"))el("studioNarration").value="founder_voice_pending";
  if(el("studioSceneImages"))el("studioSceneImages").value="";clearStudioSceneTimeline();if(el("studioSceneAudio"))el("studioSceneAudio").value="";if(el("studioSceneCaptions"))el("studioSceneCaptions").value="";
@@ -4949,7 +4950,7 @@ function studioProjectData(){
  const deliverable=value("studioDeliverable");
  const labels={series:"Serial / episod",short:"Clip scurt",youtube:"Video YouTube",ad:"Reclamă",storyboard:"Storyboard",book:"Carte / e-book",translation:"Traducere",music:"Compoziție muzicală",lyrics:"Versuri / poezie",article:"Articol / blog"};
  const title=value("studioProjectTitle").trim()||((labels[deliverable]||"Proiect")+" — "+(idea.slice(0,48)||"Proiect nou"));
- return {title,project_type:deliverable,brief:{idea,deliverable,platform:value("studioPlatform"),tone:value("studioTone"),audience:value("studioAudience"),duration:value("studioDuration"),aspect:value("studioAspect"),source_language:value("studioSourceLanguage")||"auto",target_language:value("studioTargetLanguage"),rights_status:value("studioRights")||"original_owned",monetization_route:value("studioMonetization")||"freelance",target_market:value("studioMarket")||"Regatul Unit",narration:value("studioNarration")||"founder_voice_pending",subtitles:el("studioSubtitles")?.checked!==false,branding:"MADE BY VPC",latest_output:currentStudioProjectOutput.slice(0,50000),render_job_id:currentStudioRenderJobId,render_storage_path:currentStudioRenderStoragePath,updated_from:"drvas-studio"}};
+ return {title,project_type:deliverable,brief:{idea,deliverable,platform:value("studioPlatform"),tone:value("studioTone"),audience:value("studioAudience"),duration:value("studioDuration"),aspect:value("studioAspect"),source_language:value("studioSourceLanguage")||"auto",target_language:value("studioTargetLanguage"),rights_status:value("studioRights")||"original_owned",monetization_route:value("studioMonetization")||"freelance",target_market:value("studioMarket")||"Regatul Unit",narration:value("studioNarration")||"founder_voice_pending",subtitles:el("studioSubtitles")?.checked!==false,branding:"MADE BY VPC",latest_output:currentStudioProjectOutput.slice(0,50000),render_job_id:currentStudioRenderJobId,render_storage_path:currentStudioRenderStoragePath,station:window.drvasGetStudioStationData?.()||null,updated_from:"drvas-studio"}};
 }
 function setStudioProjectStatus(message,isError=false){
  const status=el("studioProjectStatus");if(!status)return;
@@ -5004,6 +5005,7 @@ async function openStudioProject(){
   studioRenderMessage(currentStudioRenderStoragePath?"MP4-ul salvat în spațiul privat Dr.Vas.":"Proiect încărcat. Poți crea sau continua randarea.");
   el("studioDeliverable").value=data.project_type||b.deliverable||"series";
   ["studioIdea","studioPlatform","studioTone","studioAudience","studioDuration","studioAspect","studioNarration","studioSourceLanguage","studioTargetLanguage","studioRights","studioMonetization","studioMarket"].forEach((key,index)=>{const fields=["idea","platform","tone","audience","duration","aspect","narration","source_language","target_language","rights_status","monetization_route","target_market"];if(b[fields[index]]!==undefined&&el(key))el(key).value=b[fields[index]];});if(el("studioSubtitles"))el("studioSubtitles").checked=b.subtitles!==false;
+  window.drvasRestoreStudioStation?.(b.station||null);
   setStudioProjectStatus("Proiect încărcat. Poți continua editarea și îl poți salva din nou.");
   if(currentStudioRenderJobId&&!currentStudioRenderStoragePath){studioRenderPollAttempts=0;scheduleStudioRenderPolling(1200);}
  }catch(error){setStudioProjectStatus("Nu am putut deschide proiectul: "+error.message,true);}
