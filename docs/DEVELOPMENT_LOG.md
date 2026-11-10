@@ -1130,4 +1130,10 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Added Playwright tests for calculation, bounds and save/reopen round-trip; included the test in browser and production deployment gates.
 - Course completion remains user-entered; no accreditation or certification is implied. No paid provider, billing, external service or public access policy was changed.
 - PR #98's module-project privacy/failure tests have passed and merged to main at `c7e91264c3c8e1935b5e57cb926b2aa4784dc8d2`.
-- Rebased feature branch: `feat/academy-course-progress-rebased-2026-11-10`. Await new CI; not merged or deployed.
+- PR #100 passed exact-head browser E2E run #762 with 160/160 tests and merged to main at `1ede5c4bedc55509e6be2f282fff9ea88908b430`. Production deployment is not confirmed.
+
+
+## 2026-11-10 — Academy progress tracker merged
+- PR #100 passed browser E2E run #762 with 160/160 tests and was squash-merged to main at `1ede5c4bedc55509e6be2f282fff9ea88908b430`.
+- Academy lesson totals, completed count, progress percentage and notes persist in the existing owner-scoped project brief and restore when reopening a course. No schema migration was added.
+- This merge is not a production deployment confirmation.
