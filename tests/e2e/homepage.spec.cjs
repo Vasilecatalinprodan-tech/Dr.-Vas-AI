@@ -787,6 +787,11 @@ test("presenter voices stay in the selected language and reuse the local voice w
       { name: "Microsoft Elsa", lang: "it-IT", voiceURI: "elsa-it" }
     ];
     const femaleOnlyProfile = getDrvasPresentationVoiceProfile(femaleOnly, "ro-RO");
+    localStorage.removeItem("drvas_speech_voice_drvas_ro");
+    localStorage.removeItem("drvas_speech_voice_jan_ro");
+    Object.defineProperty(window, "speechSynthesis", { configurable: true, value: { getVoices: () => femaleOnly } });
+    const femaleOnlyChatDrvas = chooseSpeechVoice("ro-RO", "drvas")?.voiceURI || null;
+    const femaleOnlyChatJan = chooseSpeechVoice("ro-RO", "jan")?.voiceURI || null;
     const crossLanguageVoices = [
       voices[0],
       { name: "Google UK English Female", lang: "en-GB", voiceURI: "google-female" }
@@ -808,6 +813,8 @@ test("presenter voices stay in the selected language and reuse the local voice w
       femaleOnlySarah: femaleOnlyProfile.sarah?.voiceURI || null,
       femaleOnlyAllSpeakers: femaleOnlyProfile.hasAllSpeakers,
       femaleOnlyDistinct: femaleOnlyProfile.hasAllDistinct,
+      femaleOnlyChatDrvas,
+      femaleOnlyChatJan,
       italianOnlyVoice: italianVoice?.voiceURI || null,
       crossLanguageChatVoice: crossLanguageChatVoice?.voiceURI || null,
       crossLanguagePresentationSarah: crossLanguagePresentation.sarah?.voiceURI || null,
@@ -827,6 +834,8 @@ test("presenter voices stay in the selected language and reuse the local voice w
   expect(result.femaleOnlySarah).toBe("alina-ro");
   expect(result.femaleOnlyAllSpeakers).toBe(true);
   expect(result.femaleOnlyDistinct).toBe(false);
+  expect(result.femaleOnlyChatDrvas).toBe("alina-ro");
+  expect(result.femaleOnlyChatJan).toBe("alina-ro");
   expect(result.italianOnlyVoice).toBe("sofia-it");
   expect(result.crossLanguageChatVoice).toBeNull();
   expect(result.crossLanguagePresentationSarah).toBeNull();
