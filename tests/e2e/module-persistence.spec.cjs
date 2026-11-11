@@ -101,7 +101,11 @@ test("Commerce supplier comparison accounts for MOQ, order shipping and extra st
       commerceSupplier2Moq: "50",
       commerceSupplier2LeadDays: "8"
     }).forEach(([id, value]) => { document.getElementById(id).value = value; });
-    return calculateCommerceSupplierComparison();
+    const comparison = calculateCommerceSupplierComparison();
+    document.getElementById("commerceProduct").value = "Demo product";
+    window.submitModuleBrief = prompt => { window.__commercePrompt = prompt; };
+    buildCommercePrompt();
+    return { ...comparison, prompt: window.__commercePrompt };
   });
   expect(result.quantity).toBe(100);
   expect(result.suppliers).toHaveLength(2);
@@ -113,6 +117,8 @@ test("Commerce supplier comparison accounts for MOQ, order shipping and extra st
   expect(result.suppliers[1].name).toBe("Furnizor B");
   expect(result.suppliers[1].upfrontCost).toBe(1120);
   expect(result.suppliers[1].landedUnitCost).toBe(11.2);
+  expect(result.prompt).toContain("Furnizor A");
+  expect(result.prompt).toContain("date furnizate de utilizator, neverificate");
 });
 
 test("last selected module is remembered across browser reloads per account", async ({ page }) => {
