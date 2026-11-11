@@ -177,6 +177,10 @@ test("Book Studio manuscript controls follow the selected interface language", a
   await expect(page.locator("#drvasBookStationManuscriptDraft").locator("xpath=..")).toContainText("Manuscript / current chapter");
   await expect(page.locator("#drvasBookStationManuscriptDraft")).toHaveAttribute("placeholder", "Write or continue the current chapter here. Save the project before moving to another chapter.");
   await expect(page.locator("#drvasBookStationChapterStatus option[value='revising']")).toHaveText("In revision");
+  await expect(page.locator("#drvasBookSaveRevision")).toHaveText("Save current version");
+  await expect(page.locator("#drvasBookRestoreRevision")).toHaveText("Restore selected version");
+  await expect(page.locator(".studio-station-revision-tools")).toContainText("Chapter version history");
+  await expect(page.locator("#drvasBookRevisionSelect option").first()).toHaveText("Choose a saved version");
 });
 
 test("Translation Station glossary and source text survive save and reopen", async ({ page }) => {
