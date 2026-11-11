@@ -489,3 +489,12 @@ Conversation preservation note: this repository file stores the founder's exact 
 
 
 - Release automation gap identified during voice PR #116: the deployment workflow has no `pull_request` trigger (only `main`/`drvas-integrated-platform` pushes and manual dispatch). Add a safe PR validation workflow or restore an exact-head CI trigger as a separate platform reliability task; never merge untested changes merely to trigger the push workflow.
+
+### 2026-11-11 verification and active work
+
+- Mining sensitivity PR #111 is fully verified in production: post-merge browser #793 and deploy #553 succeeded; Worker version 729483ee-0b20-4949-9592-d84877cb53de.
+- Presenter voice correction is active in PR #116. Exact-head #803 exposed two test defects; code/fixture fixes are in head eeccb3bbd223d7891f404cb5cd87e8e3ad5e5e07. Static gates passed in #804; browser E2E is pending. Investigate the separate Cloudflare Preview failure before claiming release success.
+- Book Studio chapter version history is active in stacked PR #117: up to 10 private snapshots, restore, localized controls and Markdown export; existing project JSON only, no migration. Static gates passed in #810; browser E2E pending. Cleanly rebase after #116 squash merge.
+- CI clarification: browser-e2e.yml already has pull-request triggers; do not add a duplicate validation workflow.
+- Continue Free/Health privacy and attachment hardening, Academy progress, Commerce supplier due diligence, Business reporting and Online Income workflows in parallel. Maintain Mining as read-only/simulation only.
+- Guardrails unchanged: no SQL/schema/migrations, APK postponed/manual-only, no unapproved paid services, no actual mining/trading/wallet custody.
