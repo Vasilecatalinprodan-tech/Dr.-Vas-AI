@@ -409,3 +409,8 @@ Conversation preservation note: this repository file stores the founder's exact 
 - PR #101 closed as superseded; PR #102 now carries the Studio Book/Translation persistence implementation on current main.
 - PR #102 exact head `c203c60183997abe745636fe25b9545e0f524f52` is 5 commits ahead / 0 behind main and mergeable. Browser CI run #765 (`42927347795`) is in progress; no merge until this exact head passes.
 - No production deployment or database migration was performed.
+
+
+## 2026-11-11 00:00 UTC — Studio PR final handoff
+- PR #103 is the active clean Studio Book/Translation persistence change, based on current main (5 ahead, 0 behind). Earlier PR #101 and #102 were superseded and closed.
+- Exact-head browser run #766 (`42927733404`) is in progress; merge only after success.

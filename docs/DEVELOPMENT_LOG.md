@@ -1144,3 +1144,8 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Recreated Studio Book/Translation station persistence on a clean branch based on current main; PR #102 is open, 5 commits ahead / 0 behind, and mergeable.
 - PR #102 browser workflow run #765 (`42927347795`) is still in progress. The prior PR #101 run passed 160/160 but does not validate the new head.
 - No production deployment or database migration was performed.
+
+
+## 2026-11-11 00:00 UTC — Studio PR final handoff
+- Active Studio PR is #103, cleanly based on current main (5 ahead, 0 behind, mergeable=true). PR #101 and #102 were closed as superseded, not merged.
+- Exact-head browser workflow run #766 (`42927733404`) is in progress. Do not merge until it passes.

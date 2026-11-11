@@ -36,6 +36,19 @@
  }
  const direct=(root,selector)=>{const normalized=selector.replace(/^:scope\s*>\s*/,"");return Array.from(root.children).find(node=>node.matches(normalized))||null;};
  const byId=id=>document.getElementById(id);
+ const studioStationFieldIds={
+  book:{title:"drvasBookStationTitle",genre:"drvasBookStationGenre",language:"drvasBookStationLanguage",audience:"drvasBookStationAudience",length:"drvasBookStationLength",concept:"drvasBookStationConcept"},
+  translation:{source:"drvasTranslationSource",target:"drvasTranslationTarget",style:"drvasTranslationStyle",format:"drvasTranslationFormat",glossary:"drvasTranslationGlossary",text:"drvasTranslationText"}
+ };
+ function restoreStudioStation(data){
+  const valid=data&&studioStationFieldIds[data.kind]&&data.fields&&typeof data.fields==="object"?data:null;
+  window.drvasStudioStationData=valid;
+  Object.entries(studioStationFieldIds).forEach(([kind,fields])=>Object.entries(fields).forEach(([key,id])=>{
+   const field=byId(id);if(field)field.value=valid?.kind===kind?String(valid.fields[key]??""):"";
+  }));
+ }
+ window.drvasRestoreStudioStation=restoreStudioStation;
+ window.drvasGetStudioStationData=()=>window.drvasStudioStationData||null;
  function makeNav(root,items){
   const nav=document.createElement("nav");nav.className="drvas-feature-navigation";nav.setAttribute("aria-label","Funcții și spații de lucru");
   const pages=document.createElement("div");pages.className="drvas-feature-pages";
@@ -139,8 +152,10 @@
     const concept=value("drvasBookStationConcept");
     if(!concept){status.textContent=window.tr?window.tr("Descrie ideea cărții înainte de a continua."):"Descrie ideea cărții înainte de a continua.";byId("drvasBookStationConcept")?.focus();return;}
     const bookTitle=value("drvasBookStationTitle")||"Carte nouă";
+    const stationData={kind:"book",fields:{title:bookTitle,genre:value("drvasBookStationGenre"),language:value("drvasBookStationLanguage"),audience:value("drvasBookStationAudience"),length:value("drvasBookStationLength"),concept}};
     const idea=[localized("TITLU: ")+bookTitle,localized("GEN: ")+value("drvasBookStationGenre"),localized("LIMBA: ")+value("drvasBookStationLanguage"),localized("PUBLIC: ")+value("drvasBookStationAudience"),localized("DIMENSIUNE: ")+value("drvasBookStationLength"),localized("CONCEPT ȘI CERINȚE:"),concept].join("\n");
     window.newStudioProject?.();
+    window.drvasRestoreStudioStation?.(stationData);
     if(byId("studioDeliverable"))byId("studioDeliverable").value="book";
     if(byId("studioProjectTitle"))byId("studioProjectTitle").value=bookTitle;
     if(byId("studioIdea"))byId("studioIdea").value=idea.slice(0,5000);
@@ -150,8 +165,10 @@
     if(!source){status.textContent=window.tr?window.tr("Adaugă textul care trebuie tradus."):"Adaugă textul care trebuie tradus.";byId("drvasTranslationText")?.focus();return;}
     if(!target){status.textContent=window.tr?window.tr("Alege limba țintă."):"Alege limba țintă.";byId("drvasTranslationTarget")?.focus();return;}
     const title="Traducere "+value("drvasTranslationSource")+" → "+target;
+    const stationData={kind:"translation",fields:{source:value("drvasTranslationSource"),target,style:value("drvasTranslationStyle"),format:value("drvasTranslationFormat"),glossary:value("drvasTranslationGlossary"),text:source}};
     const idea=[localized("STIL: ")+value("drvasTranslationStyle"),localized("FORMAT: ")+value("drvasTranslationFormat"),localized("GLOSAR:"),value("drvasTranslationGlossary")||localized("Nu a fost furnizat."),localized("TEXT SURSĂ:"),source].join("\n");
     window.newStudioProject?.();
+    window.drvasRestoreStudioStation?.(stationData);
     if(byId("studioDeliverable"))byId("studioDeliverable").value="translation";
     if(byId("studioProjectTitle"))byId("studioProjectTitle").value=title;
     if(byId("studioSourceLanguage"))byId("studioSourceLanguage").value=value("drvasTranslationSource")||"auto";
@@ -204,6 +221,7 @@
   ];
   const usable=items.filter(item=>(item.nodes||[]).some(Boolean)||(item.shared||[]).some(Boolean));
   makeNav(root,usable);
+  if(window.drvasStudioStationData)restoreStudioStation(window.drvasStudioStationData);
   if(header)root.insertBefore(header,root.firstChild);
   const disclaimer=direct(root,".studio-disclaimer");if(disclaimer)root.appendChild(disclaimer);
  }
