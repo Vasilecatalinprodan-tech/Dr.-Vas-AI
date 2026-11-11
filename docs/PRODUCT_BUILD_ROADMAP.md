@@ -558,3 +558,13 @@ Conversation preservation note: this repository file stores the founder's exact 
 - PR #127 mining scanner correction merged at 974e45d69e14b30e3fb0b342d832fe068cdaea4c, 177/177 browser tests on exact head and post-merge. Deploy #560 Worker version f3d75a76-031f-45e7-bc0f-f4dacb11bd08 and production smoke tests succeeded; SBOM artifact upload failed separately.
 - Continue Free/Health shared chat and attachment/accessibility hardening, Studio chapter/version workflows, Online Income provenance and opportunity research, Commerce evidence capture, Business cashbook correctness and Mining simulator safety.
 - Preserve: no SQL/schema/migration changes, no unapproved paid providers, no APK packaging until explicitly resumed, no real mining/trading/wallet transactions, no public paid entitlements without approval.
+
+
+## 2026-11-11 — PR #128 merged: shared locale-matched feminine fallback
+- PR #128 merged to main as b2f938896200b22b61792db6b98d206e3949f348.
+- Exact latest-head browser run #852 reported 177 passed (3.5m), including Romanian and Italian cases where a recognised local feminine voice must be preferred over an unknown generic default for Dr.Vas and Dr.Jan in chat and presentation.
+- Post-merge main browser run #855 and production deploy #561 were queued at this checkpoint. Do not claim production contains the voice change until deploy #561 succeeds and the Worker version/smoke test are confirmed.
+- PR #129 documentation archive merged as 8b7673ce4b91f3c792ffc639d8e07ba0c369c057.
+- Production still has Mining PR #127 deployed at Worker version f3d75a76-031f-45e7-bc0f-f4dacb11bd08; deploy #560 smoke tests passed, but its final SBOM artifact upload failed because GitHub returned an HTML response instead of JSON.
+- No SQL/schema/migration changes, new secrets, paid TTS, voice cloning or APK build. Real mining/trading remain disabled.
+- Manual playback on Windows and Samsung remains required after the voice deployment.
