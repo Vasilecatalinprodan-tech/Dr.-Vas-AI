@@ -771,11 +771,13 @@ test("presenter voices stay in the selected language and reuse the local voice w
       { name: "Microsoft Andrei", lang: "ro-RO", voiceURI: "andrei-ro", default: true },
       { name: "Microsoft Zira", lang: "ro-RO", voiceURI: "zira-ro" },
       { name: "Microsoft Alina", lang: "ro-RO", voiceURI: "alina-ro" },
-      { name: "Google UK English Female", lang: "en-GB", voiceURI: "google-female" }
+      { name: "Google UK English Female", lang: "en-GB", voiceURI: "google-female" },
+      { name: "Microsoft Elsa", lang: "it-IT", voiceURI: "elsa-it" }
     ];
     Object.defineProperty(window, "speechSynthesis", { configurable: true, value: { getVoices: () => voices } });
     activeAssistant = "aurora";
     const chatVoice = chooseSpeechVoice("ro-RO");
+    const italianVoice = chooseSpeechVoice("it-IT", "aurora");
     refreshSpeechVoiceOptions();
     const voiceOptions = Array.from(document.querySelector("#speechVoiceSelect").options).map(option => option.value).filter(Boolean);
     const presentation = getDrvasPresentationVoiceProfile(voices, "ro-RO");
@@ -806,7 +808,7 @@ test("presenter voices stay in the selected language and reuse the local voice w
       femaleOnlySarah: femaleOnlyProfile.sarah?.voiceURI || null,
       femaleOnlyAllSpeakers: femaleOnlyProfile.hasAllSpeakers,
       femaleOnlyDistinct: femaleOnlyProfile.hasAllDistinct,
-      italianOnlyVoice: chooseSpeechVoice("it-IT", "aurora")?.voiceURI || null,
+      italianOnlyVoice: italianVoice?.voiceURI || null,
       crossLanguageChatVoice: crossLanguageChatVoice?.voiceURI || null,
       crossLanguagePresentationSarah: crossLanguagePresentation.sarah?.voiceURI || null,
       crossLanguageVoiceLanguage: crossLanguagePresentation.sarah?.lang || null
