@@ -1206,3 +1206,20 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ .
 - New structured archive: `docs/CHAT-ARCHIVE-2026-11-11-ALL-MODULES.md`. This is a project continuity archive, not a verbatim transcript export.
 - Next: continue Academy lesson-by-lesson progress, Commerce supplier comparison, Business reporting and Free/Health hardening while preserving the founder's no-SQL and APK-pause constraints.
+
+
+## 2026-11-11 10:08 UTC — Commerce deployed; Mining merged, production verification pending
+
+- PR #110 Commerce supplier comparison merged at `d43d992122cf7596537f48353afe810b3bca5d04`; exact-head and post-merge browser runs #786/#789 both passed 171/171. Deploy #552 succeeded with Worker version `b420225b-2841-4bf8-adf1-6a3321dc2cbb`; production smoke test passed; SBOM artifact `13845897516` uploaded.
+- Supabase migration history was already current; rate-limit RPC/RLS/service_role grants verified; no new migration applied and no SQL/schema/RLS change.
+- PR #111 Mining sensitivity lab merged at `6bf6701d9adb955d5c77bd0167e63dbdb324589a`. Final exact-head run #791 passed 174/174 after updating an obsolete test to reflect cooling-adjusted BTC energy and net values.
+- Post-merge browser #793 and deploy #553 queued at last check. Await production verification.
+- No SQL edits, no APK build, no actual mining/trading/wallet operations, no paid-provider changes.
+
+
+## 2026-11-11 10:11 UTC — Mining production deploy verified
+
+- Deploy #553 succeeded for main `6bf6701d9adb955d5c77bd0167e63dbdb324589a`; Worker version `729483ee-0b20-4949-9592-d84877cb53de`.
+- Remote Supabase migration history was already current; no migration applied. Health rate-limit RPC, RLS and service_role grants verified.
+- Smoke test passed, all six modules present, unauthenticated admin request HTTP 401, SBOM artifact `13846107242` uploaded.
+- Deploy workflow's browser suite passed; independent post-merge browser #793 pending at last poll.

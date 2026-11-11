@@ -83,3 +83,36 @@ The founder also explicitly confirmed that autonomous code work, branch creation
 ## Handoff for the next ChatGPT conversation
 
 Continue from `main` commit `8ecf72a754c678865f29c620463924e22714b2df`. First verify the current main SHA and production Worker version. Read this archive, `docs/DEVELOPMENT_LOG.md`, `docs/PRODUCT_BUILD_ROADMAP.md` and `docs/PROJECT_CHECKPOINT.md`. Continue across all modules and founder workbenches. Merge/deploy remain authorized when exact-head tests pass. No SQL changes. APK remains manual-only and postponed. Keep all safety, privacy, access and paid-service boundaries above. The next high-value implementation candidates are Academy lesson-by-lesson progress and Commerce supplier comparison, followed by further Business and Free/Health hardening.
+
+
+## 2026-11-11 — Commerce deployed; Mining sensitivity merged
+
+- Current main: `6bf6701d9adb955d5c77bd0167e63dbdb324589a`.
+- Academy PR #109 merged; post-merge browser run #785 passed 170/170; deploy #551 succeeded. Academy now tracks lesson-by-lesson completion and progress.
+- Commerce PR #110 merged at `d43d992122cf7596537f48353afe810b3bca5d04`. Exact-head browser #786 passed 171/171; post-merge browser #789 passed 171/171; deploy #552 succeeded. Worker version `b420225b-2841-4bf8-adf1-6a3321dc2cbb`. Production smoke test passed, all six module markers were present, unauthenticated admin request returned HTTP 401, and SBOM artifact ID `13845897516` was uploaded.
+- Supabase migration gate for deploy #552 reported `Remote database is up to date.` The rate-limit RPC, RLS and service_role grants were verified. No new migration was applied. No SQL/schema/RLS edits were made in PR #110.
+- Mining PR #111 merged at `6bf6701d9adb955d5c77bd0167e63dbdb324589a`. Initial run #787 caught an old UI expectation that omitted cooling overhead. Corrected simulator return/UI consistency and stale sensitivity-row clearing. Final exact-head run #791 (`43000457258`) passed 174/174 tests.
+- Mining now provides a 3×3 BTC price/electricity sensitivity matrix, cooling-aware facility power and energy/net figures, maximum break-even electricity tariff, and hardware payback per scenario. It remains analysis/simulation only: no actual mining process, local device command, wallet, trading or transfer is enabled.
+- Post-merge browser run #793 (`43000930832`) and production deploy #553 (`43000930954`) were queued at the last check; verify both before claiming Mining is live in production.
+- Previous documentation PRs #112 and #113 were closed as stale when main advanced. This branch refreshes the archive from current main.
+- No SQL, schema, RLS, secrets or paid-provider changes. APK remains postponed and Android workflow is manual-only (`workflow_dispatch`).
+- Production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ .
+- The archive is a structured continuity handoff, not a verbatim transcript export. The original conversation remains in ChatGPT history.
+
+## Next actions
+
+1. Verify Mining post-merge browser #793 and deploy #553, including migration history, Worker version, smoke test and SBOM.
+2. Continue Business reporting/cashbook quality, Free/Health shared chat, attachment/privacy/accessibility regressions, Studio chapter/version history, and Online Income service/digital-product workflows.
+3. Continue Crypto/Mining research and simulator accuracy only. Native device agent remains a separate future release requiring signed enrollment, explicit owner authorization, power/temperature limits, watchdog and emergency stop.
+4. Preserve owner-only access for Academy, Commerce, Business, Crypto and Online Income; do not change entitlements or paid integrations without authorization.
+5. Keep SQL out of scope and APK postponed/manual-only. Update archive/log/roadmap/checkpoint after each verified release before opening a new chat.
+
+
+## Mining production deployment verified — 2026-11-11
+
+- Deploy #553 (`43000930954`) completed successfully for main `6bf6701d9adb955d5c77bd0167e63dbdb324589a`.
+- Production Worker version: `729483ee-0b20-4949-9592-d84877cb53de`.
+- Supabase migration history: `Remote database is up to date.` No new migration was applied. Health rate-limit RPC, RLS and service_role grants were verified.
+- Production smoke test passed; all six module markers verified and unauthenticated admin-status request correctly rejected with HTTP 401. SBOM artifact ID `13846107242` uploaded.
+- Deploy workflow's full browser regression gate passed. Independent post-merge browser run #793 was still in progress at the last check.
+- No SQL/schema/RLS change; APK remains postponed/manual-only; real mining remains disabled.

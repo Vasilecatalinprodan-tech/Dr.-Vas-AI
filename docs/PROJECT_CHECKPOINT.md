@@ -427,3 +427,23 @@ Founder asked to preserve this conversation and continue the existing integrated
 - APK postponed; Android workflow is manual-only (`workflow_dispatch`).
 - Continue all modules/workbenches. Next priorities: Academy lesson checklist, Commerce supplier comparison, Business reporting, Free/Health hardening, then Studio chapter/version workflow.
 - Structured chat archive: `docs/CHAT-ARCHIVE-2026-11-11-ALL-MODULES.md`. Original ChatGPT transcript remains in conversation history; this archive preserves decisions and handoff state.
+
+
+## 2026-11-11 — Current main after Commerce and Mining merges
+
+- Main: `6bf6701d9adb955d5c77bd0167e63dbdb324589a`.
+- Academy PR #109: merged; post-merge browser #785 170/170; deploy #551 success.
+- Commerce PR #110: merged at `d43d992122cf7596537f48353afe810b3bca5d04`; exact and post-merge browser #786/#789 171/171; deploy #552 success; Worker version `b420225b-2841-4bf8-adf1-6a3321dc2cbb`; Supabase already up to date; no migration applied; smoke test passed.
+- Mining PR #111: merged at `6bf6701d9adb955d5c77bd0167e63dbdb324589a`; exact-head run #791 passed 174/174. Post-merge browser #793 and deploy #553 pending at last check.
+- Production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ .
+- Next: verify #793/#553, then continue Business, Free/Health, Studio and Online Income work. Preserve all six modules and Crypto/Mining founder workbench.
+- No SQL changes. APK postponed/manual-only. Real mining/trading remains disabled; no wallet custody. No paid service without explicit approval.
+- Chat archive is a structured handoff, not a verbatim transcript; original chat remains in ChatGPT history.
+
+
+## Mining production deployment — verified
+
+- Main: `6bf6701d9adb955d5c77bd0167e63dbdb324589a`.
+- Deploy #553 succeeded; Worker version `729483ee-0b20-4949-9592-d84877cb53de`.
+- Supabase reported remote database up to date; no migration applied. Rate-limit RPC/RLS/service_role checks passed. Production smoke test passed, six module markers verified, unauthenticated admin request HTTP 401. SBOM artifact `13846107242`.
+- Exact-head Mining tests #791: 174/174 passed. Deploy workflow browser gate passed; independent post-merge browser #793 pending at last poll.
