@@ -447,3 +447,26 @@ Founder asked to preserve this conversation and continue the existing integrated
 - Deploy #553 succeeded; Worker version `729483ee-0b20-4949-9592-d84877cb53de`.
 - Supabase reported remote database up to date; no migration applied. Rate-limit RPC/RLS/service_role checks passed. Production smoke test passed, six module markers verified, unauthenticated admin request HTTP 401. SBOM artifact `13846107242`.
 - Exact-head Mining tests #791: 174/174 passed. Deploy workflow browser gate passed; independent post-merge browser #793 pending at last poll.
+
+
+## 2026-11-11 — Presenter voice correction in progress
+
+- Founder starting point: `df5e119a14aa3526f3805835b3349b87533cf94e`.
+- Last verified Mining production deployment from the preceding checkpoint: deploy #553, Worker version `729483ee-0b20-4949-9592-d84877cb53de`; migration history already current, no migration applied; production smoke test and deploy browser gate passed. Independent post-merge browser #793 was still pending in the prior archive note and should be checked if run metadata becomes available.
+- Voice requirement: Dr.Vas and Dr.Jan male; Sarah receives the current clear Dr.Vas voice if it is feminine, otherwise the best locale-matched feminine voice. Do not use cross-language fallback for Sarah. User voice sample optional, not a blocker.
+- Branch `fix/presenter-voice-gender-routing-2026-11-11` created from the supplied SHA. Frontend implementation commits: `f35f55a8e0bfdb093cc3310fda9bb4f42e33df9a` and `0c771e726e84efecacaca2c469e09e761a4aebb5`; E2E commit: `e104bc375cc0b833b2d5de5eb978670cbadb95bf`. Documentation commits followed. CI/PR/deploy are not yet verified.
+- No SQL/schema/migration changes. No secrets or paid-provider changes. APK postponed/manual-only. Continue all modules including Mining; no actual mining/trading/wallet operations.
+
+
+### CI status for PR #116
+
+- PR #116 open; branch is ahead of main with no behind commits; merge base is the requested `df5e119a14aa3526f3805835b3349b87533cf94e`.
+- `deploy-worker.yml` does not run on pull requests, and the current GitHub integration does not expose workflow dispatch. No exact-head tests have run and no checks are reported. Hold merge/deploy; next step is to add/enable a safe PR validation path or run an available local exact-head suite.
+
+### 2026-11-11 active continuation
+
+- Current base: main df5e119a14aa3526f3805835b3349b87533cf94e.
+- PR #116 exact-head run #803 found two failures (172/174); voice routing and locale fixtures were corrected. Run #804 passed static gates but stalled at Chromium installation. Latest branch adds browser caching and skips repeated apt installs; wait for exact-head validation.
+- PR #117 is stacked Book Studio revision history, using existing private project JSON only. Rebase cleanly after #116 squash merge and pass its exact-head E2E.
+- Mining post-merge browser #793 and deploy #553 succeeded; Worker version 729483ee-0b20-4949-9592-d84877cb53de.
+- No SQL/schema/migrations. APK remains postponed/manual-only.

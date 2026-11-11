@@ -477,3 +477,21 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Mining sensitivity PR #111 merged at `6bf6701d9adb955d5c77bd0167e63dbdb324589a`; exact-head browser #791 passed 174/174.
 - Production deploy #553 succeeded; Worker version `729483ee-0b20-4949-9592-d84877cb53de`; migration history already current, no new migration applied; RPC/RLS/service_role checks and production smoke tests passed.
 - Independent post-merge browser #793 pending at last check. Mining is still analysis/simulation only; no device agent or mining execution.
+
+
+## 2026-11-11 — Voice and presenter correction added to platform priorities
+
+- Presentation audio must use male locale-matched device voices for Dr.Vas and Dr.Jan, and a clear locale-matched feminine voice for Sarah. Preserve the currently familiar Dr.Vas voice for Sarah when the device identifies it as feminine; do not use foreign-language fallback that can distort pronunciation.
+- Prefer two distinct male voices when the device provides them. If only one locale-matched male voice exists, share it; if none exists, report the missing voice and do not silently substitute a feminine voice.
+- Keep the authenticated Worker TTS path and provider secrets server-side. Do not invent voice IDs, expose secrets, configure paid providers or send the founder's private voice sample to a third party without separate explicit approval.
+- Voice-routing implementation and regression tests are in branch `fix/presenter-voice-gender-routing-2026-11-11`; validation/merge/deploy remain pending.
+- Continue the parallel all-module roadmap: Business cashbook/cashflow, Free/Health chat and attachments, Studio chapter/version history, Academy progress, Commerce supplier due diligence, Online Income digital products, and Crypto/Mining simulator safety/accuracy. Keep Health document analysis disabled, real mining/trading disabled, owner-only workbenches restricted, SQL out of scope and APK postponed.
+
+
+- Release automation gap identified during voice PR #116: the deployment workflow has no `pull_request` trigger (only `main`/`drvas-integrated-platform` pushes and manual dispatch). Add a safe PR validation workflow or restore an exact-head CI trigger as a separate platform reliability task; never merge untested changes merely to trigger the push workflow.
+
+### 2026-11-11 active verification
+
+- Presenter voice PR #116 fixes locale-specific test fixtures and preserves default browser speech only when no voice list is exposed. CI now caches the pinned Playwright shell and avoids redundant apt installs; exact-head verification still required. Cloudflare Preview failure remains separately unverified.
+- Book Studio PR #117 adds capped private chapter version history, restore and Markdown export in existing project JSON; no schema change. It is stacked on #116 and requires a clean rebase after #116 merges.
+- Mining browser #793 and production deploy #553 are verified successful. Continue all modules; no SQL/schema/migration, APK, paid provider, real mining, wallet or trading changes.

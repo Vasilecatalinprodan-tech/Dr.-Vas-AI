@@ -97,8 +97,16 @@ jobs:
       - name: Install browser test runner
         run: npm install --no-save --package-lock=false --save-exact @playwright/test@1.64.1 playwright-core@1.64.1
 
+      - name: Cache Playwright Chromium
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ runner.os }}-1.64.1
+
       - name: Install Chromium
-        run: npx playwright install --with-deps --only-shell chromium
+        # GitHub-hosted Ubuntu runners already provide the browser system libraries.
+        # Cache the pinned Playwright headless shell instead of running apt on every PR.
+        run: npx playwright install --only-shell chromium
 
       - name: Start local static site
         run: |

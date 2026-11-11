@@ -2,8 +2,8 @@
 **Date:** 11 November 2026  
 **Repository:** https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI  
 **Production:** https://dr--vas-ai.vasilecatalinprodan.workers.dev/  
-**Current main commit:** `8ecf72a754c678865f29c620463924e22714b2df`  
-**Production Worker version:** `d614a806-ea27-4f16-bb68-f772baa4cc49`
+**Current main commit at continuation start:** `df5e119a14aa3526f3805835b3349b87533cf94e`  
+**Production Worker version at latest verified Mining deployment:** `729483ee-0b20-4949-9592-d84877cb53de`
 
 > This file is a structured project/chat continuity archive, not a verbatim export of the entire ChatGPT transcript. The original conversation remains in ChatGPT history.
 
@@ -116,3 +116,29 @@ Continue from `main` commit `8ecf72a754c678865f29c620463924e22714b2df`. First ve
 - Production smoke test passed; all six module markers verified and unauthenticated admin-status request correctly rejected with HTTP 401. SBOM artifact ID `13846107242` uploaded.
 - Deploy workflow's full browser regression gate passed. Independent post-merge browser run #793 was still in progress at the last check.
 - No SQL/schema/RLS change; APK remains postponed/manual-only; real mining remains disabled.
+
+
+## 2026-11-11 — Presenter voice correction requested and implemented for validation
+
+Founder reported that the presentation currently sounds female for Dr.Vas and Dr.Jan, while Sarah's voice is distorted. New explicit direction: use the currently familiar/clear Dr.Vas voice for Sarah, and assign male voices to Dr.Vas and Dr.Jan. The founder's own short voice sample is optional and must not block the work.
+
+Repository inspection at starting commit `df5e119a14aa3526f3805835b3349b87533cf94e` found that the presentation narration was using browser SpeechSynthesis directly and its voice profile assigned the same default device voice to Dr.Vas and Dr.Jan; Sarah was assigned a separate female voice, including a foreign-language fallback that can distort pronunciation. The authenticated Worker TTS route already supports assistant IDs `drvas`, `jan`, and `aurora`, but actual provider secrets/voice IDs and device playback have not been independently verified. Do not expose or change secrets and do not activate paid provider usage.
+
+A focused branch `fix/presenter-voice-gender-routing-2026-11-11` was created from the requested starting commit. Frontend changes now explicitly select male, locale-matched voices for Dr.Vas and Dr.Jan; Sarah keeps the current default voice when that voice is recognised as feminine, otherwise selects the best locale-matched feminine voice. Foreign-language fallback is removed for Sarah in presentation and chat to avoid distorted pronunciation. If the required gendered voice is unavailable in the selected language, the presentation reports that state and skips that speaker rather than silently using the wrong voice. A second distinct male voice is selected for Jan when the device provides one; otherwise the best available male voice is shared.
+
+E2E tests were updated to cover male routing, Sarah's clear/default feminine voice, and rejection of foreign-language fallbacks. These changes are **not yet verified**; exact-head CI and PR review are required before merge/deploy. No Worker secrets, SQL, schema, migrations, paid services or APK workflow were changed. APK remains postponed.
+
+
+### Validation gate discovery — PR #116
+
+- PR #116 is open against main, with the branch 8 commits ahead and 0 behind the supplied base; GitHub compare reports the merge base is exactly `df5e119a14aa3526f3805835b3349b87533cf94e`.
+- The repository's `deploy-worker.yml` currently runs on `push` to `main` or `drvas-integrated-platform`, plus `workflow_dispatch`; it does not define a `pull_request` trigger. The GitHub connector available in this session exposes no workflow-dispatch action. Consequently no exact-head CI run has started for PR #116 and combined status is empty. Do not merge or deploy until a supported exact-head validation path is available.
+
+## 2026-11-11 correction — CI and active module work
+
+- Current main base is df5e119a14aa3526f3805835b3349b87533cf94e; the older 8ecf72a... note is historical.
+- Correction: browser-e2e.yml already has pull_request triggers. PR #116 run #803 executed and failed 172/174; the two issues were a Romanian-only voice fixture reused across locale cases and a blocked default-browser fallback when the browser returned no voices.
+- PR #116 corrected head before CI optimization: eeccb3bbd223d7891f404cb5cd87e8e3ad5e5e07. Static checks passed in #804; browser run stalled during Chromium installation. CI now caches the pinned Playwright headless shell and avoids rerunning apt dependency installation; this is included in the latest PR #116 branch commit 2c596967c1b7974824add7ed5761f6567787bb39. Recheck exact-head CI before merge.
+- PR #117 is a stacked Book Studio chapter revision-history implementation; it uses existing private project JSON, caps history at 10 snapshots, restores versions and exports Markdown. No schema/migration changes. Rebase cleanly after #116 squash merge.
+- Mining post-merge browser #793 and deploy #553 both succeeded; Worker version 729483ee-0b20-4949-9592-d84877cb53de.
+- Cloudflare Preview for #116 failed separately; do not claim Preview success. No SQL, APK, paid service, secrets, wallet/trading or real mining changes.

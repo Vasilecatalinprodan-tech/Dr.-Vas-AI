@@ -2791,19 +2791,30 @@ function prepareDrvasPresentationSpeechText(value){
  // Keep the visible brand unchanged; expand the abbreviation only in the spoken narration.
  return String(value||"").replace(/\bDr\.(?=[A-Z])/g,"Doctor ");
 }
+function isMaleSpeechVoice(voice){
+ const identity=[voice?.name,voice?.voiceURI].filter(Boolean).join(" ").toLowerCase();
+ return String(voice?.gender||"").toLowerCase()==="male"||/\bmale\b|\bman\b|andrei|david|mark|guy|james|daniel|alexander|thomas|george|ryan|aaron|fred|jorge|pavel|lucas|matthew|oliver|liam|michael|antonio|carlos|diego|eduardo|miguel|paul|bruno|marco|hans|stefan|maxim|nikita/i.test(identity);
+}
+function rankMaleSpeechVoice(voice){
+ const identity=[voice?.name,voice?.voiceURI].filter(Boolean).join(" ").toLowerCase();
+ if(/andrei|david|daniel|george|thomas|matthew|oliver|liam/.test(identity))return 4;
+ if(/\bmale\b|\bman\b|mark|guy|james|ryan|aaron|fred|pavel|michael|paul|bruno|marco|hans|stefan/.test(identity))return 3;
+ if(voice?.default)return 2;
+ return 1;
+}
 function getDrvasPresentationVoiceProfile(voices,locale){
  const lang=(locale||"ro-RO").slice(0,2).toLowerCase();
  const local=voices.filter(v=>(v.lang||"").toLowerCase().startsWith(lang));
- // Dr.Vas and Dr.Jan may share the best available device voice, but Sarah must
- // never silently inherit a masculine/default voice.
- const pool=local.length?local:voices;
- const voice=pool.find(v=>v.default)||pool[0]||null;
- const localFemale=local.filter(isFemaleSpeechVoice);
-  const femaleVoices=(localFemale.length?localFemale:voices.filter(isFemaleSpeechVoice)).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
- // Sarah uses a feminine voice native to the selected language. If none is
- // installed, report it instead of speaking with a foreign-language accent.
- const sarah=femaleVoices[0]||null;
- return {drvas:voice,jan:voice,sarah,hasFemale:!!sarah,hasAllDistinct:!!(voice&&sarah&&voice.voiceURI!==sarah.voiceURI),hasFallback:!!voice};
+ const maleVoices=local.filter(isMaleSpeechVoice).sort((a,b)=>rankMaleSpeechVoice(b)-rankMaleSpeechVoice(a));
+ const femaleVoices=local.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
+ // Keep the current default voice for Sarah when it is feminine, while
+ // selecting explicitly male voices for Dr.Vas and Dr.Jan. Never use a
+ // foreign-language voice because it can distort pronunciation.
+ const defaultVoice=local.find(v=>v.default)||null;
+ const sarah=defaultVoice&&isFemaleSpeechVoice(defaultVoice)?defaultVoice:(femaleVoices[0]||null);
+ const drvas=maleVoices[0]||null;
+ const jan=maleVoices.find(v=>v.voiceURI!==drvas?.voiceURI)||drvas;
+ return {drvas,jan,sarah,hasMale:!!drvas,hasFemale:!!sarah,hasAllDistinct:!!(drvas&&jan&&sarah&&new Set([drvas.voiceURI,jan.voiceURI,sarah.voiceURI]).size===3),hasFallback:!!(drvas||sarah)};
 }
 function getDrvasPresentationVoices(){
  const synth=window.speechSynthesis;
@@ -2841,6 +2852,7 @@ async function speakDrvasPresentation(){
  if(run!==drvasPresentationRun)return;
  drvasPresentationQueue=lines.slice();drvasPresentationIndex=0;
  const voiceProfile=getDrvasPresentationVoiceProfile(voices,lang);
+ const usingDeviceDefault=voices.length===0;
  const voiceStatus=el("presentationAudioStatus");
  if(!voices.length&&voiceStatus){
   voiceStatus.textContent="Încerc redarea cu vocea implicită a dispozitivului. Dacă nu se aude, apasă Reia prezentarea după ce verifici volumul și vocile text-to-speech.";
@@ -2849,7 +2861,7 @@ async function speakDrvasPresentation(){
   if(run!==drvasPresentationRun)return;
   if(drvasPresentationIndex>=drvasPresentationQueue.length){
    const status=el("presentationAudioStatus");
-   if(status)status.textContent=voiceProfile.sarah?"Prezentarea s-a încheiat. Apasă «Continuă la conectare» când ești pregătit.":"Sarah nu are o voce feminină disponibilă pe acest dispozitiv. Prezentarea a rămas deschisă; poți instala o voce feminină sau continua manual.";
+   if(status)status.textContent=(usingDeviceDefault||(voiceProfile.hasMale&&voiceProfile.hasFemale))?"Prezentarea s-a încheiat. Apasă «Continuă la conectare» când ești pregătit.":"Una sau mai multe voci potrivite nu sunt disponibile în limba selectată. Poți instala vocile lipsă sau continua manual.";
    el("presentationContinueButton")?.classList.remove("hidden");
    return;
   }
@@ -2857,9 +2869,10 @@ async function speakDrvasPresentation(){
   updateDrvasPresentationScene(index);
   const utterance=new SpeechSynthesisUtterance(prepareDrvasPresentationSpeechText(drvasPresentationQueue[index]));
   const voiceForSpeaker=[voiceProfile.drvas,voiceProfile.jan,voiceProfile.sarah][index];
-  if(key==="sarah"&&!voiceForSpeaker){
+  if(!voiceForSpeaker&&!usingDeviceDefault){
    const status=el("presentationAudioStatus");
-   if(status)status.textContent="Vocea feminină Sarah nu este disponibilă pe acest dispozitiv. Verifică vocile text-to-speech ale sistemului.";
+   const requiredVoice=key==="sarah"?"feminină":"masculină";
+   if(status)status.textContent="Vocea "+requiredVoice+" pentru "+speaker.name+" nu este disponibilă în limba selectată pe acest dispozitiv. Instalează o voce compatibilă sau continuă manual.";
    el("presentationPresenter")?.classList.remove("is-speaking");
    drvasPresentationIndex++;
    window.setTimeout(speakNext,420);
@@ -4283,8 +4296,9 @@ function chooseSpeechVoice(lang,assistantId=activeAssistant){
  if(assistantId==="aurora"){
   // Sarah must use a feminine voice native to the selected language.
   // A foreign-language voice distorts Romanian and other local pronunciation.
-  const localFemale=matching.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
-  const femaleVoices=localFemale.length?localFemale:voices.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
+  // Sarah must use a voice in the selected language; foreign-language
+  // fallback is a common cause of distorted pronunciation.
+  const femaleVoices=matching.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
   if(selected){const chosen=femaleVoices.find(v=>v.voiceURI===selected);if(chosen)return chosen;}
   return femaleVoices[0]||null;
  }
