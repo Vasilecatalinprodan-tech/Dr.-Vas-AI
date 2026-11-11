@@ -414,3 +414,16 @@ A detailed session log was added at `docs/SESSION_LOG_2026-11-03.md`. It records
 ## 2026-11-04 conversation continuity
 
 Founder asked to preserve this conversation and continue the existing integrated platform. The rate-limit diagnostic passed except function `search_path`; repair migration `supabase/migrations/202611040002_repair_rate_limit_rpc.sql` and safe Worker RPC error logging have been committed (Worker diagnostic commit `a00a7b35d9bb5b59b547b51683b644a8c042ef48`; SQL migration commit `0859ff233c12acce96e0573b546999fdcc5b8972`). The live Supabase migration is still outstanding; do not claim chat is fixed until applied and an authenticated AI request succeeds. Founder avatar direction: realistic male Dr.Vas portrait, adult Sarah avatar around 23–24 based on supplied photo, and consent-based integration of founder's own recorded voice. Keep source photo and voice private; do not commit to public GitHub. Image generation was unavailable in this session; no avatar or voice clone has been generated/deployed. Detailed continuity is in the conversation history; next priorities are rate-limit recovery, blue/stuck Live voice page, avatars and voice integration, then comprehensive end-to-end testing.
+
+
+## 2026-11-11 — Current verified checkpoint
+
+- Starting point requested by founder: `7e1dbc18865f45f9401195457651295379620dc7`.
+- Current main: `8ecf72a754c678865f29c620463924e22714b2df` (PR #107 merged).
+- Production Worker: `d614a806-ea27-4f16-bb68-f772baa4cc49`; deploy #550 succeeded; production smoke test passed. URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ .
+- Browser tests: exact-head PR run #778 = 168/168; post-merge run #779 = 168/168.
+- Book Studio manuscript workspace is persistent, exportable and localized in seven languages; brief ceiling 75,000 characters.
+- Supabase migration gate: Remote database is up to date; no new migration applied. No SQL/schema/RLS changes in this release.
+- APK postponed; Android workflow is manual-only (`workflow_dispatch`).
+- Continue all modules/workbenches. Next priorities: Academy lesson checklist, Commerce supplier comparison, Business reporting, Free/Health hardening, then Studio chapter/version workflow.
+- Structured chat archive: `docs/CHAT-ARCHIVE-2026-11-11-ALL-MODULES.md`. Original ChatGPT transcript remains in conversation history; this archive preserves decisions and handoff state.
