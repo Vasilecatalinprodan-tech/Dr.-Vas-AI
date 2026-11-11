@@ -1149,3 +1149,10 @@ Conversation preservation note: this repository file stores the founder's exact 
 ## 2026-11-11 00:00 UTC — Studio PR final handoff
 - Active Studio PR is #103, cleanly based on current main (5 ahead, 0 behind, mergeable=true). PR #101 and #102 were closed as superseded, not merged.
 - Exact-head browser workflow run #766 (`42927733404`) is in progress. Do not merge until it passes.
+
+
+## 2026-11-11 03:55 UTC — Studio merged; Income Tracker regression underway
+- PR #103 passed exact-head browser E2E run #769: 162/162 and merged to main at `b4df01417eb4364f37ac135658fe2e47f1ed6522`.
+- Studio Book/Translation station persistence is integrated; no schema migration or production deployment was performed.
+- Added `tests/e2e/income-tracker.spec.cjs` on branch `test/income-tracker-owner-safety-2026-11-11` for owner scoping, failed-write messaging, safe untrusted-title rendering, and multi-currency/filter behavior. Included it in both browser and deploy workflow gates. Await exact-head CI.
+- No live DB/RLS changes, secrets, paid services, production deployment or APK build.
