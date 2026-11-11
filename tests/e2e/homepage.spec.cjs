@@ -2004,9 +2004,9 @@ test("presenter assets do not depend on temporary Runway signed URLs", async ({ 
   expect(source).toContain('/assets/presenters/Sarah23.jpg');
 });
 
-test("Crypto engine includes low-price Proof-of-Work coins and filters by hardware", async ({ page }) => {
+test("Crypto scanner includes low-price Proof-of-Work coins and filters by hardware", async ({ page }) => {
   await openApp(page, "ro");
-  const result = await page.evaluate(() => {
+  const result = await page.evaluate(async () => {
     const engine = window.DrVasCryptoEngine;
     const markets = [
       { id: "bitcoin", current_price: 65000, market_cap: 1000, price_change_percentage_24h: 2 },
@@ -2016,13 +2016,21 @@ test("Crypto engine includes low-price Proof-of-Work coins and filters by hardwa
       { id: "ethereum", current_price: 3000, market_cap: 900 },
       { id: "monero", current_price: 150, market_cap: 100 }
     ];
+    const all = engine.eligibleCoins(markets).map(coin => coin.symbol);
+    const sha256 = engine.eligibleCoins(markets, "asic-sha256").map(coin => coin.symbol);
+    const randomx = engine.eligibleCoins(markets, "cpu-randomx").map(coin => coin.symbol);
+    const explicitDollarFloor = engine.eligibleCoins(markets, "all", 1).map(coin => coin.symbol);
+    const explicitTenCentFloor = engine.eligibleCoins(markets, "all", 0.1).map(coin => coin.symbol);
+    let invalidFloorThrows = false;
+    try { engine.eligibleCoins(markets, "all", -1); } catch (error) { invalidFloorThrows = error instanceof RangeError; }
+    engine.fetchMarkets = async () => markets;
+    document.getElementById("cryptoMiningHardware").value = "all";
+    await window.scanCryptoMiningCandidates();
     return {
-      all: engine.eligibleCoins(markets).map(coin => coin.symbol),
-      sha256: engine.eligibleCoins(markets, "asic-sha256").map(coin => coin.symbol),
-      randomx: engine.eligibleCoins(markets, "cpu-randomx").map(coin => coin.symbol),
-      explicitDollarFloor: engine.eligibleCoins(markets, "all", 1).map(coin => coin.symbol),
-      explicitTenCentFloor: engine.eligibleCoins(markets, "all", 0.1).map(coin => coin.symbol),
-      invalidFloorThrows: (() => { try { engine.eligibleCoins(markets, "all", -1); return false; } catch (error) { return error instanceof RangeError; } })()
+      all, sha256, randomx, explicitDollarFloor, explicitTenCentFloor, invalidFloorThrows,
+      scannerSymbols: Array.from(document.querySelectorAll("#cryptoEngineCoinsBody tr")).map(row => row.cells[0]?.textContent || ""),
+      scannerStatus: document.getElementById("cryptoEngineStatus").textContent,
+      buttonLabel: document.getElementById("cryptoEngineScanButton").textContent
     };
   });
   expect(result.all).toEqual(["BTC", "XMR", "LTC", "DOGE", "RVN"]);
@@ -2031,6 +2039,10 @@ test("Crypto engine includes low-price Proof-of-Work coins and filters by hardwa
   expect(result.explicitDollarFloor).toEqual(["BTC", "XMR", "LTC"]);
   expect(result.explicitTenCentFloor).toEqual(["BTC", "XMR", "LTC", "DOGE"]);
   expect(result.invalidFloorThrows).toBe(true);
+  expect(result.scannerSymbols).toEqual(["Bitcoin (BTC)", "Monero (XMR)", "Litecoin (LTC)", "Dogecoin (DOGE)", "Ravencoin (RVN)"]);
+  expect(result.scannerStatus).toContain("5 monede PoW cotate");
+  expect(result.scannerStatus).not.toContain("$1");
+  expect(result.buttonLabel).toBe("Scanează monedele PoW");
 });
 
 
