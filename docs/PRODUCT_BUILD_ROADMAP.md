@@ -486,3 +486,6 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Keep the authenticated Worker TTS path and provider secrets server-side. Do not invent voice IDs, expose secrets, configure paid providers or send the founder's private voice sample to a third party without separate explicit approval.
 - Voice-routing implementation and regression tests are in branch `fix/presenter-voice-gender-routing-2026-11-11`; validation/merge/deploy remain pending.
 - Continue the parallel all-module roadmap: Business cashbook/cashflow, Free/Health chat and attachments, Studio chapter/version history, Academy progress, Commerce supplier due diligence, Online Income digital products, and Crypto/Mining simulator safety/accuracy. Keep Health document analysis disabled, real mining/trading disabled, owner-only workbenches restricted, SQL out of scope and APK postponed.
+
+
+- Release automation gap identified during voice PR #116: the deployment workflow has no `pull_request` trigger (only `main`/`drvas-integrated-platform` pushes and manual dispatch). Add a safe PR validation workflow or restore an exact-head CI trigger as a separate platform reliability task; never merge untested changes merely to trigger the push workflow.
