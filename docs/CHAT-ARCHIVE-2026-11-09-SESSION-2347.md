@@ -162,3 +162,14 @@ This file preserves the founder's exact instruction above and the verified techn
 ### Conversation preservation
 - The exact founder instruction and verified code/CI/merge/deploy state are saved here and in the development log and roadmap.
 - This checkpoint does not claim a verbatim transcript export; the original ChatGPT conversation remains available in ChatGPT history.
+
+
+## 2026-11-11 08:35 UTC — Health fix merged; Android automation returned to manual-only
+
+- PR #105 passed exact-head browser E2E run #773 / 42987635157: 167/167 tests passed. It was squash-merged to main at 79195b4ff44c3f11b79f1d46a9e4f168a5b3890a.
+- The Health attachment preflight now checks the Worker capability before creating conversation metadata or saving a user message. If file analysis is disabled, no chat history write is made and the selected attachment remains pending.
+- Post-merge browser run #774 / 42988157174 and deploy run #549 / 42988156957 started on the merge commit; deployment was still in progress at this checkpoint.
+- The existing Android workflow unexpectedly triggered run #374 / 42988156884 on this web-only merge because its push path filter included www/**. The build was not manually requested, installed, released or distributed. APK packaging remains postponed.
+- Opened branch chore/android-build-manual-only-2026-11-11 and changed android.yml so APK builds are workflow_dispatch-only until the web platform is stable and the founder explicitly requests Android packaging. Commit 4b540d1cbfbae4263826bbdc073718119c1df9be.
+- No SQL, schema/RLS, secrets, paid provider or external credits were changed. Health file analysis remains disabled.
+- Conversation archive is structured continuity, not a verbatim transcript export; original ChatGPT chat remains in history.

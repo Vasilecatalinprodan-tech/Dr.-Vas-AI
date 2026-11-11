@@ -1167,3 +1167,12 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Health safety branch fix/health-attachment-preflight-2026-11-11: c9c08a1e2638bea3e9db2379212b3a3e08ae3896 preflights file-analysis capability before writing conversation metadata or user chat messages; 450d48bb56e6d45ea83dc10e23b5dbd68996a7bf adds a Playwright regression proving disabled analysis writes no chat history and retains the selected medical file.
 - No SQL, schema/RLS, secrets, paid providers, external credits or APK were changed. Health file analysis remains disabled unless explicitly enabled by existing Worker capability configuration.
 - Next: verify exact-head Health CI, continue all module work, and update archive/log/roadmap at each verified checkpoint. Chat archive is structured continuity, not a verbatim ChatGPT transcript export.
+
+
+## 2026-11-11 08:35 UTC — Health safety merged; Android packaging paused
+
+- PR #105 exact-head browser run #773 (42987635157) passed 167/167 tests and was squash-merged at 79195b4ff44c3f11b79f1d46a9e4f168a5b3890a.
+- Health file-analysis capability is now checked before chat metadata or user-message persistence; disabled analysis leaves no orphaned chat history and preserves the pending file.
+- Post-merge browser run #774 and deploy run #549 started; deploy outcome pending at this checkpoint.
+- APK workflow run #374 started automatically because android.yml still had a push trigger for www/**. It was not manually requested, installed, released or distributed. New branch chore/android-build-manual-only-2026-11-11 changes the workflow to manual dispatch only (commit 4b540d1cbfbae4263826bbdc073718119c1df9be), preserving the APK pause.
+- No SQL/schema/RLS, secrets, paid provider or external credits changed. Health file analysis remains disabled. Chat archive is a structured checkpoint, not a verbatim transcript.
