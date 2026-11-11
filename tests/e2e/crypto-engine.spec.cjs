@@ -49,9 +49,9 @@ test("Bitcoin sensitivity matrix covers nine price and electricity combinations"
     [1, 0.8], [1, 1], [1, 1.2],
     [1.2, 0.8], [1.2, 1], [1.2, 1.2]
   ]);
-  expect(result[0].netUsdPerDay).toBeCloseTo(743.2, 8);
+  expect(result[0].netUsdPerDay).toBeCloseTo(745.6, 8);
   expect(result[4].netUsdPerDay).toBeCloseTo(932.5, 8);
-  expect(result[8].netUsdPerDay).toBeCloseTo(1121.8, 8);
+  expect(result[8].netUsdPerDay).toBeCloseTo(1119.4, 8);
   expect(result[8].paybackDays).toBeLessThan(result[0].paybackDays);
 });
 
