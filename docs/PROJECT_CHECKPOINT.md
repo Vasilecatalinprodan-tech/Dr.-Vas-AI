@@ -418,12 +418,15 @@ Founder asked to preserve this conversation and continue the existing integrated
 
 ## 2026-11-11 — Current verified checkpoint
 
-- Starting point requested by founder: `7e1dbc18865f45f9401195457651295379620dc7`.
-- Current main: `8ecf72a754c678865f29c620463924e22714b2df` (PR #107 merged).
-- Production Worker: `d614a806-ea27-4f16-bb68-f772baa4cc49`; deploy #550 succeeded; production smoke test passed. URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ .
-- Browser tests: exact-head PR run #778 = 168/168; post-merge run #779 = 168/168.
-- Book Studio manuscript workspace is persistent, exportable and localized in seven languages; brief ceiling 75,000 characters.
-- Supabase migration gate: Remote database is up to date; no new migration applied. No SQL/schema/RLS changes in this release.
-- APK postponed; Android workflow is manual-only (`workflow_dispatch`).
-- Continue all modules/workbenches. Next priorities: Academy lesson checklist, Commerce supplier comparison, Business reporting, Free/Health hardening, then Studio chapter/version workflow.
-- Structured chat archive: `docs/CHAT-ARCHIVE-2026-11-11-ALL-MODULES.md`. Original ChatGPT transcript remains in conversation history; this archive preserves decisions and handoff state.
+- Founder-supplied starting checkpoint: `7e1dbc18865f45f9401195457651295379620dc7`.
+- Current main: `d43d992122cf7596537f48353afe810b3bca5d04`; PRs #107, #108, #109 and #110 merged.
+- Latest production Worker: `b420225b-2841-4bf8-adf1-6a3321dc2cbb`; deploy #552 succeeded. URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/
+- Latest post-merge browser regression: 171/171 passed (run #789). Academy post-merge run #785: 170/170. Book Studio post-merge run #779: 168/168.
+- **Book Studio:** persistent manuscript continuity, chapter outline/status, style guide and character/world bibles, long-form brief handoff and Markdown export.
+- **Academy:** lesson titles and individual checkboxes, automatic completion percentage, 100-lesson limit, seven-language localization and project save/reopen.
+- **Commerce:** three-supplier quote comparison, MOQ-aware order quantity, total shipping, upfront cost, effective unit cost, excess stock, lead time and returns/source notes; user-supplied data is persisted and included in the analysis prompt.
+- Production #552 verified homepage, all six public module cards and unauthenticated admin rejection (HTTP 401). SBOM artifact ID `13845897516`.
+- Supabase reported `Remote database is up to date`; no migrations applied. No SQL, schema, migration, RLS or production data changes were made in PRs #107, #109 or #110.
+- APK postponed; Android workflow remains manual-only (`workflow_dispatch`). No paid provider or public entitlement was enabled.
+- Continue Business reporting, Free/Health chat and attachment hardening, Studio chapter/version workflow, voice/presenter integration, auth/RLS, Crypto & Mining simulation and Online Income. Preserve founder-only access boundaries and all safety/privacy constraints.
+- Structured archive: `docs/CHAT-ARCHIVE-2026-11-11-ALL-MODULES.md`. It records the decisions and handoff; it is not a verbatim transcript export.
