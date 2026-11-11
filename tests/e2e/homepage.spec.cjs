@@ -780,7 +780,10 @@ test("presenter voices stay in the selected language and reuse the local voice w
     const voiceOptions = Array.from(document.querySelector("#speechVoiceSelect").options).map(option => option.value).filter(Boolean);
     const presentation = getDrvasPresentationVoiceProfile(voices, "ro-RO");
     const noFemale = getDrvasPresentationVoiceProfile([voices[0]], "ro-RO");
-    const femaleOnly = [{ name: "Microsoft Alina", lang: "ro-RO", voiceURI: "alina-ro", default: true }];
+    const femaleOnly = [
+      { name: "Microsoft Alina", lang: "ro-RO", voiceURI: "alina-ro", default: true },
+      { name: "Microsoft Elsa", lang: "it-IT", voiceURI: "elsa-it" }
+    ];
     const femaleOnlyProfile = getDrvasPresentationVoiceProfile(femaleOnly, "ro-RO");
     const crossLanguageVoices = [
       voices[0],
@@ -801,6 +804,9 @@ test("presenter voices stay in the selected language and reuse the local voice w
       femaleOnlyDrvas: femaleOnlyProfile.drvas?.voiceURI || null,
       femaleOnlyJan: femaleOnlyProfile.jan?.voiceURI || null,
       femaleOnlySarah: femaleOnlyProfile.sarah?.voiceURI || null,
+      femaleOnlyAllSpeakers: femaleOnlyProfile.hasAllSpeakers,
+      femaleOnlyDistinct: femaleOnlyProfile.hasAllDistinct,
+      italianOnlyVoice: chooseSpeechVoice("it-IT", "aurora")?.voiceURI || null,
       crossLanguageChatVoice: crossLanguageChatVoice?.voiceURI || null,
       crossLanguagePresentationSarah: crossLanguagePresentation.sarah?.voiceURI || null,
       crossLanguageVoiceLanguage: crossLanguagePresentation.sarah?.lang || null
@@ -817,6 +823,9 @@ test("presenter voices stay in the selected language and reuse the local voice w
   expect(result.femaleOnlyDrvas).toBe("alina-ro");
   expect(result.femaleOnlyJan).toBe("alina-ro");
   expect(result.femaleOnlySarah).toBe("alina-ro");
+  expect(result.femaleOnlyAllSpeakers).toBe(true);
+  expect(result.femaleOnlyDistinct).toBe(false);
+  expect(result.italianOnlyVoice).toBe("elsa-it");
   expect(result.crossLanguageChatVoice).toBeNull();
   expect(result.crossLanguagePresentationSarah).toBeNull();
   expect(result.crossLanguageVoiceLanguage).toBeNull();
