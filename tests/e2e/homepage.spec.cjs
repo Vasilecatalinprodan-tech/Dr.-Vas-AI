@@ -792,6 +792,22 @@ test("presenter voices stay in the selected language and reuse the local voice w
     Object.defineProperty(window, "speechSynthesis", { configurable: true, value: { getVoices: () => femaleOnly } });
     const femaleOnlyChatDrvas = chooseSpeechVoice("ro-RO", "drvas")?.voiceURI || null;
     const femaleOnlyChatJan = chooseSpeechVoice("ro-RO", "jan")?.voiceURI || null;
+    const fallbackVoices = [
+      { name: "Unknown Romanian Default", lang: "ro-RO", voiceURI: "unknown-ro", default: true },
+      { name: "Microsoft Alina", lang: "ro-RO", voiceURI: "alina-ro" }
+    ];
+    Object.defineProperty(window, "speechSynthesis", { configurable: true, value: { getVoices: () => fallbackVoices } });
+    const fallbackProfile = getDrvasPresentationVoiceProfile(fallbackVoices, "ro-RO");
+    const fallbackChatDrvas = chooseSpeechVoice("ro-RO", "drvas")?.voiceURI || null;
+    const fallbackChatJan = chooseSpeechVoice("ro-RO", "jan")?.voiceURI || null;
+    const italianFallbackVoices = [
+      { name: "Unknown Italian Default", lang: "it-IT", voiceURI: "unknown-it", default: true },
+      { name: "Microsoft Sofia", lang: "it-IT", voiceURI: "sofia-it" }
+    ];
+    Object.defineProperty(window, "speechSynthesis", { configurable: true, value: { getVoices: () => italianFallbackVoices } });
+    const italianFallbackProfile = getDrvasPresentationVoiceProfile(italianFallbackVoices, "it-IT");
+    const italianFallbackChatDrvas = chooseSpeechVoice("it-IT", "drvas")?.voiceURI || null;
+    const italianFallbackChatJan = chooseSpeechVoice("it-IT", "jan")?.voiceURI || null;
     const crossLanguageVoices = [
       voices[0],
       { name: "Google UK English Female", lang: "en-GB", voiceURI: "google-female" }
@@ -815,7 +831,15 @@ test("presenter voices stay in the selected language and reuse the local voice w
       femaleOnlyDistinct: femaleOnlyProfile.hasAllDistinct,
       femaleOnlyChatDrvas,
       femaleOnlyChatJan,
+      fallbackPresentationDrvas: fallbackProfile.drvas?.voiceURI || null,
+      fallbackPresentationJan: fallbackProfile.jan?.voiceURI || null,
+      fallbackChatDrvas,
+      fallbackChatJan,
       italianOnlyVoice: italianVoice?.voiceURI || null,
+      italianFallbackPresentationDrvas: italianFallbackProfile.drvas?.voiceURI || null,
+      italianFallbackPresentationJan: italianFallbackProfile.jan?.voiceURI || null,
+      italianFallbackChatDrvas,
+      italianFallbackChatJan,
       crossLanguageChatVoice: crossLanguageChatVoice?.voiceURI || null,
       crossLanguagePresentationSarah: crossLanguagePresentation.sarah?.voiceURI || null,
       crossLanguageVoiceLanguage: crossLanguagePresentation.sarah?.lang || null
@@ -836,7 +860,15 @@ test("presenter voices stay in the selected language and reuse the local voice w
   expect(result.femaleOnlyDistinct).toBe(false);
   expect(result.femaleOnlyChatDrvas).toBe("alina-ro");
   expect(result.femaleOnlyChatJan).toBe("alina-ro");
+  expect(result.fallbackPresentationDrvas).toBe("alina-ro");
+  expect(result.fallbackPresentationJan).toBe("alina-ro");
+  expect(result.fallbackChatDrvas).toBe("alina-ro");
+  expect(result.fallbackChatJan).toBe("alina-ro");
   expect(result.italianOnlyVoice).toBe("sofia-it");
+  expect(result.italianFallbackPresentationDrvas).toBe("sofia-it");
+  expect(result.italianFallbackPresentationJan).toBe("sofia-it");
+  expect(result.italianFallbackChatDrvas).toBe("sofia-it");
+  expect(result.italianFallbackChatJan).toBe("sofia-it");
   expect(result.crossLanguageChatVoice).toBeNull();
   expect(result.crossLanguagePresentationSarah).toBeNull();
   expect(result.crossLanguageVoiceLanguage).toBeNull();
