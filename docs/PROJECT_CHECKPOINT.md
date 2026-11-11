@@ -536,3 +536,16 @@ Founder asked to preserve this conversation and continue the existing integrated
 - Supabase migration gate reports “Remote database is up to date”; no migration, SQL/schema/RLS change. No secrets or paid voice services used. APK remains postponed/manual-only.
 - Real-device audio playback remains unverified; continue all modules, next Mining improvement is removing the default USD 1 eligibility cutoff without removing explicit filters.
 - Full chat remains in ChatGPT history; this checkpoint is structured project documentation, not a verbatim transcript.
+
+
+## 2026-11-11 — Current continuation checkpoint after Mining PR #127 and voice PR #128
+- Main commit: 974e45d69e14b30e3fb0b342d832fe068cdaea4c (PR #127).
+- Mining scanner no longer applies an arbitrary default USD 1 unit-price cutoff. Exact PR-head #849 and post-merge #850 both passed 177/177.
+- Deploy #560 deployed Worker version f3d75a76-031f-45e7-bc0f-f4dacb11bd08; production smoke test verified online Worker, six public module cards and unauthenticated admin-status HTTP 401. SBOM upload failed due an upstream GitHub artifact response-format error; deployment and smoke-test steps succeeded.
+- Voice follow-up PR #128 is open: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/128. Latest head f918765865ee7dd7ea96c8067a673c440c65ed34; browser run #852 queued. It makes the familiar locale-matched feminine voice the fallback for Dr.Vas and Jan in both chat and presentation when no local male voice is available; foreign-language fallback remains disabled.
+- Do not merge/deploy PR #128 until exact latest-head browser tests pass. Real device listening on Windows and Samsung remains required.
+- Academy lesson progress, Commerce supplier comparison and Business cashbook/cashflow already exist; next iterations should harden evidence, validation, persistence and accessibility rather than duplicate them.
+- Supabase migration gate reported remote database up to date; no migration or SQL/schema/RLS change. No secrets, paid TTS, voice cloning or APK changes.
+- APK remains postponed/manual-only. Real mining/trading and wallet custody remain disabled.
+- Production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/.
+- This is a structured checkpoint; the complete conversation remains in ChatGPT history.
