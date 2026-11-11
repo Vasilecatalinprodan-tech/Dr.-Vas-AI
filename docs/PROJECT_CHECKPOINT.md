@@ -427,3 +427,15 @@ Founder asked to preserve this conversation and continue the existing integrated
 - APK postponed; Android workflow is manual-only (`workflow_dispatch`).
 - Continue all modules/workbenches. Next priorities: Academy lesson checklist, Commerce supplier comparison, Business reporting, Free/Health hardening, then Studio chapter/version workflow.
 - Structured chat archive: `docs/CHAT-ARCHIVE-2026-11-11-ALL-MODULES.md`. Original ChatGPT transcript remains in conversation history; this archive preserves decisions and handoff state.
+
+
+## 2026-11-11 — Current continuation checkpoint after Academy
+
+- Main: `c2b9cbe72b67b05f42795229790282486b78d23b`.
+- Academy PR #109 merged; post-merge browser #785 passed 170/170; deploy #551 succeeded. Remote Supabase migration history already current; no new migration applied. Production Worker smoke test passed.
+- Production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ .
+- Open PR #110 Commerce supplier comparison: head `4a0cf92f47c24bb8f3e4f31ef5000b9963a83a4a`; CI run #786 pending.
+- Open PR #111 Crypto/Mining sensitivity lab: head `0611ba1f160c558d28fe526c2919a0e3507a52ef`; CI run #787 pending.
+- Next: finish CI, merge PRs separately, deploy only after merge, then update archive/log/roadmap/checkpoint with verified results. Continue all modules including Business, Free/Health, Studio, Academy, Commerce, Online Income and Mining.
+- No SQL changes. APK remains postponed and workflow_dispatch-only. No real mining/trading or wallet custody. Do not enable paid services without explicit approval.
+- This archive is a structured handoff, not a verbatim transcript; original chat remains in ChatGPT history.
