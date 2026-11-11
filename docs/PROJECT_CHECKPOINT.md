@@ -526,3 +526,13 @@ Founder asked to preserve this conversation and continue the existing integrated
 - Supabase reported “Remote database is up to date”; no SQL/schema/migration changes.
 - No new secrets, paid voice calls, external cloning or APK changes. Real-device playback and pronunciation remain unverified until founder confirms.
 - Full conversation remains in ChatGPT history; this checkpoint records verified technical progress.
+
+
+### 2026-11-11 — Current production voice checkpoint
+- Main commit: `54e034554c7d8959fb21300d99090b316f41160d` (PR #125).
+- Locale-safe voice selection deployed: no foreign-language fallback; Sarah feminine/local only; Dr.Vas/Dr.Jan local masculine where available, otherwise local default voice; voice picker limited to selected locale.
+- Final exact-head browser run #842 and post-merge #844 both passed 177/177.
+- Deploy #559 succeeded; Worker version `ed6dc539-0e3f-4751-868d-fd004dad87b6`. Production smoke test: online, six public modules, unauthenticated admin-status HTTP 401; SBOM artifact `13889133035`.
+- Supabase migration gate reports “Remote database is up to date”; no migration, SQL/schema/RLS change. No secrets or paid voice services used. APK remains postponed/manual-only.
+- Real-device audio playback remains unverified; continue all modules, next Mining improvement is removing the default USD 1 eligibility cutoff without removing explicit filters.
+- Full chat remains in ChatGPT history; this checkpoint is structured project documentation, not a verbatim transcript.
