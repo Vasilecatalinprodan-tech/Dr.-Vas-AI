@@ -261,3 +261,13 @@ Founder request:
 - Real mining, trading, wallet custody and automated transactions remain disabled.
 - Production URL remains https://dr--vas-ai.vasilecatalinprodan.workers.dev/.
 - This is a structured checkpoint of the request and work, not a verbatim export. The full conversation remains in ChatGPT history.
+
+
+## 2026-11-11 — PR #128 merged: shared locale-matched feminine fallback
+- PR #128 merged to main as b2f938896200b22b61792db6b98d206e3949f348.
+- Exact latest-head browser run #852 reported 177 passed (3.5m), including Romanian and Italian cases where a recognised local feminine voice must be preferred over an unknown generic default for Dr.Vas and Dr.Jan in chat and presentation.
+- Post-merge main browser run #855 and production deploy #561 were queued at this checkpoint. Do not claim production contains the voice change until deploy #561 succeeds and the Worker version/smoke test are confirmed.
+- PR #129 documentation archive merged as 8b7673ce4b91f3c792ffc639d8e07ba0c369c057.
+- Production still has Mining PR #127 deployed at Worker version f3d75a76-031f-45e7-bc0f-f4dacb11bd08; deploy #560 smoke tests passed, but its final SBOM artifact upload failed because GitHub returned an HTML response instead of JSON.
+- No SQL/schema/migration changes, new secrets, paid TTS, voice cloning or APK build. Real mining/trading remain disabled.
+- Manual playback on Windows and Samsung remains required after the voice deployment.
