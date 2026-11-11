@@ -764,7 +764,7 @@ test("first spoken answer waits for asynchronously loaded browser voices and pla
   expect(playback[0].voice).toBe("Andrei Romanian");
 });
 
-test("Sarah always selects a feminine device voice and never silently falls back to a masculine voice", async ({ page }) => {
+test("Sarah prefers a feminine voice in the selected language and falls back to another feminine device voice", async ({ page }) => {
   await openApp(page, "ro");
   const result = await page.evaluate(() => {
     const voices = [
@@ -807,9 +807,9 @@ test("Sarah always selects a feminine device voice and never silently falls back
   expect(result.presentationHasFemale).toBe(true);
   expect(result.noFemaleSarah).toBeNull();
   expect(result.noMaleDrvas).toBeNull();
-  expect(result.crossLanguageChatVoice).toBeNull();
-  expect(result.crossLanguagePresentationSarah).toBeNull();
-  expect(result.crossLanguageVoiceLanguage).toBeNull();
+  expect(result.crossLanguageChatVoice).toBe("google-female");
+  expect(result.crossLanguagePresentationSarah).toBe("google-female");
+  expect(result.crossLanguageVoiceLanguage).toBe("en-GB");
 });
 
 test("late portrait load callbacks cannot overwrite the currently selected presenter label", async ({ page }) => {
