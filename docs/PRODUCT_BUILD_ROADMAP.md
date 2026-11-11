@@ -477,3 +477,12 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Mining sensitivity PR #111 merged at `6bf6701d9adb955d5c77bd0167e63dbdb324589a`; exact-head browser #791 passed 174/174.
 - Production deploy #553 succeeded; Worker version `729483ee-0b20-4949-9592-d84877cb53de`; migration history already current, no new migration applied; RPC/RLS/service_role checks and production smoke tests passed.
 - Independent post-merge browser #793 pending at last check. Mining is still analysis/simulation only; no device agent or mining execution.
+
+
+## 2026-11-11 — Voice and presenter correction added to platform priorities
+
+- Presentation audio must use male locale-matched device voices for Dr.Vas and Dr.Jan, and a clear locale-matched feminine voice for Sarah. Preserve the currently familiar Dr.Vas voice for Sarah when the device identifies it as feminine; do not use foreign-language fallback that can distort pronunciation.
+- Prefer two distinct male voices when the device provides them. If only one locale-matched male voice exists, share it; if none exists, report the missing voice and do not silently substitute a feminine voice.
+- Keep the authenticated Worker TTS path and provider secrets server-side. Do not invent voice IDs, expose secrets, configure paid providers or send the founder's private voice sample to a third party without separate explicit approval.
+- Voice-routing implementation and regression tests are in branch `fix/presenter-voice-gender-routing-2026-11-11`; validation/merge/deploy remain pending.
+- Continue the parallel all-module roadmap: Business cashbook/cashflow, Free/Health chat and attachments, Studio chapter/version history, Academy progress, Commerce supplier due diligence, Online Income digital products, and Crypto/Mining simulator safety/accuracy. Keep Health document analysis disabled, real mining/trading disabled, owner-only workbenches restricted, SQL out of scope and APK postponed.
