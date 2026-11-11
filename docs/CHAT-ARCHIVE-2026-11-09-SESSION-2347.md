@@ -203,3 +203,8 @@ This file preserves the founder's exact instruction above and the verified techn
 - Continue the full Dr.Vas system: Free/Health, Studio, Academy, Commerce, Business, Crypto/Mining, Online Income, auth/privacy, localization and release stability.
 - Keep APK packaging manual-only and deferred. Keep Health document analysis disabled until the required privacy/legal/provider gates are satisfied.
 - Merge and deploy autonomously when exact checks pass. Do not perform direct SQL/schema/RLS work; report any automated migration stage and its exact result. No paid services, new secrets or external credits without a separate decision.
+
+
+### Final post-merge verification addendum
+- Independent main push browser run #774 / 42988157174 completed successfully: 167/167 tests passed (3.1m). This independently confirms the merged main head after PR #105.
+- APK artifact from automatic run #374 is Actions artifact ID 13840053736, named DrVas-APK, with retention through 2026-12-11. It was not installed, released, published or distributed. No artifact deletion action is available through the connected GitHub interface; the future workflow is manual-only.
