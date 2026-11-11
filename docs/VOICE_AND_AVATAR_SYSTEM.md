@@ -116,3 +116,13 @@ This still does not mean Jan/Sarah voice IDs are configured or the actual sound 
 - Production still has Mining PR #127 deployed at Worker version f3d75a76-031f-45e7-bc0f-f4dacb11bd08; deploy #560 smoke tests passed, but its final SBOM artifact upload failed because GitHub returned an HTML response instead of JSON.
 - No SQL/schema/migration changes, new secrets, paid TTS, voice cloning or APK build. Real mining/trading remain disabled.
 - Manual playback on Windows and Samsung remains required after the voice deployment.
+
+
+## 2026-11-11 — Voice release deployed; Business date correctness follow-up
+- Voice PR #128 is merged as b2f938896200b22b61792db6b98d206e3949f348. Exact-head run #852 passed 177/177 and post-merge main run #855 passed 177/177.
+- Deploy #561 completed its deployment and production smoke-test steps successfully. Worker version: 26e688bd-45f5-4a9c-a45e-5ffd02baaa70. Production checks confirmed all six module cards and unauthenticated admin-status HTTP 401.
+- Supabase migration history was checked; remote database reported “Remote database is up to date.” No migration was applied and no SQL/schema/RLS change was made.
+- PR #130 documentation checkpoint merged as ddf9dc0dc7d60610477e0d69c9d55b388cd1e0c2.
+- New Business follow-up PR #131: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/131. It replaces UTC ISO date defaults in the Business cashbook with the device-local calendar date, including the fallback used when saving a new entry, and adds a regression case for local late evening crossing the UTC date boundary. Exact-head browser run #857 was in progress at this checkpoint; do not merge until it passes.
+- Founder should test the newly deployed voice on the production site in Romanian and Italian after Ctrl+F5. The exact voice available depends on the device; automated tests validate voice selection and locale, not acoustic quality.
+- No APK build, paid voice calls, voice cloning, new secrets, SQL/schema/migrations, real mining or trading.
