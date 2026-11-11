@@ -1241,3 +1241,10 @@ Conversation preservation note: this repository file stores the founder's exact 
 
 - PR #116 is open against `main`; branch comparison is 8 commits ahead, 0 behind, with merge base exactly the requested base SHA. No combined status checks are present yet.
 - `deploy-worker.yml` triggers on pushes to `main`/`drvas-integrated-platform` and manual `workflow_dispatch`, but not `pull_request`. The connected GitHub actions interface in this session does not expose workflow dispatch. Exact-head CI has therefore not started. Merge/deploy are intentionally held until the exact code can be validated.
+
+### 2026-11-11 — CI correction and presenter follow-up
+
+- browser-e2e.yml already includes pull_request triggers; the earlier statement that no PR trigger existed was incorrect. PR #116 run #803 failed 172/174; two failures were fixed in code/test fixtures.
+- Latest voice PR branch commit adds Playwright browser caching and removes redundant apt dependency installation to address the stalled Chromium setup. Run #804 had passed static checks but stalled during browser installation; verify the new exact-head run before merge.
+- PR #117 adds private Book Studio chapter snapshots/restore/export in existing project JSON, no SQL. It is stacked on #116 and must be cleaned/rebased after #116 squash merge.
+- Mining browser #793 and deploy #553 succeeded; Worker version 729483ee-0b20-4949-9592-d84877cb53de.
