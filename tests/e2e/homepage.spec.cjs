@@ -776,6 +776,8 @@ test("presenter voices stay in the selected language and reuse the local voice w
     Object.defineProperty(window, "speechSynthesis", { configurable: true, value: { getVoices: () => voices } });
     activeAssistant = "aurora";
     const chatVoice = chooseSpeechVoice("ro-RO");
+    refreshSpeechVoiceOptions();
+    const voiceOptions = Array.from(document.querySelector("#speechVoiceSelect").options).map(option => option.value).filter(Boolean);
     const presentation = getDrvasPresentationVoiceProfile(voices, "ro-RO");
     const noFemale = getDrvasPresentationVoiceProfile([voices[0]], "ro-RO");
     const femaleOnly = [{ name: "Microsoft Alina", lang: "ro-RO", voiceURI: "alina-ro", default: true }];
@@ -789,6 +791,7 @@ test("presenter voices stay in the selected language and reuse the local voice w
     const crossLanguagePresentation = getDrvasPresentationVoiceProfile(crossLanguageVoices, "ro-RO");
     return {
       chatVoice: chatVoice?.voiceURI || null,
+      voiceOptions,
       presentationDrvas: presentation.drvas?.voiceURI || null,
       presentationJan: presentation.jan?.voiceURI || null,
       presentationSarah: presentation.sarah?.voiceURI || null,
@@ -804,6 +807,7 @@ test("presenter voices stay in the selected language and reuse the local voice w
     };
   });
   expect(result.chatVoice).toBe("alina-ro");
+  expect(result.voiceOptions).toEqual(["andrei-ro", "zira-ro", "alina-ro"]);
   expect(result.presentationDrvas).toBe("andrei-ro");
   expect(result.presentationJan).toBe("andrei-ro");
   expect(result.presentationSarah).toBe("alina-ro");
