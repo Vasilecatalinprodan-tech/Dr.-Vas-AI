@@ -133,3 +133,12 @@ E2E tests were updated to cover male routing, Sarah's clear/default feminine voi
 
 - PR #116 is open against main, with the branch 8 commits ahead and 0 behind the supplied base; GitHub compare reports the merge base is exactly `df5e119a14aa3526f3805835b3349b87533cf94e`.
 - The repository's `deploy-worker.yml` currently runs on `push` to `main` or `drvas-integrated-platform`, plus `workflow_dispatch`; it does not define a `pull_request` trigger. The GitHub connector available in this session exposes no workflow-dispatch action. Consequently no exact-head CI run has started for PR #116 and combined status is empty. Do not merge or deploy until a supported exact-head validation path is available.
+
+## 2026-11-11 correction — CI and active module work
+
+- Current main base is df5e119a14aa3526f3805835b3349b87533cf94e; the older 8ecf72a... note is historical.
+- Correction: browser-e2e.yml already has pull_request triggers. PR #116 run #803 executed and failed 172/174; the two issues were a Romanian-only voice fixture reused across locale cases and a blocked default-browser fallback when the browser returned no voices.
+- PR #116 corrected head before CI optimization: eeccb3bbd223d7891f404cb5cd87e8e3ad5e5e07. Static checks passed in #804; browser run stalled during Chromium installation. CI now caches the pinned Playwright headless shell and avoids rerunning apt dependency installation; this is included in the latest PR #116 branch commit 2c596967c1b7974824add7ed5761f6567787bb39. Recheck exact-head CI before merge.
+- PR #117 is a stacked Book Studio chapter revision-history implementation; it uses existing private project JSON, caps history at 10 snapshots, restores versions and exports Markdown. No schema/migration changes. Rebase cleanly after #116 squash merge.
+- Mining post-merge browser #793 and deploy #553 both succeeded; Worker version 729483ee-0b20-4949-9592-d84877cb53de.
+- Cloudflare Preview for #116 failed separately; do not claim Preview success. No SQL, APK, paid service, secrets, wallet/trading or real mining changes.
