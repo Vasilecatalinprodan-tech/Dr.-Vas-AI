@@ -166,7 +166,7 @@
     window.drvasRestoreStudioStation?.(stationData);
     if(byId("studioDeliverable"))byId("studioDeliverable").value="book";
     if(byId("studioProjectTitle"))byId("studioProjectTitle").value=bookTitle;
-    if(byId("studioIdea"))byId("studioIdea").value=idea.slice(0,5000);
+    if(byId("studioIdea"))byId("studioIdea").value=idea.slice(0,75000);
     if(byId("studioMonetization"))byId("studioMonetization").value="ebook";
    }else{
     const source=value("drvasTranslationText"),target=value("drvasTranslationTarget");
