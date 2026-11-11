@@ -1431,6 +1431,7 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
       { name: "Microsoft David", lang: "ro-RO", voiceURI: "david-ro" },
       { name: "Microsoft Alina", lang: "ro-RO", voiceURI: "alina-ro", default: true }
     ];
+    window.__drvasPresentationVoices = presentationVoices;
     const synth = { getVoices: () => presentationVoices, cancel() {}, speak: utterance => { window.__drvasSpoken.push(utterance); } };
     Object.defineProperty(window, "speechSynthesis", { configurable: true, value: synth });
     window.SpeechSynthesisUtterance = function (text) { this.text = text; };
@@ -1456,6 +1457,7 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
   const languages = [["ro","ro-RO"],["en","en-GB"],["it","it-IT"],["tr","tr-TR"],["de","de-DE"],["fr","fr-FR"],["es","es-ES"],["ru","ru-RU"]];
   const openLabels = {ro:"Deschide prezentarea",en:"Open presentation",it:"Apri la presentazione",tr:"Tanıtımı aç",de:"Präsentation öffnen",fr:"Ouvrir la présentation",es:"Abrir presentación",ru:"Открыть презентацию"};
   for (const [language, locale] of languages) {
+    await page.evaluate(localeCode => window.__drvasPresentationVoices.forEach(voice => { voice.lang = localeCode; }), locale);
     const first = await page.evaluate(async code => {
       stopDrvasPresentationSpeech(); currentLanguage = code; renderDrvasPresentation(); await speakDrvasPresentation();
       const utterance = window.__drvasSpoken[window.__drvasSpoken.length - 1];
@@ -1472,6 +1474,7 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
     await expect(page.locator("#presentationOpenButton")).toContainText(openLabels[language]);
   }
   await page.evaluate(async () => {
+    window.__drvasPresentationVoices.forEach(voice => { voice.lang = "ro-RO"; });
     stopDrvasPresentationSpeech(); currentLanguage = "ro"; renderDrvasPresentation(); await speakDrvasPresentation();
     window.__drvasSpoken[window.__drvasSpoken.length - 1].onend();
   });
