@@ -195,3 +195,17 @@ E2E tests were updated to cover male routing, Sarah's clear/default feminine voi
 - No real publication, transfer, wallet action, trading or mining was triggered. APK remains postponed/manual-only. No paid provider or new secret was added.
 - Public URL masking remains pending an owned custom domain or explicit account-level workers.dev subdomain change. Do not alter DNS or the account-level hostname without founder confirmation.
 - This is a structured project/chat checkpoint; the full conversation remains in ChatGPT chat history.
+
+
+## 2026-11-11 — Sarah voice regression corrected and deployed
+
+- Founder reported Sarah's voice had stopped working again.
+- Root cause confirmed in current source and regression test: Sarah's browser TTS selection had been restricted to feminine voices matching the selected UI language. When a device had only a male Romanian voice plus a female English/other-language voice, the code returned `null` and Sarah was skipped in both chat and the public landing presentation. The E2E test had explicitly asserted that cross-language fallback must be `null`, contrary to the previously agreed Sarah cross-language fallback requirement documented in `docs/SARAH-CROSS-LANGUAGE-VOICE-HANDOFF-2026-11-06.md`.
+- PR #123 restores the intended behavior in both chat and presentation: prefer a feminine voice in the selected language; if none exists, select the best installed voice identified as feminine, never a masculine voice. Set the utterance locale to the chosen voice's own language. If no installed voice can be identified as feminine, keep Sarah unavailable rather than assigning a masculine voice.
+- PR #123 merged to main as `f17096f39b4f344d4b9a53216750e96347c2beb3`.
+- Exact-head browser run #836 passed 177/177, including the new test for Romanian male-only plus English female voice availability. Post-merge main browser run #837 passed 177/177.
+- Production deploy #558 succeeded for the same main commit. Cloudflare Worker version: `55650c6a-6048-4e7f-a37b-48ac90a3da77`. Smoke test: health online, all six public module cards verified, anonymous admin-status rejected with HTTP 401.
+- Deployment migration gate reported “Remote database is up to date”; no migration was applied and no SQL/schema/database changes were made.
+- No new Worker secrets, provider voice IDs, paid TTS calls, voice-cloning provider, or APK build were used. Sarah's dedicated ElevenLabs secret may still be absent; no secret values were inspected or changed. Public landing narration continues to use browser speech synthesis.
+- Automated tests prove voice selection and utterance locale routing, not actual speaker output, voice quality or Romanian pronunciation on the founder's devices. Founder manual playback verification remains required.
+- This is a structured archive/checkpoint of the conversation and technical changes; the full conversation remains in ChatGPT chat history.
