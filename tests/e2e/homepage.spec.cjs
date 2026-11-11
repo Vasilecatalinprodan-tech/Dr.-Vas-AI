@@ -764,20 +764,29 @@ test("first spoken answer waits for asynchronously loaded browser voices and pla
   expect(playback[0].voice).toBe("Andrei Romanian");
 });
 
-test("Sarah prefers a feminine voice in the selected language and falls back to another feminine device voice", async ({ page }) => {
+test("presenter voices stay in the selected language and reuse the local voice when no male voice is installed", async ({ page }) => {
   await openApp(page, "ro");
   const result = await page.evaluate(() => {
     const voices = [
       { name: "Microsoft Andrei", lang: "ro-RO", voiceURI: "andrei-ro", default: true },
       { name: "Microsoft Zira", lang: "ro-RO", voiceURI: "zira-ro" },
       { name: "Microsoft Alina", lang: "ro-RO", voiceURI: "alina-ro" },
-      { name: "Google UK English Female", lang: "en-GB", voiceURI: "google-female" }
+      { name: "Google UK English Female", lang: "en-GB", voiceURI: "google-female" },
+      { name: "Microsoft Sofia", lang: "it-IT", voiceURI: "sofia-it" }
     ];
     Object.defineProperty(window, "speechSynthesis", { configurable: true, value: { getVoices: () => voices } });
     activeAssistant = "aurora";
     const chatVoice = chooseSpeechVoice("ro-RO");
+    const italianVoice = chooseSpeechVoice("it-IT", "aurora");
+    refreshSpeechVoiceOptions();
+    const voiceOptions = Array.from(document.querySelector("#speechVoiceSelect").options).map(option => option.value).filter(Boolean);
     const presentation = getDrvasPresentationVoiceProfile(voices, "ro-RO");
     const noFemale = getDrvasPresentationVoiceProfile([voices[0]], "ro-RO");
+    const femaleOnly = [
+      { name: "Microsoft Alina", lang: "ro-RO", voiceURI: "alina-ro", default: true },
+      { name: "Microsoft Elsa", lang: "it-IT", voiceURI: "elsa-it" }
+    ];
+    const femaleOnlyProfile = getDrvasPresentationVoiceProfile(femaleOnly, "ro-RO");
     const crossLanguageVoices = [
       voices[0],
       { name: "Google UK English Female", lang: "en-GB", voiceURI: "google-female" }
@@ -787,29 +796,41 @@ test("Sarah prefers a feminine voice in the selected language and falls back to 
     const crossLanguagePresentation = getDrvasPresentationVoiceProfile(crossLanguageVoices, "ro-RO");
     return {
       chatVoice: chatVoice?.voiceURI || null,
+      voiceOptions,
       presentationDrvas: presentation.drvas?.voiceURI || null,
       presentationJan: presentation.jan?.voiceURI || null,
       presentationSarah: presentation.sarah?.voiceURI || null,
       presentationHasMale: presentation.hasMale,
       presentationHasFemale: presentation.hasFemale,
       noFemaleSarah: noFemale.sarah?.voiceURI || null,
-      noMaleDrvas: getDrvasPresentationVoiceProfile([voices[2]], "ro-RO").drvas?.voiceURI || null,
+      femaleOnlyDrvas: femaleOnlyProfile.drvas?.voiceURI || null,
+      femaleOnlyJan: femaleOnlyProfile.jan?.voiceURI || null,
+      femaleOnlySarah: femaleOnlyProfile.sarah?.voiceURI || null,
+      femaleOnlyAllSpeakers: femaleOnlyProfile.hasAllSpeakers,
+      femaleOnlyDistinct: femaleOnlyProfile.hasAllDistinct,
+      italianOnlyVoice: italianVoice?.voiceURI || null,
       crossLanguageChatVoice: crossLanguageChatVoice?.voiceURI || null,
       crossLanguagePresentationSarah: crossLanguagePresentation.sarah?.voiceURI || null,
       crossLanguageVoiceLanguage: crossLanguagePresentation.sarah?.lang || null
     };
   });
   expect(result.chatVoice).toBe("alina-ro");
+  expect(result.voiceOptions).toEqual(["andrei-ro", "alina-ro", "zira-ro"]);
   expect(result.presentationDrvas).toBe("andrei-ro");
   expect(result.presentationJan).toBe("andrei-ro");
   expect(result.presentationSarah).toBe("alina-ro");
   expect(result.presentationHasMale).toBe(true);
   expect(result.presentationHasFemale).toBe(true);
   expect(result.noFemaleSarah).toBeNull();
-  expect(result.noMaleDrvas).toBeNull();
-  expect(result.crossLanguageChatVoice).toBe("google-female");
-  expect(result.crossLanguagePresentationSarah).toBe("google-female");
-  expect(result.crossLanguageVoiceLanguage).toBe("en-GB");
+  expect(result.femaleOnlyDrvas).toBe("alina-ro");
+  expect(result.femaleOnlyJan).toBe("alina-ro");
+  expect(result.femaleOnlySarah).toBe("alina-ro");
+  expect(result.femaleOnlyAllSpeakers).toBe(true);
+  expect(result.femaleOnlyDistinct).toBe(false);
+  expect(result.italianOnlyVoice).toBe("sofia-it");
+  expect(result.crossLanguageChatVoice).toBeNull();
+  expect(result.crossLanguagePresentationSarah).toBeNull();
+  expect(result.crossLanguageVoiceLanguage).toBeNull();
 });
 
 test("late portrait load callbacks cannot overwrite the currently selected presenter label", async ({ page }) => {

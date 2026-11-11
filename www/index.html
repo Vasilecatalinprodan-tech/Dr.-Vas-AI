@@ -2807,15 +2807,14 @@ function getDrvasPresentationVoiceProfile(voices,locale){
  const local=voices.filter(v=>(v.lang||"").toLowerCase().startsWith(lang));
  const maleVoices=local.filter(isMaleSpeechVoice).sort((a,b)=>rankMaleSpeechVoice(b)-rankMaleSpeechVoice(a));
  const femaleVoices=local.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
- const anyFemaleVoices=voices.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
- // Prefer a feminine voice in the requested language. If none is installed,
- // use another installed feminine voice and set the utterance locale to that
- // voice's own language. Never substitute a masculine voice for Sarah.
- const defaultVoice=local.find(v=>v.default)||null;
- const sarah=defaultVoice&&isFemaleSpeechVoice(defaultVoice)?defaultVoice:(femaleVoices[0]||anyFemaleVoices[0]||null);
- const drvas=maleVoices[0]||null;
+ // Keep every speaker on the selected locale. Prefer role-appropriate voices,
+ // but if the device only has one local voice (including a feminine voice),
+ // reuse that voice rather than making Dr.Vas/Dr.Jan silent.
+ const defaultVoice=local.find(v=>v.default)||local[0]||null;
+ const sarah=femaleVoices[0]||null;
+ const drvas=maleVoices[0]||defaultVoice;
  const jan=maleVoices.find(v=>v.voiceURI!==drvas?.voiceURI)||drvas;
- return {drvas,jan,sarah,hasMale:!!drvas,hasFemale:!!sarah,hasAllDistinct:!!(drvas&&jan&&sarah&&new Set([drvas.voiceURI,jan.voiceURI,sarah.voiceURI]).size===3),hasFallback:!!(drvas||sarah)};
+ return {drvas,jan,sarah,hasMale:maleVoices.length>0,hasFemale:!!sarah,hasAllSpeakers:!!(drvas&&jan&&sarah),hasAllDistinct:!!(drvas&&jan&&sarah&&new Set([drvas.voiceURI,jan.voiceURI,sarah.voiceURI]).size===3),hasFallback:!!(drvas||sarah)};
 }
 function getDrvasPresentationVoices(){
  const synth=window.speechSynthesis;
@@ -2862,7 +2861,7 @@ async function speakDrvasPresentation(){
   if(run!==drvasPresentationRun)return;
   if(drvasPresentationIndex>=drvasPresentationQueue.length){
    const status=el("presentationAudioStatus");
-   if(status)status.textContent=(usingDeviceDefault||(voiceProfile.hasMale&&voiceProfile.hasFemale))?"Prezentarea s-a încheiat. Apasă «Continuă la conectare» când ești pregătit.":"Una sau mai multe voci potrivite nu sunt disponibile în limba selectată. Poți instala vocile lipsă sau continua manual.";
+   if(status)status.textContent=(usingDeviceDefault||voiceProfile.hasAllSpeakers)?"Prezentarea s-a încheiat. Apasă «Continuă la conectare» când ești pregătit.":"Una sau mai multe voci potrivite nu sunt disponibile în limba selectată. Poți instala vocile lipsă sau continua manual.";
    el("presentationContinueButton")?.classList.remove("hidden");
    return;
   }
@@ -2880,9 +2879,9 @@ async function speakDrvasPresentation(){
    return;
   }
   if(voiceForSpeaker)utterance.voice=voiceForSpeaker;
-  // Sarah's fallback may be a feminine voice from another installed locale.
-  // Match the utterance locale to that voice so the browser does not override it.
-  utterance.lang=(key==="sarah"&&voiceForSpeaker?.lang)||lang;utterance.rate=index===2?0.94:0.96;utterance.pitch=speaker.pitch;
+  // All presenter text stays in the selected UI language. Never assign a
+  // foreign voice locale to the utterance: that causes visibly distorted speech.
+  utterance.lang=lang;utterance.rate=index===2?0.94:0.96;utterance.pitch=speaker.pitch;
   utterance.onstart=()=>{
    if(run!==drvasPresentationRun)return;
    el("presentationPresenter")?.classList.add("is-speaking");
@@ -4268,16 +4267,16 @@ function refreshSpeechVoiceOptions(){
  const select=el("speechVoiceSelect");
  if(!select||!window.speechSynthesis)return;
  const language=speechLanguage().slice(0,2).toLowerCase();
- const voices=[...(window.speechSynthesis.getVoices()||[])];
+ const voices=[...(window.speechSynthesis.getVoices()||[])].filter(v=>v.lang&&v.lang.toLowerCase().startsWith(language));
  voices.sort((a,b)=>
-  Number(b.lang?.toLowerCase().startsWith(language))-Number(a.lang?.toLowerCase().startsWith(language))||
   Number(Boolean(b.default))-Number(Boolean(a.default))||
   a.name.localeCompare(b.name)
  );
  const saved=localStorage.getItem(speechVoiceStorageKey())||"";
- select.replaceChildren(new Option(voices.length?"Automat — recomandată":"Nicio voce instalată pe dispozitiv",""));
+ select.replaceChildren(new Option(voices.length?"Automat — recomandată":"Nicio voce instalată pentru limba selectată",""));
  for(const voice of voices)select.add(new Option(voice.name+" ("+voice.lang+")",voice.voiceURI));
  select.value=voices.some(v=>v.voiceURI===saved)?saved:"";
+ if(saved&&!select.value)localStorage.removeItem(speechVoiceStorageKey());
  if(saved&&!select.value)localStorage.removeItem(speechVoiceStorageKey());
 }
 function saveSpeechVoiceChoice(){
@@ -4306,16 +4305,15 @@ function chooseSpeechVoice(lang,assistantId=activeAssistant){
  const matching=voices.filter(v=>v.lang&&v.lang.toLowerCase().startsWith(language));
  const selected=assistantId===activeAssistant?el("speechVoiceSelect")?.value:(localStorage.getItem(speechVoiceStorageKey(assistantId))||"");
  if(assistantId==="aurora"){
-  // Sarah must always use a voice identified as feminine. Prefer the selected
-  // language for natural pronunciation; if this device has no feminine voice
-  // for that language, use its best installed feminine voice rather than
-  // silently skipping Sarah. The utterance locale follows the chosen voice.
-  const allFemaleVoices=voices.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
+  // Sarah uses a feminine voice from the selected language only. A voice
+  // from another language can badly distort pronunciation of the script.
   const localFemaleVoices=matching.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
-  if(selected){const chosen=allFemaleVoices.find(v=>v.voiceURI===selected);if(chosen)return chosen;}
-  return localFemaleVoices[0]||allFemaleVoices[0]||null;
+  if(selected){const chosen=localFemaleVoices.find(v=>v.voiceURI===selected);if(chosen)return chosen;}
+  return localFemaleVoices[0]||null;
  }
- if(selected){const chosen=voices.find(v=>v.voiceURI===selected);if(chosen)return chosen;}
+ // Ignore a saved/manual voice from another locale; always speak the selected
+ // language with a voice installed for that language.
+ if(selected){const chosen=matching.find(v=>v.voiceURI===selected);if(chosen)return chosen;}
  return matching[0]||voices.find(v=>v.default)||voices[0]||null;
 }
 function prepareSpeechText(value){
