@@ -143,7 +143,7 @@ test("Book Studio keeps a private ten-version chapter history and restores a sel
 
   await page.locator("#drvasBookStationManuscriptDraft").fill("Versiunea 2 — dialog și cronologie revizuite.");
   await page.locator("#drvasBookSaveRevision").click();
-  await expect(page.locator(".studio-station-status")).toContainText("Versiunea capitolului a fost salvată");
+  await expect(page.locator("#studioWorkspace [data-feature-page='book'] .studio-station-status")).toContainText("Versiunea capitolului a fost salvată");
   let saved = await page.evaluate(() => window.__DRVAS_STUDIO_ROW__());
   expect(saved.brief.station.fields.revisions).toHaveLength(1);
   expect(saved.brief.station.fields.revisions[0].fields.manuscriptDraft).toBe("Versiunea 2 — dialog și cronologie revizuite.");
@@ -151,7 +151,7 @@ test("Book Studio keeps a private ten-version chapter history and restores a sel
   await page.locator("#drvasBookStationManuscriptDraft").fill("Versiunea 3 — editare ulterioară.");
   await page.locator("#drvasBookRevisionSelect").selectOption({ index: 1 });
   await page.locator("#drvasBookRestoreRevision").click();
-  await expect(page.locator(".studio-station-status")).toContainText("Versiunea selectată a fost restaurată");
+  await expect(page.locator("#studioWorkspace [data-feature-page='book'] .studio-station-status")).toContainText("Versiunea selectată a fost restaurată");
   await expect(page.locator("#drvasBookStationManuscriptDraft")).toHaveValue("Versiunea 2 — dialog și cronologie revizuite.");
   saved = await page.evaluate(() => window.__DRVAS_STUDIO_ROW__());
   expect(saved.brief.station.fields.manuscriptDraft).toBe("Versiunea 2 — dialog și cronologie revizuite.");
