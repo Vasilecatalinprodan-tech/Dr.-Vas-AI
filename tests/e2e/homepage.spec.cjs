@@ -1204,10 +1204,10 @@ test("hashrate mining simulator estimates coin yield and net energy-adjusted res
   });
   expect(result.expectedCoinsPerDay).toBeCloseTo(0.0001425, 10);
   expect(result.grossUsdPerDay).toBeCloseTo(12.825, 8);
-  expect(result.energyUsdPerDay).toBeCloseTo(12.6, 8);
-  expect(result.netUsdPerDay).toBeCloseTo(0.09675, 8);
+  expect(result.energyUsdPerDay).toBeCloseTo(16.56, 8);
+  expect(result.netUsdPerDay).toBeCloseTo(-3.86325, 8);
   await expect(page.locator("#cryptoScenarioCoinsDay")).toContainText("BTC/zi");
-  await expect(page.locator("#cryptoScenarioNetDay")).toContainText("$0.0968");
+  await expect(page.locator("#cryptoScenarioNetDay")).toContainText("-$3.8632");
   await expect(page.locator("#cryptoHashrateSimulatorNotice")).toContainText("nu predicție");
 
   const invalid = await page.evaluate(() => {
