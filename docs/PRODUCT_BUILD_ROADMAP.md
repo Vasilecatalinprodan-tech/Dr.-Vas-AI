@@ -501,3 +501,12 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Presenter voice PR #116 merged at 09eb72413677b66eef62e1a93a068a82549d7069. Exact-head run #817 passed 174/174. Dr.Vas and Dr.Jan use locale-matched male voices; Sarah uses the feminine default voice when available. Real-device audio and production deploy remain separate verification steps.
 - Production deploy #554 and post-merge browser #820 were pending at this checkpoint.
 - Book Studio revision history is now in clean PR #118, based on merged main; it is no longer stacked. PR #117 was closed unmerged.
+
+### 2026-11-11 — Release checkpoint
+
+- Presenter voice routing is merged and verified: PR #116, exact-head #817 174/174 and post-merge #820 174/174. Dr.Vas/Dr.Jan use locale-matched male voices; Sarah uses the feminine default voice when available.
+- Book Studio revision history is merged and verified: PR #118, exact-head #824 175/175 and post-merge #825 175/175. Private chapter snapshots, restore, localization and Markdown export use existing project JSON.
+- Production deploy #555 succeeded; Worker version 1a0b43d1-5974-460f-a922-52b5755db089. Production health online, six module cards verified, unauthenticated admin request rejected.
+- Supabase is up to date; no SQL migration or schema change was made.
+- Next work: manual device voice test, then continue module-by-module improvements across Free/Health, Studio, Academy, Commerce, Business, Online Income and Crypto/Mining. Keep Mining read-only/simulation only.
+- APK remains postponed/manual-only. No unapproved paid service or real wallet/trading/mining operation.
