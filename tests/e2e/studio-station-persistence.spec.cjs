@@ -69,12 +69,13 @@ test("Book Studio station metadata survives save, new draft and reopen", async (
   await page.locator("#drvasBookStationStyleGuide").fill("Persoana a treia, trecut, ton realist, dialog natural.");
   await page.locator("#drvasBookStationCharacterBible").fill("Mara: protagonistă, caută adevărul. Ilie: tatăl ei, ascunde o scrisoare.");
   await page.locator("#drvasBookStationSettingBible").fill("Acțiunea are loc în Botoșani și Leeds, între 2008 și 2026.");
-  await page.locator("#drvasBookStationChapterOutline").fill("1. Întoarcerea — Mara găsește scrisoarea.\\n2. Martorul — Ilie explică tăcerea.");
+  await page.locator("#drvasBookStationChapterOutline").fill("1. Întoarcerea — Mara găsește scrisoarea.\n2. Martorul — Ilie explică tăcerea.");
   await page.locator("#drvasBookStationChapterStatus").selectOption("revising");
-  await page.locator("#drvasBookStationManuscriptDraft").fill("Capitolul întâi\\n\\nMara a deschis plicul și a recunoscut scrisul.");
+  await page.locator("#drvasBookStationManuscriptDraft").fill("Capitolul întâi\n\nMara a deschis plicul și a recunoscut scrisul.");
   await page.locator("#drvasBookStationRevisionNotes").fill("Păstrează cronologia; nu dezvălui încă motivul plecării lui Ilie.");
 
   await page.locator("#studioWorkspace [data-feature-page='book'] .studio-station-card button").click();
+  await expect(page.locator("#studioIdea")).toHaveValue(/Capitolul întâi/);
   await page.waitForFunction(() => document.getElementById("studioProjectStatus")?.textContent.includes("Proiect salvat"));
   const saved = await page.evaluate(() => window.__DRVAS_STUDIO_ROW__());
   expect(saved.project_type).toBe("book");
@@ -91,9 +92,9 @@ test("Book Studio station metadata survives save, new draft and reopen", async (
       styleGuide: "Persoana a treia, trecut, ton realist, dialog natural.",
       characterBible: "Mara: protagonistă, caută adevărul. Ilie: tatăl ei, ascunde o scrisoare.",
       settingBible: "Acțiunea are loc în Botoșani și Leeds, între 2008 și 2026.",
-      chapterOutline: "1. Întoarcerea — Mara găsește scrisoarea.\\n2. Martorul — Ilie explică tăcerea.",
+      chapterOutline: "1. Întoarcerea — Mara găsește scrisoarea.\n2. Martorul — Ilie explică tăcerea.",
       chapterStatus: "revising",
-      manuscriptDraft: "Capitolul întâi\\n\\nMara a deschis plicul și a recunoscut scrisul.",
+      manuscriptDraft: "Capitolul întâi\n\nMara a deschis plicul și a recunoscut scrisul.",
       revisionNotes: "Păstrează cronologia; nu dezvălui încă motivul plecării lui Ilie."
     }
   });
@@ -113,9 +114,9 @@ test("Book Studio station metadata survives save, new draft and reopen", async (
   await expect(page.locator("#drvasBookStationStyleGuide")).toHaveValue("Persoana a treia, trecut, ton realist, dialog natural.");
   await expect(page.locator("#drvasBookStationCharacterBible")).toHaveValue("Mara: protagonistă, caută adevărul. Ilie: tatăl ei, ascunde o scrisoare.");
   await expect(page.locator("#drvasBookStationSettingBible")).toHaveValue("Acțiunea are loc în Botoșani și Leeds, între 2008 și 2026.");
-  await expect(page.locator("#drvasBookStationChapterOutline")).toHaveValue("1. Întoarcerea — Mara găsește scrisoarea.\\n2. Martorul — Ilie explică tăcerea.");
+  await expect(page.locator("#drvasBookStationChapterOutline")).toHaveValue("1. Întoarcerea — Mara găsește scrisoarea.\n2. Martorul — Ilie explică tăcerea.");
   await expect(page.locator("#drvasBookStationChapterStatus")).toHaveValue("revising");
-  await expect(page.locator("#drvasBookStationManuscriptDraft")).toHaveValue("Capitolul întâi\\n\\nMara a deschis plicul și a recunoscut scrisul.");
+  await expect(page.locator("#drvasBookStationManuscriptDraft")).toHaveValue("Capitolul întâi\n\nMara a deschis plicul și a recunoscut scrisul.");
   await expect(page.locator("#drvasBookStationRevisionNotes")).toHaveValue("Păstrează cronologia; nu dezvălui încă motivul plecării lui Ilie.");
   const downloadPromise = page.waitForEvent("download");
   await page.evaluate(() => exportStudioProject());
