@@ -151,3 +151,16 @@ E2E tests were updated to cover male routing, Sarah's clear/default feminine voi
 - Production deploy #554 and independent post-merge browser run #820 were in progress at the time this checkpoint was written. Do not claim production audio is live until deploy and smoke tests succeed; real-device playback still needs manual verification.
 - CI now caches the pinned Playwright headless shell and skips redundant apt dependency installation on hosted runners.
 - Clean Book Studio PR #118 is based on the merged main commit and contains only the three Studio code/test files. PR #117 was closed as a superseded stacked branch; it was not merged.
+
+## 2026-11-11 — Post-merge production verification (confirmed)
+
+- Main is now at b22367230ae61e154253b3dbb6d9a376dc795b44.
+- Presenter voice PR #116 merged at 09eb72413677b66eef62e1a93a068a82549d7069. Exact-head run #817 passed 174/174; post-merge main run #820 also passed 174/174.
+- Book Studio revision-history PR #118 merged at b22367230ae61e154253b3dbb6d9a376dc795b44. Exact-head run #824 passed 175/175; post-merge main run #825 also passed 175/175. Up to 10 private chapter snapshots, restore, seven-language controls and Markdown export are now in main.
+- Production deploy #555 completed successfully for main commit b22367230ae61e154253b3dbb6d9a376dc795b44. Cloudflare Worker version: 1a0b43d1-5974-460f-a922-52b5755db089. Smoke test: service status online; worker ok; assets, AI, database and Studio renderer configured; homepage and all six module cards verified; unauthenticated admin-status request rejected with HTTP 401.
+- Supabase deployment gate reported “Remote database is up to date.” No migration was applied and no SQL/schema/database change was made.
+- Browser and deploy workflows now cache Playwright Chromium 1.64.1 and skip redundant apt dependency installation. Production deploy #554 was cancelled by the newer main deploy #555 before migration/deploy steps; #555 completed successfully.
+- PR #117 was closed unmerged as a superseded stacked branch. PR #118 is the clean merged Studio implementation.
+- Real-device voice playback still needs a manual check on the founder's Windows/Android browsers. Male voice availability is device/language dependent; do not substitute foreign-language voices if that distorts pronunciation. Sarah uses the feminine default voice when available.
+- APK remains postponed/manual-only. No paid provider, new secret, wallet custody, actual mining or trading was enabled.
+- This archive is a structured technical checkpoint, not a verbatim transcript of the chat. The full conversation remains in ChatGPT chat history.
