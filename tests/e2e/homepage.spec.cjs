@@ -2023,7 +2023,7 @@ test("Crypto scanner includes low-price Proof-of-Work coins and filters by hardw
     const explicitTenCentFloor = engine.eligibleCoins(markets, "all", 0.1).map(coin => coin.symbol);
     let invalidFloorThrows = false;
     try { engine.eligibleCoins(markets, "all", -1); } catch (error) { invalidFloorThrows = error instanceof RangeError; }
-    engine.fetchMarkets = async () => markets;
+    window.fetch = async () => ({ ok: true, json: async () => markets });
     document.getElementById("cryptoMiningHardware").value = "all";
     await window.scanCryptoMiningCandidates();
     return {
