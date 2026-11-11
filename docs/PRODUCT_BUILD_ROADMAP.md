@@ -495,3 +495,9 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Presenter voice PR #116 fixes locale-specific test fixtures and preserves default browser speech only when no voice list is exposed. CI now caches the pinned Playwright shell and avoids redundant apt installs; exact-head verification still required. Cloudflare Preview failure remains separately unverified.
 - Book Studio PR #117 adds capped private chapter version history, restore and Markdown export in existing project JSON; no schema change. It is stacked on #116 and requires a clean rebase after #116 merges.
 - Mining browser #793 and production deploy #553 are verified successful. Continue all modules; no SQL/schema/migration, APK, paid provider, real mining, wallet or trading changes.
+
+### 2026-11-11 — Voice integration verified in CI
+
+- Presenter voice PR #116 merged at 09eb72413677b66eef62e1a93a068a82549d7069. Exact-head run #817 passed 174/174. Dr.Vas and Dr.Jan use locale-matched male voices; Sarah uses the feminine default voice when available. Real-device audio and production deploy remain separate verification steps.
+- Production deploy #554 and post-merge browser #820 were pending at this checkpoint.
+- Book Studio revision history is now in clean PR #118, based on merged main; it is no longer stacked. PR #117 was closed unmerged.
