@@ -233,11 +233,10 @@ test("Translation Station glossary and source text survive save and reopen", asy
 
 test("Crypto & Mining shortcut opens the actual admin mining panel inside Studio", async ({ page }) => {
   await openStudio(page);
-  const cryptoPage = page.locator("#studioWorkspace [data-feature='crypto']");
-  await cryptoPage.click();
-
+  await page.locator("#studioWorkspace [data-feature='crypto']").click();
+  const cryptoPage = page.locator("#studioWorkspace [data-feature-page='crypto']");
   const shortcut = cryptoPage.locator(".studio-founder-shortcut");
-  const openButton = shortcut.getByRole("button", { name: "Deschide panoul Crypto & Mining" });
+  const openButton = shortcut.getByRole("button", { name: "Deschide panoul Crypto & Mining", exact: true });
   const miningPanel = shortcut.locator(".crypto-admin-card").first();
 
   await expect(openButton).toBeVisible();
