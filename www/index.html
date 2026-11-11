@@ -2793,12 +2793,12 @@ function prepareDrvasPresentationSpeechText(value){
 }
 function isMaleSpeechVoice(voice){
  const identity=[voice?.name,voice?.voiceURI].filter(Boolean).join(" ").toLowerCase();
- return String(voice?.gender||"").toLowerCase()==="male"||/male|man|andrei|david|mark|guy|james|daniel|alexander|thomas|george|ryan|aaron|fred|jorge|pavel|lucas|matthew|oliver|liam|michael|antonio|carlos|diego|eduardo|miguel|paul|bruno|marco|hans|stefan|maxim|nikita/i.test(identity);
+ return String(voice?.gender||"").toLowerCase()==="male"||/\bmale\b|\bman\b|andrei|david|mark|guy|james|daniel|alexander|thomas|george|ryan|aaron|fred|jorge|pavel|lucas|matthew|oliver|liam|michael|antonio|carlos|diego|eduardo|miguel|paul|bruno|marco|hans|stefan|maxim|nikita/i.test(identity);
 }
 function rankMaleSpeechVoice(voice){
  const identity=[voice?.name,voice?.voiceURI].filter(Boolean).join(" ").toLowerCase();
  if(/andrei|david|daniel|george|thomas|matthew|oliver|liam/.test(identity))return 4;
- if(/male|man|mark|guy|james|ryan|aaron|fred|pavel|michael|paul|bruno|marco|hans|stefan/.test(identity))return 3;
+ if(/\bmale\b|\bman\b|mark|guy|james|ryan|aaron|fred|pavel|michael|paul|bruno|marco|hans|stefan/.test(identity))return 3;
  if(voice?.default)return 2;
  return 1;
 }
