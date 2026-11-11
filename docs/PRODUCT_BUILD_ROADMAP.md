@@ -451,3 +451,13 @@ Conversation preservation note: this repository file stores the founder's exact 
 
 
 - Final independent main browser run #774 passed 167/167 tests. The accidentally auto-triggered APK exists only as a non-released Actions artifact (ID 13840053736; retention through 2026-12-11); future builds are manual-only.
+
+
+## 2026-11-11 — Book Studio manuscript workspace shipped; all-module continuation
+
+- Completed PR #107: Book Studio now stores and restores a structured manuscript workspace (editorial style, character/world bibles, chapter outline/status, current draft and revision notes), sends up to 75,000 characters to the assistant, exports the continuity fields to Markdown and localizes new controls in seven languages.
+- Merged commit: `8ecf72a754c678865f29c620463924e22714b2df`. Exact-head and post-merge browser regression: 168/168 each.
+- Deploy #550 succeeded; Worker version `d614a806-ea27-4f16-bb68-f772baa4cc49`; production smoke test passed. Supabase reported remote database up to date; no migration was applied and no SQL/schema/RLS change was made.
+- Android packaging remains workflow_dispatch-only and postponed. CI now explicitly enforces manual-only APK builds.
+- Next feature priorities: Academy per-lesson checklist/progress, Commerce supplier comparison/due diligence, Business cashbook/cashflow quality, Free/Health shared chat/attachment/accessibility hardening, then further Studio chapter/version workflow and Online Income/Crypto safety.
+- Continue all six public modules and internal founder workbenches. Keep Health file analysis disabled, real mining/trading disabled, and do not enable paid services or public entitlements without explicit approval.
