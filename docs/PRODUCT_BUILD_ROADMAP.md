@@ -438,3 +438,13 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Post-merge deploy/browser workflows are pending verification.
 - Android packaging is postponed. A web merge triggered an automatic APK workflow because the existing Android workflow included www/** in its push paths. Branch chore/android-build-manual-only-2026-11-11 changes APK builds to manual workflow dispatch only; do not publish or install an APK until the founder explicitly resumes that stage.
 - Continue cross-module work on Health/Free, Studio, Academy, Commerce, Business, Crypto/Mining and Online Income. Keep Health document analysis disabled until privacy/legal/provider gates are satisfied.
+
+
+## 2026-11-11 — Release checkpoint: Health preflight deployed; APK postponed
+
+- Online Income safety regression PR #104 merged after 166/166 tests. Health attachment preflight PR #105 merged after 167/167 tests and is deployed.
+- Production Worker version 9401d39d-6211-4577-b4a1-d83a742ef5a6 at https://dr--vas-ai.vasilecatalinprodan.workers.dev/ . Deploy #549 passed the 167-test browser gate, Supabase migration gate (remote already up to date), Worker deploy, smoke test and SBOM upload.
+- Production Health file analysis remains disabled until privacy/legal/provider requirements are satisfied; the preflight now prevents orphaned conversation history when analysis is unavailable.
+- PR #106 made Android packaging manual-only. APK run #374 was auto-triggered by the old push filter and completed as a non-released Actions artifact; do not install or distribute it as a final build. Resume APK only after web stability and explicit founder instruction.
+- Continue development across all six public workspaces and the private founder tools (Crypto/Mining, Online Income, Studio/creator workbenches), plus auth, privacy, localization and release reliability. Preserve owner scoping, safe failure states and no unapproved paid integrations.
+- No ad-hoc SQL or new schema/RLS change was made; remote migration history was already up to date. Keep SQL work out of scope, and report any automatic migration step precisely.
