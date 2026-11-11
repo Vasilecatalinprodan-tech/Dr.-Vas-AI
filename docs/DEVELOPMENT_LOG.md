@@ -1235,3 +1235,9 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Current code commits on the branch: `f35f55a8e0bfdb093cc3310fda9bb4f42e33df9a` (frontend routing), `e104bc375cc0b833b2d5de5eb978670cbadb95bf` (E2E assertions), `0c771e726e84efecacaca2c469e09e761a4aebb5` (gender-token matching refinement).
 - CI, exact-head browser results, PR merge and production deployment are pending. Do not claim the voice issue is fixed in production until tests pass and the deployment/smoke test succeeds.
 - No SQL/schema/migration changes, no secrets or paid provider changes, no APK build. APK remains postponed/manual-only.
+
+
+### PR #116 validation gate discovery
+
+- PR #116 is open against `main`; branch comparison is 8 commits ahead, 0 behind, with merge base exactly the requested base SHA. No combined status checks are present yet.
+- `deploy-worker.yml` triggers on pushes to `main`/`drvas-integrated-platform` and manual `workflow_dispatch`, but not `pull_request`. The connected GitHub actions interface in this session does not expose workflow dispatch. Exact-head CI has therefore not started. Merge/deploy are intentionally held until the exact code can be validated.
