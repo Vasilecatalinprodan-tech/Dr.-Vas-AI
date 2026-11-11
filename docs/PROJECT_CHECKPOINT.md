@@ -515,3 +515,14 @@ Founder asked to preserve this conversation and continue the existing integrated
 - Public hostname masking remains pending an owned custom domain or explicit account-level workers.dev subdomain change. Do not alter DNS or account-wide hostname without founder confirmation.
 - APK postponed/manual-only; real-device presenter voice playback still needs manual verification.
 - This checkpoint is a structured continuation record; full chat remains in ChatGPT history.
+
+
+### 2026-11-11 — Latest Sarah voice release checkpoint
+
+- Main: `f17096f39b4f344d4b9a53216750e96347c2beb3`.
+- PR #123 restored Sarah's cross-language feminine fallback in ordinary chat and the landing presentation. Local-language female voice is preferred; if absent, use another installed female voice and match utterance locale to the selected voice. No masculine fallback.
+- Exact-head browser #836 and post-merge main #837 passed 177/177.
+- Production deploy #558 succeeded. Worker version `55650c6a-6048-4e7f-a37b-48ac90a3da77`. Health online; six module cards verified; anonymous admin-status HTTP 401.
+- Supabase reported “Remote database is up to date”; no SQL/schema/migration changes.
+- No new secrets, paid voice calls, external cloning or APK changes. Real-device playback and pronunciation remain unverified until founder confirms.
+- Full conversation remains in ChatGPT history; this checkpoint records verified technical progress.

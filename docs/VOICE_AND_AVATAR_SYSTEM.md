@@ -79,3 +79,12 @@ Founder feedback:
 The browser-independent server TTS fix and the Academy/Commerce/Business saved-project continuity hook were included in workflow #473 / run `42130733280`, which completed SUCCESS. The Playwright browser suite, JavaScript validation, Worker deploy, production smoke test and SBOM upload passed. Production Worker version: `f88f84eb-45b6-45b8-84f4-0d109c88864f`.
 
 This still does not mean Jan/Sarah voice IDs are configured or the actual sound has been verified on the Samsung device.
+
+
+## 2026-11-11 — Sarah cross-language fallback restored
+
+- A later change had inadvertently restricted Sarah to feminine voices matching the selected UI language. This caused Sarah to be skipped on devices that had no local-language feminine voice, even when another feminine voice was installed.
+- PR #123 restores the earlier agreed fallback in both chat and presentation: prefer a feminine voice in the selected language; otherwise use the best installed feminine voice from another language. The utterance language is set to the chosen voice's language. A masculine voice is never used as Sarah fallback.
+- Browser tests pass 177/177 on exact PR head #836 and post-merge main #837. Production deploy #558 succeeded.
+- This does not prove actual audio output or pronunciation on Windows/Android. Manual playback is still required. If the device exposes no voice confidently identified as feminine, Sarah remains unavailable instead of being assigned a masculine voice.
+- The public landing presentation uses browser speech synthesis. Authenticated chat can separately attempt the Worker TTS endpoint if the Sarah provider secret is configured; the secret configuration has not been inspected or changed, and no paid voice request was made.

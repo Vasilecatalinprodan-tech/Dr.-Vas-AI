@@ -1288,3 +1288,13 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Production deploy #557 succeeded; Worker version `61f40e4a-747e-4acf-8147-58e87bdc3baf`. Health online, assets/AI/database configured, six modules verified, anonymous admin-status HTTP 401.
 - Supabase reported “Remote database is up to date”; no migration or SQL/schema change was applied.
 - Crypto & Mining and Creator & Online Income now open their actual private panels inside dedicated Studio feature pages. APK remains postponed/manual-only; no paid providers, external publishing, wallet custody, real mining or trading enabled.
+
+
+### 2026-11-11 — Sarah feminine cross-language voice regression fixed
+
+- Found a regression: both chat and landing presentation only accepted a feminine voice matching the selected language. A device with Romanian male + English female voices therefore returned no Sarah voice and skipped her narration. Existing E2E expectations explicitly required no cross-language fallback, contrary to the prior agreed handoff.
+- PR #123 restored the agreed fallback: local-language feminine voice first, otherwise another installed feminine voice; never masculine. The utterance locale follows the chosen voice's own language.
+- Merged main commit `f17096f39b4f344d4b9a53216750e96347c2beb3`; exact-head #836 and post-merge #837 passed 177/177.
+- Production deploy #558 succeeded; Worker version `55650c6a-6048-4e7f-a37b-48ac90a3da77`. Health online, six public modules verified, anonymous admin-status HTTP 401.
+- Supabase reported “Remote database is up to date”; no SQL/schema/migration change.
+- No secrets, paid voice provider calls, voice cloning or APK changes. Actual playback and pronunciation on founder devices still need manual confirmation.

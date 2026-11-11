@@ -530,3 +530,12 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Deploy #557 succeeded; Worker version `61f40e4a-747e-4acf-8147-58e87bdc3baf`. Supabase was up to date; no migration applied.
 - Next: founder verifies Crypto & Mining and Creator & Online Income buttons in production with the admin account; then continue module polish and manual presenter audio checks. Address masking still requires an owned custom domain or explicit account-level workers.dev rename.
 - APK postponed/manual-only; no paid provider, SQL/schema change or real mining/trading.
+
+
+### 2026-11-11 — Sarah voice fallback release
+
+- PR #123 restored cross-language feminine fallback for Sarah in chat and landing presentation. Prefer feminine voice matching selected language; otherwise use another installed feminine voice and match the utterance locale to it. Never silently route Sarah to a masculine voice.
+- Main commit `f17096f39b4f344d4b9a53216750e96347c2beb3`; exact-head #836 and post-merge #837 passed 177/177.
+- Production deploy #558 succeeded; Worker version `55650c6a-6048-4e7f-a37b-48ac90a3da77`. Supabase was up to date; no migrations applied.
+- Remaining: manually verify audible Sarah playback and Romanian pronunciation on Windows and Samsung Android; if no female voice exists on a device, configure/approve a dedicated provider voice separately without exposing secrets or enabling unapproved spend.
+- APK remains postponed/manual-only.
