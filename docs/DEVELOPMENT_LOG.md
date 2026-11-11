@@ -1176,3 +1176,15 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Post-merge browser run #774 and deploy run #549 started; deploy outcome pending at this checkpoint.
 - APK workflow run #374 started automatically because android.yml still had a push trigger for www/**. It was not manually requested, installed, released or distributed. New branch chore/android-build-manual-only-2026-11-11 changes the workflow to manual dispatch only (commit 4b540d1cbfbae4263826bbdc073718119c1df9be), preserving the APK pause.
 - No SQL/schema/RLS, secrets, paid provider or external credits changed. Health file analysis remains disabled. Chat archive is a structured checkpoint, not a verbatim transcript.
+
+
+## 2026-11-11 08:40 UTC — Health preflight deployed; Android builds paused
+
+- PR #104 merged at fb5c7e2d7e9231bbea878dc36bf8912c2c61e7f4 after 166/166 tests (run #771). Deploy #548 succeeded; Worker version 12e2913e-1923-4adf-92ef-8471a8c020d3.
+- PR #105 Health attachment preflight merged at 79195b4ff44c3f11b79f1d46a9e4f168a5b3890a after 167/167 exact-head tests (run #773). Deploy #549 succeeded with 167/167 browser tests, migration gate, Wrangler deploy, production smoke test and SBOM upload. Worker version 9401d39d-6211-4577-b4a1-d83a742ef5a6.
+- Production smoke test confirmed all six public module cards, Worker online, AI/assets/database configured, Studio renderer configured, and unauthenticated admin_status rejected with HTTP 401. File analysis remains disabled.
+- Supabase migration history was already current; deploy reported Remote database is up to date. No new migration applied and no ad-hoc SQL was run.
+- PR #106 merged at c8bea1c9132d205705d34b5e4a111f66a112e91f. android.yml is now workflow_dispatch-only. Previous run #374 had been automatically triggered by the old www/** push filter and uploaded an Actions artifact; it was not installed, released or distributed. APK remains postponed.
+- Production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ .
+- Independent main push browser run #774 was still in progress at the last poll; deploy #549 already independently passed the full 167-test suite.
+- Original chat remains in ChatGPT history. The archive is structured continuity, not a verbatim transcript. Next: continue all modules; keep SQL/schema work outside this workflow, APK manual-only, Health file analysis disabled, and avoid paid services/secrets without a separate decision.
