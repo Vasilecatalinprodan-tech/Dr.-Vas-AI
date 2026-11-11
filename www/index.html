@@ -2852,6 +2852,7 @@ async function speakDrvasPresentation(){
  if(run!==drvasPresentationRun)return;
  drvasPresentationQueue=lines.slice();drvasPresentationIndex=0;
  const voiceProfile=getDrvasPresentationVoiceProfile(voices,lang);
+ const usingDeviceDefault=voices.length===0;
  const voiceStatus=el("presentationAudioStatus");
  if(!voices.length&&voiceStatus){
   voiceStatus.textContent="Încerc redarea cu vocea implicită a dispozitivului. Dacă nu se aude, apasă Reia prezentarea după ce verifici volumul și vocile text-to-speech.";
@@ -2860,7 +2861,7 @@ async function speakDrvasPresentation(){
   if(run!==drvasPresentationRun)return;
   if(drvasPresentationIndex>=drvasPresentationQueue.length){
    const status=el("presentationAudioStatus");
-   if(status)status.textContent=voiceProfile.hasMale&&voiceProfile.hasFemale?"Prezentarea s-a încheiat. Apasă «Continuă la conectare» când ești pregătit.":"Una sau mai multe voci potrivite nu sunt disponibile în limba selectată. Poți instala vocile lipsă sau continua manual.";
+   if(status)status.textContent=(usingDeviceDefault||(voiceProfile.hasMale&&voiceProfile.hasFemale))?"Prezentarea s-a încheiat. Apasă «Continuă la conectare» când ești pregătit.":"Una sau mai multe voci potrivite nu sunt disponibile în limba selectată. Poți instala vocile lipsă sau continua manual.";
    el("presentationContinueButton")?.classList.remove("hidden");
    return;
   }
@@ -2868,7 +2869,7 @@ async function speakDrvasPresentation(){
   updateDrvasPresentationScene(index);
   const utterance=new SpeechSynthesisUtterance(prepareDrvasPresentationSpeechText(drvasPresentationQueue[index]));
   const voiceForSpeaker=[voiceProfile.drvas,voiceProfile.jan,voiceProfile.sarah][index];
-  if(!voiceForSpeaker){
+  if(!voiceForSpeaker&&!usingDeviceDefault){
    const status=el("presentationAudioStatus");
    const requiredVoice=key==="sarah"?"feminină":"masculină";
    if(status)status.textContent="Vocea "+requiredVoice+" pentru "+speaker.name+" nu este disponibilă în limba selectată pe acest dispozitiv. Instalează o voce compatibilă sau continuă manual.";
