@@ -2807,11 +2807,12 @@ function getDrvasPresentationVoiceProfile(voices,locale){
  const local=voices.filter(v=>(v.lang||"").toLowerCase().startsWith(lang));
  const maleVoices=local.filter(isMaleSpeechVoice).sort((a,b)=>rankMaleSpeechVoice(b)-rankMaleSpeechVoice(a));
  const femaleVoices=local.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
- // Keep the current default voice for Sarah when it is feminine, while
- // selecting explicitly male voices for Dr.Vas and Dr.Jan. Never use a
- // foreign-language voice because it can distort pronunciation.
+ const anyFemaleVoices=voices.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
+ // Prefer a feminine voice in the requested language. If none is installed,
+ // use another installed feminine voice and set the utterance locale to that
+ // voice's own language. Never substitute a masculine voice for Sarah.
  const defaultVoice=local.find(v=>v.default)||null;
- const sarah=defaultVoice&&isFemaleSpeechVoice(defaultVoice)?defaultVoice:(femaleVoices[0]||null);
+ const sarah=defaultVoice&&isFemaleSpeechVoice(defaultVoice)?defaultVoice:(femaleVoices[0]||anyFemaleVoices[0]||null);
  const drvas=maleVoices[0]||null;
  const jan=maleVoices.find(v=>v.voiceURI!==drvas?.voiceURI)||drvas;
  return {drvas,jan,sarah,hasMale:!!drvas,hasFemale:!!sarah,hasAllDistinct:!!(drvas&&jan&&sarah&&new Set([drvas.voiceURI,jan.voiceURI,sarah.voiceURI]).size===3),hasFallback:!!(drvas||sarah)};
@@ -2879,8 +2880,8 @@ async function speakDrvasPresentation(){
    return;
   }
   if(voiceForSpeaker)utterance.voice=voiceForSpeaker;
-  // Every presenter uses a voice native to the selected language; Sarah is never
-  // routed to a foreign-language voice that would distort Romanian pronunciation.
+  // Sarah's fallback may be a feminine voice from another installed locale.
+  // Match the utterance locale to that voice so the browser does not override it.
   utterance.lang=(key==="sarah"&&voiceForSpeaker?.lang)||lang;utterance.rate=index===2?0.94:0.96;utterance.pitch=speaker.pitch;
   utterance.onstart=()=>{
    if(run!==drvasPresentationRun)return;
@@ -4305,13 +4306,14 @@ function chooseSpeechVoice(lang,assistantId=activeAssistant){
  const matching=voices.filter(v=>v.lang&&v.lang.toLowerCase().startsWith(language));
  const selected=assistantId===activeAssistant?el("speechVoiceSelect")?.value:(localStorage.getItem(speechVoiceStorageKey(assistantId))||"");
  if(assistantId==="aurora"){
-  // Sarah must use a feminine voice native to the selected language.
-  // A foreign-language voice distorts Romanian and other local pronunciation.
-  // Sarah must use a voice in the selected language; foreign-language
-  // fallback is a common cause of distorted pronunciation.
-  const femaleVoices=matching.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
-  if(selected){const chosen=femaleVoices.find(v=>v.voiceURI===selected);if(chosen)return chosen;}
-  return femaleVoices[0]||null;
+  // Sarah must always use a voice identified as feminine. Prefer the selected
+  // language for natural pronunciation; if this device has no feminine voice
+  // for that language, use its best installed feminine voice rather than
+  // silently skipping Sarah. The utterance locale follows the chosen voice.
+  const allFemaleVoices=voices.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
+  const localFemaleVoices=matching.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
+  if(selected){const chosen=allFemaleVoices.find(v=>v.voiceURI===selected);if(chosen)return chosen;}
+  return localFemaleVoices[0]||allFemaleVoices[0]||null;
  }
  if(selected){const chosen=voices.find(v=>v.voiceURI===selected);if(chosen)return chosen;}
  return matching[0]||voices.find(v=>v.default)||voices[0]||null;
