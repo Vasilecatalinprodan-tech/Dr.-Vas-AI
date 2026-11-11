@@ -1248,3 +1248,11 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Latest voice PR branch commit adds Playwright browser caching and removes redundant apt dependency installation to address the stalled Chromium setup. Run #804 had passed static checks but stalled during browser installation; verify the new exact-head run before merge.
 - PR #117 adds private Book Studio chapter snapshots/restore/export in existing project JSON, no SQL. It is stacked on #116 and must be cleaned/rebased after #116 squash merge.
 - Mining browser #793 and deploy #553 succeeded; Worker version 729483ee-0b20-4949-9592-d84877cb53de.
+
+### 2026-11-11 — Presenter voice PR #116 merged
+
+- PR #116 squash-merged to main at 09eb72413677b66eef62e1a93a068a82549d7069.
+- Exact-head browser run #817 passed 174/174; run #814 also passed 174/174 on the same voice code. Tests cover male Dr.Vas/Dr.Jan selection, feminine Sarah, multilingual locale routing and no-voices fallback.
+- Matching male browser voices are selected only within the requested language to avoid distorted foreign-language pronunciation. Real device playback remains to be manually checked.
+- Deploy #554 and post-merge browser #820 were still running at checkpoint time. Do not claim live production success until verified.
+- Clean Book Studio PR #118 replaces stacked PR #117; #117 was closed unmerged.

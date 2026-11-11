@@ -46,9 +46,26 @@
   Object.entries(studioStationFieldIds).forEach(([kind,fields])=>Object.entries(fields).forEach(([key,id])=>{
    const field=byId(id);if(field)field.value=valid?.kind===kind?String(valid.fields[key]??""):"";
   }));
+  renderBookRevisionOptions(valid?.kind==="book"?valid.fields.revisions||[]:[]);
  }
  window.drvasRestoreStudioStation=restoreStudioStation;
  window.drvasGetStudioStationData=()=>window.drvasStudioStationData||null;
+ function readBookRevisionFields(){
+  const fields={};
+  Object.entries(studioStationFieldIds.book).forEach(([key,id])=>{const field=byId(id);fields[key]=field?String(field.value||""):"";});
+  return fields;
+ }
+ function renderBookRevisionOptions(revisions){
+  const select=byId("drvasBookRevisionSelect");if(!select)return;
+  const selected=select.value;
+  select.replaceChildren();
+  const placeholder=document.createElement("option");placeholder.value="";placeholder.textContent="Alege o versiune salvată";select.appendChild(placeholder);
+  (Array.isArray(revisions)?revisions:[]).forEach((revision,index)=>{
+   if(!revision||typeof revision.id!=="string")return;
+   const option=document.createElement("option");option.value=revision.id;option.textContent=revision.label||("V"+(index+1));select.appendChild(option);
+  });
+  if([...select.options].some(option=>option.value===selected))select.value=selected;
+ }
  function makeNav(root,items){
   const nav=document.createElement("nav");nav.className="drvas-feature-navigation";nav.setAttribute("aria-label","Funcții și spații de lucru");
   const pages=document.createElement("div");pages.className="drvas-feature-pages";
@@ -152,6 +169,39 @@
   title.textContent=kind==="book"?"📚 Book Studio — atelier de carte și eBook":"🌍 Translation Station — stație de traducere";
   description.textContent=kind==="book"?"Construiește proiectul editorial etapizat: sinopsis, structură, capitole, continuitate, editare și pregătire pentru export.":"Tradu integral și localizează texte în mai multe limbi, păstrând terminologia, formatarea și marcajele temporale.";
   fields.forEach(field=>grid.appendChild(field.label));
+  let revisionTools=null;
+  if(kind==="book"){
+   revisionTools=document.createElement("div");revisionTools.className="studio-station-revision-tools";revisionTools.style.cssText="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0;padding:12px;background:#091827;border:1px solid #29465b;border-radius:12px";
+   const revisionLabel=document.createElement("label");revisionLabel.textContent="Istoric versiuni capitol";revisionLabel.style.cssText="display:flex;flex:1 1 220px;flex-direction:column;gap:6px;color:#b9d3df;font-size:12px;font-weight:700";
+   const revisionSelect=document.createElement("select");revisionSelect.id="drvasBookRevisionSelect";revisionSelect.setAttribute("aria-label","Alege o versiune salvată");revisionSelect.style.cssText="width:100%;padding:10px;background:#071827;border:1px solid #34536a;border-radius:9px;color:#fff";
+   revisionLabel.appendChild(revisionSelect);
+   const saveRevision=document.createElement("button");saveRevision.type="button";saveRevision.id="drvasBookSaveRevision";saveRevision.textContent="Salvează versiunea curentă";saveRevision.style.cssText="padding:10px 12px;font-size:12px";
+   const restoreRevision=document.createElement("button");restoreRevision.type="button";restoreRevision.id="drvasBookRestoreRevision";restoreRevision.textContent="Restaurează versiunea";restoreRevision.style.cssText="padding:10px 12px;font-size:12px;background:#17364a;color:#d7edf3;border:1px solid #34566b";
+   saveRevision.addEventListener("click",async()=>{
+    const current=window.drvasGetStudioStationData?.();
+    const previous=current?.kind==="book"&&Array.isArray(current.fields?.revisions)?current.fields.revisions:[];
+    const fields=readBookRevisionFields(),createdAt=new Date().toISOString();
+    const snapshot={id:createdAt,label:"V"+(previous.length+1)+" — "+new Date(createdAt).toLocaleString(),createdAt,fields:{title:fields.title,chapterOutline:fields.chapterOutline,chapterStatus:fields.chapterStatus,manuscriptDraft:fields.manuscriptDraft,revisionNotes:fields.revisionNotes}};
+    const revisions=[...previous,snapshot].slice(-10);
+    window.drvasRestoreStudioStation?.({kind:"book",fields:{...fields,revisions}});
+    if(byId("studioDeliverable"))byId("studioDeliverable").value="book";
+    if(byId("studioProjectTitle"))byId("studioProjectTitle").value=fields.title||"Carte nouă";
+    if(byId("studioIdea")&&!byId("studioIdea").value.trim())byId("studioIdea").value=fields.concept||"";
+    const saved=await window.saveStudioProject?.();
+    status.textContent=saved?"Versiunea capitolului a fost salvată în proiectul privat.":"Versiunea a fost pregătită, dar salvarea nu a fost confirmată. Verifică statusul proiectului.";
+   });
+   restoreRevision.addEventListener("click",async()=>{
+    const revisions=window.drvasGetStudioStationData?.()?.fields?.revisions||[];
+    const snapshot=revisions.find(item=>item.id===revisionSelect.value);
+    if(!snapshot){status.textContent="Alege mai întâi o versiune salvată.";return;}
+    const fields={...readBookRevisionFields(),...(snapshot.fields||{})};
+    window.drvasRestoreStudioStation?.({kind:"book",fields:{...fields,revisions}});
+    if(byId("studioProjectTitle"))byId("studioProjectTitle").value=fields.title||"Carte nouă";
+    const saved=await window.saveStudioProject?.();
+    status.textContent=saved?"Versiunea selectată a fost restaurată și salvată în proiect.":"Versiunea a fost restaurată în formular, dar salvarea nu a fost confirmată.";
+   });
+   revisionTools.append(revisionLabel,saveRevision,restoreRevision);
+  }
   button.type="button";button.className="studio-station-submit";button.textContent=kind==="book"?"Creează și salvează proiectul de carte":"Pregătește traducerea și salvează proiectul";
   button.addEventListener("click",async()=>{
    const value=id=>byId(id)?.value?.trim()||"";
@@ -188,7 +238,10 @@
    window.buildStudioPrompt?.();
    status.textContent=saved?(window.tr?window.tr("Proiect salvat privat. Brief-ul este pregătit în conversație; verifică-l și apasă Trimite."):"Proiect salvat privat. Brief-ul este pregătit în conversație; verifică-l și apasă Trimite."):(window.tr?window.tr("Brief pregătit. Salvarea nu a fost confirmată; verifică statusul proiectelor și apasă Trimite după revizuire."):"Brief pregătit. Salvarea nu a fost confirmată; verifică statusul proiectelor și apasă Trimite după revizuire.");
   });
-  section.append(title,description,grid,button,status);
+  section.append(title,description,grid,button);
+  if(revisionTools)section.appendChild(revisionTools);
+  section.appendChild(status);
+  if(kind==="book")renderBookRevisionOptions(window.drvasGetStudioStationData?.()?.fields?.revisions||[]);
   return section;
  }
  function founderShortcut(title,description,targetId,buttonText){
@@ -229,6 +282,7 @@
   ];
   const usable=items.filter(item=>(item.nodes||[]).some(Boolean)||(item.shared||[]).some(Boolean));
   makeNav(root,usable);
+  renderBookRevisionOptions(window.drvasGetStudioStationData?.()?.fields?.revisions||[]);
   if(window.drvasStudioStationData)restoreStudioStation(window.drvasStudioStationData);
   if(header)root.insertBefore(header,root.firstChild);
   const disclaimer=direct(root,".studio-disclaimer");if(disclaimer)root.appendChild(disclaimer);

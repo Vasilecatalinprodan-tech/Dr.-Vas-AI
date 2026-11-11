@@ -142,3 +142,12 @@ E2E tests were updated to cover male routing, Sarah's clear/default feminine voi
 - PR #117 is a stacked Book Studio chapter revision-history implementation; it uses existing private project JSON, caps history at 10 snapshots, restores versions and exports Markdown. No schema/migration changes. Rebase cleanly after #116 squash merge.
 - Mining post-merge browser #793 and deploy #553 both succeeded; Worker version 729483ee-0b20-4949-9592-d84877cb53de.
 - Cloudflare Preview for #116 failed separately; do not claim Preview success. No SQL, APK, paid service, secrets, wallet/trading or real mining changes.
+
+## 2026-11-11 — Presenter voice PR merged
+
+- PR #116 was squash-merged into main at 09eb72413677b66eef62e1a93a068a82549d7069.
+- Exact-head browser run #817 passed 174/174 tests. Earlier run #814 also passed 174/174 on the same voice code. The voice tests covered locale-specific presenter selection, feminine Sarah selection, no-voice default fallback, and the multilingual presentation.
+- Dr.Vas and Dr.Jan now select locale-matched male browser voices; Sarah retains the current/default feminine voice when available. The browser does not expose a standard voice-gender property, so selection uses voice metadata/name heuristics. If a matching male voice is not installed for the selected language, the presentation reports it rather than silently using a foreign voice that could distort pronunciation.
+- Production deploy #554 and independent post-merge browser run #820 were in progress at the time this checkpoint was written. Do not claim production audio is live until deploy and smoke tests succeed; real-device playback still needs manual verification.
+- CI now caches the pinned Playwright headless shell and skips redundant apt dependency installation on hosted runners.
+- Clean Book Studio PR #118 is based on the merged main commit and contains only the three Studio code/test files. PR #117 was closed as a superseded stacked branch; it was not merged.

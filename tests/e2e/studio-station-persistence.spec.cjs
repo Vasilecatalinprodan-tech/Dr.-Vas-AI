@@ -74,7 +74,7 @@ test("Book Studio station metadata survives save, new draft and reopen", async (
   await page.locator("#drvasBookStationManuscriptDraft").fill("Capitolul întâi\n\nMara a deschis plicul și a recunoscut scrisul.");
   await page.locator("#drvasBookStationRevisionNotes").fill("Păstrează cronologia; nu dezvălui încă motivul plecării lui Ilie.");
 
-  await page.locator("#studioWorkspace [data-feature-page='book'] .studio-station-card button").click();
+  await page.locator("#studioWorkspace [data-feature-page='book'] .studio-station-submit").click();
   await expect(page.locator("#studioIdea")).toHaveValue(/Capitolul întâi/);
   await page.waitForFunction(() => document.getElementById("studioProjectStatus")?.textContent.includes("Proiect salvat"));
   const saved = await page.evaluate(() => window.__DRVAS_STUDIO_ROW__());
@@ -128,6 +128,51 @@ test("Book Studio station metadata survives save, new draft and reopen", async (
   expect(exportedText).toContain("Capitolul întâi");
 });
 
+
+test("Book Studio keeps a private ten-version chapter history and restores a selected draft", async ({ page }) => {
+  await openStudio(page);
+  await installProjectStore(page);
+  await page.locator("#studioWorkspace [data-feature='book']").click();
+  await page.locator("#drvasBookStationTitle").fill("Jurnalul Marei");
+  await page.locator("#drvasBookStationConcept").fill("O poveste originală despre memorie și familie.");
+  await page.locator("#drvasBookStationChapterOutline").fill("1. Scrisoarea\n2. Întoarcerea");
+  await page.locator("#drvasBookStationChapterStatus").selectOption("draft");
+  await page.locator("#drvasBookStationManuscriptDraft").fill("Versiunea 1 — primul manuscris.");
+  await page.locator("#studioWorkspace [data-feature-page='book'] .studio-station-submit").click();
+  await page.waitForFunction(() => document.getElementById("studioProjectStatus")?.textContent.includes("Proiect salvat"));
+
+  await page.locator("#drvasBookStationManuscriptDraft").fill("Versiunea 2 — dialog și cronologie revizuite.");
+  await page.locator("#drvasBookSaveRevision").click();
+  await expect(page.locator("#studioWorkspace [data-feature-page='book'] .studio-station-status")).toContainText("Versiunea capitolului a fost salvată");
+  let saved = await page.evaluate(() => window.__DRVAS_STUDIO_ROW__());
+  expect(saved.brief.station.fields.revisions).toHaveLength(1);
+  expect(saved.brief.station.fields.revisions[0].fields.manuscriptDraft).toBe("Versiunea 2 — dialog și cronologie revizuite.");
+
+  await page.locator("#drvasBookStationManuscriptDraft").fill("Versiunea 3 — editare ulterioară.");
+  await page.locator("#drvasBookRevisionSelect").selectOption({ index: 1 });
+  await page.locator("#drvasBookRestoreRevision").click();
+  await expect(page.locator("#studioWorkspace [data-feature-page='book'] .studio-station-status")).toContainText("Versiunea selectată a fost restaurată");
+  await expect(page.locator("#drvasBookStationManuscriptDraft")).toHaveValue("Versiunea 2 — dialog și cronologie revizuite.");
+  saved = await page.evaluate(() => window.__DRVAS_STUDIO_ROW__());
+  expect(saved.brief.station.fields.manuscriptDraft).toBe("Versiunea 2 — dialog și cronologie revizuite.");
+  expect(saved.brief.station.fields.revisions).toHaveLength(1);
+  const historyDownloadPromise = page.waitForEvent("download");
+  await page.evaluate(() => exportStudioProject());
+  const historyDownload = await historyDownloadPromise;
+  const historyText = require("fs").readFileSync(await historyDownload.path(), "utf8");
+  expect(historyText).toContain("## Istoric versiuni capitol");
+  expect(historyText).toContain("Versiunea 2 — dialog și cronologie revizuite.");
+
+  await page.evaluate(async () => {
+    newStudioProject();
+    document.getElementById("studioSavedProjects").value = "e2e-studio-station-project";
+    await openStudioProject();
+  });
+  await expect(page.locator("#drvasBookStationManuscriptDraft")).toHaveValue("Versiunea 2 — dialog și cronologie revizuite.");
+  const history = await page.locator("#drvasBookRevisionSelect option").evaluateAll(options => options.map(option => option.value).filter(Boolean));
+  expect(history).toHaveLength(1);
+});
+
 test("Book Studio manuscript controls follow the selected interface language", async ({ page }) => {
   await openStudio(page);
   await page.evaluate(() => {
@@ -138,6 +183,10 @@ test("Book Studio manuscript controls follow the selected interface language", a
   await expect(page.locator("#drvasBookStationManuscriptDraft").locator("xpath=..")).toContainText("Manuscript / current chapter");
   await expect(page.locator("#drvasBookStationManuscriptDraft")).toHaveAttribute("placeholder", "Write or continue the current chapter here. Save the project before moving to another chapter.");
   await expect(page.locator("#drvasBookStationChapterStatus option[value='revising']")).toHaveText("In revision");
+  await expect(page.locator("#drvasBookSaveRevision")).toHaveText("Save current version");
+  await expect(page.locator("#drvasBookRestoreRevision")).toHaveText("Restore selected version");
+  await expect(page.locator(".studio-station-revision-tools")).toContainText("Chapter version history");
+  await expect(page.locator("#drvasBookRevisionSelect option").first()).toHaveText("Choose a saved version");
 });
 
 test("Translation Station glossary and source text survive save and reopen", async ({ page }) => {

@@ -163,8 +163,15 @@ jobs:
       - name: Install browser regression test runner
         run: npm install --no-save --package-lock=false --save-exact @playwright/test@1.64.1 playwright-core@1.64.1
 
+      - name: Cache Playwright Chromium
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ runner.os }}-1.64.1
+
       - name: Install Chromium headless shell
-        run: npx playwright install --with-deps --only-shell chromium
+        # Use the pinned cached headless shell; hosted runners provide browser system libraries.
+        run: npx playwright install --only-shell chromium
 
       - name: Run homepage and persisted-session browser tests
         run: |

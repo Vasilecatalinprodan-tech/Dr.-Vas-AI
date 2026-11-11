@@ -470,3 +470,11 @@ Founder asked to preserve this conversation and continue the existing integrated
 - PR #117 is stacked Book Studio revision history, using existing private project JSON only. Rebase cleanly after #116 squash merge and pass its exact-head E2E.
 - Mining post-merge browser #793 and deploy #553 succeeded; Worker version 729483ee-0b20-4949-9592-d84877cb53de.
 - No SQL/schema/migrations. APK remains postponed/manual-only.
+
+### 2026-11-11 — Latest verified merge
+
+- Main commit: 09eb72413677b66eef62e1a93a068a82549d7069 (PR #116 merged).
+- Presenter voice exact-head browser run #817: 174/174 passed. Dr.Vas/Dr.Jan select male voices matching the selected language; Sarah selects the feminine default voice where available. Browser voice gender is heuristic and device playback must be manually verified.
+- Production deploy #554 and post-merge browser #820 were in progress at checkpoint time; no production-success claim until both complete.
+- Clean Book Studio version-history PR #118 is based on this main commit; stacked PR #117 was closed unmerged.
+- No SQL/schema/migration changes. APK remains postponed/manual-only.
