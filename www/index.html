@@ -1709,7 +1709,7 @@ body.health-module-mode #chatSection .chat-main #freeChatView>#chat{
      <label>Țara / piața vizată<input id="studioMarket" type="text" maxlength="100" value="Regatul Unit" placeholder="Ex.: Regatul Unit, UE, SUA"></label>
      <label class="studio-idea-label">Material sursă (TXT, MD, SRT, VTT — maximum 2 MB)<input id="studioSourceFile" type="file" accept=".txt,.md,.srt,.vtt,text/plain,text/markdown,application/x-subrip,text/vtt" onchange="loadStudioSourceFile(this.files?.[0])"><small>Fișierul este citit local și introdus în brief. Pentru documente scanate sau DOCX, folosește atașamentul conversației.</small></label>
      <label class="studio-idea-label">Ideea ta / textul de tradus
-      <textarea id="studioIdea" rows="4" maxlength="5000" placeholder="Descrie ideea, personajele, produsul sau mesajul. Pentru traduceri, lipește textul sau încarcă un fișier TXT/MD/SRT/VTT."></textarea>
+      <textarea id="studioIdea" rows="8" maxlength="75000" placeholder="Descrie ideea, personajele, produsul sau mesajul. Pentru traduceri, lipește textul sau încarcă un fișier TXT/MD/SRT/VTT."></textarea>
      </label>
     </div>
     <div class="studio-actions">
@@ -5046,7 +5046,9 @@ async function deleteStudioProject(){
 }
 function exportStudioProject(){
  const project=studioProjectData();
- const body="# "+project.title+"\n\n"+"Tip: "+project.project_type+"\n"+"Platformă: "+project.brief.platform+"\n"+"Stil: "+project.brief.tone+"\n"+"Public: "+project.brief.audience+"\n"+"Limba sursă: "+project.brief.source_language+"\n"+"Limba țintă: "+project.brief.target_language+"\n"+"Drepturi: "+project.brief.rights_status+"\n"+"Obiectiv venit: "+project.brief.monetization_route+"\n"+"Piață: "+project.brief.target_market+"\n\n## Idee și material\n\n"+project.brief.idea+"\n\n## Ultimul rezultat Dr.Vas\n\n"+(project.brief.latest_output||"Nu există încă un răspuns salvat.")+"\n";
+ const station=project.brief.station;
+ const bookStationExport=station?.kind==="book"&&station.fields? "\n\n## Book Studio — continuitate și manuscris\n\n"+Object.entries({subtitle:"Subtitlu / promisiune",styleGuide:"Ghid de stil",characterBible:"Biblia personajelor",settingBible:"Univers și cronologie",chapterOutline:"Planul capitolelor",chapterStatus:"Stadiul capitolului",manuscriptDraft:"Manuscris / capitol curent",revisionNotes:"Note de revizie și continuitate"}).map(([key,label])=>"### "+label+"\n\n"+String(station.fields[key]||"")).join("\n\n")+"\n" : "";
+ const body="# "+project.title+"\n\n"+"Tip: "+project.project_type+"\n"+"Platformă: "+project.brief.platform+"\n"+"Stil: "+project.brief.tone+"\n"+"Public: "+project.brief.audience+"\n"+"Limba sursă: "+project.brief.source_language+"\n"+"Limba țintă: "+project.brief.target_language+"\n"+"Drepturi: "+project.brief.rights_status+"\n"+"Obiectiv venit: "+project.brief.monetization_route+"\n"+"Piață: "+project.brief.target_market+"\n\n## Idee și material\n\n"+project.brief.idea+"\n"+bookStationExport+"\n## Ultimul rezultat Dr.Vas\n\n"+(project.brief.latest_output||"Nu există încă un răspuns salvat.")+"\n";
  const blob=new Blob([body],{type:"text/markdown;charset=utf-8"});
  const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=(project.title.replace(/[^a-z0-9ăâîșț_-]+/gi,"-").slice(0,70)||"drvas-proiect")+".md";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
  setStudioProjectStatus("Fișierul proiectului a fost pregătit pentru export.");
