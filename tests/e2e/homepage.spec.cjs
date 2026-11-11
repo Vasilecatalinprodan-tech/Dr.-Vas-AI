@@ -787,21 +787,29 @@ test("Sarah always selects a feminine device voice and never silently falls back
     const crossLanguagePresentation = getDrvasPresentationVoiceProfile(crossLanguageVoices, "ro-RO");
     return {
       chatVoice: chatVoice?.voiceURI || null,
+      presentationDrvas: presentation.drvas?.voiceURI || null,
+      presentationJan: presentation.jan?.voiceURI || null,
       presentationSarah: presentation.sarah?.voiceURI || null,
+      presentationHasMale: presentation.hasMale,
       presentationHasFemale: presentation.hasFemale,
       noFemaleSarah: noFemale.sarah?.voiceURI || null,
+      noMaleDrvas: getDrvasPresentationVoiceProfile([voices[2]], "ro-RO").drvas?.voiceURI || null,
       crossLanguageChatVoice: crossLanguageChatVoice?.voiceURI || null,
       crossLanguagePresentationSarah: crossLanguagePresentation.sarah?.voiceURI || null,
       crossLanguageVoiceLanguage: crossLanguagePresentation.sarah?.lang || null
     };
   });
   expect(result.chatVoice).toBe("alina-ro");
+  expect(result.presentationDrvas).toBe("andrei-ro");
+  expect(result.presentationJan).toBe("andrei-ro");
   expect(result.presentationSarah).toBe("alina-ro");
+  expect(result.presentationHasMale).toBe(true);
   expect(result.presentationHasFemale).toBe(true);
   expect(result.noFemaleSarah).toBeNull();
-  expect(result.crossLanguageChatVoice).toBe("google-female");
-  expect(result.crossLanguagePresentationSarah).toBe("google-female");
-  expect(result.crossLanguageVoiceLanguage).toBe("en-GB");
+  expect(result.noMaleDrvas).toBeNull();
+  expect(result.crossLanguageChatVoice).toBeNull();
+  expect(result.crossLanguagePresentationSarah).toBeNull();
+  expect(result.crossLanguageVoiceLanguage).toBeNull();
 });
 
 test("late portrait load callbacks cannot overwrite the currently selected presenter label", async ({ page }) => {
@@ -1421,7 +1429,7 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
     const presentationVoices = [
       { name: "Microsoft Andrei", lang: "ro-RO", voiceURI: "andrei-ro" },
       { name: "Microsoft David", lang: "ro-RO", voiceURI: "david-ro" },
-      { name: "Microsoft Alina", lang: "ro-RO", voiceURI: "alina-ro" }
+      { name: "Microsoft Alina", lang: "ro-RO", voiceURI: "alina-ro", default: true }
     ];
     const synth = { getVoices: () => presentationVoices, cancel() {}, speak: utterance => { window.__drvasSpoken.push(utterance); } };
     Object.defineProperty(window, "speechSynthesis", { configurable: true, value: synth });
@@ -1480,7 +1488,7 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
   await expect(page.locator("#presentationAvatar .presentation-photo")).toHaveAttribute("alt", "Dr.Jan — personaj AI fictiv");
   await expect.poll(() => page.locator("#presentationAvatar .presentation-photo").evaluate(img => img.complete && img.naturalWidth > 0)).toBe(true);
   expect(await page.locator("#presentationAvatar .character-glasses").evaluate(node => getComputedStyle(node).display)).toBe("block");
-  expect(await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].voice?.name)).toBe("Microsoft Andrei");
+  expect(await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].voice?.name)).toBe("Microsoft David");
   expect(jan.modules).toContain("Dr.Vas Studio");
   expect(jan.modules).toContain("Dr.Vas Business");
   expect(jan.speech).toContain("Doctor Vas Studio");
