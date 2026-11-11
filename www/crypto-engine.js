@@ -104,6 +104,47 @@
     };
   }
 
+
+  function calculateBitcoinSensitivity({
+    expectedBtcPerDay,
+    btcPriceUsd,
+    minerHashrateThs,
+    efficiencyJPerTh,
+    electricityUsdPerKwh,
+    coolingOverheadPercent = 0,
+    poolFeePercent = 1,
+    uptimePercent = 95,
+    maintenanceUsdPerDay = 0,
+    hardwareCostUsd = 0,
+    priceMultipliers = [0.8, 1, 1.2],
+    electricityMultipliers = [0.8, 1, 1.2]
+  }) {
+    const validMultipliers = values => Array.isArray(values) && values.length > 0 &&
+      values.length <= 5 && values.every(value => Number.isFinite(Number(value)) && Number(value) > 0);
+    if (!validMultipliers(priceMultipliers) || !validMultipliers(electricityMultipliers)) {
+      throw new RangeError("Multiplicatorii de sensibilitate trebuie să fie pozitivi și să conțină cel mult cinci valori.");
+    }
+    const base = {
+      expectedBtcPerDay, btcPriceUsd, minerHashrateThs, efficiencyJPerTh,
+      electricityUsdPerKwh, coolingOverheadPercent, poolFeePercent,
+      uptimePercent, maintenanceUsdPerDay, hardwareCostUsd
+    };
+    return priceMultipliers.flatMap(priceMultiplier =>
+      electricityMultipliers.map(electricityMultiplier => {
+        const result = calculateBitcoinHardwareScenario({
+          ...base,
+          btcPriceUsd: Number(btcPriceUsd) * Number(priceMultiplier),
+          electricityUsdPerKwh: Number(electricityUsdPerKwh) * Number(electricityMultiplier)
+        });
+        return {
+          priceMultiplier: Number(priceMultiplier),
+          electricityMultiplier: Number(electricityMultiplier),
+          ...result
+        };
+      })
+    );
+  }
+
   async function fetchMarkets(fetchImpl = root.fetch) {
     if (typeof fetchImpl !== "function") throw new Error("Browserul nu poate accesa sursa de cotații.");
     const ids = encodeURIComponent(COINS.map(coin => coin.id).join(","));
@@ -244,6 +285,9 @@
       facilityPowerWatts,
       energyKwhPerDay,
       energyUsdPerDay,
+      maximumProfitableElectricityUsdPerKwh: energyKwhPerDay > 0
+        ? Math.max(0, (grossUsdPerDay - poolFeeUsdPerDay - maintenance) / energyKwhPerDay)
+        : null,
       realisedBtcPerDay,
       grossUsdPerDay,
       poolFeeUsdPerDay,
@@ -264,6 +308,7 @@
     calculateNetDaily,
     calculateHashrateScenario,
     calculateBitcoinHardwareScenario,
+    calculateBitcoinSensitivity,
     fetchMarkets,
     fetchBitcoinNetworkStats
   });

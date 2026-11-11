@@ -2201,8 +2201,16 @@ body.health-module-mode #chatSection .chat-main #freeChatView>#chat{
        <div><small>Putere cu răcire</small><strong id="cryptoScenarioFacilityPower">—</strong></div>
        <div><small>Profit hardware / zi și 30 zile</small><strong id="cryptoScenarioHardwareNet">—</strong></div>
        <div><small>Preț BTC prag rentabilitate</small><strong id="cryptoScenarioBreakEven">—</strong></div>
+       <div><small>Tarif maxim de energie pentru prag net zero</small><strong id="cryptoScenarioMaxTariff">—</strong></div>
        <div><small>Recuperare cost echipament</small><strong id="cryptoScenarioPayback">—</strong></div>
       </div>
+      <div class="admin-table-wrap" aria-label="Matrice de sensibilitate Bitcoin">
+       <table class="crypto-engine-table">
+        <thead><tr><th>Preț BTC față de bază</th><th>Tarif energie față de bază</th><th>Net / zi</th><th>Net / 30 zile</th><th>Recuperare hardware</th></tr></thead>
+        <tbody id="cryptoScenarioSensitivityBody"><tr><td colspan="5">Matricea apare după calcularea scenariului BTC.</td></tr></tbody>
+       </table>
+      </div>
+      <p class="crypto-engine-footnote">Matrice orientativă 3×3: preț BTC la 80%, 100% și 120% din ipoteză; tarif energie la 80%, 100% și 120%. Toate celelalte variabile rămân constante. Nu este prognoză și nu execută mining.</p>
       <span id="cryptoHashrateSimulatorNotice" role="status" aria-live="polite">Exemplu demonstrativ. Modelul nu citește dificultatea sau recompensa live și nu pornește mining.</span>
      </section>
      <div class="admin-table-wrap">
@@ -7724,6 +7732,7 @@ function calculateCryptoHashrateScenario() {
       input[key] = Number(field.value);
     }
     const result = window.DrVasCryptoEngine.calculateHashrateScenario(input);
+    let scenarioResult = result;
     const symbol = (document.getElementById("cryptoScenarioSymbol")?.value || "COIN").trim().toUpperCase().slice(0,10);
     const money = value => new Intl.NumberFormat("en-US", {style:"currency",currency:"USD",maximumFractionDigits:4}).format(value);
     const put = (id,value) => { const node=document.getElementById(id); if(node)node.textContent=value; };
@@ -7737,7 +7746,7 @@ function calculateCryptoHashrateScenario() {
       const efficiency = Number(document.getElementById("cryptoScenarioEfficiency")?.value);
       const cooling = Number(document.getElementById("cryptoScenarioCooling")?.value);
       const hardwareCost = Number(document.getElementById("cryptoScenarioHardwareCost")?.value);
-      const hardware = window.DrVasCryptoEngine.calculateBitcoinHardwareScenario({
+      const hardwareInputs = {
         expectedBtcPerDay: input.minerHashrate / input.networkHashrate * input.blocksPerDay * input.blockReward,
         btcPriceUsd: input.priceUsd,
         minerHashrateThs: input.minerHashrate,
@@ -7748,19 +7757,44 @@ function calculateCryptoHashrateScenario() {
         uptimePercent: input.uptimePercent,
         maintenanceUsdPerDay: input.maintenanceUsdPerDay,
         hardwareCostUsd: hardwareCost
-      });
+      };
+      const hardware = window.DrVasCryptoEngine.calculateBitcoinHardwareScenario(hardwareInputs);
+      scenarioResult = { ...result, ...hardware };
+      put("cryptoScenarioEnergyDay",money(hardware.energyUsdPerDay));
+      put("cryptoScenarioNetDay",money(hardware.netUsdPerDay));
+      put("cryptoScenarioNetMonth",money(hardware.netUsdPer30Days));
       put("cryptoScenarioPowerWatts",hardware.minerPowerWatts.toFixed(0)+" W");
       put("cryptoScenarioFacilityPower",hardware.facilityPowerWatts.toFixed(0)+" W");
       put("cryptoScenarioBreakEven",money(hardware.breakEvenBtcPriceUsd));
+      put("cryptoScenarioMaxTariff",hardware.maximumProfitableElectricityUsdPerKwh === null ? "—" : money(hardware.maximumProfitableElectricityUsdPerKwh)+"/kWh");
       put("cryptoScenarioPayback",hardware.paybackDays === null ? "Nerecuperabil la ipotezele curente" : hardware.paybackDays.toFixed(1)+" zile");
       put("cryptoScenarioHardwareNet",money(hardware.netUsdPerDay)+"/zi · "+money(hardware.netUsdPer30Days)+"/30 zile");
+      const sensitivityBody = document.getElementById("cryptoScenarioSensitivityBody");
+      if (sensitivityBody && typeof window.DrVasCryptoEngine.calculateBitcoinSensitivity === "function") {
+        const cases = window.DrVasCryptoEngine.calculateBitcoinSensitivity(hardwareInputs);
+        sensitivityBody.replaceChildren();
+        for (const scenario of cases) {
+          const row = sensitivityBody.insertRow();
+          const payback = scenario.paybackDays === null ? "Nu se recuperează" : scenario.paybackDays.toFixed(1)+" zile";
+          const values = [
+            (scenario.priceMultiplier*100).toFixed(0)+"%",
+            (scenario.electricityMultiplier*100).toFixed(0)+"%",
+            money(scenario.netUsdPerDay),
+            money(scenario.netUsdPer30Days),
+            payback
+          ];
+          values.forEach(value => { const cell=row.insertCell(); cell.textContent=value; });
+        }
+      }
     } else {
-      ["cryptoScenarioPowerWatts","cryptoScenarioFacilityPower","cryptoScenarioBreakEven","cryptoScenarioPayback","cryptoScenarioHardwareNet"].forEach(id=>put(id,"—"));
+      ["cryptoScenarioPowerWatts","cryptoScenarioFacilityPower","cryptoScenarioBreakEven","cryptoScenarioMaxTariff","cryptoScenarioPayback","cryptoScenarioHardwareNet"].forEach(id=>put(id,"—"));
+      document.getElementById("cryptoScenarioSensitivityBody")?.replaceChildren();
     }
     notice.textContent = "Estimare matematică, nu predicție. Pentru BTC, eficiența J/TH și răcirea estimează consumul; verifică tariful, dificultatea, recompensa și prețul la surse actuale. Nu se execută mining.";
-    return result;
+    return scenarioResult;
   } catch (error) {
-    ["cryptoScenarioShare","cryptoScenarioCoinsDay","cryptoScenarioGrossDay","cryptoScenarioEnergyDay","cryptoScenarioNetDay","cryptoScenarioNetMonth","cryptoScenarioPowerWatts","cryptoScenarioFacilityPower","cryptoScenarioBreakEven","cryptoScenarioPayback","cryptoScenarioHardwareNet"].forEach(id=>{const node=document.getElementById(id);if(node)node.textContent="—";});
+    ["cryptoScenarioShare","cryptoScenarioCoinsDay","cryptoScenarioGrossDay","cryptoScenarioEnergyDay","cryptoScenarioNetDay","cryptoScenarioNetMonth","cryptoScenarioPowerWatts","cryptoScenarioFacilityPower","cryptoScenarioBreakEven","cryptoScenarioMaxTariff","cryptoScenarioPayback","cryptoScenarioHardwareNet"].forEach(id=>{const node=document.getElementById(id);if(node)node.textContent="—";});
+    document.getElementById("cryptoScenarioSensitivityBody")?.replaceChildren();
     notice.textContent = error?.message || "Verifică valorile introduse.";
     return null;
   }

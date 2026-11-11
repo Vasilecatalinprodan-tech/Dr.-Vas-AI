@@ -113,4 +113,4 @@ jobs:
           exit 1
 
       - name: Run homepage and session-restoration tests
-        run: npx playwright test tests/e2e/homepage.spec.cjs tests/e2e/data-isolation-migrations.spec.cjs tests/e2e/module-persistence.spec.cjs tests/e2e/academy-progress.spec.cjs tests/e2e/studio-station-persistence.spec.cjs tests/e2e/income-tracker.spec.cjs --reporter=line
+        run: npx playwright test tests/e2e/homepage.spec.cjs tests/e2e/data-isolation-migrations.spec.cjs tests/e2e/module-persistence.spec.cjs tests/e2e/academy-progress.spec.cjs tests/e2e/studio-station-persistence.spec.cjs tests/e2e/income-tracker.spec.cjs tests/e2e/crypto-engine.spec.cjs --reporter=line
