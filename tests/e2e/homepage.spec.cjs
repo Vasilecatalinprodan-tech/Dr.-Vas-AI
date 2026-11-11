@@ -1778,13 +1778,14 @@ test("public dashboard exposes exactly six customer modules while internal workb
     workbenchCount: panel.querySelectorAll(".founder-tool").length
   }));
   expect(internalWorkbenchState).toMatchObject({
-    cryptoInsideAdmin: true,
+    cryptoInsideAdmin: false,
     creatorLabInsideAdmin: true,
     evaluationLabInsideAdmin: true,
     digitalProductStudioInsideAdmin: true,
     founderProvenanceInsideAdmin: true
   });
   expect(internalWorkbenchState.workbenchCount).toBeGreaterThanOrEqual(10);
+  await expect(page.locator("#studioWorkspace #cryptoAdminHeading")).toHaveCount(1);
 });
 
 
@@ -2998,7 +2999,10 @@ test("Studio exposes dedicated Book, Translation, Crypto and Online Income works
   await expect(page.locator("#drvasTranslationText")).toBeVisible();
   await expect(page.locator("#drvasTranslationTarget")).toBeVisible();
   await page.locator('#studioWorkspace [data-feature="crypto"]').click();
-  await expect(page.locator('#studioWorkspace [data-feature-page="crypto"] .studio-founder-shortcut button')).toBeVisible();
+  const cryptoFeaturePage = page.locator('#studioWorkspace [data-feature-page="crypto"]');
+  const openMiningPanel = cryptoFeaturePage.getByRole("button", { name: "Deschide panoul Crypto & Mining", exact: true });
+  await expect(openMiningPanel).toBeVisible();
+  await openMiningPanel.click();
   await expect(page.locator("#cryptoEngineStatus")).toContainText("Mining-ul real rămâne oprit");
   await expect(page.locator("#cryptoEngineScanButton")).toHaveCount(1);
   await page.locator('#studioWorkspace [data-feature="income-lab"]').click();
