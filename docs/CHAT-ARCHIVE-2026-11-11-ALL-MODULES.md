@@ -209,3 +209,19 @@ E2E tests were updated to cover male routing, Sarah's clear/default feminine voi
 - No new Worker secrets, provider voice IDs, paid TTS calls, voice-cloning provider, or APK build were used. Sarah's dedicated ElevenLabs secret may still be absent; no secret values were inspected or changed. Public landing narration continues to use browser speech synthesis.
 - Automated tests prove voice selection and utterance locale routing, not actual speaker output, voice quality or Romanian pronunciation on the founder's devices. Founder manual playback verification remains required.
 - This is a structured archive/checkpoint of the conversation and technical changes; the full conversation remains in ChatGPT chat history.
+
+
+## 2026-11-11 — Locale-safe presenter voice fix deployed (PR #125)
+
+Founder feedback:
+> „merge dar distorsionat....ai avut o voce feminina ieri care vorbea in locul meu si a lui jan...de ce nu o folosim pe aia,o foloseai de altfel si cand puneam in italiana....in fine continua cu toate si salveaza tot”
+
+- Root cause: the previous Sarah cross-language fallback could select (for example) an English feminine device voice for Romanian or Italian narration, then set the utterance locale to English. That made the selected script sound distorted. The voice picker also listed foreign-language voices and could retain a saved selection from another locale.
+- PR #125: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/125. Merged to main as `54e034554c7d8959fb21300d99090b316f41160d`.
+- Voice routing now remains inside the selected UI language. Sarah uses a feminine voice installed for that locale only; if none exists, she is reported unavailable rather than using a foreign-language voice or masculine substitute. Dr.Vas and Dr.Jan prefer local masculine voices, but if the device has no local masculine voice they reuse its local default voice (including the working feminine voice) instead of becoming silent. The voice picker lists only voices matching the selected locale and clears stale foreign-locale selections.
+- Regression coverage includes a device with only a local feminine voice (shared by all three presenters), an Italian feminine voice, rejection of cross-language Sarah fallback, and locale-only voice-picker options.
+- Exact final PR-head browser run #842 / run ID `43091955981`: **177/177 passed**. Post-merge main browser run #844 / run ID `43092604796`: **177/177 passed**.
+- Production deploy #559 / run ID `43092604748`: **SUCCESS**. Worker version `ed6dc539-0e3f-4751-868d-fd004dad87b6`. Production smoke test confirmed online Worker, all six public module cards, and unauthenticated admin-status HTTP 401. SBOM artifact ID `13889133035`.
+- Supabase reported “Remote database is up to date.” No migration was applied. No SQL/schema/RLS change, Worker secret, paid TTS/provider call, voice-cloning service or APK build was used. Health file analysis remains disabled; APK remains postponed/manual-only.
+- Actual audio quality and pronunciation on the founder's Windows browser and Samsung device still require a manual listening check; automated tests verify voice selection and locale routing, not the device's audible output.
+- This is a structured archive of the request and implementation, not a verbatim export. The full ChatGPT conversation remains in ChatGPT history.
