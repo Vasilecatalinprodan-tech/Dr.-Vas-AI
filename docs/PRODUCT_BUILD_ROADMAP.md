@@ -470,3 +470,10 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Continue Business cashbook/cashflow, Free/Health chat/attachments/privacy, Studio chapter/version workflows, Online Income product/service builder and platform-wide accessibility/security.
 - Mining remains read-only/simulation only; no device agent, wallet custody, trades or automated mining.
 - No SQL changes; APK remains postponed/manual-only; no unapproved paid services.
+
+
+## Mining production release — 11 November 2026
+
+- Mining sensitivity PR #111 merged at `6bf6701d9adb955d5c77bd0167e63dbdb324589a`; exact-head browser #791 passed 174/174.
+- Production deploy #553 succeeded; Worker version `729483ee-0b20-4949-9592-d84877cb53de`; migration history already current, no new migration applied; RPC/RLS/service_role checks and production smoke tests passed.
+- Independent post-merge browser #793 pending at last check. Mining is still analysis/simulation only; no device agent or mining execution.
