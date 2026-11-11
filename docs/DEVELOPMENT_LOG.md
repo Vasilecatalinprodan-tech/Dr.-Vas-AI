@@ -1191,3 +1191,18 @@ Conversation preservation note: this repository file stores the founder's exact 
 
 
 - Final independent post-merge browser run #774 (42988157174) passed 167/167 tests. APK artifact ID 13840053736 remains an uninstalled, unreleased GitHub Actions artifact through 2026-12-11; future builds are manual-only.
+
+
+## 2026-11-11 09:35 UTC — Book Studio manuscript workspace merged and deployed
+
+- Founder directive confirmed: autonomous code changes, PR merge and deploy authorized; no SQL changes; APK postponed/manual-only; continue all modules and preserve chat/project history.
+- Starting checkpoint supplied by founder: main `7e1dbc18865f45f9401195457651295379620dc7`.
+- PR #107 added Book Studio manuscript continuity fields (subtitle, style guide, character bible, world/timeline, chapter outline/status, current manuscript and revision notes), private save/reopen, long-form prompt handoff (75,000 characters), Markdown export and seven-language localization.
+- PR #107 merged to main at `8ecf72a754c678865f29c620463924e22714b2df`.
+- Exact-head PR browser run #778 passed 168/168; post-merge browser run #779 passed 168/168.
+- Corrected a stale CI assertion so Android packaging is validated as workflow_dispatch-only; Android workflow itself remains manual-only and APK remains postponed.
+- Deploy #550 succeeded; Worker version `d614a806-ea27-4f16-bb68-f772baa4cc49`. Production smoke test verified homepage, all six public modules and unauthenticated admin rejection (HTTP 401). SBOM artifact ID `13844615088`.
+- Supabase migration gate reported Remote database is up to date; no new migration applied. No SQL, schema, RLS, secrets or paid provider changes were made in PR #107.
+- Production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ .
+- New structured archive: `docs/CHAT-ARCHIVE-2026-11-11-ALL-MODULES.md`. This is a project continuity archive, not a verbatim transcript export.
+- Next: continue Academy lesson-by-lesson progress, Commerce supplier comparison, Business reporting and Free/Health hardening while preserving the founder's no-SQL and APK-pause constraints.
