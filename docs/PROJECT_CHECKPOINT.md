@@ -462,3 +462,12 @@ Founder asked to preserve this conversation and continue the existing integrated
 
 - PR #116 open; branch is ahead of main with no behind commits; merge base is the requested `df5e119a14aa3526f3805835b3349b87533cf94e`.
 - `deploy-worker.yml` does not run on pull requests, and the current GitHub integration does not expose workflow dispatch. No exact-head tests have run and no checks are reported. Hold merge/deploy; next step is to add/enable a safe PR validation path or run an available local exact-head suite.
+
+### 2026-11-11 continuation checkpoint
+
+- Verified base for active work: main at df5e119a14aa3526f3805835b3349b87533cf94e.
+- Mining PR #111 post-merge browser #793 and production deploy #553 both succeeded; Worker version 729483ee-0b20-4949-9592-d84877cb53de.
+- Presenter voice PR #116: head eeccb3bbd223d7891f404cb5cd87e8e3ad5e5e07; run #803 failed 172/174 due two test issues, both corrected. Run #804 static checks passed; browser E2E pending. Cloudflare Preview failure still needs release-path verification. Do not merge until exact-head browser tests pass.
+- Book Studio version history PR #117 is stacked on #116, latest head 1f95180f6184f22de0eed634bba7a3a18e817488; adds 10-version chapter snapshot/restore and export in existing private project JSON, no SQL. Run #810 static checks passed; browser E2E pending. After #116 squash merge, create/rebase a clean Studio branch before merge.
+- browser-e2e.yml already triggers on pull_request; earlier note stating otherwise was incorrect.
+- No SQL/schema/migration changes. APK postponed/manual-only. No paid providers, new secrets, real mining, wallet custody or trading.
