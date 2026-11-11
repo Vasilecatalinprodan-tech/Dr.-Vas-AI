@@ -1759,7 +1759,7 @@ test("server-side assistant TTS still works when browser speech synthesis is una
 });
 
 
-test("public dashboard exposes exactly six customer modules while internal workbenches stay inside the hidden admin centre", async ({ page }) => {
+test("public dashboard exposes six customer modules while founder workbenches stay behind private Studio access", async ({ page }) => {
   await openApp(page, "ro");
 
   const publicModuleIds = await page.locator("#moduleSelectionSection .module-card").evaluateAll(cards =>
@@ -1774,18 +1774,32 @@ test("public dashboard exposes exactly six customer modules while internal workb
     creatorLabInsideAdmin: Array.from(panel.querySelectorAll("h4, h5")).some(node => node.textContent.includes("Creator & Online Income Lab")),
     evaluationLabInsideAdmin: Array.from(panel.querySelectorAll("h5")).some(node => node.textContent.includes("AI Evaluation & Training Lab")),
     digitalProductStudioInsideAdmin: Array.from(panel.querySelectorAll("h5")).some(node => node.textContent.includes("Digital Product Studio")),
-    founderProvenanceInsideAdmin: Boolean(panel.querySelector("#founderProvenanceHeading")),
-    workbenchCount: panel.querySelectorAll(".founder-tool").length
+    founderProvenanceInsideAdmin: Boolean(panel.querySelector("#founderProvenanceHeading"))
   }));
   expect(internalWorkbenchState).toMatchObject({
     cryptoInsideAdmin: false,
-    creatorLabInsideAdmin: true,
-    evaluationLabInsideAdmin: true,
-    digitalProductStudioInsideAdmin: true,
-    founderProvenanceInsideAdmin: true
+    creatorLabInsideAdmin: false,
+    evaluationLabInsideAdmin: false,
+    digitalProductStudioInsideAdmin: false,
+    founderProvenanceInsideAdmin: false
   });
-  expect(internalWorkbenchState.workbenchCount).toBeGreaterThanOrEqual(10);
-  await expect(page.locator("#studioWorkspace #cryptoAdminHeading")).toHaveCount(1);
+  const studioWorkbenchState = await page.locator("#studioWorkspace").evaluate(root => ({
+    cryptoInsideStudio: Boolean(root.querySelector("#cryptoAdminHeading")),
+    creatorLabInsideStudio: Array.from(root.querySelectorAll("h4, h5")).some(node => node.textContent.includes("Creator & Online Income Lab")),
+    evaluationLabInsideStudio: Array.from(root.querySelectorAll("h5")).some(node => node.textContent.includes("AI Evaluation & Training Lab")),
+    digitalProductStudioInsideStudio: Array.from(root.querySelectorAll("h5")).some(node => node.textContent.includes("Digital Product Studio")),
+    founderProvenanceInsideStudio: Boolean(root.querySelector("#founderProvenanceHeading")),
+    workbenchCount: root.querySelectorAll(".founder-tool").length
+  }));
+  expect(studioWorkbenchState).toMatchObject({
+    cryptoInsideStudio: true,
+    creatorLabInsideStudio: true,
+    evaluationLabInsideStudio: true,
+    digitalProductStudioInsideStudio: true,
+    founderProvenanceInsideStudio: true
+  });
+  expect(studioWorkbenchState.workbenchCount).toBeGreaterThanOrEqual(10);
+  await expect(page.locator("#studioWorkspace")).toBeHidden();
 });
 
 
@@ -3006,9 +3020,13 @@ test("Studio exposes dedicated Book, Translation, Crypto and Online Income works
   await expect(page.locator("#cryptoEngineStatus")).toContainText("Mining-ul real rămâne oprit");
   await expect(page.locator("#cryptoEngineScanButton")).toHaveCount(1);
   await page.locator('#studioWorkspace [data-feature="income-lab"]').click();
-  await expect(page.locator('#studioWorkspace [data-feature-page="income-lab"] .studio-founder-shortcut button')).toBeVisible();
-  await expect(page.locator("#founderDigitalTitle")).toHaveCount(1);
-  await expect(page.locator("#founderBookTitle")).toHaveCount(1);
+  const incomePage = page.locator('#studioWorkspace [data-feature-page="income-lab"]');
+  const openIncomeLab = incomePage.getByRole("button", { name: "Deschide Creator & Online Income Lab", exact: true });
+  await expect(openIncomeLab).toBeVisible();
+  await openIncomeLab.click();
+  await expect(page.locator("#founderDigitalTitle")).toBeVisible();
+  await expect(page.locator("#founderBookTitle")).toBeVisible();
+  await expect(page.locator("#founderProvenanceHeading")).toBeVisible();
 });
 
 
