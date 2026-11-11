@@ -3393,7 +3393,7 @@ test("Academy and Commerce workspaces localize their core controls in all suppor
     await expect(page.locator("#commerceMarket option").first()).toHaveText(market);
     await expect(page.locator("#commerceModel option").first()).toHaveText(model);
     await expect(page.locator("#commerceChannel option").first()).toHaveText(channel);
-    await expect(page.locator("#commerceWorkspace .crypto-calculator h5")).toContainText("Commerce");
+    await expect(page.locator("#commerceWorkspace .crypto-calculator:not(.commerce-supplier-comparison) h5")).toContainText("Commerce");
     await expect(page.locator("#commerceCurrency").locator("xpath=..")).toContainText(currency);
     await expect(page.locator("#commerceUnitCost").locator("xpath=..")).toContainText(unitCost);
     await expect(page.locator("#commerceSupplierTitle")).toHaveText(supplierHeading);
