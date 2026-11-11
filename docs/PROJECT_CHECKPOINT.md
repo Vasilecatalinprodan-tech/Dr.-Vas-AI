@@ -478,3 +478,13 @@ Founder asked to preserve this conversation and continue the existing integrated
 - Production deploy #554 and post-merge browser #820 were in progress at checkpoint time; no production-success claim until both complete.
 - Clean Book Studio version-history PR #118 is based on this main commit; stacked PR #117 was closed unmerged.
 - No SQL/schema/migration changes. APK remains postponed/manual-only.
+
+### 2026-11-11 — Latest production checkpoint
+
+- Main: b22367230ae61e154253b3dbb6d9a376dc795b44.
+- PR #116 presenter voices merged; exact-head #817 and post-merge #820 passed 174/174.
+- PR #118 Book Studio revision history merged; exact-head #824 and post-merge #825 passed 175/175.
+- Production deploy #555 succeeded. Cloudflare Worker version: 1a0b43d1-5974-460f-a922-52b5755db089. Health status online; Worker ok; assets, AI, database and Studio renderer configured; homepage and all six modules verified.
+- Supabase migration gate: Remote database is up to date. No migration or SQL/schema change was made.
+- CI uses cached Playwright Chromium 1.64.1 in browser and production deploy workflows.
+- Next: manual real-device voice check; continue all modules including Mining simulators. APK postponed/manual-only. No paid providers, new secrets, wallet custody, trading or real mining.
