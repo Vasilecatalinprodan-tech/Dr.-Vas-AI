@@ -2163,7 +2163,7 @@ body.health-module-mode #chatSection .chat-main #freeChatView>#chat{
      <p>Motorul identifică monede Proof-of-Work din catalogul compatibil, filtrează cotațiile strict peste 1 USD și potrivește algoritmul cu tipul echipamentului. Prețul peste 1 USD nu înseamnă automat profit: pentru clasarea reală sunt necesare hashrate-ul, dificultatea/recompensa rețelei, comisionul pool-ului și energia.</p>
      <div class="crypto-engine-toolbar">
       <select id="cryptoMiningHardware" aria-label="Tip echipament pentru minare"></select>
-      <button type="button" class="crypto-engine-scan" id="cryptoEngineScanButton" onclick="scanCryptoMiningCandidates()">Scanează monedele peste $1</button>
+      <button type="button" class="crypto-engine-scan" id="cryptoEngineScanButton" onclick="scanCryptoMiningCandidates()">Scanează monedele PoW</button>
       <button type="button" class="crypto-emergency-stop" id="cryptoEmergencyStopButton" aria-pressed="false" onclick="activateCryptoEmergencyStop()">STOP URGENȚĂ</button>
      </div>
      <div id="cryptoEngineStatus" class="crypto-engine-status" role="status" aria-live="polite">Motor de analiză pregătit. Mining-ul real rămâne oprit până la conectarea unui agent nativ verificat și autorizarea echipamentului.</div>
@@ -2216,7 +2216,7 @@ body.health-module-mode #chatSection .chat-main #freeChatView>#chat{
      <div class="admin-table-wrap">
       <table class="crypto-engine-table">
        <thead><tr><th>Monedă</th><th>Algoritm</th><th>Preț USD</th><th>Schimbare 24h</th><th>Compatibilitate</th></tr></thead>
-       <tbody id="cryptoEngineCoinsBody"><tr><td colspan="5">Apasă „Scanează monedele peste $1” pentru cotații.</td></tr></tbody>
+       <tbody id="cryptoEngineCoinsBody"><tr><td colspan="5">Apasă „Scanează monedele PoW” pentru cotații.</td></tr></tbody>
       </table>
      </div>
      <p class="crypto-engine-footnote">Sursa de cotații: CoinGecko public markets API. Catalogul este limitat la monede PoW cunoscute și algoritmi declarați; nu pretinde că acoperă fiecare token sau fiecare pool. Motorul nu folosește CPU/GPU, nu rulează mining ascuns și nu trimite fonduri. Butonul roșu armează oprirea locală pentru comenzile viitoare; nu poate opri un miner extern până când agentul nativ securizat nu este conectat.</p>
