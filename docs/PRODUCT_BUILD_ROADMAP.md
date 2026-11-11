@@ -489,3 +489,9 @@ Conversation preservation note: this repository file stores the founder's exact 
 
 
 - Release automation gap identified during voice PR #116: the deployment workflow has no `pull_request` trigger (only `main`/`drvas-integrated-platform` pushes and manual dispatch). Add a safe PR validation workflow or restore an exact-head CI trigger as a separate platform reliability task; never merge untested changes merely to trigger the push workflow.
+
+### 2026-11-11 active verification
+
+- Presenter voice PR #116 fixes locale-specific test fixtures and preserves default browser speech only when no voice list is exposed. CI now caches the pinned Playwright shell and avoids redundant apt installs; exact-head verification still required. Cloudflare Preview failure remains separately unverified.
+- Book Studio PR #117 adds capped private chapter version history, restore and Markdown export in existing project JSON; no schema change. It is stacked on #116 and requires a clean rebase after #116 merges.
+- Mining browser #793 and production deploy #553 are verified successful. Continue all modules; no SQL/schema/migration, APK, paid provider, real mining, wallet or trading changes.
