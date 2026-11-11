@@ -117,3 +117,13 @@ This file preserves the founder's exact instruction above and the verified techn
 - PR #103 head `5a6665e616615907b400b0d3e5f493757947dc1f` is 5 commits ahead and 0 behind main; GitHub reports mergeable=true.
 - Exact-head browser CI run #766 / `42927733404` is in progress. No merge or production deployment yet.
 - Older PR #101 and #102 were closed as superseded, not merged. Their earlier passing 160/160 results do not replace PR #103's own CI.
+
+
+## 2026-11-11 03:55 UTC — Studio merge and Online Income safety regression
+- PR #103 (Studio Book/Translation station persistence) passed exact-head browser E2E run #769: 162/162 tests passed, then squash-merged to main at `b4df01417eb4364f37ac135658fe2e47f1ed6522`.
+- Studio Book and Translation station metadata now persists in the existing private Studio project brief and restores when reopening the saved project. No schema migration or production deployment was performed.
+- PRs #101 and #102 were superseded and closed; PR #103 was the final active PR and is now merged.
+- Started branch `test/income-tracker-owner-safety-2026-11-11` to add regression coverage for owner-scoped income opportunity inserts, database failure reporting, safe text rendering of untrusted titles, and currency-separated totals/filter behavior. Added `tests/e2e/income-tracker.spec.cjs` and included it in browser and deployment test gates.
+- The new Income Tracker suite has not yet passed CI. Do not merge until exact-head CI is green.
+- This archive is a structured checkpoint, not a literal export of the full ChatGPT transcript; the original conversation remains in ChatGPT history. The user explicitly asked: “ok continua si salveaza tot”.
+- No live DB/RLS change, secret update, paid provider, external spend, production deploy or APK build.
