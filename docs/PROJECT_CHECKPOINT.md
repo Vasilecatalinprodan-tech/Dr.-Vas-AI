@@ -456,3 +456,9 @@ Founder asked to preserve this conversation and continue the existing integrated
 - Voice requirement: Dr.Vas and Dr.Jan male; Sarah receives the current clear Dr.Vas voice if it is feminine, otherwise the best locale-matched feminine voice. Do not use cross-language fallback for Sarah. User voice sample optional, not a blocker.
 - Branch `fix/presenter-voice-gender-routing-2026-11-11` created from the supplied SHA. Frontend and E2E test changes are committed as `0c771e726e84efecacaca2c469e09e761a4aebb5` (branch HEAD at this checkpoint). CI/PR/deploy are not yet verified.
 - No SQL/schema/migration changes. No secrets or paid-provider changes. APK postponed/manual-only. Continue all modules including Mining; no actual mining/trading/wallet operations.
+
+
+### CI status for PR #116
+
+- PR #116 open; branch 8 commits ahead, 0 behind main; merge base is the requested `df5e119a14aa3526f3805835b3349b87533cf94e`.
+- `deploy-worker.yml` does not run on pull requests, and the current GitHub integration does not expose workflow dispatch. No exact-head tests have run and no checks are reported. Hold merge/deploy; next step is to add/enable a safe PR validation path or run an available local exact-head suite.
