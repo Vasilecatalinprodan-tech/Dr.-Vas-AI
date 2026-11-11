@@ -84,19 +84,14 @@ jobs:
           if (migration < 0 || healthCheck < migration || deploy < healthCheck) {
             throw new Error('Supabase migrations and Health rate-limit verification must both pass before Cloudflare Worker deployment.');
           }
-          const pushStart = android.indexOf('  push:');
-          const nextTopLevel = android.indexOf('\nconcurrency:', pushStart);
-          const androidPush = pushStart >= 0 && nextTopLevel > pushStart ? android.slice(pushStart, nextTopLevel) : '';
-          if (!android.includes('workflow_dispatch:') || !androidPush.includes('branches: [main]') || !androidPush.includes('paths:')) {
-            throw new Error('Android APK workflow must retain manual dispatch and restrict automatic builds to filtered pushes on main.');
-          }
-          for (const path of ["'www/**'", "'android/**'", "'capacitor.config.json'", "'package.json'", "'package-lock.json'"]) {
-            if (!androidPush.includes(path)) throw new Error('Android APK automatic build path filter is missing: ' + path);
+          const triggerBlock = android.split('\nconcurrency:')[0].split('\non:')[1] || '';
+          if (!triggerBlock.includes('workflow_dispatch:') || /(^|\n)\s{2}(push|pull_request|schedule|workflow_run|repository_dispatch):/.test(triggerBlock)) {
+            throw new Error('Android APK workflow must be manual-only until the founder explicitly resumes packaging.');
           }
           if (!android.includes('node --check www/module-workspaces.js') || !android.includes('./gradlew assembleDebug') || !android.includes('name: DrVas-APK')) {
             throw new Error('Final Android APK workflow must validate module workspaces and upload the APK artifact.');
           }
-          console.log('Verified: migrations and Health rate-limit RPC checks gate Worker deployment; APK builds are manual-only until final release.');
+          console.log('Verified: migrations and Health rate-limit RPC checks gate Worker deployment; APK builds are workflow_dispatch-only until the founder explicitly resumes packaging.');
           NODE
 
       - name: Install browser test runner
