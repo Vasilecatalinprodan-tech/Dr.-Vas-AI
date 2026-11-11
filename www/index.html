@@ -4115,7 +4115,7 @@ function selectModule(moduleName,userInitiated=false,suppressConversationRestore
       setStudioProjectStatus("Nu am putut încărca lista proiectelor. Verifică migrarea Studio din Supabase și permisiunile contului.",true);
     });
   }
-  if(moduleName==="business"&&currentUser&&isDrvasAdmin){if(el("businessLedgerDate")&&!el("businessLedgerDate").value)el("businessLedgerDate").value=new Date().toISOString().slice(0,10);calculateBusinessBreakEven();loadBusinessLedger();loadStudentAssessmentProjects().catch(error=>console.warn("Student Desk project list:",error));loadModuleProjectList("business").catch(error=>console.warn("Business project list:",error));}
+  if(moduleName==="business"&&currentUser&&isDrvasAdmin){if(el("businessLedgerDate")&&!el("businessLedgerDate").value)el("businessLedgerDate").value=localDateInputValue();calculateBusinessBreakEven();loadBusinessLedger();loadStudentAssessmentProjects().catch(error=>console.warn("Student Desk project list:",error));loadModuleProjectList("business").catch(error=>console.warn("Business project list:",error));}
   if(userInitiated&&currentUser)logClientEvent("module_selected",moduleName);
   if(userInitiated&&currentUser&&(moduleName==="free"||moduleName==="health"||isDrvasAdmin)){
     const chatSection=el("chatSection");
@@ -5523,6 +5523,11 @@ function buildCommercePrompt(){
  }[focus];
  submitModuleBrief(prompt+"\n\n"+focusInstructions,"Analiza Commerce este pregătită. Verifică ipotezele și apasă Trimite.");
 }
+function localDateInputValue(date=new Date()){
+ const year=Number(date.getFullYear()),month=Number(date.getMonth())+1,day=Number(date.getDate());
+ if(!Number.isInteger(year)||!Number.isInteger(month)||!Number.isInteger(day)||month<1||month>12||day<1||day>31)return "";
+ return String(year).padStart(4,"0")+"-"+String(month).padStart(2,"0")+"-"+String(day).padStart(2,"0");
+}
 const businessLedgerState={rows:[],currency:"GBP"};
 const studentAssessmentState={id:null};
 function businessMoney(value,currency){
@@ -5648,7 +5653,7 @@ async function saveBusinessTransaction(){
  if(!description){el("businessLedgerDescription")?.focus();businessLedgerStatus("Adaugă o descriere.",true);return;}
  if(!Number.isFinite(amount)||amount<=0){el("businessLedgerAmount")?.focus();businessLedgerStatus("Introdu o sumă mai mare decât zero.",true);return;}
  if(!Number.isFinite(rate)||rate<0||rate>100){businessLedgerStatus("Cota TVA trebuie să fie între 0 și 100%.",true);return;}
- const payload={user_id:currentUser.id,transaction_date:el("businessLedgerDate")?.value||new Date().toISOString().slice(0,10),entry_type:el("businessLedgerType")?.value||"income",description,category:el("businessLedgerCategory")?.value?.trim()||"General",amount,currency:el("businessLedgerCurrency")?.value||"GBP",vat_rate:rate,vat_included:Boolean(el("businessLedgerVatIncluded")?.checked)};
+ const payload={user_id:currentUser.id,transaction_date:el("businessLedgerDate")?.value||localDateInputValue(),entry_type:el("businessLedgerType")?.value||"income",description,category:el("businessLedgerCategory")?.value?.trim()||"General",amount,currency:el("businessLedgerCurrency")?.value||"GBP",vat_rate:rate,vat_included:Boolean(el("businessLedgerVatIncluded")?.checked)};
  try{
   const {error}=await supabaseClient.from("drvas_business_transactions").insert(payload);if(error)throw error;
   el("businessLedgerDescription").value="";el("businessLedgerAmount").value="";
