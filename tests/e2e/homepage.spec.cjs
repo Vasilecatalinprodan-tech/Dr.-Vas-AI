@@ -827,7 +827,7 @@ test("presenter voices stay in the selected language and reuse the local voice w
   expect(result.femaleOnlySarah).toBe("alina-ro");
   expect(result.femaleOnlyAllSpeakers).toBe(true);
   expect(result.femaleOnlyDistinct).toBe(false);
-  expect(result.italianOnlyVoice).toBe("elsa-it");
+  expect(result.italianOnlyVoice).toBe("sofia-it");
   expect(result.crossLanguageChatVoice).toBeNull();
   expect(result.crossLanguagePresentationSarah).toBeNull();
   expect(result.crossLanguageVoiceLanguage).toBeNull();
