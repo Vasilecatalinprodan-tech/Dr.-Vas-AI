@@ -510,3 +510,13 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Supabase is up to date; no SQL migration or schema change was made.
 - Next work: manual device voice test, then continue module-by-module improvements across Free/Health, Studio, Academy, Commerce, Business, Online Income and Crypto/Mining. Keep Mining read-only/simulation only.
 - APK remains postponed/manual-only. No unapproved paid service or real wallet/trading/mining operation.
+
+
+### 2026-11-11 — Mining workspace navigation release
+
+- PR #120 fixed the Crypto & Mining shortcut by moving the existing admin-only panel into Studio > Crypto & Mining and revealing it from the explicit open button.
+- Merged main commit `fe8512da6a58dbe2aabc1bd4a2663eaf1b1933b6`; browser #828 exact-head and #829 post-merge both passed 176/176.
+- Production deploy #556 succeeded; Worker version `a543bfb1-2367-4431-a32c-cebc72376658`. Supabase was already up to date; no migrations applied.
+- Mining scope is still research/simulation: PoW discovery, hardware matching, live market/network inputs where available, profitability and cooling/electricity sensitivity, hashrate scenarios, break-even/payback and JSON exports. Native agent and real mining are not implemented or enabled; no trading or wallet custody.
+- Next: founder manually verifies Mining panel on production with the correct admin account; continue module quality work and manual presenter-audio device verification. Address masking still requires an owned custom domain or account-level workers.dev rename.
+- APK postponed/manual-only. No unapproved paid service or SQL/schema changes.
