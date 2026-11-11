@@ -2814,7 +2814,7 @@ function getDrvasPresentationVoiceProfile(voices,locale){
  const sarah=femaleVoices[0]||null;
  const drvas=maleVoices[0]||defaultVoice;
  const jan=maleVoices.find(v=>v.voiceURI!==drvas?.voiceURI)||drvas;
- return {drvas,jan,sarah,hasMale:!!drvas,hasFemale:!!sarah,hasAllDistinct:!!(drvas&&jan&&sarah&&new Set([drvas.voiceURI,jan.voiceURI,sarah.voiceURI]).size===3),hasFallback:!!(drvas||sarah)};
+ return {drvas,jan,sarah,hasMale:maleVoices.length>0,hasFemale:!!sarah,hasAllSpeakers:!!(drvas&&jan&&sarah),hasAllDistinct:!!(drvas&&jan&&sarah&&new Set([drvas.voiceURI,jan.voiceURI,sarah.voiceURI]).size===3),hasFallback:!!(drvas||sarah)};
 }
 function getDrvasPresentationVoices(){
  const synth=window.speechSynthesis;
@@ -2861,7 +2861,7 @@ async function speakDrvasPresentation(){
   if(run!==drvasPresentationRun)return;
   if(drvasPresentationIndex>=drvasPresentationQueue.length){
    const status=el("presentationAudioStatus");
-   if(status)status.textContent=(usingDeviceDefault||(voiceProfile.hasMale&&voiceProfile.hasFemale))?"Prezentarea s-a încheiat. Apasă «Continuă la conectare» când ești pregătit.":"Una sau mai multe voci potrivite nu sunt disponibile în limba selectată. Poți instala vocile lipsă sau continua manual.";
+   if(status)status.textContent=(usingDeviceDefault||voiceProfile.hasAllSpeakers)?"Prezentarea s-a încheiat. Apasă «Continuă la conectare» când ești pregătit.":"Una sau mai multe voci potrivite nu sunt disponibile în limba selectată. Poți instala vocile lipsă sau continua manual.";
    el("presentationContinueButton")?.classList.remove("hidden");
    return;
   }
