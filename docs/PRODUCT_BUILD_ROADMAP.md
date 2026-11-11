@@ -414,3 +414,9 @@ Conversation preservation note: this repository file stores the founder's exact 
 ## 2026-11-11 00:00 UTC — Studio PR final handoff
 - PR #103 is the active clean Studio Book/Translation persistence change, based on current main (5 ahead, 0 behind). Earlier PR #101 and #102 were superseded and closed.
 - Exact-head browser run #766 (`42927733404`) is in progress; merge only after success.
+
+
+## 2026-11-11 03:55 UTC — Studio merged; Online Income test coverage
+- PR #103 merged after 162/162 exact-head browser tests passed (run #769), commit `b4df01417eb4364f37ac135658fe2e47f1ed6522`.
+- Added dedicated Income Tracker regression coverage on `test/income-tracker-owner-safety-2026-11-11`: owner-scoped insert payload, truthful database failure state, safe text rendering, and currency-separated totals with filters. Browser and deploy workflows include the new suite.
+- CI for the new Income Tracker branch is pending; no merge or deploy until exact-head checks pass.
