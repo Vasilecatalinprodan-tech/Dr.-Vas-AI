@@ -5254,7 +5254,7 @@ function getAcademyLessonPlan(){
  let previous=[];
  try{const parsed=JSON.parse(raw);if(Array.isArray(parsed))previous=parsed;}catch{}
  const previousByKey=new Map(previous.filter(item=>item&&typeof item.key==="string").map(item=>[item.key,Boolean(item.completed)]));
- const allTitles=(el("academyLessonTitles")?.value||"").split(/\\r?\\n/).map(title=>title.trim()).filter(Boolean);
+ const allTitles=(el("academyLessonTitles")?.value||"").split(/\r?\n/).map(title=>title.trim()).filter(Boolean);
  const occurrences=new Map();
  return allTitles.slice(0,100).map(title=>{
   const normalized=title.toLowerCase();
@@ -5267,7 +5267,7 @@ function renderAcademyLessonChecklist(){
  const list=el("academyLessonChecklist"),hidden=el("academyLessonChecklistData");
  const entries=getAcademyLessonPlan();
  if(hidden)hidden.value=JSON.stringify(entries);
- const allCount=(el("academyLessonTitles")?.value||"").split(/\\r?\\n/).map(title=>title.trim()).filter(Boolean).length;
+ const allCount=(el("academyLessonTitles")?.value||"").split(/\r?\n/).map(title=>title.trim()).filter(Boolean).length;
  const status=el("academyLessonChecklistStatus");
  if(status)setLocalizedText(status,allCount>100?"Sunt afișate primele 100 de lecții. Împarte cursul în mai multe module dacă ai nevoie de mai multe.":"Bifează fiecare lecție pe măsură ce o finalizezi. Lista și starea se salvează în proiect.");
  if(list){
