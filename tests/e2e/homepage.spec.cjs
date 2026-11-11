@@ -772,7 +772,7 @@ test("presenter voices stay in the selected language and reuse the local voice w
       { name: "Microsoft Zira", lang: "ro-RO", voiceURI: "zira-ro" },
       { name: "Microsoft Alina", lang: "ro-RO", voiceURI: "alina-ro" },
       { name: "Google UK English Female", lang: "en-GB", voiceURI: "google-female" },
-      { name: "Microsoft Elsa", lang: "it-IT", voiceURI: "elsa-it" }
+      { name: "Microsoft Sofia", lang: "it-IT", voiceURI: "sofia-it" }
     ];
     Object.defineProperty(window, "speechSynthesis", { configurable: true, value: { getVoices: () => voices } });
     activeAssistant = "aurora";
