@@ -62,7 +62,7 @@
   const placeholder=document.createElement("option");placeholder.value="";placeholder.textContent="Alege o versiune salvată";select.appendChild(placeholder);
   (Array.isArray(revisions)?revisions:[]).forEach((revision,index)=>{
    if(!revision||typeof revision.id!=="string")return;
-   const option=document.createElement("option");option.value=revision.id;option.textContent=revision.label||("Versiunea "+(index+1));select.appendChild(option);
+   const option=document.createElement("option");option.value=revision.id;option.textContent=revision.label||("V"+(index+1));select.appendChild(option);
   });
   if([...select.options].some(option=>option.value===selected))select.value=selected;
  }
@@ -181,7 +181,7 @@
     const current=window.drvasGetStudioStationData?.();
     const previous=current?.kind==="book"&&Array.isArray(current.fields?.revisions)?current.fields.revisions:[];
     const fields=readBookRevisionFields(),createdAt=new Date().toISOString();
-    const snapshot={id:createdAt,label:"Versiunea "+(previous.length+1)+" — "+new Date(createdAt).toLocaleString(),createdAt,fields:{title:fields.title,chapterOutline:fields.chapterOutline,chapterStatus:fields.chapterStatus,manuscriptDraft:fields.manuscriptDraft,revisionNotes:fields.revisionNotes}};
+    const snapshot={id:createdAt,label:"V"+(previous.length+1)+" — "+new Date(createdAt).toLocaleString(),createdAt,fields:{title:fields.title,chapterOutline:fields.chapterOutline,chapterStatus:fields.chapterStatus,manuscriptDraft:fields.manuscriptDraft,revisionNotes:fields.revisionNotes}};
     const revisions=[...previous,snapshot].slice(-10);
     window.drvasRestoreStudioStation?.({kind:"book",fields:{...fields,revisions}});
     if(byId("studioDeliverable"))byId("studioDeliverable").value="book";
