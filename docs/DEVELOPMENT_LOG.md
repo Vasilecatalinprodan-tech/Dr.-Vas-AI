@@ -1206,3 +1206,11 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ .
 - New structured archive: `docs/CHAT-ARCHIVE-2026-11-11-ALL-MODULES.md`. This is a project continuity archive, not a verbatim transcript export.
 - Next: continue Academy lesson-by-lesson progress, Commerce supplier comparison, Business reporting and Free/Health hardening while preserving the founder's no-SQL and APK-pause constraints.
+
+
+## 2026-11-11 10:06 UTC — Commerce merged; Mining sensitivity correction under CI
+
+- PR #110 merged at `d43d992122cf7596537f48353afe810b3bca5d04`; exact-head run #786 passed 171/171. Post-merge browser #789 and deploy #552 were pending at last check.
+- PR #111 initial run #787 failed one legacy BTC UI assertion because cooling-aware J/TH calculations now correctly increase facility power and energy cost. All three new engine tests passed. Corrected return/UI consistency and stale matrix clearing; latest head `aa5bafd25860c128407677fa8daa80460340e382`; run #791 pending.
+- Academy PR #109 and deploy #551 previously passed; post-merge browser suite 170/170.
+- Archive/roadmap/checkpoint refreshed. No SQL changes; APK remains postponed/manual-only; real mining remains disabled.
