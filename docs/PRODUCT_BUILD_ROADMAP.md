@@ -547,3 +547,14 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Deploy #559 succeeded; Worker version `ed6dc539-0e3f-4751-868d-fd004dad87b6`. Smoke test passed. Supabase was already up to date; no migrations applied.
 - Next: continue Mining simulator correctness (remove the unjustified default USD 1 coin-price cutoff while preserving explicit user filters), then further Business, Commerce, Academy, Studio and Free/Health hardening. Continue all modules; no SQL, paid integrations or APK work.
 - Real-device audio check remains outstanding.
+
+
+### 2026-11-11 — Founder voice preference and current module audit
+- The founder prefers reusing the familiar locale-matched feminine device voice for Dr.Vas and Dr.Jan when no suitable local masculine voice is available; it previously worked for Romanian and Italian. PR #128 brings chat and presentation into line. Keep local language matching and do not restore foreign-locale fallback that distorted speech.
+- PR #128 is open at head f918765865ee7dd7ea96c8067a673c440c65ed34; exact-head run #852 is queued. Merge/deploy only after it passes.
+- Academy's individual lesson checklist, calculated progress, notes and saved-course restore are already implemented and covered by tests/e2e/academy-progress.spec.cjs; next work should harden usability and persistence rather than duplicate the feature.
+- Commerce already compares up to three supplier offers by MOQ-adjusted order quantity, total shipping, effective unit cost, excess stock and lead time. Next due-diligence work should improve evidence capture and risk flags while clearly distinguishing user-supplied data from independently verified supplier facts.
+- Business already includes Dr.Vas Books, estimated VAT, monthly cashflow, break-even and Student Desk. Continue money/date validation, auditability and exports; do not claim statutory accounting or tax filing.
+- PR #127 mining scanner correction merged at 974e45d69e14b30e3fb0b342d832fe068cdaea4c, 177/177 browser tests on exact head and post-merge. Deploy #560 Worker version f3d75a76-031f-45e7-bc0f-f4dacb11bd08 and production smoke tests succeeded; SBOM artifact upload failed separately.
+- Continue Free/Health shared chat and attachment/accessibility hardening, Studio chapter/version workflows, Online Income provenance and opportunity research, Commerce evidence capture, Business cashbook correctness and Mining simulator safety.
+- Preserve: no SQL/schema/migration changes, no unapproved paid providers, no APK packaging until explicitly resumed, no real mining/trading/wallet transactions, no public paid entitlements without approval.
