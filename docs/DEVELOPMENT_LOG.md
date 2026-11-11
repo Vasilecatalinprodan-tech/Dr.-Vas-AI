@@ -1156,3 +1156,14 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Studio Book/Translation station persistence is integrated; no schema migration or production deployment was performed.
 - Added `tests/e2e/income-tracker.spec.cjs` on branch `test/income-tracker-owner-safety-2026-11-11` for owner scoping, failed-write messaging, safe untrusted-title rendering, and multi-currency/filter behavior. Included it in both browser and deploy workflow gates. Await exact-head CI.
 - No live DB/RLS changes, secrets, paid services, production deployment or APK build.
+
+
+## 2026-11-11 08:30 UTC — Income Tracker merged; Health attachment preflight
+
+- Founder reconfirmed autonomous merge/deploy authorization and asked to continue across the full system and save the chat. SQL/Supabase schema work remains outside this coding workflow; no ad-hoc SQL was run.
+- PR #104 passed exact-head browser E2E run #771 (42955830854) with 166/166 tests and squash-merged to main at fb5c7e2d7e9231bbea878dc36bf8912c2c61e7f4.
+- Online Income regression coverage checks authenticated owner scope on inserts, truthful failed-write UI, XSS-safe text rendering and currency-separated totals/filters.
+- Post-merge browser run #772 (42987167450) and deploy run #548 (42987167463) started on main; at checkpoint time the deploy job was still running browser tests, with automated Supabase migration and Worker deploy steps pending. Existing deploy workflow includes supabase db push; no production deployment is claimed until the run and smoke test succeed.
+- Health safety branch fix/health-attachment-preflight-2026-11-11: c9c08a1e2638bea3e9db2379212b3a3e08ae3896 preflights file-analysis capability before writing conversation metadata or user chat messages; 450d48bb56e6d45ea83dc10e23b5dbd68996a7bf adds a Playwright regression proving disabled analysis writes no chat history and retains the selected medical file.
+- No SQL, schema/RLS, secrets, paid providers, external credits or APK were changed. Health file analysis remains disabled unless explicitly enabled by existing Worker capability configuration.
+- Next: verify exact-head Health CI, continue all module work, and update archive/log/roadmap at each verified checkpoint. Chat archive is structured continuity, not a verbatim ChatGPT transcript export.
