@@ -1,18 +1,9 @@
 name: Build DrVas APK
 
-# The founder has explicitly authorised the final APK stage.
-# Keep manual dispatch available and rebuild when app/Android inputs change on main.
+# APK builds are intentionally manual-only until the web platform is stable
+# and the founder explicitly asks to resume Android packaging.
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'www/**'
-      - 'android/**'
-      - 'capacitor.config.json'
-      - 'package.json'
-      - 'package-lock.json'
-      - '.github/workflows/android.yml'
 
 concurrency:
   group: drvas-android-${{ github.ref }}
