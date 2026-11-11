@@ -83,3 +83,15 @@ The founder also explicitly confirmed that autonomous code work, branch creation
 ## Handoff for the next ChatGPT conversation
 
 Continue from `main` commit `8ecf72a754c678865f29c620463924e22714b2df`. First verify the current main SHA and production Worker version. Read this archive, `docs/DEVELOPMENT_LOG.md`, `docs/PRODUCT_BUILD_ROADMAP.md` and `docs/PROJECT_CHECKPOINT.md`. Continue across all modules and founder workbenches. Merge/deploy remain authorized when exact-head tests pass. No SQL changes. APK remains manual-only and postponed. Keep all safety, privacy, access and paid-service boundaries above. The next high-value implementation candidates are Academy lesson-by-lesson progress and Commerce supplier comparison, followed by further Business and Free/Health hardening.
+
+
+## 2026-11-11 — Commerce merged; Mining cooling consistency correction pending
+
+- Current main after Commerce merge: `d43d992122cf7596537f48353afe810b3bca5d04`.
+- PR #110 Commerce supplier comparison merged at `d43d992122cf7596537f48353afe810b3bca5d04`. Exact-head browser run #786 (`42999679552`) passed 171/171 tests. Post-merge browser run #789 (`43000233499`) and production deploy #552 (`43000233441`) were still running at the last check; do not call the Commerce feature live until both finish successfully.
+- PR #111 Crypto/Mining sensitivity lab remains open. Initial run #787 (`42999770476`) ran 173 tests and found one legacy UI expectation that assumed the manual wattage model, while the updated BTC UI correctly used J/TH × cooling facility load. The three new engine unit tests passed.
+- Corrected the BTC UI return object so the values returned to callers, displayed in the UI and used in exports are consistent with cooling-adjusted energy and net profit. Updated the legacy test to the correct cooling-adjusted result and added a check that invalid inputs clear stale sensitivity rows. Latest PR #111 head: `aa5bafd25860c128407677fa8daa80460340e382`; exact-head browser run #791 (`43000457258`) was in progress at last check. Intermediate run #790 is superseded by #791.
+- PR #112 documentation checkpoint branch was closed as stale after main advanced. A refreshed documentation branch is being prepared from the current main.
+- Academy remains merged and deployed from #109: main ancestor `c2b9cbe72b67b05f42795229790282486b78d23b`; post-merge browser #785 passed 170/170; deploy #551 succeeded and remote migration history was already current.
+- No SQL, schema, RLS, secrets, paid-provider or APK changes. APK remains postponed/manual-only. Mining remains simulation-only, with no agent or device control enabled.
+- Structured chat archive is not a verbatim transcript export; original ChatGPT chat remains in conversation history.
