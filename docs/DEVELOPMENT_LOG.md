@@ -1256,3 +1256,25 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Matching male browser voices are selected only within the requested language to avoid distorted foreign-language pronunciation. Real device playback remains to be manually checked.
 - Deploy #554 and post-merge browser #820 were still running at checkpoint time. Do not claim live production success until verified.
 - Clean Book Studio PR #118 replaces stacked PR #117; #117 was closed unmerged.
+
+### 2026-11-11 — Production deployment confirmed
+
+- Presenter voice PR #116 merged at 09eb72413677b66eef62e1a93a068a82549d7069; exact-head #817 and post-merge main #820 both passed 174/174.
+- Book Studio version history PR #118 merged at b22367230ae61e154253b3dbb6d9a376dc795b44; exact-head #824 and post-merge main #825 both passed 175/175.
+- Production deploy #555 succeeded on main b22367230ae61e154253b3dbb6d9a376dc795b44. Worker version 1a0b43d1-5974-460f-a922-52b5755db089. Production health returned online, worker ok, assets/AI/database/Studio renderer configured; homepage and six module cards verified; unauthenticated admin check returned HTTP 401.
+- Supabase reported “Remote database is up to date”; no migrations were applied and no SQL/schema change was made.
+- Browser and deploy workflows now cache Playwright Chromium 1.64.1 and avoid repeated apt dependency installation.
+- Remaining manual verification: test actual Dr.Vas/Dr.Jan male and Sarah feminine audio on supported founder devices/languages. Do not use foreign-language voices that distort pronunciation.
+- APK remains postponed/manual-only; no paid provider, secrets, wallet, trading or real mining actions.
+
+
+### 2026-11-11 — Crypto & Mining shortcut fixed; production deployment verified
+
+- User reported the “Deschide panoul Crypto & Mining” button did nothing.
+- Root cause: shortcut scrolled to `#cryptoEngineHeading` inside `#adminPanel`, which CSS hides during module-workspace mode. The target was present but not visible.
+- PR #120 moved the existing founder-only Crypto & Mining card into Studio’s dedicated Crypto & Mining feature page. The card starts collapsed and opens on the explicit button. No admin allowlist, Worker permissions or public module gates changed.
+- Merged commit: `fe8512da6a58dbe2aabc1bd4a2663eaf1b1933b6`; exact-head browser #828 and post-merge browser #829 both passed 176/176.
+- Deploy #556 succeeded; Worker version `a543bfb1-2367-4431-a32c-cebc72376658`. Health online, assets/AI/database configured, six module cards verified, anonymous admin-status request HTTP 401.
+- Supabase reported “Remote database is up to date”; no migration or SQL/schema change was applied.
+- Mining remains a simulation/research/admin registry only. No actual mining, wallet custody or trading. APK remains postponed/manual-only.
+- Public hostname still reveals the Cloudflare account subdomain; masking requires a custom domain owned by the founder or an account-level workers.dev subdomain change. Do not change until the domain is confirmed.

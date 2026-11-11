@@ -478,3 +478,26 @@ Founder asked to preserve this conversation and continue the existing integrated
 - Production deploy #554 and post-merge browser #820 were in progress at checkpoint time; no production-success claim until both complete.
 - Clean Book Studio version-history PR #118 is based on this main commit; stacked PR #117 was closed unmerged.
 - No SQL/schema/migration changes. APK remains postponed/manual-only.
+
+### 2026-11-11 — Latest production checkpoint
+
+- Main: b22367230ae61e154253b3dbb6d9a376dc795b44.
+- PR #116 presenter voices merged; exact-head #817 and post-merge #820 passed 174/174.
+- PR #118 Book Studio revision history merged; exact-head #824 and post-merge #825 passed 175/175.
+- Production deploy #555 succeeded. Cloudflare Worker version: 1a0b43d1-5974-460f-a922-52b5755db089. Health status online; Worker ok; assets, AI, database and Studio renderer configured; homepage and all six modules verified.
+- Supabase migration gate: Remote database is up to date. No migration or SQL/schema change was made.
+- CI uses cached Playwright Chromium 1.64.1 in browser and production deploy workflows.
+- Next: manual real-device voice check; continue all modules including Mining simulators. APK postponed/manual-only. No paid providers, new secrets, wallet custody, trading or real mining.
+
+
+### 2026-11-11 — Latest verified Mining navigation and production checkpoint
+
+- Main: `fe8512da6a58dbe2aabc1bd4a2663eaf1b1933b6`.
+- PR #120 merged: Crypto & Mining panel now opens inside Studio > Crypto & Mining; button reveals the real panel instead of scrolling to a hidden admin-panel target.
+- Browser tests: exact-head run #828 176/176; post-merge main run #829 176/176.
+- Production deploy #556 succeeded. Worker version: `a543bfb1-2367-4431-a32c-cebc72376658`. Health online; Worker ok; assets, AI and database configured; six module cards verified; unauthenticated admin status rejected with HTTP 401.
+- Supabase: “Remote database is up to date.” No migration applied; no SQL/schema/database change.
+- Mining remains research/simulation plus admin-only device registry; real mining, wallet custody and trading are disabled.
+- Public URL masking is pending an owned custom domain or explicit account-level workers.dev subdomain change. Do not alter DNS or account-wide subdomain without founder confirmation.
+- APK remains postponed/manual-only. Presenter voices still need real-device playback verification.
+- This checkpoint is a structured continuation record; the full chat remains in ChatGPT history.
