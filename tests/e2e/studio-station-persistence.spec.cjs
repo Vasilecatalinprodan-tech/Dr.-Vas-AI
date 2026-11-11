@@ -249,3 +249,24 @@ test("Crypto & Mining shortcut opens the actual admin mining panel inside Studio
   await expect(miningPanel.locator("#cryptoEmergencyStopButton")).toBeVisible();
   await expect(miningPanel.locator("#cryptoBtcPerDay")).toBeVisible();
 });
+
+
+test("Creator & Online Income shortcut opens its founder workbench and provenance controls inside Studio", async ({ page }) => {
+  await openStudio(page);
+  await page.locator("#studioWorkspace [data-feature='income-lab']").click();
+
+  const incomePage = page.locator("#studioWorkspace [data-feature-page='income-lab']");
+  const shortcut = incomePage.locator(".studio-founder-shortcut");
+  const openButton = shortcut.getByRole("button", { name: "Deschide Creator & Online Income Lab", exact: true });
+  const privateContent = shortcut.locator(".studio-founder-private-content");
+
+  await expect(openButton).toBeVisible();
+  await expect(privateContent).toHaveClass(/hidden/);
+  await openButton.click();
+
+  await expect(privateContent).not.toHaveClass(/hidden/);
+  await expect(privateContent.locator("#founderProductionHeading")).toBeVisible();
+  await expect(privateContent.locator("#founderDigitalTitle")).toBeVisible();
+  await expect(privateContent.locator("#founderProvenanceHeading")).toBeVisible();
+  await expect(privateContent.getByRole("button", { name: "Creează dovada semnată" })).toBeVisible();
+});
