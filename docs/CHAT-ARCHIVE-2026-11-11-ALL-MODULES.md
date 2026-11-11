@@ -127,3 +127,9 @@ Repository inspection at starting commit `df5e119a14aa3526f3805835b3349b87533cf9
 A focused branch `fix/presenter-voice-gender-routing-2026-11-11` was created from the requested starting commit. Frontend changes now explicitly select male, locale-matched voices for Dr.Vas and Dr.Jan; Sarah keeps the current default voice when that voice is recognised as feminine, otherwise selects the best locale-matched feminine voice. Foreign-language fallback is removed for Sarah in presentation and chat to avoid distorted pronunciation. If the required gendered voice is unavailable in the selected language, the presentation reports that state and skips that speaker rather than silently using the wrong voice. A second distinct male voice is selected for Jan when the device provides one; otherwise the best available male voice is shared.
 
 E2E tests were updated to cover male routing, Sarah's clear/default feminine voice, and rejection of foreign-language fallbacks. These changes are **not yet verified**; exact-head CI and PR review are required before merge/deploy. No Worker secrets, SQL, schema, migrations, paid services or APK workflow were changed. APK remains postponed.
+
+
+### Validation gate discovery — PR #116
+
+- PR #116 is open against main, with the branch 8 commits ahead and 0 behind the supplied base; GitHub compare reports the merge base is exactly `df5e119a14aa3526f3805835b3349b87533cf94e`.
+- The repository's `deploy-worker.yml` currently runs on `push` to `main` or `drvas-integrated-platform`, plus `workflow_dispatch`; it does not define a `pull_request` trigger. The GitHub connector available in this session exposes no workflow-dispatch action. Consequently no exact-head CI run has started for PR #116 and combined status is empty. Do not merge or deploy until a supported exact-head validation path is available.
