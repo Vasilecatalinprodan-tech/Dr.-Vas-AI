@@ -193,6 +193,12 @@ for (const scenario of [
       await saveModuleProject(module);
       document.getElementById(primary).value = "Valoare modificată temporar";
       document.getElementById(title).value = "Titlu temporar";
+      if (module === "commerce") {
+        document.getElementById("commerceSupplierQuantity").value = "5";
+        document.getElementById("commerceSupplier1Name").value = "Furnizor temporar";
+        document.getElementById("commerceSupplier1Moq").value = "2";
+        calculateCommerceSupplierComparison();
+      }
       document.getElementById(module + "ProjectList").value = "e2e-roundtrip-" + module;
       await openModuleProject(module);
     }, scenario);
