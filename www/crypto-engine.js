@@ -30,13 +30,17 @@
     { value: "gpu-kawpow", label: "GPU KawPoW" }
   ]);
 
-  function eligibleCoins(markets, hardware = "all", minUsd = 1) {
+  function eligibleCoins(markets, hardware = "all", minUsd = 0) {
+    const minimumPriceUsd = Number(minUsd);
+    if (!Number.isFinite(minimumPriceUsd) || minimumPriceUsd < 0) {
+      throw new RangeError("Pragul minim de preț trebuie să fie un număr valid, zero sau pozitiv.");
+    }
     const byId = new Map(COINS.map(coin => [coin.id, coin]));
     return (Array.isArray(markets) ? markets : [])
       .map(market => {
         const coin = byId.get(String(market.id || "").toLowerCase());
         const priceUsd = Number(market.current_price);
-        if (!coin || !Number.isFinite(priceUsd) || priceUsd <= minUsd) return null;
+        if (!coin || !Number.isFinite(priceUsd) || priceUsd <= minimumPriceUsd) return null;
         if (hardware !== "all" && !coin.hardware.includes(hardware)) return null;
         return {
           ...coin,
