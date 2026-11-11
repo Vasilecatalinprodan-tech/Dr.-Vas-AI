@@ -80,6 +80,35 @@ The founder also explicitly confirmed that autonomous code work, branch creation
 9. **Platform-wide:** auth, RLS ownership isolation, privacy, localization, presenters/voice, accessibility, reliability and release automation.
 10. **Subscriptions / Google Play:** remain unreleased until payment, entitlement, compliance and store validation are complete.
 
+## 2026-11-11 — Academy and Commerce releases deployed
+
+### Academy — PR #109
+- Merged commit: `c2b9cbe72b67b05f42795229790282486b78d23b`.
+- Added a per-lesson checklist, one lesson title per line, automatic completed/total percentage, an explicit 100-lesson limit, seven-language localization and save/reopen restoration in the existing private project brief.
+- Exact-head browser run #784: 170/170 passed. Post-merge browser run #785: 170/170 passed.
+- Deploy #551 succeeded; Worker version `dbc7db74-cc52-4b9b-b1bc-f6035473896c`.
+- Supabase reported the remote database was up to date; no migration was applied.
+
+### Commerce — PR #110
+- Merged commit: `d43d992122cf7596537f48353afe810b3bca5d04`.
+- Added structured comparison for up to three user-provided supplier quotes: unit price, total shipping per order, MOQ, target quantity, lead time, return/warranty terms and source URL.
+- Calculates order units as max(target quantity, MOQ), upfront order cost, effective unit cost and excess stock. Sorts by effective unit cost, with lead time as a tie-breaker.
+- Quote data is passed into the Commerce analysis prompt and saved/restored in the existing owner-scoped project brief. New controls and results are localized in seven languages.
+- Exact-head browser run: 171/171 passed. Post-merge browser run #789: 171/171 passed.
+- Deploy #552 succeeded; Worker version `b420225b-2841-4bf8-adf1-6a3321dc2cbb`.
+- Supabase reported the remote database was up to date; no migration was applied.
+
+### Production and safety verification
+- Latest production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/
+- Deploy #552 verified homepage delivery and all six public module cards. Unauthenticated `admin_status` was rejected with HTTP 401.
+- SBOM artifact ID: `13845897516`.
+- PRs #107, #108, #109 and #110 are merged. PR #108 added this structured archive and updated the development log, roadmap and checkpoint.
+- No SQL, schema, migration, RLS, secret or production data changes were made in PRs #107, #109 or #110. Deploys #550, #551 and #552 all reported the remote database was already up to date.
+- APK remains postponed. Android workflow stays manual-only (`workflow_dispatch`); no automatic build/release was enabled.
+- The supplier calculator does not verify supplier identity, reliability or quote authenticity. VAT, customs, insurance, samples and returns are excluded unless the user accounts for them separately.
+
 ## Handoff for the next ChatGPT conversation
 
-Continue from `main` commit `8ecf72a754c678865f29c620463924e22714b2df`. First verify the current main SHA and production Worker version. Read this archive, `docs/DEVELOPMENT_LOG.md`, `docs/PRODUCT_BUILD_ROADMAP.md` and `docs/PROJECT_CHECKPOINT.md`. Continue across all modules and founder workbenches. Merge/deploy remain authorized when exact-head tests pass. No SQL changes. APK remains manual-only and postponed. Keep all safety, privacy, access and paid-service boundaries above. The next high-value implementation candidates are Academy lesson-by-lesson progress and Commerce supplier comparison, followed by further Business and Free/Health hardening.
+Continue from current `main` commit `d43d992122cf7596537f48353afe810b3bca5d04` and production Worker version `b420225b-2841-4bf8-adf1-6a3321dc2cbb`. Read this archive, `docs/DEVELOPMENT_LOG.md`, `docs/PRODUCT_BUILD_ROADMAP.md` and `docs/PROJECT_CHECKPOINT.md` first. PRs #107–#110 are merged. Book Studio manuscript continuity, Academy lesson progress and Commerce supplier comparison are implemented and deployed. Continue Business reporting, Free/Health chat and attachment hardening, Studio chapter/version workflow, voice/presenter integration, and the remaining platform/security work. Merge and deploy remain authorized when exact-head tests pass. No SQL changes. APK remains manual-only and postponed. Keep the six customer modules separate from founder-only workbenches, preserve privacy/RLS boundaries, and do not activate paid services, public entitlements, real mining or trading without explicit approval.
+
+This archive is a structured continuity record, not a verbatim export of the ChatGPT transcript. The original conversation remains in ChatGPT history.
