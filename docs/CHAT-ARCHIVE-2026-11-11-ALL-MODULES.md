@@ -83,3 +83,26 @@ The founder also explicitly confirmed that autonomous code work, branch creation
 ## Handoff for the next ChatGPT conversation
 
 Continue from `main` commit `8ecf72a754c678865f29c620463924e22714b2df`. First verify the current main SHA and production Worker version. Read this archive, `docs/DEVELOPMENT_LOG.md`, `docs/PRODUCT_BUILD_ROADMAP.md` and `docs/PROJECT_CHECKPOINT.md`. Continue across all modules and founder workbenches. Merge/deploy remain authorized when exact-head tests pass. No SQL changes. APK remains manual-only and postponed. Keep all safety, privacy, access and paid-service boundaries above. The next high-value implementation candidates are Academy lesson-by-lesson progress and Commerce supplier comparison, followed by further Business and Free/Health hardening.
+
+
+## 2026-11-11 — Academy shipped; Commerce and Mining in parallel
+
+- Founder reiterated: continue all Dr.Vas modules and founder workbenches, include Crypto & Mining, and save the whole project/chat context before opening a new chat. Autonomous code work, PR merge and production deploy remain authorized when exact-head checks pass. No SQL edits or ad-hoc DB operations. APK remains postponed and Android workflow stays `workflow_dispatch`-only.
+- Main checkpoint at this update: `c2b9cbe72b67b05f42795229790282486b78d23b`.
+- Academy PR #109 merged into main at `c2b9cbe72b67b05f42795229790282486b78d23b`. Academy now has per-lesson completion checkboxes, progress percentage, lesson status persistence and seven-language placeholder/localization coverage. Exact-head browser CI passed; post-merge browser run #785 (`42998512011`) passed 170/170 tests.
+- Deploy #551 (`42998512058`) succeeded for the Academy release. Supabase migration history was already current (`Remote database is up to date`); no new migration was applied. Production Worker deployed, smoke tests passed, unauthenticated admin endpoint continued to reject requests with HTTP 401. SBOM artifact ID `13845397914`.
+- Production URL remains https://dr--vas-ai.vasilecatalinprodan.workers.dev/ .
+- PR #110 — Commerce supplier comparison — open at checkpoint. Head `4a0cf92f47c24bb8f3e4f31ef5000b9963a83a4a`; browser run #786 (`42999679552`) was in progress at last check. Adds structured comparison for up to three user-supplied supplier quotes: unit price, total shipping, MOQ, lead time, returns/warranty notes and source URL; computes order units, upfront cost, landed unit cost and excess stock; includes prompt handoff, project save/reopen and seven-language localization. Supplier identity and quote authenticity are not externally verified. No SQL changes.
+- PR #111 — Crypto/Mining Bitcoin sensitivity lab — open at checkpoint. Head `0611ba1f160c558d28fe526c2919a0e3507a52ef`; browser run #787 (`42999770476`) was in progress at last check. Adds 3×3 BTC-price/electricity-tariff sensitivity analysis, maximum break-even electricity tariff, cooling-aware energy/net output and regression coverage. No actual mining, device command, wallet, trade or transaction is enabled. No SQL changes.
+- Cloudflare Workers preview check on the two PR branches reported `failure`; this is separate from the repository Playwright job and is not a production deployment. Review if it becomes a required check; do not claim these PRs are deployed until merge and the main-branch deploy workflow succeeds.
+- No SQL, schema, RLS, secrets or paid-provider changes in the new Commerce/Mining branches. Android packaging was not triggered manually and remains postponed.
+- The chat archive is a structured continuity summary, not a verbatim ChatGPT transcript export. The original conversation remains in ChatGPT history. This file, development log, roadmap and checkpoint preserve the technical state and founder decisions for the next chat.
+
+## Next actions
+
+1. Verify exact-head CI for PR #110 and PR #111; fix any failing assertions and rerun before merging.
+2. Merge Commerce and Mining separately, checking for mergeability after each merge because both touch `www/index.html`.
+3. Verify post-merge browser tests and production Worker deploy/smoke test; record actual migration gate outcome separately. No SQL changes by the assistant.
+4. Continue Business reporting and cashbook quality; continue Free/Health shared-chat, attachment, accessibility and privacy regression coverage; extend Studio chapter/version history and Online Income product/service workflows.
+5. Continue Crypto/Mining only as read-only research and simulation until a separately owned, signed local agent, explicit device authorization, power/temperature limits, watchdog and emergency stop are designed and verified.
+6. Update this archive, development log, roadmap and checkpoint after every verified merge/deploy. Only then start a new ChatGPT conversation from the latest main SHA.
