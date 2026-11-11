@@ -2004,7 +2004,7 @@ test("presenter assets do not depend on temporary Runway signed URLs", async ({ 
   expect(source).toContain('/assets/presenters/Sarah23.jpg');
 });
 
-test("Crypto engine filters Proof-of-Work coins strictly above one dollar and by hardware", async ({ page }) => {
+test("Crypto engine includes low-price Proof-of-Work coins and filters by hardware", async ({ page }) => {
   await openApp(page, "ro");
   const result = await page.evaluate(() => {
     const engine = window.DrVasCryptoEngine;
@@ -2017,15 +2017,22 @@ test("Crypto engine filters Proof-of-Work coins strictly above one dollar and by
       { id: "monero", current_price: 150, market_cap: 100 }
     ];
     return {
-      all: engine.eligibleCoins(markets, "all", 1).map(coin => coin.symbol),
-      sha256: engine.eligibleCoins(markets, "asic-sha256", 1).map(coin => coin.symbol),
-      randomx: engine.eligibleCoins(markets, "cpu-randomx", 1).map(coin => coin.symbol)
+      all: engine.eligibleCoins(markets).map(coin => coin.symbol),
+      sha256: engine.eligibleCoins(markets, "asic-sha256").map(coin => coin.symbol),
+      randomx: engine.eligibleCoins(markets, "cpu-randomx").map(coin => coin.symbol),
+      explicitDollarFloor: engine.eligibleCoins(markets, "all", 1).map(coin => coin.symbol),
+      explicitTenCentFloor: engine.eligibleCoins(markets, "all", 0.1).map(coin => coin.symbol),
+      invalidFloorThrows: (() => { try { engine.eligibleCoins(markets, "all", -1); return false; } catch (error) { return error instanceof RangeError; } })()
     };
   });
-  expect(result.all).toEqual(["BTC", "XMR", "LTC"]);
+  expect(result.all).toEqual(["BTC", "XMR", "LTC", "DOGE", "RVN"]);
   expect(result.sha256).toEqual(["BTC"]);
   expect(result.randomx).toEqual(["XMR"]);
+  expect(result.explicitDollarFloor).toEqual(["BTC", "XMR", "LTC"]);
+  expect(result.explicitTenCentFloor).toEqual(["BTC", "XMR", "LTC", "DOGE"]);
+  expect(result.invalidFloorThrows).toBe(true);
 });
+
 
 test("Crypto profitability core subtracts pool fee, energy and maintenance", async ({ page }) => {
   await openApp(page, "ro");
