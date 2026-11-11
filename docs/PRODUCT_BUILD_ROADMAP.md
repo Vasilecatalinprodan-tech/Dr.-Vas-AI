@@ -430,3 +430,11 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Current Health hardening branch adds a fail-closed capability preflight before any chat-history write when file analysis is disabled, with an E2E regression for no writes and attachment retention. Await exact-head CI before merge.
 - Continue in parallel across Free/Health, Studio, Academy, Commerce, Business, Crypto/Mining, Online Income, authentication, privacy, localization and release checks. Keep file analysis disabled until legal/privacy/provider gates are met; no paid services or APK build at this stage.
 - Preserve each verified PR, CI run, merge SHA and production smoke-test outcome in the chat archive and development log. The archive is a structured checkpoint; the original chat remains in ChatGPT history.
+
+
+## 2026-11-11 — Health safety and Android release control
+
+- Health attachment preflight merged at 79195b4ff44c3f11b79f1d46a9e4f168a5b3890a after 167/167 exact-head browser tests passed. Disabled file analysis now blocks before conversation history is written.
+- Post-merge deploy/browser workflows are pending verification.
+- Android packaging is postponed. A web merge triggered an automatic APK workflow because the existing Android workflow included www/** in its push paths. Branch chore/android-build-manual-only-2026-11-11 changes APK builds to manual workflow dispatch only; do not publish or install an APK until the founder explicitly resumes that stage.
+- Continue cross-module work on Health/Free, Studio, Academy, Commerce, Business, Crypto/Mining and Online Income. Keep Health document analysis disabled until privacy/legal/provider gates are satisfied.
