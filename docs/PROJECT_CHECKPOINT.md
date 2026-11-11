@@ -427,3 +427,14 @@ Founder asked to preserve this conversation and continue the existing integrated
 - APK postponed; Android workflow is manual-only (`workflow_dispatch`).
 - Continue all modules/workbenches. Next priorities: Academy lesson checklist, Commerce supplier comparison, Business reporting, Free/Health hardening, then Studio chapter/version workflow.
 - Structured chat archive: `docs/CHAT-ARCHIVE-2026-11-11-ALL-MODULES.md`. Original ChatGPT transcript remains in conversation history; this archive preserves decisions and handoff state.
+
+
+## 2026-11-11 — Current main and active work
+
+- Main: `d43d992122cf7596537f48353afe810b3bca5d04` (Commerce PR #110 merged).
+- Academy: PR #109 merged; browser #785 170/170; deploy #551 succeeded.
+- Commerce: PR #110 merged; exact-head browser #786 171/171; post-merge browser #789 and deploy #552 pending at last check.
+- Mining: PR #111 open, latest head `aa5bafd25860c128407677fa8daa80460340e382`; run #791 pending after fixing the stale legacy BTC UI test. Do not merge until exact-head tests pass.
+- Production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ .
+- No SQL changes. APK postponed/manual-only. Real mining/trading remains disabled; no wallet custody.
+- After Mining CI, merge and verify post-merge deploy; then update all archive files with final results before opening a new chat.
