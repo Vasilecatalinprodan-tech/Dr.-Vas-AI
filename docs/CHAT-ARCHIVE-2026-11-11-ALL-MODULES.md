@@ -164,3 +164,20 @@ E2E tests were updated to cover male routing, Sarah's clear/default feminine voi
 - Real-device voice playback still needs a manual check on the founder's Windows/Android browsers. Male voice availability is device/language dependent; do not substitute foreign-language voices if that distorts pronunciation. Sarah uses the feminine default voice when available.
 - APK remains postponed/manual-only. No paid provider, new secret, wallet custody, actual mining or trading was enabled.
 - This archive is a structured technical checkpoint, not a verbatim transcript of the chat. The full conversation remains in ChatGPT chat history.
+
+
+## 2026-11-11 — Crypto & Mining navigation fix merged and deployed
+
+- User reported that the Studio > Crypto & Mining shortcut “Deschide panoul Crypto & Mining” did nothing.
+- Root cause confirmed in `www/module-workspaces.js`: the shortcut attempted to scroll to `#cryptoEngineHeading` inside `#adminPanel`, while the admin panel is deliberately hidden during module-workspace mode. Scrolling to a hidden element has no visible effect.
+- PR #120 moved the existing founder-only Crypto & Mining admin card into the dedicated Studio > Crypto & Mining feature page. The card remains collapsed until the user presses the explicit open button; then the real calculator, device registry and PoW engine controls are revealed in that page. Server-side admin authorization was not changed.
+- PR #120 merged to main as `fe8512da6a58dbe2aabc1bd4a2663eaf1b1933b6`.
+- Exact-head browser run #828 passed 176/176. Post-merge main browser run #829 passed 176/176.
+- Production deploy #556 succeeded for main commit `fe8512da6a58dbe2aabc1bd4a2663eaf1b1933b6`. Cloudflare Worker version: `a543bfb1-2367-4431-a32c-cebc72376658`. Production smoke test confirmed status online, Worker ok, assets/AI/database configured, all six module cards present, and unauthenticated admin-status rejected with HTTP 401.
+- Supabase migration gate reported “Remote database is up to date” before and after push. No migration was applied; no SQL/schema/database change was made.
+- Mining maturity: the current workspace is a research/simulation and admin device-registry environment. It includes PoW candidate discovery (strict price filter above $1 and hardware compatibility), Bitcoin network/hashrate scenarios, profitability/cooling/electricity/pool-fee/maintenance/downtime/tax assumptions, J/TH economics, break-even/payback and JSON report export. It does not run a miner, connect a native mining agent, custody wallets, or execute trades. Real mining/trading remain disabled.
+- The Crypto & Mining panel remains founder/admin-only. The public module chooser still exposes exactly six customer modules; no public access gate was weakened.
+- Public URL masking is still pending. Current `workers.dev` hostname contains the Cloudflare account subdomain `vasilecatalinprodan`. Cloudflare documents that this account subdomain is configurable at account level, while a custom domain requires an active Cloudflare zone owned by the account. Do not rename the account subdomain (it may affect other Workers) or change DNS until the founder confirms an owned domain/hostname. The current production URL remains https://dr--vas-ai.vasilecatalinprodan.workers.dev/.
+- Outstanding manual check: verify actual Dr.Vas/Dr.Jan male and Sarah feminine playback on the founder’s Windows and Android devices. Automated browser tests do not prove the real device audio output.
+- APK remains postponed/manual-only. No paid provider, new secret, wallet custody, trading or real mining was enabled.
+- This archive is a structured project/chat handoff, not a verbatim export. The full conversation remains in ChatGPT chat history.
