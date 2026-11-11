@@ -461,3 +461,12 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Android packaging remains workflow_dispatch-only and postponed. CI now explicitly enforces manual-only APK builds.
 - Next feature priorities: Academy per-lesson checklist/progress, Commerce supplier comparison/due diligence, Business cashbook/cashflow quality, Free/Health shared chat/attachment/accessibility hardening, then further Studio chapter/version workflow and Online Income/Crypto safety.
 - Continue all six public modules and internal founder workbenches. Keep Health file analysis disabled, real mining/trading disabled, and do not enable paid services or public entitlements without explicit approval.
+
+
+## 2026-11-11 — Commerce and Mining releases
+
+- Commerce supplier comparison shipped via PR #110; exact-head and post-merge browser suites passed 171/171; deploy #552 succeeded, Worker version `b420225b-2841-4bf8-adf1-6a3321dc2cbb`.
+- Mining sensitivity lab merged via PR #111; final exact-head browser run #791 passed 174/174. Adds BTC price/electricity 3×3 scenarios, cooling-aware energy/net results, maximum break-even electricity tariff and per-scenario payback. Await post-merge browser/deploy #793/#553.
+- Continue Business cashbook/cashflow, Free/Health chat/attachments/privacy, Studio chapter/version workflows, Online Income product/service builder and platform-wide accessibility/security.
+- Mining remains read-only/simulation only; no device agent, wallet custody, trades or automated mining.
+- No SQL changes; APK remains postponed/manual-only; no unapproved paid services.
