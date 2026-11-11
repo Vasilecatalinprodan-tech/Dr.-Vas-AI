@@ -28,7 +28,7 @@ async function openApp(page) {
 
 test("Academy lesson checklist derives progress from individual lesson completion", async ({ page }) => {
   await openApp(page);
-  await page.locator("#academyLessonTitles").fill("Introducere\\nBuget și planificare\\nMarketing");
+  await page.locator("#academyLessonTitles").fill("Introducere\nBuget și planificare\nMarketing");
   await page.evaluate(() => renderAcademyLessonChecklist());
   const lessons = page.locator("#academyLessonChecklist input[type=checkbox]");
   await lessons.nth(0).check();
@@ -37,6 +37,19 @@ test("Academy lesson checklist derives progress from individual lesson completio
   await expect(page.locator("#academyLessonsCompleted")).toHaveValue("2");
   await expect(page.locator("#academyProgressSummary")).toContainText("2 din 3 lecții finalizate");
   await expect(page.locator("#academyProgressBar")).toHaveAttribute("aria-valuenow", "67");
+});
+
+test("Academy lesson checklist labels and progress summary localize", async ({ page }) => {
+  await openApp(page);
+  await page.evaluate(() => {
+    currentLanguage = "en";
+    translatePage(document.body);
+  });
+  await expect(page.locator("#academyLessonTitles").locator("xpath=..")).toContainText("Lesson titles (one per line)");
+  await expect(page.locator(".academy-lesson-checklist-wrap h4")).toHaveText("Lesson checklist");
+  await page.locator("#academyLessonTitles").fill("Introduction\nBudget");
+  await page.evaluate(() => renderAcademyLessonChecklist());
+  await expect(page.locator("#academyProgressSummary")).toContainText("0 of 2 lessons completed");
 });
 
 test("Academy progress tracker calculates percentages and clamps completed lessons", async ({ page }) => {
@@ -91,7 +104,7 @@ test("Academy progress and notes persist with a saved course and restore when re
     document.getElementById("academyLessonsTotal").value = "8";
     document.getElementById("academyLessonsCompleted").value = "3";
     document.getElementById("academyProgressNotes").value = "Am parcurs bugetarea; urmează marketingul.";
-    document.getElementById("academyLessonTitles").value = "Introducere\\nBuget\\nMarketing";
+    document.getElementById("academyLessonTitles").value = "Introducere\nBuget\nMarketing";
     renderAcademyLessonChecklist();
     const lessonChecks = document.querySelectorAll("#academyLessonChecklist input[type=checkbox]");
     lessonChecks[0].checked = true;
@@ -133,17 +146,17 @@ test("Academy progress and notes persist with a saved course and restore when re
   expect(result.saved).toBe(true);
   expect(result.owner).toBe("e2e-academy-owner");
   expect(result.module).toBe("academy");
-  expect(result.savedTotal).toBe("8");
-  expect(result.savedCompleted).toBe("3");
+  expect(result.savedTotal).toBe("3");
+  expect(result.savedCompleted).toBe("2");
   expect(result.savedNotes).toContain("urmează marketingul");
-  expect(result.restoredTotal).toBe("8");
-  expect(result.restoredCompleted).toBe("3");
+  expect(result.restoredTotal).toBe("3");
+  expect(result.restoredCompleted).toBe("2");
   expect(result.restoredNotes).toContain("urmează marketingul");
   expect(result.savedLessonTitles).toContain("Buget");
   expect(JSON.parse(result.savedLessonChecklist).filter(item => item.completed)).toHaveLength(2);
   expect(result.restoredLessonTitles).toContain("Marketing");
   expect(JSON.parse(result.restoredLessonChecklist).filter(item => item.completed)).toHaveLength(2);
   expect(result.restoredCheckedLessons).toBe(2);
-  expect(result.summary).toContain("3 din 8 lecții finalizate");
-  expect(result.aria).toBe("38");
+  expect(result.summary).toContain("2 din 3 lecții finalizate");
+  expect(result.aria).toBe("67");
 });
