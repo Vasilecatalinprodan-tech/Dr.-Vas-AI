@@ -156,6 +156,12 @@ test("Book Studio keeps a private ten-version chapter history and restores a sel
   saved = await page.evaluate(() => window.__DRVAS_STUDIO_ROW__());
   expect(saved.brief.station.fields.manuscriptDraft).toBe("Versiunea 2 — dialog și cronologie revizuite.");
   expect(saved.brief.station.fields.revisions).toHaveLength(1);
+  const historyDownloadPromise = page.waitForEvent("download");
+  await page.evaluate(() => exportStudioProject());
+  const historyDownload = await historyDownloadPromise;
+  const historyText = require("fs").readFileSync(await historyDownload.path(), "utf8");
+  expect(historyText).toContain("## Istoric versiuni capitol");
+  expect(historyText).toContain("Versiunea 2 — dialog și cronologie revizuite.");
 
   await page.evaluate(async () => {
     newStudioProject();
