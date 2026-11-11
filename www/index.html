@@ -1458,6 +1458,17 @@ body.health-module-mode #chatSection .chat-main #freeChatView>#chat{
 .academy-lesson-item input{flex:0 0 auto;width:17px;height:17px;margin:1px 0 0;accent-color:#39c7b5}
 .academy-lesson-checklist-wrap>p{margin:10px 0 0;color:#9fbac8;font-size:12px}
 @media(max-width:600px){.academy-lesson-checklist{grid-template-columns:1fr}}
+.commerce-supplier-quantity{display:block;max-width:320px;margin:12px 0}
+.commerce-supplier-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0}
+.commerce-supplier-card{min-width:0;border:1px solid #29495b;border-radius:10px;padding:12px;background:#071522}
+.commerce-supplier-card legend{padding:0 6px;color:#b9f1e6;font-weight:700}
+.commerce-supplier-card label{display:grid;gap:5px;margin:8px 0;color:#d8e9f2;font-size:12px}
+.commerce-supplier-card input{width:100%;min-width:0}
+.commerce-supplier-results{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0}
+.commerce-supplier-result{border:1px solid #2d596b;border-radius:9px;padding:11px;background:#0a1e2c}
+.commerce-supplier-result h6{margin:0 0 8px;color:#c9f5eb;font-size:14px}
+.commerce-supplier-result p{margin:5px 0;color:#d7e5ed;font-size:12px;overflow-wrap:anywhere}
+@media(max-width:850px){.commerce-supplier-grid,.commerce-supplier-results{grid-template-columns:1fr}}
 @media(max-width:600px){.academy-progress-fields{grid-template-columns:1fr}}
 </style>
 
@@ -1858,6 +1869,40 @@ body.health-module-mode #chatSection .chat-main #freeChatView>#chat{
      <div><small>Contribuție lunară estimată</small><strong id="commerceMonthlyContribution">—</strong></div>
     </div>
     <p id="commerceEconomicsStatus" class="admin-footnote" role="status" aria-live="polite">Estimare de management, nu ofertă de profit. Verifică separat taxele, TVA, retururile și comisioanele actuale ale platformei.</p>
+   </section>
+   <section class="crypto-calculator commerce-supplier-comparison" aria-labelledby="commerceSupplierTitle">
+    <h5 id="commerceSupplierTitle">🔎 Compară ofertele furnizorilor</h5>
+    <p>Introdu până la trei oferte reale primite de la furnizori. Transportul este costul total al comenzii, iar calculatorul compară aceeași cantitate țintă și MOQ-ul fiecăruia. Nu include automat TVA, taxe vamale, asigurare, mostre sau costuri de retur.</p>
+    <label class="commerce-supplier-quantity">Cantitate țintă de comandă (unități)<input id="commerceSupplierQuantity" type="number" min="1" max="1000000" step="1" value="50" oninput="calculateCommerceSupplierComparison()"></label>
+    <div class="commerce-supplier-grid">
+     <fieldset class="commerce-supplier-card"><legend>Furnizor 1</legend>
+      <label>Nume furnizor<input id="commerceSupplier1Name" maxlength="160" oninput="calculateCommerceSupplierComparison()" placeholder="Numele firmei"></label>
+      <label>Preț / unitate<input id="commerceSupplier1UnitPrice" type="number" min="0" step="0.01" oninput="calculateCommerceSupplierComparison()" placeholder="0.00"></label>
+      <label>Transport total / comandă<input id="commerceSupplier1Shipping" type="number" min="0" step="0.01" oninput="calculateCommerceSupplierComparison()" placeholder="0.00"></label>
+      <label>MOQ (cantitate minimă)<input id="commerceSupplier1Moq" type="number" min="1" step="1" oninput="calculateCommerceSupplierComparison()" placeholder="1"></label>
+      <label>Termen livrare (zile)<input id="commerceSupplier1LeadDays" type="number" min="0" step="1" oninput="calculateCommerceSupplierComparison()" placeholder="Nespecificat"></label>
+      <label>Termeni retur / garanție<input id="commerceSupplier1Returns" maxlength="500" oninput="calculateCommerceSupplierComparison()" placeholder="Termeni confirmați în ofertă"></label>
+      <label>Sursă / URL ofertă<input id="commerceSupplier1Source" maxlength="500" oninput="calculateCommerceSupplierComparison()" placeholder="https://..."></label>
+     </fieldset><fieldset class="commerce-supplier-card"><legend>Furnizor 2</legend>
+      <label>Nume furnizor<input id="commerceSupplier2Name" maxlength="160" oninput="calculateCommerceSupplierComparison()" placeholder="Numele firmei"></label>
+      <label>Preț / unitate<input id="commerceSupplier2UnitPrice" type="number" min="0" step="0.01" oninput="calculateCommerceSupplierComparison()" placeholder="0.00"></label>
+      <label>Transport total / comandă<input id="commerceSupplier2Shipping" type="number" min="0" step="0.01" oninput="calculateCommerceSupplierComparison()" placeholder="0.00"></label>
+      <label>MOQ (cantitate minimă)<input id="commerceSupplier2Moq" type="number" min="1" step="1" oninput="calculateCommerceSupplierComparison()" placeholder="1"></label>
+      <label>Termen livrare (zile)<input id="commerceSupplier2LeadDays" type="number" min="0" step="1" oninput="calculateCommerceSupplierComparison()" placeholder="Nespecificat"></label>
+      <label>Termeni retur / garanție<input id="commerceSupplier2Returns" maxlength="500" oninput="calculateCommerceSupplierComparison()" placeholder="Termeni confirmați în ofertă"></label>
+      <label>Sursă / URL ofertă<input id="commerceSupplier2Source" maxlength="500" oninput="calculateCommerceSupplierComparison()" placeholder="https://..."></label>
+     </fieldset><fieldset class="commerce-supplier-card"><legend>Furnizor 3</legend>
+      <label>Nume furnizor<input id="commerceSupplier3Name" maxlength="160" oninput="calculateCommerceSupplierComparison()" placeholder="Numele firmei"></label>
+      <label>Preț / unitate<input id="commerceSupplier3UnitPrice" type="number" min="0" step="0.01" oninput="calculateCommerceSupplierComparison()" placeholder="0.00"></label>
+      <label>Transport total / comandă<input id="commerceSupplier3Shipping" type="number" min="0" step="0.01" oninput="calculateCommerceSupplierComparison()" placeholder="0.00"></label>
+      <label>MOQ (cantitate minimă)<input id="commerceSupplier3Moq" type="number" min="1" step="1" oninput="calculateCommerceSupplierComparison()" placeholder="1"></label>
+      <label>Termen livrare (zile)<input id="commerceSupplier3LeadDays" type="number" min="0" step="1" oninput="calculateCommerceSupplierComparison()" placeholder="Nespecificat"></label>
+      <label>Termeni retur / garanție<input id="commerceSupplier3Returns" maxlength="500" oninput="calculateCommerceSupplierComparison()" placeholder="Termeni confirmați în ofertă"></label>
+      <label>Sursă / URL ofertă<input id="commerceSupplier3Source" maxlength="500" oninput="calculateCommerceSupplierComparison()" placeholder="https://..."></label>
+     </fieldset>
+    </div>
+    <div id="commerceSupplierResults" class="commerce-supplier-results" aria-live="polite"></div>
+    <p id="commerceSupplierStatus" class="admin-footnote" role="status" aria-live="polite">Comparația este orientativă. Introdu datele din oferte; calculatorul nu verifică identitatea sau seriozitatea furnizorilor.</p>
    </section>
    <div class="studio-actions"><button type="button" onclick="buildCommercePrompt()">Analizează oportunitatea</button><span>Primești o analiză cu riscuri, costuri și marje orientative, nu promisiuni de profit.</span></div>
    <section class="studio-project-manager module-project-manager"><h3>📁 Analizele mele Commerce</h3><label>Titlu<input id="commerceProjectTitle" maxlength="160" placeholder="Titlul analizei"></label><div class="studio-project-controls"><button type="button" onclick="saveModuleProject('commerce')">Salvează analiza</button><select id="commerceProjectList" aria-label="Analize salvate"><option value="">Alege o analiză salvată</option></select><button type="button" onclick="openModuleProject('commerce')">Deschide</button><button type="button" onclick="exportModuleProject('commerce')">Exportă</button><button type="button" onclick="deleteModuleProject('commerce')">Șterge</button></div><p id="commerceProjectStatus" role="status" aria-live="polite">Analizele salvate rămân private în contul tău.</p></section>
@@ -3668,6 +3713,8 @@ Object.assign(STUDIO_BRIEF_TRANSLATIONS,{"Titlurile lecțiilor (unul pe rând)":
 
 Object.assign(STUDIO_BRIEF_TRANSLATIONS,{"Ex.: Introducere, buget și planificare, marketing, evaluare finală":["E.g. Introduction, budget and planning, marketing, final assessment","Es.: introduzione, budget e pianificazione, marketing, valutazione finale","Örn. giriş, bütçe ve planlama, pazarlama, final değerlendirmesi","Z. B. Einführung, Budget und Planung, Marketing, Abschlussbewertung","Ex. : introduction, budget et planification, marketing, évaluation finale","Ej.: introducción, presupuesto y planificación, marketing, evaluación final","Например: введение, бюджет и планирование, маркетинг, итоговая оценка"]});
 
+Object.assign(STUDIO_BRIEF_TRANSLATIONS,{"Compară ofertele furnizorilor":["Compare supplier quotes","Confronta le offerte dei fornitori","Tedarikçi tekliflerini karşılaştır","Lieferantenangebote vergleichen","Comparer les offres des fournisseurs","Comparar ofertas de proveedores","Сравнить предложения поставщиков"],"Introdu până la trei oferte reale primite de la furnizori. Transportul este costul total al comenzii, iar calculatorul compară aceeași cantitate țintă și MOQ-ul fiecăruia. Nu include automat TVA, taxe vamale, asigurare, mostre sau costuri de retur.":["Enter up to three real supplier quotes. Shipping is the total order cost, and the calculator compares the same target quantity against each supplier MOQ. VAT, customs duties, insurance, samples and returns are not included automatically.","Inserisci fino a tre offerte reali ricevute dai fornitori. La spedizione è il costo totale dell’ordine e il calcolatore confronta la stessa quantità obiettivo con il MOQ di ciascuno. IVA, dazi, assicurazione, campioni e resi non sono inclusi automaticamente.","Tedarikçilerden aldığınız en fazla üç gerçek teklifi girin. Nakliye siparişin toplam maliyetidir; hesaplayıcı aynı hedef miktarı her tedarikçinin MOQ değeriyle karşılaştırır. KDV, gümrük vergileri, sigorta, numuneler ve iadeler otomatik olarak dahil edilmez.","Gib bis zu drei echte Lieferantenangebote ein. Versandkosten sind die gesamten Bestellkosten; der Rechner vergleicht dieselbe Zielmenge mit dem jeweiligen MOQ. MwSt., Zoll, Versicherung, Muster und Retouren sind nicht automatisch enthalten.","Saisissez jusqu’à trois offres réelles de fournisseurs. Les frais d’expédition correspondent au coût total de la commande ; le calculateur compare la même quantité cible au MOQ de chaque fournisseur. TVA, droits de douane, assurance, échantillons et retours ne sont pas inclus automatiquement.","Introduce hasta tres ofertas reales de proveedores. El envío es el coste total del pedido y la calculadora compara la misma cantidad objetivo con el MOQ de cada proveedor. IVA, aranceles, seguro, muestras y devoluciones no se incluyen automáticamente.","Введите до трёх реальных предложений поставщиков. Доставка указана как общая стоимость заказа; калькулятор сравнивает одну целевую партию с MOQ каждого поставщика. НДС, пошлины, страховка, образцы и возвраты автоматически не включены."],"Cantitate țintă de comandă (unități)":["Target order quantity (units)","Quantità obiettivo dell’ordine (unità)","Hedef sipariş miktarı (adet)","Zielbestellmenge (Einheiten)","Quantité cible de commande (unités)","Cantidad objetivo del pedido (unidades)","Целевое количество заказа (единиц)"],"Furnizor 1":["Supplier 1","Fornitore 1","Tedarikçi 1","Lieferant 1","Fournisseur 1","Proveedor 1","Поставщик 1"],"Furnizor 2":["Supplier 2","Fornitore 2","Tedarikçi 2","Lieferant 2","Fournisseur 2","Proveedor 2","Поставщик 2"],"Furnizor 3":["Supplier 3","Fornitore 3","Tedarikçi 3","Lieferant 3","Fournisseur 3","Proveedor 3","Поставщик 3"],"Nume furnizor":["Supplier name","Nome del fornitore","Tedarikçi adı","Lieferantenname","Nom du fournisseur","Nombre del proveedor","Название поставщика"],"Preț / unitate":["Price / unit","Prezzo / unità","Birim fiyat","Preis / Einheit","Prix / unité","Precio / unidad","Цена за единицу"],"Transport total / comandă":["Total shipping / order","Spedizione totale / ordine","Toplam nakliye / sipariş","Gesamtversand / Bestellung","Expédition totale / commande","Envío total / pedido","Доставка всего заказа"],"MOQ (cantitate minimă)":["MOQ (minimum order quantity)","MOQ (quantità minima)","MOQ (minimum sipariş miktarı)","MOQ (Mindestbestellmenge)","MOQ (quantité minimale)","MOQ (cantidad mínima)","MOQ (минимальный объём заказа)"],"Termen livrare (zile)":["Lead time (days)","Tempi di consegna (giorni)","Teslim süresi (gün)","Lieferzeit (Tage)","Délai de livraison (jours)","Plazo de entrega (días)","Срок доставки (дней)"],"Termeni retur / garanție":["Returns / warranty terms","Termini di reso / garanzia","İade / garanti koşulları","Rückgabe- / Garantiebedingungen","Conditions de retour / garantie","Condiciones de devolución / garantía","Условия возврата / гарантии"],"Sursă / URL ofertă":["Quote source / URL","Fonte offerta / URL","Teklif kaynağı / URL","Angebotsquelle / URL","Source de l’offre / URL","Fuente de la oferta / URL","Источник предложения / URL"],"Comparația este orientativă. Introdu datele din oferte; calculatorul nu verifică identitatea sau seriozitatea furnizorilor.":["This comparison is indicative. Enter quote data; the calculator does not verify supplier identity or reliability.","Il confronto è indicativo. Inserisci i dati delle offerte; il calcolatore non verifica identità o affidabilità dei fornitori.","Bu karşılaştırma bilgilendirme amaçlıdır. Teklif verilerini girin; hesaplayıcı tedarikçi kimliğini veya güvenilirliğini doğrulamaz.","Dieser Vergleich ist unverbindlich. Gib Angebotsdaten ein; der Rechner überprüft weder Identität noch Zuverlässigkeit der Lieferanten.","Cette comparaison est indicative. Saisissez les données des offres ; le calculateur ne vérifie ni l’identité ni la fiabilité des fournisseurs.","Esta comparación es orientativa. Introduce los datos de las ofertas; la calculadora no verifica la identidad ni la fiabilidad de los proveedores.","Сравнение носит ориентировочный характер. Введите данные предложений; калькулятор не проверяет личность или надёжность поставщиков."],"Cost total comandă":["Total order cost","Costo totale dell’ordine","Toplam sipariş maliyeti","Gesamte Bestellkosten","Coût total de la commande","Coste total del pedido","Общая стоимость заказа"],"Cost efectiv / unitate":["Effective cost / unit","Costo effettivo / unità","Gerçek maliyet / birim","Effektive Kosten / Einheit","Coût effectif / unité","Coste efectivo / unidad","Фактическая стоимость / единицу"],"Stoc suplimentar":["Extra stock","Scorte aggiuntive","Fazla stok","Zusätzlicher Bestand","Stock supplémentaire","Stock adicional","Излишек товара"],"Termen livrare":["Lead time","Tempi di consegna","Teslim süresi","Lieferzeit","Délai de livraison","Plazo de entrega","Срок доставки"],"Termeni retur":["Returns terms","Termini di reso","İade koşulları","Rückgabebedingungen","Conditions de retour","Condiciones de devolución","Условия возврата"],"Sursă ofertă":["Quote source","Fonte dell’offerta","Teklif kaynağı","Angebotsquelle","Source de l’offre","Fuente de la oferta","Источник предложения"],"nespecificat":["not specified","non specificato","belirtilmedi","nicht angegeben","non précisé","no especificado","не указано"],"nespecificați":["not specified","non specificati","belirtilmedi","nicht angegeben","non précisés","no especificados","не указаны"],"nespecificată":["not specified","non specificata","belirtilmedi","nicht angegeben","non précisée","no especificada","не указана"],"Introdu o cantitate țintă între 1 și 1.000.000 de unități.":["Enter a target quantity between 1 and 1,000,000 units.","Inserisci una quantità obiettivo compresa tra 1 e 1.000.000 di unità.","1 ile 1.000.000 arasında bir hedef miktar girin.","Gib eine Zielmenge zwischen 1 und 1.000.000 Einheiten ein.","Saisissez une quantité cible entre 1 et 1 000 000 unités.","Introduce una cantidad objetivo entre 1 y 1.000.000 unidades.","Введите целевое количество от 1 до 1 000 000 единиц."],"Introdu numele, prețul unitar, transportul total și MOQ pentru cel puțin un furnizor.":["Enter the name, unit price, total shipping and MOQ for at least one supplier.","Inserisci nome, prezzo unitario, spedizione totale e MOQ per almeno un fornitore.","En az bir tedarikçi için ad, birim fiyat, toplam nakliye ve MOQ girin.","Gib für mindestens einen Lieferanten Name, Stückpreis, Gesamtversand und MOQ ein.","Saisissez le nom, le prix unitaire, l’expédition totale et le MOQ d’au moins un fournisseur.","Introduce el nombre, precio unitario, envío total y MOQ de al menos un proveedor.","Введите название, цену за единицу, общую доставку и MOQ хотя бы для одного поставщика."],"Ofertele sunt ordonate după costul efectiv unitar. Datele sunt introduse de tine, furnizorii nu sunt verificați, iar TVA și taxele vamale nu sunt incluse.":["Quotes are sorted by effective unit cost. You entered the data; suppliers are not verified, and VAT and customs duties are excluded.","Le offerte sono ordinate per costo unitario effettivo. I dati sono inseriti da te; i fornitori non sono verificati e IVA e dazi sono esclusi.","Teklifler gerçek birim maliyetine göre sıralanır. Verileri siz girdiniz; tedarikçiler doğrulanmaz, KDV ve gümrük vergileri hariçtir.","Angebote sind nach effektiven Stückkosten sortiert. Die Daten stammen von dir; Lieferanten werden nicht geprüft, MwSt. und Zoll sind ausgeschlossen.","Les offres sont classées par coût unitaire effectif. Les données sont fournies par vous ; les fournisseurs ne sont pas vérifiés et TVA et droits de douane sont exclus.","Las ofertas se ordenan por coste unitario efectivo. Tú introduces los datos; los proveedores no se verifican y se excluyen IVA y aranceles.","Предложения отсортированы по фактической цене за единицу. Данные введены вами; поставщики не проверены, НДС и пошлины не включены."],"rânduri incomplete au fost ignorate.":["incomplete rows were ignored.","righe incomplete ignorate.","eksik satır yok sayıldı.","unvollständige Zeilen wurden ignoriert.","lignes incomplètes ignorées.","filas incompletas ignoradas.","неполные строки пропущены."]});
+
 for(const [source,values] of Object.entries(STUDIO_BRIEF_TRANSLATIONS)){
  for(let i=0;i<["en","it","tr","de","fr","es","ru"].length;i++){
   const language=["en","it","tr","de","fr","es","ru"][i];
@@ -5369,6 +5416,51 @@ function calculateCommerceUnitEconomics(){
  const round2=value=>Math.round((value+Number.EPSILON)*100)/100;
  return {currency,price:round2(price),landed:round2(landed),feeTotal:round2(feeTotal),variableTotal:round2(variableTotal),contribution:round2(contribution),margin:Math.round(margin*10)/10,priceFloor:round2(priceFloor),breakEvenOrders:breakEven,monthlyContribution:round2(monthly)};
 }
+function calculateCommerceSupplierComparison(){
+ const tr=typeof window.tr==="function"?window.tr:(value=>value);
+ const currency=el("commerceCurrency")?.value||"GBP";
+ const quantityText=String(el("commerceSupplierQuantity")?.value??"").trim();
+ const quantity=Number(quantityText);
+ const results=el("commerceSupplierResults"),status=el("commerceSupplierStatus");
+ const clear=()=>{if(results)results.replaceChildren();};
+ if(!quantityText||!Number.isInteger(quantity)||quantity<1||quantity>1000000){
+  clear();if(status)status.textContent=tr("Introdu o cantitate țintă între 1 și 1.000.000 de unități.");
+  return {quantity:null,currency,suppliers:[],error:"invalid_quantity"};
+ }
+ const suppliers=[];let incomplete=0;
+ for(let index=1;index<=3;index++){
+  const read=id=>String(el("commerceSupplier"+index+id)?.value??"").trim();
+  const name=read("Name"),unitText=read("UnitPrice"),shippingText=read("Shipping"),moqText=read("Moq"),leadText=read("LeadDays"),returns=read("Returns"),source=read("Source");
+  if(![name,unitText,shippingText,moqText,leadText,returns,source].some(Boolean))continue;
+  const unitPrice=Number(unitText),shipping=Number(shippingText),moq=Number(moqText),leadDays=leadText===""?null:Number(leadText);
+  if(!name||unitText===""||shippingText===""||moqText===""||!Number.isFinite(unitPrice)||unitPrice<0||!Number.isFinite(shipping)||shipping<0||!Number.isInteger(moq)||moq<1||(leadDays!==null&&(!Number.isInteger(leadDays)||leadDays<0))){
+   incomplete++;continue;
+  }
+  const orderUnits=Math.max(quantity,moq);
+  const upfrontCost=Math.round((unitPrice*orderUnits+shipping+Number.EPSILON)*100)/100;
+  const landedUnitCost=Math.round((upfrontCost/orderUnits+Number.EPSILON)*10000)/10000;
+  suppliers.push({index,name,unitPrice,shipping,moq,leadDays,returns,source,orderUnits,upfrontCost,landedUnitCost,excessUnits:orderUnits-quantity});
+ }
+ suppliers.sort((a,b)=>a.landedUnitCost-b.landedUnitCost||(a.leadDays??Infinity)-(b.leadDays??Infinity));
+ clear();
+ const money=value=>businessMoney(value,currency);
+ if(results)suppliers.forEach((supplier,position)=>{
+  const card=document.createElement("article");card.className="commerce-supplier-result";
+  const heading=document.createElement("h6");heading.textContent=(position+1)+". "+supplier.name;
+  const total=document.createElement("p");total.textContent=tr("Cost total comandă")+": "+money(supplier.upfrontCost)+" · "+supplier.orderUnits+" "+tr("unități");
+  const unit=document.createElement("p");unit.textContent=tr("Cost efectiv / unitate")+": "+money(supplier.landedUnitCost);
+  const moqLine=document.createElement("p");moqLine.textContent="MOQ: "+supplier.moq+" · "+tr("Stoc suplimentar")+": "+supplier.excessUnits;
+  const lead=document.createElement("p");lead.textContent=tr("Termen livrare")+": "+(supplier.leadDays===null?tr("nespecificat"):supplier.leadDays+" "+tr("zile"));
+  const returnsLine=document.createElement("p");returnsLine.textContent=tr("Termeni retur")+": "+(supplier.returns||tr("nespecificați"));
+  const sourceLine=document.createElement("p");sourceLine.textContent=tr("Sursă ofertă")+": "+(supplier.source||tr("nespecificată"));
+  card.append(heading,total,unit,moqLine,lead,returnsLine,sourceLine);results.appendChild(card);
+ });
+ if(status){
+  if(!suppliers.length)status.textContent=tr("Introdu numele, prețul unitar, transportul total și MOQ pentru cel puțin un furnizor.");
+  else status.textContent=tr("Ofertele sunt ordonate după costul efectiv unitar. Datele sunt introduse de tine, furnizorii nu sunt verificați, iar TVA și taxele vamale nu sunt incluse.")+(incomplete?" "+incomplete+" "+tr("rânduri incomplete au fost ignorate."):"");
+ }
+ return {quantity,currency,suppliers,incomplete};
+}
 function buildCommercePrompt(){
  const v=id=>el(id)?.value?.trim()||"";
  const budget=Math.max(0,Number(v("commerceBudget"))||0),price=Math.max(0,Number(v("commercePrice"))||0);
@@ -5377,7 +5469,9 @@ function buildCommercePrompt(){
  const economicsSummary=economics
   ?JSON.stringify(economics)
   :"Calculatorul local nu are încă suficiente date pentru un rezultat.";
- const prompt="DR.VAS COMMERCE — ANALIZĂ OPORTUNITATE\nPRODUS/NIȘĂ: "+v("commerceProduct")+"\nPIAȚĂ: "+v("commerceMarket")+"\nBUGET MAXIM: "+budget+"\nMODEL: "+v("commerceModel")+"\nCANAL: "+v("commerceChannel")+"\nPREȚ ȚINTĂ: "+(price||"neprecizat")+"\nCOST PRODUS: "+v("commerceUnitCost")+"\nTRANSPORT: "+v("commerceShippingCost")+"\nAMBALARE: "+v("commercePackagingCost")+"\nCOMISION PLATFORMĂ: "+v("commercePlatformFee")+"%\nCOMISION PLATĂ: "+v("commercePaymentFee")+"%\nMARKETING / COMANDĂ: "+v("commerceMarketingCost")+"\nREZERVĂ RETURURI: "+v("commerceReturnsReserve")+"%\nREZULTAT CALCULATOR: "+economicsSummary+"\nBRIEF: "+v("commerceBrief")+"\n\nAnalizează fără promisiuni de profit: cerere și concurență (marchează ce necesită cercetare actuală), profilul clientului, verificarea furnizorilor, mostre, termene și retururi, siguranța produsului, proprietate intelectuală, obligații UK/UE relevante, cost complet pe unitate, taxe/VAT și comisioane, cost de achiziție client, marjă, prag de rentabilitate și scenarii pesimist/bază/optimist. Verifică independent aritmetica locală și explică diferența dintre contribuția pe comandă, profitul contabil și fluxul de numerar. Respectă strict bugetul; nu presupune că toate fondurile pot fi cheltuite pe stoc sau reclame. Încheie cu o listă de verificări înainte de orice plată și recomandă să nu comandăm până nu verificăm furnizorul și o mostră.";
+ const supplierComparison=calculateCommerceSupplierComparison();
+ const supplierSummary=supplierComparison.suppliers.length?JSON.stringify(supplierComparison):"Nu au fost introduse încă oferte complete de furnizori.";
+ const prompt="DR.VAS COMMERCE — ANALIZĂ OPORTUNITATE\nPRODUS/NIȘĂ: "+v("commerceProduct")+"\nPIAȚĂ: "+v("commerceMarket")+"\nBUGET MAXIM: "+budget+"\nMODEL: "+v("commerceModel")+"\nCANAL: "+v("commerceChannel")+"\nPREȚ ȚINTĂ: "+(price||"neprecizat")+"\nCOST PRODUS: "+v("commerceUnitCost")+"\nTRANSPORT: "+v("commerceShippingCost")+"\nAMBALARE: "+v("commercePackagingCost")+"\nCOMISION PLATFORMĂ: "+v("commercePlatformFee")+"%\nCOMISION PLATĂ: "+v("commercePaymentFee")+"%\nMARKETING / COMANDĂ: "+v("commerceMarketingCost")+"\nREZERVĂ RETURURI: "+v("commerceReturnsReserve")+"%\nREZULTAT CALCULATOR: "+economicsSummary+"\nCOMPARAȚIE FURNIZORI (date furnizate de utilizator, neverificate): "+supplierSummary+"\nBRIEF: "+v("commerceBrief")+"\n\nAnalizează fără promisiuni de profit: cerere și concurență (marchează ce necesită cercetare actuală), profilul clientului, verificarea furnizorilor, mostre, termene și retururi, siguranța produsului, proprietate intelectuală, obligații UK/UE relevante, cost complet pe unitate, taxe/VAT și comisioane, cost de achiziție client, marjă, prag de rentabilitate și scenarii pesimist/bază/optimist. Verifică independent aritmetica locală și explică diferența dintre contribuția pe comandă, profitul contabil și fluxul de numerar. Respectă strict bugetul; nu presupune că toate fondurile pot fi cheltuite pe stoc sau reclame. Încheie cu o listă de verificări înainte de orice plată și recomandă să nu comandăm până nu verificăm furnizorul și o mostră.";
  const focus=window.DrVasCommerceFeature||"research";
  const focusInstructions={
   research:"FOCUS: verifică cererea, concurența, profilul clientului și riscurile pieței; marchează ce necesită cercetare actuală.",
@@ -5589,7 +5683,7 @@ const moduleProjectState={academy:null,commerce:null,business:null};
 const moduleProjectOutputs={academy:"",commerce:"",business:""};
 const MODULE_PROJECT_FIELDS={
  academy:["academySubject","academyLevel","academyAudience","academyFormat","academyLanguage","academyOutcome","academyBrief","academyLessonsTotal","academyLessonsCompleted","academyProgressNotes","academyLessonTitles","academyLessonChecklistData"],
- commerce:["commerceProduct","commerceMarket","commerceBudget","commerceModel","commerceChannel","commercePrice","commerceBrief","commerceCurrency","commerceUnitCost","commerceShippingCost","commercePackagingCost","commercePlatformFee","commercePaymentFee","commerceMarketingCost","commerceReturnsReserve","commerceMonthlyOrders"],
+ commerce:["commerceProduct","commerceMarket","commerceBudget","commerceModel","commerceChannel","commercePrice","commerceBrief","commerceCurrency","commerceUnitCost","commerceShippingCost","commercePackagingCost","commercePlatformFee","commercePaymentFee","commerceMarketingCost","commerceReturnsReserve","commerceMonthlyOrders","commerceSupplierQuantity","commerceSupplier1Name","commerceSupplier1UnitPrice","commerceSupplier1Shipping","commerceSupplier1Moq","commerceSupplier1LeadDays","commerceSupplier1Returns","commerceSupplier1Source","commerceSupplier2Name","commerceSupplier2UnitPrice","commerceSupplier2Shipping","commerceSupplier2Moq","commerceSupplier2LeadDays","commerceSupplier2Returns","commerceSupplier2Source","commerceSupplier3Name","commerceSupplier3UnitPrice","commerceSupplier3Shipping","commerceSupplier3Moq","commerceSupplier3LeadDays","commerceSupplier3Returns","commerceSupplier3Source"],
  business:["businessIdea","businessCountry","businessBudget","businessStage","businessGoal","businessHorizon","businessBrief","businessFixedCosts","businessUnitPrice","businessVariableCost","businessExpectedUnits"]
 };
 const MODULE_PROJECT_PRIMARY={academy:"academySubject",commerce:"commerceProduct",business:"businessIdea"};
@@ -5655,7 +5749,7 @@ async function openModuleProject(module){
    if(brief[field]!==undefined&&el(field))el(field).value=String(brief[field]??"");
   }
   moduleProjectOutputs[module]=String(brief.latest_output||"");
-  if(module==="commerce")calculateCommerceUnitEconomics();
+  if(module==="commerce"){calculateCommerceUnitEconomics();calculateCommerceSupplierComparison();}
   if(module==="academy"){renderAcademyLessonChecklist();updateAcademyProgress();}
   moduleProjectStatus(module,"Proiect încărcat. Poți continua editarea.");
  }catch(error){moduleProjectStatus(module,"Nu am putut deschide proiectul: "+error.message,true);}
