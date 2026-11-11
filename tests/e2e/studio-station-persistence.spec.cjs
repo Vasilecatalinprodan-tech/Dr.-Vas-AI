@@ -229,3 +229,23 @@ test("Translation Station glossary and source text survive save and reopen", asy
   await expect(page.locator("#drvasTranslationGlossary")).toHaveValue("patient pathway = traseul pacientului\ncare plan = plan de îngrijire");
   await expect(page.locator("#drvasTranslationText")).toHaveValue("The patient pathway must preserve the original clinical meaning.");
 });
+
+
+test("Crypto & Mining shortcut opens the actual admin mining panel inside Studio", async ({ page }) => {
+  await openStudio(page);
+  await page.locator("#studioWorkspace [data-feature='crypto']").click();
+  const cryptoPage = page.locator("#studioWorkspace [data-feature-page='crypto']");
+  const shortcut = cryptoPage.locator(".studio-founder-shortcut");
+  const openButton = shortcut.getByRole("button", { name: "Deschide panoul Crypto & Mining", exact: true });
+  const miningPanel = shortcut.locator(".crypto-admin-card").first();
+
+  await expect(openButton).toBeVisible();
+  await expect(miningPanel).toHaveClass(/hidden/);
+  await openButton.click();
+
+  await expect(miningPanel).not.toHaveClass(/hidden/);
+  await expect(miningPanel.locator("#cryptoEngineHeading")).toBeVisible();
+  await expect(miningPanel.locator("#cryptoEngineScanButton")).toBeVisible();
+  await expect(miningPanel.locator("#cryptoEmergencyStopButton")).toBeVisible();
+  await expect(miningPanel.locator("#cryptoBtcPerDay")).toBeVisible();
+});

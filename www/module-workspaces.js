@@ -244,18 +244,27 @@
   if(kind==="book")renderBookRevisionOptions(window.drvasGetStudioStationData?.()?.fields?.revisions||[]);
   return section;
  }
- function founderShortcut(title,description,targetId,buttonText){
+ function founderShortcut(title,description,targetId,buttonText,contentNode=null){
   const section=document.createElement("section");section.className="studio-founder-shortcut";
   const heading=document.createElement("h4");heading.textContent=title;
   const copy=document.createElement("p");copy.textContent=description;
   const button=document.createElement("button");button.type="button";button.textContent=buttonText;
   button.addEventListener("click",()=>{
+   if(contentNode){
+    contentNode.classList.remove("hidden");
+    button.hidden=true;
+    contentNode.scrollIntoView({behavior:"smooth",block:"start"});
+    contentNode.setAttribute("tabindex","-1");contentNode.focus({preventScroll:true});
+    return;
+   }
    const target=byId(targetId);
    if(!target){const message=byId("adminAccessNotice");if(message){message.textContent="Panoul privat nu este disponibil în sesiunea curentă.";message.classList.remove("hidden");}return;}
    target.scrollIntoView({behavior:"smooth",block:"start"});
    target.setAttribute("tabindex","-1");target.focus({preventScroll:true});
   });
-  section.append(heading,copy,button);return section;
+  section.append(heading,copy,button);
+  if(contentNode)section.appendChild(contentNode);
+  return section;
  }
  function studio(root){
   if(built.has(root))return;built.add(root);
@@ -266,7 +275,9 @@
   const actions=Array.from(root.children).find(n=>n.matches(".studio-actions"));
   const projects=Array.from(root.children).find(n=>n.matches(".studio-project-manager:not(.studio-render-panel)"));
   const income=direct(root,".income-tracker"),capabilities=direct(root,".studio-capabilities"),social=direct(root,".studio-social");
-  const cryptoShortcut=founderShortcut("₿ Crypto & Mining","Analiză PoW, calculator de rentabilitate, registru de dispozitive și limite de siguranță. Minarea reală este dezactivată până la instalarea agentului local securizat.","cryptoEngineHeading","Deschide panoul Crypto & Mining"),incomeShortcut=founderShortcut("✍️ Creator & Online Income Lab","Cărți, traduceri, muzică, produse digitale, publicare, AI Evaluation și urmărirea oportunităților de venit.","founderProductionHeading","Deschide Creator & Online Income Lab");
+  const cryptoPanel=byId("cryptoEngineHeading")?.closest(".crypto-admin-card")||null;
+  if(cryptoPanel)cryptoPanel.classList.add("hidden");
+  const cryptoShortcut=founderShortcut("₿ Crypto & Mining","Analiză PoW, calculator de rentabilitate, registru de dispozitive și limite de siguranță. Minarea reală este dezactivată până la instalarea agentului local securizat.","cryptoEngineHeading","Deschide panoul Crypto & Mining",cryptoPanel),incomeShortcut=founderShortcut("✍️ Creator & Online Income Lab","Cărți, traduceri, muzică, produse digitale, publicare, AI Evaluation și urmărirea oportunităților de venit.","founderProductionHeading","Deschide Creator & Online Income Lab");
   const bookStation=createStudioStation("book"),translationStation=createStudioStation("translation");
   const items=[
    {id:"video",label:"Lucrează la videoclip",title:"Video & Reels",description:"Pregătește scenariul și producția video. Randarea MP4 rămâne disponibilă numai când serviciul este configurat și verificat.",nodes:[production,render],shared:[brief,actions],deliverable:["studioDeliverable","short"]},
