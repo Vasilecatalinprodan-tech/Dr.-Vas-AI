@@ -106,3 +106,13 @@ Continue from `main` commit `8ecf72a754c678865f29c620463924e22714b2df`. First ve
 3. Continue Crypto/Mining research and simulator accuracy only. Native device agent remains a separate future release requiring signed enrollment, explicit owner authorization, power/temperature limits, watchdog and emergency stop.
 4. Preserve owner-only access for Academy, Commerce, Business, Crypto and Online Income; do not change entitlements or paid integrations without authorization.
 5. Keep SQL out of scope and APK postponed/manual-only. Update archive/log/roadmap/checkpoint after each verified release before opening a new chat.
+
+
+## Mining production deployment verified — 2026-11-11
+
+- Deploy #553 (`43000930954`) completed successfully for main `6bf6701d9adb955d5c77bd0167e63dbdb324589a`.
+- Production Worker version: `729483ee-0b20-4949-9592-d84877cb53de`.
+- Supabase migration history: `Remote database is up to date.` No new migration was applied. Health rate-limit RPC, RLS and service_role grants were verified.
+- Production smoke test passed; all six module markers verified and unauthenticated admin-status request correctly rejected with HTTP 401. SBOM artifact ID `13846107242` uploaded.
+- Deploy workflow's full browser regression gate passed. Independent post-merge browser run #793 was still in progress at the last check.
+- No SQL/schema/RLS change; APK remains postponed/manual-only; real mining remains disabled.
