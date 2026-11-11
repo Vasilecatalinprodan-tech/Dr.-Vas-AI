@@ -520,3 +520,13 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Mining scope is still research/simulation: PoW discovery, hardware matching, live market/network inputs where available, profitability and cooling/electricity sensitivity, hashrate scenarios, break-even/payback and JSON exports. Native agent and real mining are not implemented or enabled; no trading or wallet custody.
 - Next: founder manually verifies Mining panel on production with the correct admin account; continue module quality work and manual presenter-audio device verification. Address masking still requires an owned custom domain or account-level workers.dev rename.
 - APK postponed/manual-only. No unapproved paid service or SQL/schema changes.
+
+
+### 2026-11-11 — Creator & Online Income workspace release
+
+- PR #121 fixed the second founder shortcut that targeted hidden content inside `#adminPanel`.
+- Creator & Online Income workbench and provenance controls now live in Studio > Online Income and open only after the explicit button. Existing private Studio/admin access gate remains.
+- Main commit `26335d9dd7c78358fc3683e2a4a106434ba9914e`; exact-head #833 and post-merge #834 passed 177/177.
+- Deploy #557 succeeded; Worker version `61f40e4a-747e-4acf-8147-58e87bdc3baf`. Supabase was up to date; no migration applied.
+- Next: founder verifies Crypto & Mining and Creator & Online Income buttons in production with the admin account; then continue module polish and manual presenter audio checks. Address masking still requires an owned custom domain or explicit account-level workers.dev rename.
+- APK postponed/manual-only; no paid provider, SQL/schema change or real mining/trading.
