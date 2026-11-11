@@ -282,6 +282,7 @@
   ];
   const usable=items.filter(item=>(item.nodes||[]).some(Boolean)||(item.shared||[]).some(Boolean));
   makeNav(root,usable);
+  renderBookRevisionOptions(window.drvasGetStudioStationData?.()?.fields?.revisions||[]);
   if(window.drvasStudioStationData)restoreStudioStation(window.drvasStudioStationData);
   if(header)root.insertBefore(header,root.firstChild);
   const disclaimer=direct(root,".studio-disclaimer");if(disclaimer)root.appendChild(disclaimer);
