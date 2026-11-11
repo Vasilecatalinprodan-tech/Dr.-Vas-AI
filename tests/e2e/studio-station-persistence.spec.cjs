@@ -65,8 +65,17 @@ test("Book Studio station metadata survives save, new draft and reopen", async (
   await page.locator("#drvasBookStationAudience").fill("Adulți interesați de ficțiune");
   await page.locator("#drvasBookStationLength").selectOption("Roman amplu · 20–30 capitole");
   await page.locator("#drvasBookStationConcept").fill("O poveste originală despre curaj, familie și alegeri dificile.");
+  await page.locator("#drvasBookStationSubtitle").fill("O alegere poate schimba trei generații.");
+  await page.locator("#drvasBookStationStyleGuide").fill("Persoana a treia, trecut, ton realist, dialog natural.");
+  await page.locator("#drvasBookStationCharacterBible").fill("Mara: protagonistă, caută adevărul. Ilie: tatăl ei, ascunde o scrisoare.");
+  await page.locator("#drvasBookStationSettingBible").fill("Acțiunea are loc în Botoșani și Leeds, între 2008 și 2026.");
+  await page.locator("#drvasBookStationChapterOutline").fill("1. Întoarcerea — Mara găsește scrisoarea.\n2. Martorul — Ilie explică tăcerea.");
+  await page.locator("#drvasBookStationChapterStatus").selectOption("revising");
+  await page.locator("#drvasBookStationManuscriptDraft").fill("Capitolul întâi\n\nMara a deschis plicul și a recunoscut scrisul.");
+  await page.locator("#drvasBookStationRevisionNotes").fill("Păstrează cronologia; nu dezvălui încă motivul plecării lui Ilie.");
 
   await page.locator("#studioWorkspace [data-feature-page='book'] .studio-station-card button").click();
+  await expect(page.locator("#studioIdea")).toHaveValue(/Capitolul întâi/);
   await page.waitForFunction(() => document.getElementById("studioProjectStatus")?.textContent.includes("Proiect salvat"));
   const saved = await page.evaluate(() => window.__DRVAS_STUDIO_ROW__());
   expect(saved.project_type).toBe("book");
@@ -78,7 +87,15 @@ test("Book Studio station metadata survives save, new draft and reopen", async (
       language: "Engleză",
       audience: "Adulți interesați de ficțiune",
       length: "Roman amplu · 20–30 capitole",
-      concept: "O poveste originală despre curaj, familie și alegeri dificile."
+      concept: "O poveste originală despre curaj, familie și alegeri dificile.",
+      subtitle: "O alegere poate schimba trei generații.",
+      styleGuide: "Persoana a treia, trecut, ton realist, dialog natural.",
+      characterBible: "Mara: protagonistă, caută adevărul. Ilie: tatăl ei, ascunde o scrisoare.",
+      settingBible: "Acțiunea are loc în Botoșani și Leeds, între 2008 și 2026.",
+      chapterOutline: "1. Întoarcerea — Mara găsește scrisoarea.\n2. Martorul — Ilie explică tăcerea.",
+      chapterStatus: "revising",
+      manuscriptDraft: "Capitolul întâi\n\nMara a deschis plicul și a recunoscut scrisul.",
+      revisionNotes: "Păstrează cronologia; nu dezvălui încă motivul plecării lui Ilie."
     }
   });
 
@@ -93,6 +110,34 @@ test("Book Studio station metadata survives save, new draft and reopen", async (
   await expect(page.locator("#drvasBookStationAudience")).toHaveValue("Adulți interesați de ficțiune");
   await expect(page.locator("#drvasBookStationLength")).toHaveValue("Roman amplu · 20–30 capitole");
   await expect(page.locator("#drvasBookStationConcept")).toHaveValue("O poveste originală despre curaj, familie și alegeri dificile.");
+  await expect(page.locator("#drvasBookStationSubtitle")).toHaveValue("O alegere poate schimba trei generații.");
+  await expect(page.locator("#drvasBookStationStyleGuide")).toHaveValue("Persoana a treia, trecut, ton realist, dialog natural.");
+  await expect(page.locator("#drvasBookStationCharacterBible")).toHaveValue("Mara: protagonistă, caută adevărul. Ilie: tatăl ei, ascunde o scrisoare.");
+  await expect(page.locator("#drvasBookStationSettingBible")).toHaveValue("Acțiunea are loc în Botoșani și Leeds, între 2008 și 2026.");
+  await expect(page.locator("#drvasBookStationChapterOutline")).toHaveValue("1. Întoarcerea — Mara găsește scrisoarea.\n2. Martorul — Ilie explică tăcerea.");
+  await expect(page.locator("#drvasBookStationChapterStatus")).toHaveValue("revising");
+  await expect(page.locator("#drvasBookStationManuscriptDraft")).toHaveValue("Capitolul întâi\n\nMara a deschis plicul și a recunoscut scrisul.");
+  await expect(page.locator("#drvasBookStationRevisionNotes")).toHaveValue("Păstrează cronologia; nu dezvălui încă motivul plecării lui Ilie.");
+  const downloadPromise = page.waitForEvent("download");
+  await page.evaluate(() => exportStudioProject());
+  const download = await downloadPromise;
+  const exportedPath = await download.path();
+  const exportedText = require("fs").readFileSync(exportedPath, "utf8");
+  expect(exportedText).toContain("## Book Studio — continuitate și manuscris");
+  expect(exportedText).toContain("Mara: protagonistă, caută adevărul.");
+  expect(exportedText).toContain("Capitolul întâi");
+});
+
+test("Book Studio manuscript controls follow the selected interface language", async ({ page }) => {
+  await openStudio(page);
+  await page.evaluate(() => {
+    currentLanguage = "en";
+    translatePage(document.body);
+  });
+  await expect(page.locator("#drvasBookStationSubtitle").locator("xpath=..")).toContainText("Book subtitle / promise");
+  await expect(page.locator("#drvasBookStationManuscriptDraft").locator("xpath=..")).toContainText("Manuscript / current chapter");
+  await expect(page.locator("#drvasBookStationManuscriptDraft")).toHaveAttribute("placeholder", "Write or continue the current chapter here. Save the project before moving to another chapter.");
+  await expect(page.locator("#drvasBookStationChapterStatus option[value='revising']")).toHaveText("In revision");
 });
 
 test("Translation Station glossary and source text survive save and reopen", async ({ page }) => {
