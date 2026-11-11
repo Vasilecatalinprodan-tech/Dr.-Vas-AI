@@ -439,3 +439,11 @@ Founder asked to preserve this conversation and continue the existing integrated
 - Next: verify #793/#553, then continue Business, Free/Health, Studio and Online Income work. Preserve all six modules and Crypto/Mining founder workbench.
 - No SQL changes. APK postponed/manual-only. Real mining/trading remains disabled; no wallet custody. No paid service without explicit approval.
 - Chat archive is a structured handoff, not a verbatim transcript; original chat remains in ChatGPT history.
+
+
+## Mining production deployment — verified
+
+- Main: `6bf6701d9adb955d5c77bd0167e63dbdb324589a`.
+- Deploy #553 succeeded; Worker version `729483ee-0b20-4949-9592-d84877cb53de`.
+- Supabase reported remote database up to date; no migration applied. Rate-limit RPC/RLS/service_role checks passed. Production smoke test passed, six module markers verified, unauthenticated admin request HTTP 401. SBOM artifact `13846107242`.
+- Exact-head Mining tests #791: 174/174 passed. Deploy workflow browser gate passed; independent post-merge browser #793 pending at last poll.
