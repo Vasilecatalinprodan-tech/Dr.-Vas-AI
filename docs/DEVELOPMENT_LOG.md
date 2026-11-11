@@ -1215,3 +1215,11 @@ Conversation preservation note: this repository file stores the founder's exact 
 - PR #111 Mining sensitivity lab merged at `6bf6701d9adb955d5c77bd0167e63dbdb324589a`. Final exact-head run #791 passed 174/174 after updating an obsolete test to reflect cooling-adjusted BTC energy and net values.
 - Post-merge browser #793 and deploy #553 queued at last check. Await production verification.
 - No SQL edits, no APK build, no actual mining/trading/wallet operations, no paid-provider changes.
+
+
+## 2026-11-11 10:11 UTC — Mining production deploy verified
+
+- Deploy #553 succeeded for main `6bf6701d9adb955d5c77bd0167e63dbdb324589a`; Worker version `729483ee-0b20-4949-9592-d84877cb53de`.
+- Remote Supabase migration history was already current; no migration applied. Health rate-limit RPC, RLS and service_role grants verified.
+- Smoke test passed, all six modules present, unauthenticated admin request HTTP 401, SBOM artifact `13846107242` uploaded.
+- Deploy workflow's browser suite passed; independent post-merge browser #793 pending at last poll.
