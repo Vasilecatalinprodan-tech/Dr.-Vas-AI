@@ -539,3 +539,11 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Production deploy #558 succeeded; Worker version `55650c6a-6048-4e7f-a37b-48ac90a3da77`. Supabase was up to date; no migrations applied.
 - Remaining: manually verify audible Sarah playback and Romanian pronunciation on Windows and Samsung Android; if no female voice exists on a device, configure/approve a dedicated provider voice separately without exposing secrets or enabling unapproved spend.
 - APK remains postponed/manual-only.
+
+
+### 2026-11-11 — Voice locale regression fixed and deployed
+- PR #125 merged as `54e034554c7d8959fb21300d99090b316f41160d`; browser exact-head #842 and post-merge #844 passed 177/177.
+- Cross-language fallback that could distort Romanian/Italian pronunciation has been removed. Sarah is locale-matched and feminine; Dr.Vas/Dr.Jan use local masculine voices when available, otherwise reuse the local default voice so they remain audible. Voice selector is restricted to the selected locale.
+- Deploy #559 succeeded; Worker version `ed6dc539-0e3f-4751-868d-fd004dad87b6`. Smoke test passed. Supabase was already up to date; no migrations applied.
+- Next: continue Mining simulator correctness (remove the unjustified default USD 1 coin-price cutoff while preserving explicit user filters), then further Business, Commerce, Academy, Studio and Free/Health hardening. Continue all modules; no SQL, paid integrations or APK work.
+- Real-device audio check remains outstanding.

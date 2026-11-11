@@ -1298,3 +1298,13 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Production deploy #558 succeeded; Worker version `55650c6a-6048-4e7f-a37b-48ac90a3da77`. Health online, six public modules verified, anonymous admin-status HTTP 401.
 - Supabase reported “Remote database is up to date”; no SQL/schema/migration change.
 - No secrets, paid voice provider calls, voice cloning or APK changes. Actual playback and pronunciation on founder devices still need manual confirmation.
+
+
+### 2026-11-11 — Locale-safe presenter voice correction (PR #125)
+- Fixed foreign-language voice selection that could pronounce Romanian/Italian narration with the wrong locale and distort speech.
+- Sarah now requires a feminine voice from the selected locale; foreign-language fallback is disabled. Dr.Vas/Dr.Jan use locale-matched masculine voices where available and reuse the local device default if no local masculine voice is installed. Voice picker shows only voices for the selected language.
+- Added regression cases for a local feminine-only device, Italian voice selection, locale filtering and rejection of cross-language fallback.
+- PR #125 merged as `54e034554c7d8959fb21300d99090b316f41160d`; final exact-head and post-merge browser suites passed 177/177 (runs `43091955981`, `43092604796`).
+- Production deploy #559 succeeded (run `43092604748`), Worker version `ed6dc539-0e3f-4751-868d-fd004dad87b6`; smoke test online, six public modules, anonymous admin-status HTTP 401; SBOM artifact `13889133035`.
+- Supabase migration gate: “Remote database is up to date”; no migration or SQL/schema/RLS changes. No secrets, paid voice usage or APK build.
+- Real-device playback and pronunciation still need manual verification.

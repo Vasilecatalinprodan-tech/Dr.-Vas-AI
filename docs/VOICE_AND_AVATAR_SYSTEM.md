@@ -88,3 +88,11 @@ This still does not mean Jan/Sarah voice IDs are configured or the actual sound 
 - Browser tests pass 177/177 on exact PR head #836 and post-merge main #837. Production deploy #558 succeeded.
 - This does not prove actual audio output or pronunciation on Windows/Android. Manual playback is still required. If the device exposes no voice confidently identified as feminine, Sarah remains unavailable instead of being assigned a masculine voice.
 - The public landing presentation uses browser speech synthesis. Authenticated chat can separately attempt the Worker TTS endpoint if the Sarah provider secret is configured; the secret configuration has not been inspected or changed, and no paid voice request was made.
+
+
+## 2026-11-11 — Locale-safe presenter routing deployed
+- PR #125 corrected distorted speech caused by assigning a foreign-language voice/utterance locale to Romanian or Italian narration.
+- All selected voices and utterance locales now stay with the selected UI language. Sarah uses a locale-matched feminine voice only; no foreign-language fallback. Dr.Vas and Dr.Jan prefer local masculine voices and reuse the local device default if none are installed, including a feminine default, so the narration remains audible.
+- Voice picker lists only the selected locale and clears saved foreign-locale choices.
+- Exact-head and post-merge browser suites passed 177/177; deploy #559 succeeded (Worker version `ed6dc539-0e3f-4751-868d-fd004dad87b6`).
+- Automated tests do not prove audible playback or pronunciation on Windows/Samsung. Manual listening verification remains required. No new secrets, paid TTS calls, voice cloning or APK build.
