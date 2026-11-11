@@ -277,7 +277,14 @@
   const income=direct(root,".income-tracker"),capabilities=direct(root,".studio-capabilities"),social=direct(root,".studio-social");
   const cryptoPanel=byId("cryptoEngineHeading")?.closest(".crypto-admin-card")||null;
   if(cryptoPanel)cryptoPanel.classList.add("hidden");
-  const cryptoShortcut=founderShortcut("₿ Crypto & Mining","Analiză PoW, calculator de rentabilitate, registru de dispozitive și limite de siguranță. Minarea reală este dezactivată până la instalarea agentului local securizat.","cryptoEngineHeading","Deschide panoul Crypto & Mining",cryptoPanel),incomeShortcut=founderShortcut("✍️ Creator & Online Income Lab","Cărți, traduceri, muzică, produse digitale, publicare, AI Evaluation și urmărirea oportunităților de venit.","founderProductionHeading","Deschide Creator & Online Income Lab");
+  const cryptoShortcut=founderShortcut("₿ Crypto & Mining","Analiză PoW, calculator de rentabilitate, registru de dispozitive și limite de siguranță. Minarea reală este dezactivată până la instalarea agentului local securizat.","cryptoEngineHeading","Deschide panoul Crypto & Mining",cryptoPanel);
+  const incomePanel=document.createElement("div");
+  incomePanel.className="studio-founder-private-content hidden";
+  const founderWorkbench=byId("founderProductionHeading")?.closest(".founder-workbench")||null;
+  const founderProvenance=byId("founderProvenanceHeading")?.closest(".crypto-admin-card")||null;
+  if(founderWorkbench)incomePanel.appendChild(founderWorkbench);
+  if(founderProvenance)incomePanel.appendChild(founderProvenance);
+  const incomeShortcut=founderShortcut("✍️ Creator & Online Income Lab","Cărți, traduceri, muzică, produse digitale, publicare, AI Evaluation și urmărirea oportunităților de venit.","founderProductionHeading","Deschide Creator & Online Income Lab",incomePanel);
   const bookStation=createStudioStation("book"),translationStation=createStudioStation("translation");
   const items=[
    {id:"video",label:"Lucrează la videoclip",title:"Video & Reels",description:"Pregătește scenariul și producția video. Randarea MP4 rămâne disponibilă numai când serviciul este configurat și verificat.",nodes:[production,render],shared:[brief,actions],deliverable:["studioDeliverable","short"]},
