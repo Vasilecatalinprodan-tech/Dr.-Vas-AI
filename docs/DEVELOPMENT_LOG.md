@@ -1223,3 +1223,15 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Remote Supabase migration history was already current; no migration applied. Health rate-limit RPC, RLS and service_role grants verified.
 - Smoke test passed, all six modules present, unauthenticated admin request HTTP 401, SBOM artifact `13846107242` uploaded.
 - Deploy workflow's browser suite passed; independent post-merge browser #793 pending at last poll.
+
+
+## 2026-11-11 — Presenter voice gender routing (validation pending)
+
+- Starting commit supplied by founder: `df5e119a14aa3526f3805835b3349b87533cf94e`.
+- Created branch `fix/presenter-voice-gender-routing-2026-11-11`.
+- Root cause: presentation SpeechSynthesis selected the default voice for both male presenters; Sarah selected a feminine voice but could fall back to a different-language voice, which can distort pronunciation. Existing server TTS routing is assistant-aware but provider secret values/configuration and real playback remain unverified.
+- Updated browser voice selection to require locale-matched male voices for Dr.Vas and Dr.Jan, keep the current default voice for Sarah when it is feminine, otherwise select a locale-matched feminine voice, and never fall back to a foreign-language Sarah voice. Missing gender/language matches now produce a clear unavailable state instead of silently speaking in the wrong voice.
+- Updated Playwright expectations for two male presenter profiles and Sarah's feminine voice, including no-male/no-female and cross-language fallback cases.
+- Current code commits on the branch: `f35f55a8e0bfdb093cc3310fda9bb4f42e33df9a` (frontend routing), `e104bc375cc0b833b2d5de5eb978670cbadb95bf` (E2E assertions), `0c771e726e84efecacaca2c469e09e761a4aebb5` (gender-token matching refinement).
+- CI, exact-head browser results, PR merge and production deployment are pending. Do not claim the voice issue is fixed in production until tests pass and the deployment/smoke test succeeds.
+- No SQL/schema/migration changes, no secrets or paid provider changes, no APK build. APK remains postponed/manual-only.
