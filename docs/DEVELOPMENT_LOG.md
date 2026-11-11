@@ -1241,3 +1241,12 @@ Conversation preservation note: this repository file stores the founder's exact 
 
 - PR #116 is open against `main`; branch comparison is 8 commits ahead, 0 behind, with merge base exactly the requested base SHA. No combined status checks are present yet.
 - `deploy-worker.yml` triggers on pushes to `main`/`drvas-integrated-platform` and manual `workflow_dispatch`, but not `pull_request`. The connected GitHub actions interface in this session does not expose workflow dispatch. Exact-head CI has therefore not started. Merge/deploy are intentionally held until the exact code can be validated.
+
+### 2026-11-11 — Presenter voice and Book Studio version-history work
+
+- Confirmed current PR base SHA is the founder-supplied df5e119a14aa3526f3805835b3349b87533cf94e; the older 8ecf72a... checkpoint text is historical.
+- Corrected the prior CI diagnosis: browser-e2e.yml already triggers on pull requests. PR #116 run #803 executed and failed 172/174; two failures were traced to a stale voice-language test fixture and a missing default-browser-voice fallback when the browser exposes no voice list.
+- PR #116 head eeccb3bbd223d7891f404cb5cd87e8e3ad5e5e07 contains the fixes. Run #804 passed static Worker/inline JS, migration-gate and APK-manual-only checks; browser tests were pending Chromium installation. No merge/deploy yet. Cloudflare Preview separately failed and remains to be verified via the production pipeline.
+- PR #117 stacked head 1f95180f6184f22de0eed634bba7a3a18e817488 adds Book Studio chapter revision snapshots, restore, localized controls and Markdown export using existing private project JSON only. Run #810 passed static checks; browser E2E pending. Rebase/clean branch after #116 squash merge before final integration.
+- Mining browser #793 and production deploy #553 both succeeded; Worker version 729483ee-0b20-4949-9592-d84877cb53de.
+- No SQL, schema, RLS, migration, APK, paid-provider, secret, wallet or real-mining changes.
