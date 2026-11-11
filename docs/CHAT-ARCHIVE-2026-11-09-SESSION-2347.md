@@ -173,3 +173,33 @@ This file preserves the founder's exact instruction above and the verified techn
 - Opened branch chore/android-build-manual-only-2026-11-11 and changed android.yml so APK builds are workflow_dispatch-only until the web platform is stable and the founder explicitly requests Android packaging. Commit 4b540d1cbfbae4263826bbdc073718119c1df9be.
 - No SQL, schema/RLS, secrets, paid provider or external credits were changed. Health file analysis remains disabled.
 - Conversation archive is structured continuity, not a verbatim transcript export; original ChatGPT chat remains in history.
+
+
+## 2026-11-11 08:40 UTC — Final verified handoff: Health deployed; APK workflow paused
+
+### Final merges
+- PR #104 Income Tracker safety regression: 166/166 exact-head tests passed (run #771 / 42955830854); squash merge fb5c7e2d7e9231bbea878dc36bf8912c2c61e7f4.
+- PR #105 Health attachment preflight: 167/167 exact-head tests passed (run #773 / 42987635157); squash merge 79195b4ff44c3f11b79f1d46a9e4f168a5b3890a.
+- PR #106 Android workflow control: merged at c8bea1c9132d205705d34b5e4a111f66a112e91f. Android APK builds are now manual workflow_dispatch only; no push-triggered APK build on future web changes.
+
+### Production deployment verified
+- Deploy run #548 / 42987167463 deployed commit fb5c7e2...; Cloudflare Worker version 12e2913e-1923-4adf-92ef-8471a8c020d3.
+- Deploy run #549 / 42988156957 deployed the Health preflight commit 79195b4...; all 167 Playwright tests in the deploy gate passed (2.9m), Supabase migration step succeeded and reported Remote database is up to date, Worker deployment succeeded, production smoke test succeeded, and SBOM upload completed.
+- Cloudflare Worker version: 9401d39d-6211-4577-b4a1-d83a742ef5a6.
+- Production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ . Smoke test confirmed homepage delivery and all six public module cards, Worker status online, worker ok, assets/AI/database configured, Studio renderer configured, and unauthenticated admin_status rejected with HTTP 401.
+- Health file analysis remains disabled in production by design until privacy/legal/provider gates are met. The new preflight prevents a failed attempt from writing orphaned chat history.
+- Supabase reported the remote migration history was already up to date; no new SQL migration was applied in these deploys. No ad-hoc SQL was run or edited.
+
+### APK automation correction
+- APK workflow run #374 / 42988156884 was automatically triggered by the Health web merge because the old android.yml push path filter included www/**. It completed and uploaded a GitHub Actions artifact, but it was not installed, released, published or distributed, and it is not the approved final APK.
+- PR #106 removed the automatic push trigger and retained workflow_dispatch only. Future APK builds require a deliberate manual dispatch after the web platform is stable and the founder explicitly resumes Android packaging.
+
+### Latest repository / verification state
+- Main includes PR #104, PR #105 and PR #106. Latest main merge commit from PR #106: c8bea1c9132d205705d34b5e4a111f66a112e91f.
+- The post-merge independent browser push run #774 / 42988157174 was still running at the last poll. This does not block the release record: deploy run #549 independently passed the same 167-test suite and the production smoke test.
+- The original ChatGPT conversation remains in ChatGPT history. This repository archive, development log and roadmap preserve the exact key instruction, decisions, implementation details and verified state; they are structured continuity notes, not a verbatim full UI transcript.
+
+### Next chat handoff
+- Continue the full Dr.Vas system: Free/Health, Studio, Academy, Commerce, Business, Crypto/Mining, Online Income, auth/privacy, localization and release stability.
+- Keep APK packaging manual-only and deferred. Keep Health document analysis disabled until the required privacy/legal/provider gates are satisfied.
+- Merge and deploy autonomously when exact checks pass. Do not perform direct SQL/schema/RLS work; report any automated migration stage and its exact result. No paid services, new secrets or external credits without a separate decision.
