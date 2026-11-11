@@ -2554,6 +2554,46 @@ test("Explore reflects account access and Images states that AI generation is no
 });
 
 
+test("Disabled file analysis fails closed before creating Health chat history", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.route("**/health", route => route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify({ checks: { file_analysis: "disabled" } })
+  }));
+  await page.evaluate(() => {
+    currentUser = { id: "e2e-health-preflight", email: "health@example.invalid" };
+    activeModule = "health";
+    activeFeatureKey = "";
+    currentConversationId = null;
+    currentConversationIsLegacy = false;
+    pendingChatFiles = [new File(["%PDF-1.4"], "medical-record.pdf", { type: "application/pdf" })];
+    pendingUploadedAttachments = [];
+    document.querySelector("#chatSection").classList.remove("hidden");
+    document.getElementById("fileProcessingConsent").checked = true;
+    document.getElementById("healthDataProcessingConsent").checked = true;
+    document.getElementById("question").value = "Explică documentul medical atașat";
+    window.__HEALTH_PREFLIGHT_WRITES__ = { metadata: 0, messages: 0 };
+    supabaseClient.auth.getSession = async () => ({
+      data: { session: { access_token: "e2e-access-token" } },
+      error: null
+    });
+    ensureConversationMetadata = async () => { window.__HEALTH_PREFLIGHT_WRITES__.metadata++; };
+    saveMessage = async () => { window.__HEALTH_PREFLIGHT_WRITES__.messages++; };
+  });
+
+  await page.evaluate(() => send());
+  await expect(page.locator("#chat .msg.bot").last()).toContainText("Încărcarea și analiza fișierelor nu este încă activată");
+  const state = await page.evaluate(() => ({
+    writes: window.__HEALTH_PREFLIGHT_WRITES__,
+    pendingFiles: pendingChatFiles.map(file => file.name),
+    userMessages: document.querySelectorAll("#chat .msg.user").length
+  }));
+  expect(state.writes).toEqual({ metadata: 0, messages: 0 });
+  expect(state.pendingFiles).toEqual(["medical-record.pdf"]);
+  expect(state.userMessages).toBe(1);
+});
+
 test("Dr.Vas Free mobile page scroll reaches the attachment composer beside Send", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openApp(page, "ro");
