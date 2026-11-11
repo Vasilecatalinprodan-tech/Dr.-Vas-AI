@@ -85,6 +85,42 @@ for (const scenario of [
 }
 
 
+test("Commerce supplier comparison accounts for MOQ, order shipping and extra stock", async ({ page }) => {
+  await openApp(page);
+  const result = await page.evaluate(() => {
+    document.getElementById("commerceSupplierQuantity").value = "100";
+    Object.entries({
+      commerceSupplier1Name: "Furnizor A",
+      commerceSupplier1UnitPrice: "10",
+      commerceSupplier1Shipping: "60",
+      commerceSupplier1Moq: "120",
+      commerceSupplier1LeadDays: "12",
+      commerceSupplier2Name: "Furnizor B",
+      commerceSupplier2UnitPrice: "11",
+      commerceSupplier2Shipping: "20",
+      commerceSupplier2Moq: "50",
+      commerceSupplier2LeadDays: "8"
+    }).forEach(([id, value]) => { document.getElementById(id).value = value; });
+    const comparison = calculateCommerceSupplierComparison();
+    document.getElementById("commerceProduct").value = "Demo product";
+    window.submitModuleBrief = prompt => { window.__commercePrompt = prompt; };
+    buildCommercePrompt();
+    return { ...comparison, prompt: window.__commercePrompt };
+  });
+  expect(result.quantity).toBe(100);
+  expect(result.suppliers).toHaveLength(2);
+  expect(result.suppliers[0].name).toBe("Furnizor A");
+  expect(result.suppliers[0].orderUnits).toBe(120);
+  expect(result.suppliers[0].upfrontCost).toBe(1260);
+  expect(result.suppliers[0].landedUnitCost).toBe(10.5);
+  expect(result.suppliers[0].excessUnits).toBe(20);
+  expect(result.suppliers[1].name).toBe("Furnizor B");
+  expect(result.suppliers[1].upfrontCost).toBe(1120);
+  expect(result.suppliers[1].landedUnitCost).toBe(11.2);
+  expect(result.prompt).toContain("Furnizor A");
+  expect(result.prompt).toContain("date furnizate de utilizator, neverificate");
+});
+
 test("last selected module is remembered across browser reloads per account", async ({ page }) => {
   await openApp(page);
   await page.evaluate(() => {
@@ -149,15 +185,36 @@ for (const scenario of [
     await page.evaluate(async ({ primary, title, value, module }) => {
       document.getElementById(primary).value = value;
       document.getElementById(title).value = value + " — titlu";
+      if (module === "commerce") {
+        document.getElementById("commerceSupplierQuantity").value = "100";
+        document.getElementById("commerceSupplier1Name").value = "Furnizor A";
+        document.getElementById("commerceSupplier1UnitPrice").value = "10";
+        document.getElementById("commerceSupplier1Shipping").value = "60";
+        document.getElementById("commerceSupplier1Moq").value = "120";
+        document.getElementById("commerceSupplier1LeadDays").value = "12";
+        document.getElementById("commerceSupplier1Returns").value = "30 zile";
+        document.getElementById("commerceSupplier1Source").value = "https://supplier-a.example/quote";
+        calculateCommerceSupplierComparison();
+      }
       await saveModuleProject(module);
       document.getElementById(primary).value = "Valoare modificată temporar";
       document.getElementById(title).value = "Titlu temporar";
+      if (module === "commerce") {
+        document.getElementById("commerceSupplierQuantity").value = "5";
+        document.getElementById("commerceSupplier1Name").value = "Furnizor temporar";
+        document.getElementById("commerceSupplier1Moq").value = "2";
+        calculateCommerceSupplierComparison();
+      }
       document.getElementById(module + "ProjectList").value = "e2e-roundtrip-" + module;
       await openModuleProject(module);
     }, scenario);
     const restored = await page.evaluate(({ primary, title }) => ({
       primary: document.getElementById(primary).value,
       title: document.getElementById(title).value,
+      supplierName: document.getElementById("commerceSupplier1Name")?.value || "",
+      supplierQuantity: document.getElementById("commerceSupplierQuantity")?.value || "",
+      supplierMoq: document.getElementById("commerceSupplier1Moq")?.value || "",
+      supplierResults: document.getElementById("commerceSupplierResults")?.textContent || "",
       calls: window.__DRVAS_ROUNDTRIP_CALLS__
     }), scenario);
     expect(restored.primary).toBe(scenario.value);
@@ -165,6 +222,12 @@ for (const scenario of [
     expect(restored.calls).toHaveLength(1);
     expect(restored.calls[0].payload.user_id).toBe("e2e-module-owner");
     expect(restored.calls[0].payload.module).toBe(scenario.module);
+    if (scenario.module === "commerce") {
+      expect(restored.supplierName).toBe("Furnizor A");
+      expect(restored.supplierQuantity).toBe("100");
+      expect(restored.supplierMoq).toBe("120");
+      expect(restored.supplierResults).toContain("Furnizor A");
+    }
   });
 }
 
