@@ -488,3 +488,16 @@ Founder asked to preserve this conversation and continue the existing integrated
 - Supabase migration gate: Remote database is up to date. No migration or SQL/schema change was made.
 - CI uses cached Playwright Chromium 1.64.1 in browser and production deploy workflows.
 - Next: manual real-device voice check; continue all modules including Mining simulators. APK postponed/manual-only. No paid providers, new secrets, wallet custody, trading or real mining.
+
+
+### 2026-11-11 — Latest verified Mining navigation and production checkpoint
+
+- Main: `fe8512da6a58dbe2aabc1bd4a2663eaf1b1933b6`.
+- PR #120 merged: Crypto & Mining panel now opens inside Studio > Crypto & Mining; button reveals the real panel instead of scrolling to a hidden admin-panel target.
+- Browser tests: exact-head run #828 176/176; post-merge main run #829 176/176.
+- Production deploy #556 succeeded. Worker version: `a543bfb1-2367-4431-a32c-cebc72376658`. Health online; Worker ok; assets, AI and database configured; six module cards verified; unauthenticated admin status rejected with HTTP 401.
+- Supabase: “Remote database is up to date.” No migration applied; no SQL/schema/database change.
+- Mining remains research/simulation plus admin-only device registry; real mining, wallet custody and trading are disabled.
+- Public URL masking is pending an owned custom domain or explicit account-level workers.dev subdomain change. Do not alter DNS or account-wide subdomain without founder confirmation.
+- APK remains postponed/manual-only. Presenter voices still need real-device playback verification.
+- This checkpoint is a structured continuation record; the full chat remains in ChatGPT history.
