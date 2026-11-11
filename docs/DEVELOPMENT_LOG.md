@@ -1206,3 +1206,14 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ .
 - New structured archive: `docs/CHAT-ARCHIVE-2026-11-11-ALL-MODULES.md`. This is a project continuity archive, not a verbatim transcript export.
 - Next: continue Academy lesson-by-lesson progress, Commerce supplier comparison, Business reporting and Free/Health hardening while preserving the founder's no-SQL and APK-pause constraints.
+
+
+## 2026-11-11 10:05 UTC — Academy deployed; Commerce and Mining CI pending
+
+- PR #109 merged at `c2b9cbe72b67b05f42795229790282486b78d23b`; Academy lesson checklist and saved completion progress shipped.
+- Post-merge browser run #785 (`42998512011`) passed 170/170. Deploy #551 (`42998512058`) succeeded; remote Supabase migration history already current, no new migration applied; Worker smoke test passed and SBOM artifact `13845397914` uploaded.
+- PR #110 Commerce supplier quote comparison open; exact head `4a0cf92f47c24bb8f3e4f31ef5000b9963a83a4a`; browser run #786 (`42999679552`) pending at last check.
+- PR #111 Mining sensitivity lab open; exact head `0611ba1f160c558d28fe526c2919a0e3507a52ef`; browser run #787 (`42999770476`) pending at last check.
+- PR #111 adds 3×3 BTC price/electricity sensitivity, cooling-aware cost output, maximum break-even electricity tariff and tests. Mining remains simulation-only.
+- No SQL, schema, RLS, secret or paid-service changes. APK remains postponed/manual-only.
+- Chat archive and checkpoint updated; original ChatGPT transcript remains in chat history.
