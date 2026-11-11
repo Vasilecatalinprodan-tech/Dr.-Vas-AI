@@ -7893,19 +7893,19 @@ async function scanCryptoMiningCandidates() {
   }
   button.disabled = true;
   button.textContent = "Se scanează…";
-  status.textContent = "Se citesc cotațiile publice și se aplică filtrul strict de preț > 1 USD…";
+  status.textContent = "Se citesc cotațiile publice și se verifică algoritmul Proof-of-Work și compatibilitatea hardware…";
   try {
     const [markets, hardware] = await Promise.all([
       window.DrVasCryptoEngine.fetchMarkets(),
       Promise.resolve(document.getElementById("cryptoMiningHardware")?.value || "all")
     ]);
-    const coins = window.DrVasCryptoEngine.eligibleCoins(markets, hardware, 1);
+    const coins = window.DrVasCryptoEngine.eligibleCoins(markets, hardware);
     body.replaceChildren();
     if (!coins.length) {
       const row = body.insertRow();
       const cell = row.insertCell();
       cell.colSpan = 5;
-      cell.textContent = "Nicio monedă din catalog nu îndeplinește simultan filtrul > $1 și compatibilitatea selectată.";
+      cell.textContent = "Nicio monedă cotată din catalog nu corespunde algoritmului și compatibilității hardware selectate.";
     } else {
       for (const coin of coins) {
         const row = body.insertRow();
@@ -7923,7 +7923,7 @@ async function scanCryptoMiningCandidates() {
         });
       }
     }
-    status.textContent = "Scanare finalizată: " + coins.length + " monede PoW din catalog peste $1 pentru profilul selectat. Aceasta este o listă de candidați, nu o recomandare de minare sau profit.";
+    status.textContent = "Scanare finalizată: " + coins.length + " monede PoW cotate și compatibile cu profilul hardware selectat. Prețul unitar nu stabilește rentabilitatea; aceasta depinde de hashrate, dificultate, consum, răcire și costuri. Lista nu este o recomandare de minare sau profit.";
   } catch (error) {
     status.textContent = "Scanarea nu a reușit: " + (error?.message || "eroare necunoscută") + ". Verifică accesul la sursa de cotații și încearcă din nou.";
     const row = body.insertRow();
@@ -7932,7 +7932,7 @@ async function scanCryptoMiningCandidates() {
     cell.textContent = "Cotațiile nu sunt disponibile momentan.";
   } finally {
     button.disabled = drVasCryptoStopLatched;
-    button.textContent = "Scanează monedele peste $1";
+    button.textContent = "Scanează monedele PoW";
   }
 }
 function activateCryptoEmergencyStop() {
