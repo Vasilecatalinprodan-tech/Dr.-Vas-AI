@@ -116,3 +116,14 @@ Continue from `main` commit `8ecf72a754c678865f29c620463924e22714b2df`. First ve
 - Production smoke test passed; all six module markers verified and unauthenticated admin-status request correctly rejected with HTTP 401. SBOM artifact ID `13846107242` uploaded.
 - Deploy workflow's full browser regression gate passed. Independent post-merge browser run #793 was still in progress at the last check.
 - No SQL/schema/RLS change; APK remains postponed/manual-only; real mining remains disabled.
+
+
+## 2026-11-11 — Presenter voice correction requested and implemented for validation
+
+Founder reported that the presentation currently sounds female for Dr.Vas and Dr.Jan, while Sarah's voice is distorted. New explicit direction: use the currently familiar/clear Dr.Vas voice for Sarah, and assign male voices to Dr.Vas and Dr.Jan. The founder's own short voice sample is optional and must not block the work.
+
+Repository inspection at starting commit `df5e119a14aa3526f3805835b3349b87533cf94e` found that the presentation narration was using browser SpeechSynthesis directly and its voice profile assigned the same default device voice to Dr.Vas and Dr.Jan; Sarah was assigned a separate female voice, including a foreign-language fallback that can distort pronunciation. The authenticated Worker TTS route already supports assistant IDs `drvas`, `jan`, and `aurora`, but actual provider secrets/voice IDs and device playback have not been independently verified. Do not expose or change secrets and do not activate paid provider usage.
+
+A focused branch `fix/presenter-voice-gender-routing-2026-11-11` was created from the requested starting commit. Frontend changes now explicitly select male, locale-matched voices for Dr.Vas and Dr.Jan; Sarah keeps the current default voice when that voice is recognised as feminine, otherwise selects the best locale-matched feminine voice. Foreign-language fallback is removed for Sarah in presentation and chat to avoid distorted pronunciation. If the required gendered voice is unavailable in the selected language, the presentation reports that state and skips that speaker rather than silently using the wrong voice. A second distinct male voice is selected for Jan when the device provides one; otherwise the best available male voice is shared.
+
+E2E tests were updated to cover male routing, Sarah's clear/default feminine voice, and rejection of foreign-language fallbacks. These changes are **not yet verified**; exact-head CI and PR review are required before merge/deploy. No Worker secrets, SQL, schema, migrations, paid services or APK workflow were changed. APK remains postponed.
