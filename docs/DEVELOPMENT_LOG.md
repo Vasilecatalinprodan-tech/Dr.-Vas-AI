@@ -1206,3 +1206,14 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Production URL: https://dr--vas-ai.vasilecatalinprodan.workers.dev/ .
 - New structured archive: `docs/CHAT-ARCHIVE-2026-11-11-ALL-MODULES.md`. This is a project continuity archive, not a verbatim transcript export.
 - Next: continue Academy lesson-by-lesson progress, Commerce supplier comparison, Business reporting and Free/Health hardening while preserving the founder's no-SQL and APK-pause constraints.
+
+
+## 2026-11-11 — Academy and Commerce releases merged and deployed
+
+- PR #109 merged as `c2b9cbe72b67b05f42795229790282486b78d23b`: Academy per-lesson checklist, automatic progress, seven-language localization and persistent project restoration. Exact-head run #784 and post-merge run #785 each passed 170/170. Deploy #551 succeeded; Worker version `dbc7db74-cc52-4b9b-b1bc-f6035473896c`.
+- PR #110 merged as `d43d992122cf7596537f48353afe810b3bca5d04`: Commerce supplier quote comparison for up to three user-entered suppliers, MOQ-aware order units, total shipping, upfront cost, effective unit cost, excess stock, lead time, returns/source notes, prompt handoff, seven-language localization and owner-scoped project persistence. Exact-head and post-merge browser runs each passed 171/171. Deploy #552 succeeded; Worker version `b420225b-2841-4bf8-adf1-6a3321dc2cbb`.
+- Deploy #552 verified all six public module cards and rejected unauthenticated `admin_status` with HTTP 401. SBOM artifact ID `13845897516`.
+- Supabase reported `Remote database is up to date`; no migration was applied. No SQL, schema, migration, RLS or production data changes were made in PRs #109 or #110.
+- Latest main: `d43d992122cf7596537f48353afe810b3bca5d04`. Latest production Worker: `b420225b-2841-4bf8-adf1-6a3321dc2cbb`.
+- APK remains postponed and manual-only (`workflow_dispatch`). No paid provider, external supplier verification, payment or public entitlement was enabled.
+- Next: Business cashbook/reporting hardening; Free/Health chat, attachments and document safety; Studio chapter/version workflow and presenter voice; continue auth/RLS, Crypto/Mining simulation and Online Income truthfulness.
