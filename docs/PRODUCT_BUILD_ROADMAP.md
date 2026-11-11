@@ -461,3 +461,26 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Android packaging remains workflow_dispatch-only and postponed. CI now explicitly enforces manual-only APK builds.
 - Next feature priorities: Academy per-lesson checklist/progress, Commerce supplier comparison/due diligence, Business cashbook/cashflow quality, Free/Health shared chat/attachment/accessibility hardening, then further Studio chapter/version workflow and Online Income/Crypto safety.
 - Continue all six public modules and internal founder workbenches. Keep Health file analysis disabled, real mining/trading disabled, and do not enable paid services or public entitlements without explicit approval.
+
+
+## 2026-11-11 release checkpoint — Academy and Commerce deployed
+
+### Completed
+- **Studio / Book Studio:** persistent manuscript continuity fields, chapter outline/status, long-form prompt handoff and Markdown export (PR #107; deploy #550).
+- **Academy:** individual lesson checklist, automatic progress calculation, 100-lesson cap, seven-language UI and project save/reopen (PR #109; 170/170 tests; deploy #551).
+- **Commerce:** up to three supplier quote comparison, target quantity, MOQ, total shipping, upfront cost, effective unit cost, excess stock, lead time and source/returns notes; project persistence and prompt handoff (PR #110; 171/171 tests; deploy #552).
+
+### Remaining priorities
+1. **Business:** deepen cashbook filters, monthly cashflow, break-even assumptions, reporting and clear separation between bookkeeping support and statutory/self-assessment filing. Do not claim accounting certification or submit tax returns.
+2. **Free and Health:** continue shared chat shell, separate module conversations, attachment UX, transcript/document safety, scroll/accessibility and voice regression. Health document analysis remains disabled until its server-side privacy/security path is approved and tested.
+3. **Studio:** chapter/version workflow, media-generation status truthfulness, presenter voice and portrait reliability, export and project restoration.
+4. **Online Income:** evidence-based opportunity research, income/expense tracking and digital-product workflow; no guaranteed income.
+5. **Crypto & Mining:** read-only research, efficiency/payback simulation and safe device registry. No real mining, trading or remote device activation without explicit approval.
+6. **Platform-wide:** auth, ownership isolation/RLS verification, privacy, seven-language localization, reliability and release automation.
+7. **APK / Google Play:** keep postponed and manual-only. Do not enable automatic builds or release until web workflows and voice are validated.
+
+### Release boundaries
+- Latest main: `d43d992122cf7596537f48353afe810b3bca5d04`.
+- Latest production Worker: `b420225b-2841-4bf8-adf1-6a3321dc2cbb`; deploy #552 passed production smoke checks.
+- No SQL/schema/migration/RLS changes in Academy or Commerce release; Supabase migration gate reported remote database up to date.
+- No paid services, external supplier verification, public entitlements, real mining or trading were enabled.
