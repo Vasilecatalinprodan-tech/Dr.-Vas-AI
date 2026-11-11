@@ -1256,3 +1256,13 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Matching male browser voices are selected only within the requested language to avoid distorted foreign-language pronunciation. Real device playback remains to be manually checked.
 - Deploy #554 and post-merge browser #820 were still running at checkpoint time. Do not claim live production success until verified.
 - Clean Book Studio PR #118 replaces stacked PR #117; #117 was closed unmerged.
+
+### 2026-11-11 — Production deployment confirmed
+
+- Presenter voice PR #116 merged at 09eb72413677b66eef62e1a93a068a82549d7069; exact-head #817 and post-merge main #820 both passed 174/174.
+- Book Studio version history PR #118 merged at b22367230ae61e154253b3dbb6d9a376dc795b44; exact-head #824 and post-merge main #825 both passed 175/175.
+- Production deploy #555 succeeded on main b22367230ae61e154253b3dbb6d9a376dc795b44. Worker version 1a0b43d1-5974-460f-a922-52b5755db089. Production health returned online, worker ok, assets/AI/database/Studio renderer configured; homepage and six module cards verified; unauthenticated admin check returned HTTP 401.
+- Supabase reported “Remote database is up to date”; no migrations were applied and no SQL/schema change was made.
+- Browser and deploy workflows now cache Playwright Chromium 1.64.1 and avoid repeated apt dependency installation.
+- Remaining manual verification: test actual Dr.Vas/Dr.Jan male and Sarah feminine audio on supported founder devices/languages. Do not use foreign-language voices that distort pronunciation.
+- APK remains postponed/manual-only; no paid provider, secrets, wallet, trading or real mining actions.
