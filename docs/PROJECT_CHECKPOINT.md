@@ -462,3 +462,11 @@ Founder asked to preserve this conversation and continue the existing integrated
 
 - PR #116 open; branch is ahead of main with no behind commits; merge base is the requested `df5e119a14aa3526f3805835b3349b87533cf94e`.
 - `deploy-worker.yml` does not run on pull requests, and the current GitHub integration does not expose workflow dispatch. No exact-head tests have run and no checks are reported. Hold merge/deploy; next step is to add/enable a safe PR validation path or run an available local exact-head suite.
+
+### 2026-11-11 active continuation
+
+- Current base: main df5e119a14aa3526f3805835b3349b87533cf94e.
+- PR #116 exact-head run #803 found two failures (172/174); voice routing and locale fixtures were corrected. Run #804 passed static gates but stalled at Chromium installation. Latest branch adds browser caching and skips repeated apt installs; wait for exact-head validation.
+- PR #117 is stacked Book Studio revision history, using existing private project JSON only. Rebase cleanly after #116 squash merge and pass its exact-head E2E.
+- Mining post-merge browser #793 and deploy #553 succeeded; Worker version 729483ee-0b20-4949-9592-d84877cb53de.
+- No SQL/schema/migrations. APK remains postponed/manual-only.
