@@ -807,7 +807,7 @@ test("presenter voices stay in the selected language and reuse the local voice w
     };
   });
   expect(result.chatVoice).toBe("alina-ro");
-  expect(result.voiceOptions).toEqual(["andrei-ro", "zira-ro", "alina-ro"]);
+  expect(result.voiceOptions).toEqual(["andrei-ro", "alina-ro", "zira-ro"]);
   expect(result.presentationDrvas).toBe("andrei-ro");
   expect(result.presentationJan).toBe("andrei-ro");
   expect(result.presentationSarah).toBe("alina-ro");
