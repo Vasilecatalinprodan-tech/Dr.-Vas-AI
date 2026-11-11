@@ -1278,3 +1278,13 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Supabase reported “Remote database is up to date”; no migration or SQL/schema change was applied.
 - Mining remains a simulation/research/admin registry only. No actual mining, wallet custody or trading. APK remains postponed/manual-only.
 - Public hostname still reveals the Cloudflare account subdomain; masking requires a custom domain owned by the founder or an account-level workers.dev subdomain change. Do not change until the domain is confirmed.
+
+
+### 2026-11-11 — Creator & Online Income shortcut corrected
+
+- Found the same hidden-admin-target navigation defect in the Creator & Online Income shortcut.
+- PR #121 moved the founder workbench and provenance controls into Studio > Online Income, with an explicit button to reveal the private content. Existing admin/server authorization and the six public module cards remain unchanged.
+- Merged main commit `26335d9dd7c78358fc3683e2a4a106434ba9914e`; exact-head browser #833 and post-merge browser #834 both passed 177/177.
+- Production deploy #557 succeeded; Worker version `61f40e4a-747e-4acf-8147-58e87bdc3baf`. Health online, assets/AI/database configured, six modules verified, anonymous admin-status HTTP 401.
+- Supabase reported “Remote database is up to date”; no migration or SQL/schema change was applied.
+- Crypto & Mining and Creator & Online Income now open their actual private panels inside dedicated Studio feature pages. APK remains postponed/manual-only; no paid providers, external publishing, wallet custody, real mining or trading enabled.
