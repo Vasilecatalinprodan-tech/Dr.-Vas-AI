@@ -30,7 +30,7 @@ test("Academy lesson checklist derives progress from individual lesson completio
   await openApp(page);
   const result = await page.evaluate(() => {
     const titles = document.getElementById("academyLessonTitles");
-    titles.value = "Introducere\\nBuget și planificare\\nMarketing";
+    titles.value = "Introducere\nBuget și planificare\nMarketing";
     titles.dispatchEvent(new Event("input", { bubbles: true }));
     const lessons = [...document.querySelectorAll("#academyLessonChecklist input[type=checkbox]")];
     lessons[0].checked = true;
@@ -55,7 +55,7 @@ test("Academy lesson checklist labels and progress summary localize", async ({ p
     currentLanguage = "en";
     translatePage(document.body);
     const titles = document.getElementById("academyLessonTitles");
-    titles.value = "Introduction\\nBudget";
+    titles.value = "Introduction\nBudget";
     titles.dispatchEvent(new Event("input", { bubbles: true }));
     return {
       label: titles.parentElement.textContent,
