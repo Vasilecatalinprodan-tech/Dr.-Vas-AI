@@ -1216,6 +1216,7 @@ test("hashrate mining simulator estimates coin yield and net energy-adjusted res
   });
   expect(invalid).toBeNull();
   await expect(page.locator("#cryptoHashrateSimulatorNotice")).toContainText("Verifică hashrate-ul");
+  await expect(page.locator("#cryptoScenarioSensitivityBody tr")).toHaveCount(0);
 });
 
 test("Bitcoin live network adapter validates hashrate and 144-block reward data before filling the simulator", async ({ page }) => {
