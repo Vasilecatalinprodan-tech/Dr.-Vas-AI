@@ -4267,16 +4267,16 @@ function refreshSpeechVoiceOptions(){
  const select=el("speechVoiceSelect");
  if(!select||!window.speechSynthesis)return;
  const language=speechLanguage().slice(0,2).toLowerCase();
- const voices=[...(window.speechSynthesis.getVoices()||[])];
+ const voices=[...(window.speechSynthesis.getVoices()||[])].filter(v=>v.lang&&v.lang.toLowerCase().startsWith(language));
  voices.sort((a,b)=>
-  Number(b.lang?.toLowerCase().startsWith(language))-Number(a.lang?.toLowerCase().startsWith(language))||
   Number(Boolean(b.default))-Number(Boolean(a.default))||
   a.name.localeCompare(b.name)
  );
  const saved=localStorage.getItem(speechVoiceStorageKey())||"";
- select.replaceChildren(new Option(voices.length?"Automat — recomandată":"Nicio voce instalată pe dispozitiv",""));
+ select.replaceChildren(new Option(voices.length?"Automat — recomandată":"Nicio voce instalată pentru limba selectată",""));
  for(const voice of voices)select.add(new Option(voice.name+" ("+voice.lang+")",voice.voiceURI));
  select.value=voices.some(v=>v.voiceURI===saved)?saved:"";
+ if(saved&&!select.value)localStorage.removeItem(speechVoiceStorageKey());
  if(saved&&!select.value)localStorage.removeItem(speechVoiceStorageKey());
 }
 function saveSpeechVoiceChoice(){
