@@ -127,3 +127,38 @@ This file preserves the founder's exact instruction above and the verified techn
 - The new Income Tracker suite has not yet passed CI. Do not merge until exact-head CI is green.
 - This archive is a structured checkpoint, not a literal export of the full ChatGPT transcript; the original conversation remains in ChatGPT history. The user explicitly asked: “ok continua si salveaza tot”.
 - No live DB/RLS change, secret update, paid provider, external spend, production deploy or APK build.
+
+
+## 2026-11-11 08:30 UTC — Founder authorization, Income Tracker merge and Health attachment safety
+
+### Founder instruction (verbatim)
+> asa cum am mai discutat poti face deply and merge ca esti autorizat de mine ,separat poti lucra in tot sistemul mai putin sql nu ca nu te autorizez dar nu are optiunea asta,acum continua pe toate fronturile si salveaza tot inclusiv chatul ca dupa ce termini deschidem un chat nou
+
+### Authorization and boundaries confirmed
+- Founder authorizes autonomous GitHub PR merge and production deployment when exact checks pass.
+- Work may continue across application UI, Worker source, tests, CI workflows, docs and release preparation.
+- Do not directly edit SQL, change Supabase schema/RLS, or run ad-hoc SQL. The existing deployment workflow contains an automated Supabase migration step; distinguish that pipeline behavior from direct SQL work and do not claim a deploy is complete until its run and smoke test finish.
+- No new paid services, external credits, provider spend, secrets changes or APK build are authorized by this checkpoint.
+- The ChatGPT conversation remains in ChatGPT history. This file is a structured continuity archive, not a literal full transcript export.
+
+### Online Income / Income Tracker merge
+- PR #104 passed exact-head browser E2E run #771 / 42955830854: 166/166 tests passed.
+- Squash-merged to main at fb5c7e2d7e9231bbea878dc36bf8912c2c61e7f4.
+- The merged regression suite verifies owner-scoped insert payloads, truthful database failure handling, safe text rendering of untrusted titles, and currency-separated totals/filter behavior.
+- This PR was test/documentation/workflow-gate coverage; it did not change production app behavior or database schema.
+
+### Post-merge workflows
+- Browser regression run #772 / 42987167450 started on main at merge commit fb5c7e2d...
+- Worker deployment workflow run #548 / 42987167463 also started on that commit. At checkpoint time it was still in the browser test step; Supabase migration and Worker deploy steps were pending. No successful production smoke test or deploy is claimed yet.
+- Existing deploy-worker.yml includes an automated supabase db push step before wrangler deploy. No direct SQL was run in this work. Inspect and report the exact outcome of the automated deployment gate before describing production state.
+
+### Health attachment preflight fix in progress
+- Branch: fix/health-attachment-preflight-2026-11-11.
+- Commit c9c08a1e2638bea3e9db2379212b3a3e08ae3896: move the file-analysis capability check into a reusable preflight and execute it before conversation metadata or the user message is persisted.
+- Commit 450d48bb56e6d45ea83dc10e23b5dbd68996a7bf: add a Playwright regression proving disabled file analysis fails closed, creates no conversation metadata/message rows, and retains the user's selected medical attachment.
+- File-analysis capability remains disabled unless the existing Worker health endpoint reports it enabled. No provider, paid service, schema, SQL or secret was changed.
+- Next: run exact-head browser CI, fix failures, open/merge only after green checks; then continue remaining Health, Free, Studio, Academy, Commerce, Business, Crypto/Mining and Online Income workstreams.
+
+### Conversation preservation
+- The exact founder instruction and verified code/CI/merge/deploy state are saved here and in the development log and roadmap.
+- This checkpoint does not claim a verbatim transcript export; the original ChatGPT conversation remains available in ChatGPT history.

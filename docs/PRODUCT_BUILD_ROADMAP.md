@@ -420,3 +420,13 @@ Conversation preservation note: this repository file stores the founder's exact 
 - PR #103 merged after 162/162 exact-head browser tests passed (run #769), commit `b4df01417eb4364f37ac135658fe2e47f1ed6522`.
 - Added dedicated Income Tracker regression coverage on `test/income-tracker-owner-safety-2026-11-11`: owner-scoped insert payload, truthful database failure state, safe text rendering, and currency-separated totals with filters. Browser and deploy workflows include the new suite.
 - CI for the new Income Tracker branch is pending; no merge or deploy until exact-head checks pass.
+
+
+## 2026-11-11 — Founder authorization and next all-system work
+
+- Autonomous PR merge and production deploy are authorized when exact-head checks pass. Continue across UI, application, Worker, tests, workflows and documentation.
+- Do not directly edit SQL or perform ad-hoc Supabase schema/RLS operations. Existing deploy workflow currently includes an automated migration gate; report its result separately from Worker deployment.
+- PR #104 Income Tracker safety regression merged after 166/166 browser tests at fb5c7e2d7e9231bbea878dc36bf8912c2c61e7f4.
+- Current Health hardening branch adds a fail-closed capability preflight before any chat-history write when file analysis is disabled, with an E2E regression for no writes and attachment retention. Await exact-head CI before merge.
+- Continue in parallel across Free/Health, Studio, Academy, Commerce, Business, Crypto/Mining, Online Income, authentication, privacy, localization and release checks. Keep file analysis disabled until legal/privacy/provider gates are met; no paid services or APK build at this stage.
+- Preserve each verified PR, CI run, merge SHA and production smoke-test outcome in the chat archive and development log. The archive is a structured checkpoint; the original chat remains in ChatGPT history.
