@@ -181,3 +181,17 @@ E2E tests were updated to cover male routing, Sarah's clear/default feminine voi
 - Outstanding manual check: verify actual Dr.Vas/Dr.Jan male and Sarah feminine playback on the founder’s Windows and Android devices. Automated browser tests do not prove the real device audio output.
 - APK remains postponed/manual-only. No paid provider, new secret, wallet custody, trading or real mining was enabled.
 - This archive is a structured project/chat handoff, not a verbatim export. The full conversation remains in ChatGPT chat history.
+
+
+## 2026-11-11 — Creator & Online Income navigation fix merged and deployed
+
+- During the Mining fix review, the same hidden-target defect was identified in the “Deschide Creator & Online Income Lab” shortcut: it scrolled to `#founderProductionHeading` inside the hidden `#adminPanel`, so the button could not reveal the workbench in Studio.
+- PR #121 moved the founder-only Creator & Online Income workbench and cryptographic provenance controls into the dedicated Studio > Online Income feature page. The content stays collapsed until the explicit open button is pressed. The workbench remains accessible only through the existing private Studio/admin gate; the six public modules and server-side authorization were preserved.
+- PR #121 merged to main as `26335d9dd7c78358fc3683e2a4a106434ba9914e`.
+- Exact-head browser run #833 passed 177/177. Post-merge main browser run #834 passed 177/177.
+- Production deploy #557 succeeded for main commit `26335d9dd7c78358fc3683e2a4a106434ba9914e`. Cloudflare Worker version: `61f40e4a-747e-4acf-8147-58e87bdc3baf`. Smoke test confirmed health status online, Worker ok, assets/AI/database configured, six module cards present, and unauthenticated admin-status rejected with HTTP 401.
+- Supabase migration gate again reported “Remote database is up to date.” No migration was applied; no SQL/schema/database change was made.
+- Current production includes both navigation fixes: PR #120 Crypto & Mining and PR #121 Creator & Online Income. The actual private workbenches are now opened from their own Studio feature pages instead of attempting to scroll to hidden content in the general admin panel.
+- No real publication, transfer, wallet action, trading or mining was triggered. APK remains postponed/manual-only. No paid provider or new secret was added.
+- Public URL masking remains pending an owned custom domain or explicit account-level workers.dev subdomain change. Do not alter DNS or the account-level hostname without founder confirmation.
+- This is a structured project/chat checkpoint; the full conversation remains in ChatGPT chat history.

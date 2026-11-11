@@ -501,3 +501,17 @@ Founder asked to preserve this conversation and continue the existing integrated
 - Public URL masking is pending an owned custom domain or explicit account-level workers.dev subdomain change. Do not alter DNS or account-wide subdomain without founder confirmation.
 - APK remains postponed/manual-only. Presenter voices still need real-device playback verification.
 - This checkpoint is a structured continuation record; the full chat remains in ChatGPT history.
+
+
+### 2026-11-11 — Latest verified all-module navigation checkpoint
+
+- Main: `26335d9dd7c78358fc3683e2a4a106434ba9914e`.
+- PR #120 fixed Crypto & Mining: the real admin-only panel is in Studio > Crypto & Mining and opens from its explicit button.
+- PR #121 fixed Creator & Online Income: the founder workbench and provenance controls are in Studio > Online Income and open from its explicit button.
+- Browser tests: exact-head #833 177/177; post-merge main #834 177/177.
+- Production deploy #557 succeeded. Worker version: `61f40e4a-747e-4acf-8147-58e87bdc3baf`. Health online; Worker ok; assets, AI and database configured; six public module cards verified; anonymous admin status HTTP 401.
+- Supabase: “Remote database is up to date.” No migration applied; no SQL/schema/database change.
+- All private workbenches remain behind existing founder/admin access. Mining/trading and external financial actions remain disabled.
+- Public hostname masking remains pending an owned custom domain or explicit account-level workers.dev subdomain change. Do not alter DNS or account-wide hostname without founder confirmation.
+- APK postponed/manual-only; real-device presenter voice playback still needs manual verification.
+- This checkpoint is a structured continuation record; full chat remains in ChatGPT history.
