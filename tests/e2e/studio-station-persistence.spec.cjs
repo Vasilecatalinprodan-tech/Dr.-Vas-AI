@@ -128,6 +128,18 @@ test("Book Studio station metadata survives save, new draft and reopen", async (
   expect(exportedText).toContain("Capitolul întâi");
 });
 
+test("Book Studio manuscript controls follow the selected interface language", async ({ page }) => {
+  await openStudio(page);
+  await page.evaluate(() => {
+    currentLanguage = "en";
+    translatePage(document.body);
+  });
+  await expect(page.locator("#drvasBookStationSubtitle").locator("xpath=..")).toContainText("Book subtitle / promise");
+  await expect(page.locator("#drvasBookStationManuscriptDraft").locator("xpath=..")).toContainText("Manuscript / current chapter");
+  await expect(page.locator("#drvasBookStationManuscriptDraft")).toHaveAttribute("placeholder", "Write or continue the current chapter here. Save the project before moving to another chapter.");
+  await expect(page.locator("#drvasBookStationChapterStatus option[value='revising']")).toHaveText("In revision");
+});
+
 test("Translation Station glossary and source text survive save and reopen", async ({ page }) => {
   await openStudio(page);
   await installProjectStore(page);
