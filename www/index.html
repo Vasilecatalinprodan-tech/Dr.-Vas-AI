@@ -7696,6 +7696,7 @@ function calculateCryptoHashrateScenario() {
     return scenarioResult;
   } catch (error) {
     ["cryptoScenarioShare","cryptoScenarioCoinsDay","cryptoScenarioGrossDay","cryptoScenarioEnergyDay","cryptoScenarioNetDay","cryptoScenarioNetMonth","cryptoScenarioPowerWatts","cryptoScenarioFacilityPower","cryptoScenarioBreakEven","cryptoScenarioMaxTariff","cryptoScenarioPayback","cryptoScenarioHardwareNet"].forEach(id=>{const node=document.getElementById(id);if(node)node.textContent="—";});
+    document.getElementById("cryptoScenarioSensitivityBody")?.replaceChildren();
     notice.textContent = error?.message || "Verifică valorile introduse.";
     return null;
   }
