@@ -96,3 +96,13 @@ This still does not mean Jan/Sarah voice IDs are configured or the actual sound 
 - Voice picker lists only the selected locale and clears saved foreign-locale choices.
 - Exact-head and post-merge browser suites passed 177/177; deploy #559 succeeded (Worker version `ed6dc539-0e3f-4751-868d-fd004dad87b6`).
 - Automated tests do not prove audible playback or pronunciation on Windows/Samsung. Manual listening verification remains required. No new secrets, paid TTS calls, voice cloning or APK build.
+
+
+## 2026-11-11 — Shared local feminine fallback clarified by founder
+- Founder confirmed that the familiar feminine device voice previously spoke for Dr.Vas and Dr.Jan too, including with Italian selected, and asked to reuse that voice rather than a distorted foreign-language fallback.
+- PR #125 remains the locale-safety baseline: never assign a voice from another language to Romanian/Italian narration; keep utterance language matched to the selected UI language.
+- PR #128 aligns normal chat with the presenter profile. Dr.Vas/Dr.Jan prefer locale-matched masculine voices; if none is available, prefer the recognised locale-matched feminine voice (the same voice Sarah uses) before the generic device default. Valid saved/manual choices for the selected locale remain respected. Sarah remains feminine/local only.
+- Added Romanian and Italian regression cases where an unknown default voice is listed before a recognised feminine voice; the feminine voice must be selected for Dr.Vas/Dr.Jan in both chat and presentation.
+- PR #128 latest head f918765865ee7dd7ea96c8067a673c440c65ed34, exact-head run #852 queued. Not merged or deployed at this checkpoint.
+- Device audio quality and Romanian/Italian pronunciation still require manual playback on Windows and Samsung. Tests verify selection and locale, not actual sound.
+- No new provider secrets, paid TTS, voice cloning or APK build.

@@ -1308,3 +1308,13 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Production deploy #559 succeeded (run `43092604748`), Worker version `ed6dc539-0e3f-4751-868d-fd004dad87b6`; smoke test online, six public modules, anonymous admin-status HTTP 401; SBOM artifact `13889133035`.
 - Supabase migration gate: “Remote database is up to date”; no migration or SQL/schema/RLS changes. No secrets, paid voice usage or APK build.
 - Real-device playback and pronunciation still need manual verification.
+
+
+### 2026-11-11 — Mining scanner accuracy and shared feminine voice fallback
+- PR #127 removed the arbitrary default $1 coin-price cutoff from the PoW scanner while preserving algorithm/hardware compatibility and explicit optional minimum-price validation.
+- PR #127 merged as 974e45d69e14b30e3fb0b342d832fe068cdaea4c; exact-head #849 and post-merge #850 each passed 177/177.
+- Deploy #560 deployed Worker version f3d75a76-031f-45e7-bc0f-f4dacb11bd08; production smoke test passed (health, six module cards, anonymous admin-status HTTP 401). SBOM upload failed due GitHub artifact API returning HTML; deploy and smoke steps succeeded but workflow finalization remained pending.
+- Founder clarified the desired familiar local feminine fallback should also speak for Dr.Vas and Dr.Jan when no locale-matched male voice is available, including Italian. PR #128 aligns chat with presentation and explicitly prefers local feminine before generic device default; foreign-locale voice fallback remains disabled.
+- PR #128 latest head f918765865ee7dd7ea96c8067a673c440c65ed34; run #852 queued. Do not merge/deploy before exact latest-head browser tests pass.
+- Module audit: Academy lesson checklist/progress and saved-course round-trip tests already exist; Commerce three-supplier MOQ/shipping comparison exists with user-supplied evidence unverified; Business cashbook, estimated VAT, cashflow and break-even exist.
+- No SQL/schema/migration changes, secrets, paid voice calls, voice cloning or APK build. Real mining/trading remain disabled.

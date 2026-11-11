@@ -225,3 +225,39 @@ Founder feedback:
 - Supabase reported “Remote database is up to date.” No migration was applied. No SQL/schema/RLS change, Worker secret, paid TTS/provider call, voice-cloning service or APK build was used. Health file analysis remains disabled; APK remains postponed/manual-only.
 - Actual audio quality and pronunciation on the founder's Windows browser and Samsung device still require a manual listening check; automated tests verify voice selection and locale routing, not the device's audible output.
 - This is a structured archive of the request and implementation, not a verbatim export. The full ChatGPT conversation remains in ChatGPT history.
+
+
+## 2026-11-11 — Founder feedback: familiar feminine voice, mining and all-module continuation
+
+Founder request:
+> „merge dar distorsionat....ai avut o voce feminina ieri care vorbea in locul meu si a lui jan...de ce nu o folosim pe aia,o foloseai de altfel si cand puneam in italiana....in fine continua cu toate si salveaza tot”
+
+### Voice investigation and implementation
+- Confirmed that PR #123 had restored Sarah's cross-language feminine fallback, but using (for example) an English voice for Romanian/Italian narration could mismatch the utterance language and distort pronunciation.
+- PR #125 corrected the language mismatch and deployed locale-safe voice selection. It prefers a local-language male voice for Dr.Vas/Dr.Jan, Sarah's local-language feminine voice for Sarah, and a local device fallback when a role-appropriate voice is unavailable. It intentionally does not use a foreign-language voice as a fallback.
+- Founder clarified that the familiar local feminine voice had previously spoken for Dr.Vas and Dr.Jan too, including while Italian was selected, and explicitly asked to reuse it.
+- Follow-up PR #128 makes chat and the landing presentation use the same fallback hierarchy: local masculine voice first for Dr.Vas/Dr.Jan; if none is available, prefer the detected local feminine voice used by Sarah; only then use the local default. Explicit valid per-assistant voice choices remain respected. Foreign-language selections remain rejected to prevent distortion.
+- PR #128: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/128. Latest head f918765865ee7dd7ea96c8067a673c440c65ed34; open at this checkpoint. Browser run #852 is queued; do not merge or deploy until the exact latest head passes. Earlier head run #851 is also queued and is superseded by #852.
+- Regression coverage now includes Romanian and Italian devices where a generic/default voice appears before a recognised feminine voice, proving the recognised local feminine voice is preferred for Dr.Vas and Jan in both chat and presentation.
+- Actual acoustic quality and pronunciation still require listening on the founder's Windows browser and Samsung device; automated tests cannot certify device audio quality.
+
+### Mining release and production status
+- PR #127 removed the arbitrary default USD 1 unit-price cutoff from Crypto & Mining discovery. Valid positive market quotes are eligible, subject to the selected Proof-of-Work algorithm and hardware compatibility. Explicit minimum-price filtering remains available and validates non-negative values.
+- PR #127 merged to main as 974e45d69e14b30e3fb0b342d832fe068cdaea4c.
+- Exact PR-head browser run #849 passed 177/177. Post-merge main browser run #850 passed 177/177.
+- Production deploy run #560 deployed Worker version f3d75a76-031f-45e7-bc0f-f4dacb11bd08; the production health/homepage smoke test passed, all six public module cards were confirmed, and unauthenticated admin-status was rejected with HTTP 401. The SBOM artifact upload step failed because the GitHub artifact endpoint returned HTML instead of JSON; the deploy and smoke-test steps themselves succeeded, but the overall workflow had not finalized at this checkpoint.
+- Mining remains research/simulation only. No device is controlled, no mining starts, and no wallet or trading action is enabled.
+
+### Cross-module audit at this checkpoint
+- Academy already has an individual lesson checklist, calculated completion percentage, accessible progress bar, notes, and saved-project round-trip coverage in tests/e2e/academy-progress.spec.cjs.
+- Commerce already has a three-supplier comparison for unit price, total shipping, MOQ, excess stock, lead time, returns and offer source. Supplier identity and offer evidence are user-provided and remain explicitly unverified; VAT/customs/insurance/returns extras are not automatically included.
+- Business already has the private Dr.Vas Books cashbook, estimated VAT, monthly cashflow and break-even calculator. It is not statutory accounting or tax filing.
+- Continue all six modules and founder workbenches; improve evidence quality, usability, accessibility and persistence without claiming unimplemented features.
+
+### Guardrails and preservation
+- No SQL, database schema, RLS or migration changes were made. The production workflow reported the remote database up to date.
+- No new Worker secrets, paid voice provider calls, voice cloning or external credits were used.
+- APK/Android packaging remains postponed and manual-only.
+- Real mining, trading, wallet custody and automated transactions remain disabled.
+- Production URL remains https://dr--vas-ai.vasilecatalinprodan.workers.dev/.
+- This is a structured checkpoint of the request and work, not a verbatim export. The full conversation remains in ChatGPT history.
