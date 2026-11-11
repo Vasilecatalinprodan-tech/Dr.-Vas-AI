@@ -28,30 +28,47 @@ async function openApp(page) {
 
 test("Academy lesson checklist derives progress from individual lesson completion", async ({ page }) => {
   await openApp(page);
-  await page.locator("#academyLessonTitles").fill("Introducere\nBuget și planificare\nMarketing");
-  await page.evaluate(() => renderAcademyLessonChecklist());
-  const lessons = page.locator("#academyLessonChecklist input[type=checkbox]");
-  await lessons.nth(0).check();
-  await lessons.nth(2).check();
-  await expect(page.locator("#academyLessonsTotal")).toHaveValue("3");
-  await expect(page.locator("#academyLessonsCompleted")).toHaveValue("2");
-  await expect(page.locator("#academyProgressSummary")).toContainText("2 din 3 lecții finalizate");
-  await expect(page.locator("#academyProgressBar")).toHaveAttribute("aria-valuenow", "67");
+  const result = await page.evaluate(() => {
+    const titles = document.getElementById("academyLessonTitles");
+    titles.value = "Introducere\\nBuget și planificare\\nMarketing";
+    titles.dispatchEvent(new Event("input", { bubbles: true }));
+    const lessons = [...document.querySelectorAll("#academyLessonChecklist input[type=checkbox]")];
+    lessons[0].checked = true;
+    lessons[0].dispatchEvent(new Event("change", { bubbles: true }));
+    lessons[2].checked = true;
+    lessons[2].dispatchEvent(new Event("change", { bubbles: true }));
+    return {
+      total: document.getElementById("academyLessonsTotal").value,
+      completed: document.getElementById("academyLessonsCompleted").value,
+      summary: document.getElementById("academyProgressSummary").textContent,
+      aria: document.getElementById("academyProgressBar").getAttribute("aria-valuenow")
+    };
+  });
+  expect(result.total).toBe("3");
+  expect(result.completed).toBe("2");
+  expect(result.summary).toContain("2 din 3 lecții finalizate");
+  expect(result.aria).toBe("67");
 });
-
 test("Academy lesson checklist labels and progress summary localize", async ({ page }) => {
   await openApp(page);
-  await page.evaluate(() => {
+  const result = await page.evaluate(() => {
     currentLanguage = "en";
     translatePage(document.body);
+    const titles = document.getElementById("academyLessonTitles");
+    titles.value = "Introduction\\nBudget";
+    titles.dispatchEvent(new Event("input", { bubbles: true }));
+    return {
+      label: titles.parentElement.textContent,
+      heading: document.querySelector(".academy-lesson-checklist-wrap h4").textContent,
+      summary: document.getElementById("academyProgressSummary").textContent,
+      placeholder: titles.getAttribute("placeholder")
+    };
   });
-  await expect(page.locator("#academyLessonTitles").locator("xpath=..")).toContainText("Lesson titles (one per line)");
-  await expect(page.locator(".academy-lesson-checklist-wrap h4")).toHaveText("Lesson checklist");
-  await page.locator("#academyLessonTitles").fill("Introduction\nBudget");
-  await page.evaluate(() => renderAcademyLessonChecklist());
-  await expect(page.locator("#academyProgressSummary")).toContainText("0 of 2 lessons completed");
+  expect(result.label).toContain("Lesson titles (one per line)");
+  expect(result.heading).toBe("Lesson checklist");
+  expect(result.summary).toContain("0 of 2 lessons completed");
+  expect(result.placeholder).toContain("Introduction");
 });
-
 test("Academy progress tracker calculates percentages and clamps completed lessons", async ({ page }) => {
   await openApp(page);
   const result = await page.evaluate(() => {
