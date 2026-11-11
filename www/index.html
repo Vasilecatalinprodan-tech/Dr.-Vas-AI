@@ -2812,7 +2812,7 @@ function getDrvasPresentationVoiceProfile(voices,locale){
  // reuse that voice rather than making Dr.Vas/Dr.Jan silent.
  const defaultVoice=local.find(v=>v.default)||local[0]||null;
  const sarah=femaleVoices[0]||null;
- const drvas=maleVoices[0]||defaultVoice;
+ const drvas=maleVoices[0]||femaleVoices[0]||defaultVoice;
  const jan=maleVoices.find(v=>v.voiceURI!==drvas?.voiceURI)||drvas;
  return {drvas,jan,sarah,hasMale:maleVoices.length>0,hasFemale:!!sarah,hasAllSpeakers:!!(drvas&&jan&&sarah),hasAllDistinct:!!(drvas&&jan&&sarah&&new Set([drvas.voiceURI,jan.voiceURI,sarah.voiceURI]).size===3),hasFallback:!!(drvas||sarah)};
 }
@@ -4314,7 +4314,11 @@ function chooseSpeechVoice(lang,assistantId=activeAssistant){
  // Ignore a saved/manual voice from another locale; always speak the selected
  // language with a voice installed for that language.
  if(selected){const chosen=matching.find(v=>v.voiceURI===selected);if(chosen)return chosen;}
- return matching[0]||voices.find(v=>v.default)||voices[0]||null;
+ const localMaleVoices=matching.filter(isMaleSpeechVoice).sort((a,b)=>rankMaleSpeechVoice(b)-rankMaleSpeechVoice(a));
+ const localFemaleVoices=matching.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
+ // Keep chat and presentation consistent: use a local masculine voice first,
+ // then the same local feminine fallback used by the presenter profile.
+ return localMaleVoices[0]||localFemaleVoices[0]||matching.find(v=>v.default)||matching[0]||null;
 }
 function prepareSpeechText(value){
  return String(value||"")
