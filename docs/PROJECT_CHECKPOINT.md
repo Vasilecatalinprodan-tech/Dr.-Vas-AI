@@ -447,3 +447,12 @@ Founder asked to preserve this conversation and continue the existing integrated
 - Deploy #553 succeeded; Worker version `729483ee-0b20-4949-9592-d84877cb53de`.
 - Supabase reported remote database up to date; no migration applied. Rate-limit RPC/RLS/service_role checks passed. Production smoke test passed, six module markers verified, unauthenticated admin request HTTP 401. SBOM artifact `13846107242`.
 - Exact-head Mining tests #791: 174/174 passed. Deploy workflow browser gate passed; independent post-merge browser #793 pending at last poll.
+
+
+## 2026-11-11 — Presenter voice correction in progress
+
+- Founder starting point: `df5e119a14aa3526f3805835b3349b87533cf94e`.
+- Last verified Mining production deployment from the preceding checkpoint: deploy #553, Worker version `729483ee-0b20-4949-9592-d84877cb53de`; migration history already current, no migration applied; production smoke test and deploy browser gate passed. Independent post-merge browser #793 was still pending in the prior archive note and should be checked if run metadata becomes available.
+- Voice requirement: Dr.Vas and Dr.Jan male; Sarah receives the current clear Dr.Vas voice if it is feminine, otherwise the best locale-matched feminine voice. Do not use cross-language fallback for Sarah. User voice sample optional, not a blocker.
+- Branch `fix/presenter-voice-gender-routing-2026-11-11` created from the supplied SHA. Frontend and E2E test changes are committed as `0c771e726e84efecacaca2c469e09e761a4aebb5` (branch HEAD at this checkpoint). CI/PR/deploy are not yet verified.
+- No SQL/schema/migration changes. No secrets or paid-provider changes. APK postponed/manual-only. Continue all modules including Mining; no actual mining/trading/wallet operations.
