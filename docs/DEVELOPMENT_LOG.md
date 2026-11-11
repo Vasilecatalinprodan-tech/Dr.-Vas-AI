@@ -1266,3 +1266,15 @@ Conversation preservation note: this repository file stores the founder's exact 
 - Browser and deploy workflows now cache Playwright Chromium 1.64.1 and avoid repeated apt dependency installation.
 - Remaining manual verification: test actual Dr.Vas/Dr.Jan male and Sarah feminine audio on supported founder devices/languages. Do not use foreign-language voices that distort pronunciation.
 - APK remains postponed/manual-only; no paid provider, secrets, wallet, trading or real mining actions.
+
+
+### 2026-11-11 — Crypto & Mining shortcut fixed; production deployment verified
+
+- User reported the “Deschide panoul Crypto & Mining” button did nothing.
+- Root cause: shortcut scrolled to `#cryptoEngineHeading` inside `#adminPanel`, which CSS hides during module-workspace mode. The target was present but not visible.
+- PR #120 moved the existing founder-only Crypto & Mining card into Studio’s dedicated Crypto & Mining feature page. The card starts collapsed and opens on the explicit button. No admin allowlist, Worker permissions or public module gates changed.
+- Merged commit: `fe8512da6a58dbe2aabc1bd4a2663eaf1b1933b6`; exact-head browser #828 and post-merge browser #829 both passed 176/176.
+- Deploy #556 succeeded; Worker version `a543bfb1-2367-4431-a32c-cebc72376658`. Health online, assets/AI/database configured, six module cards verified, anonymous admin-status request HTTP 401.
+- Supabase reported “Remote database is up to date”; no migration or SQL/schema change was applied.
+- Mining remains a simulation/research/admin registry only. No actual mining, wallet custody or trading. APK remains postponed/manual-only.
+- Public hostname still reveals the Cloudflare account subdomain; masking requires a custom domain owned by the founder or an account-level workers.dev subdomain change. Do not change until the domain is confirmed.
