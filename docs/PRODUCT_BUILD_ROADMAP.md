@@ -448,3 +448,6 @@ Conversation preservation note: this repository file stores the founder's exact 
 - PR #106 made Android packaging manual-only. APK run #374 was auto-triggered by the old push filter and completed as a non-released Actions artifact; do not install or distribute it as a final build. Resume APK only after web stability and explicit founder instruction.
 - Continue development across all six public workspaces and the private founder tools (Crypto/Mining, Online Income, Studio/creator workbenches), plus auth, privacy, localization and release reliability. Preserve owner scoping, safe failure states and no unapproved paid integrations.
 - No ad-hoc SQL or new schema/RLS change was made; remote migration history was already up to date. Keep SQL work out of scope, and report any automatic migration step precisely.
+
+
+- Final independent main browser run #774 passed 167/167 tests. The accidentally auto-triggered APK exists only as a non-released Actions artifact (ID 13840053736; retention through 2026-12-11); future builds are manual-only.
