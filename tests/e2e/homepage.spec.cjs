@@ -1553,7 +1553,7 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
     stopDrvasPresentationSpeech(); currentLanguage = "ro"; renderDrvasPresentation(); await speakDrvasPresentation();
     window.__drvasSpoken[window.__drvasSpoken.length - 1].onend();
   });
-  await page.waitForTimeout(500);
+  await expect.poll(() => page.locator("#presentationSpeakerName").textContent(), { timeout: 5000 }).toBe("Dr.Jan");
   const jan = await page.evaluate(() => ({
     speaker: document.querySelector("#presentationSpeakerName").textContent,
     modules: document.querySelector("#presentationSpeakerModules").textContent,
@@ -1573,7 +1573,7 @@ test("Dr.Vas presentation introduces all six modules through three animated spea
   expect(jan.speech).toContain("Doctor Vas Business");
   expect(jan.speech).toContain("Doctor Jan");
   await page.evaluate(() => window.__drvasSpoken[window.__drvasSpoken.length - 1].onend());
-  await page.waitForTimeout(500);
+  await expect.poll(() => page.locator("#presentationSpeakerName").textContent(), { timeout: 5000 }).toBe("Sarah");
   const sarah = await page.evaluate(() => ({
     speaker: document.querySelector("#presentationSpeakerName").textContent,
     modules: document.querySelector("#presentationSpeakerModules").textContent,
