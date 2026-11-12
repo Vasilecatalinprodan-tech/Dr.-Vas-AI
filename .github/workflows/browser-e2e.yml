@@ -66,7 +66,14 @@ jobs:
           ]) {
             if (!worker.includes(marker)) throw new Error('File consent Worker route missing: ' + marker);
           }
-          console.log(`Validated Worker, ${scripts.length} inline script(s), private attachment migration, and consent withdrawal routes.`);
+          const userFacingSource = html + '\\n' + worker;
+          for (const pattern of [
+            /(?:Aplică|Apply|Applica|Wende|Appliquez|Aplica|Примените).{0,100}(?:migra|migration)/i,
+            /(?:Verifică|Check|Controlla).{0,100}(?:migra|migration)/i
+          ]) {
+            if (pattern.test(userFacingSource)) throw new Error('User-facing migration instructions are forbidden; direct users to administrator review instead.');
+          }
+          console.log(`Validated Worker, ${scripts.length} inline script(s), private attachment migration, consent withdrawal routes and migration-safe user error guidance.`);
           NODE
 
       - name: Verify production Worker deployment never applies database migrations
