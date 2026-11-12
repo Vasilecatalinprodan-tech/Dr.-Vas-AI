@@ -90,8 +90,10 @@ This file is a structured engineering archive of the request, decisions, diagnos
 - PR: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/134
 - Branch: `safety/deploy-worker-without-db-migrations-2026-11-12`, head `aa7e67d8dc06e491dbf0aa8de6e845ecd3650651`.
 - Removes automatic Supabase CLI setup and `supabase db push` from the Cloudflare Worker release workflow; keeps Worker deployment and smoke test. Adds regression assertion that release workflows cannot read DB secrets or run schema mutation. APK remains manual-only.
-- PR was open, mergeable, and browser E2E run `43222204442` still running at checkpoint. Static validation and the migration-safety assertion had passed; full Playwright suite had not yet completed.
-- Main run `43222066934` for PR #133 remained in progress at the last poll, with its browser suite running and migration/deploy steps not yet started. Earlier main release after PR #131 (`43191574508`) completed successfully. Keep PR #134 unmerged until its exact-head browser suite succeeds, then merge and verify the new no-migration deployment run.
+- PR #134 exact-head browser E2E run `43222204442` completed successfully. PR #134 was squash-merged on 2026-11-12 as `c5e81c1ce914e609ad9d976b7fc5f87b88c6008c`.
+- The automatic release workflow now deploys Worker code and smoke-tests production without accessing Supabase DB credentials or applying migrations.
+- The first PR #133 deployment run `43222066934` completed with 174/175 browser tests passing; the one failure was the presentation sequence test capturing `Dr.Jan` before the next scheduled 420 ms transition to Sarah. Supabase migration/deploy steps were skipped; no DB changes were made.
+- A subsequent safe main deployment run `43222690410` was still running its browser tests at the latest checkpoint; Worker deploy and smoke test had not yet started.
 
 ### PR #135 — Commerce supplier due diligence
 - PR: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/135
@@ -107,3 +109,18 @@ This file is a structured engineering archive of the request, decisions, diagnos
 - Continue Business audit and improvements to cashbook validation, cashflow, break-even, invoices/expenses and export; do not claim statutory accounting/tax filing.
 - Keep APK workflow manual-only/postponed. No paid TTS or external provider spend without approval.
 - This archive is a structured session/engineering checkpoint, not a verbatim export of every chat UI message. The original conversation remains in ChatGPT chat history.
+
+
+### PR #136 — Stabilize presenter transition test
+- PR: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/136
+- Branch: `test/stabilize-sarah-presentation-sequence-2026-11-12`, head `d542f80966aa1ac0cc7c2f737f840586c271d9e0`.
+- Replaces fixed 500 ms sleeps between Dr.Vas → Dr.Jan → Sarah with state-based polling (5-second timeout), leaving production speaker logic unchanged.
+- Browser run `43222867904` was still running at checkpoint; do not merge until exact-head suite passes.
+
+### Updated release status
+- PR #131 merged and its post-merge deploy and browser suite both succeeded.
+- PR #133 merged; deployment of the Sarah fix is not yet confirmed because the main deployment's comprehensive browser suite exposed the transition timing failure.
+- PR #134 merged; future automatic Worker releases no longer apply Supabase migrations.
+- PR #135 Commerce supplier evidence work remains open. Its branch was created before PR #134 merged and may need rebasing onto latest main before merge.
+- PR #135 updated-head browser run `43222654750` was in progress; archive content is being updated in that branch.
+- Real audible playback in Romanian/Italian remains a manual live-site verification after successful deployment.
