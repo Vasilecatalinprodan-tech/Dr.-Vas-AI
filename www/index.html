@@ -5797,7 +5797,7 @@ const MODULE_PROJECT_FIELDS={
 const MODULE_PROJECT_PRIMARY={academy:"academySubject",commerce:"commerceProduct",business:"businessIdea"};
 function moduleProjectStatus(module,message,isError=false){
  const node=el(module+"ProjectStatus");if(!node)return;
- node.textContent=message;node.style.color=isError?"#ff9d9d":"#9fe5ce";
+ node.textContent=tr(message);node.style.color=isError?"#ff9d9d":"#9fe5ce";
 }
 function moduleProjectBrief(module){
  const brief={};
