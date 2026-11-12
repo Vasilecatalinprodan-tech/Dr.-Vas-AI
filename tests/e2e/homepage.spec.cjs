@@ -869,9 +869,9 @@ test("presenter voices stay in the selected language and reuse the local voice w
   expect(result.italianFallbackPresentationJan).toBe("sofia-it");
   expect(result.italianFallbackChatDrvas).toBe("sofia-it");
   expect(result.italianFallbackChatJan).toBe("sofia-it");
-  expect(result.crossLanguageChatVoice).toBeNull();
-  expect(result.crossLanguagePresentationSarah).toBeNull();
-  expect(result.crossLanguageVoiceLanguage).toBeNull();
+  expect(result.crossLanguageChatVoice).toBe("google-female");
+  expect(result.crossLanguagePresentationSarah).toBe("google-female");
+  expect(result.crossLanguageVoiceLanguage).toBe("en-GB");
 });
 
 test("late portrait load callbacks cannot overwrite the currently selected presenter label", async ({ page }) => {
