@@ -167,3 +167,32 @@ Continue all six customer workspaces and all founder-only workbenches, preservin
 - Do not read, print or alter secrets; do not enable paid services or consume paid credits.
 - APK/Android packaging remains postponed and manual-only until explicitly resumed.
 - Merge only after exact-head tests pass; verify resulting main workflows and deployment. Report limitations honestly.
+
+
+### PR #137 — Business cashbook migration guidance correction (current chat)
+- PR: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/137
+- Branch: `fix/business-cashbook-migration-guidance-2026-11-12`
+- Exact head: `274144a518383b27a25e732d9fe12e8f4e7eca12`.
+- Replaces stale Business cashbook UI text that told users to apply a Supabase migration. Initial state now asks the user to sign in; missing-table/save errors direct the user to contact the administrator rather than instructing manual database changes.
+- Romanian, Italian, English and the other supported Business translations are updated.
+- Adds E2E regression coverage that error messages never tell users to apply migrations.
+- Exact-head browser run `43224053751` was in progress at archive time. Do not merge until this run passes and the exact PR head is reconfirmed.
+- No schema, SQL, RLS, migration, Supabase state, secrets, paid services, APK or Worker runtime changes.
+
+### Current module audit from this chat
+- **Free / shared shell:** preserve independent conversation history, attachment handling, sidebar and localization; continue access, persistence and accessibility checks.
+- **Health:** separate Health workspace is present; retain shared chat and consent controls. File analysis remains fail-closed/disabled unless separately configured and consented; do not imply diagnosis or clinician integration.
+- **Studio:** Book Studio, chapter manuscript/continuity and version snapshots, Translation Station, video, music, private projects and render workflow are present. Do not claim generative video/audio or a completed MP4 unless a real render is completed and retrieved; no paid renders without approval.
+- **Academy:** course builder, lesson authoring, exercises/quiz, learning plan, saved courses and lesson completion/progress coverage exist. Continue testing saved-project round trips and progress accuracy; do not claim accreditation.
+- **Commerce:** supplier due-diligence evidence fields are now merged in PR #135. Evidence remains user-entered and unverified pending independent checking. No orders or store publishing.
+- **Business:** cashbook, estimated VAT, cashflow, break-even and Student Desk exist. PR #137 corrects unsafe stale migration instructions. Keep figures/assumptions clearly separated; this is not statutory accounting or tax filing.
+- **Crypto & Mining:** continue read-only PoW discovery, hardware compatibility, energy/cooling/maintenance/pool-fee and payback simulation. No live mining, device agent, wallets, trading or transfers.
+- **Creator / Online Income / Digital Products:** private opportunity tracking and CSV export exist; continue rights/source provenance, fees, costs, deadlines and expected-versus-received tracking. No guaranteed income or automatic publishing.
+- **Subscriptions / Google Play:** retain as a later release workstream; do not enable billing or submit/publish a store release without explicit approval and required verification.
+
+### Scheduling request in this chat
+- Founder requested a daily scheduled task named “Verifică zilnic Dr.Vas AI”.
+- Creation was not completed because the account had reached its limit of three active scheduled tasks. No existing task was modified or deleted. Revisit only after an existing slot is freed.
+
+### Preservation
+- This archive records this conversation's project instructions, decisions, changes, and test state in a structured format. The original chat remains in ChatGPT history; this is not a verbatim transcript export.
