@@ -7463,7 +7463,7 @@ async function freeNavLoadLibrary(imagesOnly=false){
    });card.appendChild(remove);
    grid.appendChild(card);
   }
- }catch(error){grid.replaceChildren();const failed=document.createElement("div");failed.className="free-nav-status";failed.textContent="Nu am putut încărca Library: "+error.message+". Serviciul Library nu este disponibil momentan. Contactează administratorul pentru verificare.";grid.appendChild(failed);}
+ }catch(error){grid.replaceChildren();const failed=document.createElement("div");failed.className="free-nav-status";failed.textContent="Nu am putut încărca Library: "+error.message+". "+tr("Serviciul nu este disponibil momentan. Contactează administratorul pentru verificare.");grid.appendChild(failed);}
 }
 
 
@@ -7494,7 +7494,7 @@ async function freeNavLoadProjects(){
  const descriptionLabel=document.createElement("label");descriptionLabel.className="wide";descriptionLabel.textContent="Descriere (opțional)";const descriptionInput=document.createElement("textarea");descriptionInput.maxLength=1000;descriptionInput.placeholder="Despre ce este proiectul?";descriptionLabel.appendChild(descriptionInput);form.appendChild(descriptionLabel);
  const create=document.createElement("button");create.type="submit";create.textContent="＋ Creează proiect";form.appendChild(create);
  const formStatus=document.createElement("p");formStatus.className="free-nav-muted wide";form.appendChild(formStatus);
- form.addEventListener("submit",async event=>{event.preventDefault();const title=titleInput.value.trim();if(!title)return;create.disabled=true;formStatus.textContent="Creez proiectul…";const {data,error}=await supabaseClient.from("drvas_projects").insert({user_id:currentUser.id,title,description:descriptionInput.value.trim(),module:moduleInput.value,notes:""}).select("id").single();if(error){formStatus.textContent="Nu am putut crea proiectul: "+error.message+". Serviciul Projects nu este disponibil momentan. Contactează administratorul pentru verificare.";create.disabled=false;}else freeNavOpenProject(data.id);});
+ form.addEventListener("submit",async event=>{event.preventDefault();const title=titleInput.value.trim();if(!title)return;create.disabled=true;formStatus.textContent="Creez proiectul…";const {data,error}=await supabaseClient.from("drvas_projects").insert({user_id:currentUser.id,title,description:descriptionInput.value.trim(),module:moduleInput.value,notes:""}).select("id").single();if(error){formStatus.textContent="Nu am putut crea proiectul: "+error.message+". "+tr("Serviciul nu este disponibil momentan. Contactează administratorul pentru verificare.");create.disabled=false;}else freeNavOpenProject(data.id);});
  const tools=document.createElement("div");tools.style.display="flex";tools.style.alignItems="center";tools.style.gap="10px";tools.style.margin="18px 0 8px";
  const heading=document.createElement("h3");heading.textContent=showArchivedFreeProjects?"Proiecte arhivate":"Proiectele mele";heading.style.margin="0";tools.appendChild(heading);
  const toggle=document.createElement("button");toggle.type="button";toggle.textContent=showArchivedFreeProjects?"Vezi active":"Vezi arhivate";toggle.addEventListener("click",()=>{showArchivedFreeProjects=!showArchivedFreeProjects;freeNavLoadProjects();});tools.appendChild(toggle);page.appendChild(tools);
@@ -7573,7 +7573,7 @@ async function freeNavLoadScheduled(){
    const {error}=await supabaseClient.from("drvas_scheduled_tasks").insert({user_id:currentUser.id,title,details:detailsInput.value.trim(),timezone,run_at:runAt,next_run_at:runAt,status:"active"});
    if(error)throw error;
    await freeNavLoadScheduled();
-  }catch(error){formStatus.textContent="Nu am putut salva mementoul: "+error.message+". Serviciul de programări nu este disponibil momentan. Contactează administratorul pentru verificare.";submit.disabled=false;}
+  }catch(error){formStatus.textContent="Nu am putut salva mementoul: "+error.message+". "+tr("Serviciul nu este disponibil momentan. Contactează administratorul pentru verificare.");submit.disabled=false;}
  });
  const sectionTitle=document.createElement("h3");sectionTitle.textContent="Mementouri programate";sectionTitle.style.margin="20px 0 8px";page.appendChild(sectionTitle);
  const taskGrid=document.createElement("div");taskGrid.className="free-nav-grid";page.appendChild(taskGrid);
