@@ -1883,6 +1883,12 @@ body.health-module-mode #chatSection .chat-main #freeChatView>#chat{
       <label>Termen livrare (zile)<input id="commerceSupplier1LeadDays" type="number" min="0" step="1" oninput="calculateCommerceSupplierComparison()" placeholder="Nespecificat"></label>
       <label>Termeni retur / garanție<input id="commerceSupplier1Returns" maxlength="500" oninput="calculateCommerceSupplierComparison()" placeholder="Termeni confirmați în ofertă"></label>
       <label>Sursă / URL ofertă<input id="commerceSupplier1Source" maxlength="500" oninput="calculateCommerceSupplierComparison()" placeholder="https://..."></label>
+      <label>Nr. înregistrare / țara firmei<input id="commerceSupplier1Registration" maxlength="180" oninput="calculateCommerceSupplierComparison()" placeholder="Date declarate de furnizor"></label>
+      <label>Mostră<select id="commerceSupplier1Sample" onchange="calculateCommerceSupplierComparison()"><option value="">Neverificată</option><option value="requested">Solicitată</option><option value="received">Primită, netestată</option><option value="passed">Testată – acceptată</option><option value="failed">Testată – respinsă</option></select></label>
+      <label>Dovezi siguranță / conformitate<input id="commerceSupplier1Safety" maxlength="500" oninput="calculateCommerceSupplierComparison()" placeholder="Documente și standarde declarate"></label>
+      <label>Drepturi marcă / proprietate intelectuală<input id="commerceSupplier1Ip" maxlength="500" oninput="calculateCommerceSupplierComparison()" placeholder="Autorizație, licență sau neconfirmat"></label>
+      <label>URL sursă independentă<input id="commerceSupplier1Evidence" maxlength="500" oninput="calculateCommerceSupplierComparison()" placeholder="Registru oficial / certificare / altă sursă"></label>
+      <label>Data ultimei verificări independente<input id="commerceSupplier1CheckedAt" type="date" onchange="calculateCommerceSupplierComparison()"></label>
      </fieldset><fieldset class="commerce-supplier-card"><legend>Furnizor 2</legend>
       <label>Nume furnizor<input id="commerceSupplier2Name" maxlength="160" oninput="calculateCommerceSupplierComparison()" placeholder="Numele firmei"></label>
       <label>Preț / unitate<input id="commerceSupplier2UnitPrice" type="number" min="0" step="0.01" oninput="calculateCommerceSupplierComparison()" placeholder="0.00"></label>
@@ -1891,6 +1897,12 @@ body.health-module-mode #chatSection .chat-main #freeChatView>#chat{
       <label>Termen livrare (zile)<input id="commerceSupplier2LeadDays" type="number" min="0" step="1" oninput="calculateCommerceSupplierComparison()" placeholder="Nespecificat"></label>
       <label>Termeni retur / garanție<input id="commerceSupplier2Returns" maxlength="500" oninput="calculateCommerceSupplierComparison()" placeholder="Termeni confirmați în ofertă"></label>
       <label>Sursă / URL ofertă<input id="commerceSupplier2Source" maxlength="500" oninput="calculateCommerceSupplierComparison()" placeholder="https://..."></label>
+      <label>Nr. înregistrare / țara firmei<input id="commerceSupplier2Registration" maxlength="180" oninput="calculateCommerceSupplierComparison()" placeholder="Date declarate de furnizor"></label>
+      <label>Mostră<select id="commerceSupplier2Sample" onchange="calculateCommerceSupplierComparison()"><option value="">Neverificată</option><option value="requested">Solicitată</option><option value="received">Primită, netestată</option><option value="passed">Testată – acceptată</option><option value="failed">Testată – respinsă</option></select></label>
+      <label>Dovezi siguranță / conformitate<input id="commerceSupplier2Safety" maxlength="500" oninput="calculateCommerceSupplierComparison()" placeholder="Documente și standarde declarate"></label>
+      <label>Drepturi marcă / proprietate intelectuală<input id="commerceSupplier2Ip" maxlength="500" oninput="calculateCommerceSupplierComparison()" placeholder="Autorizație, licență sau neconfirmat"></label>
+      <label>URL sursă independentă<input id="commerceSupplier2Evidence" maxlength="500" oninput="calculateCommerceSupplierComparison()" placeholder="Registru oficial / certificare / altă sursă"></label>
+      <label>Data ultimei verificări independente<input id="commerceSupplier2CheckedAt" type="date" onchange="calculateCommerceSupplierComparison()"></label>
      </fieldset><fieldset class="commerce-supplier-card"><legend>Furnizor 3</legend>
       <label>Nume furnizor<input id="commerceSupplier3Name" maxlength="160" oninput="calculateCommerceSupplierComparison()" placeholder="Numele firmei"></label>
       <label>Preț / unitate<input id="commerceSupplier3UnitPrice" type="number" min="0" step="0.01" oninput="calculateCommerceSupplierComparison()" placeholder="0.00"></label>
@@ -1899,6 +1911,12 @@ body.health-module-mode #chatSection .chat-main #freeChatView>#chat{
       <label>Termen livrare (zile)<input id="commerceSupplier3LeadDays" type="number" min="0" step="1" oninput="calculateCommerceSupplierComparison()" placeholder="Nespecificat"></label>
       <label>Termeni retur / garanție<input id="commerceSupplier3Returns" maxlength="500" oninput="calculateCommerceSupplierComparison()" placeholder="Termeni confirmați în ofertă"></label>
       <label>Sursă / URL ofertă<input id="commerceSupplier3Source" maxlength="500" oninput="calculateCommerceSupplierComparison()" placeholder="https://..."></label>
+      <label>Nr. înregistrare / țara firmei<input id="commerceSupplier3Registration" maxlength="180" oninput="calculateCommerceSupplierComparison()" placeholder="Date declarate de furnizor"></label>
+      <label>Mostră<select id="commerceSupplier3Sample" onchange="calculateCommerceSupplierComparison()"><option value="">Neverificată</option><option value="requested">Solicitată</option><option value="received">Primită, netestată</option><option value="passed">Testată – acceptată</option><option value="failed">Testată – respinsă</option></select></label>
+      <label>Dovezi siguranță / conformitate<input id="commerceSupplier3Safety" maxlength="500" oninput="calculateCommerceSupplierComparison()" placeholder="Documente și standarde declarate"></label>
+      <label>Drepturi marcă / proprietate intelectuală<input id="commerceSupplier3Ip" maxlength="500" oninput="calculateCommerceSupplierComparison()" placeholder="Autorizație, licență sau neconfirmat"></label>
+      <label>URL sursă independentă<input id="commerceSupplier3Evidence" maxlength="500" oninput="calculateCommerceSupplierComparison()" placeholder="Registru oficial / certificare / altă sursă"></label>
+      <label>Data ultimei verificări independente<input id="commerceSupplier3CheckedAt" type="date" onchange="calculateCommerceSupplierComparison()"></label>
      </fieldset>
     </div>
     <div id="commerceSupplierResults" class="commerce-supplier-results" aria-live="polite"></div>
@@ -5479,6 +5497,7 @@ function calculateCommerceSupplierComparison(){
  for(let index=1;index<=3;index++){
   const read=id=>String(el("commerceSupplier"+index+id)?.value??"").trim();
   const name=read("Name"),unitText=read("UnitPrice"),shippingText=read("Shipping"),moqText=read("Moq"),leadText=read("LeadDays"),returns=read("Returns"),source=read("Source");
+  const registration=read("Registration"),sample=read("Sample"),safety=read("Safety"),ip=read("Ip"),evidence=read("Evidence"),checkedAt=read("CheckedAt");
   if(![name,unitText,shippingText,moqText,leadText,returns,source].some(Boolean))continue;
   const unitPrice=Number(unitText),shipping=Number(shippingText),moq=Number(moqText),leadDays=leadText===""?null:Number(leadText);
   if(!name||unitText===""||shippingText===""||moqText===""||!Number.isFinite(unitPrice)||unitPrice<0||!Number.isFinite(shipping)||shipping<0||!Number.isInteger(moq)||moq<1||(leadDays!==null&&(!Number.isInteger(leadDays)||leadDays<0))){
@@ -5487,7 +5506,7 @@ function calculateCommerceSupplierComparison(){
   const orderUnits=Math.max(quantity,moq);
   const upfrontCost=Math.round((unitPrice*orderUnits+shipping+Number.EPSILON)*100)/100;
   const landedUnitCost=Math.round((upfrontCost/orderUnits+Number.EPSILON)*10000)/10000;
-  suppliers.push({index,name,unitPrice,shipping,moq,leadDays,returns,source,orderUnits,upfrontCost,landedUnitCost,excessUnits:orderUnits-quantity});
+  suppliers.push({index,name,unitPrice,shipping,moq,leadDays,returns,source,registration,sample,safety,ip,evidence,checkedAt,orderUnits,upfrontCost,landedUnitCost,excessUnits:orderUnits-quantity});
  }
  suppliers.sort((a,b)=>a.landedUnitCost-b.landedUnitCost||(a.leadDays??Infinity)-(b.leadDays??Infinity));
  clear();
@@ -5501,11 +5520,17 @@ function calculateCommerceSupplierComparison(){
   const lead=document.createElement("p");lead.textContent=tr("Termen livrare")+": "+(supplier.leadDays===null?tr("nespecificat"):supplier.leadDays+" "+tr("zile"));
   const returnsLine=document.createElement("p");returnsLine.textContent=tr("Termeni retur")+": "+(supplier.returns||tr("nespecificați"));
   const sourceLine=document.createElement("p");sourceLine.textContent=tr("Sursă ofertă")+": "+(supplier.source||tr("nespecificată"));
-  card.append(heading,total,unit,moqLine,lead,returnsLine,sourceLine);results.appendChild(card);
+  const registrationLine=document.createElement("p");registrationLine.textContent=tr("Înregistrare firmă (declarată)")+": "+(supplier.registration||tr("nespecificată"));
+  const sampleLine=document.createElement("p");sampleLine.textContent=tr("Mostră")+": "+(supplier.sample||tr("neverificată"));
+  const safetyLine=document.createElement("p");safetyLine.textContent=tr("Siguranță / conformitate (declarată)")+": "+(supplier.safety||tr("fără dovezi introduse"));
+  const ipLine=document.createElement("p");ipLine.textContent=tr("Drepturi IP / marcă (declarate)")+": "+(supplier.ip||tr("neconfirmate"));
+  const evidenceLine=document.createElement("p");evidenceLine.textContent=tr("Sursă independentă")+": "+(supplier.evidence||tr("lipsește"));
+  const checkedLine=document.createElement("p");checkedLine.textContent=tr("Verificată la")+": "+(supplier.checkedAt||tr("nu a fost verificată"));
+  card.append(heading,total,unit,moqLine,lead,returnsLine,sourceLine,registrationLine,sampleLine,safetyLine,ipLine,evidenceLine,checkedLine);results.appendChild(card);
  });
  if(status){
   if(!suppliers.length)status.textContent=tr("Introdu numele, prețul unitar, transportul total și MOQ pentru cel puțin un furnizor.");
-  else status.textContent=tr("Ofertele sunt ordonate după costul efectiv unitar. Datele sunt introduse de tine, furnizorii nu sunt verificați, iar TVA și taxele vamale nu sunt incluse.")+(incomplete?" · "+tr("Rânduri incomplete ignorate")+": "+incomplete:"");
+  else status.textContent=tr("Ofertele sunt ordonate după costul efectiv unitar. Câmpurile de înregistrare, mostre, siguranță și IP sunt informații introduse de utilizator, nu verificări automate. Furnizorii rămân NEVERIFICAȚI până la confirmarea independentă a dovezilor. TVA și taxele vamale nu sunt incluse.")+(incomplete?" · "+tr("Rânduri incomplete ignorate")+": "+incomplete:"");
  }
  return {quantity,currency,suppliers,incomplete};
 }
