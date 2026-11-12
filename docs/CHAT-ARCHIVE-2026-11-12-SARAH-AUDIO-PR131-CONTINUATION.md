@@ -220,3 +220,11 @@ Continue all six customer workspaces and all founder-only workbenches, preservin
 - Continue module-specific E2E coverage, prioritising Academy lesson checklist/progress round-trip and saved project restoration; Studio chapter/version and project restoration; Health consent and upload boundaries; Mining profitability arithmetic; Creator/Income provenance and expected-vs-received tracking.
 - Preserve existing restrictions: no DB changes, no paid credits, no APK, no mining/wallets/trading, no external publishing or supplier orders without explicit approval.
 - Real audible output for Sarah, Dr.Vas and Dr.Jan in Romanian and Italian still requires a real playback check; automated tests are not acoustic confirmation.
+
+
+### PR #138 final branch update — latest exact head
+- Latest branch commit at this checkpoint: `025411afae22ddb6c0e583ae328f4daacabe0838`.
+- In addition to the all-module migration-guidance removal, module project status messages now pass through the translation function; E2E coverage checks English and Italian Studio/Academy error text.
+- The Academy project persistence E2E now creates three lesson titles, marks one complete, saves the Academy project, reopens it and asserts that all three checklist items and the 1/3 progress state are restored.
+- Static audit of `www/index.html` found no remaining user-facing instructions matching Romanian/English/Italian/Turkish/German/French/Spanish/Russian “apply/check migration” wording.
+- Browser workflow result for this exact head has not yet been returned by the GitHub workflow lookup. Keep PR #138 open until the exact head's browser regression run succeeds. Do not merge based only on static inspection.
