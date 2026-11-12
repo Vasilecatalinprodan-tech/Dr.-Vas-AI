@@ -1199,6 +1199,11 @@ test("Academy, Commerce and Business projects are saved, reopened and deleted pe
   for (const item of modules) {
     console.log("[module-project] start", item.id);
     await page.evaluate(id => selectModule(id, true), item.id);
+    if (item.id === "academy") {
+      await page.locator("#academyLessonTitles").fill("Introducere\nPlan de afaceri\nMarketing");
+      await page.locator("#academyLessonChecklist input").nth(0).check();
+      await expect(page.locator("#academyProgressSummary")).toContainText("1 din 3 lecții finalizate");
+    }
     await page.locator("#" + item.primary).fill(item.value);
     if (item.id === "academy") await page.locator('#academyWorkspace [data-feature="courses"]').click();
     if (item.id === "commerce") await page.locator('#commerceWorkspace [data-feature="projects"]').click();
@@ -1221,6 +1226,12 @@ test("Academy, Commerce and Business projects are saved, reopened and deleted pe
     if (item.id === "commerce") await page.locator('#commerceWorkspace [data-feature="projects"]').click();
     await page.evaluate(id => openModuleProject(id), item.id);
     await expect(page.locator("#" + item.primary)).toHaveValue(item.value);
+    if (item.id === "academy") {
+      await page.locator('#academyWorkspace [data-feature="course"]').click();
+      await expect(page.locator("#academyLessonChecklist input")).toHaveCount(3);
+      await expect(page.locator("#academyLessonChecklist input").nth(0)).toBeChecked();
+      await expect(page.locator("#academyProgressSummary")).toContainText("1 din 3 lecții finalizate");
+    }
 
     page.once("dialog", dialog => dialog.accept());
     await page.evaluate(id => deleteModuleProject(id), item.id);
