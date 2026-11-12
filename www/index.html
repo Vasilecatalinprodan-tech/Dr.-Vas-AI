@@ -2807,11 +2807,13 @@ function getDrvasPresentationVoiceProfile(voices,locale){
  const local=voices.filter(v=>(v.lang||"").toLowerCase().startsWith(lang));
  const maleVoices=local.filter(isMaleSpeechVoice).sort((a,b)=>rankMaleSpeechVoice(b)-rankMaleSpeechVoice(a));
  const femaleVoices=local.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
- // Keep every speaker on the selected locale. Prefer role-appropriate voices,
- // but if the device only has one local voice (including a feminine voice),
- // reuse that voice rather than making Dr.Vas/Dr.Jan silent.
+ // Sarah must never become silent merely because the device lacks a feminine
+ // voice for the selected locale. Prefer a local feminine voice, then the best
+ // installed feminine voice; the utterance uses that voice's own locale.
+ const anyFemaleVoices=voices.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
+ // Keep Dr.Vas/Dr.Jan on the selected locale and reuse a local voice if needed.
  const defaultVoice=local.find(v=>v.default)||local[0]||null;
- const sarah=femaleVoices[0]||null;
+ const sarah=femaleVoices[0]||anyFemaleVoices[0]||null;
  const drvas=maleVoices[0]||femaleVoices[0]||defaultVoice;
  const jan=maleVoices.find(v=>v.voiceURI!==drvas?.voiceURI)||drvas;
  return {drvas,jan,sarah,hasMale:maleVoices.length>0,hasFemale:!!sarah,hasAllSpeakers:!!(drvas&&jan&&sarah),hasAllDistinct:!!(drvas&&jan&&sarah&&new Set([drvas.voiceURI,jan.voiceURI,sarah.voiceURI]).size===3),hasFallback:!!(drvas||sarah)};
@@ -2879,9 +2881,9 @@ async function speakDrvasPresentation(){
    return;
   }
   if(voiceForSpeaker)utterance.voice=voiceForSpeaker;
-  // All presenter text stays in the selected UI language. Never assign a
-  // foreign voice locale to the utterance: that causes visibly distorted speech.
-  utterance.lang=lang;utterance.rate=index===2?0.94:0.96;utterance.pitch=speaker.pitch;
+  // Keep the utterance locale aligned with its selected voice. Sarah may use
+  // the best installed feminine voice when the device lacks one for the UI locale.
+  utterance.lang=voiceForSpeaker?.lang||lang;utterance.rate=index===2?0.94:0.96;utterance.pitch=speaker.pitch;
   utterance.onstart=()=>{
    if(run!==drvasPresentationRun)return;
    el("presentationPresenter")?.classList.add("is-speaking");
@@ -4309,7 +4311,10 @@ function chooseSpeechVoice(lang,assistantId=activeAssistant){
   // from another language can badly distort pronunciation of the script.
   const localFemaleVoices=matching.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
   if(selected){const chosen=localFemaleVoices.find(v=>v.voiceURI===selected);if(chosen)return chosen;}
-  return localFemaleVoices[0]||null;
+  // If the device has no feminine voice for this locale, use its best installed
+  // feminine voice instead of returning null and silently skipping Sarah.
+  const anyFemaleVoices=voices.filter(isFemaleSpeechVoice).sort((a,b)=>rankFemaleSpeechVoice(b)-rankFemaleSpeechVoice(a));
+  return localFemaleVoices[0]||anyFemaleVoices[0]||null;
  }
  // Ignore a saved/manual voice from another locale; always speak the selected
  // language with a voice installed for that language.
