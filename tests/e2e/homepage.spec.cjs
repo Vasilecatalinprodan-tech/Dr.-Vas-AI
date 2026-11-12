@@ -3824,4 +3824,22 @@ test("module service errors never instruct users to apply Supabase migrations", 
   });
   await expect(page.locator("#academyProjectStatus")).toContainText("Contactează administratorul");
   await expect(page.locator("#studioProjectStatus")).toContainText("Contactează administratorul");
+
+  await page.evaluate(() => {
+    chooseLanguage("en");
+    const message = "Proiectele modulului nu sunt disponibile momentan. Contactează administratorul pentru verificare.";
+    moduleProjectStatus("academy", message, true);
+    setStudioProjectStatus("Proiectele Studio nu sunt disponibile momentan. Contactează administratorul pentru verificare.", true);
+  });
+  await expect(page.locator("#academyProjectStatus")).toContainText("Module projects are temporarily unavailable");
+  await expect(page.locator("#studioProjectStatus")).toContainText("Studio projects are temporarily unavailable");
+
+  await page.evaluate(() => {
+    chooseLanguage("it");
+    const message = "Proiectele modulului nu sunt disponibile momentan. Contactează administratorul pentru verificare.";
+    moduleProjectStatus("academy", message, true);
+    setStudioProjectStatus("Proiectele Studio nu sunt disponibile momentan. Contactează administratorul pentru verificare.", true);
+  });
+  await expect(page.locator("#academyProjectStatus")).toContainText("I progetti del modulo non sono disponibili");
+  await expect(page.locator("#studioProjectStatus")).toContainText("I progetti Studio non sono disponibili");
 });
