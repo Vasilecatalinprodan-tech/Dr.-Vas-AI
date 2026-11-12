@@ -228,3 +228,11 @@ Continue all six customer workspaces and all founder-only workbenches, preservin
 - The Academy project persistence E2E now creates three lesson titles, marks one complete, saves the Academy project, reopens it and asserts that all three checklist items and the 1/3 progress state are restored.
 - Static audit of `www/index.html` found no remaining user-facing instructions matching Romanian/English/Italian/Turkish/German/French/Spanish/Russian “apply/check migration” wording.
 - Browser workflow result for this exact head has not yet been returned by the GitHub workflow lookup. Keep PR #138 open until the exact head's browser regression run succeeds. Do not merge based only on static inspection.
+
+
+### PR #138 scope extension — Worker API errors and CI guard
+- Updated `worker/index.js` so Crypto Admin registry, audit-log and founder-provenance failures no longer instruct anyone to apply/check SQL migrations. They now return administrator-review guidance; existing status codes and setup flags are preserved.
+- Updated `.github/workflows/browser-e2e.yml` to reject user-facing migration instructions in both `www/index.html` and `worker/index.js`.
+- Static source audit of frontend and Worker found no remaining user-facing apply/check-migration instruction patterns.
+- Latest code/workflow commit before this archive update: `769e4640fd8264a37d487f5945cc5d66918637f5`.
+- Browser run `43244770452` (run #884) was in progress after the static validation and migration-safety checks had passed. Reconfirm the exact latest PR head and its browser test result before merge.
