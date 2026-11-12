@@ -33,7 +33,7 @@
 - Code now prefers a local feminine voice for Sarah, then the best installed feminine voice across locales rather than returning null. Presentation utterance locale follows the selected voice locale; chat already sets utterance locale from selected voice.
 - Updated regression assertions for both directions: Romanian UI with Romanian male + English female installed voices, and Italian UI with Italian default/male + Romanian female installed voices. Sarah should select the installed feminine voice instead of being skipped, and her utterance locale should match that voice.
 - Commits: `dad3f76cc6ff6924d579b9700885fbf29eb1569a` (frontend), `960ff3c94dbbb45957ce7a172cca17caf710c620` (tests/PR head).
-- PR #133 was opened. Additional Romanian and Italian fallback assertions were added after opening. Exact-head CI had not yet appeared in the workflow-run listing at checkpoint time; do not merge until exact-head tests pass and review the behavior.
+- PR #133 passed exact-head browser regression runs `43191644307` and `43191630588` and was squash-merged to `main` on 2026-11-12 as `0114cce5cb4d0a5223977a7e1d6ff9ff45b5c9f5`. The automatic production deploy and main browser regression runs `43222066934` and `43222067001` were still in progress at the latest checkpoint. Do not claim the Sarah change is deployed until deploy and production smoke checks pass.
 - This fallback is intended to restore audible Sarah output, but the accent/pronunciation may be less natural when the only installed feminine voice is in another language. Manual Romanian and Italian playback remains essential.
 - Do not call Sarah fixed in production until PR checks, deployment, and real audio listening succeed.
 
@@ -58,7 +58,7 @@ After a successful production deployment, perform an actual listening test on th
 
 ## Business continuation
 
-- PR #131 local-date correction must be reconciled and revalidated.
+- PR #131 local-date correction is merged as `9793748243af8c2d025e235128cfc8f058703c84`; its production Worker deployment and browser regression runs `43191574508` and `43191574305` both completed successfully.
 - Continue Business Books/cashbook, invoices/expenses, cashflow, break-even, business plan, compliance checklist and Student Desk.
 - Add clear separation of actual entered figures, estimates, assumptions, and missing evidence; improve validation, local date/currency handling, summary calculations, and CSV/Markdown export where supported.
 - Cashbook is bookkeeping support, not double-entry statutory accounting, a VAT return, tax return, payroll or audited accounts. Do not submit filings or give regulated professional advice.
@@ -76,3 +76,34 @@ After a successful production deployment, perform an actual listening test on th
 ## Chat persistence note
 
 This file is a structured engineering archive of the request, decisions, diagnosis, changes, and next steps from the 2026-11-12 session. The original conversation also remains in ChatGPT chat history; this file is not a verbatim export of the entire interface transcript.
+
+
+## Continuation update — 2026-11-12 12:56 UTC
+
+### PR #133 — Sarah fallback merged
+- Merged to main as `0114cce5cb4d0a5223977a7e1d6ff9ff45b5c9f5`.
+- Exact-head browser tests passed before merge, including Romanian and Italian cross-locale feminine fallback selection.
+- The change fixes the identified null voice-selection path when no feminine voice is installed for the selected locale.
+- Real acoustic playback remains unverified; must listen to the live site after successful deployment on Windows and Android. Do not infer audio success from E2E or avatar animation.
+
+### PR #134 — deployment safety
+- PR: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/134
+- Branch: `safety/deploy-worker-without-db-migrations-2026-11-12`, head `aa7e67d8dc06e491dbf0aa8de6e845ecd3650651`.
+- Removes automatic Supabase CLI setup and `supabase db push` from the Cloudflare Worker release workflow; keeps Worker deployment and smoke test. Adds regression assertion that release workflows cannot read DB secrets or run schema mutation. APK remains manual-only.
+- PR was open, mergeable, and browser E2E run `43222204442` still running at checkpoint. Static validation and the migration-safety assertion had passed; full Playwright suite had not yet completed.
+- Main run `43222066934` for PR #133 remained in progress at the last poll, with its browser suite running and migration/deploy steps not yet started. Earlier main release after PR #131 (`43191574508`) completed successfully. Keep PR #134 unmerged until its exact-head browser suite succeeds, then merge and verify the new no-migration deployment run.
+
+### PR #135 — Commerce supplier due diligence
+- PR: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/135
+- Branch: `feature/commerce-supplier-evidence-ledger-2026-11-12`, latest head `5e8f322b1f65ff323a3adf4a178f1c36e97d9980`.
+- Adds supplier registration/country, sample status, safety/conformity evidence, IP/brand authorization notes, independent source URL, and last independent-check date for each of three supplier comparison rows.
+- Result cards display these details and explicitly retain `NEVERIFICAȚI` status until independent verification. Data is user-entered; no automatic trust scoring or fabricated claims.
+- E2E coverage checks evidence fields and unverified status. PR browser run `43222440350` was in progress at checkpoint; static JS validation and migration-safety assertion passed. A source audit found no duplicate HTML IDs and all 12 required new fields present.
+- No database/schema/migrations, secrets, paid services, supplier orders, or external publishing.
+
+### Global safety and continuation
+- Do not apply Supabase migrations or alter DB state without explicit separate approval. PR #134 is intended to enforce this for routine Worker releases.
+- Keep working across Free, Health, Studio, Academy, Commerce, Business, Crypto & Mining simulators and Online Income/Digital Products workbenches.
+- Continue Business audit and improvements to cashbook validation, cashflow, break-even, invoices/expenses and export; do not claim statutory accounting/tax filing.
+- Keep APK workflow manual-only/postponed. No paid TTS or external provider spend without approval.
+- This archive is a structured session/engineering checkpoint, not a verbatim export of every chat UI message. The original conversation remains in ChatGPT chat history.
