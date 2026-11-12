@@ -2915,7 +2915,7 @@ test("module capabilities open dedicated feature pages instead of one crowded wo
   await page.locator("#commerceSupplier1CheckedAt").fill("2026-11-12");
   await page.evaluate(() => calculateCommerceSupplierComparison());
   await expect(page.locator("#commerceSupplierResults")).toContainText("Example supplier");
-  await expect(page.locator("#commerceSupplierResults")).toContainText("Primită, netestată");
+  await expect(page.locator("#commerceSupplierResults")).toContainText("received");
   await expect(page.locator("#commerceSupplierStatus")).toContainText("NEVERIFICAȚI");
   await page.locator("#commerceProduct").fill("Supplier-only product");
   await page.locator('#commerceWorkspace [data-feature="launch"]').click();
