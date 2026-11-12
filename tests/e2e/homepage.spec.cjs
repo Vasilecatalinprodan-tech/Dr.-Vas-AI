@@ -3799,3 +3799,29 @@ test("Business cashbook configuration errors never ask users to apply Supabase m
   await expect(page.locator("#businessLedgerStatus")).toContainText("Contact the administrator");
   await expect(page.locator("#businessLedgerStatus")).not.toContainText(/migration/i);
 });
+
+
+test("module service errors never instruct users to apply Supabase migrations", async ({ page }) => {
+  await openApp(page, "ro");
+  const markup = await page.content();
+  const userFacingMigrationInstructions = [
+    /Aplică migrarea/i,
+    /Apply (?:the )?(?:SQL )?migration/i,
+    /Applica la migrazione/i,
+    /Wende die Migration/i,
+    /Appliquez la migration/i,
+    /Aplica la migración/i,
+    /Примените миграцию/i,
+    /Verifică migrarea/i
+  ];
+  for (const instruction of userFacingMigrationInstructions) {
+    expect(markup).not.toMatch(instruction);
+  }
+  await page.evaluate(() => {
+    const safeMessage = "Proiectele modulului nu sunt disponibile momentan. Contactează administratorul pentru verificare.";
+    moduleProjectStatus("academy", safeMessage, true);
+    setStudioProjectStatus("Proiectele Studio nu sunt disponibile momentan. Contactează administratorul pentru verificare.", true);
+  });
+  await expect(page.locator("#academyProjectStatus")).toContainText("Contactează administratorul");
+  await expect(page.locator("#studioProjectStatus")).toContainText("Contactează administratorul");
+});
