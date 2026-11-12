@@ -61,6 +61,20 @@ async function openApp(page) {
   });
 }
 
+test("Business cashbook uses the local calendar date rather than the UTC date", async ({ page }) => {
+  await openApp(page);
+  const result = await page.evaluate(() => {
+    const localLateEvening = {
+      getFullYear: () => 2026,
+      getMonth: () => 10,
+      getDate: () => 11,
+      toISOString: () => "2026-11-12T00:30:00.000Z"
+    };
+    return localDateInputValue(localLateEvening);
+  });
+  expect(result).toBe("2026-11-11");
+});
+
 for (const scenario of [
   { module: "academy", primary: "academySubject", title: "academyProjectTitle", value: "Plan curs antreprenoriat" },
   { module: "commerce", primary: "commerceProduct", title: "commerceProjectTitle", value: "Magazin online" },
