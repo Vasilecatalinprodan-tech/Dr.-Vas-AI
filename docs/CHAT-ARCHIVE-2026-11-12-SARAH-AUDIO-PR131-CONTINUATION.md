@@ -20,7 +20,7 @@
 - Changes: use device-local calendar date rather than UTC ISO date for initial Business cashbook date and save fallback; add regression coverage for a local late-evening date crossing UTC midnight.
 - Exact-head browser workflow #857 / run `43100474314`: browser-e2e job completed successfully.
 - Cloudflare Preview bot comment reported **Build: Failed** for commit `bfc642b`; preview URL was not produced. This must be investigated separately; do not treat browser E2E success as a successful preview build.
-- At the latest comparison, `main` had advanced one documentation commit beyond PR #131's base; PR branch compared as diverged (2 ahead / 1 behind) and GitHub reported mergeable=false. Reconcile/update the branch and rerun checks before merge.
+- PR #131 was subsequently confirmed mergeable and squash-merged successfully on 2026-11-12 as `9793748243af8c2d025e235128cfc8f058703c84`. The earlier Cloudflare Preview failure remains a separate preview-build warning; its dashboard logs were inaccessible through the available session. Verify the post-merge production deploy/smoke test before calling the release complete.
 - No database/schema/migration change is included.
 
 ## Sarah audio — source-level diagnosis and fix in progress
@@ -31,9 +31,9 @@
 - PR #133: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/133
 - Branch: `fix/sarah-audio-fallback-2026-11-12`.
 - Code now prefers a local feminine voice for Sarah, then the best installed feminine voice across locales rather than returning null. Presentation utterance locale follows the selected voice locale; chat already sets utterance locale from selected voice.
-- Updated existing regression assertions for a device with Romanian male + English female voices: Sarah should select the English feminine voice instead of being skipped.
+- Updated regression assertions for both directions: Romanian UI with Romanian male + English female installed voices, and Italian UI with Italian default/male + Romanian female installed voices. Sarah should select the installed feminine voice instead of being skipped, and her utterance locale should match that voice.
 - Commits: `dad3f76cc6ff6924d579b9700885fbf29eb1569a` (frontend), `960ff3c94dbbb45957ce7a172cca17caf710c620` (tests/PR head).
-- PR was opened but exact-head CI had not yet appeared in the workflow-run listing at checkpoint time. Do not merge until exact-head tests pass and review the behavior.
+- PR #133 was opened. Additional Romanian and Italian fallback assertions were added after opening. Exact-head CI had not yet appeared in the workflow-run listing at checkpoint time; do not merge until exact-head tests pass and review the behavior.
 - This fallback is intended to restore audible Sarah output, but the accent/pronunciation may be less natural when the only installed feminine voice is in another language. Manual Romanian and Italian playback remains essential.
 - Do not call Sarah fixed in production until PR checks, deployment, and real audio listening succeed.
 
