@@ -815,6 +815,13 @@ test("presenter voices stay in the selected language and reuse the local voice w
     Object.defineProperty(window, "speechSynthesis", { configurable: true, value: { getVoices: () => crossLanguageVoices } });
     const crossLanguageChatVoice = chooseSpeechVoice("ro-RO");
     const crossLanguagePresentation = getDrvasPresentationVoiceProfile(crossLanguageVoices, "ro-RO");
+    const italianCrossLanguageVoices = [
+      { name: "Unknown Italian Default", lang: "it-IT", voiceURI: "unknown-it", default: true },
+      { name: "Microsoft Alina", lang: "ro-RO", voiceURI: "alina-ro" }
+    ];
+    Object.defineProperty(window, "speechSynthesis", { configurable: true, value: { getVoices: () => italianCrossLanguageVoices } });
+    const crossLanguageItalianChatVoice = chooseSpeechVoice("it-IT", "aurora");
+    const crossLanguageItalianPresentation = getDrvasPresentationVoiceProfile(italianCrossLanguageVoices, "it-IT");
     return {
       chatVoice: chatVoice?.voiceURI || null,
       voiceOptions,
@@ -842,7 +849,10 @@ test("presenter voices stay in the selected language and reuse the local voice w
       italianFallbackChatJan,
       crossLanguageChatVoice: crossLanguageChatVoice?.voiceURI || null,
       crossLanguagePresentationSarah: crossLanguagePresentation.sarah?.voiceURI || null,
-      crossLanguageVoiceLanguage: crossLanguagePresentation.sarah?.lang || null
+      crossLanguageVoiceLanguage: crossLanguagePresentation.sarah?.lang || null,
+      crossLanguageItalianChatVoice: crossLanguageItalianChatVoice?.voiceURI || null,
+      crossLanguageItalianPresentationSarah: crossLanguageItalianPresentation.sarah?.voiceURI || null,
+      crossLanguageItalianVoiceLanguage: crossLanguageItalianPresentation.sarah?.lang || null
     };
   });
   expect(result.chatVoice).toBe("alina-ro");
@@ -869,9 +879,12 @@ test("presenter voices stay in the selected language and reuse the local voice w
   expect(result.italianFallbackPresentationJan).toBe("sofia-it");
   expect(result.italianFallbackChatDrvas).toBe("sofia-it");
   expect(result.italianFallbackChatJan).toBe("sofia-it");
-  expect(result.crossLanguageChatVoice).toBeNull();
-  expect(result.crossLanguagePresentationSarah).toBeNull();
-  expect(result.crossLanguageVoiceLanguage).toBeNull();
+  expect(result.crossLanguageChatVoice).toBe("google-female");
+  expect(result.crossLanguagePresentationSarah).toBe("google-female");
+  expect(result.crossLanguageVoiceLanguage).toBe("en-GB");
+  expect(result.crossLanguageItalianChatVoice).toBe("alina-ro");
+  expect(result.crossLanguageItalianPresentationSarah).toBe("alina-ro");
+  expect(result.crossLanguageItalianVoiceLanguage).toBe("ro-RO");
 });
 
 test("late portrait load callbacks cannot overwrite the currently selected presenter label", async ({ page }) => {
