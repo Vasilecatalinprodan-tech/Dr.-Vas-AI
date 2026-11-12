@@ -3775,3 +3775,27 @@ test("all six workspaces retain the shared mobile chat, attachments, send and ac
     expect(layout.sendWidth, moduleName + " send control must remain visible").toBeGreaterThan(0);
   }
 });
+
+
+test("Business cashbook configuration errors never ask users to apply Supabase migrations", async ({ page }) => {
+  await openApp(page, "ro");
+  await page.evaluate(() => {
+    businessLedgerStatus("Registrul privat nu este configurat pe server. Contactează administratorul pentru verificare.", true);
+  });
+  await expect(page.locator("#businessLedgerStatus")).toContainText("Contactează administratorul");
+  await expect(page.locator("#businessLedgerStatus")).not.toContainText(/migra/i);
+
+  await page.evaluate(() => chooseLanguage("it"));
+  await page.evaluate(() => {
+    businessLedgerStatus("Registrul privat nu este configurat pe server. Contactează administratorul pentru verificare.", true);
+  });
+  await expect(page.locator("#businessLedgerStatus")).toContainText("Contatta l'amministratore");
+  await expect(page.locator("#businessLedgerStatus")).not.toContainText(/migrazion/i);
+
+  await page.evaluate(() => chooseLanguage("en"));
+  await page.evaluate(() => {
+    businessLedgerStatus("Registrul privat nu este disponibil pentru salvare. Contactează administratorul pentru verificare.", true);
+  });
+  await expect(page.locator("#businessLedgerStatus")).toContainText("Contact the administrator");
+  await expect(page.locator("#businessLedgerStatus")).not.toContainText(/migration/i);
+});
