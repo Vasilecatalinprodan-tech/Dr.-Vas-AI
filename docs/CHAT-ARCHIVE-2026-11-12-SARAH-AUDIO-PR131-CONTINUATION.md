@@ -196,3 +196,27 @@ Continue all six customer workspaces and all founder-only workbenches, preservin
 
 ### Preservation
 - This archive records this conversation's project instructions, decisions, changes, and test state in a structured format. The original chat remains in ChatGPT history; this is not a verbatim transcript export.
+
+
+## Continuation update — 2026-11-12, afternoon
+
+### PR #137 completed
+- PR #137 “Remove manual migration instructions from Business cashbook” passed exact-head browser regression run `43224053751` (run #873).
+- Squash-merged to `main` as `31b3887bdb1ed3ca62e082ee5321121445e6688e`.
+- Business cashbook initial and missing-table/save error states now direct users to administrator review; they no longer tell users to apply SQL.
+
+### PR #138 — remove unsafe migration guidance across the app
+- PR: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/138
+- Branch: `fix/remove-manual-migration-guidance-all-modules-2026-11-12`
+- Latest code commit at archive time: `8f654377b43a73264ab9bf567978eeb3d368cc37`.
+- Removes remaining user-facing instructions to apply/check Supabase migrations from Studio, Academy/Commerce/Business module projects, Income opportunities, conversation history, Library, Projects and scheduled reminders.
+- Replaces failure guidance with administrator-review messages; adds translations for Studio and module-service errors, and uses the shared translation function for Library/Projects/reminders messages.
+- Adds browser regression coverage scanning the full app markup for migration instructions in Romanian, English, Italian, Turkish, German, French, Spanish and Russian, and checking Academy/Studio project error messages.
+- No SQL, schema, RLS, migration, Supabase state, secrets, paid services, APK or Worker runtime changes.
+- Exact-head CI must pass before merge. At archive time the GitHub workflow/status endpoint had not yet returned a run for the latest head; do not merge until exact-head browser tests are confirmed successful.
+
+### Next work after PR #138
+- Verify main's post-merge browser and safe Worker release workflows; ensure the release never runs Supabase migrations.
+- Continue module-specific E2E coverage, prioritising Academy lesson checklist/progress round-trip and saved project restoration; Studio chapter/version and project restoration; Health consent and upload boundaries; Mining profitability arithmetic; Creator/Income provenance and expected-vs-received tracking.
+- Preserve existing restrictions: no DB changes, no paid credits, no APK, no mining/wallets/trading, no external publishing or supplier orders without explicit approval.
+- Real audible output for Sarah, Dr.Vas and Dr.Jan in Romanian and Italian still requires a real playback check; automated tests are not acoustic confirmation.
