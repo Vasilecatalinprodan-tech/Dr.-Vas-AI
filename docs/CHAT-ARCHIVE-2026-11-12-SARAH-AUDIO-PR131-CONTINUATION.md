@@ -124,3 +124,46 @@ This file is a structured engineering archive of the request, decisions, diagnos
 - PR #135 Commerce supplier evidence work remains open. Its branch was created before PR #134 merged and may need rebasing onto latest main before merge.
 - PR #135 updated-head browser run `43222654750` was in progress; archive content is being updated in that branch.
 - Real audible playback in Romanian/Italian remains a manual live-site verification after successful deployment.
+
+
+## Continuation update — 2026-11-12 (current chat)
+
+### Founder instruction
+> „continua acum cu toate modulele si salveaza tot incluziv chatul”
+
+Continue all six customer workspaces and all founder-only workbenches, preserving the standing safety constraints below. This archive is a structured engineering record; the original conversation remains in ChatGPT history and this file is not a verbatim UI transcript export.
+
+### PR #136 — presenter sequence test stabilization
+- PR: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/136
+- Exact head: `d542f80966aa1ac0cc7c2f737f840586c271d9e0`.
+- Exact-head browser E2E run `43222867904` completed SUCCESS.
+- Squash-merged to `main` as `81ed6e5a5b84a7d257cc5c9e8b5719fd9b5b053f`.
+- Test-only change: waits for visible speaker transitions rather than fixed 500 ms sleeps. Production presenter sequencing was not changed.
+
+### PR #135 — Commerce supplier due-diligence evidence
+- PR: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/135
+- Exact head: `afbae777fac4f62faac54ff2f3f8a03e3eed3519`.
+- Exact-head browser E2E run `43223081418` completed SUCCESS, including inline Worker/browser validation and the release migration-safety assertion.
+- Squash-merged to `main` as `6816ac6ef6ea61e833da6b3b4da94a09223df4aa`.
+- Commerce supplier comparison now captures registration/country, sample status, safety/conformity evidence, IP/brand authorisation, independent source URL and last independent check date across all three comparison rows.
+- Evidence remains explicitly user-entered and supplier status remains `NEVERIFICAȚI` until independent evidence is verified. No invented suppliers, ratings or trust score; no orders or external publishing.
+
+### PR #133 / #134 release and voice status
+- Sarah voice fallback PR #133 is merged as `0114cce5cb4d0a5223977a7e1d6ff9ff45b5c9f5`; Romanian/Italian voice-selection regression coverage passed before merge.
+- PR #134 is merged as `c5e81c1ce914e609ad9d976b7fc5f87b88c6008c`; automatic Worker deployment no longer runs Supabase migrations or accesses database secrets.
+- Safe post-merge production deployment run `43222690410` previously completed successfully with browser regression, Worker deployment and production smoke test. PR #136 and #135 have since added commits to main; their post-merge release status must be checked separately.
+- Real acoustic playback remains unverified. Automated tests cannot prove that Sarah, Dr.Vas or Dr.Jan can actually be heard on the founder's Windows browser or Samsung device. Test Romanian and Italian public presentation and signed-in chat separately; do not report acoustic success without listening.
+
+### Current main checkpoint and next validation
+- Latest main commit at this archive update: `6816ac6ef6ea61e833da6b3b4da94a09223df4aa`.
+- Check the post-merge workflow for this commit and confirm browser suite, Worker deployment and production smoke test before describing the latest Commerce changes as deployed.
+- Recheck the live site's public module cards, Health access and unauthenticated admin rejection after deployment.
+- Continue Business improvements after Commerce: validate cashbook entry types, VAT included/excluded arithmetic, multi-currency separation, monthly cashflow/break-even, invoices/expenses and exports; preserve clear separation of actual values, estimates and missing evidence.
+- Continue Free/Health chat, attachment consent and privacy; Studio book/chapter/version workflow and truthful render boundaries; Academy lesson checklist/progress and saved-project round trip; Crypto & Mining live-data freshness and hardware/energy/payback simulation; Creator/Online Income/Digital Products provenance, rights, fees, costs and expected-vs-received tracking.
+- Keep owner isolation and server-side admin gating intact. Keep mining read-only/simulation-only; no wallets, trading, transfers or device mining. No paid renders, voice provider calls or external publishing without explicit approval.
+
+### Non-negotiable founder constraints
+- No Supabase SQL, schema, RLS, migration or database-state changes without separate explicit approval. Routine Worker deploy must remain migration-free.
+- Do not read, print or alter secrets; do not enable paid services or consume paid credits.
+- APK/Android packaging remains postponed and manual-only until explicitly resumed.
+- Merge only after exact-head tests pass; verify resulting main workflows and deployment. Report limitations honestly.
