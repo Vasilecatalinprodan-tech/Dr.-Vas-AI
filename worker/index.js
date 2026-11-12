@@ -1418,7 +1418,7 @@ export default {
           if (!insertResponse.ok) {
             const detail = await insertResponse.text();
             console.error("Founder provenance insert failed:", insertResponse.status, detail.slice(0, 300));
-            return json({ error: "Nu am putut salva înregistrarea criptografică. Verifică migrarea SQL 0005." }, 503);
+            return json({ error: "Nu am putut salva înregistrarea criptografică. Serviciul nu este disponibil momentan. Contactează administratorul pentru verificare." }, 503);
           }
           const saved = (await insertResponse.json())?.[0];
           await writeAdminAuditLog(env, {
@@ -1531,7 +1531,7 @@ export default {
         );
         if (!devicesResponse.ok) {
           return json({
-            error: "Registrul Crypto Admin nu este încă instalat. Aplică migrarea SQL 202611030003_crypto_device_registry.sql.",
+            error: "Registrul Crypto Admin nu este disponibil momentan. Contactează administratorul pentru verificare.",
             setup_required: true
           }, 503);
         }
@@ -1577,7 +1577,7 @@ export default {
         );
         if (!logsResponse.ok) {
           return json({
-            error: "Tabelul de audit nu este încă disponibil. Aplică migrarea SQL din supabase/migrations.",
+            error: "Datele de audit nu sunt disponibile momentan. Contactează administratorul pentru verificare.",
             setup_required: true
           }, 503);
         }
