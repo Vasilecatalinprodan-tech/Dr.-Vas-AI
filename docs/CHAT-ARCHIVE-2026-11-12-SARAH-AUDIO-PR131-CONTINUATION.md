@@ -196,3 +196,43 @@ Continue all six customer workspaces and all founder-only workbenches, preservin
 
 ### Preservation
 - This archive records this conversation's project instructions, decisions, changes, and test state in a structured format. The original chat remains in ChatGPT history; this is not a verbatim transcript export.
+
+
+## Continuation update — 2026-11-12, afternoon
+
+### PR #137 completed
+- PR #137 “Remove manual migration instructions from Business cashbook” passed exact-head browser regression run `43224053751` (run #873).
+- Squash-merged to `main` as `31b3887bdb1ed3ca62e082ee5321121445e6688e`.
+- Business cashbook initial and missing-table/save error states now direct users to administrator review; they no longer tell users to apply SQL.
+
+### PR #138 — remove unsafe migration guidance across the app
+- PR: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/138
+- Branch: `fix/remove-manual-migration-guidance-all-modules-2026-11-12`
+- Latest code commit at archive time: `8f654377b43a73264ab9bf567978eeb3d368cc37`.
+- Removes remaining user-facing instructions to apply/check Supabase migrations from Studio, Academy/Commerce/Business module projects, Income opportunities, conversation history, Library, Projects and scheduled reminders.
+- Replaces failure guidance with administrator-review messages; adds translations for Studio and module-service errors, and uses the shared translation function for Library/Projects/reminders messages.
+- Adds browser regression coverage scanning the full app markup for migration instructions in Romanian, English, Italian, Turkish, German, French, Spanish and Russian, and checking Academy/Studio project error messages.
+- No SQL, schema, RLS, migration, Supabase state, secrets, paid services, APK or Worker runtime changes.
+- Exact-head CI must pass before merge. At archive time the GitHub workflow/status endpoint had not yet returned a run for the latest head; do not merge until exact-head browser tests are confirmed successful.
+
+### Next work after PR #138
+- Verify main's post-merge browser and safe Worker release workflows; ensure the release never runs Supabase migrations.
+- Continue module-specific E2E coverage, prioritising Academy lesson checklist/progress round-trip and saved project restoration; Studio chapter/version and project restoration; Health consent and upload boundaries; Mining profitability arithmetic; Creator/Income provenance and expected-vs-received tracking.
+- Preserve existing restrictions: no DB changes, no paid credits, no APK, no mining/wallets/trading, no external publishing or supplier orders without explicit approval.
+- Real audible output for Sarah, Dr.Vas and Dr.Jan in Romanian and Italian still requires a real playback check; automated tests are not acoustic confirmation.
+
+
+### PR #138 final branch update — latest exact head
+- Latest branch commit at this checkpoint: `025411afae22ddb6c0e583ae328f4daacabe0838`.
+- In addition to the all-module migration-guidance removal, module project status messages now pass through the translation function; E2E coverage checks English and Italian Studio/Academy error text.
+- The Academy project persistence E2E now creates three lesson titles, marks one complete, saves the Academy project, reopens it and asserts that all three checklist items and the 1/3 progress state are restored.
+- Static audit of `www/index.html` found no remaining user-facing instructions matching Romanian/English/Italian/Turkish/German/French/Spanish/Russian “apply/check migration” wording.
+- Browser workflow result for this exact head has not yet been returned by the GitHub workflow lookup. Keep PR #138 open until the exact head's browser regression run succeeds. Do not merge based only on static inspection.
+
+
+### PR #138 scope extension — Worker API errors and CI guard
+- Updated `worker/index.js` so Crypto Admin registry, audit-log and founder-provenance failures no longer instruct anyone to apply/check SQL migrations. They now return administrator-review guidance; existing status codes and setup flags are preserved.
+- Updated `.github/workflows/browser-e2e.yml` to reject user-facing migration instructions in both `www/index.html` and `worker/index.js`.
+- Static source audit of frontend and Worker found no remaining user-facing apply/check-migration instruction patterns.
+- Latest code/workflow commit before this archive update: `769e4640fd8264a37d487f5945cc5d66918637f5`.
+- Browser run `43244770452` (run #884) was in progress after the static validation and migration-safety checks had passed. Reconfirm the exact latest PR head and its browser test result before merge.

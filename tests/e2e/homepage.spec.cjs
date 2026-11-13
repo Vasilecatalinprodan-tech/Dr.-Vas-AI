@@ -1199,6 +1199,11 @@ test("Academy, Commerce and Business projects are saved, reopened and deleted pe
   for (const item of modules) {
     console.log("[module-project] start", item.id);
     await page.evaluate(id => selectModule(id, true), item.id);
+    if (item.id === "academy") {
+      await page.locator("#academyLessonTitles").fill("Introducere\nPlan de afaceri\nMarketing");
+      await page.locator("#academyLessonChecklist input").nth(0).check();
+      await expect(page.locator("#academyProgressSummary")).toContainText("1 din 3 lecții finalizate");
+    }
     await page.locator("#" + item.primary).fill(item.value);
     if (item.id === "academy") await page.locator('#academyWorkspace [data-feature="courses"]').click();
     if (item.id === "commerce") await page.locator('#commerceWorkspace [data-feature="projects"]').click();
@@ -1221,6 +1226,12 @@ test("Academy, Commerce and Business projects are saved, reopened and deleted pe
     if (item.id === "commerce") await page.locator('#commerceWorkspace [data-feature="projects"]').click();
     await page.evaluate(id => openModuleProject(id), item.id);
     await expect(page.locator("#" + item.primary)).toHaveValue(item.value);
+    if (item.id === "academy") {
+      await page.locator('#academyWorkspace [data-feature="course"]').click();
+      await expect(page.locator("#academyLessonChecklist input")).toHaveCount(3);
+      await expect(page.locator("#academyLessonChecklist input").nth(0)).toBeChecked();
+      await expect(page.locator("#academyProgressSummary")).toContainText("1 din 3 lecții finalizate");
+    }
 
     page.once("dialog", dialog => dialog.accept());
     await page.evaluate(id => deleteModuleProject(id), item.id);
@@ -3798,4 +3809,48 @@ test("Business cashbook configuration errors never ask users to apply Supabase m
   });
   await expect(page.locator("#businessLedgerStatus")).toContainText("Contact the administrator");
   await expect(page.locator("#businessLedgerStatus")).not.toContainText(/migration/i);
+});
+
+
+test("module service errors never instruct users to apply Supabase migrations", async ({ page }) => {
+  await openApp(page, "ro");
+  const markup = await page.content();
+  const userFacingMigrationInstructions = [
+    /Aplică migrarea/i,
+    /Apply (?:the )?(?:SQL )?migration/i,
+    /Applica la migrazione/i,
+    /Wende die Migration/i,
+    /Appliquez la migration/i,
+    /Aplica la migración/i,
+    /Примените миграцию/i,
+    /Verifică migrarea/i
+  ];
+  for (const instruction of userFacingMigrationInstructions) {
+    expect(markup).not.toMatch(instruction);
+  }
+  await page.evaluate(() => {
+    const safeMessage = "Proiectele modulului nu sunt disponibile momentan. Contactează administratorul pentru verificare.";
+    moduleProjectStatus("academy", safeMessage, true);
+    setStudioProjectStatus("Proiectele Studio nu sunt disponibile momentan. Contactează administratorul pentru verificare.", true);
+  });
+  await expect(page.locator("#academyProjectStatus")).toContainText("Contactează administratorul");
+  await expect(page.locator("#studioProjectStatus")).toContainText("Contactează administratorul");
+
+  await page.evaluate(() => {
+    chooseLanguage("en");
+    const message = "Proiectele modulului nu sunt disponibile momentan. Contactează administratorul pentru verificare.";
+    moduleProjectStatus("academy", message, true);
+    setStudioProjectStatus("Proiectele Studio nu sunt disponibile momentan. Contactează administratorul pentru verificare.", true);
+  });
+  await expect(page.locator("#academyProjectStatus")).toContainText("Module projects are temporarily unavailable");
+  await expect(page.locator("#studioProjectStatus")).toContainText("Studio projects are temporarily unavailable");
+
+  await page.evaluate(() => {
+    chooseLanguage("it");
+    const message = "Proiectele modulului nu sunt disponibile momentan. Contactează administratorul pentru verificare.";
+    moduleProjectStatus("academy", message, true);
+    setStudioProjectStatus("Proiectele Studio nu sunt disponibile momentan. Contactează administratorul pentru verificare.", true);
+  });
+  await expect(page.locator("#academyProjectStatus")).toContainText("I progetti del modulo non sono disponibili");
+  await expect(page.locator("#studioProjectStatus")).toContainText("I progetti Studio non sono disponibili");
 });
