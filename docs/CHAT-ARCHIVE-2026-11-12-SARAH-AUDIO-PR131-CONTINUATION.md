@@ -236,3 +236,38 @@ Continue all six customer workspaces and all founder-only workbenches, preservin
 - Static source audit of frontend and Worker found no remaining user-facing apply/check-migration instruction patterns.
 - Latest code/workflow commit before this archive update: `769e4640fd8264a37d487f5945cc5d66918637f5`.
 - Browser run `43244770452` (run #884) was in progress after the static validation and migration-safety checks had passed. Reconfirm the exact latest PR head and its browser test result before merge.
+
+
+## Continuation checkpoint — 2026-11-15 (PR #138 merged, deployment verified, Codespaces storage protection)
+
+### PR #138 completion and production release
+- PR #138 was squash-merged into `main` at commit `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`.
+- Exact-head browser E2E run `43472877158` completed successfully.
+- Post-merge browser regression run `43472877158` completed successfully; the migration-safety source guard and browser/session restoration tests passed.
+- Production Worker deployment run `43472877005` completed successfully. Worker deployment and production smoke test both passed.
+- Routine deployment remains migration-free. No SQL, schema, RLS, or Supabase migration was applied.
+
+### Codespaces storage protection
+- User reported GitHub Codespaces storage usage at 90%.
+- Do not create or start additional Codespaces for this project. Continue repository work through GitHub branches, file APIs, Pull Requests and GitHub Actions where possible.
+- Avoid local dependency installs, browser caches, build folders and other generated content in Codespaces. Do not delete any Codespace, volume, repository file, artifact or user data without inspection and explicit confirmation.
+- The original conversation remains in ChatGPT history. This file is a durable engineering handoff/checkpoint, not a verbatim transcript of the full chat.
+
+### Crypto & Mining — live-data freshness safeguard in progress
+- Existing Mining code is a profitability simulator and public-data reader; it is not an actual miner and does not submit work to a mining pool. Actual mining remains disabled pending a separately installed and authorized local agent/hardware integration.
+- Identified a trust issue: a Bitcoin hashrate sample with a missing timestamp could previously be treated as fresh; the live scenario loader also only warned about stale data after updating the simulator.
+- New branch: `fix/mining-stale-network-data-guard-2026-11-15`.
+- Changes in progress: missing or older-than-two-hours Bitcoin hashrate samples are marked stale; the live scenario loader refuses stale samples before overwriting existing values; Playwright coverage checks fresh, old and missing timestamps.
+- No wallet keys, pool credentials, mining execution, hardware control, paid services, database changes or APK build are involved.
+- Next: run exact-head CI, inspect any failures, merge only if all checks pass, verify production deployment and update this archive with final SHA/results.
+
+### Next module priorities
+- Academy: lesson progress persistence and project restoration (already covered by PR #138 regression).
+- Studio: chapter/version persistence and project restoration.
+- Health: consent boundaries, medical upload handling and user-data isolation.
+- Commerce: supplier evidence and verification status.
+- Business: cashbook, VAT estimates, cashflow and self-assessment separation.
+- Crypto & Mining: trustworthy live network data, device telemetry and a safe local-agent architecture; no wallet custody or automatic mining purchases.
+- Creator / Online Income: source provenance, expected versus received income and evidence.
+- Free / Voice AI: separate conversation history, attachments, and real acoustic verification of Sarah, Dr.Vas and Dr.Jan in Romanian and Italian.
+- APK remains postponed/manual-only until the user explicitly resumes it.
