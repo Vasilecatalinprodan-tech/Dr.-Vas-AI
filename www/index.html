@@ -7914,6 +7914,9 @@ async function loadBitcoinNetworkScenario() {
     if (!bitcoin || !Number.isFinite(Number(bitcoin.current_price)) || Number(bitcoin.current_price) <= 0) {
       throw new Error("Prețul public BTC nu este disponibil momentan.");
     }
+    if (network.hashrateSampleStale === true) {
+      throw new Error("Eșantionul hashrate Bitcoin este prea vechi sau nu are marcaj temporal. Valorile existente au fost păstrate; reîncearcă după actualizarea sursei.");
+    }
     document.getElementById("cryptoScenarioSymbol").value = "BTC";
     const modelHashrateHs = network.networkHashrateForProfitabilityHs || network.networkHashrateHs;
     document.getElementById("cryptoScenarioNetworkHashrate").value = (modelHashrateHs / 1e12).toPrecision(10);
