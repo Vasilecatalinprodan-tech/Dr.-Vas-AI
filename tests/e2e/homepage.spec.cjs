@@ -1354,9 +1354,14 @@ test("Bitcoin live network adapter validates hashrate and 144-block reward data 
   expect(result.marketUrl).toContain("ids=bitcoin%2Cbitcoin-cash");
 });
 
-test("Bitcoin live adapter warns when network or market timestamps are stale", async ({ page }) => {
+test("Bitcoin live adapter rejects stale network samples before changing existing simulator inputs", async ({ page }) => {
   await openApp(page, "ro");
-  const status = await page.evaluate(async () => {
+  const result = await page.evaluate(async () => {
+    document.querySelector("#cryptoScenarioSymbol").value = "ETH";
+    document.querySelector("#cryptoScenarioNetworkHashrate").value = "123.45";
+    document.querySelector("#cryptoScenarioBlockReward").value = "6.25";
+    document.querySelector("#cryptoScenarioBlocksPerDay").value = "7200";
+    document.querySelector("#cryptoScenarioPriceUsd").value = "2500";
     const staleNetworkTimestamp = Math.floor(Date.now() / 1000) - 3 * 60 * 60;
     const stalePriceTimestamp = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
     window.fetch = async url => {
@@ -1372,11 +1377,15 @@ test("Bitcoin live adapter warns when network or market timestamps are stale", a
       throw new Error("Unexpected test URL: " + url);
     };
     await loadBitcoinNetworkScenario();
-    return document.querySelector("#cryptoBitcoinLiveStatus").textContent;
+    return {
+      status: document.querySelector("#cryptoBitcoinLiveStatus").textContent,
+      inputs: ["cryptoScenarioSymbol", "cryptoScenarioNetworkHashrate", "cryptoScenarioBlockReward", "cryptoScenarioBlocksPerDay", "cryptoScenarioPriceUsd"]
+        .map(id => document.getElementById(id).value)
+    };
   });
-  expect(status).toContain("ATENȚIE: cel puțin o sursă depășește pragul de prospețime");
-  expect(status).toContain("Ultimul eșantion hashrate:");
-  expect(status).toContain("ultima actualizare preț BTC:");
+  expect(result.status).toContain("Eșantionul hashrate Bitcoin este prea vechi");
+  expect(result.status).toContain("Valorile existente au fost păstrate");
+  expect(result.inputs).toEqual(["ETH", "123.45", "6.25", "7200", "2500"]);
 });
 
 test("founder content campaign planner builds a 30-day brief for the private Studio", async ({ page }) => {
