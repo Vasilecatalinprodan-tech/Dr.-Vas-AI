@@ -109,3 +109,43 @@ Continue module-by-module and test each workflow's real persistence, permissions
 3. After any merge, verify the production Worker deployment and smoke-test output independently.
 4. Continue module-by-module persistence, access-control, localization and failure-state work; arrange real device audio checks separately.
 5. Preserve the Codespaces 90% storage warning: do not create/start Codespaces or delete files, volumes, artifacts or user data.
+
+
+## Daily monitoring checkpoint — 2026-11-17 (UTC)
+
+### Repository and open pull requests
+- Verified current `main` SHA: `c20ac0111fa1f45072c3930d1c11dc188431f300`. This is a documentation-only commit; the latest verified application/deployment baseline remains `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`.
+- Open PR #139: `fix/mining-stale-network-data-guard-2026-11-15`, exact head `74c7859d9002ac7289935cd2ffb07b35c72a1910`, base SHA `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`, reported mergeable. Compared with current main it is 5 commits ahead and 1 behind; the intervening main commit is documentation-only.
+- Open PR #141: `docs/daily-monitor-checkpoint-2026-11-16`, head `e35bde0bf010225cb1929ffddc98267f719c5ed1`, base `c20ac0111fa1f45072c3930d1c11dc188431f300`; changed file is documentation only.
+
+### PR #139 — Mining stale-network safeguard
+- Specifically rechecked browser E2E run #887 / ID `43761439183`: failed, 180 passed / 1 failed. The failure was an outdated assertion expecting the previous warning-only response; the implementation now rejects stale/missing timestamps before overwriting simulator inputs.
+- Exact-current-head browser E2E run #888 / ID `43762012231`: **181 passed**, job `132958684326` succeeded. The static Worker/inline-script validation, migration-safety guard and browser tests all passed.
+- GitHub Actions check suite `118477121131` completed successfully for head `74c7859d9002ac7289935cd2ffb07b35c72a1910`.
+- Cloudflare Workers and Pages check suite `118477105965` failed for that same head. Cloudflare's PR comment links build `1f3620aa-c1c3-48ef-9bed-ed4e6bee7930`; the prior commit `53a693a` preview also failed at build `1c258ddc-bd94-4edb-86eb-1b191fcf0609`.
+- Cloudflare dashboard build logs are not accessible from this monitoring runtime, so the root cause remains unknown. PR #139 was not merged and no production deployment was triggered from it. A green E2E run alone is not sufficient while the required Cloudflare preview build remains failed.
+
+### PR #141 — archive-only checkpoint
+- Browser E2E run #890 / ID `43933403036` completed successfully: **180 passed**; job `133531512475` succeeded.
+- Cloudflare Workers and Pages check suite `118935445436` reported Preview Build failed for documentation-only commit `e35bde0`, build `ba2c5fa1-7c2e-4d4d-ae81-8408a99501cd`. Its dashboard logs are also inaccessible from this runtime.
+- The PR changes only `docs/CHAT-ARCHIVE-2026-11-15-ALL-MODULES.md`; no application code is changed by this PR. It remains open pending a safe archive merge decision.
+
+### Production Worker
+- Last verified production deployment remains run `43472877005` (workflow run #568), for application baseline `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`; deploy job `132049060150` succeeded.
+- The associated browser regression run #886 / ID `43472877158` passed **180/180**.
+- The deployment workflow includes a production smoke test that checks /health, homepage delivery with all six module cards, unauthenticated admin rejection (HTTP 401), and health checks for Worker/assets/AI/database. This is historical evidence from the last successful release, not a fresh live probe on 2026-11-17.
+- No deploy workflow is associated with the current documentation-only main commit. Current live Worker health could not be independently probed from this runtime.
+
+### Module verification and limits
+- Run #888's 181 browser tests include Free/Health chat shells, independent conversation history, attachments, localization, TTS routing paths, Studio Book/Translation persistence, Academy progress, Commerce/Business project persistence and calculators, Online Income tracking, and Crypto & Mining simulator/live-data validation.
+- The tests cover the simulator only. No actual mining execution, pool connection or local hardware agent was verified or started.
+- Sarah, Dr.Vas and Dr.Jan voice-routing/browser tests are automated UI/code-path tests, not acoustic verification. No live audio was heard during this run.
+- No dedicated subscriptions/Google Play test evidence was present in the inspected run.
+- No database/schema/RLS/migration/secrets/Supabase changes, paid services, Codespaces creation/start/deletion, file or artifact deletion, or APK build occurred.
+
+### Next actions
+1. Obtain the Cloudflare Preview build logs through an authenticated Cloudflare dashboard session and identify the root cause; do not change secrets or use paid services without approval.
+2. Keep PR #139 unmerged until its Cloudflare Preview check is resolved, then re-run validation against the exact current head and current main.
+3. Preserve the documentation checkpoint and keep production deployment separate from Preview failures; verify a fresh production smoke test after any future code merge.
+4. Continue module-by-module verification, with a separate live device audio check and a separately authorized hardware-agent design before claiming real mining.
+5. Continue protecting the reported Codespaces storage usage: do not create/start Codespaces or delete any user data.
