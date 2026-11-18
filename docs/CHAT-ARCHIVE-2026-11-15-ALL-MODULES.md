@@ -212,3 +212,12 @@ Continue module-by-module and test each workflow's real persistence, permissions
 - Compared with current main after the archive merge, PR #139 is 5 commits ahead and 2 commits behind, with merge base `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`; it is reported rebaseable and mergeable at the latest PR API check, but the Cloudflare failure blocks safe merge under the user's condition.
 - Last independently verified production smoke test remains run `43472877005` for application SHA `3e0e5dad92cf74ddc04e1a8477940423874a0c4d` (13 November): deploy and smoke-test steps succeeded, homepage/all six module cards verified, unauthenticated admin status returned HTTP 401, health status was online and Worker/assets/AI/database/studio-renderer were configured. This is historical, not a fresh 18 November probe.
 - The Worker health URL and Cloudflare dashboard build logs remain inaccessible from this runtime. User intervention is required to inspect the PR #139 Cloudflare build log in an authenticated dashboard session before any Mining PR merge decision.
+
+
+## 18 November final monitoring snapshot — 18:42 UTC
+- Verified `main` immediately before this checkpoint update at SHA `ab328e3e2a59cc9e7a869f4dda327cbf26aba05a`; this commit already contained the PR #141 merge and archive follow-up.
+- Cloudflare Workers Builds check for that main SHA completed successfully: check run `135043347669`, build `3d5cf02e-dfc8-4bf2-8cbf-b68c1ac6cccf`, under the production Worker service path.
+- No GitHub Actions workflow run was returned for that documentation-only main SHA. The production Worker GitHub Actions workflow excludes `docs/**`; therefore the successful Cloudflare build check must not be confused with a GitHub Actions production smoke test.
+- Current open PR list contains only PR #139. Its head remains `74c7859d9002ac7289935cd2ffb07b35c72a1910`; it is 5 commits ahead / 3 behind main, merge base `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`, and the latest PR API response reports mergeable/rebaseable. It remains unmerged because the exact-head Cloudflare Workers Builds check is still failed (build `1f3620aa-c1c3-48ef-9bed-ed4e6bee7930`), even though E2E run #888 passed 181/181.
+- The PR #139 failure is not cleared by the successful Cloudflare build on main; it is a distinct check for the PR head and needs its own dashboard diagnosis.
+- Last successful GitHub Actions production smoke test remains run `43472877005` (13 November); no fresh live HTTP health check was possible in this environment.
