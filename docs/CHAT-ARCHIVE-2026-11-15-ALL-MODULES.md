@@ -70,3 +70,134 @@ Continue module-by-module and test each workflow's real persistence, permissions
 - PR #139: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/139
 - Browser E2E run #888: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/actions/runs/43762012231
 - Repository: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI
+
+
+## Daily monitoring checkpoint — 2026-11-16 (UTC)
+
+### Repository and branch state
+- Current `main` SHA verified: `c20ac0111fa1f45072c3930d1c11dc188431f300`.
+- The latest main commit is a documentation-only archive commit; the previous application baseline remains `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`.
+- Open PR #139: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/139
+- PR #139 head verified: `74c7859d9002ac7289935cd2ffb07b35c72a1910`; base `main`; branch `fix/mining-stale-network-data-guard-2026-11-15`; mergeable reported true.
+- Comparing current main with PR #139: PR has 5 commits ahead and is 1 commit behind; merge base remains `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`. The single intervening main commit only adds this 15 November archive, not application code.
+
+### PR #139 — Mining stale-network-data safeguard
+- Earlier browser E2E run #887, ID `43761439183`, failed: 180 passed / 1 failed. The failing test still expected the old warning-only behavior, while the new implementation correctly rejected a stale sample and preserved existing simulator inputs.
+- PR head was subsequently updated to `74c7859d9002ac7289935cd2ffb07b35c72a1910` with the corrected regression test.
+- Exact-head browser E2E run #888, ID `43762012231`, completed successfully: **181 passed**. Static Worker/inline-script validation, migration-safety guard, browser setup and homepage/session-restoration tests all completed successfully.
+- Combined commit status endpoint returned no individual status contexts for the PR head or current main; the Actions workflow result above is the available CI evidence.
+- Cloudflare preview builds reported **failed** for commit `53a693a293fb7a40258d733bc954a3d6a9947b92` and the current head `74c7859d9002ac7289935cd2ffb07b35c72a1910`. The PR bot supplied dashboard log links:
+  - https://dash.cloudflare.com/?to=/e8d4f2f766b237fbae3242ad5f664c04/workers/services/view/dr--vas-ai/production/builds/1c258ddc-bd94-4edb-86eb-1b191fcf0609
+  - https://dash.cloudflare.com/?to=/e8d4f2f766b237fbae3242ad5f664c04/workers/services/view/dr--vas-ai/production/builds/1f3620aa-c1c3-48ef-9bed-ed4e6bee7930
+- Those Cloudflare dashboard logs could not be opened from this monitoring environment. Because the latest preview build failure is unresolved, PR #139 was **not merged** and no production deploy was triggered from it.
+
+### Production Worker — last verifiable evidence
+- Last available successful production deployment run: `43472877005` (PR #138 release), job `132049060150`.
+- GitHub Actions job reports successful `Deploy Worker` and `Smoke test production Worker` steps.
+- The smoke-test log reported: homepage delivery and all six module cards verified; unauthenticated `admin_status` correctly returned HTTP 401; health JSON reported `status: online`, Worker `ok`, and assets/AI/database configured.
+- This is the last verified production deployment evidence, not a fresh live probe on 2026-11-16. Direct access to the Worker health URL was unavailable from this monitoring runtime, so current live health remains unconfirmed.
+
+### Module verification snapshot
+- Run #888 passed 181 browser tests across the homepage/session flow and module workflows, including Free/Health chat shells, separate conversation IDs, attachments, localization, Studio stations, Academy progress, Commerce/Business project persistence, Income Tracker and Mining simulator paths.
+- Mining remains a profitability simulator and public-data reader only. No actual mining execution, pool connection or local hardware agent was verified or started.
+- Automated presenter/voice routing tests are not acoustic verification. No claim is made that Sarah, Dr.Vas or Dr.Jan were heard live in Romanian or Italian during this run.
+- No database/schema/RLS/migration/secrets/Supabase changes, paid services, Codespaces creation/start/deletion, or APK build occurred.
+
+### Next actions
+1. Obtain and inspect the Cloudflare dashboard logs for the failed PR preview builds; resolve the preview build issue without changing secrets or paid services.
+2. Reconcile PR #139 with current `main`, rerun exact-head E2E and Cloudflare preview validation, and merge only after all required checks are green and the PR head is re-confirmed.
+3. After any merge, verify the production Worker deployment and smoke-test output independently.
+4. Continue module-by-module persistence, access-control, localization and failure-state work; arrange real device audio checks separately.
+5. Preserve the Codespaces 90% storage warning: do not create/start Codespaces or delete files, volumes, artifacts or user data.
+
+
+## Daily monitoring checkpoint — 2026-11-17 (UTC)
+
+### Repository and open pull requests
+- Verified current `main` SHA: `c20ac0111fa1f45072c3930d1c11dc188431f300`. This is a documentation-only commit; the latest verified application/deployment baseline remains `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`.
+- Open PR #139: `fix/mining-stale-network-data-guard-2026-11-15`, exact head `74c7859d9002ac7289935cd2ffb07b35c72a1910`, base SHA `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`, reported mergeable. Compared with current main it is 5 commits ahead and 1 behind; the intervening main commit is documentation-only.
+- Open PR #141: `docs/daily-monitor-checkpoint-2026-11-16`, head `e35bde0bf010225cb1929ffddc98267f719c5ed1`, base `c20ac0111fa1f45072c3930d1c11dc188431f300`; changed file is documentation only.
+
+### PR #139 — Mining stale-network safeguard
+- Specifically rechecked browser E2E run #887 / ID `43761439183`: failed, 180 passed / 1 failed. The failure was an outdated assertion expecting the previous warning-only response; the implementation now rejects stale/missing timestamps before overwriting simulator inputs.
+- Exact-current-head browser E2E run #888 / ID `43762012231`: **181 passed**, job `132958684326` succeeded. The static Worker/inline-script validation, migration-safety guard and browser tests all passed.
+- GitHub Actions check suite `118477121131` completed successfully for head `74c7859d9002ac7289935cd2ffb07b35c72a1910`.
+- Cloudflare Workers and Pages check suite `118477105965` failed for that same head. Cloudflare's PR comment links build `1f3620aa-c1c3-48ef-9bed-ed4e6bee7930`; the prior commit `53a693a` preview also failed at build `1c258ddc-bd94-4edb-86eb-1b191fcf0609`.
+- Cloudflare dashboard build logs are not accessible from this monitoring runtime, so the root cause remains unknown. PR #139 was not merged and no production deployment was triggered from it. A green E2E run alone is not sufficient while the required Cloudflare preview build remains failed.
+
+### PR #141 — archive-only checkpoint
+- Browser E2E run #890 / ID `43933403036` completed successfully: **180 passed**; job `133531512475` succeeded.
+- Cloudflare Workers and Pages check suite `118935445436` reported Preview Build failed for documentation-only commit `e35bde0`, build `ba2c5fa1-7c2e-4d4d-ae81-8408a99501cd`. Its dashboard logs are also inaccessible from this runtime.
+- The PR changes only `docs/CHAT-ARCHIVE-2026-11-15-ALL-MODULES.md`; no application code is changed by this PR. It remains open pending a safe archive merge decision.
+
+### Production Worker
+- Last verified production deployment remains run `43472877005` (workflow run #568), for application baseline `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`; deploy job `132049060150` succeeded.
+- The associated browser regression run #886 / ID `43472877158` passed **180/180**.
+- The deployment workflow includes a production smoke test that checks /health, homepage delivery with all six module cards, unauthenticated admin rejection (HTTP 401), and health checks for Worker/assets/AI/database. This is historical evidence from the last successful release, not a fresh live probe on 2026-11-17.
+- No deploy workflow is associated with the current documentation-only main commit. Current live Worker health could not be independently probed from this runtime.
+
+### Module verification and limits
+- Run #888's 181 browser tests include Free/Health chat shells, independent conversation history, attachments, localization, TTS routing paths, Studio Book/Translation persistence, Academy progress, Commerce/Business project persistence and calculators, Online Income tracking, and Crypto & Mining simulator/live-data validation.
+- The tests cover the simulator only. No actual mining execution, pool connection or local hardware agent was verified or started.
+- Sarah, Dr.Vas and Dr.Jan voice-routing/browser tests are automated UI/code-path tests, not acoustic verification. No live audio was heard during this run.
+- No dedicated subscriptions/Google Play test evidence was present in the inspected run.
+- No database/schema/RLS/migration/secrets/Supabase changes, paid services, Codespaces creation/start/deletion, file or artifact deletion, or APK build occurred.
+
+### Next actions
+1. Obtain the Cloudflare Preview build logs through an authenticated Cloudflare dashboard session and identify the root cause; do not change secrets or use paid services without approval.
+2. Keep PR #139 unmerged until its Cloudflare Preview check is resolved, then re-run validation against the exact current head and current main.
+3. Preserve the documentation checkpoint and keep production deployment separate from Preview failures; verify a fresh production smoke test after any future code merge.
+4. Continue module-by-module verification, with a separate live device audio check and a separately authorized hardware-agent design before claiming real mining.
+5. Continue protecting the reported Codespaces storage usage: do not create/start Codespaces or delete any user data.
+
+
+## Daily monitoring checkpoint — 2026-11-18 (UTC)
+
+### Repository and open pull requests
+- Fresh GitHub API check: `main` remains at `c20ac0111fa1f45072c3930d1c11dc188431f300`; its latest commit is the 15 November documentation-only archive commit. No newer main commit was present in the current repository response.
+- Exactly two open PRs were returned:
+  - PR #139, Mining safeguard, head `74c7859d9002ac7289935cd2ffb07b35c72a1910`, base SHA `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`.
+  - PR #141, documentation checkpoint, head `67dee6b7b47e3254d5723b178b79c9bc9d29f029`, base SHA `c20ac0111fa1f45072c3930d1c11dc188431f300`.
+- PR #139 is still one documentation commit behind current main; its application/test diff remains the five files listed in the PR. It remains open and was not merged.
+- PR #141 changes only this archive file.
+
+### PR #139 — Mining stale Bitcoin network data
+- Specifically rechecked requested run #887 / ID `43761439183`: **failure**, 180 passed / 1 failed. The only failing test was the old assertion at `tests/e2e/homepage.spec.cjs:1357` expecting the previous warning-only stale-data behavior.
+- Rechecked exact-current-head run #888 / ID `43762012231`, SHA `74c7859d9002ac7289935cd2ffb07b35c72a1910`: **success, 181/181 passed**. Job `132958684326` passed Worker/inline-script validation, migration-safety guard, browser setup and homepage/session-restoration tests.
+- GitHub check runs for the exact PR head show:
+  - `browser-e2e`: success.
+  - `Workers Builds: dr--vas-ai`: **failure**, check run `132958794325`, Cloudflare build `1f3620aa-c1c3-48ef-9bed-ed4e6bee7930`.
+- The Cloudflare check's dashboard URL is https://dash.cloudflare.com/e8d4f2f766b237fbae3242ad5f664c04/workers/services/view/dr--vas-ai/production/builds/1f3620aa-c1c3-48ef-9bed-ed4e6bee7930. Both the Cloudflare dashboard and direct Worker URLs were inaccessible from this monitoring runtime; the root cause and current live health could not be confirmed.
+- Because the current Cloudflare Preview check is failed, PR #139 was **not merged**, and no production deploy was triggered from it. Do not treat run #888 success as sufficient to override the failed Cloudflare check.
+
+### PR #141 — archive-only checkpoint
+- Current head `67dee6b7b47e3254d5723b178b79c9bc9d29f029` was rechecked.
+- Browser E2E run #891 / ID `44150307949`: **success, 180/180 passed**, job `134276478040`.
+- Cloudflare Workers Builds check run `134276870830`: **failure**, build `01c2c362-ed05-4eea-a20c-ccecb872f747`. The Cloudflare log is not accessible from this runtime.
+- PR #141 is documentation-only; the production Worker workflow's push path filter excludes `docs/**` and this archive file, so merging this archive alone would not trigger the production deploy workflow. This does not resolve the broader Cloudflare Preview integration failure.
+
+### Current main and production Worker evidence
+- The current main SHA `c20ac0111fa1f45072c3930d1c11dc188431f300` also has a failed Cloudflare Workers Builds check, check run `133531696789`, build `5d668b5f-26f0-4584-9e1c-32c2e5f84618`. This suggests the Cloudflare build issue is not limited to the Mining code change; do not infer a root cause without the dashboard log.
+- Last successful production deploy remains GitHub Actions run `43472877005` (deploy workflow run #568), application SHA `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`, job `132049060150`.
+- Re-inspected that deploy job: all steps succeeded, including `Deploy Worker` and `Smoke test production Worker`. The smoke-test log confirmed homepage delivery and all six module cards, unauthenticated `admin_status` returned HTTP 401, health status `online`, Worker `ok`, and assets/AI/database/studio-renderer bindings configured.
+- The deployment workflow's push path filter includes Worker, website, Wrangler, package and test files, but not `docs/**`; a documentation-only archive merge will not invoke the production deploy workflow.
+- Direct live probes of `https://dr--vas-ai.vasilecatalinprodan.workers.dev/` and `/health` could not be completed in this runtime (DNS/host access unavailable). The 13 November smoke test is historical evidence, not a fresh 18 November live check.
+
+### Module coverage and limits
+- Browser runs #888 and #891 include broad regression coverage for Free/Health chat shells, independent conversation history, attachments, session restoration, localization, Studio stations, Academy progress, Commerce/Business project persistence and calculators, Online Income tracking, and Mining simulator/data validation.
+- No dedicated subscriptions/Google Play test was present in the inspected runs.
+- Voice-related browser tests validate UI/TTS routing and replay code paths only; no acoustic test confirmed that Sarah, Dr.Vas or Dr.Jan was heard in Romanian or Italian.
+- Mining remains a profitability simulator and public-data reader. No actual mining, pool connection, wallet operation or local hardware agent was verified or started.
+
+### Safety and next actions
+- No database, schema, RLS, migration, SQL, Supabase secret/settings, paid service, APK, Codespaces, file deletion, artifact deletion or volume deletion action was performed.
+- Do not create or start Codespaces; preserve the reported storage warning.
+- User intervention required: open the Cloudflare build details for PR #139 build `1f3620aa-c1c3-48ef-9bed-ed4e6bee7930` and PR #141 build `01c2c362-ed05-4eea-a20c-ccecb872f747` in an authenticated dashboard session so the actual build error can be read.
+- Next: diagnose the Cloudflare integration/build failure without changing secrets or paid services; keep PR #139 unmerged until its exact-head Cloudflare check passes; keep archive updates and application deployment separate; after a future code merge, verify the production deploy and smoke test independently.
+
+
+### 18 November follow-up — exact-head archive PR rerun
+- After adding the 18 November checkpoint, PR #141 head was `7c572ca8c4034b0454a89cb12703fecccc498457`; base remained current `main` SHA `c20ac0111fa1f45072c3930d1c11dc188431f300`.
+- Browser E2E run #892 / ID `44370661118`, job `135036230872`, completed successfully. The complete homepage/session-restoration suite passed; the final job conclusion is success.
+- The Cloudflare Workers Builds check for this exact head failed again: check run `135036575367`, build `92da3720-5627-458d-b01e-40c571977528`. The dashboard log remains inaccessible from this runtime.
+- PR #141 remains documentation-only and the production Worker workflow excludes documentation paths. The Cloudflare Preview integration failure is recorded separately and is not represented as a passing deploy.
