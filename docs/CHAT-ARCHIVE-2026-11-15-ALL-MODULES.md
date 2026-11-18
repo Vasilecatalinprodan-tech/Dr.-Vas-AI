@@ -194,3 +194,10 @@ Continue module-by-module and test each workflow's real persistence, permissions
 - Do not create or start Codespaces; preserve the reported storage warning.
 - User intervention required: open the Cloudflare build details for PR #139 build `1f3620aa-c1c3-48ef-9bed-ed4e6bee7930` and PR #141 build `01c2c362-ed05-4eea-a20c-ccecb872f747` in an authenticated dashboard session so the actual build error can be read.
 - Next: diagnose the Cloudflare integration/build failure without changing secrets or paid services; keep PR #139 unmerged until its exact-head Cloudflare check passes; keep archive updates and application deployment separate; after a future code merge, verify the production deploy and smoke test independently.
+
+
+### 18 November follow-up — exact-head archive PR rerun
+- After adding the 18 November checkpoint, PR #141 head was `7c572ca8c4034b0454a89cb12703fecccc498457`; base remained current `main` SHA `c20ac0111fa1f45072c3930d1c11dc188431f300`.
+- Browser E2E run #892 / ID `44370661118`, job `135036230872`, completed successfully. The complete homepage/session-restoration suite passed; the final job conclusion is success.
+- The Cloudflare Workers Builds check for this exact head failed again: check run `135036575367`, build `92da3720-5627-458d-b01e-40c571977528`. The dashboard log remains inaccessible from this runtime.
+- PR #141 remains documentation-only and the production Worker workflow excludes documentation paths. The Cloudflare Preview integration failure is recorded separately and is not represented as a passing deploy.
