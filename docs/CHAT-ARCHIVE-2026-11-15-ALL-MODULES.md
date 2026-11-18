@@ -149,3 +149,48 @@ Continue module-by-module and test each workflow's real persistence, permissions
 3. Preserve the documentation checkpoint and keep production deployment separate from Preview failures; verify a fresh production smoke test after any future code merge.
 4. Continue module-by-module verification, with a separate live device audio check and a separately authorized hardware-agent design before claiming real mining.
 5. Continue protecting the reported Codespaces storage usage: do not create/start Codespaces or delete any user data.
+
+
+## Daily monitoring checkpoint — 2026-11-18 (UTC)
+
+### Repository and open pull requests
+- Fresh GitHub API check: `main` remains at `c20ac0111fa1f45072c3930d1c11dc188431f300`; its latest commit is the 15 November documentation-only archive commit. No newer main commit was present in the current repository response.
+- Exactly two open PRs were returned:
+  - PR #139, Mining safeguard, head `74c7859d9002ac7289935cd2ffb07b35c72a1910`, base SHA `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`.
+  - PR #141, documentation checkpoint, head `67dee6b7b47e3254d5723b178b79c9bc9d29f029`, base SHA `c20ac0111fa1f45072c3930d1c11dc188431f300`.
+- PR #139 is still one documentation commit behind current main; its application/test diff remains the five files listed in the PR. It remains open and was not merged.
+- PR #141 changes only this archive file.
+
+### PR #139 — Mining stale Bitcoin network data
+- Specifically rechecked requested run #887 / ID `43761439183`: **failure**, 180 passed / 1 failed. The only failing test was the old assertion at `tests/e2e/homepage.spec.cjs:1357` expecting the previous warning-only stale-data behavior.
+- Rechecked exact-current-head run #888 / ID `43762012231`, SHA `74c7859d9002ac7289935cd2ffb07b35c72a1910`: **success, 181/181 passed**. Job `132958684326` passed Worker/inline-script validation, migration-safety guard, browser setup and homepage/session-restoration tests.
+- GitHub check runs for the exact PR head show:
+  - `browser-e2e`: success.
+  - `Workers Builds: dr--vas-ai`: **failure**, check run `132958794325`, Cloudflare build `1f3620aa-c1c3-48ef-9bed-ed4e6bee7930`.
+- The Cloudflare check's dashboard URL is https://dash.cloudflare.com/e8d4f2f766b237fbae3242ad5f664c04/workers/services/view/dr--vas-ai/production/builds/1f3620aa-c1c3-48ef-9bed-ed4e6bee7930. Both the Cloudflare dashboard and direct Worker URLs were inaccessible from this monitoring runtime; the root cause and current live health could not be confirmed.
+- Because the current Cloudflare Preview check is failed, PR #139 was **not merged**, and no production deploy was triggered from it. Do not treat run #888 success as sufficient to override the failed Cloudflare check.
+
+### PR #141 — archive-only checkpoint
+- Current head `67dee6b7b47e3254d5723b178b79c9bc9d29f029` was rechecked.
+- Browser E2E run #891 / ID `44150307949`: **success, 180/180 passed**, job `134276478040`.
+- Cloudflare Workers Builds check run `134276870830`: **failure**, build `01c2c362-ed05-4eea-a20c-ccecb872f747`. The Cloudflare log is not accessible from this runtime.
+- PR #141 is documentation-only; the production Worker workflow's push path filter excludes `docs/**` and this archive file, so merging this archive alone would not trigger the production deploy workflow. This does not resolve the broader Cloudflare Preview integration failure.
+
+### Current main and production Worker evidence
+- The current main SHA `c20ac0111fa1f45072c3930d1c11dc188431f300` also has a failed Cloudflare Workers Builds check, check run `133531696789`, build `5d668b5f-26f0-4584-9e1c-32c2e5f84618`. This suggests the Cloudflare build issue is not limited to the Mining code change; do not infer a root cause without the dashboard log.
+- Last successful production deploy remains GitHub Actions run `43472877005` (deploy workflow run #568), application SHA `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`, job `132049060150`.
+- Re-inspected that deploy job: all steps succeeded, including `Deploy Worker` and `Smoke test production Worker`. The smoke-test log confirmed homepage delivery and all six module cards, unauthenticated `admin_status` returned HTTP 401, health status `online`, Worker `ok`, and assets/AI/database/studio-renderer bindings configured.
+- The deployment workflow's push path filter includes Worker, website, Wrangler, package and test files, but not `docs/**`; a documentation-only archive merge will not invoke the production deploy workflow.
+- Direct live probes of `https://dr--vas-ai.vasilecatalinprodan.workers.dev/` and `/health` could not be completed in this runtime (DNS/host access unavailable). The 13 November smoke test is historical evidence, not a fresh 18 November live check.
+
+### Module coverage and limits
+- Browser runs #888 and #891 include broad regression coverage for Free/Health chat shells, independent conversation history, attachments, session restoration, localization, Studio stations, Academy progress, Commerce/Business project persistence and calculators, Online Income tracking, and Mining simulator/data validation.
+- No dedicated subscriptions/Google Play test was present in the inspected runs.
+- Voice-related browser tests validate UI/TTS routing and replay code paths only; no acoustic test confirmed that Sarah, Dr.Vas or Dr.Jan was heard in Romanian or Italian.
+- Mining remains a profitability simulator and public-data reader. No actual mining, pool connection, wallet operation or local hardware agent was verified or started.
+
+### Safety and next actions
+- No database, schema, RLS, migration, SQL, Supabase secret/settings, paid service, APK, Codespaces, file deletion, artifact deletion or volume deletion action was performed.
+- Do not create or start Codespaces; preserve the reported storage warning.
+- User intervention required: open the Cloudflare build details for PR #139 build `1f3620aa-c1c3-48ef-9bed-ed4e6bee7930` and PR #141 build `01c2c362-ed05-4eea-a20c-ccecb872f747` in an authenticated dashboard session so the actual build error can be read.
+- Next: diagnose the Cloudflare integration/build failure without changing secrets or paid services; keep PR #139 unmerged until its exact-head Cloudflare check passes; keep archive updates and application deployment separate; after a future code merge, verify the production deploy and smoke test independently.
