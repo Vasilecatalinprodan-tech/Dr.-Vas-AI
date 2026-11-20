@@ -221,3 +221,72 @@ Continue module-by-module and test each workflow's real persistence, permissions
 - Current open PR list contains only PR #139. Its head remains `74c7859d9002ac7289935cd2ffb07b35c72a1910`; it is 5 commits ahead / 3 behind main, merge base `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`, and the latest PR API response reports mergeable/rebaseable. It remains unmerged because the exact-head Cloudflare Workers Builds check is still failed (build `1f3620aa-c1c3-48ef-9bed-ed4e6bee7930`), even though E2E run #888 passed 181/181.
 - The PR #139 failure is not cleared by the successful Cloudflare build on main; it is a distinct check for the PR head and needs its own dashboard diagnosis.
 - Last successful GitHub Actions production smoke test remains run `43472877005` (13 November); no fresh live HTTP health check was possible in this environment.
+
+
+## 19 November 2026 — daily monitoring run
+
+- Repository default branch: `main`. Verified latest main SHA: `e19e7edda42d5c6d55b53d2cd7d7dcdf72995d48`. Its commit diff changes only this archive document; it does not change application code.
+- Open PR search returned exactly one open PR: #139, “Reject stale Bitcoin network data in Mining live scenarios”. Exact head remains `74c7859d9002ac7289935cd2ffb07b35c72a1910`; base SHA is still `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`.
+- Fresh comparison of `main` to the PR branch reports 5 commits ahead and 4 behind, with merge base `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`. The PR API reports mergeable=true, but the branch is behind main and must be synchronized and retested before merge.
+- Required historical run #887 / ID `43761439183`: completed with failure. Browser job `132956920870` completed setup, Worker/inline-script validation and migration-free deployment guard successfully, then failed the Playwright suite: 180 passed, 1 failed. The failing assertion was the old test “Bitcoin live adapter warns when network or market timestamps are stale” at `tests/e2e/homepage.spec.cjs:1357`.
+- Follow-up run #888 / ID `43762012231`: completed successfully on the current PR head. Browser job `132958684326` passed all steps and all 181 tests. The suite includes checks that a missing or older-than-two-hours Bitcoin hashrate timestamp is stale and that rejected network samples do not overwrite existing simulator inputs.
+- Reviewed PR #139's five changed files: archive documentation, `tests/e2e/crypto-engine.spec.cjs`, `tests/e2e/homepage.spec.cjs`, `www/crypto-engine.js`, and `www/index.html`. The engine now treats a missing sample age as stale; the UI guard runs before filling BTC scenario inputs; tests cover fresh, stale and missing timestamps plus preservation of existing values.
+- GitHub combined commit-status calls returned empty status arrays for both current main and the PR head. This is not proof that all checks are green; the successful PR-triggered E2E run is recorded separately.
+- Cloudflare exact-head Preview status could not be refreshed from this runtime. The previous 18 November archive snapshot recorded a failed Workers Builds check for PR #139 head `74c7859d9002ac7289935cd2ffb07b35c72a1910`, build `1f3620aa-c1c3-48ef-9bed-ed4e6bee7930`. Treat that as the last recorded result, not a fresh 19 November verification. Authenticated dashboard log inspection is still needed.
+- Verified `.github/workflows/deploy-worker.yml` on main: pushes affecting `www/**` or `tests/**` trigger the Worker deployment workflow. That workflow runs browser tests before deployment, contains no automatic database-migration step, and runs a production `/health`, homepage/module-card and unauthenticated-admin HTTP 401 smoke test after deployment.
+- Last independently recorded production smoke test remains GitHub Actions run `43472877005` for application SHA `3e0e5dad92cf74ddc04e1a8477940423874a0c4d` on 13 November. No fresh production HTTP probe was possible in this run.
+- Module evidence from E2E #888 covers Free chat/sidebar/session/attachment behavior; Health's shared chat shell and separate history; presenter/TTS routing and replay software paths; Studio stations, translation, video and saved projects; Academy progress; Commerce unit economics and project persistence; Business cashbook and localization; Crypto/Bitcoin simulator calculations and stale-data handling; and Online Income tracker flows. No dedicated Google Play/subscriptions test was identified in this run.
+- Voice tests are automated software-path checks only; no acoustic playback was heard. Mining remains a profitability simulator/public-data reader; no real mining, pool connection or hardware agent was verified.
+- No Codespaces were created or started. No files, artifacts, volumes or user data were deleted. No database, schema, RLS, migration, secret or Supabase setting was changed. No paid service/credit was used. APK remains postponed/manual-only.
+- Decision: do not merge or deploy PR #139 in this run. The PR branch is behind main and the exact-head Cloudflare Preview result could not be freshly verified; the last recorded Preview result is failed. Next step is to inspect that build in the authenticated Cloudflare dashboard, synchronize the PR with current main, rerun required checks on the new exact head, then merge only if every required check passes.
+
+
+### 19 November checkpoint publication
+- Published this snapshot on branch `docs/daily-monitoring-2026-11-19`, initial documentation commit `d876746cc837de19ee811b121ca4084a4ad81f05`, as documentation-only PR #142: https://github.com/Vasilecatalinprodan-tech/Dr.-Vas-AI/pull/142.
+- PR #142 targets `main` at `e19e7edda42d5c6d55b53d2cd7d7dcdf72995d48`; its branch comparison is 1 commit ahead and 0 behind. The PR API reports mergeable=true.
+- At final verification, the GitHub connector returned no PR-triggered Actions runs and no classic commit-status records for PR #142 head. This is recorded as “no run/status returned”, not as a passing test. The PR remains open and unmerged pending available checks.
+
+## Daily monitoring checkpoint — 2026-11-20 (UTC)
+
+### Repository and pull-request state
+- Verified repository default branch is `main`; current main SHA is `e19e7edda42d5c6d55b53d2cd7d7dcdf72995d48`. The main commit is the 18 November documentation-only checkpoint commit (parent `ab328e3e2a59cc9e7a869f4dda327cbf26aba05a`); no application-code change is present in this commit.
+- GitHub open-PR search returned exactly PR #139 and PR #142.
+- The main branch API reports `protected: false` and no required status checks. This is recorded as a governance risk; no repository settings were changed.
+
+### PR #139 — Mining stale Bitcoin network data safeguard
+- PR remains open. Exact head: `74c7859d9002ac7289935cd2ffb07b35c72a1910`; base SHA recorded by PR metadata: `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`.
+- Fresh compare against current main `e19e7edda42d5c6d55b53d2cd7d7dcdf72995d48`: diverged; 5 commits ahead and 4 behind; merge base `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`.
+- Requested historical browser run #887 / ID `43761439183`: completed failure. Job `132956920870` passed setup, Worker/static validation and migration-safety checks, then failed the homepage/session browser step; the earlier run summary records 180 passed and 1 failed.
+- Corrected exact-head browser run #888 / ID `43762012231`: completed success. Job `132958684326` passed all steps; previous exact-run evidence records 181/181 tests passed.
+- Cloudflare check run `132958794325` for this exact PR head is completed with conclusion `failure`; build ID `1f3620aa-c1c3-48ef-9bed-ed4e6bee7930`. The check returned no annotations or failure text in the accessible metadata.
+- Reviewed the five-file patch: the Mining engine now marks missing timestamps stale; the scenario loader rejects stale samples before overwriting existing inputs; Playwright tests cover fresh, older-than-two-hours and missing timestamps and preservation of existing values. The change remains a simulator/data-quality safeguard only, not real mining.
+- Decision: do not merge. The branch is behind/diverged from main and its exact-head Cloudflare check is failed. No production deploy was triggered.
+
+### PR #142 — daily archive checkpoint
+- PR remains open and changes only `docs/CHAT-ARCHIVE-2026-11-15-ALL-MODULES.md`.
+- Head: `23ae2090c50c812132497facb40e04d07d924532`; base: `e19e7edda42d5c6d55b53d2cd7d7dcdf72995d48`.
+- Compare against main: 2 commits ahead, 0 behind.
+- Browser E2E run #895 / ID `44584744040`, job `135774565188`: completed success; log confirms 180 tests passed in 3.4 minutes. Static Worker/inline-script validation and the migration-free release guard also passed.
+- Cloudflare check run `135775188327` for this documentation-only PR head is completed with conclusion `failure`; build ID `8bb295c4-ae39-4d95-9afc-fa3dfb192f33`. Accessible check metadata contains no annotations or reason.
+- PR remains open and unmerged; do not treat E2E success as clearing the failed Cloudflare check.
+
+### Main Cloudflare check and production release evidence
+- Cloudflare check run `135774705358` for current main SHA `e19e7edda42d5c6d55b53d2cd7d7dcdf72995d48` is completed with conclusion `failure`; build ID `e4159534-3042-4399-8d7c-1e7e1c59beaf`. No annotations/reason were available in GitHub check metadata.
+- The current main commit has no associated GitHub Actions workflow run in the commit-run lookup.
+- Re-fetched last successful production deploy run #568 / ID `43472877005`: completed success for application SHA `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`, timestamp 13 November 2026. This remains historical evidence, not a fresh deployment.
+- Worker health URL defined by the release workflow is `https://dr--vas-ai.vasilecatalinprodan.workers.dev`. A fresh /health and homepage probe was attempted via available web/runtime access but could not resolve/access the host; live health is unverified today.
+- Release workflow inspection confirms browser regression and static safety checks precede `wrangler deploy`, and the workflow explicitly excludes automatic database migrations. Its post-deploy smoke test checks /health, the homepage and six module cards, unauthenticated admin rejection (HTTP 401), and Worker/assets/AI/database configuration.
+
+### Module evidence and remaining gaps
+- E2E run #895 executed 180 tests across `homepage.spec.cjs`, `data-isolation-migrations.spec.cjs`, `module-persistence.spec.cjs`, `academy-progress.spec.cjs`, `studio-station-persistence.spec.cjs`, `income-tracker.spec.cjs`, and `crypto-engine.spec.cjs`.
+- Verified automated coverage includes Free/module chat and session flows; Health attachment consent, clinical boundaries and owner-scoped data; Studio render-job/media privacy and station persistence; Academy lesson progress; Commerce and Business project ownership/persistence and Business cashbook validation; Online Income save/failure/currency handling; Crypto & Mining simulator calculations and stale network sample rejection.
+- The inspected run does not establish a fresh acoustic test for Sarah, Dr.Vas or Dr.Jan. Do not claim that audio was heard in Romanian or Italian.
+- Mining remains a profitability simulator/public-data reader. No real mining execution, pool connection or local hardware agent was verified.
+- No dedicated Google Play/subscriptions test was identified in this run.
+- No Codespace was created or started. No files, artifacts, volumes or user data were deleted. No database, schema, RLS, migration, Supabase setting/secret, paid service or APK operation occurred.
+
+### Next actions
+1. Obtain the Cloudflare dashboard build logs for IDs `1f3620aa-c1c3-48ef-9bed-ed4e6bee7930`, `8bb295c4-ae39-4d95-9afc-fa3dfb192f33` and `e4159534-3042-4399-8d7c-1e7e1c59beaf`; GitHub check metadata exposes no root cause.
+2. Reconcile PR #139 with current main, rerun exact-head E2E and Cloudflare Preview checks, and merge only if all required checks pass and the head is re-confirmed.
+3. Resolve the Cloudflare build issue before any new production release; after a code merge, verify the production deploy and smoke-test result independently.
+4. Add/verify dedicated subscriptions/Google Play coverage and arrange actual device-based acoustic checks separately.
