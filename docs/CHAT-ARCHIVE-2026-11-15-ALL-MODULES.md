@@ -339,3 +339,35 @@ Continue module-by-module and test each workflow's real persistence, permissions
 3. Keep PR #142 documentation-only and unmerged until its exact-head Cloudflare result is known.
 4. Verify a fresh production Worker /health and homepage smoke test after any future code deployment.
 5. Add dedicated subscriptions/Google Play coverage and arrange separate device-based acoustic checks.
+
+
+## Post-merge correction and capability audit — 21 November 2026
+
+### Documentation PR #142 merged
+- PR #142 was squash-merged after confirming its current head `614000a4a1edcb22dd15d4632935f21879a6a8ef`, documentation-only diff, and the successful browser regression run #896 / ID `44792328163` (180 passed on the preceding code-identical head).
+- Merge commit: `61a5b57cbbec7b7b111f3ef0506bc595c9d8043f`.
+- Verified PR #142 is closed/merged and current `main` is identical to that merge commit. The merge changes only this archive file; no Worker deployment was triggered or required.
+- The previous checkpoint's instruction to keep PR #142 unmerged is superseded by this result.
+
+### Current outstanding code PR
+- PR #139 remains open at head `74c7859d9002ac7289935cd2ffb07b35c72a1910`; its recorded base SHA is still `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`.
+- Compared with new main `61a5b57cbbec7b7b111f3ef0506bc595c9d8043f`, PR #139 must be re-compared and synchronized before merge; its earlier comparison against `e19e7ed` was 5 ahead/4 behind.
+- E2E #888 / ID `43762012231` passed 181/181 on the current PR code head. Requested run #887 / ID `43761439183` remains a historical failure (180 passed, one obsolete stale-data warning assertion failed).
+- Do not merge until PR #139 is reconciled with main and exact-head browser plus Cloudflare checks are confirmed green.
+
+### Subscriptions / Google Play and Mining agent implementation audit
+- A fresh code search on current main for Google Play BillingClient purchase verification returned no code matches. Searches for Stripe checkout/webhook/entitlement found payment architecture and planning documents, not evidence of an operational checkout, signed subscription webhook, or live entitlement flow. Existing `PROJECT-STATUS.md` and `docs/PLATFORM_AUDIT_2026-11-06.md` likewise describe premium billing/entitlements and Google Play readiness as incomplete. Do not enable paid public access or claim Google Play billing is implemented.
+- Searches for a native Mining agent/Stratum implementation found the architecture/design documents `docs/CRYPTO_NATIVE_MINING_AGENT_DESIGN.md` and `docs/DRVAS_CRYPTO_MINING_ENGINE_ARCHITECTURE.md`, but no verified executable agent or pool implementation. The running feature remains the profitability simulator/public-data reader only.
+
+### Cloudflare and production verification limitations
+- Current GitHub combined classic commit statuses returned no entries for main or the checked PR heads; the available GitHub connector does not expose the external Cloudflare Check Runs/build detail.
+- Last archived Cloudflare evidence remains a failed build for main SHA `e19e7edda42d5c6d55b53d2cd7d7dcdf72995d48` (build `e4159534-3042-4399-8d7c-1e7e1c59beaf`) and a previously failed PR #139 Preview build `1f3620aa-c1c3-48ef-9bed-ed4e6bee7930`. These are last-known records, not a fresh status for current main `61a5b57`.
+- Latest successful production deploy remains run #568 / ID `43472877005`, app SHA `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`, deployed Worker version `3fca9242-52fb-4501-9b76-0cd43a277e4e`. Deploy, browser regression, /health/homepage smoke checks and HTTP 401 unauthenticated-admin rejection all succeeded on 13 November 2026. No new production deploy or fresh live Worker probe was verified on 21 November.
+
+### Next actions
+1. Obtain the current Cloudflare Check Run/build details for main `61a5b57cbbec7b7b111f3ef0506bc595c9d8043f` and PR #139 head `74c7859d9002ac7289935cd2ffb07b35c72a1910`.
+2. Reconcile PR #139 with main, rerun browser E2E on its exact new head, and require a successful Cloudflare Preview before merge/deploy.
+3. Add real subscription/Google Play implementation only after billing, legal, privacy, server-side entitlement and store requirements are deliberately designed and tested; no paid provider or account setup without approval.
+4. Treat Mining agent/Stratum work as a separate future local-agent project requiring explicit hardware selection and owner opt-in; do not represent it as already operational.
+5. Arrange real-device acoustic verification for Sarah, Dr.Vas and Dr.Jan separately from automated TTS tests.
+6. Do not create/start Codespaces, apply database changes/migrations, alter Supabase settings/secrets, spend paid credits, or build APKs under the current standing constraints.
