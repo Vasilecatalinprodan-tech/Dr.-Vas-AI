@@ -238,7 +238,7 @@
       rewardSampleBlocks: 144,
       hashrateSampleAt,
       hashrateSampleAgeMs,
-      hashrateSampleStale: hashrateSampleAgeMs !== null && hashrateSampleAgeMs > 2 * 60 * 60 * 1000,
+      hashrateSampleStale: hashrateSampleAgeMs === null || hashrateSampleAgeMs > 2 * 60 * 60 * 1000,
       source: "mempool.space",
       fetchedAt: new Date().toISOString()
     };

@@ -71,3 +71,26 @@ test("Bitcoin sensitivity rejects invalid, zero and oversized multiplier sets", 
   });
   expect(result).toEqual({ zero: true, negative: true, tooMany: true });
 });
+
+
+test("Bitcoin live network sample is stale when its timestamp is missing or older than two hours", async ({ page }) => {
+  await loadEngine(page);
+  const result = await page.evaluate(async () => {
+    const load = timestamp => window.DrVasCryptoEngine.fetchBitcoinNetworkStats(async url => ({
+      ok: true,
+      json: async () => url.includes("/hashrate/3d")
+        ? [{ ...(timestamp === null ? {} : { timestamp }), avgHashrate: 600e18 }]
+        : { totalReward: 450000000 }
+    }));
+    const now = Math.floor(Date.now() / 1000);
+    const fresh = await load(now - 10 * 60);
+    const old = await load(now - 3 * 60 * 60);
+    const missing = await load(null);
+    return {
+      fresh: fresh.hashrateSampleStale,
+      old: old.hashrateSampleStale,
+      missing: missing.hashrateSampleStale
+    };
+  });
+  expect(result).toEqual({ fresh: false, old: true, missing: true });
+});
