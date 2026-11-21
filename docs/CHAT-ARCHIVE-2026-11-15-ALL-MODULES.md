@@ -290,3 +290,52 @@ Continue module-by-module and test each workflow's real persistence, permissions
 2. Reconcile PR #139 with current main, rerun exact-head E2E and Cloudflare Preview checks, and merge only if all required checks pass and the head is re-confirmed.
 3. Resolve the Cloudflare build issue before any new production release; after a code merge, verify the production deploy and smoke-test result independently.
 4. Add/verify dedicated subscriptions/Google Play coverage and arrange actual device-based acoustic checks separately.
+
+
+## Daily monitoring checkpoint — 21 November 2026 (18:09 UTC)
+
+### Repository and main
+- Repository metadata confirms the default branch is `main`, repository is public, and the linked GitHub integration has admin/push/pull permissions.
+- Current main SHA confirmed by the repository's latest commit listing and by the PR base comparison: `e19e7edda42d5c6d55b53d2cd7d7dcdf72995d48` (`docs: record final 18 November monitoring snapshot`).
+- Main commit lookup returned no associated PR-triggered GitHub Actions runs; classic combined commit status returned no entries. This does not expose GitHub Check Runs or Cloudflare's external build state.
+- Exactly two open PRs were returned by the repository PR listing: #139 and #142.
+
+### PR #139 — Mining stale Bitcoin network data
+- State: open; head `74c7859d9002ac7289935cd2ffb07b35c72a1910`; base SHA recorded on the PR is `3e0e5dad92cf74ddc04e1a8477940423874a0c4d`.
+- Fresh compare against current main `e19e7edda42d5c6d55b53d2cd7d7dcdf72995d48`: diverged, 5 commits ahead and 4 behind. Mergeability flag is true, but divergence still requires reconciliation and exact-head revalidation.
+- Explicit requested browser E2E run #887 / ID `43761439183`, job `132956920870`: completed failure. Job log shows 180 passed and one failed: old assertion `Bitcoin live adapter warns when network or market timestamps are stale` at `tests/e2e/homepage.spec.cjs:1357`.
+- Corrected browser E2E run #888 / ID `43762012231`, job `132958684326`: completed success; job log confirms 181 passed. Test now asserts stale samples are rejected before existing simulator inputs are changed.
+- Commit-run lookup for the current PR head returned run #888 as successful. No new PR #139 workflow run was listed.
+- Current Cloudflare Preview status for the exact PR head could not be freshly retrieved. The latest archived failure for this PR remains build `1f3620aa-c1c3-48ef-9bed-ed4e6bee7930`; its private dashboard log was not accessible.
+- Decision: do not merge or deploy. Reconcile with main, retrieve exact-head Cloudflare result, rerun E2E and re-check head SHA before any merge.
+
+### PR #142 — documentation checkpoint
+- State: open, mergeable true, documentation-only (one changed file: `docs/CHAT-ARCHIVE-2026-11-15-ALL-MODULES.md`).
+- Current head `f1d343ebd818a9fe75f4300146d501abfb849bd1`; base SHA `e19e7edda42d5c6d55b53d2cd7d7dcdf72995d48`.
+- Fresh compare: 3 commits ahead, 0 behind.
+- Browser E2E run #896 / ID `44792328163`, job `136482949446`: completed success; job log confirms 180 passed in 2.3 minutes. Static Worker/inline JavaScript validation and the guard against automatic database migrations also passed.
+- No workflow artifacts were produced for this run.
+- Current Cloudflare Preview result for the exact head `f1d343ebd818a9fe75f4300146d501abfb849bd1` could not be freshly retrieved. The last archived Cloudflare Preview failure for the earlier PR #142 head was build `8bb295c4-ae39-4d95-9afc-fa3dfb192f33`; do not assume that status applies to the current head.
+- Decision: keep PR #142 open until Cloudflare status is confirmed; no app code or production deploy is involved in this documentation PR.
+
+### Cloudflare Worker production evidence
+- Release workflow `.github/workflows/deploy-worker.yml` was fetched from current main; file blob SHA `755520459ccec3dcb7bfda254b2623bb0dbc4f71`.
+- Re-fetched production deploy run #568 / ID `43472877005`. Job `132049060150` is completed success. Every listed step passed, including validation, browser regression, `Deploy Worker`, and `Smoke test production Worker`.
+- That deployment remains historical evidence for application SHA `3e0e5dad92cf74ddc04e1a8477940423874a0c4d` (13 November 2026), not a fresh deployment on 21 November.
+- Last archived main Cloudflare build failure remains check `135774705358`, build `e4159534-3042-4399-8d7c-1e7e1c59beaf`, associated with main SHA `e19e7edda42d5c6d55b53d2cd7d7dcdf72995d48`. No annotations/root cause were available in prior check metadata.
+- Current Cloudflare dashboard/build logs and a fresh live Worker /health + homepage probe were not accessible in this run. Current live production health is therefore unverified.
+- Workflow review confirms browser tests precede `wrangler deploy`; release explicitly excludes automatic database migrations. Production smoke test checks /health, homepage/six module cards, unauthenticated admin rejection (HTTP 401), and Worker/assets/AI/database configuration.
+
+### Module coverage and limits
+- Run #888 (181 tests) and PR #142 run #896 (180 tests) cover Free chat/session/sidebar/attachments; Health consent and separate chat/history; Studio stations, projects and media flows; Academy progress/persistence; Commerce calculations and project restore; Business cashbook/cashflow and migration-safe errors; Online Income tracking; Crypto/Mining simulator economics and stale-data handling; plus presenter/TTS routing and UI localization.
+- No dedicated Google Play/subscriptions test was identified in the inspected runs.
+- Automated voice/TTS tests are not acoustic confirmation. No real audio was heard/tested in this run for Sarah, Dr.Vas or Dr.Jan in Romanian or Italian.
+- Mining remains a profitability simulator/public-data reader. No real mining execution, pool connection, wallet handling or local hardware agent was verified.
+- No Codespaces were created or started; no files, artifacts, volumes or user data were deleted. No database/schema/RLS/migration/Supabase setting/secret changes, paid services, or APK operations occurred.
+
+### Next actions
+1. Obtain fresh Cloudflare build/check results for main SHA `e19e7edda42d5c6d55b53d2cd7d7dcdf72995d48`, PR #139 head `74c7859d9002ac7289935cd2ffb07b35c72a1910`, and PR #142 head `f1d343ebd818a9fe75f4300146d501abfb849bd1`.
+2. Reconcile PR #139 with current main; rerun browser E2E and Cloudflare Preview on the resulting exact head.
+3. Keep PR #142 documentation-only and unmerged until its exact-head Cloudflare result is known.
+4. Verify a fresh production Worker /health and homepage smoke test after any future code deployment.
+5. Add dedicated subscriptions/Google Play coverage and arrange separate device-based acoustic checks.
