@@ -36,3 +36,9 @@
 - No Codespaces created or started; no files, artifacts, volumes or data deleted.
 - No database/schema/RLS/migration, Supabase setting/secret, paid service/credit or APK changes.
 - Next: inspect Cloudflare build logs; reconcile PR #139 with current main; rerun browser and Cloudflare checks on exact new head; merge/deploy only after all required checks pass and SHA is reconfirmed; run production smoke test after any code deploy.
+
+
+## Update at 18:40 UTC — exact-head follow-up
+- Main SHA 61a5b57cbbec7b7b111f3ef0506bc595c9d8043f has a current Cloudflare Workers Builds check completed with failure: build fe97d8d3-710c-4838-bac1-e8cdaae727c1. This is a fresh check-run result, but the private Cloudflare build log is not accessible; no cause inferred.
+- PR #143 was updated with this report and the archive checkpoint. Latest head is a83365c2d3575d3a9a50bf12efeb1eb0a94663a2, based on main. New browser run #45240701738 is in progress; validation and migration-safety steps passed, browser runner installation is still running. Previous exact head 4f3b3c3 had browser run #45057639067 successfully completed, but Cloudflare check failed at build 2a38c438-78d3-4e45-b163-5836d306a733.
+- Latest head a83365c has a browser-e2e check in progress and no Cloudflare check-run yet. PR #143 remains open; no merge/deploy.
