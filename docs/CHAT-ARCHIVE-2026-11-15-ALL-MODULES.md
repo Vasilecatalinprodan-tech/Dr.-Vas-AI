@@ -371,3 +371,14 @@ Continue module-by-module and test each workflow's real persistence, permissions
 4. Treat Mining agent/Stratum work as a separate future local-agent project requiring explicit hardware selection and owner opt-in; do not represent it as already operational.
 5. Arrange real-device acoustic verification for Sarah, Dr.Vas and Dr.Jan separately from automated TTS tests.
 6. Do not create/start Codespaces, apply database changes/migrations, alter Supabase settings/secrets, spend paid credits, or build APKs under the current standing constraints.
+
+
+## Daily monitoring checkpoint — 23 November 2026
+
+- Independently queried main branch tip: 61a5b57cbbec7b7b111f3ef0506bc595c9d8043f. Main remains documentation-only since the previous app commit; branch protection and required checks are disabled.
+- PR #139 remains open at 74c7859d9002ac7289935cd2ffb07b35c72a1910; compare main...branch is diverged 5 ahead/5 behind. Requested E2E #887 / 43761439183 failed 180/181 on workflow SHA 53a693a; follow-up #888 / 43762012231 passed 181/181 on earlier PR code. Exact-head Cloudflare check is failed (build 1f3620aa-c1c3-48ef-9bed-ed4e6bee7930). No merge/deploy.
+- PR #143 head 4f3b3c35d4788599acdb02f325968f9165d45cfd, 2 ahead/0 behind main. Browser regression run #45057639067 passed its browser-e2e job, including homepage/session restoration. Exact-head Cloudflare check failed (build 2a38c438-78d3-4e45-b163-5836d306a733); private log unavailable. PR remains open.
+- Latest production deploy evidence remains run #568 / 43472877005, app SHA 3e0e5dad92cf74ddc04e1a8477940423874a0c4d, Worker version 3fca9242-52fb-4501-9b76-0cd43a277e4e; deploy and smoke passed on 13 November. No fresh live probe or deploy verified today.
+- Module boundary unchanged: existing E2E covers the main workspaces, but no verified Google Play/subscription entitlement flow; Mining is simulator/public-data reader only; voice tests are automated and not acoustic confirmation; APK remains postponed.
+- Safety: no Codespaces, deletion, database/schema/RLS/migration/Supabase secret/settings, paid credits, or APK activity. Next: resolve Cloudflare failures, synchronize #139, rerun exact-head checks, and merge/deploy only when green.
+- Full daily report: docs/DAILY-MONITORING-2026-11-23.md (added in PR #143).
