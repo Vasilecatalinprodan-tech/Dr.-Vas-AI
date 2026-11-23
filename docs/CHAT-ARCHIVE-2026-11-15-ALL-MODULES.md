@@ -382,3 +382,9 @@ Continue module-by-module and test each workflow's real persistence, permissions
 - Module boundary unchanged: existing E2E covers the main workspaces, but no verified Google Play/subscription entitlement flow; Mining is simulator/public-data reader only; voice tests are automated and not acoustic confirmation; APK remains postponed.
 - Safety: no Codespaces, deletion, database/schema/RLS/migration/Supabase secret/settings, paid credits, or APK activity. Next: resolve Cloudflare failures, synchronize #139, rerun exact-head checks, and merge/deploy only when green.
 - Full daily report: docs/DAILY-MONITORING-2026-11-23.md (added in PR #143).
+
+
+### 23 November follow-up verification (18:40 UTC)
+- Fresh check-runs API for current main SHA 61a5b57cbbec7b7b111f3ef0506bc595c9d8043f reports Cloudflare Workers Builds failure, build fe97d8d3-710c-4838-bac1-e8cdaae727c1. Private build log inaccessible; cause unknown.
+- PR #143 was updated with today's checkpoint. Latest head f907bdff2f3c69d13d6d7c95a19a3a08c23680e8 (documentation only), browser run #45240701738 still in progress at last poll; prior head 4f3b3c3 E2E run #45057639067 passed, but Cloudflare Preview failed (build 2a38c438-78d3-4e45-b163-5836d306a733). Current head has no Cloudflare check-run yet.
+- No merge/deploy. The exact main Cloudflare failure reinforces the unresolved Preview/Build blocker.
